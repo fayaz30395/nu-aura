@@ -1,17 +1,17 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  JobOpening,
-  CreateJobOpeningRequest,
+  AcceptOfferRequest,
   Candidate,
   CreateCandidateRequest,
-  Interview,
   CreateInterviewRequest,
-  Page,
-  JobStatus,
-  AcceptOfferRequest,
-  DeclineOfferRequest,
-  MoveStageRequest,
+  CreateJobOpeningRequest,
   CreateOfferRequest,
+  DeclineOfferRequest,
+  Interview,
+  JobOpening,
+  JobStatus,
+  MoveStageRequest,
+  Page,
 } from '../../types/hire/recruitment';
 
 class RecruitmentService {
@@ -34,14 +34,14 @@ class RecruitmentService {
 
   async getAllJobOpenings(page: number = 0, size: number = 20): Promise<Page<JobOpening>> {
     const response = await apiClient.get<Page<JobOpening>>('/recruitment/job-openings', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getJobOpeningsByStatus(status: JobStatus): Promise<JobOpening[]> {
     const response = await apiClient.get<Page<JobOpening>>(`/recruitment/job-openings/status/${status}`, {
-      params: { size: 1000 },
+      params: {size: 1000},
     });
     return response.data.content;
   }
@@ -69,14 +69,14 @@ class RecruitmentService {
 
   async getAllCandidates(page: number = 0, size: number = 20): Promise<Page<Candidate>> {
     const response = await apiClient.get<Page<Candidate>>('/recruitment/candidates', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getCandidatesByJobOpening(jobOpeningId: string): Promise<Candidate[]> {
     const response = await apiClient.get<Page<Candidate>>(`/recruitment/candidates/job-opening/${jobOpeningId}`, {
-      params: { size: 1000 },
+      params: {size: 1000},
     });
     return response.data.content;
   }
@@ -122,7 +122,7 @@ class RecruitmentService {
 
   async getAllInterviews(page: number = 0, size: number = 100): Promise<Page<Interview>> {
     const response = await apiClient.get<Page<Interview>>('/recruitment/interviews', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -144,7 +144,7 @@ class RecruitmentService {
 
   async getInterviewsByCandidate(candidateId: string): Promise<Interview[]> {
     const response = await apiClient.get<Page<Interview>>(`/recruitment/interviews/candidate/${candidateId}`, {
-      params: { size: 1000 },
+      params: {size: 1000},
     });
     return response.data.content;
   }

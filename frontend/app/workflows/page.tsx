@@ -1,35 +1,32 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/Modal';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import React, {useCallback, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useDeactivateWorkflowDefinition, useWorkflowDefinitions,} from '@/lib/hooks/queries/useWorkflows';
+import type {WorkflowDefinitionResponse, WorkflowEntityType} from '@/lib/types/core/workflow';
+import {format} from 'date-fns';
 import {
-  useWorkflowDefinitions,
-  useDeactivateWorkflowDefinition,
-} from '@/lib/hooks/queries/useWorkflows';
-import type { WorkflowDefinitionResponse, WorkflowEntityType } from '@/lib/types/core/workflow';
-import { format } from 'date-fns';
-import {
-  Plus,
-  Search,
-  GitBranch,
-  MoreVertical,
-  Eye,
-  Edit,
-  Trash2,
-  Power,
   ChevronLeft,
   ChevronRight,
-  XCircle,
+  Edit,
+  Eye,
+  GitBranch,
+  MoreVertical,
+  Plus,
+  Power,
+  Search,
   Shield,
+  Trash2,
+  XCircle,
 } from 'lucide-react';
-import { useDebounce } from '@/lib/hooks/useDebounce';
+import {useDebounce} from '@/lib/hooks/useDebounce';
 
 // ── Entity Type Labels & Colors ──────────────────────────────────────────────
 
@@ -37,27 +34,111 @@ const ENTITY_TYPE_CONFIG: Record<
   WorkflowEntityType,
   { label: string; bg: string; text: string }
 > = {
-  LEAVE_REQUEST: { label: 'Leave', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  EXPENSE_CLAIM: { label: 'Expense', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
-  TRAVEL_REQUEST: { label: 'Travel', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  LOAN_REQUEST: { label: 'Loan', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
-  ASSET_REQUEST: { label: 'Asset', bg: 'bg-surface-100 dark:bg-surface-800/30', text: 'text-surface-700 dark:text-surface-300' },
-  TIMESHEET: { label: 'Timesheet', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  RESIGNATION: { label: 'Resignation', bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-300' },
-  SALARY_REVISION: { label: 'Salary Revision', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  PROMOTION: { label: 'Promotion', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  TRANSFER: { label: 'Transfer', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  ONBOARDING: { label: 'Onboarding', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  OFFBOARDING: { label: 'Offboarding', bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-300' },
-  DOCUMENT_REQUEST: { label: 'Document', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  POLICY_ACKNOWLEDGMENT: { label: 'Policy', bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' },
-  TRAINING_REQUEST: { label: 'Training', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  REIMBURSEMENT: { label: 'Reimbursement', bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
-  OVERTIME: { label: 'Overtime', bg: 'bg-nu-purple-100 dark:bg-nu-purple-900/30', text: 'text-nu-purple-700 dark:text-nu-purple-300' },
-  SHIFT_CHANGE: { label: 'Shift Change', bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' },
-  WORK_FROM_HOME: { label: 'WFH', bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  RECRUITMENT_OFFER: { label: 'Recruitment', bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  CUSTOM: { label: 'Custom', bg: 'bg-surface-100 dark:bg-surface-800/30', text: 'text-surface-700 dark:text-surface-300' },
+  LEAVE_REQUEST: {
+    label: 'Leave',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  EXPENSE_CLAIM: {
+    label: 'Expense',
+    bg: 'bg-warning-100 dark:bg-warning-900/30',
+    text: 'text-warning-700 dark:text-warning-300'
+  },
+  TRAVEL_REQUEST: {
+    label: 'Travel',
+    bg: 'bg-success-100 dark:bg-success-900/30',
+    text: 'text-success-700 dark:text-success-300'
+  },
+  LOAN_REQUEST: {
+    label: 'Loan',
+    bg: 'bg-warning-100 dark:bg-warning-900/30',
+    text: 'text-warning-700 dark:text-warning-300'
+  },
+  ASSET_REQUEST: {
+    label: 'Asset',
+    bg: 'bg-surface-100 dark:bg-surface-800/30',
+    text: 'text-surface-700 dark:text-surface-300'
+  },
+  TIMESHEET: {
+    label: 'Timesheet',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  RESIGNATION: {
+    label: 'Resignation',
+    bg: 'bg-danger-100 dark:bg-danger-900/30',
+    text: 'text-danger-700 dark:text-danger-300'
+  },
+  SALARY_REVISION: {
+    label: 'Salary Revision',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  PROMOTION: {
+    label: 'Promotion',
+    bg: 'bg-success-100 dark:bg-success-900/30',
+    text: 'text-success-700 dark:text-success-300'
+  },
+  TRANSFER: {
+    label: 'Transfer',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  ONBOARDING: {
+    label: 'Onboarding',
+    bg: 'bg-success-100 dark:bg-success-900/30',
+    text: 'text-success-700 dark:text-success-300'
+  },
+  OFFBOARDING: {
+    label: 'Offboarding',
+    bg: 'bg-danger-100 dark:bg-danger-900/30',
+    text: 'text-danger-700 dark:text-danger-300'
+  },
+  DOCUMENT_REQUEST: {
+    label: 'Document',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  POLICY_ACKNOWLEDGMENT: {
+    label: 'Policy',
+    bg: 'bg-accent-300 dark:bg-accent-900/30',
+    text: 'text-accent-900 dark:text-accent-500'
+  },
+  TRAINING_REQUEST: {
+    label: 'Training',
+    bg: 'bg-success-100 dark:bg-success-900/30',
+    text: 'text-success-700 dark:text-success-300'
+  },
+  REIMBURSEMENT: {
+    label: 'Reimbursement',
+    bg: 'bg-warning-100 dark:bg-warning-900/30',
+    text: 'text-warning-700 dark:text-warning-300'
+  },
+  OVERTIME: {
+    label: 'Overtime',
+    bg: 'bg-nu-purple-100 dark:bg-nu-purple-900/30',
+    text: 'text-nu-purple-700 dark:text-nu-purple-300'
+  },
+  SHIFT_CHANGE: {
+    label: 'Shift Change',
+    bg: 'bg-accent-300 dark:bg-accent-900/30',
+    text: 'text-accent-900 dark:text-accent-500'
+  },
+  WORK_FROM_HOME: {
+    label: 'WFH',
+    bg: 'bg-success-100 dark:bg-success-900/30',
+    text: 'text-success-700 dark:text-success-300'
+  },
+  RECRUITMENT_OFFER: {
+    label: 'Recruitment',
+    bg: 'bg-accent-100 dark:bg-accent-900/30',
+    text: 'text-accent-700 dark:text-accent-300'
+  },
+  CUSTOM: {
+    label: 'Custom',
+    bg: 'bg-surface-100 dark:bg-surface-800/30',
+    text: 'text-surface-700 dark:text-surface-300'
+  },
 };
 
 type StatusFilter = 'ALL' | 'ACTIVE' | 'INACTIVE';
@@ -66,7 +147,7 @@ const PAGE_SIZE = 20;
 
 export default function WorkflowListPage() {
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
   const canManage = isReady && hasPermission(Permissions.WORKFLOW_MANAGE);
   const canView = isReady && (hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
 
@@ -84,7 +165,7 @@ export default function WorkflowListPage() {
   const [deleteTarget, setDeleteTarget] = useState<WorkflowDefinitionResponse | null>(null);
   const deactivateMutation = useDeactivateWorkflowDefinition();
 
-  const { data: workflowPage, isLoading } = useWorkflowDefinitions({ page, size: PAGE_SIZE });
+  const {data: workflowPage, isLoading} = useWorkflowDefinitions({page, size: PAGE_SIZE});
 
   // Client-side filtering (status + entity type + search) on top of the paginated response
   const filteredItems = useMemo(() => {
@@ -126,7 +207,7 @@ export default function WorkflowListPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-danger-500" />}
+            icon={<XCircle className="h-12 w-12 text-danger-500"/>}
           />
         </div>
       </AppLayout>
@@ -136,9 +217,9 @@ export default function WorkflowListPage() {
   return (
     <AppLayout activeMenuItem="workflows">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="space-y-6 p-6"
       >
         {/* Header */}
@@ -156,22 +237,27 @@ export default function WorkflowListPage() {
               variant="primary"
               onClick={() => router.push('/workflows/new')}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4"/>
               Create Workflow
             </Button>
           )}
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
+        <div
+          className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-4">
             {/* Status toggle */}
-            <div className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
+            <div
+              className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
               {(['ALL', 'ACTIVE', 'INACTIVE'] as StatusFilter[]).map((s) => (
                 <button
                   key={s}
                   type="button"
-                  onClick={() => { setStatusFilter(s); setPage(0); }}
+                  onClick={() => {
+                    setStatusFilter(s);
+                    setPage(0);
+                  }}
                   className={`rounded-full px-4 py-1 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     statusFilter === s
                       ? 'bg-accent-700 text-white'
@@ -203,12 +289,15 @@ export default function WorkflowListPage() {
 
           {/* Search */}
           <div className="relative w-full md:w-64">
-            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search workflows..."
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
               className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
             />
           </div>
@@ -218,7 +307,7 @@ export default function WorkflowListPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-20 rounded-xl" />
+              <Skeleton key={i} className="h-20 rounded-xl"/>
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
@@ -229,7 +318,7 @@ export default function WorkflowListPage() {
                 ? 'Try adjusting your filters.'
                 : 'Create your first approval workflow to get started.'
             }
-            icon={<GitBranch className="h-12 w-12" />}
+            icon={<GitBranch className="h-12 w-12"/>}
           />
         ) : (
           <>
@@ -237,46 +326,51 @@ export default function WorkflowListPage() {
             <div className="overflow-hidden rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)]">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
-                    <th className="px-4 py-2 font-medium text-[var(--text-secondary)]">Name</th>
-                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] sm:table-cell">Type</th>
-                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] md:table-cell">Workflow Type</th>
-                    <th className="px-4 py-2 text-center font-medium text-[var(--text-secondary)]">Status</th>
-                    <th className="hidden px-4 py-2 text-right font-medium text-[var(--text-secondary)] lg:table-cell">Steps</th>
-                    <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] lg:table-cell">Created</th>
-                    <th className="px-4 py-2 text-right font-medium text-[var(--text-secondary)]">Actions</th>
-                  </tr>
+                <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
+                  <th className="px-4 py-2 font-medium text-[var(--text-secondary)]">Name</th>
+                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] sm:table-cell">Type</th>
+                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] md:table-cell">Workflow
+                    Type
+                  </th>
+                  <th className="px-4 py-2 text-center font-medium text-[var(--text-secondary)]">Status</th>
+                  <th
+                    className="hidden px-4 py-2 text-right font-medium text-[var(--text-secondary)] lg:table-cell">Steps
+                  </th>
+                  <th className="hidden px-4 py-2 font-medium text-[var(--text-secondary)] lg:table-cell">Created</th>
+                  <th className="px-4 py-2 text-right font-medium text-[var(--text-secondary)]">Actions</th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-main)]">
-                  {filteredItems.map((wf) => {
-                    const typeConfig = ENTITY_TYPE_CONFIG[wf.entityType] ?? ENTITY_TYPE_CONFIG.CUSTOM;
-                    return (
-                      <tr
-                        key={wf.id}
-                        className="h-11 cursor-pointer transition-colors hover:bg-[var(--bg-secondary)]/30"
-                        onClick={() => router.push(`/workflows/${wf.id}`)}
-                      >
-                        <td className="px-4 py-4">
-                          <div>
-                            <p className="font-medium text-[var(--text-primary)]">{wf.name}</p>
-                            {wf.description && (
-                              <p className="mt-0.5 text-caption truncate max-w-[250px]">
-                                {wf.description}
-                              </p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="hidden px-4 py-4 sm:table-cell">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${typeConfig.bg} ${typeConfig.text}`}>
+                {filteredItems.map((wf) => {
+                  const typeConfig = ENTITY_TYPE_CONFIG[wf.entityType] ?? ENTITY_TYPE_CONFIG.CUSTOM;
+                  return (
+                    <tr
+                      key={wf.id}
+                      className="h-11 cursor-pointer transition-colors hover:bg-[var(--bg-secondary)]/30"
+                      onClick={() => router.push(`/workflows/${wf.id}`)}
+                    >
+                      <td className="px-4 py-4">
+                        <div>
+                          <p className="font-medium text-[var(--text-primary)]">{wf.name}</p>
+                          {wf.description && (
+                            <p className="mt-0.5 text-caption truncate max-w-[250px]">
+                              {wf.description}
+                            </p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="hidden px-4 py-4 sm:table-cell">
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${typeConfig.bg} ${typeConfig.text}`}>
                             {typeConfig.label}
                           </span>
-                        </td>
-                        <td className="hidden px-4 py-4 md:table-cell">
+                      </td>
+                      <td className="hidden px-4 py-4 md:table-cell">
                           <span className="text-xs text-[var(--text-secondary)] capitalize">
                             {wf.workflowType.toLowerCase()}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 text-center">
+                      </td>
+                      <td className="px-4 py-4 text-center">
                           <span
                             className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold justify-center ${
                               wf.isActive
@@ -284,85 +378,87 @@ export default function WorkflowListPage() {
                                 : 'bg-surface-100 text-surface-600 dark:bg-surface-800/30 dark:text-surface-400'
                             }`}
                           >
-                            <span className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-surface-400'}`} />
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-surface-400'}`}/>
                             {wf.isActive ? 'Active' : 'Inactive'}
                           </span>
-                          {wf.isDefault && (
-                            <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-                              <Shield className="h-3 w-3" />
+                        {wf.isDefault && (
+                          <span
+                            className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                              <Shield className="h-3 w-3"/>
                               Default
                             </span>
-                          )}
-                        </td>
-                        <td className="hidden px-4 py-4 text-right lg:table-cell">
+                        )}
+                      </td>
+                      <td className="hidden px-4 py-4 text-right lg:table-cell">
                           <span className="text-body-secondary">
                             {wf.totalSteps} {wf.totalSteps === 1 ? 'step' : 'steps'}
                           </span>
-                        </td>
-                        <td className="hidden px-4 py-4 lg:table-cell">
+                      </td>
+                      <td className="hidden px-4 py-4 lg:table-cell">
                           <span className="text-caption">
                             {wf.createdAt ? format(new Date(wf.createdAt), 'MMM d, yyyy') : '--'}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 text-right">
-                          <div className="relative inline-block">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setMenuOpenId(menuOpenId === wf.id ? null : wf.id);
-                              }}
-                              aria-label="Actions menu"
-                              className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <div className="relative inline-block">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMenuOpenId(menuOpenId === wf.id ? null : wf.id);
+                            }}
+                            aria-label="Actions menu"
+                            className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          >
+                            <MoreVertical className="h-4 w-4"/>
+                          </button>
+                          {menuOpenId === wf.id && (
+                            <div
+                              className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-1 shadow-[var(--shadow-dropdown)]"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <MoreVertical className="h-4 w-4" />
-                            </button>
-                            {menuOpenId === wf.id && (
-                              <div
-                                className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-1 shadow-[var(--shadow-dropdown)]"
-                                onClick={(e) => e.stopPropagation()}
+                              <button
+                                type="button"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                onClick={() => {
+                                  router.push(`/workflows/${wf.id}`);
+                                  setMenuOpenId(null);
+                                }}
                               >
-                                <button
-                                  type="button"
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                  onClick={() => {
-                                    router.push(`/workflows/${wf.id}`);
-                                    setMenuOpenId(null);
-                                  }}
-                                >
-                                  <Eye className="h-4 w-4" /> View
-                                </button>
-                                {canManage && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                      onClick={() => {
-                                        router.push(`/workflows/${wf.id}?edit=true`);
-                                        setMenuOpenId(null);
-                                      }}
-                                    >
-                                      <Edit className="h-4 w-4" /> Edit
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                      onClick={() => {
-                                        setDeleteTarget(wf);
-                                        setMenuOpenId(null);
-                                      }}
-                                    >
-                                      <Trash2 className="h-4 w-4" /> Deactivate
-                                    </button>
-                                  </>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                                <Eye className="h-4 w-4"/> View
+                              </button>
+                              {canManage && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    onClick={() => {
+                                      router.push(`/workflows/${wf.id}?edit=true`);
+                                      setMenuOpenId(null);
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4"/> Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    onClick={() => {
+                                      setDeleteTarget(wf);
+                                      setMenuOpenId(null);
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4"/> Deactivate
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
                 </tbody>
               </table>
             </div>
@@ -380,7 +476,7 @@ export default function WorkflowListPage() {
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4"/>
                     Previous
                   </Button>
                   <Button
@@ -390,7 +486,7 @@ export default function WorkflowListPage() {
                     disabled={page >= totalPages - 1}
                   >
                     Next
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4"/>
                   </Button>
                 </div>
               </div>
@@ -401,14 +497,14 @@ export default function WorkflowListPage() {
 
       {/* Click outside to close menu */}
       {menuOpenId && (
-        <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setMenuOpenId(null)} />
+        <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setMenuOpenId(null)}/>
       )}
 
       {/* Deactivate Confirmation Modal */}
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="md">
         <ModalHeader onClose={() => setDeleteTarget(null)}>
           <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-            <Power className="h-5 w-5" />
+            <Power className="h-5 w-5"/>
             Deactivate Workflow
           </div>
         </ModalHeader>

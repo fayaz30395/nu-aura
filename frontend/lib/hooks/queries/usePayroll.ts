@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { payrollService } from '@/lib/services/hrms/payroll.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {payrollService} from '@/lib/services/hrms/payroll.service';
 import {
+  ComponentType,
+  PayrollComponentRequest,
   PayrollRunRequest,
+  PayrollRunStatus,
   PayslipRequest,
   SalaryStructureRequest,
-  PayrollRunStatus,
-  PayrollComponentRequest,
-  ComponentType,
 } from '@/lib/types/hrms/payroll';
 
 // Query keys for cache management
@@ -16,28 +16,28 @@ export const payrollKeys = {
   all: ['payroll'] as const,
   runs: () => [...payrollKeys.all, 'runs'] as const,
   runsList: (page: number, size: number, status?: PayrollRunStatus) =>
-    [...payrollKeys.runs(), { page, size, status }] as const,
+    [...payrollKeys.runs(), {page, size, status}] as const,
   runsDetail: () => [...payrollKeys.runs(), 'detail'] as const,
   runsById: (id: string) => [...payrollKeys.runsDetail(), id] as const,
   payslips: () => [...payrollKeys.all, 'payslips'] as const,
   payslipsList: (page: number, size: number, month?: string, employeeId?: string) =>
-    [...payrollKeys.payslips(), { page, size, month, employeeId }] as const,
+    [...payrollKeys.payslips(), {page, size, month, employeeId}] as const,
   payslipsDetail: () => [...payrollKeys.payslips(), 'detail'] as const,
   payslipsById: (id: string) => [...payrollKeys.payslipsDetail(), id] as const,
   payslipsByEmployee: (employeeId: string, page: number, size: number) =>
-    [...payrollKeys.payslips(), 'employee', { employeeId, page, size }] as const,
+    [...payrollKeys.payslips(), 'employee', {employeeId, page, size}] as const,
   payslipsByRun: (payrollRunId: string, page: number, size: number) =>
-    [...payrollKeys.payslips(), 'run', { payrollRunId, page, size }] as const,
+    [...payrollKeys.payslips(), 'run', {payrollRunId, page, size}] as const,
   structures: () => [...payrollKeys.all, 'structures'] as const,
   structuresList: (page: number, size: number) =>
-    [...payrollKeys.structures(), { page, size }] as const,
+    [...payrollKeys.structures(), {page, size}] as const,
   structuresDetail: () => [...payrollKeys.structures(), 'detail'] as const,
   structuresById: (id: string) => [...payrollKeys.structuresDetail(), id] as const,
   structuresByEmployee: (employeeId: string) =>
     [...payrollKeys.structures(), 'employee', employeeId] as const,
   components: () => [...payrollKeys.all, 'components'] as const,
   componentsList: (page: number, size: number) =>
-    [...payrollKeys.components(), { page, size }] as const,
+    [...payrollKeys.components(), {page, size}] as const,
   componentsActive: () => [...payrollKeys.components(), 'active'] as const,
   componentsByType: (type: ComponentType) =>
     [...payrollKeys.components(), 'type', type] as const,
@@ -93,7 +93,7 @@ export function useCreatePayrollRun() {
   return useMutation({
     mutationFn: (data: PayrollRunRequest) => payrollService.createPayrollRun(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
     },
   });
 }
@@ -105,11 +105,11 @@ export function useUpdatePayrollRun() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: PayrollRunRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: PayrollRunRequest }) =>
       payrollService.updatePayrollRun(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runsById(id) });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.runsById(id)});
     },
   });
 }
@@ -123,8 +123,8 @@ export function useProcessPayrollRun() {
   return useMutation({
     mutationFn: (id: string) => payrollService.processPayrollRun(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runsById(id) });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.runsById(id)});
     },
   });
 }
@@ -138,8 +138,8 @@ export function useApprovePayrollRun() {
   return useMutation({
     mutationFn: (id: string) => payrollService.approvePayrollRun(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runsById(id) });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.runsById(id)});
     },
   });
 }
@@ -153,8 +153,8 @@ export function useLockPayrollRun() {
   return useMutation({
     mutationFn: (id: string) => payrollService.lockPayrollRun(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runsById(id) });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.runsById(id)});
     },
   });
 }
@@ -168,7 +168,7 @@ export function useDeletePayrollRun() {
   return useMutation({
     mutationFn: (id: string) => payrollService.deletePayrollRun(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
     },
   });
 }
@@ -263,7 +263,7 @@ export function useCreatePayslip() {
   return useMutation({
     mutationFn: (data: PayslipRequest) => payrollService.createPayslip(data),
     onSuccess: (newPayslip) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.payslips() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.payslips()});
       queryClient.invalidateQueries({
         queryKey: payrollKeys.payslipsByEmployee(newPayslip.employeeId, 0, 20),
       });
@@ -281,11 +281,11 @@ export function useUpdatePayslip() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: PayslipRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: PayslipRequest }) =>
       payrollService.updatePayslip(id, data),
-    onSuccess: (_, { id, data }) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.payslips() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.payslipsById(id) });
+    onSuccess: (_, {id, data}) => {
+      queryClient.invalidateQueries({queryKey: payrollKeys.payslips()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.payslipsById(id)});
       queryClient.invalidateQueries({
         queryKey: payrollKeys.payslipsByEmployee(data.employeeId, 0, 20),
       });
@@ -305,7 +305,7 @@ export function useDeletePayslip() {
   return useMutation({
     mutationFn: (id: string) => payrollService.deletePayslip(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.payslips() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.payslips()});
     },
   });
 }
@@ -324,7 +324,7 @@ export function useDownloadPayslipPdf() {
  */
 export function useDownloadPayslipPdfByPeriod() {
   return useMutation({
-    mutationFn: ({ employeeId, year, month }: { employeeId: string; year: number; month: number }) =>
+    mutationFn: ({employeeId, year, month}: { employeeId: string; year: number; month: number }) =>
       payrollService.downloadPayslipPdfByPeriod(employeeId, year, month),
   });
 }
@@ -389,7 +389,7 @@ export function useCreateSalaryStructure() {
   return useMutation({
     mutationFn: (data: SalaryStructureRequest) => payrollService.createSalaryStructure(data),
     onSuccess: (newStructure) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structures() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.structures()});
       queryClient.invalidateQueries({
         queryKey: payrollKeys.structuresByEmployee(newStructure.employeeId),
       });
@@ -404,11 +404,11 @@ export function useUpdateSalaryStructure() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: SalaryStructureRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: SalaryStructureRequest }) =>
       payrollService.updateSalaryStructure(id, data),
-    onSuccess: (_, { id, data }) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structures() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structuresById(id) });
+    onSuccess: (_, {id, data}) => {
+      queryClient.invalidateQueries({queryKey: payrollKeys.structures()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.structuresById(id)});
       queryClient.invalidateQueries({
         queryKey: payrollKeys.structuresByEmployee(data.employeeId),
       });
@@ -429,8 +429,8 @@ export function useDeactivateSalaryStructure() {
   return useMutation({
     mutationFn: (id: string) => payrollService.deactivateSalaryStructure(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structures() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structuresById(id) });
+      queryClient.invalidateQueries({queryKey: payrollKeys.structures()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.structuresById(id)});
     },
   });
 }
@@ -444,7 +444,7 @@ export function useDeleteSalaryStructure() {
   return useMutation({
     mutationFn: (id: string) => payrollService.deleteSalaryStructure(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.structures() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.structures()});
     },
   });
 }
@@ -466,8 +466,8 @@ export function useBulkProcessPayroll() {
       runName?: string;
     }) => payrollService.bulkProcessPayroll(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: payrollKeys.runs() });
-      queryClient.invalidateQueries({ queryKey: payrollKeys.payslips() });
+      queryClient.invalidateQueries({queryKey: payrollKeys.runs()});
+      queryClient.invalidateQueries({queryKey: payrollKeys.payslips()});
     },
   });
 }
@@ -542,17 +542,17 @@ export function useCreatePayrollComponent() {
     mutationFn: (data: PayrollComponentRequest) =>
       payrollService.createPayrollComponent(data),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+      qc.invalidateQueries({queryKey: payrollKeys.components()}),
   });
 }
 
 export function useUpdatePayrollComponent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: PayrollComponentRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: PayrollComponentRequest }) =>
       payrollService.updatePayrollComponent(id, data),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+      qc.invalidateQueries({queryKey: payrollKeys.components()}),
   });
 }
 
@@ -561,7 +561,7 @@ export function useDeletePayrollComponent() {
   return useMutation({
     mutationFn: (id: string) => payrollService.deletePayrollComponent(id),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+      qc.invalidateQueries({queryKey: payrollKeys.components()}),
   });
 }
 
@@ -570,6 +570,6 @@ export function useRecomputeEvaluationOrder() {
   return useMutation({
     mutationFn: () => payrollService.recomputeEvaluationOrder(),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: payrollKeys.components() }),
+      qc.invalidateQueries({queryKey: payrollKeys.components()}),
   });
 }

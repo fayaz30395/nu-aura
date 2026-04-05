@@ -1,5 +1,5 @@
-import { apiClient } from '../../api/client';
-import { AdminStats, AdminUserSummary, Page, HealthResponse } from '../../types/core/admin';
+import {apiClient} from '../../api/client';
+import {AdminStats, AdminUserSummary, HealthResponse, Page} from '../../types/core/admin';
 
 class AdminService {
   async getStats(): Promise<AdminStats> {
@@ -37,11 +37,11 @@ class AdminService {
       return {
         status: 'DEGRADED',
         components: {
-          db: { status: 'UNAVAILABLE', details: { message: 'Unable to reach server' } },
-          redis: { status: 'UNAVAILABLE', details: { message: 'Unable to reach server' } },
-          kafka: { status: 'UNAVAILABLE', details: { message: 'Unable to reach server' } },
-          livenessState: { status: 'UP', details: { message: 'Application is running' } },
-          readinessState: { status: 'UNAVAILABLE', details: { message: 'Unable to reach server' } },
+          db: {status: 'UNAVAILABLE', details: {message: 'Unable to reach server'}},
+          redis: {status: 'UNAVAILABLE', details: {message: 'Unable to reach server'}},
+          kafka: {status: 'UNAVAILABLE', details: {message: 'Unable to reach server'}},
+          livenessState: {status: 'UP', details: {message: 'Application is running'}},
+          readinessState: {status: 'UNAVAILABLE', details: {message: 'Unable to reach server'}},
         },
       };
     }

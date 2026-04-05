@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {employeeService} from './employee.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { employeeService } from './employee.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -74,7 +73,7 @@ describe('EmployeeService', () => {
         email: 'john@example.com',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockEmployee });
+      mockApiClient.post.mockResolvedValueOnce({data: mockEmployee});
 
       const result = await employeeService.createEmployee(requestData as Partial<MockEmployee>);
 
@@ -110,7 +109,7 @@ describe('EmployeeService', () => {
         email: 'john@example.com',
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockEmployee });
+      mockApiClient.get.mockResolvedValueOnce({data: mockEmployee});
 
       const result = await employeeService.getEmployee(employeeId);
 
@@ -148,12 +147,12 @@ describe('EmployeeService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await employeeService.getAllEmployees();
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/employees', {
-        params: { page: 0, size: 20, sortBy: 'createdAt', sortDirection: 'DESC' },
+        params: {page: 0, size: 20, sortBy: 'createdAt', sortDirection: 'DESC'},
       });
       expect(result).toEqual(mockPage);
     });
@@ -166,12 +165,12 @@ describe('EmployeeService', () => {
         page: 1,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await employeeService.getAllEmployees(1, 50, 'lastName', 'ASC');
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/employees', {
-        params: { page: 1, size: 50, sortBy: 'lastName', sortDirection: 'ASC' },
+        params: {page: 1, size: 50, sortBy: 'lastName', sortDirection: 'ASC'},
       });
       expect(result).toEqual(mockPage);
     });
@@ -195,12 +194,12 @@ describe('EmployeeService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await employeeService.searchEmployees(query);
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/employees/search', {
-        params: { query, page: 0, size: 20 },
+        params: {query, page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -214,12 +213,12 @@ describe('EmployeeService', () => {
         page: 2,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await employeeService.searchEmployees(query, 2, 30);
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/employees/search', {
-        params: { query, page: 2, size: 30 },
+        params: {query, page: 2, size: 30},
       });
       expect(result).toEqual(mockPage);
     });
@@ -236,7 +235,7 @@ describe('EmployeeService', () => {
         email: 'john@example.com',
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockEmployee });
+      mockApiClient.get.mockResolvedValueOnce({data: mockEmployee});
 
       const result = await employeeService.getEmployeeHierarchy(employeeId);
 
@@ -269,7 +268,7 @@ describe('EmployeeService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockSubordinates });
+      mockApiClient.get.mockResolvedValueOnce({data: mockSubordinates});
 
       const result = await employeeService.getSubordinates(employeeId);
 
@@ -281,7 +280,7 @@ describe('EmployeeService', () => {
       const employeeId = 'emp-1';
       const mockSubordinates: MockEmployee[] = [];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockSubordinates });
+      mockApiClient.get.mockResolvedValueOnce({data: mockSubordinates});
 
       const result = await employeeService.getSubordinates(employeeId);
 
@@ -293,7 +292,7 @@ describe('EmployeeService', () => {
   describe('updateEmployee', () => {
     it('should update an employee', async () => {
       const employeeId = 'emp-1';
-      const updateData = { firstName: 'Jonathan' };
+      const updateData = {firstName: 'Jonathan'};
       const mockEmployee: MockEmployee = {
         id: employeeId,
         firstName: 'Jonathan',
@@ -301,7 +300,7 @@ describe('EmployeeService', () => {
         email: 'john@example.com',
       };
 
-      mockApiClient.put.mockResolvedValueOnce({ data: mockEmployee });
+      mockApiClient.put.mockResolvedValueOnce({data: mockEmployee});
 
       const result = await employeeService.updateEmployee(employeeId, updateData as Partial<MockEmployee>);
 
@@ -311,7 +310,7 @@ describe('EmployeeService', () => {
 
     it('should handle errors when updating an employee', async () => {
       const employeeId = 'emp-1';
-      const updateData = { firstName: 'Jonathan' };
+      const updateData = {firstName: 'Jonathan'};
       const error = new Error('Update failed');
 
       mockApiClient.put.mockRejectedValueOnce(error);
@@ -347,15 +346,15 @@ describe('EmployeeService', () => {
   // downloadCsvTemplate tests
   describe('downloadCsvTemplate', () => {
     it('should download CSV template', async () => {
-      const mockBlob = new Blob(['template,data'], { type: 'text/csv' });
+      const mockBlob = new Blob(['template,data'], {type: 'text/csv'});
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockBlob });
+      mockApiClient.get.mockResolvedValueOnce({data: mockBlob});
 
       const result = await employeeService.downloadCsvTemplate();
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
         '/employees/import/template/csv',
-        expect.objectContaining({ responseType: 'blob' })
+        expect.objectContaining({responseType: 'blob'})
       );
       expect(result).toEqual(mockBlob);
     });
@@ -372,15 +371,15 @@ describe('EmployeeService', () => {
   // downloadExcelTemplate tests
   describe('downloadExcelTemplate', () => {
     it('should download Excel template', async () => {
-      const mockBlob = new Blob(['template'], { type: 'application/vnd.ms-excel' });
+      const mockBlob = new Blob(['template'], {type: 'application/vnd.ms-excel'});
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockBlob });
+      mockApiClient.get.mockResolvedValueOnce({data: mockBlob});
 
       const result = await employeeService.downloadExcelTemplate();
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
         '/employees/import/template/xlsx',
-        expect.objectContaining({ responseType: 'blob' })
+        expect.objectContaining({responseType: 'blob'})
       );
       expect(result).toEqual(mockBlob);
     });
@@ -397,14 +396,14 @@ describe('EmployeeService', () => {
   // previewImport tests
   describe('previewImport', () => {
     it('should preview employee import', async () => {
-      const mockFile = new File(['data'], 'employees.csv', { type: 'text/csv' });
+      const mockFile = new File(['data'], 'employees.csv', {type: 'text/csv'});
       const mockPreview: MockEmployeeImportPreview = {
         valid: 10,
         invalid: 2,
         rows: [],
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockPreview });
+      mockApiClient.post.mockResolvedValueOnce({data: mockPreview});
 
       const result = await employeeService.previewImport(mockFile);
 
@@ -412,14 +411,14 @@ describe('EmployeeService', () => {
         '/employees/import/preview',
         expect.any(FormData),
         expect.objectContaining({
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {'Content-Type': 'multipart/form-data'},
         })
       );
       expect(result).toEqual(mockPreview);
     });
 
     it('should handle errors when previewing import', async () => {
-      const mockFile = new File(['data'], 'employees.csv', { type: 'text/csv' });
+      const mockFile = new File(['data'], 'employees.csv', {type: 'text/csv'});
       const error = new Error('Preview failed');
 
       mockApiClient.post.mockRejectedValueOnce(error);
@@ -431,14 +430,14 @@ describe('EmployeeService', () => {
   // executeImport tests
   describe('executeImport', () => {
     it('should execute employee import with default skipInvalid', async () => {
-      const mockFile = new File(['data'], 'employees.csv', { type: 'text/csv' });
+      const mockFile = new File(['data'], 'employees.csv', {type: 'text/csv'});
       const mockResult: MockEmployeeImportResult = {
         totalImported: 10,
         totalFailed: 0,
         errors: [],
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockResult });
+      mockApiClient.post.mockResolvedValueOnce({data: mockResult});
 
       const result = await employeeService.executeImport(mockFile);
 
@@ -446,21 +445,21 @@ describe('EmployeeService', () => {
         '/employees/import/execute?skipInvalid=true',
         expect.any(FormData),
         expect.objectContaining({
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {'Content-Type': 'multipart/form-data'},
         })
       );
       expect(result).toEqual(mockResult);
     });
 
     it('should execute employee import with skipInvalid=false', async () => {
-      const mockFile = new File(['data'], 'employees.csv', { type: 'text/csv' });
+      const mockFile = new File(['data'], 'employees.csv', {type: 'text/csv'});
       const mockResult: MockEmployeeImportResult = {
         totalImported: 0,
         totalFailed: 2,
         errors: ['Row 1: Missing email'],
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockResult });
+      mockApiClient.post.mockResolvedValueOnce({data: mockResult});
 
       const result = await employeeService.executeImport(mockFile, false);
 
@@ -468,7 +467,7 @@ describe('EmployeeService', () => {
         '/employees/import/execute?skipInvalid=false',
         expect.any(FormData),
         expect.objectContaining({
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {'Content-Type': 'multipart/form-data'},
         })
       );
       expect(result).toEqual(mockResult);
@@ -487,7 +486,7 @@ describe('EmployeeService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockManagers });
+      mockApiClient.get.mockResolvedValueOnce({data: mockManagers});
 
       const result = await employeeService.getManagers();
 
@@ -517,7 +516,7 @@ describe('EmployeeService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockReports });
+      mockApiClient.get.mockResolvedValueOnce({data: mockReports});
 
       const result = await employeeService.getDottedLineReports(managerId);
 
@@ -529,7 +528,7 @@ describe('EmployeeService', () => {
       const managerId = 'mgr-1';
       const mockReports: MockEmployee[] = [];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockReports });
+      mockApiClient.get.mockResolvedValueOnce({data: mockReports});
 
       const result = await employeeService.getDottedLineReports(managerId);
 
@@ -547,7 +546,7 @@ describe('EmployeeService', () => {
         certifications: ['AWS', 'Kubernetes'],
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockTalentProfile });
+      mockApiClient.get.mockResolvedValueOnce({data: mockTalentProfile});
 
       const result = await employeeService.getTalentProfile(employeeId);
 

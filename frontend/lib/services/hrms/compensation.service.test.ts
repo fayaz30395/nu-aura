@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {compensationService} from './compensation.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { compensationService } from './compensation.service';
-import { apiClient } from '@/lib/api/client';
 
 // Type definitions
 interface CompensationReviewCycle {
@@ -85,7 +84,7 @@ describe('compensationService', () => {
         startDate: '2024-01-01',
         endDate: '2024-03-31',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.createCycle(request);
 
@@ -95,13 +94,13 @@ describe('compensationService', () => {
     });
 
     it('should create cycle with minimal data', async () => {
-      const request: CompensationCycleRequest = { name: 'Annual Review 2024' };
+      const request: CompensationCycleRequest = {name: 'Annual Review 2024'};
       const mockResponse: CompensationReviewCycle = {
         id: 'cycle-2',
         name: 'Annual Review 2024',
         status: 'DRAFT',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.createCycle(request);
 
@@ -120,7 +119,7 @@ describe('compensationService', () => {
         startDate: '2024-01-01',
         endDate: '2024-03-31',
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockCycle });
+      mockedApiClient.get.mockResolvedValue({data: mockCycle});
 
       const result = await compensationService.getCycleById('cycle-1');
 
@@ -137,7 +136,7 @@ describe('compensationService', () => {
         startDate: '2024-06-01',
         endDate: '2024-06-30',
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockCycle });
+      mockedApiClient.get.mockResolvedValue({data: mockCycle});
 
       const result = await compensationService.getCycleById('cycle-2');
 
@@ -151,14 +150,14 @@ describe('compensationService', () => {
     it('should fetch all cycles with default pagination', async () => {
       const mockData: PaginatedResponse<CompensationReviewCycle> = {
         content: [
-          { id: 'cycle-1', name: 'Q1 Review', status: 'CLOSED' },
-          { id: 'cycle-2', name: 'Q2 Review', status: 'ACTIVE' },
+          {id: 'cycle-1', name: 'Q1 Review', status: 'CLOSED'},
+          {id: 'cycle-2', name: 'Q2 Review', status: 'ACTIVE'},
         ],
         totalElements: 2,
         page: 0,
         size: 10,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getAllCycles();
 
@@ -174,7 +173,7 @@ describe('compensationService', () => {
         page: 1,
         size: 20,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getAllCycles(1, 20);
 
@@ -187,10 +186,10 @@ describe('compensationService', () => {
   describe('getActiveCycles', () => {
     it('should fetch all active cycles', async () => {
       const mockCycles: CompensationReviewCycle[] = [
-        { id: 'cycle-1', name: 'Q1 Review', status: 'ACTIVE' },
-        { id: 'cycle-2', name: 'Q2 Review', status: 'ACTIVE' },
+        {id: 'cycle-1', name: 'Q1 Review', status: 'ACTIVE'},
+        {id: 'cycle-2', name: 'Q2 Review', status: 'ACTIVE'},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockCycles });
+      mockedApiClient.get.mockResolvedValue({data: mockCycles});
 
       const result = await compensationService.getActiveCycles();
 
@@ -200,7 +199,7 @@ describe('compensationService', () => {
     });
 
     it('should return empty list when no active cycles', async () => {
-      mockedApiClient.get.mockResolvedValue({ data: [] });
+      mockedApiClient.get.mockResolvedValue({data: []});
 
       const result = await compensationService.getActiveCycles();
 
@@ -216,7 +215,7 @@ describe('compensationService', () => {
         name: 'Q1 Review',
         status: 'ACTIVE',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.updateCycleStatus('cycle-1', 'ACTIVE');
 
@@ -232,7 +231,7 @@ describe('compensationService', () => {
         name: 'Q2 Review',
         status: 'CLOSED',
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.updateCycleStatus('cycle-2', 'CLOSED');
 
@@ -248,7 +247,7 @@ describe('compensationService', () => {
         averageSalary: 75000,
         salaryIncreasePercentage: 5.5,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockStats });
+      mockedApiClient.get.mockResolvedValue({data: mockStats});
 
       const result = await compensationService.getCycleStatistics('cycle-1');
 
@@ -265,7 +264,7 @@ describe('compensationService', () => {
         averageSalary: 85000,
         salaryIncreasePercentage: 4.2,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockStats });
+      mockedApiClient.get.mockResolvedValue({data: mockStats});
 
       const result = await compensationService.getCycleStatistics('cycle-2');
 
@@ -288,7 +287,7 @@ describe('compensationService', () => {
         status: 'DRAFT',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.createRevision(request);
 
@@ -310,7 +309,7 @@ describe('compensationService', () => {
         status: 'DRAFT',
         proposedSalary: 95000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.createRevision(request);
 
@@ -328,7 +327,7 @@ describe('compensationService', () => {
         status: 'PENDING_APPROVAL',
         proposedSalary: 80000,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockRevision });
+      mockedApiClient.get.mockResolvedValue({data: mockRevision});
 
       const result = await compensationService.getRevisionById('rev-1');
 
@@ -345,7 +344,7 @@ describe('compensationService', () => {
         status: 'APPROVED',
         proposedSalary: 95000,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockRevision });
+      mockedApiClient.get.mockResolvedValue({data: mockRevision});
 
       const result = await compensationService.getRevisionById('rev-2');
 
@@ -359,14 +358,14 @@ describe('compensationService', () => {
     it('should fetch all revisions with default pagination', async () => {
       const mockData: PaginatedResponse<SalaryRevision> = {
         content: [
-          { id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'DRAFT', proposedSalary: 80000 },
-          { id: 'rev-2', cycleId: 'cycle-1', employeeId: 'emp-2', status: 'DRAFT', proposedSalary: 85000 },
+          {id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'DRAFT', proposedSalary: 80000},
+          {id: 'rev-2', cycleId: 'cycle-1', employeeId: 'emp-2', status: 'DRAFT', proposedSalary: 85000},
         ],
         totalElements: 2,
         page: 0,
         size: 10,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getAllRevisions();
 
@@ -381,7 +380,7 @@ describe('compensationService', () => {
         page: 2,
         size: 25,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getAllRevisions(2, 25);
 
@@ -394,13 +393,13 @@ describe('compensationService', () => {
     it('should fetch revisions for a cycle with default pagination', async () => {
       const mockData: PaginatedResponse<SalaryRevision> = {
         content: [
-          { id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'DRAFT', proposedSalary: 80000 },
+          {id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'DRAFT', proposedSalary: 80000},
         ],
         totalElements: 1,
         page: 0,
         size: 10,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getRevisionsByCycle('cycle-1');
 
@@ -417,7 +416,7 @@ describe('compensationService', () => {
         page: 1,
         size: 20,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getRevisionsByCycle('cycle-1', 1, 20);
 
@@ -431,10 +430,10 @@ describe('compensationService', () => {
   describe('getEmployeeRevisionHistory', () => {
     it('should fetch revision history for employee', async () => {
       const mockRevisions: SalaryRevision[] = [
-        { id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'APPROVED', proposedSalary: 75000 },
-        { id: 'rev-2', cycleId: 'cycle-2', employeeId: 'emp-1', status: 'APPROVED', proposedSalary: 80000 },
+        {id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'APPROVED', proposedSalary: 75000},
+        {id: 'rev-2', cycleId: 'cycle-2', employeeId: 'emp-1', status: 'APPROVED', proposedSalary: 80000},
       ];
-      mockedApiClient.get.mockResolvedValue({ data: mockRevisions });
+      mockedApiClient.get.mockResolvedValue({data: mockRevisions});
 
       const result = await compensationService.getEmployeeRevisionHistory('emp-1');
 
@@ -446,7 +445,7 @@ describe('compensationService', () => {
     });
 
     it('should return empty list for employee with no revisions', async () => {
-      mockedApiClient.get.mockResolvedValue({ data: [] });
+      mockedApiClient.get.mockResolvedValue({data: []});
 
       const result = await compensationService.getEmployeeRevisionHistory('emp-new');
 
@@ -459,14 +458,14 @@ describe('compensationService', () => {
     it('should fetch pending approvals with default pagination', async () => {
       const mockData: PaginatedResponse<SalaryRevision> = {
         content: [
-          { id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'PENDING_APPROVAL', proposedSalary: 80000 },
-          { id: 'rev-2', cycleId: 'cycle-1', employeeId: 'emp-2', status: 'PENDING_APPROVAL', proposedSalary: 85000 },
+          {id: 'rev-1', cycleId: 'cycle-1', employeeId: 'emp-1', status: 'PENDING_APPROVAL', proposedSalary: 80000},
+          {id: 'rev-2', cycleId: 'cycle-1', employeeId: 'emp-2', status: 'PENDING_APPROVAL', proposedSalary: 85000},
         ],
         totalElements: 2,
         page: 0,
         size: 10,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getPendingApprovals();
 
@@ -483,7 +482,7 @@ describe('compensationService', () => {
         page: 1,
         size: 15,
       };
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await compensationService.getPendingApprovals(1, 15);
 
@@ -503,7 +502,7 @@ describe('compensationService', () => {
         status: 'SUBMITTED',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.submitRevision('rev-1');
 
@@ -519,7 +518,7 @@ describe('compensationService', () => {
         status: 'SUBMITTED',
         proposedSalary: 85000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.submitRevision('rev-2');
 
@@ -538,7 +537,7 @@ describe('compensationService', () => {
         status: 'UNDER_REVIEW',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.reviewRevision('rev-1');
 
@@ -554,7 +553,7 @@ describe('compensationService', () => {
         status: 'UNDER_REVIEW',
         proposedSalary: 85000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.reviewRevision('rev-2', 'Needs adjustment');
 
@@ -575,7 +574,7 @@ describe('compensationService', () => {
         status: 'APPROVED',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.approveRevision('rev-1');
 
@@ -591,7 +590,7 @@ describe('compensationService', () => {
         status: 'APPROVED',
         proposedSalary: 85000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.approveRevision('rev-2', 'Approved as discussed');
 
@@ -612,7 +611,7 @@ describe('compensationService', () => {
         status: 'REJECTED',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.rejectRevision('rev-1', 'Budget exceeded');
 
@@ -630,7 +629,7 @@ describe('compensationService', () => {
         status: 'REJECTED',
         proposedSalary: 85000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.rejectRevision('rev-2', 'Needs review by CFO');
 
@@ -648,7 +647,7 @@ describe('compensationService', () => {
         status: 'APPLIED',
         proposedSalary: 80000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.applyRevision('rev-1');
 
@@ -664,7 +663,7 @@ describe('compensationService', () => {
         status: 'APPLIED',
         proposedSalary: 85000,
       };
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await compensationService.applyRevision('rev-2');
 

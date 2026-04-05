@@ -1,13 +1,13 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
+  EmployeeSummary,
+  Page,
+  PolicyRequest,
   RestrictedHoliday,
+  RestrictedHolidayPolicy,
   RestrictedHolidayRequest,
   RestrictedHolidaySelection,
   SelectionActionRequest,
-  RestrictedHolidayPolicy,
-  PolicyRequest,
-  EmployeeSummary,
-  Page,
   SelectionStatus,
 } from '../../types/hrms/restricted-holiday';
 
@@ -22,7 +22,7 @@ class RestrictedHolidayService {
     year?: number
   ): Promise<Page<RestrictedHoliday>> {
     const response = await apiClient.get<Page<RestrictedHoliday>>(this.basePath, {
-      params: { page, size, ...(year ? { year } : {}) },
+      params: {page, size, ...(year ? {year} : {})},
     });
     return response.data;
   }
@@ -30,7 +30,7 @@ class RestrictedHolidayService {
   async getAvailableHolidays(year: number): Promise<RestrictedHoliday[]> {
     const response = await apiClient.get<RestrictedHoliday[]>(
       `${this.basePath}/available`,
-      { params: { year } }
+      {params: {year}}
     );
     return response.data;
   }
@@ -74,7 +74,7 @@ class RestrictedHolidayService {
   async getMySelections(year: number): Promise<RestrictedHolidaySelection[]> {
     const response = await apiClient.get<RestrictedHolidaySelection[]>(
       `${this.basePath}/selections/me`,
-      { params: { year } }
+      {params: {year}}
     );
     return response.data;
   }
@@ -82,7 +82,7 @@ class RestrictedHolidayService {
   async getMySummary(year: number): Promise<EmployeeSummary> {
     const response = await apiClient.get<EmployeeSummary>(
       `${this.basePath}/summary/me`,
-      { params: { year } }
+      {params: {year}}
     );
     return response.data;
   }
@@ -103,7 +103,7 @@ class RestrictedHolidayService {
   ): Promise<Page<RestrictedHolidaySelection>> {
     const response = await apiClient.get<Page<RestrictedHolidaySelection>>(
       `${this.basePath}/selections`,
-      { params: { status, page, size } }
+      {params: {status, page, size}}
     );
     return response.data;
   }
@@ -115,7 +115,7 @@ class RestrictedHolidayService {
   ): Promise<Page<RestrictedHolidaySelection>> {
     const response = await apiClient.get<Page<RestrictedHolidaySelection>>(
       `${this.basePath}/${holidayId}/selections`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -145,7 +145,7 @@ class RestrictedHolidayService {
   async getPolicy(year: number): Promise<RestrictedHolidayPolicy> {
     const response = await apiClient.get<RestrictedHolidayPolicy>(
       `${this.basePath}/policy`,
-      { params: { year } }
+      {params: {year}}
     );
     return response.data;
   }

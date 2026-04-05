@@ -1,31 +1,31 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {demoUsers} from './fixtures/testData';
 
 test.describe('Performance Improvement Plans (PIP)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/performance/pip');
   });
 
-  test('should display PIP page with correct heading', async ({ page }) => {
+  test('should display PIP page with correct heading', async ({page}) => {
     await expect(
-      page.getByRole('heading', { name: /improvement plan/i })
+      page.getByRole('heading', {name: /improvement plan/i})
     ).toBeVisible();
   });
 
-  test('should show create PIP button', async ({ page }) => {
+  test('should show create PIP button', async ({page}) => {
     await expect(
-      page.getByRole('button', { name: /new pip|create pip/i })
+      page.getByRole('button', {name: /new pip|create pip/i})
     ).toBeVisible();
   });
 
-  test('should open create PIP modal on button click', async ({ page }) => {
-    await page.getByRole('button', { name: /new pip|create pip/i }).click();
+  test('should open create PIP modal on button click', async ({page}) => {
+    await page.getByRole('button', {name: /new pip|create pip/i}).click();
     await expect(page.getByRole('dialog')).toBeVisible();
   });
 
-  test('should show required fields in create PIP form', async ({ page }) => {
-    await page.getByRole('button', { name: /new pip|create pip/i }).click();
+  test('should show required fields in create PIP form', async ({page}) => {
+    await page.getByRole('button', {name: /new pip|create pip/i}).click();
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
     // At minimum: employee selector and date fields should be present
@@ -33,14 +33,14 @@ test.describe('Performance Improvement Plans (PIP)', () => {
     await expect(dialog.getByText(/start date/i).first()).toBeVisible();
   });
 
-  test('should close modal on cancel', async ({ page }) => {
-    await page.getByRole('button', { name: /new pip|create pip/i }).click();
+  test('should close modal on cancel', async ({page}) => {
+    await page.getByRole('button', {name: /new pip|create pip/i}).click();
     await expect(page.getByRole('dialog')).toBeVisible();
-    await page.getByRole('button', { name: /cancel/i }).click();
+    await page.getByRole('button', {name: /cancel/i}).click();
     await expect(page.getByRole('dialog')).not.toBeVisible();
   });
 
-  test('should display status filter options', async ({ page }) => {
+  test('should display status filter options', async ({page}) => {
     // Status filter chips or dropdown should be available
     const filterArea = page.locator('text=/all|active|completed/i').first();
     await expect(filterArea).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('Performance Improvement Plans (PIP)', () => {
 });
 
 test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, Employee sees review', () => {
-  test('HR creates a review cycle from the cycles page', async ({ page }) => {
+  test('HR creates a review cycle from the cycles page', async ({page}) => {
     // Login as HR Manager
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
@@ -63,7 +63,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     await expect(heading).toBeVisible();
 
     // Click create cycle button
-    const createBtn = page.getByRole('button', { name: /create cycle/i });
+    const createBtn = page.getByRole('button', {name: /create cycle/i});
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
     if (hasCreate) {
@@ -81,18 +81,18 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
         const typeSelect = page.getByLabel(/cycle type/i);
         const hasType = await typeSelect.isVisible().catch(() => false);
         if (hasType) {
-          await typeSelect.selectOption({ index: 1 });
+          await typeSelect.selectOption({index: 1});
         }
 
         // Try to submit the form
-        const submitBtn = page.getByRole('button', { name: /create|save|submit/i }).last();
+        const submitBtn = page.getByRole('button', {name: /create|save|submit/i}).last();
         const hasSubmit = await submitBtn.isVisible().catch(() => false);
         if (hasSubmit) {
           await submitBtn.click();
           await page.waitForTimeout(2000);
 
           // Should either show success or close the modal
-          const modalClosed = !(await page.getByRole('heading', { name: /create review cycle/i }).isVisible().catch(() => false));
+          const modalClosed = !(await page.getByRole('heading', {name: /create review cycle/i}).isVisible().catch(() => false));
           const hasSuccess = await page.locator('text=/success|created/i').first().isVisible().catch(() => false);
           expect(modalClosed || hasSuccess).toBe(true);
         }
@@ -102,7 +102,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     expect(hasCreate || true).toBe(true);
   });
 
-  test('Manager can access performance reviews page and see pending reviews', async ({ page }) => {
+  test('Manager can access performance reviews page and see pending reviews', async ({page}) => {
     // Login as Engineering Manager
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
@@ -134,7 +134,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     expect(hasReviews || true).toBe(true);
   });
 
-  test('Manager submits a review — form loads and can be filled', async ({ page }) => {
+  test('Manager submits a review — form loads and can be filled', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.managerEng.email, demoUsers.managerEng.password);
@@ -164,7 +164,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
     expect(hasReviewBtn || true).toBe(true);
   });
 
-  test('Employee can view their performance reviews', async ({ page }) => {
+  test('Employee can view their performance reviews', async ({page}) => {
     // Login as an Employee
     const loginPage = new LoginPage(page);
     await loginPage.navigate();

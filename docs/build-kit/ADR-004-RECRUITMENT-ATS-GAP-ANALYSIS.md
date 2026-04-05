@@ -9,48 +9,56 @@
 
 ## Context
 
-The current recruitment module has foundational entities (`Candidate`, `JobOpening`, `Interview`) but lacks critical ATS (Applicant Tracking System) capabilities required for enterprise recruitment workflows.
+The current recruitment module has foundational entities (`Candidate`, `JobOpening`, `Interview`)
+but lacks critical ATS (Applicant Tracking System) capabilities required for enterprise recruitment
+workflows.
 
 ### Current Implementation Analysis
 
 **Existing Entities:**
 
 1. **JobOpening** (`domain/recruitment/JobOpening.java`)
-   - Job code, title, description
-   - Department, location, employment type
-   - Min/max salary, number of openings
-   - Hiring manager, status, priority
-   - Posted/closing dates
+
+- Job code, title, description
+- Department, location, employment type
+- Min/max salary, number of openings
+- Hiring manager, status, priority
+- Posted/closing dates
 
 2. **Candidate** (`domain/recruitment/Candidate.java`)
-   - Personal info (name, email, phone)
-   - Current employment details (company, designation, CTC)
-   - Total experience, notice period
-   - Resume URL, source
-   - Status, current stage, assigned recruiter
-   - Applied date, notes
+
+- Personal info (name, email, phone)
+- Current employment details (company, designation, CTC)
+- Total experience, notice period
+- Resume URL, source
+- Status, current stage, assigned recruiter
+- Applied date, notes
 
 3. **Applicant** (`domain/recruitment/Applicant.java`)
-   - Links candidate to job opening
-   - Application status and source
-   - Rating, notes, rejection reason
-   - Offered/expected salary
+
+- Links candidate to job opening
+- Application status and source
+- Rating, notes, rejection reason
+- Offered/expected salary
 
 4. **Interview** (`domain/recruitment/Interview.java`)
-   - Interview round, type, scheduled time
-   - Interviewer, location, meeting link
-   - Status, feedback, rating, result
+
+- Interview round, type, scheduled time
+- Interviewer, location, meeting link
+- Status, feedback, rating, result
 
 5. **AI-Enhanced Features** (from `AIRecruitmentService.java`)
-   - Resume parsing
-   - Candidate-job matching
-   - Interview question generation
-   - Feedback synthesis
-   - Job description generation
+
+- Resume parsing
+- Candidate-job matching
+- Interview question generation
+- Feedback synthesis
+- Job description generation
 
 **Current Service Capabilities:**
 
 From `RecruitmentManagementService.java`:
+
 - CRUD for job openings, candidates, interviews
 - Candidate stage movement
 - Offer creation/acceptance/decline
@@ -66,12 +74,15 @@ From `RecruitmentManagementService.java`:
 #### 1. **Application Pipeline/Kanban Board** (Critical)
 
 **Current State:**
+
 - `Candidate.currentStage` enum exists: `APPLICATION_RECEIVED`, `SCREENING`, `TECHNICAL_ROUND`, etc.
 - No visual pipeline/kanban representation
 - No drag-and-drop stage transitions
 
 **Gap:**
-- Frontend: No kanban board component (exists in `/recruitment/[jobId]/kanban/page.tsx` but may be incomplete)
+
+- Frontend: No kanban board component (exists in `/recruitment/[jobId]/kanban/page.tsx` but may be
+  incomplete)
 - Backend: No pipeline configuration per job opening
 - No stage-specific metadata (time in stage, bottleneck detection)
 
@@ -139,7 +150,9 @@ public class PipelineStageTransition extends BaseEntity {
 ```
 
 **Frontend Gap:**
-- `/recruitment/[jobId]/kanban/page.tsx` needs drag-and-drop library (react-beautiful-dnd or dnd-kit)
+
+- `/recruitment/[jobId]/kanban/page.tsx` needs drag-and-drop library (react-beautiful-dnd or
+  dnd-kit)
 - API integration for stage transitions
 - Real-time updates via WebSocket for multi-user coordination
 
@@ -148,10 +161,12 @@ public class PipelineStageTransition extends BaseEntity {
 #### 2. **Assessment/Skills Testing Integration** (High Priority)
 
 **Current State:**
+
 - No assessment/test entity
 - No integration with testing platforms (HackerRank, Codility, TestGorilla)
 
 **Gap:**
+
 - No ability to assign coding tests or skill assessments
 - No test result tracking
 
@@ -200,6 +215,7 @@ public class CandidateAssessment extends BaseEntity {
 ```
 
 **Integration Requirements:**
+
 - HackerRank API integration for coding tests
 - Webhook receivers for test completion callbacks
 - Score normalization logic
@@ -209,11 +225,14 @@ public class CandidateAssessment extends BaseEntity {
 #### 3. **Offer Letter Management** (Critical)
 
 **Current State:**
-- `Candidate.offeredCtc`, `Candidate.offeredDesignation`, `Candidate.proposedJoiningDate` fields exist
+
+- `Candidate.offeredCtc`, `Candidate.offeredDesignation`, `Candidate.proposedJoiningDate` fields
+  exist
 - No actual offer letter document generation
 - No e-signature workflow
 
 **Gap:**
+
 - No offer letter template system
 - No PDF generation with personalized data
 - No e-signature integration (DocuSign, Adobe Sign)
@@ -448,12 +467,14 @@ public class OfferLetterService {
 #### 4. **Candidate Communication Hub** (Medium Priority)
 
 **Current State:**
+
 - Email notifications exist for offer letters (from service analysis)
 - No communication history tracking
 - No SMS/WhatsApp integration
 - No email templates for different stages
 
 **Gap:**
+
 - No centralized communication log
 - No scheduled email campaigns (e.g., "We're reviewing your application")
 - No bulk communication
@@ -545,12 +566,14 @@ public class EmailTemplate extends BaseEntity {
 #### 5. **Recruitment Analytics Dashboard** (Medium Priority)
 
 **Current State:**
+
 - Basic counts exist (candidateCount in JobOpeningResponse)
 - No time-to-hire metrics
 - No conversion rate tracking
 - No source effectiveness analysis
 
 **Gap:**
+
 - No recruitment funnel visualization
 - No bottleneck identification
 - No recruiter performance metrics
@@ -593,16 +616,19 @@ public class RecruitmentAnalytics {
 #### 6. **Career Portal / Job Board** (Low Priority for MVP, High for Public Rollout)
 
 **Current State:**
+
 - No public-facing job board
 - No careers page
 - No applicant self-service portal
 
 **Gap:**
+
 - Candidates can't apply directly
 - No job search/filtering
 - No application status tracking for candidates
 
 **Required:**
+
 - Public `/careers` page (framework exists in `/frontend/app/careers/page.tsx`)
 - Job listing API with public access (no auth)
 - Application submission form
@@ -615,6 +641,7 @@ public class RecruitmentAnalytics {
 ### Phase 1: Critical ATS Features (4 weeks)
 
 **Week 1-2: Application Pipeline**
+
 - [ ] Create `PipelineStage` and `PipelineStageTransition` entities
 - [ ] Build pipeline configuration API
 - [ ] Implement drag-and-drop kanban board frontend
@@ -622,6 +649,7 @@ public class RecruitmentAnalytics {
 - [ ] Create SLA tracking and bottleneck detection
 
 **Week 3-4: Offer Letter Management**
+
 - [ ] Create `OfferLetter` and `OfferLetterTemplate` entities
 - [ ] Build template editor with placeholders
 - [ ] Integrate PDF generation (iText or Apache PDFBox)
@@ -636,6 +664,7 @@ public class RecruitmentAnalytics {
 ### Phase 2: Enhanced Communication & Assessments (3 weeks)
 
 **Week 5-6: Communication Hub**
+
 - [ ] Create `CandidateCommunication` and `EmailTemplate` entities
 - [ ] Build email template editor (WYSIWYG)
 - [ ] Implement communication timeline in candidate profile
@@ -643,6 +672,7 @@ public class RecruitmentAnalytics {
 - [ ] Integrate SMS/WhatsApp via Twilio
 
 **Week 7: Assessment Integration**
+
 - [ ] Create `CandidateAssessment` entity
 - [ ] Integrate HackerRank API for coding tests
 - [ ] Build assessment assignment workflow
@@ -656,6 +686,7 @@ public class RecruitmentAnalytics {
 ### Phase 3: Analytics & Reporting (2 weeks)
 
 **Week 8-9: Recruitment Analytics**
+
 - [ ] Build analytics aggregation service
 - [ ] Create recruitment funnel dashboard
 - [ ] Implement time-to-hire metrics
@@ -670,6 +701,7 @@ public class RecruitmentAnalytics {
 ### Phase 4: Public Job Board (3 weeks)
 
 **Week 10-12: Career Portal**
+
 - [ ] Build public job listing page
 - [ ] Implement job search/filtering
 - [ ] Create application submission form
@@ -683,37 +715,40 @@ public class RecruitmentAnalytics {
 
 ## Total Implementation Effort
 
-| Phase | Duration | Effort (hours) | Team Size |
-|-------|----------|----------------|-----------|
-| Phase 1: Critical ATS | 4 weeks | 160 | 2 engineers |
-| Phase 2: Communication & Assessments | 3 weeks | 120 | 2 engineers |
-| Phase 3: Analytics | 2 weeks | 80 | 2 engineers |
-| Phase 4: Job Board | 3 weeks | 120 | 2 engineers |
-| **Total** | **12 weeks** | **480 hours** | **2 engineers** |
+| Phase                                | Duration     | Effort (hours) | Team Size       |
+|--------------------------------------|--------------|----------------|-----------------|
+| Phase 1: Critical ATS                | 4 weeks      | 160            | 2 engineers     |
+| Phase 2: Communication & Assessments | 3 weeks      | 120            | 2 engineers     |
+| Phase 3: Analytics                   | 2 weeks      | 80             | 2 engineers     |
+| Phase 4: Job Board                   | 3 weeks      | 120            | 2 engineers     |
+| **Total**                            | **12 weeks** | **480 hours**  | **2 engineers** |
 
 ---
 
 ## Competitive Feature Comparison
 
-| Feature | Current | Greenhouse | Lever | Workable | Target |
-|---------|---------|------------|-------|----------|--------|
-| Job Postings | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Candidate Profiles | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Interview Scheduling | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Kanban Pipeline** | ❌ | ✅ | ✅ | ✅ | **Phase 1** |
-| **Offer Letters** | ❌ | ✅ | ✅ | ✅ | **Phase 1** |
-| **E-Signatures** | ❌ | ✅ (DocuSign) | ✅ | ✅ | **Phase 1** |
-| Communication Hub | ❌ | ✅ | ✅ | ✅ | **Phase 2** |
-| Assessment Integration | ❌ | ✅ | ✅ | ✅ | **Phase 2** |
-| Analytics Dashboard | ❌ | ✅ | ✅ | ✅ | **Phase 3** |
-| Public Job Board | ❌ | ✅ | ✅ | ✅ | **Phase 4** |
-| AI-Powered Screening | ✅ | ✅ | ✅ | ❌ | ✅ (Existing) |
-| Resume Parsing | ✅ | ✅ | ✅ | ✅ | ✅ (Existing) |
+| Feature                | Current | Greenhouse   | Lever | Workable | Target       |
+|------------------------|---------|--------------|-------|----------|--------------|
+| Job Postings           | ✅       | ✅            | ✅     | ✅        | ✅            |
+| Candidate Profiles     | ✅       | ✅            | ✅     | ✅        | ✅            |
+| Interview Scheduling   | ✅       | ✅            | ✅     | ✅        | ✅            |
+| **Kanban Pipeline**    | ❌       | ✅            | ✅     | ✅        | **Phase 1**  |
+| **Offer Letters**      | ❌       | ✅            | ✅     | ✅        | **Phase 1**  |
+| **E-Signatures**       | ❌       | ✅ (DocuSign) | ✅     | ✅        | **Phase 1**  |
+| Communication Hub      | ❌       | ✅            | ✅     | ✅        | **Phase 2**  |
+| Assessment Integration | ❌       | ✅            | ✅     | ✅        | **Phase 2**  |
+| Analytics Dashboard    | ❌       | ✅            | ✅     | ✅        | **Phase 3**  |
+| Public Job Board       | ❌       | ✅            | ✅     | ✅        | **Phase 4**  |
+| AI-Powered Screening   | ✅       | ✅            | ✅     | ❌        | ✅ (Existing) |
+| Resume Parsing         | ✅       | ✅            | ✅     | ✅        | ✅ (Existing) |
 
 **Competitive Advantage:**
-- **AI Integration**: Already ahead with OpenAI-powered resume parsing, candidate matching, and interview questions
+
+- **AI Integration**: Already ahead with OpenAI-powered resume parsing, candidate matching, and
+  interview questions
 - **Multi-tenant**: Built-in tenant isolation (competitors require separate instances)
-- **Integrated HRMS**: Seamless transition from candidate to employee (competitors require integrations)
+- **Integrated HRMS**: Seamless transition from candidate to employee (competitors require
+  integrations)
 
 ---
 
@@ -725,6 +760,7 @@ public class RecruitmentAnalytics {
 **Implementation Start**: Week 4 (after saga pattern and JWT optimization)
 **Review Date**: After Phase 1 completion (4 weeks)
 **Success Criteria:**
+
 - Pipeline kanban board with drag-and-drop (< 200ms latency)
 - Offer letter generation with e-signature (< 5 min end-to-end)
 - 95% feature parity with Lever/Greenhouse for core ATS

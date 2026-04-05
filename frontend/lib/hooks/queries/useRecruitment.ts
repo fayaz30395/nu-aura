@@ -1,21 +1,21 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { recruitmentService } from '@/lib/services/hire/recruitment.service';
-import { aiRecruitmentService } from '@/lib/services/hire/ai-recruitment.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {recruitmentService} from '@/lib/services/hire/recruitment.service';
+import {aiRecruitmentService} from '@/lib/services/hire/ai-recruitment.service';
 import {
-  CreateJobOpeningRequest,
   CreateCandidateRequest,
   CreateInterviewRequest,
+  CreateJobOpeningRequest,
+  CreateOfferRequest,
   JobStatus,
   MoveStageRequest,
-  CreateOfferRequest,
 } from '@/lib/types/hire/recruitment';
 import {
-  ResumeParseRequest,
   CandidateScreeningSummaryRequest,
-  JobDescriptionRequest,
   FeedbackSynthesisRequest,
+  JobDescriptionRequest,
+  ResumeParseRequest,
 } from '@/lib/types/hire/ai-recruitment';
 
 // ==================== Query Keys ====================
@@ -26,7 +26,7 @@ export const recruitmentKeys = {
   // Job Openings
   jobs: () => [...recruitmentKeys.all, 'jobs'] as const,
   jobsList: (page: number, size: number) =>
-    [...recruitmentKeys.jobs(), 'list', { page, size }] as const,
+    [...recruitmentKeys.jobs(), 'list', {page, size}] as const,
   jobsByStatus: (status: JobStatus) =>
     [...recruitmentKeys.jobs(), 'status', status] as const,
   jobDetail: (id: string) => [...recruitmentKeys.jobs(), 'detail', id] as const,
@@ -34,7 +34,7 @@ export const recruitmentKeys = {
   // Candidates
   candidates: () => [...recruitmentKeys.all, 'candidates'] as const,
   candidatesList: (page: number, size: number) =>
-    [...recruitmentKeys.candidates(), 'list', { page, size }] as const,
+    [...recruitmentKeys.candidates(), 'list', {page, size}] as const,
   candidatesByJob: (jobId: string) =>
     [...recruitmentKeys.candidates(), 'job', jobId] as const,
   candidateDetail: (id: string) =>
@@ -94,7 +94,7 @@ export function useCreateJobOpening() {
     mutationFn: (data: CreateJobOpeningRequest) =>
       recruitmentService.createJobOpening(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.jobs() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.jobs()});
     },
   });
 }
@@ -102,11 +102,11 @@ export function useCreateJobOpening() {
 export function useUpdateJobOpening() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateJobOpeningRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateJobOpeningRequest }) =>
       recruitmentService.updateJobOpening(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.jobs() });
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.jobDetail(id) });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.jobs()});
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.jobDetail(id)});
     },
   });
 }
@@ -116,7 +116,7 @@ export function useDeleteJobOpening() {
   return useMutation({
     mutationFn: (id: string) => recruitmentService.deleteJobOpening(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.jobs() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.jobs()});
     },
   });
 }
@@ -161,7 +161,7 @@ export function useCreateCandidate() {
     mutationFn: (data: CreateCandidateRequest) =>
       recruitmentService.createCandidate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.candidates() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.candidates()});
     },
   });
 }
@@ -169,10 +169,10 @@ export function useCreateCandidate() {
 export function useUpdateCandidate() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateCandidateRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateCandidateRequest }) =>
       recruitmentService.updateCandidate(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.candidates() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.candidates()});
       queryClient.invalidateQueries({
         queryKey: recruitmentKeys.candidateDetail(id),
       });
@@ -185,7 +185,7 @@ export function useDeleteCandidate() {
   return useMutation({
     mutationFn: (id: string) => recruitmentService.deleteCandidate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.candidates() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.candidates()});
     },
   });
 }
@@ -194,14 +194,14 @@ export function useMoveCandidateStage() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      candidateId,
-      data,
-    }: {
+                   candidateId,
+                   data,
+                 }: {
       candidateId: string;
       data: MoveStageRequest;
     }) => recruitmentService.moveCandidateStage(candidateId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.candidates() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.candidates()});
     },
   });
 }
@@ -210,14 +210,14 @@ export function useCreateOffer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      candidateId,
-      data,
-    }: {
+                   candidateId,
+                   data,
+                 }: {
       candidateId: string;
       data: CreateOfferRequest;
     }) => recruitmentService.createOffer(candidateId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.candidates() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.candidates()});
     },
   });
 }
@@ -226,7 +226,7 @@ export function useCreateOffer() {
 
 export function useAllInterviews(page: number = 0, size: number = 100) {
   return useQuery({
-    queryKey: [...recruitmentKeys.interviews(), 'list', { page, size }],
+    queryKey: [...recruitmentKeys.interviews(), 'list', {page, size}],
     queryFn: () => recruitmentService.getAllInterviews(page, size),
     staleTime: 3 * 60 * 1000,
     retry: 2,
@@ -254,7 +254,7 @@ export function useScheduleInterview() {
     mutationFn: (data: CreateInterviewRequest) =>
       recruitmentService.scheduleInterview(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.interviews()});
     },
   });
 }
@@ -262,10 +262,10 @@ export function useScheduleInterview() {
 export function useUpdateInterview() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateInterviewRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateInterviewRequest }) =>
       recruitmentService.updateInterview(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.interviews()});
     },
   });
 }
@@ -275,7 +275,7 @@ export function useDeleteInterview() {
   return useMutation({
     mutationFn: (id: string) => recruitmentService.deleteInterview(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: recruitmentKeys.interviews() });
+      queryClient.invalidateQueries({queryKey: recruitmentKeys.interviews()});
     },
   });
 }
@@ -300,13 +300,13 @@ export function useCalculateMatchScore() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      candidateId,
-      jobOpeningId,
-    }: {
+                   candidateId,
+                   jobOpeningId,
+                 }: {
       candidateId: string;
       jobOpeningId: string;
     }) => aiRecruitmentService.calculateMatchScore(candidateId, jobOpeningId),
-    onSuccess: (_, { jobOpeningId }) => {
+    onSuccess: (_, {jobOpeningId}) => {
       queryClient.invalidateQueries({
         queryKey: recruitmentKeys.rankedCandidates(jobOpeningId),
       });
@@ -342,9 +342,9 @@ export function useGenerateJobDescription() {
 export function useGenerateInterviewQuestions() {
   return useMutation({
     mutationFn: ({
-      jobOpeningId,
-      candidateId,
-    }: {
+                   jobOpeningId,
+                   candidateId,
+                 }: {
       jobOpeningId: string;
       candidateId?: string;
     }) =>

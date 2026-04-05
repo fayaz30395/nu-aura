@@ -1,36 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FileText,
-  Pen,
-  Eye,
-  Heart,
-  MessageCircle,
-  Calendar,
-  Plus,
-  RefreshCw,
-  Star,
-  BarChart3,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import {
-  useMyWikiPages,
-  useMyBlogPosts,
-  useFluenceFavorites,
-} from '@/lib/hooks/queries/useFluence';
-import type { WikiPage, BlogPost, FluenceFavorite } from '@/lib/types/platform/fluence';
-import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
+import {BarChart3, Calendar, Eye, FileText, Heart, MessageCircle, Pen, Plus, RefreshCw, Star,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/queries/useFluence';
+import type {BlogPost, FluenceFavorite, WikiPage} from '@/lib/types/platform/fluence';
+import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/design-system';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 type TabType = 'wiki' | 'blog' | 'favorites';
 
 export default function MyContentPage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabType>('wiki');
 
   // A3: Permission gate — redirect if user lacks KNOWLEDGE:WIKI_READ
@@ -41,18 +26,18 @@ export default function MyContentPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  const { data: myWikiData, isLoading: wikiLoading } = useMyWikiPages(0, 50);
-  const { data: myBlogData, isLoading: myBlogLoading } = useMyBlogPosts(0, 50);
-  const { data: favorites, isLoading: favsLoading } = useFluenceFavorites();
+  const {data: myWikiData, isLoading: wikiLoading} = useMyWikiPages(0, 50);
+  const {data: myBlogData, isLoading: myBlogLoading} = useMyBlogPosts(0, 50);
+  const {data: favorites, isLoading: favsLoading} = useFluenceFavorites();
 
   const myWikiPages = myWikiData?.content || [];
   const myBlogPosts = myBlogData?.content || [];
   const myFavorites = favorites || [];
 
   const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: 'wiki', label: 'Wiki Pages', count: myWikiPages.length },
-    { id: 'blog', label: 'Blog Posts', count: myBlogPosts.length },
-    { id: 'favorites', label: 'Favorites', count: myFavorites.length },
+    {id: 'wiki', label: 'Wiki Pages', count: myWikiPages.length},
+    {id: 'blog', label: 'Blog Posts', count: myBlogPosts.length},
+    {id: 'favorites', label: 'Favorites', count: myFavorites.length},
   ];
 
   const isLoading = activeTab === 'wiki' ? wikiLoading : activeTab === 'blog' ? myBlogLoading : favsLoading;
@@ -75,7 +60,7 @@ export default function MyContentPage() {
               className="gap-2"
               onClick={() => router.push('/fluence/wiki/new')}
             >
-              <Plus className={iconSize.button} />
+              <Plus className={iconSize.button}/>
               New Page
             </Button>
             <Button
@@ -84,7 +69,7 @@ export default function MyContentPage() {
               className="gap-2"
               onClick={() => router.push('/fluence/blogs/new')}
             >
-              <Plus className={iconSize.button} />
+              <Plus className={iconSize.button}/>
               New Post
             </Button>
           </div>
@@ -93,9 +78,9 @@ export default function MyContentPage() {
         {/* Stat cards summary row */}
         <motion.div
           className={layout.grid3}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3, delay: 0.1}}
         >
           <StatCard
             icon={FileText}
@@ -120,9 +105,9 @@ export default function MyContentPage() {
         {/* Animated tab bar with sliding indicator */}
         <motion.div
           className="flex gap-1 border-b border-[var(--border-main)] overflow-x-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.15 }}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          transition={{duration: 0.3, delay: 0.15}}
         >
           {tabs.map((tab, _idx) => (
             <motion.button
@@ -132,12 +117,12 @@ export default function MyContentPage() {
                 relative px-4 py-4 text-sm font-medium whitespace-nowrap
                 transition-colors duration-200 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                 ${activeTab === tab.id
-                  ? 'text-[var(--accent-700)] dark:text-[var(--accent-400)]'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-                }
+                ? 'text-[var(--accent-700)] dark:text-[var(--accent-400)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+              }
               `}
-              whileHover={{ y: -1 }}
-              whileTap={{ y: 0 }}
+              whileHover={{y: -1}}
+              whileTap={{y: 0}}
             >
               {tab.label}
               <motion.span
@@ -147,7 +132,7 @@ export default function MyContentPage() {
                     : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}
                 initial={false}
-                animate={{ scale: activeTab === tab.id ? 1.05 : 1 }}
+                animate={{scale: activeTab === tab.id ? 1.05 : 1}}
               >
                 {tab.count}
               </motion.span>
@@ -157,7 +142,7 @@ export default function MyContentPage() {
                 <motion.div
                   layoutId="tab-indicator"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--accent-700)] dark:bg-[var(--accent-400)]"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  transition={{type: 'spring', stiffness: 500, damping: 30}}
                 />
               )}
             </motion.button>
@@ -169,20 +154,20 @@ export default function MyContentPage() {
           {isLoading ? (
             <motion.div
               key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
               className="flex items-center justify-center py-16"
             >
-              <RefreshCw className="h-8 w-8 text-[var(--text-muted)] animate-spin" />
+              <RefreshCw className="h-8 w-8 text-[var(--text-muted)] animate-spin"/>
             </motion.div>
           ) : (
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -8}}
+              transition={{duration: 0.25}}
             >
               {activeTab === 'wiki' && (
                 <WikiPageList
@@ -225,7 +210,7 @@ interface StatCardProps {
   iconColor: 'violet' | 'amber' | 'yellow';
 }
 
-function StatCard({ icon: Icon, label, value, iconColor }: StatCardProps) {
+function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
   const colorMap = {
     violet: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
     amber: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
@@ -235,11 +220,11 @@ function StatCard({ icon: Icon, label, value, iconColor }: StatCardProps) {
   return (
     <motion.div
       className={`${card.base} ${card.padding} flex items-start gap-4`}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2 }}
+      whileHover={{y: -2}}
+      transition={{duration: 0.2}}
     >
       <div className={`${colorMap[iconColor]} rounded-lg p-4 flex-shrink-0`}>
-        <Icon className={iconSize.statCard} />
+        <Icon className={iconSize.statCard}/>
       </div>
       <div className="flex-1 min-w-0">
         <p className={typography.caption}>{label}</p>
@@ -256,9 +241,9 @@ function StatCard({ icon: Icon, label, value, iconColor }: StatCardProps) {
 // ─────────────────────────────────────────────────────────────
 
 function WikiPageList({
-  pages,
-  onNavigate,
-}: {
+                        pages,
+                        onNavigate,
+                      }: {
   pages: WikiPage[];
   onNavigate: (id: string) => void;
 }) {
@@ -289,9 +274,9 @@ function WikiPageList({
             title={page.title}
             status={page.status}
             metadata={[
-              { label: new Date(page.updatedAt).toLocaleDateString(), icon: Calendar },
-              { label: `${page.viewCount || 0}`, icon: Eye },
-              { label: `${page.likeCount || 0}`, icon: Heart },
+              {label: new Date(page.updatedAt).toLocaleDateString(), icon: Calendar},
+              {label: `${page.viewCount || 0}`, icon: Eye},
+              {label: `${page.likeCount || 0}`, icon: Heart},
             ]}
             onClick={() => onNavigate(page.id)}
           />
@@ -306,9 +291,9 @@ function WikiPageList({
 // ─────────────────────────────────────────────────────────────
 
 function BlogPostList({
-  posts,
-  onNavigate,
-}: {
+                        posts,
+                        onNavigate,
+                      }: {
   posts: BlogPost[];
   onNavigate: (id: string) => void;
 }) {
@@ -340,10 +325,10 @@ function BlogPostList({
             subtitle={post.excerpt}
             status={post.status}
             metadata={[
-              { label: new Date(post.publishedAt || post.updatedAt).toLocaleDateString(), icon: Calendar },
-              { label: `${post.viewCount || 0}`, icon: Eye },
-              { label: `${post.likeCount || 0}`, icon: Heart },
-              { label: `${post.commentCount || 0}`, icon: MessageCircle },
+              {label: new Date(post.publishedAt || post.updatedAt).toLocaleDateString(), icon: Calendar},
+              {label: `${post.viewCount || 0}`, icon: Eye},
+              {label: `${post.likeCount || 0}`, icon: Heart},
+              {label: `${post.commentCount || 0}`, icon: MessageCircle},
             ]}
             onClick={() => onNavigate(post.id)}
           />
@@ -358,9 +343,9 @@ function BlogPostList({
 // ─────────────────────────────────────────────────────────────
 
 function FavoritesList({
-  favorites,
-  onNavigate,
-}: {
+                         favorites,
+                         onNavigate,
+                       }: {
   favorites: FluenceFavorite[];
   onNavigate: (fav: FluenceFavorite) => void;
 }) {
@@ -437,14 +422,14 @@ interface ContentCardProps {
 }
 
 function ContentCard({
-  icon: Icon,
-  iconColor,
-  title,
-  subtitle,
-  status,
-  metadata,
-  onClick,
-}: ContentCardProps) {
+                       icon: Icon,
+                       iconColor,
+                       title,
+                       subtitle,
+                       status,
+                       metadata,
+                       onClick,
+                     }: ContentCardProps) {
   const colorMap = {
     violet: 'text-accent-600 dark:text-accent-400',
     amber: 'text-warning-600 dark:text-warning-400',
@@ -464,7 +449,7 @@ function ContentCard({
     >
       <div className="flex items-start gap-4">
         <div className={`${colorMap[iconColor]} flex-shrink-0 mt-0.5`}>
-          <Icon className={iconSize.cardInline} />
+          <Icon className={iconSize.cardInline}/>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -481,7 +466,7 @@ function ContentCard({
               const MetaIcon = item.icon;
               return (
                 <span key={idx} className={`${typography.caption} flex items-center gap-1`}>
-                  <MetaIcon className={iconSize.meta} />
+                  <MetaIcon className={iconSize.meta}/>
                   {item.label}
                 </span>
               );
@@ -508,14 +493,14 @@ interface FavoriteCardProps {
 }
 
 function FavoriteCard({
-  starIcon: StarIcon,
-  typeIcon: TypeIcon,
-  typeColor,
-  title,
-  contentType,
-  dateAdded,
-  onClick,
-}: FavoriteCardProps) {
+                        starIcon: StarIcon,
+                        typeIcon: TypeIcon,
+                        typeColor,
+                        title,
+                        contentType,
+                        dateAdded,
+                        onClick,
+                      }: FavoriteCardProps) {
   const colorMap = {
     violet: 'text-accent-600 dark:text-accent-400',
     amber: 'text-warning-600 dark:text-warning-400',
@@ -530,9 +515,9 @@ function FavoriteCard({
       className={`${card.interactive} ${card.padding} w-full text-left flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
       {...dsMotion.cardHover}
     >
-      <StarIcon className="h-5 w-5 text-warning-500 fill-warning-500 flex-shrink-0" />
+      <StarIcon className="h-5 w-5 text-warning-500 fill-warning-500 flex-shrink-0"/>
       <div className={`${colorMap[typeColor]} flex-shrink-0`}>
-        <TypeIcon className={iconSize.cardInline} />
+        <TypeIcon className={iconSize.cardInline}/>
       </div>
       <div className="flex-1 min-w-0">
         <h3 className={`${typography.cardTitle} truncate`}>{title}</h3>
@@ -557,21 +542,21 @@ interface EmptyStateProps {
 }
 
 function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  actionLabel,
-  onAction,
-}: EmptyStateProps) {
+                      icon: Icon,
+                      title,
+                      description,
+                      actionLabel,
+                      onAction,
+                    }: EmptyStateProps) {
   return (
     <motion.div
       className="flex flex-col items-center justify-center py-16 px-4"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{opacity: 0, y: 12}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.3}}
     >
       <div className="rounded-lg bg-[var(--bg-secondary)] p-6 mb-4">
-        <Icon className="h-12 w-12 text-[var(--text-muted)]" />
+        <Icon className="h-12 w-12 text-[var(--text-muted)]"/>
       </div>
       <h3 className={`${typography.sectionTitle} text-center`}>{title}</h3>
       <p className={`${typography.bodySecondary} text-center mt-2 max-w-xs`}>

@@ -6,7 +6,8 @@
 
 -- Step 1: Create database if not exists
 SELECT 'Creating database hrms_db...' AS status;
-CREATE DATABASE hrms_db
+CREATE
+DATABASE hrms_db
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -16,12 +17,15 @@ CREATE DATABASE hrms_db
     CONNECTION LIMIT = -1;
 
 -- Connect to the database
-\c hrms_db
+\c
+hrms_db
 
 -- Step 2: Enable required extensions
 SELECT 'Enabling PostgreSQL extensions...' AS status;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE
+EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE
+EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Step 3: Verify extensions
 SELECT 'Verifying extensions...' AS status;
@@ -71,17 +75,23 @@ FROM information_schema.tables
 WHERE table_schema = 'public'
 UNION ALL
 -- Check row counts for key tables
-SELECT 'Tenants:' AS metric, COUNT(*)::text AS value FROM tenants
+SELECT 'Tenants:' AS metric, COUNT(*) ::text AS value
+FROM tenants
 UNION ALL
-SELECT 'Users:' AS metric, COUNT(*)::text AS value FROM users
+SELECT 'Users:' AS metric, COUNT(*) ::text AS value
+FROM users
 UNION ALL
-SELECT 'Employees:' AS metric, COUNT(*)::text AS value FROM employees
+SELECT 'Employees:' AS metric, COUNT(*) ::text AS value
+FROM employees
 UNION ALL
-SELECT 'Departments:' AS metric, COUNT(*)::text AS value FROM departments
+SELECT 'Departments:' AS metric, COUNT(*) ::text AS value
+FROM departments
 UNION ALL
-SELECT 'Roles:' AS metric, COUNT(*)::text AS value FROM roles
+SELECT 'Roles:' AS metric, COUNT(*) ::text AS value
+FROM roles
 UNION ALL
-SELECT 'Permissions:' AS metric, COUNT(*)::text AS value FROM permissions;
+SELECT 'Permissions:' AS metric, COUNT(*) ::text AS value
+FROM permissions;
 
 -- Check sequences
 SELECT 'Checking sequences...' AS status;
@@ -91,10 +101,9 @@ WHERE schemaname = 'public';
 
 -- Check foreign key constraints
 SELECT 'Checking foreign keys...' AS status;
-SELECT
-    tc.table_name,
-    tc.constraint_name,
-    tc.constraint_type
+SELECT tc.table_name,
+       tc.constraint_name,
+       tc.constraint_type
 FROM information_schema.table_constraints tc
 WHERE tc.constraint_schema = 'public'
   AND tc.constraint_type = 'FOREIGN KEY'
@@ -102,11 +111,10 @@ ORDER BY tc.table_name;
 
 -- Check indexes
 SELECT 'Checking indexes...' AS status;
-SELECT
-    schemaname,
-    tablename,
-    indexname,
-    indexdef
+SELECT schemaname,
+       tablename,
+       indexname,
+       indexdef
 FROM pg_indexes
 WHERE schemaname = 'public'
 ORDER BY tablename, indexname;
@@ -118,25 +126,27 @@ ORDER BY tablename, indexname;
 -- This section is needed if you import data with explicit IDs
 -- PostgreSQL sequences won't auto-increment properly without resetting
 
-DO $$
+DO
+$$
 DECLARE
-    rec RECORD;
-    max_id BIGINT;
+rec RECORD;
+    max_id
+BIGINT;
 BEGIN
-    FOR rec IN
-        SELECT
-            table_name,
-            column_name,
-            pg_get_serial_sequence(table_name, column_name) as seq_name
-        FROM information_schema.columns
-        WHERE table_schema = 'public'
-          AND column_default LIKE 'nextval%'
-          AND pg_get_serial_sequence(table_name, column_name) IS NOT NULL
-    LOOP
-        EXECUTE format('SELECT COALESCE(MAX(%I), 0) FROM %I', rec.column_name, rec.table_name) INTO max_id;
-        EXECUTE format('SELECT setval(%L, %s)', rec.seq_name, max_id + 1);
-        RAISE NOTICE 'Reset sequence % to %', rec.seq_name, max_id + 1;
-    END LOOP;
+FOR rec IN
+SELECT table_name,
+       column_name,
+       pg_get_serial_sequence(table_name, column_name) as seq_name
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND column_default LIKE 'nextval%'
+  AND pg_get_serial_sequence(table_name, column_name) IS NOT NULL LOOP
+        EXECUTE format('SELECT COALESCE(MAX(%I), 0) FROM %I', rec.column_name, rec.table_name)
+INTO max_id;
+EXECUTE format('SELECT setval(%L, %s)', rec.seq_name, max_id + 1);
+RAISE
+NOTICE 'Reset sequence % to %', rec.seq_name, max_id + 1;
+END LOOP;
 END $$;
 
 -- ============================================================================

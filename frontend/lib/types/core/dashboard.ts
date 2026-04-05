@@ -82,6 +82,7 @@ export interface DemographicBreakdown {
   category: string;
   count: number;
   percentage: number;
+
   [key: string]: string | number;
 }
 

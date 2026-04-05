@@ -1,19 +1,27 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import {motion} from 'framer-motion';
+import {cn} from '@/lib/utils';
 
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    variant?: 'default' | 'bordered' | 'elevated';
-    hover?: boolean;
-    isClickable?: boolean;
-    padding?: 'none' | 'sm' | 'md' | 'lg';
-    glow?: boolean;
-  }
->(({ className, variant = 'default', hover = false, isClickable = false, padding = 'none', glow = false, ...props }, ref) => {
+  variant?: 'default' | 'bordered' | 'elevated';
+  hover?: boolean;
+  isClickable?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  glow?: boolean;
+}
+>(({
+     className,
+     variant = 'default',
+     hover = false,
+     isClickable = false,
+     padding = 'none',
+     glow = false,
+     ...props
+   }, ref) => {
   const isHoverable = hover || isClickable;
   const variantStyles = {
     default: 'skeuo-card border shadow-card',
@@ -30,8 +38,8 @@ const Card = React.forwardRef<
 
   return (
     <motion.div
-      whileHover={isHoverable ? { y: -3, transition: { type: 'spring', stiffness: 400, damping: 25 } } : undefined}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      whileHover={isHoverable ? {y: -3, transition: {type: 'spring', stiffness: 400, damping: 25}} : undefined}
+      transition={{type: 'spring', stiffness: 300, damping: 30}}
     >
       <div
         ref={ref}
@@ -58,7 +66,7 @@ Card.displayName = 'Card';
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({className, ...props}, ref) => (
   <div
     ref={ref}
     className={cn('flex flex-col space-y-2 p-6 pb-2', className)}
@@ -71,7 +79,7 @@ CardHeader.displayName = 'CardHeader';
 const CardTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+>(({className, ...props}, ref) => (
   <h3
     ref={ref}
     className={cn(
@@ -87,7 +95,7 @@ CardTitle.displayName = 'CardTitle';
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+>(({className, ...props}, ref) => (
   <p
     ref={ref}
     className={cn('text-body-secondary', className)}
@@ -100,7 +108,7 @@ CardDescription.displayName = 'CardDescription';
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({className, ...props}, ref) => (
   <div
     ref={ref}
     className={cn('p-6', className)}
@@ -113,14 +121,14 @@ CardContent.displayName = 'CardContent';
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({className, ...props}, ref) => (
   <div
     ref={ref}
     className={cn(
       'flex items-center p-6 pt-4',
       className
     )}
-    style={{ borderTop: '1px solid var(--border-subtle)' }}
+    style={{borderTop: '1px solid var(--border-subtle)'}}
     {...props}
   />
 ));

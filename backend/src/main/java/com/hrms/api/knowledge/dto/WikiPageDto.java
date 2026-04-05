@@ -51,6 +51,8 @@ public class WikiPageDto {
     private String authorName;
     private String authorAvatarUrl;
 
+    private Integer childCount;
+
     private Boolean canEdit;
     private Boolean canDelete;
     private Boolean canPublish;

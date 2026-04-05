@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import {motion} from 'framer-motion';
+import {cn} from '@/lib/utils';
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -11,10 +11,10 @@ export interface SpinnerProps {
 }
 
 const sizeConfig = {
-  sm: { outer: 16, inner: 12, strokeWidth: 2 },
-  md: { outer: 24, inner: 18, strokeWidth: 2.5 },
-  lg: { outer: 32, inner: 24, strokeWidth: 3 },
-  xl: { outer: 48, inner: 36, strokeWidth: 3.5 },
+  sm: {outer: 16, inner: 12, strokeWidth: 2},
+  md: {outer: 24, inner: 18, strokeWidth: 2.5},
+  lg: {outer: 32, inner: 24, strokeWidth: 3},
+  xl: {outer: 48, inner: 36, strokeWidth: 3.5},
 };
 
 const variantConfig = {
@@ -32,7 +32,7 @@ const variantConfig = {
   },
 };
 
-export function Spinner({ size = 'md', variant = 'primary', className }: SpinnerProps) {
+export function Spinner({size = 'md', variant = 'primary', className}: SpinnerProps) {
   const config = sizeConfig[size];
   const colors = variantConfig[variant];
 
@@ -65,14 +65,14 @@ export function Spinner({ size = 'md', variant = 'primary', className }: Spinner
           strokeWidth={config.strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${Math.PI * config.inner * 0.75} ${Math.PI * config.inner}`}
-          initial={{ rotate: 0 }}
-          animate={{ rotate: 360 }}
+          initial={{rotate: 0}}
+          animate={{rotate: 360}}
           transition={{
             duration: 1.2,
             repeat: Infinity,
             ease: 'linear',
           }}
-          style={{ transformOrigin: 'center' }}
+          style={{transformOrigin: 'center'}}
         />
       </svg>
     </div>
@@ -82,7 +82,7 @@ export function Spinner({ size = 'md', variant = 'primary', className }: Spinner
 /**
  * Elegant pulsing dots loader
  */
-export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProps, 'size'>) {
+export function DotsSpinner({variant = 'primary', className}: Omit<SpinnerProps, 'size'>) {
   const dotColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
@@ -97,7 +97,7 @@ export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProp
         <motion.div
           key={i}
           className={cn('w-2 h-2 rounded-full', dotColor)}
-          initial={{ scale: 0.8, opacity: 0.5 }}
+          initial={{scale: 0.8, opacity: 0.5}}
           animate={{
             scale: [0.8, 1.2, 0.8],
             opacity: [0.5, 1, 0.5],
@@ -117,7 +117,7 @@ export function DotsSpinner({ variant = 'primary', className }: Omit<SpinnerProp
 /**
  * Elegant wave loader
  */
-export function WaveSpinner({ variant = 'primary', className }: Omit<SpinnerProps, 'size'>) {
+export function WaveSpinner({variant = 'primary', className}: Omit<SpinnerProps, 'size'>) {
   const barColors = {
     primary: 'bg-accent-700 dark:bg-accent-400',
     secondary: 'bg-[var(--text-secondary)]',
@@ -132,7 +132,7 @@ export function WaveSpinner({ variant = 'primary', className }: Omit<SpinnerProp
         <motion.div
           key={i}
           className={cn('w-1 rounded-full', barColor)}
-          initial={{ height: 8 }}
+          initial={{height: 8}}
           animate={{
             height: [8, 20, 8],
           }}
@@ -151,7 +151,7 @@ export function WaveSpinner({ variant = 'primary', className }: Omit<SpinnerProp
 /**
  * Elegant pulse ring loader
  */
-export function PulseRing({ size = 'md', variant = 'primary', className }: SpinnerProps) {
+export function PulseRing({size = 'md', variant = 'primary', className}: SpinnerProps) {
   const sizeMap = {
     sm: 'w-12 h-12',
     md: 'w-16 h-16',
@@ -174,7 +174,7 @@ export function PulseRing({ size = 'md', variant = 'primary', className }: Spinn
             'absolute inset-0 rounded-full border-4',
             ringColors[variant]
           )}
-          initial={{ scale: 0.8, opacity: 1 }}
+          initial={{scale: 0.8, opacity: 1}}
           animate={{
             scale: [0.8, 1.2],
             opacity: [1, 0],

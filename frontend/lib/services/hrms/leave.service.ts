@@ -1,11 +1,11 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  LeaveType,
-  LeaveTypeRequest,
+  LeaveBalance,
   LeaveRequest,
   LeaveRequestRequest,
-  LeaveBalance,
   LeaveRequestStatus,
+  LeaveType,
+  LeaveTypeRequest,
   Page,
 } from '../../types/hrms/leave';
 
@@ -28,7 +28,7 @@ class LeaveService {
 
   async getAllLeaveTypes(page: number = 0, size: number = 20): Promise<Page<LeaveType>> {
     const response = await apiClient.get<Page<LeaveType>>('/leave-types', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -68,7 +68,7 @@ class LeaveService {
     size: number = 20
   ): Promise<Page<LeaveRequest>> {
     const response = await apiClient.get<Page<LeaveRequest>>('/leave-requests', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -81,7 +81,7 @@ class LeaveService {
     const response = await apiClient.get<Page<LeaveRequest>>(
       `/leave-requests/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -104,7 +104,7 @@ class LeaveService {
     const response = await apiClient.get<Page<LeaveRequest>>(
       `/leave-requests/status/${status}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -126,7 +126,7 @@ class LeaveService {
       `/leave-requests/${id}/reject`,
       null,
       {
-        params: { reason },
+        params: {reason},
       }
     );
     return response.data;
@@ -137,7 +137,7 @@ class LeaveService {
       `/leave-requests/${id}/cancel`,
       null,
       {
-        params: { reason },
+        params: {reason},
       }
     );
     return response.data;
@@ -180,7 +180,7 @@ class LeaveService {
     const response = await apiClient.post<CarryForwardResponse>(
       '/leave-balances/admin/carry-forward',
       null,
-      { params: { fromYear } }
+      {params: {fromYear}}
     );
     return response.data;
   }

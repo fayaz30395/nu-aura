@@ -1,12 +1,12 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  ReferralRequest,
-  ReferralResponse,
+  Page,
+  ReferralDashboard,
   ReferralPolicyRequest,
   ReferralPolicyResponse,
-  ReferralDashboard,
+  ReferralRequest,
+  ReferralResponse,
   ReferralStatus,
-  Page,
 } from '../../types/hire/referral';
 
 const BASE_URL = '/referrals';
@@ -31,7 +31,7 @@ export const referralService = {
 
   getAllReferrals: async (page = 0, size = 20): Promise<Page<ReferralResponse>> => {
     const response = await apiClient.get<Page<ReferralResponse>>(BASE_URL, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -49,7 +49,7 @@ export const referralService = {
     notes?: string
   ): Promise<ReferralResponse> => {
     const response = await apiClient.put<ReferralResponse>(`${BASE_URL}/${id}/status`, null, {
-      params: { status, notes },
+      params: {status, notes},
     });
     return response.data;
   },
@@ -60,7 +60,7 @@ export const referralService = {
     stage?: string
   ): Promise<ReferralResponse> => {
     const response = await apiClient.put<ReferralResponse>(`${BASE_URL}/${id}/reject`, null, {
-      params: { reason, stage },
+      params: {reason, stage},
     });
     return response.data;
   },
@@ -70,7 +70,7 @@ export const referralService = {
     employeeId: string
   ): Promise<ReferralResponse> => {
     const response = await apiClient.put<ReferralResponse>(`${BASE_URL}/${id}/link-employee`, null, {
-      params: { employeeId },
+      params: {employeeId},
     });
     return response.data;
   },
@@ -91,7 +91,7 @@ export const referralService = {
     const response = await apiClient.post<ReferralResponse>(
       `${BASE_URL}/${id}/mark-bonus-paid`,
       null,
-      { params: { paymentReference } }
+      {params: {paymentReference}}
     );
     return response.data;
   },
@@ -131,7 +131,7 @@ export const referralService = {
     const response = await apiClient.put<ReferralPolicyResponse>(
       `${BASE_URL}/policies/${id}/toggle`,
       null,
-      { params: { active } }
+      {params: {active}}
     );
     return response.data;
   },

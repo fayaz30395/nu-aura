@@ -1,12 +1,12 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   CalendarEvent,
   CreateCalendarEventRequest,
+  EventsSummary,
   EventStatus,
   EventType,
-  EventsSummary,
-  SyncResult,
   Page,
+  SyncResult,
 } from '../../types/hrms/calendar';
 
 class CalendarService {
@@ -32,7 +32,7 @@ class CalendarService {
 
   async updateEventStatus(id: string, status: EventStatus): Promise<CalendarEvent> {
     const response = await apiClient.patch<CalendarEvent>(`/calendar/events/${id}/status`, null, {
-      params: { status },
+      params: {status},
     });
     return response.data;
   }
@@ -40,14 +40,14 @@ class CalendarService {
   // My Events
   async getMyEvents(page: number = 0, size: number = 20): Promise<Page<CalendarEvent>> {
     const response = await apiClient.get<Page<CalendarEvent>>('/calendar/events/my', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getMyEventsForRange(startTime: string, endTime: string): Promise<CalendarEvent[]> {
     const response = await apiClient.get<CalendarEvent[]>('/calendar/events/my/range', {
-      params: { startTime, endTime },
+      params: {startTime, endTime},
     });
     return response.data;
   }
@@ -55,14 +55,14 @@ class CalendarService {
   // All Events (Admin)
   async getAllEvents(page: number = 0, size: number = 20): Promise<Page<CalendarEvent>> {
     const response = await apiClient.get<Page<CalendarEvent>>('/calendar/events', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getEventsForRange(startTime: string, endTime: string): Promise<CalendarEvent[]> {
     const response = await apiClient.get<CalendarEvent[]>('/calendar/events/range', {
-      params: { startTime, endTime },
+      params: {startTime, endTime},
     });
     return response.data;
   }
@@ -74,7 +74,7 @@ class CalendarService {
 
   async getEventsOrganizedByMe(page: number = 0, size: number = 20): Promise<Page<CalendarEvent>> {
     const response = await apiClient.get<Page<CalendarEvent>>('/calendar/events/organized', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -104,14 +104,14 @@ class CalendarService {
 
   async importFromGoogle(externalEventId: string): Promise<SyncResult> {
     const response = await apiClient.post<SyncResult>('/calendar/import/google', null, {
-      params: { externalEventId },
+      params: {externalEventId},
     });
     return response.data;
   }
 
   async importFromOutlook(externalEventId: string): Promise<SyncResult> {
     const response = await apiClient.post<SyncResult>('/calendar/import/outlook', null, {
-      params: { externalEventId },
+      params: {externalEventId},
     });
     return response.data;
   }
@@ -119,7 +119,7 @@ class CalendarService {
   // Summary
   async getEventsSummary(startTime: string, endTime: string): Promise<EventsSummary> {
     const response = await apiClient.get<EventsSummary>('/calendar/summary', {
-      params: { startTime, endTime },
+      params: {startTime, endTime},
     });
     return response.data;
   }

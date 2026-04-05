@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Suspense, ReactNode } from 'react';
-import { ErrorBoundary } from './ErrorBoundary';
+import React, {ReactNode, Suspense} from 'react';
+import {ErrorBoundary} from './ErrorBoundary';
 
 interface SectionErrorFallbackProps {
   error: Error | null;
@@ -14,13 +14,14 @@ interface SectionErrorFallbackProps {
  * Unlike PageErrorFallback (full-page), this renders inline so
  * the rest of the page continues working.
  */
-function SectionErrorFallback({ error, onReset, sectionName }: SectionErrorFallbackProps) {
+function SectionErrorFallback({error, onReset, sectionName}: SectionErrorFallbackProps) {
   return (
     <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)]">
-      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
+      <div
+        className="flex-shrink-0 w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
         <svg className="w-5 h-5 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
           />
         </svg>
       </div>
@@ -49,13 +50,14 @@ interface SectionLoadingProps {
 /**
  * Lightweight loading indicator for section-level Suspense boundaries.
  */
-function SectionLoading({ height = '120px' }: SectionLoadingProps) {
+function SectionLoading({height = '120px'}: SectionLoadingProps) {
   return (
-    <div className="flex items-center justify-center rounded-lg bg-[var(--bg-card)]" style={{ minHeight: height }}>
+    <div className="flex items-center justify-center rounded-lg bg-[var(--bg-card)]" style={{minHeight: height}}>
       <div className="flex items-center gap-2 text-[var(--text-muted)]">
         <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
         </svg>
         <span className="text-sm">Loading...</span>
       </div>
@@ -98,16 +100,16 @@ interface SectionBoundaryProps {
  * ```
  */
 export function SectionBoundary({
-  children,
-  name,
-  errorFallback,
-  loadingFallback,
-  loadingHeight,
-  suspense = true,
-  resetKeys,
-}: SectionBoundaryProps) {
+                                  children,
+                                  name,
+                                  errorFallback,
+                                  loadingFallback,
+                                  loadingHeight,
+                                  suspense = true,
+                                  resetKeys,
+                                }: SectionBoundaryProps) {
   const content = suspense ? (
-    <Suspense fallback={loadingFallback || <SectionLoading height={loadingHeight} />}>
+    <Suspense fallback={loadingFallback || <SectionLoading height={loadingHeight}/>}>
       {children}
     </Suspense>
   ) : children;
@@ -131,10 +133,10 @@ export function SectionBoundary({
  * Separated so ErrorBoundary can use the class component pattern.
  */
 function SectionBoundaryInner({
-  children,
-  name: _name,
-  errorFallback,
-}: {
+                                children,
+                                name: _name,
+                                errorFallback,
+                              }: {
   children: ReactNode;
   name?: string;
   errorFallback?: ReactNode;
@@ -153,4 +155,4 @@ function SectionBoundaryInner({
   );
 }
 
-export { SectionErrorFallback, SectionLoading };
+export {SectionErrorFallback, SectionLoading};

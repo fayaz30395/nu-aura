@@ -1,17 +1,17 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   Contract,
   ContractListItem,
-  CreateContractRequest,
-  UpdateContractRequest,
   ContractSignature,
-  SendForSigningRequest,
-  ContractTemplate,
-  CreateContractTemplateRequest,
   ContractStatus,
+  ContractTemplate,
   ContractType,
+  CreateContractRequest,
+  CreateContractTemplateRequest,
   Page,
+  SendForSigningRequest,
   SignatureSummary,
+  UpdateContractRequest,
 } from '../../types/hrms/contract';
 
 class ContractService {
@@ -29,7 +29,7 @@ class ContractService {
 
   async getContracts(page: number = 0, size: number = 20): Promise<Page<ContractListItem>> {
     const response = await apiClient.get<Page<ContractListItem>>('/contracts', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -47,28 +47,28 @@ class ContractService {
 
   async getContractsByStatus(status: ContractStatus, page: number = 0, size: number = 20): Promise<Page<ContractListItem>> {
     const response = await apiClient.get<Page<ContractListItem>>(`/contracts/status/${status}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getContractsByType(type: ContractType, page: number = 0, size: number = 20): Promise<Page<ContractListItem>> {
     const response = await apiClient.get<Page<ContractListItem>>(`/contracts/type/${type}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getEmployeeContracts(employeeId: string, page: number = 0, size: number = 20): Promise<Page<ContractListItem>> {
     const response = await apiClient.get<Page<ContractListItem>>(`/contracts/employee/${employeeId}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async searchContracts(search: string, page: number = 0, size: number = 20): Promise<Page<ContractListItem>> {
     const response = await apiClient.get<Page<ContractListItem>>('/contracts/search', {
-      params: { search, page, size },
+      params: {search, page, size},
     });
     return response.data;
   }
@@ -104,7 +104,7 @@ class ContractService {
 
   async getExpiringContracts(days: number = 30): Promise<ContractListItem[]> {
     const response = await apiClient.get<ContractListItem[]>('/contracts/expiring', {
-      params: { days },
+      params: {days},
     });
     return response.data;
   }
@@ -140,14 +140,14 @@ class ContractService {
     ipAddress?: string
   ): Promise<ContractSignature> {
     const response = await apiClient.post<ContractSignature>(`/contracts/${contractId}/record-signature`, null, {
-      params: { signerEmail, signatureImageUrl, ipAddress },
+      params: {signerEmail, signatureImageUrl, ipAddress},
     });
     return response.data;
   }
 
   async declineSignature(contractId: string, signerEmail: string): Promise<ContractSignature> {
     const response = await apiClient.post<ContractSignature>(`/contracts/${contractId}/decline-signature`, null, {
-      params: { signerEmail },
+      params: {signerEmail},
     });
     return response.data;
   }
@@ -181,14 +181,14 @@ class ContractService {
 
   async getTemplates(page: number = 0, size: number = 20): Promise<Page<ContractTemplate>> {
     const response = await apiClient.get<Page<ContractTemplate>>('/contracts/templates', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getActiveTemplates(page: number = 0, size: number = 20): Promise<Page<ContractTemplate>> {
     const response = await apiClient.get<Page<ContractTemplate>>('/contracts/templates/active', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -200,7 +200,7 @@ class ContractService {
 
   async searchTemplates(search: string, page: number = 0, size: number = 20): Promise<Page<ContractTemplate>> {
     const response = await apiClient.get<Page<ContractTemplate>>('/contracts/templates/search', {
-      params: { search, page, size },
+      params: {search, page, size},
     });
     return response.data;
   }

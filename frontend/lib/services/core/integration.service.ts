@@ -1,12 +1,12 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   IntegrationStatus,
   IntegrationTestResponse,
-  SmsTestRequest,
-  SmsSendRequest,
-  SmsSendResponse,
   PaymentRequest,
   PaymentResponse,
+  SmsSendRequest,
+  SmsSendResponse,
+  SmsTestRequest,
 } from '../../types/core/integration';
 
 class IntegrationService {

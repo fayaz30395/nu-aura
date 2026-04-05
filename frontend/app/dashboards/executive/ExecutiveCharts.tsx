@@ -2,16 +2,16 @@
 
 import React from 'react';
 import {
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
   Area,
   AreaChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart as RechartsPieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 // ── Headcount Trend Chart ─────────────────────────────────────────
@@ -25,19 +25,19 @@ interface ExecutiveHeadcountChartProps {
   data: HeadcountTrendEntry[];
 }
 
-export function ExecutiveHeadcountChart({ data }: ExecutiveHeadcountChartProps) {
+export function ExecutiveHeadcountChart({data}: ExecutiveHeadcountChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data}>
         <defs>
           <linearGradient id="colorHeadcount" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8}/>
+            <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0}/>
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-        <XAxis dataKey="period" tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
-        <YAxis tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)"/>
+        <XAxis dataKey="period" tick={{fill: 'var(--chart-muted)', fontSize: 12}}/>
+        <YAxis tick={{fill: 'var(--chart-muted)', fontSize: 12}}/>
         <Tooltip
           contentStyle={{
             borderRadius: '8px',
@@ -71,7 +71,7 @@ interface ExecutiveDeptPieChartProps {
   formatNumber: (value: number) => string;
 }
 
-export function ExecutiveDeptPieChart({ data, colors, formatNumber }: ExecutiveDeptPieChartProps) {
+export function ExecutiveDeptPieChart({data, colors, formatNumber}: ExecutiveDeptPieChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RechartsPieChart>
@@ -82,14 +82,14 @@ export function ExecutiveDeptPieChart({ data, colors, formatNumber }: ExecutiveD
           cx="50%"
           cy="50%"
           outerRadius={100}
-          label={({ name, percent }) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
+          label={({name, percent}) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
           labelLine={true}
         >
           {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]}/>
           ))}
         </Pie>
-        <Tooltip formatter={(value) => formatNumber(value as number)} />
+        <Tooltip formatter={(value) => formatNumber(value as number)}/>
       </RechartsPieChart>
     </ResponsiveContainer>
   );

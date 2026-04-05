@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
-import { Drawer } from '@mantine/core';
-import { Button } from '@/components/ui/Button';
-import { ConnectorInfo, ConnectorConfigField, ConnectorConfigRequest } from '@/lib/types/core/connector';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Loader2} from 'lucide-react';
+import {Drawer} from '@mantine/core';
+import {Button} from '@/components/ui/Button';
+import {ConnectorConfigField, ConnectorConfigRequest, ConnectorInfo} from '@/lib/types/core/connector';
 
 interface ConnectorConfigPanelProps {
   connector: ConnectorInfo | null;
@@ -18,12 +18,12 @@ interface ConnectorConfigPanelProps {
 }
 
 export function ConnectorConfigPanel({
-  connector,
-  isOpen,
-  onClose,
-  onSave,
-  isLoading,
-}: ConnectorConfigPanelProps) {
+                                       connector,
+                                       isOpen,
+                                       onClose,
+                                       onSave,
+                                       isLoading,
+                                     }: ConnectorConfigPanelProps) {
   // Build Zod schema dynamically from config fields
   const buildSchema = React.useCallback((conn: ConnectorInfo) => {
     const shape: Record<string, z.ZodTypeAny> = {
@@ -63,7 +63,7 @@ export function ConnectorConfigPanel({
   }, []);
 
   const schema = React.useMemo(
-    () => (connector ? buildSchema(connector) : z.object({ displayName: z.string() })),
+    () => (connector ? buildSchema(connector) : z.object({displayName: z.string()})),
     [connector, buildSchema]
   );
 
@@ -72,26 +72,26 @@ export function ConnectorConfigPanel({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: connector
       ? {
-          displayName: connector.name,
-          ...Object.fromEntries(
-            connector.capabilities.configSchema.map((field) => {
-              if (field.type === 'boolean') return [field.name, false];
-              return [field.name, ''];
-            })
-          ),
-        }
-      : { displayName: '' },
+        displayName: connector.name,
+        ...Object.fromEntries(
+          connector.capabilities.configSchema.map((field) => {
+            if (field.type === 'boolean') return [field.name, false];
+            return [field.name, ''];
+          })
+        ),
+      }
+      : {displayName: ''},
   });
 
   if (!connector) return null;
 
   const onSubmit = async (data: FormData) => {
-    const { displayName, ...configData } = data;
+    const {displayName, ...configData} = data;
 
     await onSave({
       displayName,
@@ -300,7 +300,7 @@ export function ConnectorConfigPanel({
           >
             {isSubmitting || isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                 Saving...
               </>
             ) : (

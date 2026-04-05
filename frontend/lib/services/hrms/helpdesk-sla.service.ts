@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 export interface TicketSLA {
   id: string;
@@ -77,7 +77,10 @@ class HelpdeskSLAService {
   }
 
   async getSLAs(page: number = 0, size: number = 20): Promise<{ content: TicketSLA[], totalElements: number }> {
-    const response = await apiClient.get<{ content: TicketSLA[], totalElements: number }>('/helpdesk/sla', { params: { page, size } });
+    const response = await apiClient.get<{
+      content: TicketSLA[],
+      totalElements: number
+    }>('/helpdesk/sla', {params: {page, size}});
     return response.data;
   }
 
@@ -102,7 +105,7 @@ class HelpdeskSLAService {
 
   async escalateTicket(ticketId: string, escalatedTo: string, level: string, reason: string, notes?: string): Promise<TicketEscalation> {
     const response = await apiClient.post<TicketEscalation>(`/helpdesk/sla/escalate/${ticketId}`, null, {
-      params: { escalatedTo, level, reason, notes }
+      params: {escalatedTo, level, reason, notes}
     });
     return response.data;
   }
@@ -128,7 +131,7 @@ class HelpdeskSLAService {
 
   async submitCSAT(ticketId: string, rating: number, feedback?: string): Promise<void> {
     await apiClient.post(`/helpdesk/sla/metrics/${ticketId}/csat`, null, {
-      params: { rating, feedback }
+      params: {rating, feedback}
     });
   }
 

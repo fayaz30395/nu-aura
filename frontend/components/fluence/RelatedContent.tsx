@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { Clock, Eye, Heart } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { typography, iconSize } from '@/lib/design-system';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {Clock, Eye, Heart} from 'lucide-react';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {iconSize, typography} from '@/lib/design-system';
 
 export interface RelatedItem {
   id: string;
@@ -26,10 +26,10 @@ interface RelatedContentProps {
  * Component to display related wiki pages, blog posts, or templates.
  */
 export function RelatedContent({
-  items,
-  title = 'Related Content',
-  className = '',
-}: RelatedContentProps) {
+                                 items,
+                                 title = 'Related Content',
+                                 className = '',
+                               }: RelatedContentProps) {
   const router = useRouter();
 
   if (items.length === 0) {
@@ -65,18 +65,18 @@ export function RelatedContent({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
+      initial={{opacity: 0, y: 8}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 0.3}}
     >
       <h2 className={`${typography.sectionTitle} mb-4`}>{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {items.slice(0, 4).map((item, index) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: index * 0.05}}
           >
             <Card
               className="group cursor-pointer h-full transition-all hover:shadow-[var(--shadow-dropdown)]"
@@ -88,7 +88,8 @@ export function RelatedContent({
                     {item.type === 'WIKI' ? 'Wiki' : item.type === 'BLOG' ? 'Blog' : 'Template'}
                   </span>
                 </div>
-                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--accent-700)] transition-colors`}>
+                <CardTitle
+                  className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--accent-700)] transition-colors`}>
                   {item.title}
                 </CardTitle>
               </CardHeader>
@@ -103,7 +104,7 @@ export function RelatedContent({
 
               <CardContent className="space-y-2 pt-0">
                 <div className="flex items-center gap-2 text-caption">
-                  <Clock className={iconSize.meta} />
+                  <Clock className={iconSize.meta}/>
                   <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
                 </div>
 
@@ -111,13 +112,13 @@ export function RelatedContent({
                   <div className="flex items-center gap-2 text-caption">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
-                        <Eye className={iconSize.meta} />
+                        <Eye className={iconSize.meta}/>
                         <span>{item.viewCount}</span>
                       </div>
                     )}
                     {item.likeCount !== undefined && (
                       <div className="flex items-center gap-1">
-                        <Heart className={iconSize.meta} />
+                        <Heart className={iconSize.meta}/>
                         <span>{item.likeCount}</span>
                       </div>
                     )}

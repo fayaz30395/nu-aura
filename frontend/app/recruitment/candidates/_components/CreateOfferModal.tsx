@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { Button } from '@/components/ui/Button';
-import { Loader2, X } from 'lucide-react';
-import { Candidate } from '@/lib/types/hire/recruitment';
-import { CreateOfferFormData } from '@/lib/validations/recruitment';
+import {UseFormReturn} from 'react-hook-form';
+import {Button} from '@/components/ui/Button';
+import {Loader2, X} from 'lucide-react';
+import {Candidate} from '@/lib/types/hire/recruitment';
+import {CreateOfferFormData} from '@/lib/validations/recruitment';
 
 interface CreateOfferModalProps {
   open: boolean;
@@ -17,27 +17,29 @@ interface CreateOfferModalProps {
 }
 
 export function CreateOfferModal({
-  open,
-  candidate,
-  offerForm,
-  isSubmitting,
-  onSubmit,
-  onClose,
-}: CreateOfferModalProps) {
+                                   open,
+                                   candidate,
+                                   offerForm,
+                                   isSubmitting,
+                                   onSubmit,
+                                   onClose,
+                                 }: CreateOfferModalProps) {
   if (!open || !candidate) return null;
 
   const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-[var(--text-primary)]">
               Generate Offer Letter
             </h2>
-            <button onClick={onClose} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6" />
+            <button onClick={onClose} aria-label="Close modal"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <X className="h-6 w-6"/>
             </button>
           </div>
 
@@ -52,7 +54,7 @@ export function CreateOfferModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offered Salary *</label>
               <input
                 type="number"
-                {...offerForm.register('offeredSalary', { valueAsNumber: true })}
+                {...offerForm.register('offeredSalary', {valueAsNumber: true})}
                 className={inputCls}
               />
               {offerForm.formState.errors.offeredSalary && (
@@ -104,7 +106,7 @@ export function CreateOfferModal({
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Offer'}
+                {isSubmitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin"/>Creating...</> : 'Create Offer'}
               </Button>
             </div>
           </form>

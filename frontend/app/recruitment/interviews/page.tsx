@@ -1,22 +1,63 @@
 'use client';
 
-import React, { useState, useMemo, useRef, Suspense, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { notifications } from '@mantine/notifications';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Interview, CreateInterviewRequest, InterviewStatus, InterviewType, InterviewResult } from '@/lib/types/hire/recruitment';
-import { Employee } from '@/lib/types/hrms/employee';
-import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validations/recruitment';
-import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings, useAllInterviews, useInterviewsByCandidate } from '@/lib/hooks/queries/useRecruitment';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/hire/ai-recruitment';
-import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown } from 'lucide-react';
-import { getGoogleToken, hasValidGoogleToken } from '@/lib/utils/googleToken';
+import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {notifications} from '@mantine/notifications';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {
+  CreateInterviewRequest,
+  Interview,
+  InterviewResult,
+  InterviewStatus,
+  InterviewType
+} from '@/lib/types/hire/recruitment';
+import {Employee} from '@/lib/types/hrms/employee';
+import {CreateInterviewFormData, createInterviewSchema} from '@/lib/validations/recruitment';
+import {
+  useAllInterviews,
+  useCandidates,
+  useDeleteInterview,
+  useGenerateInterviewQuestions,
+  useInterviewsByCandidate,
+  useJobOpenings,
+  useScheduleInterview,
+  useUpdateInterview
+} from '@/lib/hooks/queries/useRecruitment';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {
+  BehavioralQuestion,
+  CulturalFitQuestion,
+  InterviewQuestionsResponse,
+  RoleSpecificQuestion,
+  SituationalQuestion,
+  TechnicalQuestion
+} from '@/lib/types/hire/ai-recruitment';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  Copy,
+  Edit2,
+  MapPin,
+  Phone,
+  Plus,
+  Save,
+  Search,
+  Sparkles,
+  Star,
+  Trash2,
+  User,
+  Video,
+  X
+} from 'lucide-react';
+import {getGoogleToken, hasValidGoogleToken} from '@/lib/utils/googleToken';
 
 // ==================== Searchable Select Component ====================
 interface SearchableSelectOption {
@@ -34,7 +75,14 @@ interface SearchableSelectProps {
   className?: string;
 }
 
-function SearchableSelect({ options, value, onChange, placeholder = 'Search...', error, className }: SearchableSelectProps) {
+function SearchableSelect({
+                            options,
+                            value,
+                            onChange,
+                            placeholder = 'Search...',
+                            error,
+                            className
+                          }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,10 +138,12 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           placeholder={selectedOption ? selectedOption.label : placeholder}
           className="w-full px-4 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
         />
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
+        <ChevronDown
+          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none"/>
       </div>
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)]">
+        <div
+          className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)]">
           {filtered.length === 0 ? (
             <div className="px-4 py-2 text-body-muted">No results found</div>
           ) : (
@@ -125,8 +175,8 @@ function InterviewsPageLoading() {
   return (
     <AppLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-[var(--bg-secondary)] rounded w-1/4" />
-        <div className="h-64 bg-[var(--bg-secondary)] rounded" />
+        <div className="h-8 bg-[var(--bg-secondary)] rounded w-1/4"/>
+        <div className="h-64 bg-[var(--bg-secondary)] rounded"/>
       </div>
     </AppLayout>
   );
@@ -135,8 +185,8 @@ function InterviewsPageLoading() {
 // Wrap with Suspense for useSearchParams
 export default function InterviewsPageWrapper() {
   return (
-    <Suspense fallback={<InterviewsPageLoading />}>
-      <InterviewsPage />
+    <Suspense fallback={<InterviewsPageLoading/>}>
+      <InterviewsPage/>
     </Suspense>
   );
 }
@@ -145,7 +195,7 @@ function InterviewsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.RECRUITMENT_VIEW,
@@ -160,9 +210,9 @@ function InterviewsPage() {
   }, [isReady, hasAccess, router]);
 
   // Query hooks
-  const { data: candidatesData } = useCandidates(0, 100);
-  const { data: jobOpeningsData } = useJobOpenings(0, 100);
-  const { data: employeesData } = useEmployees(0, 100);
+  const {data: candidatesData} = useCandidates(0, 100);
+  const {data: jobOpeningsData} = useJobOpenings(0, 100);
+  const {data: employeesData} = useEmployees(0, 100);
 
   const scheduleInterviewMutation = useScheduleInterview();
   const updateInterviewMutation = useUpdateInterview();
@@ -200,7 +250,7 @@ function InterviewsPage() {
     setValue: setValueCreate,
     handleSubmit: handleSubmitCreate,
     reset: resetCreate,
-    formState: { errors: errorsCreate },
+    formState: {errors: errorsCreate},
   } = useForm<CreateInterviewFormData>({
     resolver: zodResolver(createInterviewSchema),
     mode: 'onBlur',
@@ -213,7 +263,7 @@ function InterviewsPage() {
     setValue: setValueFeedback,
     handleSubmit: handleSubmitFeedback,
     reset: resetFeedback,
-    formState: { errors: errorsFeedback },
+    formState: {errors: errorsFeedback},
   } = useForm<CreateInterviewFormData>({
     resolver: zodResolver(createInterviewSchema),
     mode: 'onBlur',
@@ -493,61 +543,76 @@ function InterviewsPage() {
     return result;
   };
 
-const getStatusColor = (status: InterviewStatus): string => {
-  switch (status) {
-    case 'SCHEDULED': return 'bg-accent-100 text-accent-800';
-    case 'RESCHEDULED': return 'bg-warning-100 text-warning-800';
-    case 'COMPLETED': return 'bg-success-100 text-success-800';
-    case 'CANCELLED': return 'bg-danger-100 text-danger-800';
-    case 'NO_SHOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-  }
-};
+  const getStatusColor = (status: InterviewStatus): string => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'bg-accent-100 text-accent-800';
+      case 'RESCHEDULED':
+        return 'bg-warning-100 text-warning-800';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-800';
+      case 'CANCELLED':
+        return 'bg-danger-100 text-danger-800';
+      case 'NO_SHOW':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+    }
+  };
 
-const getResultColor = (result?: InterviewResult): string => {
-  switch (result) {
-    case 'SELECTED': return 'bg-success-100 text-success-800';
-    case 'REJECTED': return 'bg-danger-100 text-danger-800';
-    case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
-    case 'PENDING': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-  }
-};
+  const getResultColor = (result?: InterviewResult): string => {
+    switch (result) {
+      case 'SELECTED':
+        return 'bg-success-100 text-success-800';
+      case 'REJECTED':
+        return 'bg-danger-100 text-danger-800';
+      case 'ON_HOLD':
+        return 'bg-warning-100 text-warning-800';
+      case 'PENDING':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+    }
+  };
 
-const getTypeIcon = (type?: InterviewType): React.ReactNode => {
-  switch (type) {
-    case 'VIDEO': return <Video className="h-4 w-4" />;
-    case 'PHONE': return <Phone className="h-4 w-4" />;
-    case 'IN_PERSON': return <MapPin className="h-4 w-4" />;
-    default: return <Calendar className="h-4 w-4" />;
-  }
-};
+  const getTypeIcon = (type?: InterviewType): React.ReactNode => {
+    switch (type) {
+      case 'VIDEO':
+        return <Video className="h-4 w-4"/>;
+      case 'PHONE':
+        return <Phone className="h-4 w-4"/>;
+      case 'IN_PERSON':
+        return <MapPin className="h-4 w-4"/>;
+      default:
+        return <Calendar className="h-4 w-4"/>;
+    }
+  };
 
-const filteredInterviews = interviews.filter(interview => {
-  const matchesStatus = !statusFilter || interview.status === statusFilter;
-  const matchesSearch = !searchQuery ||
-    interview.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    interview.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase());
-  return matchesStatus && matchesSearch;
-});
-
-const stats = {
-  total: interviews.length,
-  scheduled: interviews.filter(i => i.status === 'SCHEDULED').length,
-  completed: interviews.filter(i => i.status === 'COMPLETED').length,
-  pending: interviews.filter(i => i.result === 'PENDING').length,
-};
-
-const formatDateTime = (dateString?: string): string => {
-  if (!dateString) return '-';
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  const filteredInterviews = interviews.filter(interview => {
+    const matchesStatus = !statusFilter || interview.status === statusFilter;
+    const matchesSearch = !searchQuery ||
+      interview.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      interview.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
   });
-};
+
+  const stats = {
+    total: interviews.length,
+    scheduled: interviews.filter(i => i.status === 'SCHEDULED').length,
+    completed: interviews.filter(i => i.status === 'COMPLETED').length,
+    pending: interviews.filter(i => i.result === 'PENDING').length,
+  };
+
+  const formatDateTime = (dateString?: string): string => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <AppLayout activeMenuItem="recruitment">
@@ -558,8 +623,12 @@ const formatDateTime = (dateString?: string): string => {
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Schedule and manage candidate interviews</p>
           </div>
-          <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => {
+            resetCreate();
+            setEditingInterview(null);
+            setShowAddModal(true);
+          }} className="flex items-center gap-2">
+            <Plus className="h-4 w-4"/>
             Schedule Interview
           </Button>
         </div>
@@ -570,7 +639,7 @@ const formatDateTime = (dateString?: string): string => {
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-accent-700" />
+                  <Calendar className="h-6 w-6 text-accent-700"/>
                 </div>
                 <div>
                   <p className="text-body-muted">Total</p>
@@ -583,7 +652,7 @@ const formatDateTime = (dateString?: string): string => {
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-600" />
+                  <Clock className="h-6 w-6 text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-body-muted">Scheduled</p>
@@ -596,7 +665,7 @@ const formatDateTime = (dateString?: string): string => {
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600" />
+                  <CheckCircle className="h-6 w-6 text-success-600"/>
                 </div>
                 <div>
                   <p className="text-body-muted">Completed</p>
@@ -609,7 +678,7 @@ const formatDateTime = (dateString?: string): string => {
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-warning-50 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-warning-600" />
+                  <AlertCircle className="h-6 w-6 text-warning-600"/>
                 </div>
                 <div>
                   <p className="text-body-muted">Pending Decision</p>
@@ -625,7 +694,7 @@ const formatDateTime = (dateString?: string): string => {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="text"
                   placeholder="Search interviews..."
@@ -655,9 +724,13 @@ const formatDateTime = (dateString?: string): string => {
           <CardContent className="p-0">
             {filteredInterviews.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                <Calendar className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                 <p className="text-[var(--text-muted)]">No interviews found</p>
-                <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="mt-4">
+                <Button onClick={() => {
+                  resetCreate();
+                  setEditingInterview(null);
+                  setShowAddModal(true);
+                }} className="mt-4">
                   Schedule First Interview
                 </Button>
               </div>
@@ -665,111 +738,135 @@ const formatDateTime = (dateString?: string): string => {
               <div className="overflow-x-auto">
                 <table className="w-full table-aura">
                   <thead className="bg-[var(--bg-secondary)]/50">
-                    <tr>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Round</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Scheduled</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Interviewer</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Result</th>
-                      <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
-                    </tr>
+                  <tr>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Round
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Scheduled
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Interviewer
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status
+                    </th>
+                    <th
+                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Result
+                    </th>
+                    <th
+                      className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border-main)]">
-                    {filteredInterviews.map((interview) => (
-                      <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-accent-100 rounded-xl flex items-center justify-center">
-                              <User className="h-5 w-5 text-accent-700" />
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
-                            </div>
+                  {filteredInterviews.map((interview) => (
+                    <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <div
+                            className="flex-shrink-0 h-10 w-10 bg-accent-100 rounded-xl flex items-center justify-center">
+                            <User className="h-5 w-5 text-accent-700"/>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 text-body-secondary">
-                          {interview.jobTitle || '-'}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {getTypeIcon(interview.interviewType)}
-                            <span className="text-sm text-[var(--text-primary)]">
+                          <div className="ml-4">
+                            <div
+                              className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-body-secondary">
+                        {interview.jobTitle || '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {getTypeIcon(interview.interviewType)}
+                          <span className="text-sm text-[var(--text-primary)]">
                               {interview.interviewRound?.replace(/_/g, ' ') || '-'}
                             </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-[var(--text-primary)]">{formatDateTime(interview.scheduledAt)}</div>
-                          <div className="text-caption">{interview.durationMinutes} min</div>
-                        </td>
-                        <td className="px-6 py-4 text-body-secondary">
-                          <div>{interview.interviewerName || '-'}</div>
-                          {(interview.googleMeetLink || interview.meetingLink) && (
-                            <a
-                              href={interview.googleMeetLink || interview.meetingLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"
-                            >
-                              <Video className="h-3 w-3" />
-                              Join Meet
-                            </a>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(interview.status)}`}>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div
+                          className="text-sm text-[var(--text-primary)]">{formatDateTime(interview.scheduledAt)}</div>
+                        <div className="text-caption">{interview.durationMinutes} min</div>
+                      </td>
+                      <td className="px-6 py-4 text-body-secondary">
+                        <div>{interview.interviewerName || '-'}</div>
+                        {(interview.googleMeetLink || interview.meetingLink) && (
+                          <a
+                            href={interview.googleMeetLink || interview.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"
+                          >
+                            <Video className="h-3 w-3"/>
+                            Join Meet
+                          </a>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                          <span
+                            className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(interview.status)}`}>
                             {interview.status}
                           </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {interview.result && (
-                              <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getResultColor(interview.result)}`}>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {interview.result && (
+                            <span
+                              className={`px-2.5 py-1 text-xs font-medium rounded-full ${getResultColor(interview.result)}`}>
                                 {interview.result}
                               </span>
-                            )}
-                            {interview.rating && (
-                              <span className="flex items-center gap-1 text-sm text-warning-600">
-                                <Star className="h-4 w-4 fill-current" />
-                                {interview.rating}/5
+                          )}
+                          {interview.rating && (
+                            <span className="flex items-center gap-1 text-sm text-warning-600">
+                                <Star className="h-4 w-4 fill-current"/>
+                              {interview.rating}/5
                               </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {interview.status === 'SCHEDULED' && (
-                              <button
-                                onClick={() => handleProvideFeedback(interview)}
-                                className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                title="Provide Feedback"
-                                aria-label="Provide feedback"
-                              >
-                                <CheckCircle className="h-4 w-4" />
-                              </button>
-                            )}
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {interview.status === 'SCHEDULED' && (
                             <button
-                              onClick={() => handleEdit(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              title="Edit"
-                              aria-label="Edit interview"
+                              onClick={() => handleProvideFeedback(interview)}
+                              className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              title="Provide Feedback"
+                              aria-label="Provide feedback"
                             >
-                              <Edit2 className="h-4 w-4" />
+                              <CheckCircle className="h-4 w-4"/>
                             </button>
-                            <button
-                              onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
-                              className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              title="Delete"
-                              aria-label="Delete interview"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          )}
+                          <button
+                            onClick={() => handleEdit(interview)}
+                            className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title="Edit"
+                            aria-label="Edit interview"
+                          >
+                            <Edit2 className="h-4 w-4"/>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setInterviewToDelete(interview);
+                              setShowDeleteModal(true);
+                            }}
+                            className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title="Delete"
+                            aria-label="Delete interview"
+                          >
+                            <Trash2 className="h-4 w-4"/>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                   </tbody>
                 </table>
               </div>
@@ -780,14 +877,20 @@ const formatDateTime = (dateString?: string): string => {
         {/* Add/Edit Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6" />
+                  <button onClick={() => {
+                    setShowAddModal(false);
+                    resetCreate();
+                    setEditingInterview(null);
+                  }} aria-label="Close modal"
+                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <X className="h-6 w-6"/>
                   </button>
                 </div>
 
@@ -796,7 +899,11 @@ const formatDateTime = (dateString?: string): string => {
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate *</label>
                       <SearchableSelect
-                        options={candidates.map(c => ({ value: c.id, label: c.fullName, subtitle: c.jobTitle || c.email }))}
+                        options={candidates.map(c => ({
+                          value: c.id,
+                          label: c.fullName,
+                          subtitle: c.jobTitle || c.email
+                        }))}
                         value={watchCreate('candidateId') || ''}
                         onChange={(val) => {
                           setValueCreate('candidateId', val);
@@ -810,9 +917,14 @@ const formatDateTime = (dateString?: string): string => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening
+                        *</label>
                       <SearchableSelect
-                        options={jobOpenings.map(j => ({ value: j.id, label: j.jobTitle, subtitle: j.departmentName || j.location }))}
+                        options={jobOpenings.map(j => ({
+                          value: j.id,
+                          label: j.jobTitle,
+                          subtitle: j.departmentName || j.location
+                        }))}
                         value={watchCreate('jobOpeningId') || ''}
                         onChange={(val) => setValueCreate('jobOpeningId', val)}
                         placeholder="Search job openings..."
@@ -823,7 +935,8 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Round</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
+                        Round</label>
                       <select
                         {...registerCreate('interviewRound')}
                         className="input-aura"
@@ -837,7 +950,8 @@ const formatDateTime = (dateString?: string): string => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Type</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview
+                        Type</label>
                       <select
                         {...registerCreate('interviewType')}
                         className="input-aura"
@@ -851,16 +965,19 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Scheduled Date & Time *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Scheduled Date &
+                        Time *</label>
                       <input
                         type="datetime-local"
                         {...registerCreate('scheduledAt')}
                         className="input-aura"
                       />
-                      {errorsCreate.scheduledAt && <p className="text-danger-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
+                      {errorsCreate.scheduledAt &&
+                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration (minutes)</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration
+                        (minutes)</label>
                       <input
                         type="number"
                         min="15"
@@ -868,14 +985,19 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('durationMinutes')}
                         className="input-aura"
                       />
-                      {errorsCreate.durationMinutes && <p className="text-danger-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
+                      {errorsCreate.durationMinutes &&
+                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interviewer</label>
                     <SearchableSelect
-                      options={interviewers.map((emp: Employee) => ({ value: emp.id, label: emp.fullName, subtitle: emp.designation || emp.departmentName }))}
+                      options={interviewers.map((emp: Employee) => ({
+                        value: emp.id,
+                        label: emp.fullName,
+                        subtitle: emp.designation || emp.departmentName
+                      }))}
                       value={watchCreate('interviewerId') || ''}
                       onChange={(val) => setValueCreate('interviewerId', val)}
                       placeholder="Search interviewers..."
@@ -884,11 +1006,13 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Google Meet Toggle */}
                   {!editingInterview && (
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
+                    <div
+                      className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
                       <div className="flex items-center gap-2 flex-1">
-                        <Video className="h-5 w-5 text-accent-500" />
+                        <Video className="h-5 w-5 text-accent-500"/>
                         <div>
-                          <span className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
+                          <span
+                            className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
                           <p className="text-caption">
                             {hasValidGoogleToken()
                               ? 'Creates a Calendar event with Meet link automatically'
@@ -930,13 +1054,17 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Time Slot Preview when Google Meet is enabled */}
                   {createMeetToggle && watchCreate('scheduledAt') && (
-                    <div className="px-4 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+                    <div
+                      className="px-4 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5 flex-shrink-0"/>
                       <span>
-                        Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                        Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short'
+                      })}
                         {' — '}
                         {watchCreate('durationMinutes')
-                          ? new Date(new Date(watchCreate('scheduledAt')).getTime() + (watchCreate('durationMinutes') as number) * 60000).toLocaleTimeString('en-IN', { timeStyle: 'short' })
+                          ? new Date(new Date(watchCreate('scheduledAt')).getTime() + (watchCreate('durationMinutes') as number) * 60000).toLocaleTimeString('en-IN', {timeStyle: 'short'})
                           : '(set duration)'}
                         {watchCreate('durationMinutes') ? ` (${watchCreate('durationMinutes')} min)` : ''}
                       </span>
@@ -957,7 +1085,8 @@ const formatDateTime = (dateString?: string): string => {
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
-                      {errorsCreate.meetingLink && <p className="text-danger-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
+                      {errorsCreate.meetingLink &&
+                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
@@ -979,7 +1108,7 @@ const formatDateTime = (dateString?: string): string => {
                         disabled={generateQuestionsMutation.isPending}
                         className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
-                        <Sparkles className="h-3 w-3" />
+                        <Sparkles className="h-3 w-3"/>
                         Generate AI Questions
                       </button>
                     </div>
@@ -992,10 +1121,16 @@ const formatDateTime = (dateString?: string): string => {
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
-                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => {
+                      setShowAddModal(false);
+                      resetCreate();
+                      setEditingInterview(null);
+                    }} className="flex-1">
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={scheduleInterviewMutation.isPending || updateInterviewMutation.isPending} className="flex-1">
+                    <Button type="submit"
+                            disabled={scheduleInterviewMutation.isPending || updateInterviewMutation.isPending}
+                            className="flex-1">
                       {editingInterview ? 'Update Interview' : 'Schedule Interview'}
                     </Button>
                   </div>
@@ -1008,19 +1143,26 @@ const formatDateTime = (dateString?: string): string => {
         {/* Feedback Modal */}
         {showFeedbackModal && selectedInterview && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
-                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6" />
+                  <button onClick={() => {
+                    setShowFeedbackModal(false);
+                    setSelectedInterview(null);
+                    resetFeedback();
+                  }} aria-label="Close modal"
+                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <X className="h-6 w-6"/>
                   </button>
                 </div>
 
                 <div className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <p className="text-body-muted">Candidate</p>
                   <p className="font-medium text-[var(--text-primary)]">{selectedInterview.candidateName}</p>
-                  <p className="text-body-muted mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
+                  <p
+                    className="text-body-muted mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
                 </div>
 
                 <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
@@ -1038,7 +1180,8 @@ const formatDateTime = (dateString?: string): string => {
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-warning-500'
                           }`}
                         >
-                          <Star className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`} />
+                          <Star
+                            className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`}/>
                         </button>
                       ))}
                     </div>
@@ -1065,11 +1208,16 @@ const formatDateTime = (dateString?: string): string => {
                       placeholder="Provide detailed feedback about the candidate's performance..."
                       className="input-aura"
                     />
-                    {errorsFeedback.feedback && <p className="text-danger-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
+                    {errorsFeedback.feedback &&
+                      <p className="text-danger-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
-                    <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => {
+                      setShowFeedbackModal(false);
+                      setSelectedInterview(null);
+                      resetFeedback();
+                    }} className="flex-1">
                       Cancel
                     </Button>
                     <Button type="submit" disabled={updateInterviewMutation.isPending} className="flex-1">
@@ -1085,21 +1233,28 @@ const formatDateTime = (dateString?: string): string => {
         {/* Delete Modal */}
         {showDeleteModal && interviewToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-danger-600" />
+                  <Trash2 className="h-6 w-6 text-danger-600"/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
               <p className="text-body-muted mb-6">
-                Are you sure you want to delete this interview for <strong className="text-[var(--text-secondary)]">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
+                Are you sure you want to delete this interview for <strong
+                className="text-[var(--text-secondary)]">{interviewToDelete.candidateName}</strong>? This action cannot
+                be undone.
               </p>
               <div className="flex gap-4">
-                <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
+                <Button variant="outline" onClick={() => {
+                  setShowDeleteModal(false);
+                  setInterviewToDelete(null);
+                }} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="danger" onClick={handleDelete} disabled={deleteInterviewMutation.isPending} className="flex-1">
+                <Button variant="danger" onClick={handleDelete} disabled={deleteInterviewMutation.isPending}
+                        className="flex-1">
                   Delete
                 </Button>
               </div>
@@ -1110,15 +1265,20 @@ const formatDateTime = (dateString?: string): string => {
         {/* AI Interview Questions Modal */}
         {showQuestionsModal && generatedQuestions && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-accent-500" />
+                    <Sparkles className="h-5 w-5 text-accent-500"/>
                     <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
-                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6" />
+                  <button onClick={() => {
+                    setShowQuestionsModal(false);
+                    setGeneratedQuestions(null);
+                  }} aria-label="Close modal"
+                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <X className="h-6 w-6"/>
                   </button>
                 </div>
 
@@ -1134,8 +1294,8 @@ const formatDateTime = (dateString?: string): string => {
                               <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
                                 q.difficulty === 'easy' ? 'bg-success-100 text-success-700' :
-                                q.difficulty === 'medium' ? 'bg-warning-100 text-warning-700' :
-                                'bg-danger-100 text-danger-700'
+                                  q.difficulty === 'medium' ? 'bg-warning-100 text-warning-700' :
+                                    'bg-danger-100 text-danger-700'
                               }`}>
                                 {q.difficulty}
                               </span>
@@ -1209,15 +1369,20 @@ const formatDateTime = (dateString?: string): string => {
                 </div>
 
                 <div className="flex gap-4 pt-4 border-t border-[var(--border-main)] mt-6">
-                  <Button type="button" variant="outline" onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="flex-1">
+                  <Button type="button" variant="outline" onClick={() => {
+                    setShowQuestionsModal(false);
+                    setGeneratedQuestions(null);
+                  }} className="flex-1">
                     Close
                   </Button>
-                  <Button type="button" onClick={handleCopyQuestions} className="flex-1 flex items-center justify-center gap-2">
-                    <Copy className="h-4 w-4" />
+                  <Button type="button" onClick={handleCopyQuestions}
+                          className="flex-1 flex items-center justify-center gap-2">
+                    <Copy className="h-4 w-4"/>
                     Copy All
                   </Button>
-                  <Button type="button" onClick={handleSaveQuestionsToNotes} className="flex-1 flex items-center justify-center gap-2">
-                    <Save className="h-4 w-4" />
+                  <Button type="button" onClick={handleSaveQuestionsToNotes}
+                          className="flex-1 flex items-center justify-center gap-2">
+                    <Save className="h-4 w-4"/>
                     Save to Notes
                   </Button>
                 </div>

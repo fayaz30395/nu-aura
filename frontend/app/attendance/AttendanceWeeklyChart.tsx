@@ -1,13 +1,20 @@
 'use client';
 
-import React, { memo } from 'react';
-import { Calendar, BarChart3, Sun, Moon } from 'lucide-react';
+import React, {memo} from 'react';
+import {BarChart3, Calendar, Moon, Sun} from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-  ResponsiveContainer, Cell, ReferenceLine,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { STANDARD_WORK_HOURS } from './utils';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {STANDARD_WORK_HOURS} from './utils';
 
 // ─── Chart Data Shape ─────────────────────────────────────────────────────────
 export interface ChartEntry {
@@ -24,19 +31,20 @@ export interface ChartEntry {
 }
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartEntry }> }) {
+function CustomTooltip({active, payload}: { active?: boolean; payload?: Array<{ payload: ChartEntry }> }) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
 
   return (
-    <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] p-4 min-w-[180px]">
+    <div
+      className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] p-4 min-w-[180px]">
       <div className="text-xs font-semibold text-[var(--text-primary)] mb-2">
-        {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+        {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
       </div>
       {d.isHoliday ? (
-        <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3" /> Holiday</div>
+        <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3"/> Holiday</div>
       ) : d.isWeeklyOff ? (
-        <div className="flex items-center gap-1.5 text-caption"><Moon className="h-3 w-3" /> Weekly Off</div>
+        <div className="flex items-center gap-1.5 text-caption"><Moon className="h-3 w-3"/> Weekly Off</div>
       ) : d.hours > 0 ? (
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs">
@@ -64,8 +72,8 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
           <div className="pt-1 border-t border-[var(--border-subtle)]">
             <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded ${
               d.hours >= STANDARD_WORK_HOURS ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
-              d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
-              'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
+                  'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
             }`}>
               {d.hours >= STANDARD_WORK_HOURS ? 'Full Day' : d.hours >= STANDARD_WORK_HOURS / 2 ? 'Half Day' : 'Short Day'}
             </span>
@@ -89,28 +97,30 @@ interface AttendanceWeeklyChartProps {
  * Memoized — only re-renders when chart data changes.
  */
 export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
-  chartData,
-  attendanceRate,
-}: AttendanceWeeklyChartProps) {
+                                                                           chartData,
+                                                                           attendanceRate,
+                                                                         }: AttendanceWeeklyChartProps) {
   return (
-    <Card className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
+    <Card
+      className="lg:col-span-2 skeuo-card card-aura border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
       <CardHeader className="border-b border-[var(--border-main)] pb-4">
         <div className="row-between">
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
-              <BarChart3 className="h-4 w-4 text-white" />
+            <div
+              className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
+              <BarChart3 className="h-4 w-4 text-white"/>
             </div>
             Weekly Overview
           </CardTitle>
           <div className="flex items-center gap-2">
             <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" /> Last 7 days
+              <Calendar className="h-3.5 w-3.5"/> Last 7 days
             </span>
             {attendanceRate > 0 && (
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                 attendanceRate >= 95 ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
-                attendanceRate >= 80 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
-                'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                  attendanceRate >= 80 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
+                    'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
               }`}>
                 {attendanceRate}% this month
               </span>
@@ -120,25 +130,26 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
       </CardHeader>
       <CardContent className="pt-4 h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+          <BarChart data={chartData} margin={{top: 8, right: 8, left: -20, bottom: 0}}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)"/>
             <XAxis dataKey="name" axisLine={false} tickLine={false}
-              tick={{ fill: 'var(--chart-muted)', fontSize: 11, fontWeight: 500 }} dy={8} />
+                   tick={{fill: 'var(--chart-muted)', fontSize: 11, fontWeight: 500}} dy={8}/>
             <YAxis axisLine={false} tickLine={false}
-              tick={{ fill: 'var(--chart-muted)', fontSize: 11 }}
-              domain={[0, 'auto']} />
-            <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'var(--chart-grid)', opacity: 0.3 }} />
-            <ReferenceLine y={STANDARD_WORK_HOURS} stroke="var(--chart-primary)" strokeDasharray="6 4" strokeWidth={1.5} strokeOpacity={0.5} />
+                   tick={{fill: 'var(--chart-muted)', fontSize: 11}}
+                   domain={[0, 'auto']}/>
+            <RechartsTooltip content={<CustomTooltip/>} cursor={{fill: 'var(--chart-grid)', opacity: 0.3}}/>
+            <ReferenceLine y={STANDARD_WORK_HOURS} stroke="var(--chart-primary)" strokeDasharray="6 4" strokeWidth={1.5}
+                           strokeOpacity={0.5}/>
             <Bar dataKey="hours" radius={[8, 8, 0, 0]} maxBarSize={48}>
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={
                     entry.isHoliday ? 'var(--chart-accent, var(--accent-primary))'
-                    : entry.hours >= STANDARD_WORK_HOURS ? 'var(--chart-success)'
-                    : entry.isToday ? 'var(--chart-primary)'
-                    : entry.hours > 0 ? 'var(--chart-warning)'
-                    : 'var(--chart-grid)'
+                      : entry.hours >= STANDARD_WORK_HOURS ? 'var(--chart-success)'
+                        : entry.isToday ? 'var(--chart-primary)'
+                          : entry.hours > 0 ? 'var(--chart-warning)'
+                            : 'var(--chart-grid)'
                   }
                 />
               ))}
@@ -148,13 +159,13 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
         {/* Legend */}
         <div className="flex items-center justify-center gap-6 mt-2 text-xs">
           {[
-            { color: 'bg-success-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)` },
-            { color: 'bg-accent-500', label: 'Today' },
-            { color: 'bg-warning-500', label: 'Partial' },
-            { color: 'bg-accent-500', label: 'Holiday' },
+            {color: 'bg-success-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)`},
+            {color: 'bg-accent-500', label: 'Today'},
+            {color: 'bg-warning-500', label: 'Partial'},
+            {color: 'bg-accent-500', label: 'Holiday'},
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
-              <div className={`h-3 w-3 rounded-md ${l.color} shadow-[var(--shadow-card)]`} />
+              <div className={`h-3 w-3 rounded-md ${l.color} shadow-[var(--shadow-card)]`}/>
               <span className="font-medium text-[var(--text-secondary)]">{l.label}</span>
             </div>
           ))}

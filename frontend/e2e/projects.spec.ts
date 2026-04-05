@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { testUsers, testProject } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {ProjectsPage} from './pages/ProjectsPage';
+import {testProject, testUsers} from './fixtures/testData';
 
 /**
  * Projects E2E Tests
@@ -12,7 +12,7 @@ test.describe('Project Management', () => {
   let loginPage: LoginPage;
   let projectsPage: ProjectsPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     projectsPage = new ProjectsPage(page);
 
@@ -26,7 +26,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Projects List', () => {
-    test('should display projects page', async ({ page }) => {
+    test('should display projects page', async ({page}) => {
       // Verify page heading
       await expect(projectsPage.pageHeading).toBeVisible();
 
@@ -38,7 +38,7 @@ test.describe('Project Management', () => {
       expect(hasSearchInput).toBe(true);
     });
 
-    test('should display projects in grid view', async ({ page }) => {
+    test('should display projects in grid view', async ({page}) => {
       // Switch to grid view if not already
       const hasGridButton = await projectsPage.gridViewButton.isVisible().catch(() => false);
       if (hasGridButton) {
@@ -50,7 +50,7 @@ test.describe('Project Management', () => {
       expect(projectCount).toBeGreaterThanOrEqual(0);
     });
 
-    test('should display projects in list view', async ({ page }) => {
+    test('should display projects in list view', async ({page}) => {
       // Switch to list view if available
       const hasListButton = await projectsPage.listViewButton.isVisible().catch(() => false);
       if (hasListButton) {
@@ -63,7 +63,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should search for projects', async ({ page }) => {
+    test('should search for projects', async ({page}) => {
       // Get initial count
       const initialCount = await projectsPage.getProjectCount();
 
@@ -83,7 +83,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should filter projects by status', async ({ page }) => {
+    test('should filter projects by status', async ({page}) => {
       const hasStatusFilter = await projectsPage.statusFilter.isVisible().catch(() => false);
 
       if (hasStatusFilter) {
@@ -101,7 +101,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Create Project', () => {
-    test('should open create project modal', async ({ page }) => {
+    test('should open create project modal', async ({page}) => {
       // Click create project button
       await projectsPage.clickCreateProject();
 
@@ -115,7 +115,7 @@ test.describe('Project Management', () => {
       await expect(projectsPage.startDateInput).toBeVisible();
     });
 
-    test('should create project with basic info', async ({ page }) => {
+    test('should create project with basic info', async ({page}) => {
       // Create project
       await projectsPage.createProject({
         name: testProject.basic.name,
@@ -131,7 +131,7 @@ test.describe('Project Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should create project with all details', async ({ page }) => {
+    test('should create project with all details', async ({page}) => {
       // Create project with all fields
       await projectsPage.createProject({
         name: `${testProject.basic.name} Full`,
@@ -153,7 +153,7 @@ test.describe('Project Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should validate required fields', async ({ page }) => {
+    test('should validate required fields', async ({page}) => {
       // Open modal
       await projectsPage.clickCreateProject();
 
@@ -168,7 +168,7 @@ test.describe('Project Management', () => {
       expect(isModalVisible).toBe(true);
     });
 
-    test('should close modal on cancel', async ({ page }) => {
+    test('should close modal on cancel', async ({page}) => {
       // Open modal
       await projectsPage.clickCreateProject();
 
@@ -186,7 +186,7 @@ test.describe('Project Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should validate project code uniqueness', async ({ page }) => {
+    test('should validate project code uniqueness', async ({page}) => {
       // First, create a project
       const uniqueCode = `PRJ${Date.now()}`;
       await projectsPage.createProject({
@@ -213,7 +213,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('View Project', () => {
-    test('should view project details', async ({ page }) => {
+    test('should view project details', async ({page}) => {
       const projectCount = await projectsPage.getProjectCount();
 
       if (projectCount > 0) {
@@ -231,7 +231,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should display project information correctly', async ({ page }) => {
+    test('should display project information correctly', async ({page}) => {
       // First create a project with known data
       const projectData = {
         name: `Detailed Project ${Date.now()}`,
@@ -266,7 +266,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Edit Project', () => {
-    test('should edit project details', async ({ page }) => {
+    test('should edit project details', async ({page}) => {
       // First create a project to edit
       const originalName = `Edit Test ${Date.now()}`;
       await projectsPage.createProject({
@@ -306,7 +306,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should update project status', async ({ page }) => {
+    test('should update project status', async ({page}) => {
       // Create a project
       await projectsPage.createProject({
         name: `Status Update ${Date.now()}`,
@@ -337,7 +337,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should update project priority', async ({ page }) => {
+    test('should update project priority', async ({page}) => {
       // Create a project
       await projectsPage.createProject({
         name: `Priority Update ${Date.now()}`,
@@ -368,7 +368,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Delete Project', () => {
-    test('should open delete confirmation modal', async ({ page }) => {
+    test('should open delete confirmation modal', async ({page}) => {
       // Create a project to delete
       await projectsPage.createProject({
         name: `Delete Test ${Date.now()}`,
@@ -399,7 +399,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should cancel delete operation', async ({ page }) => {
+    test('should cancel delete operation', async ({page}) => {
       // Create a project
       await projectsPage.createProject({
         name: `Cancel Delete ${Date.now()}`,
@@ -432,7 +432,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should delete project successfully', async ({ page }) => {
+    test('should delete project successfully', async ({page}) => {
       // Get initial count
       const _initialCount = await projectsPage.getProjectCount();
 
@@ -467,7 +467,7 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Project Filtering and Search', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       // Create multiple test projects with different statuses
       const projects = [
         {
@@ -495,7 +495,7 @@ test.describe('Project Management', () => {
       await page.waitForTimeout(1000);
     });
 
-    test('should filter by planning status', async ({ page }) => {
+    test('should filter by planning status', async ({page}) => {
       const hasStatusFilter = await projectsPage.statusFilter.isVisible().catch(() => false);
 
       if (hasStatusFilter) {
@@ -508,7 +508,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should filter by in progress status', async ({ page }) => {
+    test('should filter by in progress status', async ({page}) => {
       const hasStatusFilter = await projectsPage.statusFilter.isVisible().catch(() => false);
 
       if (hasStatusFilter) {
@@ -520,7 +520,7 @@ test.describe('Project Management', () => {
       }
     });
 
-    test('should clear filters', async ({ page }) => {
+    test('should clear filters', async ({page}) => {
       const hasStatusFilter = await projectsPage.statusFilter.isVisible().catch(() => false);
 
       if (hasStatusFilter) {
@@ -529,7 +529,7 @@ test.describe('Project Management', () => {
         await page.waitForTimeout(1000);
 
         // Clear filter (select "All" or empty option)
-        await projectsPage.statusFilter.selectOption({ index: 0 });
+        await projectsPage.statusFilter.selectOption({index: 0});
         await page.waitForTimeout(1000);
 
         const count = await projectsPage.getProjectCount();
@@ -539,13 +539,13 @@ test.describe('Project Management', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match projects page snapshot', async ({ page }) => {
+    test('should match projects page snapshot', async ({page}) => {
       await expect(page).toHaveScreenshot('projects-page.png', {
         maxDiffPixels: 200,
       });
     });
 
-    test('should match create project modal snapshot', async ({ page }) => {
+    test('should match create project modal snapshot', async ({page}) => {
       await projectsPage.clickCreateProject();
       await page.waitForTimeout(500);
 
@@ -557,7 +557,7 @@ test.describe('Project Management', () => {
 });
 
 test.describe('Project Management - Permission Tests', () => {
-  test('should allow admin to create projects', async ({ page }) => {
+  test('should allow admin to create projects', async ({page}) => {
     const loginPage = new LoginPage(page);
     const projectsPage = new ProjectsPage(page);
 
@@ -572,7 +572,7 @@ test.describe('Project Management - Permission Tests', () => {
     expect(hasCreateButton).toBe(true);
   });
 
-  test('should allow manager to view projects', async ({ page }) => {
+  test('should allow manager to view projects', async ({page}) => {
     const loginPage = new LoginPage(page);
     const projectsPage = new ProjectsPage(page);
 
@@ -591,7 +591,7 @@ test.describe('Project Management - Edge Cases', () => {
   let loginPage: LoginPage;
   let projectsPage: ProjectsPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     projectsPage = new ProjectsPage(page);
 
@@ -601,7 +601,7 @@ test.describe('Project Management - Edge Cases', () => {
     await projectsPage.navigate();
   });
 
-  test('should validate date range (end date after start date)', async ({ page }) => {
+  test('should validate date range (end date after start date)', async ({page}) => {
     await projectsPage.clickCreateProject();
 
     // Set end date before start date
@@ -623,7 +623,7 @@ test.describe('Project Management - Edge Cases', () => {
     expect(isModalStillVisible).toBe(true);
   });
 
-  test('should handle very long project names', async ({ page }) => {
+  test('should handle very long project names', async ({page}) => {
     await projectsPage.clickCreateProject();
 
     const longName = 'A'.repeat(200);
@@ -637,7 +637,7 @@ test.describe('Project Management - Edge Cases', () => {
     // Should either truncate or show error
   });
 
-  test('should handle special characters in project name', async ({ page }) => {
+  test('should handle special characters in project name', async ({page}) => {
     const specialCharName = `Test @#$% Project ${Date.now()}`;
 
     await projectsPage.createProject({
@@ -649,7 +649,7 @@ test.describe('Project Management - Edge Cases', () => {
     await page.waitForTimeout(1500);
   });
 
-  test('should handle empty search gracefully', async ({ page }) => {
+  test('should handle empty search gracefully', async ({page}) => {
     await projectsPage.searchProject('');
     await page.waitForTimeout(500);
 
@@ -658,7 +658,7 @@ test.describe('Project Management - Edge Cases', () => {
     expect(count).toBeGreaterThanOrEqual(0);
   });
 
-  test('should handle search with no results', async ({ page }) => {
+  test('should handle search with no results', async ({page}) => {
     await projectsPage.searchProject('XYZNONEXISTENTPROJECT123456789');
     await page.waitForTimeout(1000);
 

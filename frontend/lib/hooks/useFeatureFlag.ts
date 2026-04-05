@@ -5,4 +5,4 @@
  *   const { enabled, isLoading } = useFeatureFlag('enable_projects');
  *   if (!enabled) return <FeatureDisabled />;
  */
-export { useFeatureFlag, useFeatureFlagMap, useEnabledFeatures } from './queries/useFeatureFlags';
+export {useFeatureFlag, useFeatureFlagMap, useEnabledFeatures} from './queries/useFeatureFlags';

@@ -1,32 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
-  Mail,
-  MessageSquare,
-  Zap,
-  Video,
-  FileText,
-  DollarSign,
-  Shield,
-  Code,
   ArrowRight,
   Check,
-  Workflow,
   Clock,
+  Code,
+  DollarSign,
+  FileText,
   Fingerprint,
+  Mail,
+  MessageSquare,
+  Shield,
+  Video,
+  Workflow,
+  Zap,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function IntegrationsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
   const router = useRouter();
 
   const hasAccess = hasAnyPermission(Permissions.SYSTEM_ADMIN, Permissions.INTEGRATION_MANAGE);
@@ -40,11 +40,11 @@ export default function IntegrationsPage() {
   if (!isReady || !hasAccess) return null;
 
   const categories = [
-    { id: 'all', name: 'All Integrations' },
-    { id: 'productivity', name: 'Productivity' },
-    { id: 'attendance', name: 'Attendance' },
-    { id: 'finance', name: 'Finance' },
-    { id: 'developer', name: 'Developer' },
+    {id: 'all', name: 'All Integrations'},
+    {id: 'productivity', name: 'Productivity'},
+    {id: 'attendance', name: 'Attendance'},
+    {id: 'finance', name: 'Finance'},
+    {id: 'developer', name: 'Developer'},
   ];
 
   const integrations = [
@@ -198,7 +198,8 @@ export default function IntegrationsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -257,9 +258,9 @@ export default function IntegrationsPage() {
             {filteredIntegrations.map((integration, index) => (
               <motion.div
                 key={integration.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: index * 0.05}}
               >
                 <Card hover padding="lg" className="h-full">
                   {integration.popular && (
@@ -270,7 +271,7 @@ export default function IntegrationsPage() {
                   <div
                     className={`w-14 h-14 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center mb-4`}
                   >
-                    <integration.icon className="h-7 w-7 text-white" />
+                    <integration.icon className="h-7 w-7 text-white"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {integration.name}
@@ -284,7 +285,7 @@ export default function IntegrationsPage() {
                         key={i}
                         className="flex items-center gap-2 text-body-secondary"
                       >
-                        <Check className="h-4 w-4 text-success-500 flex-shrink-0" />
+                        <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
                         {feature}
                       </li>
                     ))}
@@ -330,7 +331,7 @@ export default function IntegrationsPage() {
               },
             ].map((feature, index) => (
               <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-4" />
+                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>
@@ -342,7 +343,7 @@ export default function IntegrationsPage() {
           <div className="mt-10 text-center">
             <Button variant="outline" size="lg" className="gap-2">
               View API Documentation
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4"/>
             </Button>
           </div>
         </div>
@@ -365,7 +366,7 @@ export default function IntegrationsPage() {
             </Link>
             <Button size="lg" className="gap-2">
               View API Docs
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5"/>
             </Button>
           </div>
         </div>

@@ -1,26 +1,31 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { useLeaveRequestsByStatus, useActiveLeaveTypes, useApproveLeaveRequest, useRejectLeaveRequest } from '@/lib/hooks/queries/useLeaves';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AlertCircle, CheckCircle, RefreshCw} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {
+  useActiveLeaveTypes,
+  useApproveLeaveRequest,
+  useLeaveRequestsByStatus,
+  useRejectLeaveRequest
+} from '@/lib/hooks/queries/useLeaves';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Input} from '@/components/ui/Input';
+import {Button} from '@/components/ui/Button';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 
 export default function LeaveApprovalsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // BUG-L6-006: Page-level permission gate for leave approvals
   useEffect(() => {
@@ -33,9 +38,9 @@ export default function LeaveApprovalsPage() {
       router.replace('/me/dashboard');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
-  const { data: pendingData } = useLeaveRequestsByStatus('PENDING', 0, 50);
-  const { data: leaveTypes = [] } = useActiveLeaveTypes();
-  const { data: employeeData } = useEmployees(0, 500);
+  const {data: pendingData} = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const {data: leaveTypes = []} = useActiveLeaveTypes();
+  const {data: employeeData} = useEmployees(0, 500);
   const approveLeaveRequest = useApproveLeaveRequest();
   const rejectLeaveRequest = useRejectLeaveRequest();
   const [error, setError] = useState<string | null>(null);
@@ -70,11 +75,13 @@ export default function LeaveApprovalsPage() {
 
     try {
       setIsProcessing(true);
-      await approveLeaveRequest.mutateAsync({ id: selectedRequestId, approverId: user?.employeeId || '' });
+      await approveLeaveRequest.mutateAsync({id: selectedRequestId, approverId: user?.employeeId || ''});
       toast.success('Leave request approved successfully');
       setSelectedRequestId(null);
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to approve leave request');
     } finally {
       setIsProcessing(false);
     }
@@ -95,13 +102,15 @@ export default function LeaveApprovalsPage() {
 
     try {
       setIsProcessing(true);
-      await rejectLeaveRequest.mutateAsync({ id: selectedRequestId, reason: rejectReason });
+      await rejectLeaveRequest.mutateAsync({id: selectedRequestId, reason: rejectReason});
       toast.success('Leave request rejected');
       setShowRejectReasonModal(false);
       setRejectReason('');
       setSelectedRequestId(null);
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to reject leave request');
     } finally {
       setIsProcessing(false);
     }
@@ -119,9 +128,9 @@ export default function LeaveApprovalsPage() {
   return (
     <AppLayout activeMenuItem="leave">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 12}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="max-w-7xl mx-auto"
       >
         <div className="mb-6">
@@ -137,8 +146,9 @@ export default function LeaveApprovalsPage() {
 
         {/* Error State */}
         {error && (
-          <div className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0" />
+          <div
+            className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
+            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
             <div className="flex-1">
               <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
             </div>
@@ -146,7 +156,8 @@ export default function LeaveApprovalsPage() {
               onClick={() => setError(null)}
               className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <RefreshCw className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+              <RefreshCw
+                className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
           </div>
         )}
@@ -155,7 +166,8 @@ export default function LeaveApprovalsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="skeuo-card rounded-xl p-6">
             <div className="skeuo-deboss text-body-secondary mb-1">Pending Requests</div>
-            <div className="skeuo-emboss text-3xl font-bold text-warning-600 dark:text-warning-500">{requests.length}</div>
+            <div
+              className="skeuo-emboss text-3xl font-bold text-warning-600 dark:text-warning-500">{requests.length}</div>
           </div>
           <div className="skeuo-card rounded-xl p-6">
             <div className="skeuo-deboss text-body-secondary mb-1">Approved (This Month)</div>
@@ -174,15 +186,18 @@ export default function LeaveApprovalsPage() {
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <div
+                  className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin"
+                  aria-label="Loading leave requests"/>
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-950/30 flex items-center justify-center">
-                  <CheckCircle className="w-8 h-8 text-success-500 dark:text-success-400" />
+                <div
+                  className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-950/30 flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-success-500 dark:text-success-400"/>
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
@@ -192,67 +207,76 @@ export default function LeaveApprovalsPage() {
             <div className="overflow-x-auto">
               <table className="table-aura">
                 <thead className="skeuo-table-header">
-                  <tr>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
-                  </tr>
+                <tr>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave
+                    Type
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied
+                    On
+                  </th>
+                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions
+                  </th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                  {requests.map((request) => (
-                    <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                      <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                        {request.requestNumber}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                        {employeeMap[request.employeeId] || request.employeeId.substring(0, 8) + '...'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                        {getLeaveTypeName(request.leaveTypeId)}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {request.totalDays} {request.isHalfDay && '(Half)'}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary max-w-xs">
-                        <div className="truncate" title={request.reason}>
-                          {request.reason}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {new Date(request.appliedOn).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex gap-2">
-                          <PermissionGate permission={Permissions.LEAVE_APPROVE}>
-                            <button
-                              onClick={() => handleApproveClick(request.id)}
-                              disabled={isProcessing}
-                              className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                            >
-                              {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
-                            </button>
-                          </PermissionGate>
-                          <PermissionGate permission={Permissions.LEAVE_APPROVE}>
-                            <button
-                              onClick={() => handleRejectClick(request.id)}
-                              disabled={isProcessing}
-                              className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                            >
-                              Reject
-                            </button>
-                          </PermissionGate>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                {requests.map((request) => (
+                  <tr key={request.id}
+                      className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                    <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
+                      {request.requestNumber}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
+                      {employeeMap[request.employeeId] || request.employeeId.substring(0, 8) + '...'}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
+                      {getLeaveTypeName(request.leaveTypeId)}
+                    </td>
+                    <td className="px-6 py-4 text-body-secondary">
+                      {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-body-secondary">
+                      {request.totalDays} {request.isHalfDay && '(Half)'}
+                    </td>
+                    <td className="px-6 py-4 text-body-secondary max-w-xs">
+                      <div className="truncate" title={request.reason}>
+                        {request.reason}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-body-secondary">
+                      {new Date(request.appliedOn).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex gap-2">
+                        <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                          <button
+                            onClick={() => handleApproveClick(request.id)}
+                            disabled={isProcessing}
+                            className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          >
+                            {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
+                          </button>
+                        </PermissionGate>
+                        <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                          <button
+                            onClick={() => handleRejectClick(request.id)}
+                            disabled={isProcessing}
+                            className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          >
+                            Reject
+                          </button>
+                        </PermissionGate>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>

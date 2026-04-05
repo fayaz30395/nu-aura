@@ -3,12 +3,12 @@
  * Uses the shared apiClient (cookie-based JWT auth).
  * For public/external token-based signing, use esign-public.service.ts instead.
  */
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   CreateSignatureRequestRequest,
-  SignatureRequestResponse,
   SignatureApprovalRequest,
   SignatureApprovalResponse,
+  SignatureRequestResponse,
   SignatureStatus,
 } from '../../types/hire/esignature';
 
@@ -36,7 +36,7 @@ class ESignatureService {
     const res = await apiClient.patch<SignatureRequestResponse>(
       `/esignature/requests/${id}/cancel`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return res.data;
   }

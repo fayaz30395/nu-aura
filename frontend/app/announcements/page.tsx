@@ -1,62 +1,62 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AnimatePresence, motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  Megaphone,
-  Pin,
-  Calendar,
-  ChevronRight,
-  X,
-  Bell,
   AlertTriangle,
-  PartyPopper,
+  Bell,
   BookOpen,
-  Heart,
-  Wrench,
-  Gift,
-  Users,
-  Search,
-  Eye,
+  Calendar,
   CheckCircle,
+  ChevronRight,
   Clock,
-  Plus,
-  Loader2,
   Edit2,
+  Eye,
+  Gift,
+  Heart,
+  Loader2,
+  Megaphone,
+  PartyPopper,
+  Pin,
+  Plus,
+  Search,
   Trash2,
+  Users,
+  Wrench,
+  X,
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { isAdmin } from '@/lib/utils';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {isAdmin} from '@/lib/utils';
 import {
   Announcement,
   AnnouncementCategory,
   AnnouncementPriority,
-  getCategoryColor,
-  getPriorityColor,
-  getCategoryLabel,
   CreateAnnouncementRequest,
+  getCategoryColor,
+  getCategoryLabel,
+  getPriorityColor,
 } from '@/lib/services/platform/announcement.service';
-import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { createLogger } from '@/lib/utils/logger';
-import { useDebounce } from '@/lib/hooks/useDebounce';
+import {sanitizeAnnouncementHtml} from '@/lib/utils/sanitize';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {createLogger} from '@/lib/utils/logger';
+import {useDebounce} from '@/lib/hooks/useDebounce';
 import {
   useActiveAnnouncements,
-  usePinnedAnnouncements,
   useCreateAnnouncement,
-  useUpdateAnnouncement,
   useDeleteAnnouncement,
   useMarkAnnouncementRead,
+  usePinnedAnnouncements,
+  useUpdateAnnouncement,
 } from '@/lib/hooks/queries/useAnnouncements';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
@@ -141,7 +141,7 @@ const priorityLabels: Record<AnnouncementPriority, string> = {
 };
 
 export default function AnnouncementsPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const toast = useToast();
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -156,8 +156,8 @@ export default function AnnouncementsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // React Query hooks
-  const { data: activeData, isLoading: activeLoading } = useActiveAnnouncements(user?.employeeId || '', page, 10);
-  const { data: pinnedData } = usePinnedAnnouncements();
+  const {data: activeData, isLoading: activeLoading} = useActiveAnnouncements(user?.employeeId || '', page, 10);
+  const {data: pinnedData} = usePinnedAnnouncements();
   const deleteAnnouncementMutation = useDeleteAnnouncement();
   const markReadMutation = useMarkAnnouncementRead();
 
@@ -216,7 +216,7 @@ export default function AnnouncementsPage() {
 
   const filteredAnnouncements = announcements.filter(a => {
     const matchesSearch = a.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-                          a.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+      a.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesCategory = !categoryFilter || a.category === categoryFilter;
     const matchesPriority = !priorityFilter || a.priority === priorityFilter;
     return matchesSearch && matchesCategory && matchesPriority;
@@ -231,7 +231,7 @@ export default function AnnouncementsPage() {
     if (days === 0) return 'Today';
     if (days === 1) return 'Yesterday';
     if (days < 7) return `${days} days ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
   };
 
   const getCategoryIcon = (category: AnnouncementCategory) => {
@@ -243,451 +243,464 @@ export default function AnnouncementsPage() {
     <AppLayout activeMenuItem="announcements">
       <div className="p-6">
         <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="row-between">
-            <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">
-                <Megaphone className="w-8 h-8 text-accent-700" />
-                Announcements
-              </h1>
-              <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
-                Stay updated with company news and important updates
-              </p>
-            </div>
-            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
-              >
-                <Plus className="w-5 h-5" />
-                New Announcement
-              </button>
-            </PermissionGate>
-          </div>
-        </motion.div>
-
-        {/* Pinned Announcements */}
-        {pinnedAnnouncements.length > 0 && (
+          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            initial={{opacity: 0, y: -20}}
+            animate={{opacity: 1, y: 0}}
             className="mb-8"
           >
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Pin className="w-5 h-5 text-warning-500" />
-              Pinned
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {pinnedAnnouncements.map((announcement, index) => {
-                const Icon = getCategoryIcon(announcement.category);
-                return (
-                  <motion.div
-                    key={announcement.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    onClick={() => handleAnnouncementClick(announcement)}
-                    className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                        <Icon className="w-6 h-6 text-warning-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getCategoryColor(announcement.category)}`}>
-                            {getCategoryLabel(announcement.category)}
-                          </span>
-                          {announcement.priority === 'HIGH' || announcement.priority === 'CRITICAL' ? (
-                            <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(announcement.priority)}`}>
-                              {priorityLabels[announcement.priority]}
-                            </span>
-                          ) : null}
-                        </div>
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-warning-600 transition-colors">
-                          {announcement.title}
-                        </h3>
-                        <p className="text-body-secondary mt-1 line-clamp-2">
-                          {announcement.content.replace(/<[^>]*>/g, '')}
-                        </p>
-                        <div className="flex items-center gap-4 mt-4 text-caption">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" />
-                            {formatDate(announcement.publishedAt)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3.5 h-3.5" />
-                            {announcement.readCount} views
-                          </span>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors" />
-                    </div>
-                  </motion.div>
-                );
-              })}
+            <div className="row-between">
+              <div>
+                <h1 className="text-2xl font-bold skeuo-emboss">
+                  <Megaphone className="w-8 h-8 text-accent-700"/>
+                  Announcements
+                </h1>
+                <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
+                  Stay updated with company news and important updates
+                </p>
+              </div>
+              <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
+                >
+                  <Plus className="w-5 h-5"/>
+                  New Announcement
+                </button>
+              </PermissionGate>
             </div>
           </motion.div>
-        )}
 
-        {/* Search and Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="skeuo-card p-4 mb-6"
-        >
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px] relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search announcements..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-aura pl-10"
-              />
-            </div>
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="input-aura"
+          {/* Pinned Announcements */}
+          {pinnedAnnouncements.length > 0 && (
+            <motion.div
+              initial={{opacity: 0, y: 20}}
+              animate={{opacity: 1, y: 0}}
+              transition={{delay: 0.1}}
+              className="mb-8"
             >
-              <option value="">All Categories</option>
-              {Object.keys(categoryIcons).map((cat) => (
-                <option key={cat} value={cat}>
-                  {getCategoryLabel(cat as AnnouncementCategory)}
-                </option>
-              ))}
-            </select>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="input-aura"
-            >
-              <option value="">All Priorities</option>
-              {Object.entries(priorityLabels).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </motion.div>
-
-        {/* Announcements List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-accent-700" />
-            All Announcements
-          </h2>
-
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-accent-700" />
-            </div>
-          ) : filteredAnnouncements.length === 0 ? (
-            <EmptyState
-              icon={<Megaphone className="h-12 w-12" />}
-              title="No Announcements"
-              description="No announcements to display"
-            />
-          ) : (
-            <div className="space-y-4">
-              {filteredAnnouncements.map((announcement, index) => {
-                const Icon = getCategoryIcon(announcement.category);
-                return (
-                  <motion.div
-                    key={announcement.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => handleAnnouncementClick(announcement)}
-                    className={`bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group border-l-4 ${
-                      announcement.isRead
-                        ? 'border-l-[var(--border-main)]'
-                        : 'border-l-accent-600'
-                    }`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`p-4 rounded-lg ${categoryIconBgColors[announcement.category] || categoryIconBgColors.OTHER}`}>
-                        <Icon className={`w-6 h-6 ${categoryIconTextColors[announcement.category] || categoryIconTextColors.OTHER}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getCategoryColor(announcement.category)}`}>
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                <Pin className="w-5 h-5 text-warning-500"/>
+                Pinned
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {pinnedAnnouncements.map((announcement, index) => {
+                  const Icon = getCategoryIcon(announcement.category);
+                  return (
+                    <motion.div
+                      key={announcement.id}
+                      initial={{opacity: 0, x: -20}}
+                      animate={{opacity: 1, x: 0}}
+                      transition={{delay: index * 0.1}}
+                      onClick={() => handleAnnouncementClick(announcement)}
+                      className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
+                          <Icon className="w-6 h-6 text-warning-600"/>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={`px-2 py-0.5 text-xs font-medium rounded-full ${getCategoryColor(announcement.category)}`}>
                             {getCategoryLabel(announcement.category)}
                           </span>
-                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(announcement.priority)}`}>
-                            {priorityLabels[announcement.priority]}
-                          </span>
-                          {!announcement.isRead && (
-                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400">
-                              New
+                            {announcement.priority === 'HIGH' || announcement.priority === 'CRITICAL' ? (
+                              <span
+                                className={`px-2 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(announcement.priority)}`}>
+                              {priorityLabels[announcement.priority]}
                             </span>
-                          )}
-                        </div>
-                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent-700 transition-colors">
-                          {announcement.title}
-                        </h3>
-                        <p className="text-body-secondary mt-1 line-clamp-2">
-                          {announcement.content.replace(/<[^>]*>/g, '')}
-                        </p>
-                        <div className="flex items-center gap-4 mt-4 text-caption">
+                            ) : null}
+                          </div>
+                          <h3
+                            className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-warning-600 transition-colors">
+                            {announcement.title}
+                          </h3>
+                          <p className="text-body-secondary mt-1 line-clamp-2">
+                            {announcement.content.replace(/<[^>]*>/g, '')}
+                          </p>
+                          <div className="flex items-center gap-4 mt-4 text-caption">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" />
+                            <Calendar className="w-3.5 h-3.5"/>
                             {formatDate(announcement.publishedAt)}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3.5 h-3.5" />
-                            {announcement.readCount} views
-                          </span>
-                          {announcement.expiresAt && (
                             <span className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" />
+                            <Eye className="w-3.5 h-3.5"/>
+                              {announcement.readCount} views
+                          </span>
+                          </div>
+                        </div>
+                        <ChevronRight
+                          className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors"/>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Search and Filters */}
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.2}}
+            className="skeuo-card p-4 mb-6"
+          >
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1 min-w-[200px] relative">
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
+                <input
+                  type="text"
+                  placeholder="Search announcements..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input-aura pl-10"
+                />
+              </div>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="input-aura"
+              >
+                <option value="">All Categories</option>
+                {Object.keys(categoryIcons).map((cat) => (
+                  <option key={cat} value={cat}>
+                    {getCategoryLabel(cat as AnnouncementCategory)}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="input-aura"
+              >
+                <option value="">All Priorities</option>
+                {Object.entries(priorityLabels).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </motion.div>
+
+          {/* Announcements List */}
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.3}}
+          >
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <Bell className="w-5 h-5 text-accent-700"/>
+              All Announcements
+            </h2>
+
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-accent-700"/>
+              </div>
+            ) : filteredAnnouncements.length === 0 ? (
+              <EmptyState
+                icon={<Megaphone className="h-12 w-12"/>}
+                title="No Announcements"
+                description="No announcements to display"
+              />
+            ) : (
+              <div className="space-y-4">
+                {filteredAnnouncements.map((announcement, index) => {
+                  const Icon = getCategoryIcon(announcement.category);
+                  return (
+                    <motion.div
+                      key={announcement.id}
+                      initial={{opacity: 0, y: 20}}
+                      animate={{opacity: 1, y: 0}}
+                      transition={{delay: index * 0.05}}
+                      onClick={() => handleAnnouncementClick(announcement)}
+                      className={`bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-card)] p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group border-l-4 ${
+                        announcement.isRead
+                          ? 'border-l-[var(--border-main)]'
+                          : 'border-l-accent-600'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`p-4 rounded-lg ${categoryIconBgColors[announcement.category] || categoryIconBgColors.OTHER}`}>
+                          <Icon
+                            className={`w-6 h-6 ${categoryIconTextColors[announcement.category] || categoryIconTextColors.OTHER}`}/>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span
+                            className={`px-2 py-0.5 text-xs font-medium rounded-full ${getCategoryColor(announcement.category)}`}>
+                            {getCategoryLabel(announcement.category)}
+                          </span>
+                            <span
+                              className={`px-2 py-0.5 text-xs font-medium rounded-full ${getPriorityColor(announcement.priority)}`}>
+                            {priorityLabels[announcement.priority]}
+                          </span>
+                            {!announcement.isRead && (
+                              <span
+                                className="px-2 py-0.5 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400">
+                              New
+                            </span>
+                            )}
+                          </div>
+                          <h3
+                            className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent-700 transition-colors">
+                            {announcement.title}
+                          </h3>
+                          <p className="text-body-secondary mt-1 line-clamp-2">
+                            {announcement.content.replace(/<[^>]*>/g, '')}
+                          </p>
+                          <div className="flex items-center gap-4 mt-4 text-caption">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5"/>
+                            {formatDate(announcement.publishedAt)}
+                          </span>
+                            <span className="flex items-center gap-1">
+                            <Eye className="w-3.5 h-3.5"/>
+                              {announcement.readCount} views
+                          </span>
+                            {announcement.expiresAt && (
+                              <span className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5"/>
                               Expires {formatDate(announcement.expiresAt)}
                             </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {announcement.isPinned && (
+                            <Pin className="w-4 h-4 text-warning-500"/>
                           )}
+                          {canEditAnnouncement(announcement) && (
+                            <div
+                              className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                                <button
+                                  onClick={(e) => handleEditAnnouncement(announcement, e)}
+                                  className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-4 h-4"/>
+                                </button>
+                              </PermissionGate>
+                              <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowDeleteConfirm(announcement.id);
+                                  }}
+                                  className="p-1.5 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-4 h-4"/>
+                                </button>
+                              </PermissionGate>
+                            </div>
+                          )}
+                          <ChevronRight
+                            className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {announcement.isPinned && (
-                          <Pin className="w-4 h-4 text-warning-500" />
-                        )}
-                        {canEditAnnouncement(announcement) && (
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                              <button
-                                onClick={(e) => handleEditAnnouncement(announcement, e)}
-                                className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
-                                title="Edit"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-                            </PermissionGate>
-                            <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setShowDeleteConfirm(announcement.id);
-                                }}
-                                className="p-1.5 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
-                                title="Delete"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </PermissionGate>
-                          </div>
-                        )}
-                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors" />
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-8">
-              <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
-                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-body-secondary">
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  onClick={() => setPage(Math.max(0, page - 1))}
+                  disabled={page === 0}
+                  className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-body-secondary">
                 Page {page + 1} of {totalPages}
               </span>
-              <button
-                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                disabled={page >= totalPages - 1}
-                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </motion.div>
+                <button
+                  onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
+                  disabled={page >= totalPages - 1}
+                  className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </motion.div>
 
-        {/* Announcement Detail Modal */}
-        <AnimatePresence>
-          {selectedAnnouncement && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
-              onClick={() => setSelectedAnnouncement(null)}
-            >
+          {/* Announcement Detail Modal */}
+          <AnimatePresence>
+            {selectedAnnouncement && (
               <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
+                className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
+                onClick={() => setSelectedAnnouncement(null)}
               >
-                {/* Modal Header */}
-                <div className="bg-gradient-to-r from-accent-700 to-accent-800 px-6 py-4 relative">
-                  <button
-                    onClick={() => setSelectedAnnouncement(null)}
-                    className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
-                  >
-                    <X className="w-5 h-5 text-white" />
-                  </button>
-                  <div className="flex items-center gap-4">
-                    {(() => {
-                      const Icon = getCategoryIcon(selectedAnnouncement.category);
-                      return (
-                        <div className="p-4 bg-white/20 rounded-lg">
-                          <Icon className="w-6 h-6 text-white" />
-                        </div>
-                      );
-                    })()}
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
+                <motion.div
+                  initial={{scale: 0.95, opacity: 0}}
+                  animate={{scale: 1, opacity: 1}}
+                  exit={{scale: 0.95, opacity: 0}}
+                  className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Modal Header */}
+                  <div className="bg-gradient-to-r from-accent-700 to-accent-800 px-6 py-4 relative">
+                    <button
+                      onClick={() => setSelectedAnnouncement(null)}
+                      className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+                    >
+                      <X className="w-5 h-5 text-white"/>
+                    </button>
+                    <div className="flex items-center gap-4">
+                      {(() => {
+                        const Icon = getCategoryIcon(selectedAnnouncement.category);
+                        return (
+                          <div className="p-4 bg-white/20 rounded-lg">
+                            <Icon className="w-6 h-6 text-white"/>
+                          </div>
+                        );
+                      })()}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
                           {getCategoryLabel(selectedAnnouncement.category)}
                         </span>
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
+                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
                           {priorityLabels[selectedAnnouncement.priority]}
                         </span>
+                        </div>
+                        <h2 className="text-xl font-bold text-white">
+                          {selectedAnnouncement.title}
+                        </h2>
                       </div>
-                      <h2 className="text-xl font-bold text-white">
-                        {selectedAnnouncement.title}
-                      </h2>
                     </div>
                   </div>
-                </div>
 
-                {/* Modal Content */}
-                <div className="p-6 overflow-y-auto max-h-[60vh]">
-                  <div className="flex items-center gap-4 mb-6 text-body-muted">
+                  {/* Modal Content */}
+                  <div className="p-6 overflow-y-auto max-h-[60vh]">
+                    <div className="flex items-center gap-4 mb-6 text-body-muted">
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="w-4 h-4"/>
                       Published {formatDate(selectedAnnouncement.publishedAt)}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {selectedAnnouncement.readCount} views
+                      <span className="flex items-center gap-1">
+                      <Eye className="w-4 h-4"/>
+                        {selectedAnnouncement.readCount} views
                     </span>
-                    {selectedAnnouncement.isPinned && (
-                      <span className="flex items-center gap-1 text-warning-600">
-                        <Pin className="w-4 h-4" />
+                      {selectedAnnouncement.isPinned && (
+                        <span className="flex items-center gap-1 text-warning-600">
+                        <Pin className="w-4 h-4"/>
                         Pinned
                       </span>
-                    )}
-                  </div>
-
-                  <div
-                    className="prose dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: sanitizeAnnouncementHtml(selectedAnnouncement.content) }}
-                  />
-
-                  {selectedAnnouncement.attachmentUrl && (
-                    <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
-                      <a
-                        href={selectedAnnouncement.attachmentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
-                      >
-                        <BookOpen className="w-4 h-4" />
-                        View Attachment
-                      </a>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Modal Footer */}
-                <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-body-muted">
-                    <CheckCircle className="w-4 h-4 text-success-500" />
-                    Marked as read
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {canEditAnnouncement(selectedAnnouncement) && (
-                      <>
-                        <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                          <button
-                            onClick={() => {
-                              setEditingAnnouncement(selectedAnnouncement);
-                              setSelectedAnnouncement(null);
-                              setShowCreateModal(true);
-                            }}
-                            className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                            Edit
-                          </button>
-                        </PermissionGate>
-                        <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                          <button
-                            onClick={() => {
-                              setShowDeleteConfirm(selectedAnnouncement.id);
-                            }}
-                            className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Delete
-                          </button>
-                        </PermissionGate>
-                      </>
+                    <div
+                      className="prose dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{__html: sanitizeAnnouncementHtml(selectedAnnouncement.content)}}
+                    />
+
+                    {selectedAnnouncement.attachmentUrl && (
+                      <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                        <a
+                          href={selectedAnnouncement.attachmentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
+                        >
+                          <BookOpen className="w-4 h-4"/>
+                          View Attachment
+                        </a>
+                      </div>
                     )}
-                    <button
-                      onClick={() => setSelectedAnnouncement(null)}
-                      className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
-                    >
-                      Close
-                    </button>
                   </div>
-                </div>
+
+                  {/* Modal Footer */}
+                  <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-body-muted">
+                      <CheckCircle className="w-4 h-4 text-success-500"/>
+                      Marked as read
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {canEditAnnouncement(selectedAnnouncement) && (
+                        <>
+                          <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                            <button
+                              onClick={() => {
+                                setEditingAnnouncement(selectedAnnouncement);
+                                setSelectedAnnouncement(null);
+                                setShowCreateModal(true);
+                              }}
+                              className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
+                            >
+                              <Edit2 className="w-4 h-4"/>
+                              Edit
+                            </button>
+                          </PermissionGate>
+                          <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                            <button
+                              onClick={() => {
+                                setShowDeleteConfirm(selectedAnnouncement.id);
+                              }}
+                              className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
+                            >
+                              <Trash2 className="w-4 h-4"/>
+                              Delete
+                            </button>
+                          </PermissionGate>
+                        </>
+                      )}
+                      <button
+                        onClick={() => setSelectedAnnouncement(null)}
+                        className="px-4 py-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors font-medium"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>
 
-        {/* Create/Edit Announcement Modal - Only for admins */}
-        <AnimatePresence>
-          {showCreateModal && (
-            <CreateAnnouncementModal
-              announcement={editingAnnouncement}
-              onClose={() => {
-                setShowCreateModal(false);
-                setEditingAnnouncement(null);
-              }}
-              onSuccess={() => {
-                setShowCreateModal(false);
-                setEditingAnnouncement(null);
-              }}
-            />
-          )}
-        </AnimatePresence>
+          {/* Create/Edit Announcement Modal - Only for admins */}
+          <AnimatePresence>
+            {showCreateModal && (
+              <CreateAnnouncementModal
+                announcement={editingAnnouncement}
+                onClose={() => {
+                  setShowCreateModal(false);
+                  setEditingAnnouncement(null);
+                }}
+                onSuccess={() => {
+                  setShowCreateModal(false);
+                  setEditingAnnouncement(null);
+                }}
+              />
+            )}
+          </AnimatePresence>
 
-        {/* Delete Confirmation Dialog */}
-        <ConfirmDialog
-          isOpen={!!showDeleteConfirm}
-          onClose={() => setShowDeleteConfirm(null)}
-          onConfirm={handleDeleteAnnouncement}
-          title="Delete Announcement"
-          message="Are you sure you want to delete this announcement? All associated data will be permanently removed. This action cannot be undone."
-          confirmText="Delete"
-          cancelText="Cancel"
-          type="danger"
-          loading={deleteAnnouncementMutation.isPending}
-        />
+          {/* Delete Confirmation Dialog */}
+          <ConfirmDialog
+            isOpen={!!showDeleteConfirm}
+            onClose={() => setShowDeleteConfirm(null)}
+            onConfirm={handleDeleteAnnouncement}
+            title="Delete Announcement"
+            message="Are you sure you want to delete this announcement? All associated data will be permanently removed. This action cannot be undone."
+            confirmText="Delete"
+            cancelText="Cancel"
+            type="danger"
+            loading={deleteAnnouncementMutation.isPending}
+          />
         </div>
       </div>
     </AppLayout>
@@ -700,14 +713,14 @@ interface CreateAnnouncementModalProps {
   onSuccess: () => void;
 }
 
-function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnnouncementModalProps) {
+function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnouncementModalProps) {
   const toast = useToast();
   const isEditing = !!announcement;
   const [error, setError] = useState('');
   const [targetDepartmentIds, setTargetDepartmentIds] = useState<string[]>(announcement?.targetDepartmentIds || []);
 
   // React Query hooks
-  const { data: departments = [], isLoading: loadingDepartments } = useActiveDepartments();
+  const {data: departments = [], isLoading: loadingDepartments} = useActiveDepartments();
   const createMutation = useCreateAnnouncement();
   const updateMutation = useUpdateAnnouncement();
 
@@ -717,7 +730,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     watch,
     reset,
     handleSubmit: formHandleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<AnnouncementFormData>({
     resolver: zodResolver(announcementFormSchema),
     defaultValues: {
@@ -775,7 +788,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       };
 
       if (isEditing && announcement) {
-        await updateMutation.mutateAsync({ id: announcement.id, data: payload });
+        await updateMutation.mutateAsync({id: announcement.id, data: payload});
         toast.success('Announcement Updated', 'Your announcement has been updated successfully.');
       } else {
         await createMutation.mutateAsync(payload);
@@ -784,7 +797,9 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       onSuccess();
     } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} announcement:`, err);
-      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
+      const errorMessage = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Publish Failed', errorMessage);
     }
@@ -792,16 +807,16 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       className="fixed inset-0 z-50 flex items-center justify-center glass-aura !rounded-none p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+        initial={{scale: 0.95, opacity: 0}}
+        animate={{scale: 1, opacity: 1}}
+        exit={{scale: 0.95, opacity: 0}}
         className="skeuo-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -811,9 +826,9 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
           <button onClick={handleClose}
-            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="w-5 h-5 text-[var(--text-muted)]" />
+            <X className="w-5 h-5 text-[var(--text-muted)]"/>
           </button>
         </div>
 
@@ -910,13 +925,14 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 </label>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin text-accent-700" />
+                    <Loader2 className="w-5 h-5 animate-spin text-accent-700"/>
                     <span className="ml-2 text-body-muted">Loading departments...</span>
                   </div>
                 ) : departments.length === 0 ? (
                   <p className="text-body-muted">No departments found</p>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
+                  <div
+                    className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
                     {departments.map((dept) => (
                       <label
                         key={dept.id}
@@ -969,7 +985,8 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
             {/* Error */}
             {error && (
-              <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+              <div
+                className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
                 {error}
               </div>
             )}
@@ -978,23 +995,23 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           {/* Footer */}
           <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-4">
             <button type="button"
-              onClick={handleClose}
-              className="flex-1 btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handleClose}
+                    className="flex-1 btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Cancel
             </button>
             <button type="submit"
-              disabled={createMutation.isPending || updateMutation.isPending}
-              className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    disabled={createMutation.isPending || updateMutation.isPending}
+                    className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               {createMutation.isPending || updateMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin"/>
                   {isEditing ? 'Updating...' : 'Publishing...'}
                 </>
               ) : (
                 <>
-                  <Megaphone className="w-4 h-4" />
+                  <Megaphone className="w-4 h-4"/>
                   {isEditing ? 'Update' : 'Publish'}
                 </>
               )}

@@ -7,6 +7,7 @@
 ## Core Responsibilities
 
 ### 1. Authentication & Authorization
+
 - JWT-based auth (JJWT 0.12.6)
 - RBAC (500+ permissions, `MODULE:ACTION` format)
 - SuperAdmin bypass logic
@@ -16,12 +17,14 @@
 **Key Files**: `SecurityConfig.java`, `JwtAuthenticationFilter.java`, `PermissionAspect.java`
 
 ### 2. Multi-Tenant Architecture
+
 - PostgreSQL RLS (Row-Level Security)
 - Tenant context management (`TenantFilter.java`)
 - Shared DB, shared schema
 - Tenant isolation validation
 
 **Pattern**:
+
 ```java
 @Column(name = "tenant_id", nullable = false)
 private UUID tenantId;
@@ -30,14 +33,17 @@ private UUID tenantId;
 ```
 
 ### 3. Event-Driven Architecture (Kafka)
+
 - 5 topics + 5 DLT (Dead Letter Topics)
 - Event publishing (`KafkaProducer.java`)
 - Consumer retry logic
 - Failed event handling (`FailedKafkaEvent` table)
 
-**Topics**: `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.employee-lifecycle`, `nu-aura.fluence-content`
+**Topics**: `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`,
+`nu-aura.employee-lifecycle`, `nu-aura.fluence-content`
 
 ### 4. Caching (Redis)
+
 - Permission cache (TTL: 1 hour)
 - Rate limiting (Bucket4j 8.7.0)
 - Session storage
@@ -46,12 +52,14 @@ private UUID tenantId;
 **Limits**: 5/min (auth), 100/min (API), 5/5min (exports)
 
 ### 5. Real-Time (WebSocket)
+
 - STOMP + SockJS
 - Notifications push
 - Presence tracking
 - Connection management
 
 ### 6. Security
+
 - OWASP headers
 - CSRF protection (double-submit cookie)
 - Password policy (12+ chars, complexity, history of 5, 90-day max age)
@@ -61,6 +69,7 @@ private UUID tenantId;
 ## Key Patterns
 
 **RBAC Check**:
+
 ```java
 @RequiresPermission("EMPLOYEE:READ")
 public EmployeeResponse getEmployee(UUID id) {
@@ -69,6 +78,7 @@ public EmployeeResponse getEmployee(UUID id) {
 ```
 
 **Kafka Event**:
+
 ```java
 kafkaProducer.send("nu-aura.approvals", ApprovalEvent.builder()
     .approvalId(approvalId)
@@ -78,6 +88,7 @@ kafkaProducer.send("nu-aura.approvals", ApprovalEvent.builder()
 ```
 
 **Redis Cache**:
+
 ```java
 @Cacheable(value = "permissions", key = "#userId")
 public Set<String> getCachedPermissions(UUID userId) {

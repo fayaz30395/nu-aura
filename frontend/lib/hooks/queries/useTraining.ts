@@ -1,20 +1,20 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { trainingService } from '@/lib/services/grow/training.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {trainingService} from '@/lib/services/grow/training.service';
 import type {
-  TrainingProgramRequest,
-  TrainingEnrollmentRequest,
-  ProgramStatus,
   EnrollmentStatus,
+  ProgramStatus,
+  TrainingEnrollmentRequest,
+  TrainingProgramRequest,
 } from '@/lib/types/grow/training';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
 export const trainingKeys = {
   all: ['training'] as const,
   programs: () => [...trainingKeys.all, 'programs'] as const,
-  programsList: (page: number, size: number) => [...trainingKeys.programs(), 'list', { page, size }] as const,
+  programsList: (page: number, size: number) => [...trainingKeys.programs(), 'list', {page, size}] as const,
   programDetail: (id: string) => [...trainingKeys.programs(), 'detail', id] as const,
   programsByStatus: (status: ProgramStatus) => [...trainingKeys.programs(), 'status', status] as const,
   enrollments: () => [...trainingKeys.all, 'enrollments'] as const,
@@ -76,7 +76,7 @@ export function useCreateTrainingProgram() {
   return useMutation({
     mutationFn: (data: TrainingProgramRequest) => trainingService.createProgram(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: trainingKeys.programs() });
+      queryClient.invalidateQueries({queryKey: trainingKeys.programs()});
       notifications.show({
         title: 'Success',
         message: 'Training program created successfully',
@@ -86,7 +86,9 @@ export function useCreateTrainingProgram() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create training program',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to create training program',
         color: 'red',
       });
     },
@@ -97,11 +99,11 @@ export function useUpdateTrainingProgram() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ programId, data }: { programId: string; data: TrainingProgramRequest }) =>
+    mutationFn: ({programId, data}: { programId: string; data: TrainingProgramRequest }) =>
       trainingService.updateProgram(programId, data),
     onSuccess: (updatedProgram) => {
-      queryClient.invalidateQueries({ queryKey: trainingKeys.programs() });
-      queryClient.invalidateQueries({ queryKey: trainingKeys.programDetail(updatedProgram.id) });
+      queryClient.invalidateQueries({queryKey: trainingKeys.programs()});
+      queryClient.invalidateQueries({queryKey: trainingKeys.programDetail(updatedProgram.id)});
       notifications.show({
         title: 'Success',
         message: 'Training program updated successfully',
@@ -111,7 +113,9 @@ export function useUpdateTrainingProgram() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update training program',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to update training program',
         color: 'red',
       });
     },
@@ -124,7 +128,7 @@ export function useDeleteTrainingProgram() {
   return useMutation({
     mutationFn: (programId: string) => trainingService.deleteProgram(programId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: trainingKeys.programs() });
+      queryClient.invalidateQueries({queryKey: trainingKeys.programs()});
       notifications.show({
         title: 'Success',
         message: 'Training program deleted successfully',
@@ -134,7 +138,9 @@ export function useDeleteTrainingProgram() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete training program',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to delete training program',
         color: 'red',
       });
     },
@@ -147,8 +153,8 @@ export function useEnrollInTraining() {
   return useMutation({
     mutationFn: (data: TrainingEnrollmentRequest) => trainingService.enrollEmployee(data),
     onSuccess: (enrollment) => {
-      queryClient.invalidateQueries({ queryKey: trainingKeys.enrollments() });
-      queryClient.invalidateQueries({ queryKey: trainingKeys.enrollmentsByProgram(enrollment.programId) });
+      queryClient.invalidateQueries({queryKey: trainingKeys.enrollments()});
+      queryClient.invalidateQueries({queryKey: trainingKeys.enrollmentsByProgram(enrollment.programId)});
       notifications.show({
         title: 'Success',
         message: 'Employee enrolled successfully',
@@ -158,7 +164,9 @@ export function useEnrollInTraining() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll employee',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to enroll employee',
         color: 'red',
       });
     },
@@ -169,11 +177,11 @@ export function useUpdateEnrollmentStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ enrollmentId, status }: { enrollmentId: string; status: EnrollmentStatus }) =>
+    mutationFn: ({enrollmentId, status}: { enrollmentId: string; status: EnrollmentStatus }) =>
       trainingService.updateEnrollmentStatus(enrollmentId, status),
     onSuccess: (updatedEnrollment) => {
-      queryClient.invalidateQueries({ queryKey: trainingKeys.enrollments() });
-      queryClient.invalidateQueries({ queryKey: trainingKeys.enrollmentsByProgram(updatedEnrollment.programId) });
+      queryClient.invalidateQueries({queryKey: trainingKeys.enrollments()});
+      queryClient.invalidateQueries({queryKey: trainingKeys.enrollmentsByProgram(updatedEnrollment.programId)});
       notifications.show({
         title: 'Success',
         message: 'Enrollment status updated successfully',
@@ -183,7 +191,9 @@ export function useUpdateEnrollmentStatus() {
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
-        message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update enrollment status',
+        message: (error as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to update enrollment status',
         color: 'red',
       });
     },

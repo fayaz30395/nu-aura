@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { connectorService } from '@/lib/services/core/connector.service';
-import { ConnectorConfigRequest, TemplateMappingRequest } from '@/lib/types/core/connector';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {connectorService} from '@/lib/services/core/connector.service';
+import {ConnectorConfigRequest, TemplateMappingRequest} from '@/lib/types/core/connector';
 
 // Query keys for cache management
 export const connectorKeys = {
@@ -15,10 +15,10 @@ export const connectorKeys = {
   // Event logs
   events: () => [...connectorKeys.all, 'events'] as const,
   eventsList: (connectorId?: string, status?: string, page?: number, size?: number) =>
-    [...connectorKeys.events(), { connectorId, status, page, size }] as const,
+    [...connectorKeys.events(), {connectorId, status, page, size}] as const,
   // DocuSign envelopes
   docuSignEnvelopes: () => [...connectorKeys.all, 'docusign-envelopes'] as const,
-  envelopesList: (page?: number, size?: number) => [...connectorKeys.docuSignEnvelopes(), { page, size }] as const,
+  envelopesList: (page?: number, size?: number) => [...connectorKeys.docuSignEnvelopes(), {page, size}] as const,
   // DocuSign template mappings
   docuSignMappings: () => [...connectorKeys.all, 'docusign-mappings'] as const,
   mappingsList: () => [...connectorKeys.docuSignMappings(), 'list'] as const,
@@ -91,11 +91,11 @@ export function useSaveConnectorConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ connectorId, data }: { connectorId: string; data: ConnectorConfigRequest }) =>
+    mutationFn: ({connectorId, data}: { connectorId: string; data: ConnectorConfigRequest }) =>
       connectorService.saveConnectorConfig(connectorId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: connectorKeys.connectorDetail(data.connectorId) });
-      queryClient.invalidateQueries({ queryKey: connectorKeys.list() });
+      queryClient.invalidateQueries({queryKey: connectorKeys.connectorDetail(data.connectorId)});
+      queryClient.invalidateQueries({queryKey: connectorKeys.list()});
     },
   });
 }
@@ -107,8 +107,8 @@ export function useActivateConnector() {
   return useMutation({
     mutationFn: (connectorId: string) => connectorService.activateConnector(connectorId),
     onSuccess: (_, connectorId) => {
-      queryClient.invalidateQueries({ queryKey: connectorKeys.connectorDetail(connectorId) });
-      queryClient.invalidateQueries({ queryKey: connectorKeys.list() });
+      queryClient.invalidateQueries({queryKey: connectorKeys.connectorDetail(connectorId)});
+      queryClient.invalidateQueries({queryKey: connectorKeys.list()});
     },
   });
 }
@@ -120,8 +120,8 @@ export function useDeactivateConnector() {
   return useMutation({
     mutationFn: (connectorId: string) => connectorService.deactivateConnector(connectorId),
     onSuccess: (_, connectorId) => {
-      queryClient.invalidateQueries({ queryKey: connectorKeys.connectorDetail(connectorId) });
-      queryClient.invalidateQueries({ queryKey: connectorKeys.list() });
+      queryClient.invalidateQueries({queryKey: connectorKeys.connectorDetail(connectorId)});
+      queryClient.invalidateQueries({queryKey: connectorKeys.list()});
     },
   });
 }
@@ -133,7 +133,7 @@ export function useSaveTemplateMapping() {
   return useMutation({
     mutationFn: (data: TemplateMappingRequest) => connectorService.saveTemplateMapping(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectorKeys.mappingsList() });
+      queryClient.invalidateQueries({queryKey: connectorKeys.mappingsList()});
     },
   });
 }

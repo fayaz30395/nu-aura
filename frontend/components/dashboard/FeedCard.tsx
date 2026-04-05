@@ -1,24 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import {useState} from 'react';
 import Image from 'next/image';
+import {formatDistanceToNow, isToday, parseISO,} from 'date-fns';
 import {
-  formatDistanceToNow, isToday, parseISO,
-} from 'date-fns';
-import {
-  Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
-  MessageCircle, ThumbsUp, Heart, Star, Pin, Linkedin, Lightbulb, ExternalLink, Send, MessageSquare,
-  MoreHorizontal, Trash2, Pencil, Check,
+  Award,
+  Cake,
+  Check,
+  ExternalLink,
+  Heart,
+  Lightbulb,
+  Linkedin,
+  Megaphone,
+  MessageCircle,
+  MessageSquare,
+  MoreHorizontal,
+  Pencil,
+  Pin,
+  Send,
+  Star,
+  ThumbsUp,
+  Trash2,
+  TrendingUp,
+  Trophy,
+  UserPlus,
 } from 'lucide-react';
-import { wallService } from '@/lib/services/core/wall.service';
-import { PRAISE_CATEGORIES } from '@/components/dashboard/PostComposer';
-import type { CommentResponse } from '@/lib/services/core/wall.service';
-import type { FeedItem, FeedItemType } from '@/lib/types/core/feed';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { cn } from '@/lib/utils';
-import { logger } from '@/lib/utils/logger';
-import { FeedCommentItem } from './FeedCommentThread';
+import type {CommentResponse} from '@/lib/services/core/wall.service';
+import {wallService} from '@/lib/services/core/wall.service';
+import {PRAISE_CATEGORIES} from '@/components/dashboard/PostComposer';
+import type {FeedItem, FeedItemType} from '@/lib/types/core/feed';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {cn} from '@/lib/utils';
+import {logger} from '@/lib/utils/logger';
+import {FeedCommentItem} from './FeedCommentThread';
 
 // ─── Config (co-located with FeedCard, exported for CompanyFeed) ──────
 export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -79,15 +94,15 @@ export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; ico
 };
 
 export const FEED_ICONS: Record<FeedItemType, React.ReactNode> = {
-  ANNOUNCEMENT: <Megaphone className="h-4 w-4" />,
-  BIRTHDAY: <Cake className="h-4 w-4" />,
-  WORK_ANNIVERSARY: <Trophy className="h-4 w-4" />,
-  NEW_JOINER: <UserPlus className="h-4 w-4" />,
-  PROMOTION: <TrendingUp className="h-4 w-4" />,
-  RECOGNITION: <Award className="h-4 w-4" />,
-  LINKEDIN_POST: <Linkedin className="h-4 w-4" />,
-  SPOTLIGHT: <Lightbulb className="h-4 w-4" />,
-  WALL_POST: <MessageSquare className="h-4 w-4" />,
+  ANNOUNCEMENT: <Megaphone className="h-4 w-4"/>,
+  BIRTHDAY: <Cake className="h-4 w-4"/>,
+  WORK_ANNIVERSARY: <Trophy className="h-4 w-4"/>,
+  NEW_JOINER: <UserPlus className="h-4 w-4"/>,
+  PROMOTION: <TrendingUp className="h-4 w-4"/>,
+  RECOGNITION: <Award className="h-4 w-4"/>,
+  LINKEDIN_POST: <Linkedin className="h-4 w-4"/>,
+  SPOTLIGHT: <Lightbulb className="h-4 w-4"/>,
+  WALL_POST: <MessageSquare className="h-4 w-4"/>,
 };
 
 export const FEED_LABELS: Record<FeedItemType, string> = {
@@ -111,7 +126,7 @@ export function formatFeedDate(dateStr: string): string {
   try {
     const date = parseISO(dateStr);
     if (isToday(date)) return 'Today';
-    return formatDistanceToNow(date, { addSuffix: true });
+    return formatDistanceToNow(date, {addSuffix: true});
   } catch {
     return dateStr;
   }
@@ -126,7 +141,7 @@ interface ActionMenuProps {
   isDeleting: boolean;
 }
 
-function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: ActionMenuProps) {
+function ActionMenu({showMenu, setShowMenu, onEdit, onDelete, isDeleting}: ActionMenuProps) {
   return (
     <div className="relative">
       <button
@@ -134,18 +149,22 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
         className="p-0.5 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
         aria-label="Open menu"
       >
-        <MoreHorizontal className="h-3.5 w-3.5" />
+        <MoreHorizontal className="h-3.5 w-3.5"/>
       </button>
       {showMenu && (
         <>
-          <div className="fixed inset-0 z-10 cursor-pointer" onClick={() => setShowMenu(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] py-1">
+          <div className="fixed inset-0 z-10 cursor-pointer" onClick={() => setShowMenu(false)}/>
+          <div
+            className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] py-1">
             {onEdit && (
               <button
-                onClick={() => { onEdit(); setShowMenu(false); }}
+                onClick={() => {
+                  onEdit();
+                  setShowMenu(false);
+                }}
                 className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]  transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Pencil className="h-3 w-3" />
+                <Pencil className="h-3 w-3"/>
                 Edit post
               </button>
             )}
@@ -154,7 +173,7 @@ function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: Act
               disabled={isDeleting}
               className="w-full flex items-center gap-2 px-4 py-1.5 text-xs text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="h-3 w-3"/>
               {isDeleting ? 'Deleting...' : 'Delete post'}
             </button>
           </div>
@@ -176,11 +195,11 @@ export interface FeedCardProps {
  * Handles WALL_POST (social card with reactions, comments, polls, praise)
  * and all other feed item types (announcement, birthday, recognition, etc.).
  */
-export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
+export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
   const colors = FEED_COLORS[item.type];
   const icon = FEED_ICONS[item.type];
-  const { user } = useAuth();
-  const { hasPermission, isAdmin } = usePermissions();
+  const {user} = useAuth();
+  const {hasPermission, isAdmin} = usePermissions();
   const [liked, setLiked] = useState(item.hasReacted ?? false);
   const [localLikeCount, setLocalLikeCount] = useState(item.likesCount ?? 0);
   const [localCommentCount, setLocalCommentCount] = useState(item.commentsCount ?? 0);
@@ -208,7 +227,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
   // Reactor details state
   const [localReactors, setLocalReactors] = useState(item.recentReactors ?? []);
   const [showReactorsPopover, setShowReactorsPopover] = useState(false);
-  const [allReactors, setAllReactors] = useState<Array<{ employeeId: string; fullName: string; avatarUrl?: string; reactionType: string; reactedAt: string }>>([]);
+  const [allReactors, setAllReactors] = useState<Array<{
+    employeeId: string;
+    fullName: string;
+    avatarUrl?: string;
+    reactionType: string;
+    reactedAt: string
+  }>>([]);
   const [isLoadingAllReactors, setIsLoadingAllReactors] = useState(false);
 
   // Determine if current user can manage this post
@@ -244,7 +269,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
     if (!item.wallPostId || !editContent.trim() || isSavingEdit) return;
     setIsSavingEdit(true);
     try {
-      await wallService.updatePost(item.wallPostId, { content: editContent.trim() });
+      await wallService.updatePost(item.wallPostId, {content: editContent.trim()});
       setLocalContent(editContent.trim());
       setIsEditing(false);
       onUpdated?.(item.id, editContent.trim());
@@ -317,7 +342,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
       setLocalReactors((prev) => prev.filter((r) => r.employeeId !== user?.employeeId));
     } else if (user) {
       setLocalReactors((prev) => [
-        { employeeId: user.employeeId || '', fullName: user.fullName || 'You', avatarUrl: user.profilePictureUrl, reactionType: 'LIKE', reactedAt: new Date().toISOString() },
+        {
+          employeeId: user.employeeId || '',
+          fullName: user.fullName || 'You',
+          avatarUrl: user.profilePictureUrl,
+          reactionType: 'LIKE',
+          reactedAt: new Date().toISOString()
+        },
         ...prev,
       ].slice(0, 5));
     }
@@ -358,7 +389,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
     setIsSubmittingComment(true);
     try {
-      const newComment = await wallService.addComment(item.wallPostId, { content: commentText.trim() });
+      const newComment = await wallService.addComment(item.wallPostId, {content: commentText.trim()});
       setComments((prev) => [...prev, newComment]);
       setCommentText('');
       setLocalCommentCount((prev) => prev + 1);
@@ -384,18 +415,21 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
       || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.wallPostAuthor || 'U')}&background=6366f1&color=fff&size=80&bold=true&format=svg`;
 
     return (
-      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] overflow-hidden transition-colors">
+      <div
+        className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] overflow-hidden transition-colors">
         {/* Header: avatar + "Author created a post" + timestamp + action menu */}
         <div className="flex items-start gap-2 px-4 pt-4 pb-2">
           <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
-            <Image src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
+            <Image src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40}
+                   className="rounded-full object-cover w-10 h-10"/>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm leading-snug">
               <span className="font-semibold text-[var(--text-primary)]">{item.wallPostAuthor}</span>
               <span className="text-[var(--text-muted)] font-normal">
                 {item.wallPostType === 'POLL' && ' created a poll'}
-                {item.wallPostType === 'PRAISE' && <> recognized <span className="font-semibold text-[var(--text-primary)]">{item.praiseRecipientName}</span></>}
+                {item.wallPostType === 'PRAISE' && <> recognized <span
+                  className="font-semibold text-[var(--text-primary)]">{item.praiseRecipientName}</span></>}
                 {(!item.wallPostType || item.wallPostType === 'POST') && ' created a post'}
               </span>
             </p>
@@ -409,7 +443,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           <div className="flex items-center gap-2 flex-shrink-0">
             {item.isPinned && (
               <span className="inline-flex items-center gap-0.5 text-2xs text-[var(--text-muted)]">
-                <Pin className="h-2.5 w-2.5" /> Pinned
+                <Pin className="h-2.5 w-2.5"/> Pinned
               </span>
             )}
             {canManagePost && (
@@ -466,7 +500,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         {/* Post image */}
         {item.wallPostImageUrl && (
           <div className="relative w-full h-48 bg-[var(--bg-secondary)]">
-            <Image src={item.wallPostImageUrl} alt="Post image" fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+            <Image src={item.wallPostImageUrl} alt="Post image" fill className="object-cover"
+                   sizes="(max-width: 768px) 100vw, 600px"/>
           </div>
         )}
 
@@ -498,13 +533,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                           ? 'bg-accent-100 dark:bg-accent-900/40'
                           : 'bg-[var(--bg-secondary)]'
                       )}
-                      style={{ width: `${pct}%` }}
+                      style={{width: `${pct}%`}}
                     />
                   )}
                   <div className="relative row-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
                       {isSelected && (
-                        <Check size={14} className="text-accent-700 dark:text-accent-400 shrink-0" />
+                        <Check size={14} className="text-accent-700 dark:text-accent-400 shrink-0"/>
                       )}
                       <span className={cn(
                         'truncate',
@@ -530,10 +565,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         {/* Praise badge + recipient */}
         {item.wallPostType === 'PRAISE' && item.praiseRecipientName && (
           <div className="px-4 pb-2">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/30 dark:to-warning-950/30 border border-warning-200/50 dark:border-warning-800/30">
-              <div className="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/50 flex items-center justify-center text-lg font-bold text-warning-700 dark:text-warning-300 overflow-hidden shrink-0">
+            <div
+              className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/30 dark:to-warning-950/30 border border-warning-200/50 dark:border-warning-800/30">
+              <div
+                className="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/50 flex items-center justify-center text-lg font-bold text-warning-700 dark:text-warning-300 overflow-hidden shrink-0">
                 {item.praiseRecipientAvatar ? (
-                  <Image src={item.praiseRecipientAvatar} alt={item.praiseRecipientName ?? ''} width={48} height={48} className="w-full h-full object-cover" />
+                  <Image src={item.praiseRecipientAvatar} alt={item.praiseRecipientName ?? ''} width={48} height={48}
+                         className="w-full h-full object-cover"/>
                 ) : (
                   item.praiseRecipientName.charAt(0)
                 )}
@@ -548,11 +586,13 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 {item.praiseCategory && (() => {
                   const cat = PRAISE_CATEGORIES.find((c) => c.id === item.praiseCategory);
                   return cat ? (
-                    <span className={cn('inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border', cat.color)}>
+                    <span
+                      className={cn('inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border', cat.color)}>
                       <span>{cat.emoji}</span> {cat.label}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-warning-200 bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800">
+                    <span
+                      className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-warning-200 bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300 dark:border-warning-800">
                       🏆 {item.praiseCategory}
                     </span>
                   );
@@ -563,7 +603,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
         )}
 
         {/* Action bar: Like + Comment (hidden for polls) */}
-        <div className={`row-between px-4 py-2 border-t border-[var(--border-subtle)] ${item.wallPostType === 'POLL' ? 'hidden' : ''}`}>
+        <div
+          className={`row-between px-4 py-2 border-t border-[var(--border-subtle)] ${item.wallPostType === 'POLL' ? 'hidden' : ''}`}>
           <div className="flex items-center gap-4">
             <button
               onClick={handleLike}
@@ -571,7 +612,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 liked ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
-              <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-accent-700 dark:fill-accent-400' : ''}`} />
+              <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-accent-700 dark:fill-accent-400' : ''}`}/>
               Like
             </button>
             <button
@@ -580,7 +621,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 showComments ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4"/>
               Comment
             </button>
           </div>
@@ -623,20 +664,27 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   {/* Reactors popover */}
                   {showReactorsPopover && (
                     <>
-                      <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)} />
-                      <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] overflow-hidden">
+                      <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setShowReactorsPopover(false)}/>
+                      <div
+                        className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-[var(--shadow-dropdown)] overflow-hidden">
                         <div className="row-between px-4 py-2 divider-b">
-                          <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
-                          <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close reactions popup">✕</button>
+                          <span
+                            className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
+                          <button onClick={() => setShowReactorsPopover(false)}
+                                  className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  aria-label="Close reactions popup">✕
+                          </button>
                         </div>
                         <div className="max-h-48 overflow-y-auto">
                           {isLoadingAllReactors ? (
                             <div className="flex items-center justify-center py-4">
-                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
+                              <div
+                                className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500"/>
                             </div>
                           ) : (
                             (allReactors.length > 0 ? allReactors : localReactors).map((reactor) => (
-                              <div key={reactor.employeeId} className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--bg-surface)] transition-colors">
+                              <div key={reactor.employeeId}
+                                   className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--bg-surface)] transition-colors">
                                 <Image
                                   src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=28&bold=true`}
                                   alt={reactor.fullName}
@@ -646,7 +694,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                                   unoptimized
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-medium text-[var(--text-primary)] truncate">{reactor.fullName}</p>
+                                  <p
+                                    className="text-xs font-medium text-[var(--text-primary)] truncate">{reactor.fullName}</p>
                                 </div>
                                 <span className="text-sm">👍</span>
                               </div>
@@ -665,7 +714,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 <span className="mx-0.5">·</span>
               )}
               {localCommentCount > 0 && (
-                <button onClick={handleToggleComments} className="hover:text-[var(--text-secondary)] hover:underline transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <button onClick={handleToggleComments}
+                        className="hover:text-[var(--text-secondary)] hover:underline transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {localCommentCount} {localCommentCount === 1 ? 'Comment' : 'Comments'}
                 </button>
               )}
@@ -682,7 +732,10 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); }
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmitComment();
+                  }
                 }}
                 placeholder="Write a comment..."
                 className="flex-1 px-4 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
@@ -694,19 +747,24 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                 className="inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Submit comment"
               >
-                <Send className="h-3 w-3" />
+                <Send className="h-3 w-3"/>
               </button>
             </div>
             {isLoadingComments && (
               <div className="flex items-center gap-2 py-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
+                <div
+                  className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500"/>
                 <span className="text-caption">Loading comments...</span>
               </div>
             )}
             {!isLoadingComments && comments.length > 0 && (
               <div className="space-y-2">
                 {comments.map((comment) => (
-                  <FeedCommentItem key={comment.id} comment={comment} postId={item.wallPostId!} depth={0} onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)} currentUser={user ? { employeeId: user.employeeId, profilePictureUrl: user.profilePictureUrl } : undefined} />
+                  <FeedCommentItem key={comment.id} comment={comment} postId={item.wallPostId!} depth={0}
+                                   onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)} currentUser={user ? {
+                    employeeId: user.employeeId,
+                    profilePictureUrl: user.profilePictureUrl
+                  } : undefined}/>
                 ))}
               </div>
             )}
@@ -718,12 +776,15 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
 
   // ─── Default card layout (non-WALL_POST types) ─────────────────────
   return (
-    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
+    <div
+      className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-4 transition-colors hover:bg-[var(--bg-surface)] `}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-card)] border border-[var(--border-main)] ${colors.icon}`}>
+        <div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-card)] border border-[var(--border-main)] ${colors.icon}`}>
           {item.personAvatarUrl ? (
-            <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32} className="rounded-full object-cover" />
+            <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32}
+                   className="rounded-full object-cover"/>
           ) : icon}
         </div>
 
@@ -736,7 +797,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
             </span>
             {item.isPinned && (
               <span className="inline-flex items-center gap-0.5 text-caption">
-                <Pin className="h-2.5 w-2.5" /> Pinned
+                <Pin className="h-2.5 w-2.5"/> Pinned
               </span>
             )}
             {item.isToday && (
@@ -762,7 +823,8 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
           {item.type === 'RECOGNITION' && (
             <div className="mt-0.5">
               <p className="text-caption">
-                {item.giverName} recognized <span className="font-medium text-[var(--text-secondary)]">{item.receiverName}</span>
+                {item.giverName} recognized <span
+                className="font-medium text-[var(--text-secondary)]">{item.receiverName}</span>
               </p>
               {item.description && (
                 <p className="text-caption mt-0.5 line-clamp-2 italic">
@@ -772,17 +834,17 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               <div className="flex items-center gap-2.5 mt-1">
                 {item.pointsAwarded && item.pointsAwarded > 0 && (
                   <span className="inline-flex items-center gap-0.5 text-caption">
-                    <Star className="h-2.5 w-2.5" /> {item.pointsAwarded} pts
+                    <Star className="h-2.5 w-2.5"/> {item.pointsAwarded} pts
                   </span>
                 )}
                 {(item.likesCount ?? 0) > 0 && (
                   <span className="inline-flex items-center gap-0.5 text-caption">
-                    <ThumbsUp className="h-2.5 w-2.5" /> {item.likesCount}
+                    <ThumbsUp className="h-2.5 w-2.5"/> {item.likesCount}
                   </span>
                 )}
                 {(item.commentsCount ?? 0) > 0 && (
                   <span className="inline-flex items-center gap-0.5 text-caption">
-                    <MessageCircle className="h-2.5 w-2.5" /> {item.commentsCount}
+                    <MessageCircle className="h-2.5 w-2.5"/> {item.commentsCount}
                   </span>
                 )}
               </div>
@@ -820,7 +882,9 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
               )}
               {item.linkedinImageUrl && (
                 <div className="mt-1.5 rounded-lg overflow-hidden bg-[var(--bg-surface)] relative w-full h-24">
-                  <Image src={item.linkedinImageUrl} alt={item.title ? `Image for post: ${item.title}` : 'LinkedIn post image'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+                  <Image src={item.linkedinImageUrl}
+                         alt={item.title ? `Image for post: ${item.title}` : 'LinkedIn post image'} fill
+                         className="object-cover" sizes="(max-width: 768px) 100vw, 400px"/>
                 </div>
               )}
               <div className="flex items-center gap-2.5 mt-1.5">
@@ -828,12 +892,12 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   <>
                     {item.linkedinEngagement.likes > 0 && (
                       <span className="inline-flex items-center gap-0.5 text-caption">
-                        <ThumbsUp className="h-2.5 w-2.5" /> {item.linkedinEngagement.likes}
+                        <ThumbsUp className="h-2.5 w-2.5"/> {item.linkedinEngagement.likes}
                       </span>
                     )}
                     {item.linkedinEngagement.comments > 0 && (
                       <span className="inline-flex items-center gap-0.5 text-caption">
-                        <MessageCircle className="h-2.5 w-2.5" /> {item.linkedinEngagement.comments}
+                        <MessageCircle className="h-2.5 w-2.5"/> {item.linkedinEngagement.comments}
                       </span>
                     )}
                   </>
@@ -845,7 +909,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]  ml-auto"
                   >
-                    View on LinkedIn <ExternalLink className="h-2.5 w-2.5" />
+                    View on LinkedIn <ExternalLink className="h-2.5 w-2.5"/>
                   </a>
                 )}
               </div>
@@ -861,7 +925,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
-                <Heart className={`h-3 w-3 ${liked ? 'fill-danger-500' : ''}`} />
+                <Heart className={`h-3 w-3 ${liked ? 'fill-danger-500' : ''}`}/>
                 {localLikeCount > 0 ? localLikeCount : 'Like'}
               </button>
               <button
@@ -870,7 +934,7 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   showComments ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
-                <MessageCircle className="h-3 w-3" />
+                <MessageCircle className="h-3 w-3"/>
                 {localCommentCount > 0 ? localCommentCount : 'Comment'}
               </button>
             </div>
@@ -899,14 +963,15 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                   disabled={!commentText.trim() || isSubmittingComment}
                   className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <Send className="h-3 w-3" />
+                  <Send className="h-3 w-3"/>
                   {isSubmittingComment ? 'Posting...' : 'Post'}
                 </button>
               </div>
 
               {isLoadingComments && (
                 <div className="flex items-center gap-2 py-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500" />
+                  <div
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500"/>
                   <span className="text-caption">Loading comments...</span>
                 </div>
               )}
@@ -920,7 +985,10 @@ export function FeedCard({ item, onDeleted, onUpdated }: FeedCardProps) {
                       postId={item.wallPostId!}
                       depth={0}
                       onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)}
-                      currentUser={user ? { employeeId: user.employeeId, profilePictureUrl: user.profilePictureUrl } : undefined}
+                      currentUser={user ? {
+                        employeeId: user.employeeId,
+                        profilePictureUrl: user.profilePictureUrl
+                      } : undefined}
                     />
                   ))}
                 </div>

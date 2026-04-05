@@ -2,24 +2,14 @@
 
 import React from 'react';
 import NextImage from 'next/image';
-import {
-  X,
-  FolderPlus,
-  Loader2,
-  Share2,
-  Check,
-  Copy,
-  Edit3,
-  Download,
-  ExternalLink,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { DriveFile } from './types';
-import { getFileIcon, getPreviewUrl } from './fileUtils';
-import { safeWindowOpen } from '@/lib/utils/url';
+import {Check, Copy, Download, Edit3, ExternalLink, FolderPlus, Loader2, Share2, X,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Card} from '@/components/ui/Card';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {DriveFile} from './types';
+import {getFileIcon, getPreviewUrl} from './fileUtils';
+import {safeWindowOpen} from '@/lib/utils/url';
 
 // ---- New Folder Modal ----
 interface NewFolderModalProps {
@@ -32,13 +22,13 @@ interface NewFolderModalProps {
 }
 
 export const NewFolderModal = React.memo(function NewFolderModal({
-  opened,
-  newFolderName,
-  creatingFolder,
-  onClose,
-  onNameChange,
-  onCreate,
-}: NewFolderModalProps) {
+                                                                   opened,
+                                                                   newFolderName,
+                                                                   creatingFolder,
+                                                                   onClose,
+                                                                   onNameChange,
+                                                                   onCreate,
+                                                                 }: NewFolderModalProps) {
   if (!opened) return null;
 
   return (
@@ -50,7 +40,7 @@ export const NewFolderModal = React.memo(function NewFolderModal({
             onClick={onClose}
             className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
         <div className="p-4 space-y-4">
@@ -73,7 +63,8 @@ export const NewFolderModal = React.memo(function NewFolderModal({
               variant="primary"
               onClick={onCreate}
               disabled={creatingFolder || !newFolderName.trim()}
-              leftIcon={creatingFolder ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderPlus className="h-4 w-4" />}
+              leftIcon={creatingFolder ? <Loader2 className="h-4 w-4 animate-spin"/> :
+                <FolderPlus className="h-4 w-4"/>}
             >
               {creatingFolder ? 'Creating...' : 'Create'}
             </Button>
@@ -103,21 +94,21 @@ interface ShareModalProps {
 }
 
 export const ShareModal = React.memo(function ShareModal({
-  opened,
-  file,
-  shareEmail,
-  shareRole,
-  sharing,
-  shareSuccess,
-  shareLink,
-  linkCopied,
-  onClose,
-  onEmailChange,
-  onRoleChange,
-  onShare,
-  onGetShareableLink,
-  onCopyLink,
-}: ShareModalProps) {
+                                                           opened,
+                                                           file,
+                                                           shareEmail,
+                                                           shareRole,
+                                                           sharing,
+                                                           shareSuccess,
+                                                           shareLink,
+                                                           linkCopied,
+                                                           onClose,
+                                                           onEmailChange,
+                                                           onRoleChange,
+                                                           onShare,
+                                                           onGetShareableLink,
+                                                           onCopyLink,
+                                                         }: ShareModalProps) {
   if (!opened || !file) return null;
 
   return (
@@ -129,13 +120,14 @@ export const ShareModal = React.memo(function ShareModal({
             onClick={onClose}
             className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
         <div className="p-4 space-y-4">
           {shareSuccess && (
-            <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
-              <Check className="h-4 w-4" />
+            <div
+              className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
+              <Check className="h-4 w-4"/>
               <span className="text-sm">Shared successfully!</span>
             </div>
           )}
@@ -171,7 +163,7 @@ export const ShareModal = React.memo(function ShareModal({
             variant="primary"
             onClick={onShare}
             disabled={sharing || !shareEmail.trim()}
-            leftIcon={sharing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
+            leftIcon={sharing ? <Loader2 className="h-4 w-4 animate-spin"/> : <Share2 className="h-4 w-4"/>}
             className="w-full"
           >
             {sharing ? 'Sharing...' : 'Share'}
@@ -183,11 +175,11 @@ export const ShareModal = React.memo(function ShareModal({
             </label>
             {shareLink ? (
               <div className="flex items-center gap-2">
-                <Input value={shareLink} readOnly className="flex-1" />
+                <Input value={shareLink} readOnly className="flex-1"/>
                 <Button
                   variant="outline"
                   onClick={onCopyLink}
-                  leftIcon={linkCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  leftIcon={linkCopied ? <Check className="h-4 w-4"/> : <Copy className="h-4 w-4"/>}
                 >
                   {linkCopied ? 'Copied!' : 'Copy'}
                 </Button>
@@ -219,14 +211,14 @@ interface RenameModalProps {
 }
 
 export const RenameModal = React.memo(function RenameModal({
-  opened,
-  file,
-  renameValue,
-  renaming,
-  onClose,
-  onRenameChange,
-  onRename,
-}: RenameModalProps) {
+                                                             opened,
+                                                             file,
+                                                             renameValue,
+                                                             renaming,
+                                                             onClose,
+                                                             onRenameChange,
+                                                             onRename,
+                                                           }: RenameModalProps) {
   if (!opened || !file) return null;
 
   return (
@@ -238,7 +230,7 @@ export const RenameModal = React.memo(function RenameModal({
             onClick={onClose}
             className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
         <div className="p-4 space-y-4">
@@ -261,7 +253,7 @@ export const RenameModal = React.memo(function RenameModal({
               variant="primary"
               onClick={onRename}
               disabled={renaming || !renameValue.trim()}
-              leftIcon={renaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Edit3 className="h-4 w-4" />}
+              leftIcon={renaming ? <Loader2 className="h-4 w-4 animate-spin"/> : <Edit3 className="h-4 w-4"/>}
             >
               {renaming ? 'Renaming...' : 'Rename'}
             </Button>
@@ -286,16 +278,16 @@ interface FilePreviewModalProps {
 }
 
 export const FilePreviewModal = React.memo(function FilePreviewModal({
-  opened,
-  file,
-  previewLoading,
-  previewContent,
-  previewImgError,
-  onClose,
-  onDownload,
-  onShare,
-  onImgError,
-}: FilePreviewModalProps) {
+                                                                       opened,
+                                                                       file,
+                                                                       previewLoading,
+                                                                       previewContent,
+                                                                       previewImgError,
+                                                                       onClose,
+                                                                       onDownload,
+                                                                       onShare,
+                                                                       onImgError,
+                                                                     }: FilePreviewModalProps) {
   if (!opened || !file) return null;
 
   return (
@@ -320,7 +312,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
               size="sm"
               onClick={() => onDownload(file)}
               className="text-white hover:bg-[var(--bg-secondary)]"
-              leftIcon={<Download className="h-4 w-4" />}
+              leftIcon={<Download className="h-4 w-4"/>}
             >
               Download
             </Button>
@@ -330,7 +322,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             size="sm"
             onClick={() => onShare(file)}
             className="text-white hover:bg-[var(--bg-secondary)]"
-            leftIcon={<Share2 className="h-4 w-4" />}
+            leftIcon={<Share2 className="h-4 w-4"/>}
           >
             Share
           </Button>
@@ -340,7 +332,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
               size="sm"
               onClick={() => safeWindowOpen(file.webViewLink, '_blank')}
               className="text-white hover:bg-[var(--bg-secondary)]"
-              leftIcon={<ExternalLink className="h-4 w-4" />}
+              leftIcon={<ExternalLink className="h-4 w-4"/>}
             >
               Open in Drive
             </Button>
@@ -349,7 +341,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             onClick={onClose}
             className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5"/>
           </button>
         </div>
       </div>
@@ -358,12 +350,13 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
       <div className="flex-1 flex items-center justify-center overflow-hidden">
         {previewLoading ? (
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-10 w-10 text-white animate-spin" />
+            <Loader2 className="h-10 w-10 text-white animate-spin"/>
             <p className="text-white">Loading preview...</p>
           </div>
         ) : previewContent ? (
           <div className="w-full h-full overflow-auto p-4">
-            <pre className="bg-[var(--bg-secondary)] text-[var(--text-primary)] p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
+            <pre
+              className="bg-[var(--bg-secondary)] text-[var(--text-primary)] p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
               {previewContent}
             </pre>
           </div>
@@ -392,7 +385,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             src={getPreviewUrl(file) || `https://drive.google.com/file/d/${file.id}/preview`}
             className="w-full h-full"
             allow="autoplay"
-            style={{ border: 'none' }}
+            style={{border: 'none'}}
           />
         )}
       </div>
@@ -407,7 +400,7 @@ interface DeleteConfirmProps {
   onConfirm: () => void;
 }
 
-export const DeleteConfirm = React.memo(function DeleteConfirm({ isOpen, onClose, onConfirm }: DeleteConfirmProps) {
+export const DeleteConfirm = React.memo(function DeleteConfirm({isOpen, onClose, onConfirm}: DeleteConfirmProps) {
   return (
     <ConfirmDialog
       isOpen={isOpen}

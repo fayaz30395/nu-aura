@@ -1,66 +1,58 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion } from 'framer-motion';
+import React, {useState} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {motion} from 'framer-motion';
 import {
   ArrowLeft,
-  Plus,
-  Trash2,
-  Send,
-  Type,
-  CircleDot,
-  CheckSquare,
-  Star,
-  Hash,
   BarChart3,
-  GripVertical,
   Calendar,
-  Users,
+  CheckSquare,
+  CircleDot,
+  GripVertical,
+  Hash,
+  Plus,
+  Send,
+  Star,
   ToggleLeft,
+  Trash2,
+  Type,
+  Users,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
-  Button,
+  ConfirmDialog,
   Input,
-  Select,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  Badge,
+  ModalHeader,
+  Select,
   Textarea,
-  ConfirmDialog,
 } from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useSurveyDetail, useLaunchSurvey } from '@/lib/hooks/queries/useSurveys';
-import {
-  useSurveyQuestions,
-  useAddQuestion,
-  useDeleteQuestion,
-} from '@/lib/hooks/queries/useSurveyQuestions';
-import { QuestionType, SurveyStatus } from '@/lib/types/grow/survey';
-import { toBadgeVariant } from '@/lib/utils/type-guards';
-import {
-  motion as dsMotion,
-  typography,
-  iconSize,
-} from '@/lib/design-system';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useLaunchSurvey, useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
+import {useAddQuestion, useDeleteQuestion, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
+import {QuestionType, SurveyStatus} from '@/lib/types/grow/survey';
+import {toBadgeVariant} from '@/lib/utils/type-guards';
+import {iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
 
 // ─── Question type metadata ────────────────────────────────────────────────
 const questionTypeOptions = [
-  { value: QuestionType.TEXT, label: 'Text', icon: Type },
-  { value: QuestionType.SINGLE_CHOICE, label: 'Single Choice', icon: CircleDot },
-  { value: QuestionType.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: CheckSquare },
-  { value: QuestionType.SCALE, label: 'Likert Scale (1-5)', icon: BarChart3 },
-  { value: QuestionType.NPS, label: 'NPS (0-10)', icon: Hash },
-  { value: QuestionType.RATING, label: 'Rating (1-5)', icon: Star },
+  {value: QuestionType.TEXT, label: 'Text', icon: Type},
+  {value: QuestionType.SINGLE_CHOICE, label: 'Single Choice', icon: CircleDot},
+  {value: QuestionType.MULTIPLE_CHOICE, label: 'Multiple Choice', icon: CheckSquare},
+  {value: QuestionType.SCALE, label: 'Likert Scale (1-5)', icon: BarChart3},
+  {value: QuestionType.NPS, label: 'NPS (0-10)', icon: Hash},
+  {value: QuestionType.RATING, label: 'Rating (1-5)', icon: Star},
 ];
 
 const getQuestionTypeIcon = (type: QuestionType) => {
@@ -90,7 +82,7 @@ const addQuestionSchema = z
       }
       return true;
     },
-    { message: 'Provide at least 2 comma-separated options', path: ['options'] }
+    {message: 'Provide at least 2 comma-separated options', path: ['options']}
   );
 
 type AddQuestionFormData = z.infer<typeof addQuestionSchema>;
@@ -101,8 +93,8 @@ export default function SurveyDetailPage() {
   const router = useRouter();
   const surveyId = params.id as string;
 
-  const { data: survey, isLoading: surveyLoading } = useSurveyDetail(surveyId);
-  const { data: questions, isLoading: questionsLoading } = useSurveyQuestions(surveyId);
+  const {data: survey, isLoading: surveyLoading} = useSurveyDetail(surveyId);
+  const {data: questions, isLoading: questionsLoading} = useSurveyQuestions(surveyId);
   const addMutation = useAddQuestion(surveyId);
   const deleteMutation = useDeleteQuestion(surveyId);
   const launchMutation = useLaunchSurvey();
@@ -116,7 +108,7 @@ export default function SurveyDetailPage() {
     control,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<AddQuestionFormData>({
     resolver: zodResolver(addQuestionSchema),
     defaultValues: {
@@ -142,9 +134,9 @@ export default function SurveyDetailPage() {
   const onSubmitQuestion = (formData: AddQuestionFormData) => {
     const optionsArray = needsOptions(formData.questionType)
       ? formData.options
-          ?.split(',')
-          .map((o) => o.trim())
-          .filter(Boolean)
+        ?.split(',')
+        .map((o) => o.trim())
+        .filter(Boolean)
       : undefined;
 
     addMutation.mutate(
@@ -169,9 +161,9 @@ export default function SurveyDetailPage() {
   const isDraft = survey?.status === SurveyStatus.DRAFT;
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Surveys', href: '/surveys' },
-    { label: survey?.title ?? 'Survey Detail' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Surveys', href: '/surveys'},
+    {label: survey?.title ?? 'Survey Detail'},
   ];
 
   return (
@@ -181,7 +173,7 @@ export default function SurveyDetailPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm" onClick={() => router.push('/surveys')}>
-              <ArrowLeft className={iconSize.button} />
+              <ArrowLeft className={iconSize.button}/>
             </Button>
             <div>
               <div className="flex items-center gap-2">
@@ -210,12 +202,12 @@ export default function SurveyDetailPage() {
                 variant="outline"
                 onClick={() => router.push(`/surveys/${surveyId}/analytics`)}
               >
-                <BarChart3 className={`${iconSize.button} mr-2`} />
+                <BarChart3 className={`${iconSize.button} mr-2`}/>
                 Analytics
               </Button>
               {isDraft && (
                 <Button onClick={handlePublish} disabled={launchMutation.isPending}>
-                  <Send className={`${iconSize.button} mr-2`} />
+                  <Send className={`${iconSize.button} mr-2`}/>
                   Publish
                 </Button>
               )}
@@ -230,7 +222,7 @@ export default function SurveyDetailPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Target</p>
@@ -245,7 +237,7 @@ export default function SurveyDetailPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                    <Hash className="h-6 w-6 text-success-600 dark:text-success-400" />
+                    <Hash className="h-6 w-6 text-success-600 dark:text-success-400"/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Responses</p>
@@ -258,7 +250,7 @@ export default function SurveyDetailPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                    <Calendar className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                    <Calendar className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Status</p>
@@ -271,7 +263,7 @@ export default function SurveyDetailPage() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                    <ToggleLeft className="h-6 w-6 text-warning-600 dark:text-warning-400" />
+                    <ToggleLeft className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Anonymous</p>
@@ -295,7 +287,7 @@ export default function SurveyDetailPage() {
               <PermissionGate permission={Permissions.SURVEY_MANAGE}>
                 {isDraft && (
                   <Button size="sm" onClick={handleOpenAddModal}>
-                    <Plus className={`${iconSize.button} mr-2`} />
+                    <Plus className={`${iconSize.button} mr-2`}/>
                     Add Question
                   </Button>
                 )}
@@ -313,7 +305,7 @@ export default function SurveyDetailPage() {
               </div>
             ) : !questions || questions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <Type className="h-12 w-12 text-[var(--text-muted)]" />
+                <Type className="h-12 w-12 text-[var(--text-muted)]"/>
                 <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                   No questions yet
                 </p>
@@ -333,11 +325,12 @@ export default function SurveyDetailPage() {
                         variants={dsMotion.staggerItem.variants}
                         className="flex items-center gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 transition-colors hover:bg-[var(--bg-card-hover)]"
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                        <span
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
                           {index + 1}
                         </span>
-                        <GripVertical className="h-4 w-4 text-[var(--text-muted)]" />
-                        <Icon className={`${iconSize.cardInline} text-[var(--text-secondary)]`} />
+                        <GripVertical className="h-4 w-4 text-[var(--text-muted)]"/>
+                        <Icon className={`${iconSize.cardInline} text-[var(--text-secondary)]`}/>
                         <div className="flex-1 min-w-0">
                           <p className={typography.body}>{question.questionText}</p>
                           <div className="flex items-center gap-2 mt-1">
@@ -364,7 +357,7 @@ export default function SurveyDetailPage() {
                               className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                               onClick={() => setDeleteConfirmId(question.id)}
                             >
-                              <Trash2 className={iconSize.button} />
+                              <Trash2 className={iconSize.button}/>
                             </Button>
                           )}
                         </PermissionGate>
@@ -460,7 +453,7 @@ export default function SurveyDetailPage() {
                   <Controller
                     name="isRequired"
                     control={control}
-                    render={({ field }) => (
+                    render={({field}) => (
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"

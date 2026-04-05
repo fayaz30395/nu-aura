@@ -1,54 +1,52 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  UserMinus,
-  Search,
-  Plus,
-  Calendar,
-  Clock,
   AlertCircle,
+  Briefcase,
+  Building,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Edit,
+  Eye,
+  FileText,
   Loader2,
   MoreVertical,
-  Edit,
+  Plus,
+  Search,
   Trash2,
-  Eye,
   User,
-  Building,
-  DollarSign,
-  FileText,
-  CheckCircle,
+  UserMinus,
   XCircle,
-  Briefcase,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  Card,
-  CardContent,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import {
-  useExitProcesses,
   useCreateExitProcess,
-  useUpdateExitProcess,
   useDeleteExitProcess,
+  useExitProcesses,
+  useUpdateExitProcess,
   useUpdateExitStatus,
 } from '@/lib/hooks/queries/useExit';
-import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/hrms/exit';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useRouter } from 'next/navigation';
-import { extractContent } from '@/lib/utils/type-guards';
-import { createLogger } from '@/lib/utils/logger';
-import { formatCurrency } from '@/lib/utils';
+import {
+  CreateExitProcessRequest,
+  ExitProcess,
+  ExitStatus,
+  ExitType,
+  UpdateExitProcessRequest
+} from '@/lib/types/hrms/exit';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useRouter} from 'next/navigation';
+import {extractContent} from '@/lib/utils/type-guards';
+import {createLogger} from '@/lib/utils/logger';
+import {formatCurrency} from '@/lib/utils';
 
 const log = createLogger('OffboardingPage');
 
@@ -57,7 +55,7 @@ const exitProcessFormSchema = z.object({
   exitType: z.string().min(1, 'Exit type required'),
   resignationDate: z.string().optional().or(z.literal('')),
   lastWorkingDate: z.string().optional().or(z.literal('')),
-  noticePeriodDays: z.number({ coerce: true }).min(0, 'Notice period must be non-negative'),
+  noticePeriodDays: z.number({coerce: true}).min(0, 'Notice period must be non-negative'),
   reasonForLeaving: z.string().optional().or(z.literal('')),
   newCompany: z.string().optional().or(z.literal('')),
   newDesignation: z.string().optional().or(z.literal('')),
@@ -147,8 +145,8 @@ const formatStatusLabel = (status: ExitStatus | string | null | undefined) => {
 
 export default function OffboardingPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { data: exitResponse, isPending } = useExitProcesses(0, 20);
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {data: exitResponse, isPending} = useExitProcesses(0, 20);
   const createMutation = useCreateExitProcess();
   const updateMutation = useUpdateExitProcess();
   const deleteMutation = useDeleteExitProcess();
@@ -174,7 +172,7 @@ export default function OffboardingPage() {
     register,
     handleSubmit,
     reset: resetForm,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     setValue,
   } = useForm<ExitProcessFormData>({
     resolver: zodResolver(exitProcessFormSchema),
@@ -276,7 +274,7 @@ export default function OffboardingPage() {
           rehireEligible: data.rehireEligible,
           notes: data.notes || undefined,
         };
-        await updateMutation.mutateAsync({ id: selectedProcess.id, data: updateData });
+        await updateMutation.mutateAsync({id: selectedProcess.id, data: updateData});
       } else {
         const createData: CreateExitProcessRequest = {
           employeeId: data.employeeId,
@@ -297,7 +295,9 @@ export default function OffboardingPage() {
       resetFormState();
     } catch (err: unknown) {
       log.error('Error saving exit process:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save exit process');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to save exit process');
     }
   };
 
@@ -311,16 +311,20 @@ export default function OffboardingPage() {
       setSelectedProcess(null);
     } catch (err: unknown) {
       log.error('Error deleting exit process:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete exit process');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete exit process');
     }
   };
 
   const handleStatusChange = async (process: ExitProcess, newStatus: ExitStatus) => {
     try {
-      await updateStatusMutation.mutateAsync({ id: process.id, status: newStatus });
+      await updateStatusMutation.mutateAsync({id: process.id, status: newStatus});
     } catch (err: unknown) {
       log.error('Error updating status:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to update status');
     }
   };
 
@@ -334,15 +338,15 @@ export default function OffboardingPage() {
   };
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Offboarding' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Offboarding'},
   ];
 
   if (isPending) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading exit processes...</span>
         </div>
       </AppLayout>
@@ -364,7 +368,7 @@ export default function OffboardingPage() {
           </div>
           <PermissionGate permission={Permissions.EXIT_INITIATE}>
             <Button onClick={handleOpenAddModal}>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2"/>
               Initiate Exit
             </Button>
           </PermissionGate>
@@ -375,7 +379,7 @@ export default function OffboardingPage() {
           <Card className="border-danger-200 bg-danger-50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
               </div>
             </CardContent>
@@ -388,7 +392,7 @@ export default function OffboardingPage() {
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4">
-                  <UserMinus className="h-6 w-6 text-accent-700" />
+                  <UserMinus className="h-6 w-6 text-accent-700"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Exits</p>
@@ -401,7 +405,7 @@ export default function OffboardingPage() {
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4">
-                  <Clock className="h-6 w-6 text-accent-600" />
+                  <Clock className="h-6 w-6 text-accent-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Initiated</p>
@@ -414,7 +418,7 @@ export default function OffboardingPage() {
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-warning-100 p-4">
-                  <Clock className="h-6 w-6 text-warning-600" />
+                  <Clock className="h-6 w-6 text-warning-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">In Progress</p>
@@ -427,7 +431,7 @@ export default function OffboardingPage() {
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-300 p-4">
-                  <FileText className="h-6 w-6 text-accent-800" />
+                  <FileText className="h-6 w-6 text-accent-800"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Clearance Pending</p>
@@ -440,7 +444,7 @@ export default function OffboardingPage() {
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-success-100 p-4">
-                  <CheckCircle className="h-6 w-6 text-success-600" />
+                  <CheckCircle className="h-6 w-6 text-success-600"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Completed</p>
@@ -454,7 +458,7 @@ export default function OffboardingPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search by employee name, company..."
@@ -496,145 +500,154 @@ export default function OffboardingPage() {
               <div className="overflow-x-auto">
                 <table className="table-aura">
                   <thead>
-                    <tr>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Employee
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Exit Type
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Last Working Day
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Notice Period
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Rehire Eligible
-                      </th>
-                      <th className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
+                  <tr>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Employee
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Exit Type
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Last Working Day
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Notice Period
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Rehire Eligible
+                    </th>
+                    <th
+                      className="skeuo-table-header px-4 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
                   </thead>
                   <tbody>
-                    {filteredProcesses.map((process: ExitProcess) => (
-                      <tr key={process.id}>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-4">
-                            <div className="rounded-full bg-[var(--bg-secondary)] p-2">
-                              <User className="h-5 w-5 text-[var(--text-secondary)]" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-[var(--text-primary)]">
-                                {process.employeeName || 'Employee'}
-                              </p>
-                              {process.newCompany && (
-                                <p className="text-caption">Moving to: {process.newCompany}</p>
-                              )}
-                            </div>
+                  {filteredProcesses.map((process: ExitProcess) => (
+                    <tr key={process.id}>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div className="rounded-full bg-[var(--bg-secondary)] p-2">
+                            <User className="h-5 w-5 text-[var(--text-secondary)]"/>
                           </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div>
+                            <p className="font-medium text-[var(--text-primary)]">
+                              {process.employeeName || 'Employee'}
+                            </p>
+                            {process.newCompany && (
+                              <p className="text-caption">Moving to: {process.newCompany}</p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className={getExitTypeColor(process.exitType)}>
                             {getExitTypeLabel(process.exitType)}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className={getStatusColor(process.status)}>
                             {formatStatusLabel(process.status)}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
                             {formatDate(process.lastWorkingDate)}
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
                             {process.noticePeriodServed || 0} / {process.noticePeriodDays || 0} days
                           </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          {process.rehireEligible ? (
-                            <CheckCircle className="h-5 w-5 text-success-500" />
-                          ) : (
-                            <XCircle className="h-5 w-5 text-danger-500" />
-                          )}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <div className="relative group inline-block">
-                            <button aria-label="Open exit process menu" className="p-1 rounded hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                              <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        {process.rehireEligible ? (
+                          <CheckCircle className="h-5 w-5 text-success-500"/>
+                        ) : (
+                          <XCircle className="h-5 w-5 text-danger-500"/>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-right">
+                        <div className="relative group inline-block">
+                          <button aria-label="Open exit process menu"
+                                  className="p-1 rounded hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                            <MoreVertical className="h-4 w-4 text-[var(--text-muted)]"/>
+                          </button>
+                          <div
+                            className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <button
+                              onClick={() => handleViewDetails(process)}
+                              aria-label={`View exit process details for ${process.employeeName}`}
+                              className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            >
+                              <Eye className="h-4 w-4"/>
+                              View Details
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
                               <button
-                                onClick={() => handleViewDetails(process)}
-                                aria-label={`View exit process details for ${process.employeeName}`}
-                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                onClick={() => handleOpenEditModal(process)}
+                                className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
-                                <Eye className="h-4 w-4" />
-                                View Details
+                                <Edit className="h-4 w-4"/>
+                                Edit
                               </button>
-                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
+                            </PermissionGate>
+                            {process.status === ExitStatus.INITIATED && (
+                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
                                 <button
-                                  onClick={() => handleOpenEditModal(process)}
+                                  onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
                                   className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <Edit className="h-4 w-4" />
-                                  Edit
+                                  <Clock className="h-4 w-4"/>
+                                  Start Process
                                 </button>
                               </PermissionGate>
-                              {process.status === ExitStatus.INITIATED && (
-                                <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
-                                  <button
-                                    onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
-                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                  >
-                                    <Clock className="h-4 w-4" />
-                                    Start Process
-                                  </button>
-                                </PermissionGate>
-                              )}
-                              {process.status === ExitStatus.IN_PROGRESS && (
-                                <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
-                                  <button
-                                    onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                    className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
-                                  >
-                                    <FileText className="h-4 w-4" />
-                                    Request Clearance
-                                  </button>
-                                </PermissionGate>
-                              )}
-                              {process.status === ExitStatus.CLEARANCE_PENDING && (
-                                <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div />}>
-                                  <button
-                                    onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
-                                    className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
-                                  >
-                                    <CheckCircle className="h-4 w-4" />
-                                    Complete
-                                  </button>
-                                </PermissionGate>
-                              )}
-                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div />}>
+                            )}
+                            {process.status === ExitStatus.IN_PROGRESS && (
+                              <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
                                 <button
-                                  onClick={() => handleDeleteClick(process)}
-                                  className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2"
+                                  onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
+                                  className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
-                                  <Trash2 className="h-4 w-4" />
-                                  Delete
+                                  <FileText className="h-4 w-4"/>
+                                  Request Clearance
                                 </button>
                               </PermissionGate>
-                            </div>
+                            )}
+                            {process.status === ExitStatus.CLEARANCE_PENDING && (
+                              <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div/>}>
+                                <button
+                                  onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
+                                  className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
+                                >
+                                  <CheckCircle className="h-4 w-4"/>
+                                  Complete
+                                </button>
+                              </PermissionGate>
+                            )}
+                            <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
+                              <button
+                                onClick={() => handleDeleteClick(process)}
+                                className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2"
+                              >
+                                <Trash2 className="h-4 w-4"/>
+                                Delete
+                              </button>
+                            </PermissionGate>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                   </tbody>
                 </table>
               </div>
@@ -644,7 +657,7 @@ export default function OffboardingPage() {
           exitResponse && (
             <Card>
               <CardContent className="p-12 text-center">
-                <UserMinus className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                <UserMinus className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Exit Processes Found
                 </h3>
@@ -655,7 +668,7 @@ export default function OffboardingPage() {
                 </p>
                 {!searchQuery && !statusFilter && !typeFilter && (
                   <Button onClick={handleOpenAddModal}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 mr-2"/>
                     Initiate Exit
                   </Button>
                 )}
@@ -757,7 +770,8 @@ export default function OffboardingPage() {
                     placeholder="30"
                     {...register('noticePeriodDays')}
                   />
-                  {errors.noticePeriodDays && <span className="text-danger-500 text-sm">{errors.noticePeriodDays.message}</span>}
+                  {errors.noticePeriodDays &&
+                    <span className="text-danger-500 text-sm">{errors.noticePeriodDays.message}</span>}
                 </div>
 
                 <div>
@@ -829,7 +843,7 @@ export default function OffboardingPage() {
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Saving...
                   </>
                 ) : isEditing ? (
@@ -847,7 +861,7 @@ export default function OffboardingPage() {
           <ModalHeader>
             <div className="flex items-center gap-4">
               <div className="rounded-full bg-[var(--bg-secondary)] p-2">
-                <User className="h-6 w-6 text-[var(--text-secondary)]" />
+                <User className="h-6 w-6 text-[var(--text-secondary)]"/>
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -877,7 +891,7 @@ export default function OffboardingPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4"/>
                       Resignation Date
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -886,7 +900,7 @@ export default function OffboardingPage() {
                   </div>
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4"/>
                       Last Working Day
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -898,7 +912,7 @@ export default function OffboardingPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 card-aura">
                     <p className="text-body-muted flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-4 w-4"/>
                       Notice Period
                     </p>
                     <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -908,7 +922,7 @@ export default function OffboardingPage() {
                   {selectedProcess.finalSettlementAmount && (
                     <div className="p-4 card-aura">
                       <p className="text-body-muted flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
+                        <DollarSign className="h-4 w-4"/>
                         Settlement Amount
                       </p>
                       <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -932,7 +946,7 @@ export default function OffboardingPage() {
                     {selectedProcess.newCompany && (
                       <div className="p-4 card-aura">
                         <p className="text-body-muted flex items-center gap-2">
-                          <Building className="h-4 w-4" />
+                          <Building className="h-4 w-4"/>
                           New Company
                         </p>
                         <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -943,7 +957,7 @@ export default function OffboardingPage() {
                     {selectedProcess.newDesignation && (
                       <div className="p-4 card-aura">
                         <p className="text-body-muted flex items-center gap-2">
-                          <Briefcase className="h-4 w-4" />
+                          <Briefcase className="h-4 w-4"/>
                           New Designation
                         </p>
                         <p className="text-lg font-semibold text-[var(--text-primary)]">
@@ -973,7 +987,7 @@ export default function OffboardingPage() {
               setShowDetailModal(false);
               if (selectedProcess) handleOpenEditModal(selectedProcess);
             }}>
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4 mr-2"/>
               Edit
             </Button>
           </ModalFooter>
@@ -988,7 +1002,8 @@ export default function OffboardingPage() {
           </ModalHeader>
           <ModalBody>
             <p className="text-[var(--text-secondary)]">
-              Are you sure you want to delete the exit process for <strong>{selectedProcess?.employeeName || 'this employee'}</strong>? This action cannot be undone.
+              Are you sure you want to delete the exit process
+              for <strong>{selectedProcess?.employeeName || 'this employee'}</strong>? This action cannot be undone.
             </p>
           </ModalBody>
           <ModalFooter>
@@ -998,12 +1013,12 @@ export default function OffboardingPage() {
             <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
               {deleteMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                   Deleting...
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2"/>
                   Delete
                 </>
               )}

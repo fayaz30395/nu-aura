@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { usePermissions } from '@/lib/hooks/usePermissions';
+import {ReactNode} from 'react';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 
 interface PermissionGateProps {
   /** Children to render if permission check passes */
@@ -52,16 +52,16 @@ interface PermissionGateProps {
  * </PermissionGate>
  */
 export function PermissionGate({
-  children,
-  permission,
-  anyOf,
-  allOf,
-  role,
-  anyRole,
-  allRoles,
-  fallback = null,
-  showWhileLoading = false,
-}: PermissionGateProps): ReactNode {
+                                 children,
+                                 permission,
+                                 anyOf,
+                                 allOf,
+                                 role,
+                                 anyRole,
+                                 allRoles,
+                                 fallback = null,
+                                 showWhileLoading = false,
+                               }: PermissionGateProps): ReactNode {
   const {
     hasPermission,
     hasAnyPermission,
@@ -112,13 +112,13 @@ export function PermissionGate({
  * Component that only renders for admin users
  */
 export function AdminGate({
-  children,
-  fallback = null,
-}: {
+                            children,
+                            fallback = null,
+                          }: {
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const { isAdmin, isReady } = usePermissions();
+  const {isAdmin, isReady} = usePermissions();
 
   if (!isReady) return null;
   return isAdmin ? children : fallback;
@@ -128,13 +128,13 @@ export function AdminGate({
  * Component that only renders for HR users
  */
 export function HRGate({
-  children,
-  fallback = null,
-}: {
+                         children,
+                         fallback = null,
+                       }: {
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const { isHR, isReady } = usePermissions();
+  const {isHR, isReady} = usePermissions();
 
   if (!isReady) return null;
   return isHR ? children : fallback;
@@ -144,13 +144,13 @@ export function HRGate({
  * Component that only renders for managers
  */
 export function ManagerGate({
-  children,
-  fallback = null,
-}: {
+                              children,
+                              fallback = null,
+                            }: {
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const { isManager, isReady } = usePermissions();
+  const {isManager, isReady} = usePermissions();
 
   if (!isReady) return null;
   return isManager ? children : fallback;

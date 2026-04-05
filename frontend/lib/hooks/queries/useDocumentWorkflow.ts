@@ -1,12 +1,12 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
 import {
-  DocumentApprovalWorkflow,
   DocumentAccess,
-  DocumentExpiryTracking,
   DocumentAccessLevel,
+  DocumentApprovalWorkflow,
+  DocumentExpiryTracking,
   DocumentWithStatus
 } from '@/lib/types/core/document-workflow';
 
@@ -18,7 +18,7 @@ export const useListApprovalWorkflows = (page = 0, size = 20) => {
   return useQuery({
     queryKey: ['approval-workflows', page, size],
     queryFn: async () => {
-      const { data } = await apiClient.get<{
+      const {data} = await apiClient.get<{
         content: DocumentApprovalWorkflow[];
         totalElements: number;
         totalPages: number;
@@ -32,7 +32,7 @@ export const useListPendingApprovals = (page = 0, size = 20) => {
   return useQuery({
     queryKey: ['pending-approvals', page, size],
     queryFn: async () => {
-      const { data } = await apiClient.get<{
+      const {data} = await apiClient.get<{
         content: DocumentApprovalWorkflow[];
         totalElements: number;
         totalPages: number;
@@ -46,7 +46,7 @@ export const useWorkflowDetails = (workflowId: string | null) => {
   return useQuery({
     queryKey: ['approval-workflows', workflowId],
     queryFn: async () => {
-      const { data } = await apiClient.get<DocumentApprovalWorkflow>(
+      const {data} = await apiClient.get<DocumentApprovalWorkflow>(
         `${WORKFLOW_API}/${workflowId}`
       );
       return data;
@@ -59,7 +59,7 @@ export const useDocumentAccessList = (documentId: string) => {
   return useQuery({
     queryKey: ['document-access', documentId],
     queryFn: async () => {
-      const { data } = await apiClient.get<DocumentAccess[]>(
+      const {data} = await apiClient.get<DocumentAccess[]>(
         `${DOCUMENTS_API}/${documentId}/access`
       );
       return data;
@@ -72,7 +72,7 @@ export const useDocumentExpiryInfo = (documentId: string | null) => {
   return useQuery({
     queryKey: ['document-expiry', documentId],
     queryFn: async () => {
-      const { data } = await apiClient.get<DocumentExpiryTracking>(
+      const {data} = await apiClient.get<DocumentExpiryTracking>(
         `${DOCUMENTS_API}/${documentId}/expiry`
       );
       return data;
@@ -85,7 +85,7 @@ export const useExpiringDocuments = (page = 0, size = 20) => {
   return useQuery({
     queryKey: ['expiring-documents', page, size],
     queryFn: async () => {
-      const { data } = await apiClient.get<{
+      const {data} = await apiClient.get<{
         content: DocumentWithStatus[];
         totalElements: number;
       }>(`${DOCUMENTS_API}/expiring?page=${page}&size=${size}`);
@@ -100,20 +100,20 @@ export const useInitiateApprovalWorkflow = () => {
 
   return useMutation({
     mutationFn: async ({
-      documentId,
-      totalApprovalLevels
-    }: {
+                         documentId,
+                         totalApprovalLevels
+                       }: {
       documentId: string;
       totalApprovalLevels: number;
     }) => {
-      const { data } = await apiClient.post<DocumentApprovalWorkflow>(
+      const {data} = await apiClient.post<DocumentApprovalWorkflow>(
         `${WORKFLOW_API}/initiate`,
-        { documentId, totalApprovalLevels }
+        {documentId, totalApprovalLevels}
       );
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['approval-workflows'] });
+      queryClient.invalidateQueries({queryKey: ['approval-workflows']});
     }
   });
 };
@@ -123,15 +123,15 @@ export const useApproveDocument = () => {
 
   return useMutation({
     mutationFn: async ({
-      workflowId,
-      comments
-    }: {
+                         workflowId,
+                         comments
+                       }: {
       workflowId: string;
       comments?: string;
     }) => {
-      const { data } = await apiClient.post<DocumentApprovalWorkflow>(
+      const {data} = await apiClient.post<DocumentApprovalWorkflow>(
         `${WORKFLOW_API}/${workflowId}/approve`,
-        { comments }
+        {comments}
       );
       return data;
     },
@@ -139,7 +139,7 @@ export const useApproveDocument = () => {
       queryClient.invalidateQueries({
         queryKey: ['approval-workflows', variables.workflowId]
       });
-      queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
+      queryClient.invalidateQueries({queryKey: ['pending-approvals']});
     }
   });
 };
@@ -149,15 +149,15 @@ export const useRejectDocument = () => {
 
   return useMutation({
     mutationFn: async ({
-      workflowId,
-      rejectionReason
-    }: {
+                         workflowId,
+                         rejectionReason
+                       }: {
       workflowId: string;
       rejectionReason: string;
     }) => {
-      const { data } = await apiClient.post<DocumentApprovalWorkflow>(
+      const {data} = await apiClient.post<DocumentApprovalWorkflow>(
         `${WORKFLOW_API}/${workflowId}/reject`,
-        { rejectionReason }
+        {rejectionReason}
       );
       return data;
     },
@@ -165,7 +165,7 @@ export const useRejectDocument = () => {
       queryClient.invalidateQueries({
         queryKey: ['approval-workflows', variables.workflowId]
       });
-      queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
+      queryClient.invalidateQueries({queryKey: ['pending-approvals']});
     }
   });
 };
@@ -175,21 +175,21 @@ export const useGrantDocumentAccess = () => {
 
   return useMutation({
     mutationFn: async ({
-      documentId,
-      userId,
-      roleId,
-      departmentId,
-      accessLevel
-    }: {
+                         documentId,
+                         userId,
+                         roleId,
+                         departmentId,
+                         accessLevel
+                       }: {
       documentId: string;
       userId?: string;
       roleId?: string;
       departmentId?: string;
       accessLevel: DocumentAccessLevel;
     }) => {
-      const { data } = await apiClient.post<DocumentAccess>(
+      const {data} = await apiClient.post<DocumentAccess>(
         `${DOCUMENTS_API}/${documentId}/access`,
-        { userId, roleId, departmentId, accessLevel }
+        {userId, roleId, departmentId, accessLevel}
       );
       return data;
     },
@@ -206,9 +206,9 @@ export const useRevokeDocumentAccess = () => {
 
   return useMutation({
     mutationFn: async ({
-      documentId,
-      accessId
-    }: {
+                         documentId,
+                         accessId
+                       }: {
       documentId: string;
       accessId: string;
     }) => {
@@ -227,17 +227,17 @@ export const useSetDocumentExpiry = () => {
 
   return useMutation({
     mutationFn: async ({
-      documentId,
-      expiryDate,
-      reminderDaysBefore
-    }: {
+                         documentId,
+                         expiryDate,
+                         reminderDaysBefore
+                       }: {
       documentId: string;
       expiryDate: string;
       reminderDaysBefore?: number;
     }) => {
-      const { data } = await apiClient.post<DocumentExpiryTracking>(
+      const {data} = await apiClient.post<DocumentExpiryTracking>(
         `${DOCUMENTS_API}/${documentId}/expiry`,
-        { expiryDate, reminderDaysBefore }
+        {expiryDate, reminderDaysBefore}
       );
       return data;
     },
@@ -245,7 +245,7 @@ export const useSetDocumentExpiry = () => {
       queryClient.invalidateQueries({
         queryKey: ['document-expiry', variables.documentId]
       });
-      queryClient.invalidateQueries({ queryKey: ['expiring-documents'] });
+      queryClient.invalidateQueries({queryKey: ['expiring-documents']});
     }
   });
 };

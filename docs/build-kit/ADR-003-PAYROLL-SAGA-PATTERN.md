@@ -9,7 +9,9 @@
 
 ## Context
 
-The payroll processing workflow is a **long-running, multi-step business transaction** involving multiple services and external systems. Currently implemented as a monolithic transaction in `PayrollRunService.java`, it lacks fault tolerance and compensating transaction capabilities.
+The payroll processing workflow is a **long-running, multi-step business transaction** involving
+multiple services and external systems. Currently implemented as a monolithic transaction in
+`PayrollRunService.java`, it lacks fault tolerance and compensating transaction capabilities.
 
 ### Current Payroll Workflow
 
@@ -34,7 +36,8 @@ From analysis of `PayrollRunService.java` and related services:
 **Problems with Current Approach:**
 
 1. **All-or-Nothing Transaction**: If email sending fails (step 4), entire payroll rollback occurs
-2. **Long Transaction Locks**: Database locked for entire workflow duration (30-60s for 1000 employees)
+2. **Long Transaction Locks**: Database locked for entire workflow duration (30-60s for 1000
+   employees)
 3. **No Partial Recovery**: Can't resume from failure point
 4. **External Service Failures**: Email/bank API failures shouldn't rollback salary calculations
 5. **No Retry Logic**: Transient failures cause complete re-run
@@ -49,6 +52,7 @@ From analysis of `PayrollRunService.java` and related services:
 - **Result**: Entire payroll run rollback, 500 generated payslips discarded
 
 **Desired Behavior:**
+
 - Keep calculated payslips
 - Retry email sending for failed 500 employees
 - Mark payroll as "Partially Completed"
@@ -59,6 +63,7 @@ From analysis of `PayrollRunService.java` and related services:
 ## Decision
 
 Implement **Orchestration-Based Saga Pattern** for payroll processing using:
+
 - **Saga Orchestrator**: Coordinates workflow steps
 - **Compensating Transactions**: Rollback steps on failure
 - **Idempotent Operations**: Safe retries
@@ -66,13 +71,13 @@ Implement **Orchestration-Based Saga Pattern** for payroll processing using:
 
 ### Why Orchestration Over Choreography?
 
-| Aspect | Orchestration | Choreography |
-|--------|--------------|--------------|
-| **Complexity** | Centralized logic | Distributed logic |
-| **Debugging** | Easy (single point) | Hard (trace across services) |
-| **Workflow Visibility** | Clear in orchestrator | Implicit in events |
-| **Transaction Order** | Guaranteed | Eventually consistent |
-| **Error Handling** | Centralized | Per-service handling |
+| Aspect                  | Orchestration         | Choreography                 |
+|-------------------------|-----------------------|------------------------------|
+| **Complexity**          | Centralized logic     | Distributed logic            |
+| **Debugging**           | Easy (single point)   | Hard (trace across services) |
+| **Workflow Visibility** | Clear in orchestrator | Implicit in events           |
+| **Transaction Order**   | Guaranteed            | Eventually consistent        |
+| **Error Handling**      | Centralized           | Per-service handling         |
 
 **Decision**: Orchestration (centralized) is better for critical financial workflows like payroll.
 
@@ -627,6 +632,7 @@ sequenceDiagram
 ## Implementation Plan
 
 ### Phase 1: Foundation (Week 1, 16 hours)
+
 - [ ] Create `PayrollSaga` entity and repository
 - [ ] Implement `PayrollSagaState` enum
 - [ ] Create `PayrollSagaOrchestrator` skeleton
@@ -634,6 +640,7 @@ sequenceDiagram
 - [ ] Write unit tests for state transitions
 
 ### Phase 2: Step Implementation (Week 2, 24 hours)
+
 - [ ] Implement Step 1: Salary calculation
 - [ ] Implement Step 2: Payslip generation with idempotency
 - [ ] Implement Step 3: Email notifications with retry
@@ -641,18 +648,21 @@ sequenceDiagram
 - [ ] Add saga progress tracking
 
 ### Phase 3: Compensation (Week 3, 16 hours)
+
 - [ ] Implement compensating transactions for each step
 - [ ] Add rollback orchestration
 - [ ] Test compensation scenarios
 - [ ] Add compensation audit logging
 
 ### Phase 4: Integration (Week 4, 16 hours)
+
 - [ ] Update `PayrollController` to use saga orchestrator
 - [ ] Add saga status endpoints (GET /api/payroll/sagas/{id})
 - [ ] Implement WebSocket notifications for saga events
 - [ ] Add monitoring dashboards (Grafana)
 
 ### Phase 5: Migration (Week 5, 8 hours)
+
 - [ ] Run parallel execution (old + new) for validation
 - [ ] Compare results and performance
 - [ ] Feature flag rollout (10% → 50% → 100%)

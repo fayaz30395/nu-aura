@@ -1,10 +1,10 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {
-  samlService,
   SamlConfigRequest,
   SamlConfigResponse,
+  samlService,
   SamlTestConnectionResponse,
 } from '@/lib/services/core/saml.service';
 
@@ -38,7 +38,7 @@ export function useCreateSamlConfig() {
   return useMutation<SamlConfigResponse, Error, SamlConfigRequest>({
     mutationFn: (config) => samlService.createConfig(config),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: samlKeys.config() });
+      queryClient.invalidateQueries({queryKey: samlKeys.config()});
     },
   });
 }
@@ -51,7 +51,7 @@ export function useUpdateSamlConfig() {
   return useMutation<SamlConfigResponse, Error, SamlConfigRequest>({
     mutationFn: (config) => samlService.updateConfig(config),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: samlKeys.config() });
+      queryClient.invalidateQueries({queryKey: samlKeys.config()});
     },
   });
 }
@@ -64,7 +64,7 @@ export function useDeleteSamlConfig() {
   return useMutation<void, Error>({
     mutationFn: () => samlService.deleteConfig(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: samlKeys.config() });
+      queryClient.invalidateQueries({queryKey: samlKeys.config()});
     },
   });
 }

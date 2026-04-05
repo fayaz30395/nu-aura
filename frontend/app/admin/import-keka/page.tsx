@@ -1,40 +1,40 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-
-const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
-import { Stepper, Button, Badge, Table } from '@mantine/core';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Badge, Button, Stepper, Table} from '@mantine/core';
 import {
-  Upload,
-  FileSpreadsheet,
-  Download,
-  CheckCircle,
-  XCircle,
+  AlertCircle,
   AlertTriangle,
   ArrowLeft,
-  FileText,
-  AlertCircle,
-  Settings,
-  MapPin,
+  CheckCircle,
+  Download,
   Eye,
+  FileSpreadsheet,
+  FileText,
+  MapPin,
+  Settings,
+  Upload,
+  XCircle,
 } from 'lucide-react';
-import { AdminPageContent } from '@/components/layout';
+import {AdminPageContent} from '@/components/layout';
 import {
+  KEKA_COLUMN_PRESETS,
   KekaImportMapping,
   KekaImportPreview,
   KekaImportResult,
-  KEKA_COLUMN_PRESETS,
 } from '@/lib/types/core/keka-import';
-import { kekaImportService } from '@/lib/services/core/keka-import.service';
+import {kekaImportService} from '@/lib/services/core/keka-import.service';
 import {
+  useKekaDownloadErrorReport,
+  useKekaExecuteImport,
   useKekaFileUpload,
   useKekaImportPreview,
-  useKekaExecuteImport,
-  useKekaDownloadErrorReport,
 } from '@/lib/hooks/queries/useKekaImport';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 type ImportStep = 'upload' | 'mapping' | 'preview' | 'import' | 'result';
 
@@ -47,15 +47,20 @@ interface ColumnMapping {
 
 export default function KekaImportPage() {
   const router = useRouter();
-  const { hasAnyRole, isReady } = usePermissions();
-  const { hasHydrated, isAuthenticated } = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
+  const {hasHydrated, isAuthenticated} = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // DEF-59: RBAC gate — import is a destructive operation requiring admin access
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
-    if (!isAuthenticated) { router.replace('/auth/login'); return; }
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+      return;
+    }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.replace('/me/dashboard');
+    }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   // State management
@@ -308,10 +313,10 @@ export default function KekaImportPage() {
       prev.map((m) =>
         m.sourceColumn === sourceColumn
           ? {
-              ...m,
-              targetField,
-              matched: !!targetField,
-            }
+            ...m,
+            targetField,
+            matched: !!targetField,
+          }
           : m
       )
     );
@@ -334,7 +339,7 @@ export default function KekaImportPage() {
               onClick={() => router.push('/admin')}
               className="flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Admin
             </button>
             <h1 className="text-2xl font-bold skeuo-emboss">
@@ -348,18 +353,19 @@ export default function KekaImportPage() {
           {/* Progress Stepper */}
           <div className="mb-8 skeuo-card p-6">
             <Stepper active={['upload', 'mapping', 'preview', 'import', 'result'].indexOf(step)}>
-              <Stepper.Step label="Upload" description="Select KEKA export file" />
-              <Stepper.Step label="Mapping" description="Map columns" />
-              <Stepper.Step label="Preview" description="Validate data" />
-              <Stepper.Step label="Import" description="Execute import" />
-              <Stepper.Step label="Result" description="View results" />
+              <Stepper.Step label="Upload" description="Select KEKA export file"/>
+              <Stepper.Step label="Mapping" description="Map columns"/>
+              <Stepper.Step label="Preview" description="Validate data"/>
+              <Stepper.Step label="Import" description="Execute import"/>
+              <Stepper.Step label="Result" description="View results"/>
             </Stepper>
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start">
-              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-4 flex-shrink-0 mt-0.5" />
+            <div
+              className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start">
+              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-4 flex-shrink-0 mt-0.5"/>
               <div className="flex-1">
                 <p className="text-danger-800 dark:text-danger-100 font-medium">Error</p>
                 <p className="text-danger-700 dark:text-danger-200 text-sm mt-1">{error}</p>
@@ -380,7 +386,7 @@ export default function KekaImportPage() {
               {/* Download Templates */}
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
-                  <Download className="w-5 h-5 mr-2" />
+                  <Download className="w-5 h-5 mr-2"/>
                   Download Template
                 </h3>
                 <p className="text-body-secondary mb-4">
@@ -390,14 +396,14 @@ export default function KekaImportPage() {
                   <Button
                     onClick={() => downloadTemplate('csv')}
                     variant="light"
-                    leftSection={<FileText className="w-4 h-4" />}
+                    leftSection={<FileText className="w-4 h-4"/>}
                   >
                     CSV Template
                   </Button>
                   <Button
                     onClick={() => downloadTemplate('xlsx')}
                     variant="light"
-                    leftSection={<FileSpreadsheet className="w-4 h-4" />}
+                    leftSection={<FileSpreadsheet className="w-4 h-4"/>}
                   >
                     Excel Template
                   </Button>
@@ -405,7 +411,8 @@ export default function KekaImportPage() {
               </div>
 
               {/* Instructions */}
-              <div className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-6">
+              <div
+                className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-6">
                 <h4 className="font-semibold text-accent-900 dark:text-accent-100 mb-2">
                   How to export from KEKA:
                 </h4>
@@ -420,7 +427,7 @@ export default function KekaImportPage() {
               {/* File Upload */}
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
-                  <Upload className="w-5 h-5 mr-2" />
+                  <Upload className="w-5 h-5 mr-2"/>
                   Upload File
                 </h3>
                 <div
@@ -428,8 +435,8 @@ export default function KekaImportPage() {
                     dragActive
                       ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
                       : selectedFile
-                      ? 'border-success-500 bg-success-50 dark:bg-success-900/20'
-                      : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
+                        ? 'border-success-500 bg-success-50 dark:bg-success-900/20'
+                        : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -446,7 +453,7 @@ export default function KekaImportPage() {
 
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
-                      <CheckCircle className="w-12 h-12 text-success-500 mb-4" />
+                      <CheckCircle className="w-12 h-12 text-success-500 mb-4"/>
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
@@ -470,7 +477,7 @@ export default function KekaImportPage() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <Upload className="w-12 h-12 text-[var(--text-muted)] mb-4" />
+                      <Upload className="w-12 h-12 text-[var(--text-muted)] mb-4"/>
                       <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                         Drag and drop your file here
                       </p>
@@ -509,7 +516,7 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center">
-                  <MapPin className="w-5 h-5 mr-2" />
+                  <MapPin className="w-5 h-5 mr-2"/>
                   Column Mapping
                 </h3>
                 <p className="text-body-secondary mb-4">
@@ -518,8 +525,9 @@ export default function KekaImportPage() {
               </div>
 
               {unmappedColumns.length > 0 && (
-                <div className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg flex items-start mb-6">
-                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-4 flex-shrink-0 mt-0.5" />
+                <div
+                  className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg flex items-start mb-6">
+                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-4 flex-shrink-0 mt-0.5"/>
                   <div>
                     <p className="text-warning-800 dark:text-warning-100 font-medium">Unmapped Columns</p>
                     <p className="text-warning-700 dark:text-warning-200 text-sm mt-1">
@@ -554,8 +562,8 @@ export default function KekaImportPage() {
                                 mapping.confidence > 0.9
                                   ? 'green'
                                   : mapping.confidence > 0.7
-                                  ? 'yellow'
-                                  : 'gray'
+                                    ? 'yellow'
+                                    : 'gray'
                               }
                             >
                               {Math.round(mapping.confidence * 100)}%
@@ -582,9 +590,9 @@ export default function KekaImportPage() {
                         </Table.Td>
                         <Table.Td>
                           {mapping.targetField ? (
-                            <CheckCircle className="w-5 h-5 text-success-500" />
+                            <CheckCircle className="w-5 h-5 text-success-500"/>
                           ) : (
-                            <XCircle className="w-5 h-5 text-[var(--text-muted)]" />
+                            <XCircle className="w-5 h-5 text-[var(--text-muted)]"/>
                           )}
                         </Table.Td>
                       </Table.Tr>
@@ -614,7 +622,8 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
+                <div
+                  className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
                   <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Rows
                   </p>
@@ -622,7 +631,8 @@ export default function KekaImportPage() {
                     {preview.totalRows}
                   </p>
                 </div>
-                <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
+                <div
+                  className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
                   <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Valid
                   </p>
@@ -630,7 +640,8 @@ export default function KekaImportPage() {
                     {preview.validRows}
                   </p>
                 </div>
-                <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
+                <div
+                  className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
                   <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Warnings
                   </p>
@@ -638,7 +649,8 @@ export default function KekaImportPage() {
                     {preview.warnings.length}
                   </p>
                 </div>
-                <div className="bg-danger-50 dark:bg-danger-900/20 p-4 rounded-lg border border-danger-200 dark:border-danger-800">
+                <div
+                  className="bg-danger-50 dark:bg-danger-900/20 p-4 rounded-lg border border-danger-200 dark:border-danger-800">
                   <p className="text-sm text-danger-600 dark:text-danger-300 font-medium">
                     Errors
                   </p>
@@ -650,7 +662,8 @@ export default function KekaImportPage() {
 
               {/* Error Details */}
               {preview.errors.length > 0 && (
-                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
                   <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
                   <div className="text-sm space-y-1">
                     {preview.errors.slice(0, 5).map((err, idx) => (
@@ -670,7 +683,7 @@ export default function KekaImportPage() {
               {/* Preview Table */}
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center">
-                  <Eye className="w-5 h-5 mr-2" />
+                  <Eye className="w-5 h-5 mr-2"/>
                   Data Preview (First 10 rows)
                 </h3>
                 <div className="overflow-x-auto border border-[var(--border-main)] rounded-lg">
@@ -726,7 +739,7 @@ export default function KekaImportPage() {
             <div className="skeuo-card p-6 space-y-6">
               <div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center">
-                  <Settings className="w-5 h-5 mr-2" />
+                  <Settings className="w-5 h-5 mr-2"/>
                   Import Options
                 </h3>
                 <p className="text-body-secondary mb-4">
@@ -736,7 +749,8 @@ export default function KekaImportPage() {
 
               {/* Options */}
               <div className="space-y-4">
-                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label
+                  className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={skipInvalidRows}
@@ -753,7 +767,8 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label
+                  className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={updateExistingEmployees}
@@ -770,7 +785,8 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label
+                  className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendWelcomeEmail}
@@ -787,7 +803,8 @@ export default function KekaImportPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
+                <label
+                  className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={autoApproveEmployees}
@@ -806,7 +823,8 @@ export default function KekaImportPage() {
               </div>
 
               {/* Summary */}
-              <div className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 p-4 rounded-lg mb-6">
+              <div
+                className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 p-4 rounded-lg mb-6">
                 <p className="text-sm font-medium text-accent-900 dark:text-accent-100">
                   Ready to import {preview.validRows} valid employee records
                 </p>
@@ -837,17 +855,17 @@ export default function KekaImportPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
                       <>
-                        <CheckCircle className="w-6 h-6 text-success-500 mr-2" />
+                        <CheckCircle className="w-6 h-6 text-success-500 mr-2"/>
                         Import Completed
                       </>
                     ) : result.status === 'PARTIAL_SUCCESS' ? (
                       <>
-                        <AlertTriangle className="w-6 h-6 text-warning-500 mr-2" />
+                        <AlertTriangle className="w-6 h-6 text-warning-500 mr-2"/>
                         Partial Success
                       </>
                     ) : (
                       <>
-                        <XCircle className="w-6 h-6 text-danger-500 mr-2" />
+                        <XCircle className="w-6 h-6 text-danger-500 mr-2"/>
                         Import Failed
                       </>
                     )}
@@ -858,8 +876,8 @@ export default function KekaImportPage() {
                     result.status === 'SUCCESS'
                       ? 'green'
                       : result.status === 'PARTIAL_SUCCESS'
-                      ? 'yellow'
-                      : 'red'
+                        ? 'yellow'
+                        : 'red'
                   }
                 >
                   {result.status}
@@ -868,7 +886,8 @@ export default function KekaImportPage() {
 
               {/* Summary Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
+                <div
+                  className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
                   <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Processed
                   </p>
@@ -876,7 +895,8 @@ export default function KekaImportPage() {
                     {result.totalProcessed}
                   </p>
                 </div>
-                <div className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
+                <div
+                  className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
                   <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Created
                   </p>
@@ -884,7 +904,8 @@ export default function KekaImportPage() {
                     {result.created}
                   </p>
                 </div>
-                <div className="bg-accent-250 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-400 dark:border-accent-900">
+                <div
+                  className="bg-accent-250 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-400 dark:border-accent-900">
                   <p className="text-sm text-accent-800 dark:text-accent-500 font-medium">
                     Updated
                   </p>
@@ -892,7 +913,8 @@ export default function KekaImportPage() {
                     {result.updated}
                   </p>
                 </div>
-                <div className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
+                <div
+                  className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
                   <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Skipped
                   </p>
@@ -911,7 +933,8 @@ export default function KekaImportPage() {
 
               {/* Errors */}
               {result.errors.length > 0 && (
-                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
                   <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
                   <div className="text-sm space-y-1 mb-4">
                     {result.errors.slice(0, 5).map((err, idx) => (

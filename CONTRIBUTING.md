@@ -18,6 +18,7 @@ type(scope): description
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 Examples:
+
 ```
 feat(payroll): add salary revision with effective date support
 fix(leave): prevent negative leave balance on approval
@@ -33,9 +34,11 @@ refactor(auth): extract JWT validation into reusable filter
 - **All data fetching** must use React Query — no raw `useEffect` + `fetch`
 - **HTTP client:** Use the existing Axios client in `frontend/lib/` — never create new instances
 - **Colors:** CSS variables only — no hardcoded hex values
-- **Spacing:** 8px grid — banned classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`, `m-3`, `m-5`
+- **Spacing:** 8px grid — banned classes: `gap-3`, `p-3`, `p-5`, `gap-5`, `space-y-3`, `space-y-5`,
+  `m-3`, `m-5`
 - **Buttons:** `<Button>` component only — no raw `<button>` with inline styles
-- **Loading states:** `NuAuraLoader`, `SkeletonTable`, `SkeletonStatCard`, `SkeletonCard` — no plain spinner text
+- **Loading states:** `NuAuraLoader`, `SkeletonTable`, `SkeletonStatCard`, `SkeletonCard` — no plain
+  spinner text
 - **Empty states:** `<EmptyState>` component — no blank page fallbacks
 - **Icons:** Lucide React + Tabler Icons — don't mix icon libraries
 

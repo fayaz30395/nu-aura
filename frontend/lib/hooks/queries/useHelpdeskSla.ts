@@ -1,10 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  helpdeskSLAService,
-  TicketSLA,
-} from '@/lib/services/hrms/helpdesk-sla.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {helpdeskSLAService, TicketSLA,} from '@/lib/services/hrms/helpdesk-sla.service';
 
 export const helpdeskSlaKeys = {
   all: ['helpdesk-sla'] as const,
@@ -27,7 +24,7 @@ export const helpdeskSlaKeys = {
  */
 export function useSlaConfigs(page: number = 0, size: number = 20) {
   return useQuery({
-    queryKey: [...helpdeskSlaKeys.slas(), { page, size }],
+    queryKey: [...helpdeskSlaKeys.slas(), {page, size}],
     queryFn: () => helpdeskSLAService.getSLAs(page, size),
     staleTime: 5 * 60 * 1000,
   });
@@ -118,9 +115,9 @@ export function useCreateSlaConfig() {
     mutationFn: (data: Partial<TicketSLA>) =>
       helpdeskSLAService.createSLA(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.slas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.activeSlas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.slas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.activeSlas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }
@@ -132,13 +129,13 @@ export function useUpdateSlaConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<TicketSLA> }) =>
+    mutationFn: ({id, data}: { id: string; data: Partial<TicketSLA> }) =>
       helpdeskSLAService.updateSLA(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.slaDetail(id) });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.slas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.activeSlas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.slaDetail(id)});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.slas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.activeSlas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }
@@ -152,9 +149,9 @@ export function useDeleteSlaConfig() {
   return useMutation({
     mutationFn: (id: string) => helpdeskSLAService.deleteSLA(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.slas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.activeSlas() });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.slas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.activeSlas()});
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }
@@ -167,12 +164,12 @@ export function useEscalateTicket() {
 
   return useMutation({
     mutationFn: ({
-      ticketId,
-      escalatedTo,
-      level,
-      reason,
-      notes,
-    }: {
+                   ticketId,
+                   escalatedTo,
+                   level,
+                   reason,
+                   notes,
+                 }: {
       ticketId: string;
       escalatedTo: string;
       level: string;
@@ -186,14 +183,14 @@ export function useEscalateTicket() {
         reason,
         notes
       ),
-    onSuccess: (_, { ticketId }) => {
+    onSuccess: (_, {ticketId}) => {
       queryClient.invalidateQueries({
         queryKey: helpdeskSlaKeys.ticketEscalations(ticketId),
       });
       queryClient.invalidateQueries({
         queryKey: helpdeskSlaKeys.pendingEscalations(),
       });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }
@@ -211,7 +208,7 @@ export function useAcknowledgeEscalation() {
       queryClient.invalidateQueries({
         queryKey: helpdeskSlaKeys.pendingEscalations(),
       });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }
@@ -224,19 +221,19 @@ export function useSubmitCSAT() {
 
   return useMutation({
     mutationFn: ({
-      ticketId,
-      rating,
-      feedback,
-    }: {
+                   ticketId,
+                   rating,
+                   feedback,
+                 }: {
       ticketId: string;
       rating: number;
       feedback?: string;
     }) => helpdeskSLAService.submitCSAT(ticketId, rating, feedback),
-    onSuccess: (_, { ticketId }) => {
+    onSuccess: (_, {ticketId}) => {
       queryClient.invalidateQueries({
         queryKey: helpdeskSlaKeys.metrics(ticketId),
       });
-      queryClient.invalidateQueries({ queryKey: helpdeskSlaKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: helpdeskSlaKeys.dashboard()});
     },
   });
 }

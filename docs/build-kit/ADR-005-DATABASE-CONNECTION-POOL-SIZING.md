@@ -9,7 +9,8 @@
 
 ## Context
 
-The current HikariCP connection pool configuration in `application.yml` is set to a **maximum of 10 connections**, which is insufficient for production workloads and can lead to:
+The current HikariCP connection pool configuration in `application.yml` is set to a **maximum of 10
+connections**, which is insufficient for production workloads and can lead to:
 
 - Connection exhaustion under concurrent load
 - Thread blocking waiting for connections
@@ -36,6 +37,7 @@ spring:
 ```
 
 **Production Profile:**
+
 ```yaml
 spring:
   config:
@@ -67,6 +69,7 @@ spring:
 **Scenario: 100 Concurrent Users in an HRMS System**
 
 Typical user behavior:
+
 - 60% passive (reading dashboards, viewing reports)
 - 30% active (creating/updating records)
 - 10% heavy (running payroll, bulk operations)
@@ -74,18 +77,20 @@ Typical user behavior:
 **Database Connection Usage:**
 
 | User Type | % of Users | Avg Requests/Min | Avg Connection Hold Time | Concurrent Connections Needed |
-|-----------|------------|------------------|--------------------------|------------------------------|
-| Passive | 60 | 5 | 100ms | 0.5 connections |
-| Active | 30 | 15 | 200ms | 1.5 connections |
-| Heavy | 10 | 30 | 500ms | 2.5 connections |
+|-----------|------------|------------------|--------------------------|-------------------------------|
+| Passive   | 60         | 5                | 100ms                    | 0.5 connections               |
+| Active    | 30         | 15               | 200ms                    | 1.5 connections               |
+| Heavy     | 10         | 30               | 500ms                    | 2.5 connections               |
 
 **Total Concurrent Connection Demand:**
+
 - Passive: 60 users × 0.5 = 30 connections
 - Active: 30 users × 1.5 = 45 connections
 - Heavy: 10 users × 2.5 = 25 connections
 - **Total: ~100 active connections at peak**
 
 **With Current Pool (10 connections):**
+
 - 90 requests queued/blocked
 - Average wait time: ~9 seconds (unacceptable)
 
@@ -100,10 +105,12 @@ connections = ((core_count * 2) + effective_spindle_count)
 ```
 
 **Where:**
+
 - `core_count`: Number of CPU cores (PostgreSQL server)
 - `effective_spindle_count`: Number of hard drives (1 for SSD, 4-8 for spinning disks)
 
 **Typical Cloud PostgreSQL Setup (AWS RDS db.t3.large):**
+
 - CPU cores: 2
 - Storage: SSD (1 effective spindle)
 - **Formula result**: (2 × 2) + 1 = **5 connections per thread**
@@ -115,6 +122,7 @@ max_pool_size = (max_concurrent_requests / avg_request_duration_sec) + buffer
 ```
 
 **For 100 concurrent users:**
+
 - Max concurrent requests: 100
 - Avg request duration: 200ms (0.2s)
 - **Result**: (100 / 0.2) × 1.2 (20% buffer) = **60 connections**
@@ -126,16 +134,19 @@ max_pool_size = (max_concurrent_requests / avg_request_duration_sec) + buffer
 ### PostgreSQL Max Connections Configuration
 
 **Default PostgreSQL Settings:**
+
 ```sql
 SHOW max_connections;  -- Usually 100-200
 ```
 
 **Connection Breakdown:**
+
 - Reserved for superuser: 3
 - Reserved for replication: 5-10
 - Available for application: ~87-187
 
 **Our Application:**
+
 - Backend service: 60 connections
 - Background jobs (Quartz): 10 connections
 - Admin connections: 5 connections
@@ -146,12 +157,12 @@ SHOW max_connections;  -- Usually 100-200
 
 For **microservices architecture** (future-proofing):
 
-| Service | Max Pool Size | Instances | Total Connections |
-|---------|---------------|-----------|-------------------|
-| HRMS API | 30 | 2 | 60 |
-| Background Jobs | 10 | 1 | 10 |
-| Analytics Service | 20 | 1 | 20 |
-| **Total** | | | **90** |
+| Service           | Max Pool Size | Instances | Total Connections |
+|-------------------|---------------|-----------|-------------------|
+| HRMS API          | 30            | 2         | 60                |
+| Background Jobs   | 10            | 1         | 10                |
+| Analytics Service | 20            | 1         | 20                |
+| **Total**         |               |           | **90**            |
 
 **PostgreSQL Max Connections Required:** 100 (with 10 buffer)
 
@@ -159,7 +170,8 @@ For **microservices architecture** (future-proofing):
 
 ## Decision
 
-Implement **Environment-Specific Connection Pool Sizing** with monitoring and auto-tuning capabilities.
+Implement **Environment-Specific Connection Pool Sizing** with monitoring and auto-tuning
+capabilities.
 
 ### Recommended Configuration
 
@@ -272,6 +284,7 @@ spring:
 **Production Calculation (100 concurrent users):**
 
 **Method 1: PostgreSQL Formula**
+
 ```
 connections = (core_count * 2) + effective_spindle_count
             = (4 * 2) + 1  [assuming db.t3.xlarge with 4 vCPU]
@@ -283,6 +296,7 @@ max_pool_size = 9 * expected_parallelism
 ```
 
 **Method 2: Web Application Formula**
+
 ```
 max_pool_size = (peak_concurrent_requests / avg_db_time_per_request) * buffer
               = (100 / 0.2s) * 1.2
@@ -291,6 +305,7 @@ max_pool_size = (peak_concurrent_requests / avg_db_time_per_request) * buffer
 ```
 
 **Method 3: Little's Law**
+
 ```
 L = λ × W
 where:
@@ -333,14 +348,14 @@ public class HikariMetricsConfig {
 
 **Key Metrics:**
 
-| Metric | Description | Alert Threshold |
-|--------|-------------|-----------------|
-| `hikaricp.connections.active` | Connections currently in use | > 80% of max |
-| `hikaricp.connections.idle` | Idle connections in pool | < 10% of max |
-| `hikaricp.connections.pending` | Threads waiting for connection | > 5 |
-| `hikaricp.connections.timeout` | Connection acquisition timeouts | > 0 |
-| `hikaricp.connections.usage` | Average connection usage time | > 500ms |
-| `hikaricp.connections.creation` | Time to create new connection | > 100ms |
+| Metric                          | Description                     | Alert Threshold |
+|---------------------------------|---------------------------------|-----------------|
+| `hikaricp.connections.active`   | Connections currently in use    | > 80% of max    |
+| `hikaricp.connections.idle`     | Idle connections in pool        | < 10% of max    |
+| `hikaricp.connections.pending`  | Threads waiting for connection  | > 5             |
+| `hikaricp.connections.timeout`  | Connection acquisition timeouts | > 0             |
+| `hikaricp.connections.usage`    | Average connection usage time   | > 500ms         |
+| `hikaricp.connections.creation` | Time to create new connection   | > 100ms         |
 
 **Grafana Dashboard Queries:**
 
@@ -409,12 +424,14 @@ public class ConnectionPoolAutoTuner {
 ### Phase 1: Development & Staging Update (Week 1)
 
 **Day 1-2: Configuration Update**
+
 - [ ] Update `application.yml` with environment-specific profiles
 - [ ] Add connection validation and leak detection
 - [ ] Deploy to development environment
 - [ ] Test connection pool behavior under load
 
 **Day 3-5: Staging Validation**
+
 - [ ] Deploy updated configuration to staging
 - [ ] Run load tests (JMeter/Gatling) simulating 100 concurrent users
 - [ ] Monitor HikariCP metrics in Grafana
@@ -424,18 +441,21 @@ public class ConnectionPoolAutoTuner {
 ### Phase 2: Production Rollout (Week 2)
 
 **Day 1-2: Pre-Production Preparation**
+
 - [ ] Validate PostgreSQL max_connections setting (ensure >= 100)
 - [ ] Set up Grafana dashboard for connection pool monitoring
 - [ ] Configure PagerDuty alerts for connection pool issues
 - [ ] Create rollback plan (environment variables)
 
 **Day 3: Production Deployment**
+
 - [ ] Deploy during low-traffic window (2 AM - 4 AM)
 - [ ] Set initial `DB_POOL_MAX=40` (conservative)
 - [ ] Monitor for 24 hours
 - [ ] Gradually increase to 60 based on observed utilization
 
 **Day 4-5: Post-Deployment Monitoring**
+
 - [ ] Analyze connection pool metrics
 - [ ] Validate no connection timeouts
 - [ ] Compare API response time percentiles (p50, p95, p99)
@@ -453,23 +473,23 @@ public class ConnectionPoolAutoTuner {
 
 ### Before (Current Configuration)
 
-| Metric | Value |
-|--------|-------|
-| Max Pool Size | 10 connections |
-| 100 Concurrent Users | 90 requests queued |
-| P95 API Latency | ~9 seconds (connection wait) |
-| Connection Timeout Rate | ~30% (high) |
-| Database CPU Utilization | 10-15% (underutilized) |
+| Metric                   | Value                        |
+|--------------------------|------------------------------|
+| Max Pool Size            | 10 connections               |
+| 100 Concurrent Users     | 90 requests queued           |
+| P95 API Latency          | ~9 seconds (connection wait) |
+| Connection Timeout Rate  | ~30% (high)                  |
+| Database CPU Utilization | 10-15% (underutilized)       |
 
 ### After (Optimized Configuration)
 
-| Metric | Value | Improvement |
-|--------|-------|-------------|
-| Max Pool Size | 60 connections | 6x increase |
-| 100 Concurrent Users | 0 requests queued | 100% improvement |
-| P95 API Latency | ~200ms (normal DB query time) | 97.8% faster |
-| Connection Timeout Rate | < 0.1% | 99.7% reduction |
-| Database CPU Utilization | 40-60% (optimal) | Better resource usage |
+| Metric                   | Value                         | Improvement           |
+|--------------------------|-------------------------------|-----------------------|
+| Max Pool Size            | 60 connections                | 6x increase           |
+| 100 Concurrent Users     | 0 requests queued             | 100% improvement      |
+| P95 API Latency          | ~200ms (normal DB query time) | 97.8% faster          |
+| Connection Timeout Rate  | < 0.1%                        | 99.7% reduction       |
+| Database CPU Utilization | 40-60% (optimal)              | Better resource usage |
 
 ---
 
@@ -478,16 +498,19 @@ public class ConnectionPoolAutoTuner {
 ### AWS RDS PostgreSQL Instance Sizing
 
 **Current (Undersized Pool):**
+
 - Instance: db.t3.medium (2 vCPU, 4 GB RAM)
 - Monthly Cost: ~$60
 - **Problem:** Connection pool limits prevent using full DB capacity
 
 **Recommended (Right-Sized):**
+
 - Instance: db.t3.large (2 vCPU, 8 GB RAM)
 - Monthly Cost: ~$120
 - **Benefit:** Supports 60 connections + buffer, better query performance
 
 **Alternative (High Availability):**
+
 - Instance: db.r5.large (2 vCPU, 16 GB RAM, optimized for memory)
 - Monthly Cost: ~$180
 - **Benefit:** Better for read-heavy HRMS workloads (reports, dashboards)
@@ -605,11 +628,13 @@ log_disconnections = on
 **Approved for Implementation**: Environment-Specific Connection Pool Sizing
 
 **Configuration:**
+
 - Development: 5 connections
 - Staging: 30 connections
 - Production: 60 connections (scalable to 100)
 
 **PostgreSQL Server:**
+
 - Current: db.t3.medium (sufficient for < 50 users)
 - Upgrade to: db.t3.large (for 100+ users)
 - Future: db.r5.large or PgBouncer (for 500+ users)
@@ -618,6 +643,7 @@ log_disconnections = on
 **Implementation Start**: Week 1 (immediate)
 **Review Date**: After 1 week in production
 **Success Metrics:**
+
 - Connection timeout rate < 0.1%
 - P95 API latency < 500ms
 - Database CPU utilization 40-60%

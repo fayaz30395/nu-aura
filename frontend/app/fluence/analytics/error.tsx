@@ -1,14 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { typography, iconSize } from '@/lib/design-system';
+import {useRouter} from 'next/navigation';
+import {AlertCircle} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {iconSize, typography} from '@/lib/design-system';
 
 export default function AnalyticsError({
-  error,
-  reset,
-}: {
+                                         error,
+                                         reset,
+                                       }: {
   error: Error;
   reset: () => void;
 }) {
@@ -17,7 +17,7 @@ export default function AnalyticsError({
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4">
       <div className="p-4 bg-danger-100 dark:bg-danger-900/30 rounded-lg">
-        <AlertCircle className={`${iconSize.pageHeader} text-danger-600 dark:text-danger-300`} />
+        <AlertCircle className={`${iconSize.pageHeader} text-danger-600 dark:text-danger-300`}/>
       </div>
 
       <div className="text-center max-w-md">

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { PremiumSpinner } from './PremiumSpinner';
+import {cn} from '@/lib/utils';
+import {PremiumSpinner} from './PremiumSpinner';
 
 export interface LoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -11,10 +11,10 @@ export interface LoadingProps {
   variant?: 'orbit' | 'pulse' | 'dots' | 'bars' | 'ring' | 'gradient';
 }
 
-export function Loading({ size = 'md', text, fullScreen = false, variant = 'orbit' }: LoadingProps) {
+export function Loading({size = 'md', text, fullScreen = false, variant = 'orbit'}: LoadingProps) {
   const spinner = (
     <div className="flex flex-col items-center justify-center gap-6">
-      <PremiumSpinner size={size} variant={variant} />
+      <PremiumSpinner size={size} variant={variant}/>
       {text && (
         <p className="text-[var(--text-secondary)] text-sm font-medium animate-pulse duration-1000">
           {text}
@@ -28,7 +28,7 @@ export function Loading({ size = 'md', text, fullScreen = false, variant = 'orbi
       <div className="fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
         <div className="relative">
           {/* Glow effect behind spinner */}
-          <div className="absolute inset-0 blur-3xl bg-accent-500/20 rounded-full scale-150" />
+          <div className="absolute inset-0 blur-3xl bg-accent-500/20 rounded-full scale-150"/>
           {spinner}
         </div>
       </div>
@@ -45,7 +45,7 @@ interface SkeletonProps {
 }
 
 /** Base skeleton block — use for custom layouts */
-export function Skeleton({ className }: SkeletonProps) {
+export function Skeleton({className}: SkeletonProps) {
   return (
     <div
       className={cn('skeleton-aura', className)}
@@ -59,34 +59,34 @@ export function SkeletonStatCard() {
   return (
     <div className="card-aura p-4" aria-hidden="true">
       <div className="flex items-start justify-between mb-4">
-        <div className="skeleton-aura h-10 w-10 rounded-lg" />
-        <div className="skeleton-aura h-4 w-16 rounded" />
+        <div className="skeleton-aura h-10 w-10 rounded-lg"/>
+        <div className="skeleton-aura h-4 w-16 rounded"/>
       </div>
       <div className="space-y-2">
-        <div className="skeleton-aura h-8 w-24 rounded" />
-        <div className="skeleton-aura h-4 w-32 rounded" />
+        <div className="skeleton-aura h-8 w-24 rounded"/>
+        <div className="skeleton-aura h-4 w-32 rounded"/>
       </div>
     </div>
   );
 }
 
 /** Skeleton for table rows */
-export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
+export function SkeletonTable({rows = 5, columns = 4}: { rows?: number; columns?: number }) {
   return (
     <div className="card-aura overflow-hidden" aria-hidden="true">
       {/* Header */}
       <div className="flex gap-4 px-6 py-4 border-b border-[var(--border-main)]">
-        {Array.from({ length: columns }).map((_, i) => (
-          <div key={i} className="skeleton-aura h-4 rounded flex-1" />
+        {Array.from({length: columns}).map((_, i) => (
+          <div key={i} className="skeleton-aura h-4 rounded flex-1"/>
         ))}
       </div>
       {/* Rows */}
-      {Array.from({ length: rows }).map((_, rowIdx) => (
+      {Array.from({length: rows}).map((_, rowIdx) => (
         <div
           key={rowIdx}
           className="flex gap-4 px-6 py-4 divider-b"
         >
-          {Array.from({ length: columns }).map((_, colIdx) => (
+          {Array.from({length: columns}).map((_, colIdx) => (
             <div
               key={colIdx}
               className={cn(
@@ -102,21 +102,21 @@ export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; column
 }
 
 /** Skeleton for chart containers */
-export function SkeletonChart({ height = 'h-64' }: { height?: string }) {
+export function SkeletonChart({height = 'h-64'}: { height?: string }) {
   return (
     <div className={cn('card-aura p-6', height)} aria-hidden="true">
       <div className="row-between mb-6">
-        <div className="skeleton-aura h-6 w-32 rounded" />
-        <div className="skeleton-aura h-8 w-24 rounded-lg" />
+        <div className="skeleton-aura h-6 w-32 rounded"/>
+        <div className="skeleton-aura h-8 w-24 rounded-lg"/>
       </div>
       <div className="flex items-end gap-2 h-[calc(100%-4rem)]">
         {(() => {
           const heights = [65, 45, 80, 55, 70, 40, 75, 50, 85, 60];
-          return Array.from({ length: 7 }).map((_, i) => (
+          return Array.from({length: 7}).map((_, i) => (
             <div
               key={i}
               className="skeleton-aura flex-1 rounded-t"
-              style={{ height: `${heights[i % heights.length]}%` }}
+              style={{height: `${heights[i % heights.length]}%`}}
             />
           ));
         })()}
@@ -130,16 +130,16 @@ export function SkeletonCard() {
   return (
     <div className="card-aura p-6" aria-hidden="true">
       <div className="flex items-center gap-4 mb-4">
-        <div className="skeleton-aura h-10 w-10 rounded-lg flex-shrink-0" />
+        <div className="skeleton-aura h-10 w-10 rounded-lg flex-shrink-0"/>
         <div className="flex-1 space-y-2">
-          <div className="skeleton-aura h-4 w-3/4 rounded" />
-          <div className="skeleton-aura h-4 w-1/2 rounded" />
+          <div className="skeleton-aura h-4 w-3/4 rounded"/>
+          <div className="skeleton-aura h-4 w-1/2 rounded"/>
         </div>
       </div>
       <div className="space-y-2">
-        <div className="skeleton-aura h-4 w-full rounded" />
-        <div className="skeleton-aura h-4 w-5/6 rounded" />
-        <div className="skeleton-aura h-4 w-2/3 rounded" />
+        <div className="skeleton-aura h-4 w-full rounded"/>
+        <div className="skeleton-aura h-4 w-5/6 rounded"/>
+        <div className="skeleton-aura h-4 w-2/3 rounded"/>
       </div>
     </div>
   );
@@ -151,14 +151,50 @@ const NU_ICON_PATH =
 
 /** Particle configuration for the constellation loader */
 const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color: string }> = [
-  { size: 6, x: '14%', y: '12%', anim: 'nuaura-float-1 4s ease-in-out infinite',       color: 'bg-accent-600 dark:bg-accent-400' },
-  { size: 4, x: '78%', y: '8%',  anim: 'nuaura-float-2 5s ease-in-out infinite',       color: 'bg-[var(--nu-purple)]' },
-  { size: 5, x: '8%',  y: '72%', anim: 'nuaura-float-3 4.5s ease-in-out infinite',     color: 'bg-accent-400 dark:bg-accent-300' },
-  { size: 3, x: '82%', y: '76%', anim: 'nuaura-float-1 3.5s ease-in-out 0.5s infinite', color: 'bg-accent-300 dark:bg-accent-200' },
-  { size: 4, x: '6%',  y: '42%', anim: 'nuaura-float-2 5.5s ease-in-out 1s infinite',  color: 'bg-accent-500 dark:bg-accent-400' },
-  { size: 5, x: '88%', y: '38%', anim: 'nuaura-float-3 4s ease-in-out 0.8s infinite',  color: 'bg-[var(--nu-purple)]' },
-  { size: 3, x: '28%', y: '4%',  anim: 'nuaura-float-1 6s ease-in-out 0.3s infinite',  color: 'bg-accent-400 dark:bg-accent-300' },
-  { size: 3, x: '68%', y: '86%', anim: 'nuaura-float-2 5s ease-in-out 1.2s infinite',  color: 'bg-accent-500 dark:bg-accent-400' },
+  {
+    size: 6,
+    x: '14%',
+    y: '12%',
+    anim: 'nuaura-float-1 4s ease-in-out infinite',
+    color: 'bg-accent-600 dark:bg-accent-400'
+  },
+  {size: 4, x: '78%', y: '8%', anim: 'nuaura-float-2 5s ease-in-out infinite', color: 'bg-[var(--nu-purple)]'},
+  {
+    size: 5,
+    x: '8%',
+    y: '72%',
+    anim: 'nuaura-float-3 4.5s ease-in-out infinite',
+    color: 'bg-accent-400 dark:bg-accent-300'
+  },
+  {
+    size: 3,
+    x: '82%',
+    y: '76%',
+    anim: 'nuaura-float-1 3.5s ease-in-out 0.5s infinite',
+    color: 'bg-accent-300 dark:bg-accent-200'
+  },
+  {
+    size: 4,
+    x: '6%',
+    y: '42%',
+    anim: 'nuaura-float-2 5.5s ease-in-out 1s infinite',
+    color: 'bg-accent-500 dark:bg-accent-400'
+  },
+  {size: 5, x: '88%', y: '38%', anim: 'nuaura-float-3 4s ease-in-out 0.8s infinite', color: 'bg-[var(--nu-purple)]'},
+  {
+    size: 3,
+    x: '28%',
+    y: '4%',
+    anim: 'nuaura-float-1 6s ease-in-out 0.3s infinite',
+    color: 'bg-accent-400 dark:bg-accent-300'
+  },
+  {
+    size: 3,
+    x: '68%',
+    y: '86%',
+    anim: 'nuaura-float-2 5s ease-in-out 1.2s infinite',
+    color: 'bg-accent-500 dark:bg-accent-400'
+  },
 ];
 
 /**
@@ -168,7 +204,7 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
  * around the NULogic atom icon like a neural network coming alive.
  * Pure CSS animations, no Framer Motion dependency.
  */
-export function NuAuraLoader({ message = 'Loading your workspace...' }: { message?: string }) {
+export function NuAuraLoader({message = 'Loading your workspace...'}: { message?: string }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[var(--bg-page)] transition-colors select-none">
       <div className="flex flex-col items-center gap-8">
@@ -177,7 +213,8 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
         <div className="relative w-40 h-40">
 
           {/* Radial glow behind logo */}
-          <div className="absolute inset-6 rounded-full bg-accent-500/12 dark:bg-accent-400/10 blur-2xl nuaura-breathe" />
+          <div
+            className="absolute inset-6 rounded-full bg-accent-500/12 dark:bg-accent-400/10 blur-2xl nuaura-breathe"/>
 
           {/* Floating particles */}
           {PARTICLES.map((p, i) => (
@@ -213,9 +250,10 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
                 fill="url(#nuaura-loader-grad)"
               />
               <defs>
-                <linearGradient id="nuaura-loader-grad" x1="13.5" y1="0" x2="13.5" y2="38" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="var(--accent-primary, #2952A3)" />
-                  <stop offset="1" stopColor="var(--nu-purple, #8939A1)" />
+                <linearGradient id="nuaura-loader-grad" x1="13.5" y1="0" x2="13.5" y2="38"
+                                gradientUnits="userSpaceOnUse">
+                  <stop stopColor="var(--accent-primary, #2952A3)"/>
+                  <stop offset="1" stopColor="var(--nu-purple, #8939A1)"/>
                 </linearGradient>
               </defs>
             </svg>
@@ -238,7 +276,7 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
             <div
               key={i}
               className="w-2 h-2 rounded-full bg-accent-500 dark:bg-accent-400"
-              style={{ animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both` }}
+              style={{animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both`}}
             />
           ))}
         </div>

@@ -2,14 +2,16 @@
 
 > **Prerequisite:** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` + Claude Code v2.1.32+
 > **Token warning:** Teams use 10–15× tokens vs single session. Reserve for major efforts.
-> **File ownership rule:** Every agent must work in distinct directories. Shared files need task-list coordination.
+> **File ownership rule:** Every agent must work in distinct directories. Shared files need
+> task-list coordination.
 
 ---
 
 ## Config 1: Full Feature Build (6 Agents)
 
 **When:** Building a complete new module end-to-end (UI + API + DB + tests + docs).
-**Ideal for:** Modules like Expense Management, Shift Management, Training, Wellness, NU-Fluence Phase 2.
+**Ideal for:** Modules like Expense Management, Shift Management, Training, Wellness, NU-Fluence
+Phase 2.
 **Duration:** 1–2 hours of parallel agent work.
 
 ```
@@ -118,7 +120,8 @@ Start after architect posts design. Refine as backend and frontend complete."
 
 ## Config 2: Cross-Module Refactor (4 Agents)
 
-**When:** Changing something that spans multiple sub-apps — RBAC model, DB schema, permission format, auth flow, shared components.
+**When:** Changing something that spans multiple sub-apps — RBAC model, DB schema, permission
+format, auth flow, shared components.
 
 ```
 Spawn a team of 4 agents for a cross-module refactor.
@@ -186,7 +189,8 @@ After editing: post "COMPLETED EDIT: {filename} — what changed"
 
 ## Config 3: Bug Hunt — Competing Hypotheses (3 Agents)
 
-**When:** Complex intermittent bugs, cross-cutting issues, production incidents where root cause is unknown.
+**When:** Complex intermittent bugs, cross-cutting issues, production incidents where root cause is
+unknown.
 
 ```
 Spawn 3 agents to debug: "{Exact bug description with symptoms, frequency, and affected users/roles}"
@@ -328,9 +332,9 @@ investigator-3 ──┘
 
 ## Team Budget Reference
 
-| Config | Agents | Est. Token Multiplier | Best For |
-|--------|--------|----------------------|----------|
-| Full Feature Build | 6 | 10–15× | New module from scratch |
-| Cross-Module Refactor | 4 | 6–10× | Platform-wide changes |
-| Bug Hunt | 3 | 5–8× | Unknown root cause, complex bugs |
-| Sprint Execution | 5 | 8–12× | Multiple independent tickets |
+| Config                | Agents | Est. Token Multiplier | Best For                         |
+|-----------------------|--------|-----------------------|----------------------------------|
+| Full Feature Build    | 6      | 10–15×                | New module from scratch          |
+| Cross-Module Refactor | 4      | 6–10×                 | Platform-wide changes            |
+| Bug Hunt              | 3      | 5–8×                  | Unknown root cause, complex bugs |
+| Sprint Execution      | 5      | 8–12×                 | Multiple independent tickets     |

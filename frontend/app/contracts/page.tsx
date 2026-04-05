@@ -1,14 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useContracts, useExpiringContracts, useActiveContracts, useExpiredContracts } from '@/lib/hooks/queries/useContracts';
-import { contractService } from '@/lib/services/hrms/contract.service';
-import { Button, Table, Badge, Input, Select } from '@mantine/core';
-import { Plus, Search, FileText, AlertCircle, RefreshCw } from 'lucide-react';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {
+  useActiveContracts,
+  useContracts,
+  useExpiredContracts,
+  useExpiringContracts
+} from '@/lib/hooks/queries/useContracts';
+import {contractService} from '@/lib/services/hrms/contract.service';
+import {Badge, Button, Input, Select, Table} from '@mantine/core';
+import {AlertCircle, FileText, Plus, RefreshCw, Search} from 'lucide-react';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 export default function ContractsPage() {
   const router = useRouter();
@@ -16,10 +21,10 @@ export default function ContractsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
-  const { data: contractsData, isLoading, isError, error, refetch } = useContracts({ page, size: 20 });
-  const { data: expiringData } = useExpiringContracts();
-  const { data: activeData } = useActiveContracts();
-  const { data: expiredData } = useExpiredContracts();
+  const {data: contractsData, isLoading, isError, error, refetch} = useContracts({page, size: 20});
+  const {data: expiringData} = useExpiringContracts();
+  const {data: activeData} = useActiveContracts();
+  const {data: expiredData} = useExpiredContracts();
 
   const contracts = contractsData?.content || [];
 
@@ -51,8 +56,8 @@ export default function ContractsPage() {
   ];
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Contracts', href: '/contracts' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Contracts', href: '/contracts'},
   ];
 
   return (
@@ -62,12 +67,13 @@ export default function ContractsPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">Contracts</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage employment, vendor, and other contracts</p>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage employment, vendor, and other
+              contracts</p>
           </div>
           <PermissionGate permission={Permissions.CONTRACT_CREATE}>
             <Button
               onClick={() => router.push('/contracts/new')}
-              leftSection={<Plus className="w-4 h-4" />}
+              leftSection={<Plus className="w-4 h-4"/>}
               size="md"
             >
               New Contract
@@ -90,7 +96,7 @@ export default function ContractsPage() {
           <div className="flex-1">
             <Input
               placeholder="Search contracts..."
-              leftSection={<Search className="w-4 h-4" />}
+              leftSection={<Search className="w-4 h-4"/>}
               value={search}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)}
             />
@@ -98,11 +104,11 @@ export default function ContractsPage() {
           <Select
             placeholder="Filter by status"
             data={[
-              { label: 'All', value: '' },
-              { label: 'Draft', value: 'DRAFT' },
-              { label: 'Active', value: 'ACTIVE' },
-              { label: 'Expired', value: 'EXPIRED' },
-              { label: 'Terminated', value: 'TERMINATED' },
+              {label: 'All', value: ''},
+              {label: 'Draft', value: 'DRAFT'},
+              {label: 'Active', value: 'ACTIVE'},
+              {label: 'Expired', value: 'EXPIRED'},
+              {label: 'Terminated', value: 'TERMINATED'},
             ]}
             value={statusFilter}
             onChange={(value: string | null) => setStatusFilter(value || '')}
@@ -112,14 +118,16 @@ export default function ContractsPage() {
 
         {/* Error State */}
         {isError && (
-          <div className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl row-between">
+          <div
+            className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl row-between">
             <div className="flex items-center gap-4">
-              <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0" />
+              <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
               <p className="text-sm text-danger-600 dark:text-danger-400">
                 {error instanceof Error ? error.message : 'Failed to load contracts'}
               </p>
             </div>
-            <Button variant="light" size="xs" onClick={() => refetch()} leftSection={<RefreshCw className="w-3.5 h-3.5" />}>
+            <Button variant="light" size="xs" onClick={() => refetch()}
+                    leftSection={<RefreshCw className="w-3.5 h-3.5"/>}>
               Retry
             </Button>
           </div>
@@ -131,7 +139,7 @@ export default function ContractsPage() {
             <div className="p-8 text-center text-[var(--text-muted)]">Loading contracts...</div>
           ) : contracts.length === 0 ? (
             <div className="p-8 text-center text-[var(--text-muted)]">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <FileText className="w-12 h-12 mx-auto mb-4 opacity-50"/>
               <p>No contracts found</p>
             </div>
           ) : (
@@ -159,7 +167,8 @@ export default function ContractsPage() {
                     </Table.Td>
                     <Table.Td>{contract.employeeName || contract.vendorName || '—'}</Table.Td>
                     <Table.Td>{contract.endDate ? contractService.formatDate(contract.endDate) : '—'}</Table.Td>
-                    <Table.Td>{contract.pendingSignatureCount > 0 && <Badge>{contract.pendingSignatureCount} pending</Badge>}</Table.Td>
+                    <Table.Td>{contract.pendingSignatureCount > 0 &&
+                      <Badge>{contract.pendingSignatureCount} pending</Badge>}</Table.Td>
                     <Table.Td>
                       <Button
                         variant="light"

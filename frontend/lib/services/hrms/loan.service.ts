@@ -1,12 +1,5 @@
-import { apiClient } from '../../api/client';
-import {
-  EmployeeLoan,
-  CreateLoanRequest,
-  LoanStatus,
-  LoanFilters,
-  LoanSummary,
-  Page,
-} from '../../types/hrms/loan';
+import {apiClient} from '../../api/client';
+import {CreateLoanRequest, EmployeeLoan, LoanFilters, LoanStatus, LoanSummary, Page,} from '../../types/hrms/loan';
 
 class LoanService {
   // Loan Management
@@ -32,7 +25,7 @@ class LoanService {
   // Employee's Loans
   async getMyLoans(page: number = 0, size: number = 20): Promise<Page<EmployeeLoan>> {
     const response = await apiClient.get<Page<EmployeeLoan>>('/loans/my', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -43,7 +36,7 @@ class LoanService {
     size: number = 20,
     filters?: LoanFilters
   ): Promise<Page<EmployeeLoan>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
 
     if (filters) {
       if (filters.status) params.status = filters.status;
@@ -52,13 +45,13 @@ class LoanService {
       if (filters.search) params.search = filters.search;
     }
 
-    const response = await apiClient.get<Page<EmployeeLoan>>('/loans', { params });
+    const response = await apiClient.get<Page<EmployeeLoan>>('/loans', {params});
     return response.data;
   }
 
   async getPendingApprovals(page: number = 0, size: number = 20): Promise<Page<EmployeeLoan>> {
     const response = await apiClient.get<Page<EmployeeLoan>>('/loans/pending', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -80,7 +73,7 @@ class LoanService {
 
   // BUG-FIX: Backend expects @RequestBody RejectLoanRequest with 'reason' field.
   async rejectLoan(id: string, reason: string): Promise<EmployeeLoan> {
-    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/reject`, { reason });
+    const response = await apiClient.post<EmployeeLoan>(`/loans/${id}/reject`, {reason});
     return response.data;
   }
 
@@ -93,7 +86,7 @@ class LoanService {
     const response = await apiClient.post<EmployeeLoan>(
       `/loans/${id}/payment`,
       null,
-      { params: { amount } }
+      {params: {amount}}
     );
     return response.data;
   }

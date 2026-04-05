@@ -1,21 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { RefreshCw, Home, Grid } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
-import { isDevelopment } from '@/lib/config';
+import {useEffect} from 'react';
+import {motion} from 'framer-motion';
+import {Grid, Home, RefreshCw} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {categorizeError, getUserMessage, handleError} from '@/lib/utils/error-handler';
+import {isDevelopment} from '@/lib/config';
 
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
-export default function HelpdeskError({ error, reset }: ErrorProps) {
+export default function HelpdeskError({error, reset}: ErrorProps) {
   useEffect(() => {
-    handleError(error, { source: 'helpdesk-error-boundary', digest: error.digest });
+    handleError(error, {source: 'helpdesk-error-boundary', digest: error.digest});
   }, [error]);
 
   const category = categorizeError(error);
@@ -24,14 +24,15 @@ export default function HelpdeskError({ error, reset }: ErrorProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400" />
+            <div
+              className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
             </div>
             <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
               App Error
@@ -55,7 +56,7 @@ export default function HelpdeskError({ error, reset }: ErrorProps) {
             )}
             <div className="flex flex-col gap-2">
               <Button onClick={reset} className="w-full">
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4"/>
                 Try Again
               </Button>
               <Button
@@ -63,7 +64,7 @@ export default function HelpdeskError({ error, reset }: ErrorProps) {
                 onClick={() => (window.location.href = '/helpdesk')}
                 className="w-full"
               >
-                <Grid className="mr-2 h-4 w-4" />
+                <Grid className="mr-2 h-4 w-4"/>
                 Back to App
               </Button>
               <Button
@@ -71,7 +72,7 @@ export default function HelpdeskError({ error, reset }: ErrorProps) {
                 onClick={() => (window.location.href = '/me/dashboard')}
                 className="w-full"
               >
-                <Home className="mr-2 h-4 w-4" />
+                <Home className="mr-2 h-4 w-4"/>
                 Go to Home
               </Button>
             </div>

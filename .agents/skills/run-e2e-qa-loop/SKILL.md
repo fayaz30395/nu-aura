@@ -5,7 +5,8 @@ description: Run a complete end-to-end QA loop for NU-AURA with Google Chrome-ba
 
 # Run E2E QA Loop
 
-Use this skill when the task is not just "run tests", but "own quality until confidence is high". The workflow is deliberate:
+Use this skill when the task is not just "run tests", but "own quality until confidence is high".
+The workflow is deliberate:
 
 1. Understand the feature and blast radius
 2. Build a risk-based QA plan
@@ -29,7 +30,9 @@ UI validation is Google Chrome-first. Treat browser validation as a core signal,
 - Inspect console errors, failed network calls, broken loading states, and interaction dead ends
 - Validate responsive behavior when the route or component is user-facing
 
-If Playwright browser projects are configurable, prefer `channel: 'chrome'` or the equivalent Chrome project over generic Chromium. Use generic Chromium only as a fallback when Google Chrome is unavailable in the environment.
+If Playwright browser projects are configurable, prefer `channel: 'chrome'` or the equivalent Chrome
+project over generic Chromium. Use generic Chromium only as a fallback when Google Chrome is
+unavailable in the environment.
 
 ## Non-negotiables
 
@@ -53,7 +56,8 @@ By the end of the loop, produce:
 
 ## Platform-Aware Reference Model
 
-Use the following platform assumptions when building the QA plan. If the codebase disagrees, trust the repo and note the mismatch.
+Use the following platform assumptions when building the QA plan. If the codebase disagrees, trust
+the repo and note the mismatch.
 
 ### Sub-apps
 
@@ -84,11 +88,13 @@ Apply both the project role hierarchy and the platform route-role expectations d
 - Permissions are loaded from DB/cache and may become stale after role changes
 - DB format is `module.action`
 - Code checks may use `MODULE:ACTION`
-- Super Admin bypass must remain intact through controller, service, frontend gate, and middleware layers
+- Super Admin bypass must remain intact through controller, service, frontend gate, and middleware
+  layers
 
 ## Global Preflight
 
-Run these once before the first QA loop unless the user explicitly wants a narrow static-only review.
+Run these once before the first QA loop unless the user explicitly wants a narrow static-only
+review.
 
 ### Environment sanity
 
@@ -97,7 +103,8 @@ curl -s http://localhost:3000 | head
 curl -s http://localhost:8080/actuator/health
 ```
 
-If services are not healthy, inspect the repo’s documented run path before improvising. Prefer existing startup commands and compose files already checked into the repo.
+If services are not healthy, inspect the repo’s documented run path before improvising. Prefer
+existing startup commands and compose files already checked into the repo.
 
 ### Browser sanity
 
@@ -105,7 +112,8 @@ Before UI validation:
 
 - Confirm Google Chrome is installed or the Playwright Chrome channel is available
 - Prefer a dedicated Playwright Chrome project if the config defines one
-- If not present, add a note that the skill is using fallback Chromium and that browser parity risk remains
+- If not present, add a note that the skill is using fallback Chromium and that browser parity risk
+  remains
 
 Suggested checks:
 
@@ -202,7 +210,8 @@ After each key interaction, inspect:
 
 ## Loop Operating Model
 
-Run the QA process as deliberate loops. Each loop should narrow uncertainty, not just repeat commands.
+Run the QA process as deliberate loops. Each loop should narrow uncertainty, not just repeat
+commands.
 
 ### Loop 0: Recon
 
@@ -288,8 +297,10 @@ Every finding must include severity and class.
 
 ### Severity
 
-- `CRITICAL`: auth bypass, tenant leak, destructive corruption, total route failure, payroll/compliance-impacting defect
-- `MAJOR`: broken main workflow, wrong role behavior, persistent save failure, major UI block, broken core API contract
+- `CRITICAL`: auth bypass, tenant leak, destructive corruption, total route failure,
+  payroll/compliance-impacting defect
+- `MAJOR`: broken main workflow, wrong role behavior, persistent save failure, major UI block,
+  broken core API contract
 - `MINOR`: degraded UX, non-critical validation defect, layout problem with workaround
 - `NIT`: cosmetic or low-risk polish issue
 
@@ -338,7 +349,8 @@ Do not return `PASS` unless all of these are true for the scoped feature:
 - bug-fix proofs pass
 - adjacent regression band is clean enough for the stated scope
 
-Use `PASS WITH KNOWN RISK` only when the remaining risk is explicit, bounded, and not a core path failure.
+Use `PASS WITH KNOWN RISK` only when the remaining risk is explicit, bounded, and not a core path
+failure.
 
 ## Suggested Final Report Shape
 
@@ -387,7 +399,8 @@ First identify exactly what is being validated:
 - Adjacent modules likely to regress
 - Whether the target is new behavior, modified behavior, or a bug fix
 
-If the user did not specify the target clearly, infer it from changed files, branch diff, failing tests, or recent worktree edits.
+If the user did not specify the target clearly, infer it from changed files, branch diff, failing
+tests, or recent worktree edits.
 
 Useful commands:
 
@@ -424,8 +437,10 @@ Build a matrix across these layers. Keep it lean but complete.
 
 - Smoke: app boots, route loads, core action reachable
 - Happy path: intended flow succeeds
-- Browser UI: layout, visibility, affordances, modal behavior, focus, keyboard flow, navigation, back/forward behavior in Google Chrome
-- Visual: screenshots, modal layouts, overflow, clipping, broken spacing, missing icons, hidden actions, sticky headers, tables
+- Browser UI: layout, visibility, affordances, modal behavior, focus, keyboard flow, navigation,
+  back/forward behavior in Google Chrome
+- Visual: screenshots, modal layouts, overflow, clipping, broken spacing, missing icons, hidden
+  actions, sticky headers, tables
 - Validation: empty, malformed, boundary, duplicate, stale, conflicting input
 - RBAC: Super Admin bypass, allowed roles, denied roles
 - Tenant isolation: same role across different tenants cannot see or mutate foreign data
@@ -527,11 +542,15 @@ For browser/UI failures, classify more precisely:
 
 Start with the nearest layer to the failure.
 
-- Playwright failure: inspect page object, spec, network calls, route component, form schema, service call
-- Browser validation failure: inspect screenshots, DOM state, console errors, failed requests, z-index/overflow issues, disabled controls, hydration or loading glitches
-- Backend test failure: inspect controller, permission annotation, service method, repository query, mapper, transaction boundary
+- Playwright failure: inspect page object, spec, network calls, route component, form schema,
+  service call
+- Browser validation failure: inspect screenshots, DOM state, console errors, failed requests,
+  z-index/overflow issues, disabled controls, hydration or loading glitches
+- Backend test failure: inspect controller, permission annotation, service method, repository query,
+  mapper, transaction boundary
 - Auth failure: inspect cookies, guards, permission checks, cached permission loading, role mapping
-- Tenant failure: inspect tenant filter propagation, repository constraints, async job context, caching keys
+- Tenant failure: inspect tenant filter propagation, repository constraints, async job context,
+  caching keys
 
 Useful commands:
 
@@ -546,7 +565,8 @@ When fixing:
 
 - Keep the change minimal and causal
 - Add or repair the narrowest test that proves the bug
-- Preserve conventions: DTOs, thin controllers, React Hook Form + Zod, React Query, existing Axios client
+- Preserve conventions: DTOs, thin controllers, React Hook Form + Zod, React Query, existing Axios
+  client
 - Re-read nearby tests before changing behavior
 
 Every code fix should answer:
@@ -655,8 +675,10 @@ Apply these repeatedly during planning and diagnosis.
 
 - Re-run suspected flaky tests at least once
 - Separate timing failures from deterministic product bugs
-- If Playwright is timing out, inspect selectors, network waits, test data assumptions, and backend slowness before labeling it flaky
-- If Chrome-only issues appear, compare whether the bug is viewport, timing, animation, browser behavior, or actual DOM-state related
+- If Playwright is timing out, inspect selectors, network waits, test data assumptions, and backend
+  slowness before labeling it flaky
+- If Chrome-only issues appear, compare whether the bug is viewport, timing, animation, browser
+  behavior, or actual DOM-state related
 
 ## Loop Template
 
@@ -721,7 +743,8 @@ For each finding:
 
 ## Subagent Usage
 
-Use subagents only if the user explicitly asks for delegation, parallel agents, or subagents. If allowed, split by non-overlapping responsibilities:
+Use subagents only if the user explicitly asks for delegation, parallel agents, or subagents. If
+allowed, split by non-overlapping responsibilities:
 
 - Explorer 1: feature and blast-radius analysis
 - Explorer 2: existing test coverage and gaps
@@ -743,7 +766,8 @@ Do not delegate the same unresolved failure to multiple workers with overlapping
 - MapStruct mappings still align after DTO changes
 - Flyway/schema assumptions still hold
 - Redis or permission cache side effects are considered
-- Kafka, Elasticsearch, MinIO, email templates, and scheduled jobs are considered when the feature touches them
+- Kafka, Elasticsearch, MinIO, email templates, and scheduled jobs are considered when the feature
+  touches them
 
 ## When to Add New Tests
 
@@ -753,7 +777,8 @@ Add tests when:
 - The failure path is important and repeatable
 - The fix changes business logic or authorization behavior
 - The issue involved tenant scoping, RBAC, or state transitions
-- The issue is a real browser/UI regression that should be locked by a Playwright scenario or screenshot assertion
+- The issue is a real browser/UI regression that should be locked by a Playwright scenario or
+  screenshot assertion
 
 Avoid adding broad, expensive tests when a narrower one proves the bug better.
 

@@ -1,36 +1,41 @@
 'use client';
 
-import { useState } from 'react';
-import { AppLayout } from '@/components/layout';
-import { Settings, Tag, Shield, Plus, Edit2, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Modal, ModalHeader, ModalBody, ModalFooter, ConfirmDialog } from '@/components/ui';
+import {useState} from 'react';
+import {AppLayout} from '@/components/layout';
+import {Edit2, Plus, Settings, Shield, Tag, ToggleLeft, ToggleRight, Trash2} from 'lucide-react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
 import {
   useAllExpenseCategories,
-  useCreateExpenseCategory,
-  useUpdateExpenseCategory,
-  useToggleExpenseCategory,
-  useDeleteExpenseCategory,
   useAllExpensePolicies,
+  useCreateExpenseCategory,
   useCreateExpensePolicy,
-  useUpdateExpensePolicy,
+  useDeleteExpenseCategory,
+  useToggleExpenseCategory,
   useToggleExpensePolicy,
+  useUpdateExpenseCategory,
+  useUpdateExpensePolicy,
 } from '@/lib/hooks/queries';
-import { ExpenseCategoryEntity, ExpensePolicyEntity, CreateExpenseCategoryRequest, CreateExpensePolicyRequest } from '@/lib/types/hrms/expense';
+import {
+  CreateExpenseCategoryRequest,
+  CreateExpensePolicyRequest,
+  ExpenseCategoryEntity,
+  ExpensePolicyEntity
+} from '@/lib/types/hrms/expense';
 
 // ─── Category Schema ─────────────────────────────────────────────────────────
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(500).optional(),
-  maxAmount: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
+  maxAmount: z.number({coerce: true}).positive().optional().or(z.literal(0)),
   requiresReceipt: z.boolean(),
   glCode: z.string().max(50).optional(),
   iconName: z.string().max(50).optional(),
-  sortOrder: z.number({ coerce: true }).int().min(0).optional(),
+  sortOrder: z.number({coerce: true}).int().min(0).optional(),
 });
 type CategoryFormData = z.infer<typeof categorySchema>;
 
@@ -38,13 +43,13 @@ type CategoryFormData = z.infer<typeof categorySchema>;
 const policySchema = z.object({
   name: z.string().min(1, 'Name is required').max(150),
   description: z.string().max(500).optional(),
-  dailyLimit: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
-  monthlyLimit: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
-  yearlyLimit: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
-  singleClaimLimit: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
+  dailyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  monthlyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  yearlyLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  singleClaimLimit: z.number({coerce: true}).positive().optional().or(z.literal(0)),
   requiresPreApproval: z.boolean(),
-  preApprovalThreshold: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
-  receiptRequiredAbove: z.number({ coerce: true }).positive().optional().or(z.literal(0)),
+  preApprovalThreshold: z.number({coerce: true}).positive().optional().or(z.literal(0)),
+  receiptRequiredAbove: z.number({coerce: true}).positive().optional().or(z.literal(0)),
   currency: z.string().length(3).optional(),
 });
 type PolicyFormData = z.infer<typeof policySchema>;
@@ -55,14 +60,14 @@ export default function ExpenseSettingsPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
 
   // Categories
-  const { data: categoriesData } = useAllExpenseCategories(0, 100);
+  const {data: categoriesData} = useAllExpenseCategories(0, 100);
   const createCategoryMutation = useCreateExpenseCategory();
   const updateCategoryMutation = useUpdateExpenseCategory();
   const toggleCategoryMutation = useToggleExpenseCategory();
   const deleteCategoryMutation = useDeleteExpenseCategory();
 
   // Policies
-  const { data: policiesData } = useAllExpensePolicies(0, 100);
+  const {data: policiesData} = useAllExpensePolicies(0, 100);
   const createPolicyMutation = useCreateExpensePolicy();
   const updatePolicyMutation = useUpdateExpensePolicy();
   const togglePolicyMutation = useToggleExpensePolicy();
@@ -79,13 +84,13 @@ export default function ExpenseSettingsPage() {
   // Category form
   const categoryForm = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
-    defaultValues: { requiresReceipt: false, sortOrder: 0 },
+    defaultValues: {requiresReceipt: false, sortOrder: 0},
   });
 
   // Policy form
   const policyForm = useForm<PolicyFormData>({
     resolver: zodResolver(policySchema),
-    defaultValues: { requiresPreApproval: false, currency: 'INR' },
+    defaultValues: {requiresPreApproval: false, currency: 'INR'},
   });
 
   const openCategoryEdit = (cat: ExpenseCategoryEntity) => {
@@ -104,7 +109,7 @@ export default function ExpenseSettingsPage() {
 
   const openCategoryCreate = () => {
     setEditingCategory(null);
-    categoryForm.reset({ requiresReceipt: false, sortOrder: 0 });
+    categoryForm.reset({requiresReceipt: false, sortOrder: 0});
     setShowCategoryModal(true);
   };
 
@@ -115,8 +120,8 @@ export default function ExpenseSettingsPage() {
     } as CreateExpenseCategoryRequest;
     if (editingCategory) {
       updateCategoryMutation.mutate(
-        { categoryId: editingCategory.id, data: payload },
-        { onSuccess: () => setShowCategoryModal(false) }
+        {categoryId: editingCategory.id, data: payload},
+        {onSuccess: () => setShowCategoryModal(false)}
       );
     } else {
       createCategoryMutation.mutate(payload, {
@@ -144,7 +149,7 @@ export default function ExpenseSettingsPage() {
 
   const openPolicyCreate = () => {
     setEditingPolicy(null);
-    policyForm.reset({ requiresPreApproval: false, currency: 'INR' });
+    policyForm.reset({requiresPreApproval: false, currency: 'INR'});
     setShowPolicyModal(true);
   };
 
@@ -160,8 +165,8 @@ export default function ExpenseSettingsPage() {
     } as CreateExpensePolicyRequest;
     if (editingPolicy) {
       updatePolicyMutation.mutate(
-        { policyId: editingPolicy.id, data: payload },
-        { onSuccess: () => setShowPolicyModal(false) }
+        {policyId: editingPolicy.id, data: payload},
+        {onSuccess: () => setShowPolicyModal(false)}
       );
     } else {
       createPolicyMutation.mutate(payload, {
@@ -179,12 +184,13 @@ export default function ExpenseSettingsPage() {
     <AppLayout>
       <PermissionGate
         permission={Permissions.EXPENSE_MANAGE}
-        fallback={<div className="p-8 text-center text-surface-500">You do not have permission to manage expense settings.</div>}
+        fallback={<div className="p-8 text-center text-surface-500">You do not have permission to manage expense
+          settings.</div>}
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-              <Settings className="w-6 h-6" />
+              <Settings className="w-6 h-6"/>
               Expense Settings
             </h1>
             <p className="text-surface-500 mt-1">Manage expense categories and policies</p>
@@ -212,18 +218,19 @@ export default function ExpenseSettingsPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-                  <Tag className="w-5 h-5" />
+                  <Tag className="w-5 h-5"/>
                   Expense Categories
                 </h2>
                 <button
                   onClick={openCategoryCreate}
                   className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4"/>
                   Add Category
                 </button>
               </div>
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
+              <div
+                className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
                 {categories.length === 0 ? (
                   <div className="p-6 text-center text-surface-500">No categories configured yet.</div>
                 ) : (
@@ -233,7 +240,8 @@ export default function ExpenseSettingsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-surface-900 dark:text-surface-50">{cat.name}</p>
                           {!cat.isActive && (
-                            <span className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
+                            <span
+                              className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
                           )}
                           {cat.requiresReceipt && (
                             <span className="px-1.5 py-0.5 bg-warning-100 text-warning-700 rounded text-xs">Receipt Required</span>
@@ -247,12 +255,13 @@ export default function ExpenseSettingsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => toggleCategoryMutation.mutate({ categoryId: cat.id, active: !cat.isActive })}
+                          onClick={() => toggleCategoryMutation.mutate({categoryId: cat.id, active: !cat.isActive})}
                           className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           title={cat.isActive ? 'Deactivate' : 'Activate'}
                           aria-label={cat.isActive ? 'Deactivate category' : 'Activate category'}
                         >
-                          {cat.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
+                          {cat.isActive ? <ToggleRight className="w-5 h-5 text-success-500"/> :
+                            <ToggleLeft className="w-5 h-5"/>}
                         </button>
                         <button
                           onClick={() => openCategoryEdit(cat)}
@@ -260,7 +269,7 @@ export default function ExpenseSettingsPage() {
                           title="Edit"
                           aria-label="Edit category"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-4 h-4"/>
                         </button>
                         <button
                           onClick={() => setDeleteCategoryId(cat.id)}
@@ -268,7 +277,7 @@ export default function ExpenseSettingsPage() {
                           title="Delete"
                           aria-label="Delete category"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4"/>
                         </button>
                       </div>
                     </div>
@@ -283,18 +292,19 @@ export default function ExpenseSettingsPage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
+                  <Shield className="w-5 h-5"/>
                   Expense Policies
                 </h2>
                 <button
                   onClick={openPolicyCreate}
                   className="flex items-center gap-1.5 px-4 py-1.5 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4"/>
                   Add Policy
                 </button>
               </div>
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
+              <div
+                className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg divide-y divide-surface-200 dark:divide-surface-700">
                 {policies.length === 0 ? (
                   <div className="p-6 text-center text-surface-500">No policies configured yet.</div>
                 ) : (
@@ -304,10 +314,12 @@ export default function ExpenseSettingsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-surface-900 dark:text-surface-50">{pol.name}</p>
                           {!pol.isActive && (
-                            <span className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
+                            <span
+                              className="px-1.5 py-0.5 bg-surface-100 text-surface-500 rounded text-xs">Inactive</span>
                           )}
                           {pol.requiresPreApproval && (
-                            <span className="px-1.5 py-0.5 bg-accent-100 text-accent-700 rounded text-xs">Pre-Approval</span>
+                            <span
+                              className="px-1.5 py-0.5 bg-accent-100 text-accent-700 rounded text-xs">Pre-Approval</span>
                           )}
                         </div>
                         {pol.description && <p className="text-sm text-surface-500 mt-0.5">{pol.description}</p>}
@@ -320,18 +332,19 @@ export default function ExpenseSettingsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => togglePolicyMutation.mutate({ policyId: pol.id, active: !pol.isActive })}
+                          onClick={() => togglePolicyMutation.mutate({policyId: pol.id, active: !pol.isActive})}
                           className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           aria-label={pol.isActive ? 'Deactivate policy' : 'Activate policy'}
                         >
-                          {pol.isActive ? <ToggleRight className="w-5 h-5 text-success-500" /> : <ToggleLeft className="w-5 h-5" />}
+                          {pol.isActive ? <ToggleRight className="w-5 h-5 text-success-500"/> :
+                            <ToggleLeft className="w-5 h-5"/>}
                         </button>
                         <button
                           onClick={() => openPolicyEdit(pol)}
                           className="p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 rounded transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           aria-label="Edit policy"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-4 h-4"/>
                         </button>
                       </div>
                     </div>
@@ -348,43 +361,55 @@ export default function ExpenseSettingsPage() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name *</label>
-                    <input {...categoryForm.register('name')} className={inputClass} />
-                    {categoryForm.formState.errors.name && <p className="text-danger-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Name
+                      *</label>
+                    <input {...categoryForm.register('name')} className={inputClass}/>
+                    {categoryForm.formState.errors.name &&
+                      <p className="text-danger-500 text-sm mt-1">{categoryForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea {...categoryForm.register('description')} rows={2} className={inputClass} />
+                    <label
+                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
+                    <textarea {...categoryForm.register('description')} rows={2} className={inputClass}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max Amount</label>
-                      <input type="number" step="0.01" {...categoryForm.register('maxAmount')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max
+                        Amount</label>
+                      <input type="number" step="0.01" {...categoryForm.register('maxAmount')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">GL Code</label>
-                      <input {...categoryForm.register('glCode')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">GL
+                        Code</label>
+                      <input {...categoryForm.register('glCode')} className={inputClass}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Icon Name</label>
-                      <input {...categoryForm.register('iconName')} placeholder="e.g., Plane, Hotel" className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Icon
+                        Name</label>
+                      <input {...categoryForm.register('iconName')} placeholder="e.g., Plane, Hotel"
+                             className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Sort Order</label>
-                      <input type="number" {...categoryForm.register('sortOrder')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Sort
+                        Order</label>
+                      <input type="number" {...categoryForm.register('sortOrder')} className={inputClass}/>
                     </div>
                   </div>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" {...categoryForm.register('requiresReceipt')} className="rounded border-surface-300" />
+                    <input type="checkbox" {...categoryForm.register('requiresReceipt')}
+                           className="rounded border-surface-300"/>
                     <span className="text-sm text-surface-700 dark:text-surface-300">Requires receipt upload</span>
                   </label>
                 </div>
               </ModalBody>
               <ModalFooter>
-                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel</button>
-                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <button type="button" onClick={() => setShowCategoryModal(false)}
+                        className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
+                </button>
+                <button type="submit" disabled={createCategoryMutation.isPending || updateCategoryMutation.isPending}
+                        className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingCategory ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>
@@ -398,41 +423,52 @@ export default function ExpenseSettingsPage() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name *</label>
-                    <input {...policyForm.register('name')} className={inputClass} />
-                    {policyForm.formState.errors.name && <p className="text-danger-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Policy Name
+                      *</label>
+                    <input {...policyForm.register('name')} className={inputClass}/>
+                    {policyForm.formState.errors.name &&
+                      <p className="text-danger-500 text-sm mt-1">{policyForm.formState.errors.name.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-                    <textarea {...policyForm.register('description')} rows={2} className={inputClass} />
+                    <label
+                      className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
+                    <textarea {...policyForm.register('description')} rows={2} className={inputClass}/>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Daily Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('dailyLimit')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Daily
+                        Limit</label>
+                      <input type="number" step="0.01" {...policyForm.register('dailyLimit')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Monthly Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('monthlyLimit')} className={inputClass} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Yearly Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('yearlyLimit')} className={inputClass} />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Per Claim Limit</label>
-                      <input type="number" step="0.01" {...policyForm.register('singleClaimLimit')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Monthly
+                        Limit</label>
+                      <input type="number" step="0.01" {...policyForm.register('monthlyLimit')} className={inputClass}/>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Receipt Required Above</label>
-                      <input type="number" step="0.01" {...policyForm.register('receiptRequiredAbove')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Yearly
+                        Limit</label>
+                      <input type="number" step="0.01" {...policyForm.register('yearlyLimit')} className={inputClass}/>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Currency</label>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Per Claim
+                        Limit</label>
+                      <input type="number" step="0.01" {...policyForm.register('singleClaimLimit')}
+                             className={inputClass}/>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Receipt
+                        Required Above</label>
+                      <input type="number" step="0.01" {...policyForm.register('receiptRequiredAbove')}
+                             className={inputClass}/>
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Currency</label>
                       <select {...policyForm.register('currency')} className={inputClass}>
                         <option value="INR">INR</option>
                         <option value="USD">USD</option>
@@ -442,20 +478,26 @@ export default function ExpenseSettingsPage() {
                     </div>
                   </div>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" {...policyForm.register('requiresPreApproval')} className="rounded border-surface-300" />
+                    <input type="checkbox" {...policyForm.register('requiresPreApproval')}
+                           className="rounded border-surface-300"/>
                     <span className="text-sm text-surface-700 dark:text-surface-300">Requires pre-approval for amounts above threshold</span>
                   </label>
                   {policyForm.watch('requiresPreApproval') && (
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Pre-Approval Threshold</label>
-                      <input type="number" step="0.01" {...policyForm.register('preApprovalThreshold')} className={inputClass} />
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Pre-Approval
+                        Threshold</label>
+                      <input type="number" step="0.01" {...policyForm.register('preApprovalThreshold')}
+                             className={inputClass}/>
                     </div>
                   )}
                 </div>
               </ModalBody>
               <ModalFooter>
-                <button type="button" onClick={() => setShowPolicyModal(false)} className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel</button>
-                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending} className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <button type="button" onClick={() => setShowPolicyModal(false)}
+                        className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Cancel
+                </button>
+                <button type="submit" disabled={createPolicyMutation.isPending || updatePolicyMutation.isPending}
+                        className="px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {editingPolicy ? 'Update' : 'Create'}
                 </button>
               </ModalFooter>

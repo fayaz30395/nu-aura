@@ -1,6 +1,6 @@
-export { PayrollRunsTab } from './PayrollRunsTab';
-export { PayslipsTab } from './PayslipsTab';
-export { SalaryStructuresTab } from './SalaryStructuresTab';
+export {PayrollRunsTab} from './PayrollRunsTab';
+export {PayslipsTab} from './PayslipsTab';
+export {SalaryStructuresTab} from './SalaryStructuresTab';
 export {
   PayrollRunModal,
   PayslipModal,

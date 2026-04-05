@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Wellness Page Smoke Tests
@@ -6,20 +6,20 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Wellness Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/wellness');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display wellness page with heading', async ({ page }) => {
+  test('should display wellness page with heading', async ({page}) => {
     await expect(page.locator('h1')).toContainText('Wellness');
   });
 
-  test('should not show application error', async ({ page }) => {
+  test('should not show application error', async ({page}) => {
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display wellness stats or content cards', async ({ page }) => {
+  test('should display wellness stats or content cards', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -28,7 +28,7 @@ test.describe('Wellness Page', () => {
     expect(hasCards || hasContent).toBe(true);
   });
 
-  test('should display leaderboard or activity section', async ({ page }) => {
+  test('should display leaderboard or activity section', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasLeaderboard = await page.locator('text=/leaderboard|ranking|top/i').first().isVisible().catch(() => false);
@@ -37,7 +37,7 @@ test.describe('Wellness Page', () => {
     expect(hasLeaderboard || hasActivity || true).toBe(true);
   });
 
-  test('should show action button if present', async ({ page }) => {
+  test('should show action button if present', async ({page}) => {
     await page.waitForTimeout(500);
 
     const actionBtn = page.locator('button:has-text("Log"), button:has-text("Add"), button:has-text("Create"), button:has-text("Join")').first();

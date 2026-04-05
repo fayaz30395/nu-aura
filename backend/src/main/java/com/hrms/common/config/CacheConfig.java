@@ -57,6 +57,8 @@ public class CacheConfig implements CachingConfigurer {
     public static final String ANALYTICS_SUMMARY = "analyticsSummary";
     public static final String DASHBOARD_METRICS = "dashboardMetrics";
     public static final String TENANT_ATTENDANCE_CONFIG = "tenantAttendanceConfig";
+    public static final String UPCOMING_BIRTHDAYS = "upcomingBirthdays";
+    public static final String UPCOMING_ANNIVERSARIES = "upcomingAnniversaries";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -99,6 +101,10 @@ public class CacheConfig implements CachingConfigurer {
 
         // Feature flags - checked frequently, but changes are rare; invalidated on toggle
         cacheConfigurations.put(FEATURE_FLAGS, defaultConfig.entryTtl(Duration.ofHours(4)));
+
+        // Celebration caches — change once a day, 24hr TTL (PERF-5)
+        cacheConfigurations.put(UPCOMING_BIRTHDAYS, defaultConfig.entryTtl(Duration.ofHours(24)));
+        cacheConfigurations.put(UPCOMING_ANNIVERSARIES, defaultConfig.entryTtl(Duration.ofHours(24)));
 
         // Analytics caches - short-lived to reflect near-real-time data
         cacheConfigurations.put(ANALYTICS_SUMMARY, defaultConfig.entryTtl(Duration.ofMinutes(5)));

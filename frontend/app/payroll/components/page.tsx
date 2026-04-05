@@ -1,49 +1,39 @@
 'use client';
 
-import { useState } from 'react';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  usePayrollComponents,
   useCreatePayrollComponent,
-  useUpdatePayrollComponent,
   useDeletePayrollComponent,
+  usePayrollComponents,
   useRecomputeEvaluationOrder,
+  useUpdatePayrollComponent,
 } from '@/lib/hooks/queries/usePayroll';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Modal,
-  TextInput,
-  Textarea,
-  Select,
-  NumberInput,
-  Switch,
+  ActionIcon,
+  Box,
   Button,
   Group,
+  Modal,
+  NumberInput,
+  Select,
   Stack,
-  Badge,
-  ActionIcon,
-  Tooltip,
+  Switch,
   Table,
-  Text,
-  Box,
   Tabs,
+  Text,
+  Textarea,
+  TextInput,
+  Tooltip,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-  Building2,
-  Code,
-} from 'lucide-react';
-import type { PayrollComponent, ComponentType, PayrollComponentRequest } from '@/lib/types/hrms/payroll';
+import {notifications} from '@mantine/notifications';
+import {Building2, Code, Pencil, Plus, RefreshCw, Trash2, TrendingDown, TrendingUp,} from 'lucide-react';
+import type {ComponentType, PayrollComponent, PayrollComponentRequest} from '@/lib/types/hrms/payroll';
 
 // ─── Form schema ──────────────────────────────────────────────────────────────
 
@@ -78,19 +68,19 @@ const TYPE_COLORS: Record<ComponentType, string> = {
   EMPLOYER_CONTRIBUTION: 'text-info-600 dark:text-info-400 bg-info-50 dark:bg-info-950/20',
 };
 
-function TypeIcon({ type }: { type: ComponentType }) {
-  if (type === 'EARNING') return <TrendingUp className="h-4 w-4 text-success-500" />;
-  if (type === 'DEDUCTION') return <TrendingDown className="h-4 w-4 text-danger-500" />;
-  return <Building2 className="h-4 w-4 text-info-500" />;
+function TypeIcon({type}: { type: ComponentType }) {
+  if (type === 'EARNING') return <TrendingUp className="h-4 w-4 text-success-500"/>;
+  if (type === 'DEDUCTION') return <TrendingDown className="h-4 w-4 text-danger-500"/>;
+  return <Building2 className="h-4 w-4 text-info-500"/>;
 }
 
 // ─── Component form modal ─────────────────────────────────────────────────────
 
 function ComponentModal({
-  opened,
-  onClose,
-  editTarget,
-}: {
+                          opened,
+                          onClose,
+                          editTarget,
+                        }: {
   opened: boolean;
   onClose: () => void;
   editTarget: PayrollComponent | null;
@@ -105,25 +95,25 @@ function ComponentModal({
     watch,
     setValue,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ComponentFormData>({
     resolver: zodResolver(componentSchema),
     defaultValues: editTarget
       ? {
-          code: editTarget.code,
-          name: editTarget.name,
-          componentType: editTarget.componentType,
-          formula: editTarget.formula ?? '',
-          defaultValue: editTarget.defaultValue ?? null,
-          isActive: editTarget.isActive,
-          isTaxable: editTarget.isTaxable,
-          description: editTarget.description ?? '',
-        }
+        code: editTarget.code,
+        name: editTarget.name,
+        componentType: editTarget.componentType,
+        formula: editTarget.formula ?? '',
+        defaultValue: editTarget.defaultValue ?? null,
+        isActive: editTarget.isActive,
+        isTaxable: editTarget.isTaxable,
+        description: editTarget.description ?? '',
+      }
       : {
-          componentType: 'EARNING',
-          isActive: true,
-          isTaxable: true,
-        },
+        componentType: 'EARNING',
+        isActive: true,
+        isTaxable: true,
+      },
   });
 
   const isActive = watch('isActive');
@@ -144,16 +134,16 @@ function ComponentModal({
 
     try {
       if (isEdit) {
-        await update.mutateAsync({ id: editTarget!.id, data: payload });
-        notifications.show({ message: 'Component updated', color: 'green' });
+        await update.mutateAsync({id: editTarget!.id, data: payload});
+        notifications.show({message: 'Component updated', color: 'green'});
       } else {
         await create.mutateAsync(payload);
-        notifications.show({ message: 'Component created', color: 'green' });
+        notifications.show({message: 'Component created', color: 'green'});
       }
       reset();
       onClose();
     } catch {
-      notifications.show({ message: 'Failed to save component', color: 'red' });
+      notifications.show({message: 'Failed to save component', color: 'red'});
     }
   };
 
@@ -186,9 +176,9 @@ function ComponentModal({
           <Select
             label="Component Type"
             data={[
-              { value: 'EARNING', label: 'Earning (adds to gross)' },
-              { value: 'DEDUCTION', label: 'Deduction (subtracts from gross)' },
-              { value: 'EMPLOYER_CONTRIBUTION', label: "Employer Contribution (employer's cost)" },
+              {value: 'EARNING', label: 'Earning (adds to gross)'},
+              {value: 'DEDUCTION', label: 'Deduction (subtracts from gross)'},
+              {value: 'EMPLOYER_CONTRIBUTION', label: "Employer Contribution (employer's cost)"},
             ]}
             value={componentType}
             onChange={(v) => setValue('componentType', v as ComponentType)}
@@ -251,10 +241,10 @@ function ComponentModal({
 // ─── Components table ─────────────────────────────────────────────────────────
 
 function ComponentsTable({
-  components,
-  onEdit,
-  onDelete,
-}: {
+                           components,
+                           onEdit,
+                           onDelete,
+                         }: {
   components: PayrollComponent[];
   onEdit: (c: PayrollComponent) => void;
   onDelete: (c: PayrollComponent) => void;
@@ -262,7 +252,7 @@ function ComponentsTable({
   if (components.length === 0) {
     return (
       <div className="py-16 text-center">
-        <Code className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4" />
+        <Code className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4"/>
         <p className="text-sm font-medium text-[var(--text-primary)]">No components in this category</p>
         <p className="text-caption mt-1">Add a component using the button above</p>
       </div>
@@ -281,7 +271,7 @@ function ComponentsTable({
             <Table.Th>Formula / Default</Table.Th>
             <Table.Th>Taxable</Table.Th>
             <Table.Th>Status</Table.Th>
-            <Table.Th />
+            <Table.Th/>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -309,7 +299,7 @@ function ComponentsTable({
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[c.componentType]}`}
                 >
-                  <TypeIcon type={c.componentType} />
+                  <TypeIcon type={c.componentType}/>
                   {TYPE_LABELS[c.componentType]}
                 </span>
               </Table.Td>
@@ -356,7 +346,7 @@ function ComponentsTable({
                       aria-label="Edit component"
                       className="cursor-pointer"
                     >
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Pencil className="h-3.5 w-3.5"/>
                     </ActionIcon>
                   </Tooltip>
                   <Tooltip label="Delete">
@@ -368,7 +358,7 @@ function ComponentsTable({
                       aria-label="Delete component"
                       className="cursor-pointer"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5"/>
                     </ActionIcon>
                   </Tooltip>
                 </Group>
@@ -389,7 +379,7 @@ export default function PayrollComponentsPage() {
   const [deleteTarget, setDeleteTarget] = useState<PayrollComponent | null>(null);
   const [activeTab, setActiveTab] = useState<string>('ALL');
 
-  const { data: componentsPage, isLoading } = usePayrollComponents(0, 200);
+  const {data: componentsPage, isLoading} = usePayrollComponents(0, 200);
   const deleteComponent = useDeletePayrollComponent();
   const recompute = useRecomputeEvaluationOrder();
 
@@ -412,9 +402,9 @@ export default function PayrollComponentsPage() {
     if (!deleteTarget) return;
     try {
       await deleteComponent.mutateAsync(deleteTarget.id);
-      notifications.show({ message: `Deleted "${deleteTarget.name}"`, color: 'green' });
+      notifications.show({message: `Deleted "${deleteTarget.name}"`, color: 'green'});
     } catch {
-      notifications.show({ message: 'Delete failed', color: 'red' });
+      notifications.show({message: 'Delete failed', color: 'red'});
     } finally {
       setDeleteTarget(null);
     }
@@ -460,12 +450,12 @@ export default function PayrollComponentsPage() {
                   aria-label="Recompute evaluation order"
                   className="cursor-pointer"
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  <RefreshCw className="h-4 w-4"/>
                 </ActionIcon>
               </Tooltip>
               <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                 <Button
-                  leftSection={<Plus className="h-4 w-4" />}
+                  leftSection={<Plus className="h-4 w-4"/>}
                   onClick={openNew}
                   className="skeuo-button cursor-pointer"
                 >
@@ -478,10 +468,10 @@ export default function PayrollComponentsPage() {
           {/* Summary badges */}
           <div className="flex flex-wrap gap-2">
             {[
-              { label: `${earnings.length} Earnings`, color: TYPE_COLORS.EARNING },
-              { label: `${deductions.length} Deductions`, color: TYPE_COLORS.DEDUCTION },
-              { label: `${employer.length} Employer`, color: TYPE_COLORS.EMPLOYER_CONTRIBUTION },
-            ].map(({ label, color }) => (
+              {label: `${earnings.length} Earnings`, color: TYPE_COLORS.EARNING},
+              {label: `${deductions.length} Deductions`, color: TYPE_COLORS.DEDUCTION},
+              {label: `${employer.length} Employer`, color: TYPE_COLORS.EMPLOYER_CONTRIBUTION},
+            ].map(({label, color}) => (
               <span
                 key={label}
                 className={`px-4 py-1 rounded-full text-xs font-semibold ${color}`}
@@ -492,7 +482,8 @@ export default function PayrollComponentsPage() {
           </div>
 
           {/* Table with tabs */}
-          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div
+            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
             <Tabs value={activeTab} onChange={(v) => setActiveTab(v ?? 'ALL')}>
               <Tabs.List px="md" pt="sm">
                 <Tabs.Tab value="ALL">All ({all.length})</Tabs.Tab>
@@ -504,11 +495,11 @@ export default function PayrollComponentsPage() {
               <Tabs.Panel value={activeTab} pt="sm">
                 {isLoading ? (
                   <div className="divide-y divide-[var(--border-subtle)]">
-                    {Array.from({ length: 5 }).map((_, i) => (
+                    {Array.from({length: 5}).map((_, i) => (
                       <div key={i} className="px-6 py-4 flex items-center gap-4">
-                        <div className="h-4 w-8 rounded bg-[var(--skeleton-base)] animate-pulse" />
-                        <div className="h-4 w-24 rounded bg-[var(--skeleton-base)] animate-pulse" />
-                        <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse" />
+                        <div className="h-4 w-8 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+                        <div className="h-4 w-24 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+                        <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse"/>
                       </div>
                     ))}
                   </div>
@@ -533,10 +524,10 @@ export default function PayrollComponentsPage() {
             </p>
             <div className="flex flex-wrap gap-2">
               {[
-                { label: 'HRA (40% of basic)', formula: 'basic * 0.4' },
-                { label: 'PF (12% of basic)', formula: 'basic * 0.12' },
-                { label: 'ESI (0.75%)', formula: '(basic + hra) * 0.0075' },
-              ].map(({ label, formula }) => (
+                {label: 'HRA (40% of basic)', formula: 'basic * 0.4'},
+                {label: 'PF (12% of basic)', formula: 'basic * 0.12'},
+                {label: 'ESI (0.75%)', formula: '(basic + hra) * 0.0075'},
+              ].map(({label, formula}) => (
                 <div
                   key={label}
                   className="flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg px-4 py-1.5"
@@ -552,7 +543,10 @@ export default function PayrollComponentsPage() {
         {/* Create/Edit modal */}
         <ComponentModal
           opened={modalOpen}
-          onClose={() => { setModalOpen(false); setEditTarget(null); }}
+          onClose={() => {
+            setModalOpen(false);
+            setEditTarget(null);
+          }}
           editTarget={editTarget}
         />
 

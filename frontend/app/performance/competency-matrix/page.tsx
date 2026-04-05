@@ -1,86 +1,80 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useCallback, useMemo, useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Tabs,
-  Modal,
-  Select,
-  TextInput,
-  Badge,
-  Progress,
-  Tooltip,
   ActionIcon,
-  Group,
-  Stack,
-  Text,
-  Title,
-  Paper,
-  SimpleGrid,
-  Table,
-  Loader,
+  Badge,
   Button,
+  Group,
+  Loader,
+  Modal,
+  Paper,
+  Progress,
+  Select,
+  SimpleGrid,
+  Stack,
+  Table,
+  Tabs,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import {useDisclosure} from '@mantine/hooks';
 import {
-  BarChart3,
-  Users,
-  Shield,
-  Plus,
-  Trash2,
-  CheckCircle,
   AlertTriangle,
-  TrendingUp,
-  Target,
+  BarChart3,
   BookOpen,
+  CheckCircle,
   ChevronRight,
-  Info,
-  Search,
   Filter,
+  Info,
+  Plus,
+  Search,
+  Shield,
+  Target,
+  Trash2,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {
+  useAddEmployeeSkill,
+  useEmployeeSkills,
+  useRemoveSkill,
+  useSkillGapAnalysis,
+  useVerifySkill,
+} from '@/lib/hooks/useCompetency';
+import type {CompetencyCategory, EmployeeSkill, ProficiencyLevel, SkillGapDetail,} from '@/lib/types/grow/competency';
+import {
+  COMPETENCY_CATEGORY_COLORS,
+  COMPETENCY_CATEGORY_LABELS,
+  GAP_LEVEL_COLORS,
+  PROFICIENCY_LEVEL_LABELS,
+} from '@/lib/types/grow/competency';
 
 // Recharts uses browser-only SVG/ResizeObserver APIs — lazy-load chart components.
 // Both chart files live in CompetencyCharts.tsx so the entire recharts bundle is
 // excluded from the initial page JS.
 const ChartSkeleton = () => (
-  <div className="w-full h-[280px] animate-pulse bg-[var(--bg-secondary)] rounded-lg" />
+  <div className="w-full h-[280px] animate-pulse bg-[var(--bg-secondary)] rounded-lg"/>
 );
 const GapAnalysisRadarChart = dynamic(
-  () => import('./CompetencyCharts').then(m => ({ default: m.GapAnalysisRadarChart })),
-  { ssr: false, loading: ChartSkeleton }
+  () => import('./CompetencyCharts').then(m => ({default: m.GapAnalysisRadarChart})),
+  {ssr: false, loading: ChartSkeleton}
 );
 const CompetencyHeatmapChart = dynamic(
-  () => import('./CompetencyCharts').then(m => ({ default: m.CompetencyHeatmapChart })),
-  { ssr: false, loading: ChartSkeleton }
+  () => import('./CompetencyCharts').then(m => ({default: m.CompetencyHeatmapChart})),
+  {ssr: false, loading: ChartSkeleton}
 );
-
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
-import { useAuth } from '@/lib/hooks/useAuth';
-import {
-  useEmployeeSkills,
-  useAddEmployeeSkill,
-  useRemoveSkill,
-  useVerifySkill,
-  useSkillGapAnalysis,
-} from '@/lib/hooks/useCompetency';
-import type {
-  EmployeeSkill,
-  CompetencyCategory,
-  ProficiencyLevel,
-  SkillGapDetail,
-} from '@/lib/types/grow/competency';
-import {
-  COMPETENCY_CATEGORY_LABELS,
-  PROFICIENCY_LEVEL_LABELS,
-  COMPETENCY_CATEGORY_COLORS,
-  GAP_LEVEL_COLORS,
-} from '@/lib/types/grow/competency';
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────
 
@@ -102,31 +96,121 @@ const FRAMEWORK_COMPETENCIES: Array<{
   requiredLevel: ProficiencyLevel;
   department: string;
 }> = [
-  { name: 'System Design', category: 'TECHNICAL', description: 'Ability to design scalable distributed systems', requiredLevel: 4, department: 'Engineering' },
-  { name: 'Java', category: 'TECHNICAL', description: 'Proficiency in Java programming language', requiredLevel: 4, department: 'Engineering' },
-  { name: 'Cloud Architecture', category: 'TECHNICAL', description: 'AWS/GCP/Azure cloud infrastructure design', requiredLevel: 3, department: 'Engineering' },
-  { name: 'API Development', category: 'TECHNICAL', description: 'REST/GraphQL API design and implementation', requiredLevel: 4, department: 'Engineering' },
-  { name: 'Database Design', category: 'TECHNICAL', description: 'Relational and NoSQL database modeling', requiredLevel: 3, department: 'Engineering' },
-  { name: 'Leadership', category: 'LEADERSHIP', description: 'Guiding teams and making strategic decisions', requiredLevel: 4, department: 'Management' },
-  { name: 'Communication', category: 'BEHAVIORAL', description: 'Clear and effective written and verbal communication', requiredLevel: 5, department: 'All' },
-  { name: 'Strategic Planning', category: 'LEADERSHIP', description: 'Long-term planning and vision alignment', requiredLevel: 4, department: 'Management' },
-  { name: 'Team Management', category: 'LEADERSHIP', description: 'Managing and developing team members', requiredLevel: 4, department: 'Management' },
-  { name: 'Problem Solving', category: 'PROBLEM_SOLVING', description: 'Analytical thinking and creative solutions', requiredLevel: 3, department: 'All' },
-  { name: 'Product Strategy', category: 'DOMAIN', description: 'Product vision, roadmap, and market analysis', requiredLevel: 4, department: 'Product' },
-  { name: 'User Research', category: 'DOMAIN', description: 'Conducting user interviews and usability testing', requiredLevel: 3, department: 'Product' },
-  { name: 'Data Analysis', category: 'TECHNICAL', description: 'Statistical analysis and data interpretation', requiredLevel: 3, department: 'Product' },
-  { name: 'Stakeholder Management', category: 'BEHAVIORAL', description: 'Managing relationships with key stakeholders', requiredLevel: 4, department: 'Product' },
-  { name: 'Collaboration', category: 'BEHAVIORAL', description: 'Working effectively within and across teams', requiredLevel: 3, department: 'All' },
+  {
+    name: 'System Design',
+    category: 'TECHNICAL',
+    description: 'Ability to design scalable distributed systems',
+    requiredLevel: 4,
+    department: 'Engineering'
+  },
+  {
+    name: 'Java',
+    category: 'TECHNICAL',
+    description: 'Proficiency in Java programming language',
+    requiredLevel: 4,
+    department: 'Engineering'
+  },
+  {
+    name: 'Cloud Architecture',
+    category: 'TECHNICAL',
+    description: 'AWS/GCP/Azure cloud infrastructure design',
+    requiredLevel: 3,
+    department: 'Engineering'
+  },
+  {
+    name: 'API Development',
+    category: 'TECHNICAL',
+    description: 'REST/GraphQL API design and implementation',
+    requiredLevel: 4,
+    department: 'Engineering'
+  },
+  {
+    name: 'Database Design',
+    category: 'TECHNICAL',
+    description: 'Relational and NoSQL database modeling',
+    requiredLevel: 3,
+    department: 'Engineering'
+  },
+  {
+    name: 'Leadership',
+    category: 'LEADERSHIP',
+    description: 'Guiding teams and making strategic decisions',
+    requiredLevel: 4,
+    department: 'Management'
+  },
+  {
+    name: 'Communication',
+    category: 'BEHAVIORAL',
+    description: 'Clear and effective written and verbal communication',
+    requiredLevel: 5,
+    department: 'All'
+  },
+  {
+    name: 'Strategic Planning',
+    category: 'LEADERSHIP',
+    description: 'Long-term planning and vision alignment',
+    requiredLevel: 4,
+    department: 'Management'
+  },
+  {
+    name: 'Team Management',
+    category: 'LEADERSHIP',
+    description: 'Managing and developing team members',
+    requiredLevel: 4,
+    department: 'Management'
+  },
+  {
+    name: 'Problem Solving',
+    category: 'PROBLEM_SOLVING',
+    description: 'Analytical thinking and creative solutions',
+    requiredLevel: 3,
+    department: 'All'
+  },
+  {
+    name: 'Product Strategy',
+    category: 'DOMAIN',
+    description: 'Product vision, roadmap, and market analysis',
+    requiredLevel: 4,
+    department: 'Product'
+  },
+  {
+    name: 'User Research',
+    category: 'DOMAIN',
+    description: 'Conducting user interviews and usability testing',
+    requiredLevel: 3,
+    department: 'Product'
+  },
+  {
+    name: 'Data Analysis',
+    category: 'TECHNICAL',
+    description: 'Statistical analysis and data interpretation',
+    requiredLevel: 3,
+    department: 'Product'
+  },
+  {
+    name: 'Stakeholder Management',
+    category: 'BEHAVIORAL',
+    description: 'Managing relationships with key stakeholders',
+    requiredLevel: 4,
+    department: 'Product'
+  },
+  {
+    name: 'Collaboration',
+    category: 'BEHAVIORAL',
+    description: 'Working effectively within and across teams',
+    requiredLevel: 3,
+    department: 'All'
+  },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
 const proficiencyOptions = [
-  { value: '1', label: '1 - Beginner' },
-  { value: '2', label: '2 - Basic' },
-  { value: '3', label: '3 - Intermediate' },
-  { value: '4', label: '4 - Advanced' },
-  { value: '5', label: '5 - Expert' },
+  {value: '1', label: '1 - Beginner'},
+  {value: '2', label: '2 - Basic'},
+  {value: '3', label: '3 - Intermediate'},
+  {value: '4', label: '4 - Advanced'},
+  {value: '5', label: '5 - Expert'},
 ];
 
 const categoryOptions = Object.entries(COMPETENCY_CATEGORY_LABELS).map(([value, label]) => ({
@@ -135,16 +219,16 @@ const categoryOptions = Object.entries(COMPETENCY_CATEGORY_LABELS).map(([value, 
 }));
 
 const sourceOptions = [
-  { value: 'SELF', label: 'Self Assessment' },
-  { value: 'MANAGER', label: 'Manager Assessment' },
-  { value: 'COURSE_COMPLETION', label: 'Course Completion' },
+  {value: 'SELF', label: 'Self Assessment'},
+  {value: 'MANAGER', label: 'Manager Assessment'},
+  {value: 'COURSE_COMPLETION', label: 'Course Completion'},
 ];
 
 const departmentOptions = [
-  { value: 'All', label: 'All Departments' },
-  { value: 'Engineering', label: 'Engineering' },
-  { value: 'Management', label: 'Management' },
-  { value: 'Product', label: 'Product' },
+  {value: 'All', label: 'All Departments'},
+  {value: 'Engineering', label: 'Engineering'},
+  {value: 'Management', label: 'Management'},
+  {value: 'Product', label: 'Product'},
 ];
 
 const HEATMAP_COLORS = [
@@ -192,7 +276,7 @@ function FrameworkAdminTab() {
   return (
     <div className="space-y-6">
       {/* Category Stats */}
-      <SimpleGrid cols={{ base: 2, sm: 3, md: 5 }}>
+      <SimpleGrid cols={{base: 2, sm: 3, md: 5}}>
         {categoryStats.map((stat) => (
           <Paper
             key={stat.category}
@@ -204,7 +288,7 @@ function FrameworkAdminTab() {
                 <Text size="xs" c="dimmed">{stat.label}</Text>
                 <Text size="xl" fw={700} className="text-[var(--text-primary)]">{stat.count}</Text>
               </div>
-              <div className={`w-3 h-3 rounded-full bg-${stat.color}-500`} />
+              <div className={`w-3 h-3 rounded-full bg-${stat.color}-500`}/>
             </div>
             {filterCategory === stat.category && (
               <Badge size="xs" color="indigo" mt={4}>Active Filter</Badge>
@@ -217,13 +301,13 @@ function FrameworkAdminTab() {
       <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
-            <Filter className="h-4 w-4" />
+            <Filter className="h-4 w-4"/>
             <Text size="sm" fw={500}>Filters:</Text>
           </div>
           <TextInput
             placeholder="Search competencies..."
             size="sm"
-            leftSection={<Search className="h-3.5 w-3.5" />}
+            leftSection={<Search className="h-3.5 w-3.5"/>}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.currentTarget.value)}
             className="flex-1 min-w-[200px]"
@@ -313,8 +397,8 @@ function FrameworkAdminTab() {
 
 // ─── My Competencies Tab ─────────────────────────────────────────────────
 
-function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
-  const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
+function MyCompetenciesTab({employeeId}: { employeeId: string }) {
+  const [addModalOpened, {open: openAddModal, close: closeAddModal}] = useDisclosure(false);
 
   const skillsQuery = useEmployeeSkills(employeeId);
   const gapQuery = useSkillGapAnalysis(employeeId);
@@ -371,7 +455,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
   if (skillsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader color="indigo" size="lg" />
+        <Loader color="indigo" size="lg"/>
       </div>
     );
   }
@@ -397,7 +481,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
           </Text>
         </div>
         <Button
-          leftSection={<Plus className="h-4 w-4" />}
+          leftSection={<Plus className="h-4 w-4"/>}
           size="sm"
           className="bg-accent-700 hover:bg-accent-800"
           onClick={openAddModal}
@@ -414,7 +498,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
           </Title>
           {Object.keys(skillsByCategory).length === 0 ? (
             <div className="text-center py-10">
-              <Target className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
+              <Target className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
               <Text c="dimmed">No skills recorded yet. Add your first skill to get started.</Text>
             </div>
           ) : (
@@ -443,7 +527,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                               </Text>
                               {skill.isVerified && (
                                 <Tooltip label="Verified by manager">
-                                  <CheckCircle className="h-3.5 w-3.5 text-success-500 shrink-0" />
+                                  <CheckCircle className="h-3.5 w-3.5 text-success-500 shrink-0"/>
                                 </Tooltip>
                               )}
                             </div>
@@ -475,7 +559,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                           onClick={() => removeSkillMutation.mutate(skill.id)}
                           loading={removeSkillMutation.isPending}
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3.5 w-3.5"/>
                         </ActionIcon>
                       </div>
                     ))}
@@ -493,16 +577,16 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
           </Title>
           {gapQuery.isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader color="indigo" size="md" />
+              <Loader color="indigo" size="md"/>
             </div>
           ) : radarData.length === 0 ? (
             <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
+              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
               <Text c="dimmed">No gap analysis data available.</Text>
             </div>
           ) : (
             <>
-              <GapAnalysisRadarChart data={radarData} />
+              <GapAnalysisRadarChart data={radarData}/>
 
               {/* Gap Details */}
               <div className="mt-4 space-y-2">
@@ -517,8 +601,8 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                           gap.gapLevel === 'CRITICAL'
                             ? 'text-danger-500'
                             : gap.gapLevel === 'MODERATE'
-                            ? 'text-warning-500'
-                            : 'text-warning-500'
+                              ? 'text-warning-500'
+                              : 'text-warning-500'
                         }`}
                       />
                       <Text size="sm" fw={500}>{gap.skillName}</Text>
@@ -536,7 +620,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
                       </Text>
                       {gap.recommendedCourses.length > 0 && (
                         <Tooltip label={`${gap.recommendedCourses.length} course(s) recommended`}>
-                          <BookOpen className="h-3.5 w-3.5 text-accent-600" />
+                          <BookOpen className="h-3.5 w-3.5 text-accent-600"/>
                         </Tooltip>
                       )}
                     </div>
@@ -560,7 +644,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             <Controller
               name="skillName"
               control={form.control}
-              render={({ field, fieldState }) => (
+              render={({field, fieldState}) => (
                 <TextInput
                   label="Skill Name"
                   placeholder="e.g., Java, Leadership, Data Analysis"
@@ -573,7 +657,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             <Controller
               name="category"
               control={form.control}
-              render={({ field, fieldState }) => (
+              render={({field, fieldState}) => (
                 <Select
                   label="Category"
                   data={categoryOptions}
@@ -586,7 +670,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             <Controller
               name="proficiencyLevel"
               control={form.control}
-              render={({ field, fieldState }) => (
+              render={({field, fieldState}) => (
                 <Select
                   label="Proficiency Level"
                   data={proficiencyOptions}
@@ -600,7 +684,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
             <Controller
               name="source"
               control={form.control}
-              render={({ field, fieldState }) => (
+              render={({field, fieldState}) => (
                 <Select
                   label="Assessment Source"
                   data={sourceOptions}
@@ -631,7 +715,7 @@ function MyCompetenciesTab({ employeeId }: { employeeId: string }) {
 
 // ─── Team View Tab ───────────────────────────────────────────────────────
 
-function TeamViewTab({ managerId }: { managerId: string }) {
+function TeamViewTab({managerId}: { managerId: string }) {
   const [_selectedCategory, _setSelectedCategory] = useState<string | null>(null);
   const verifySkillMutation = useVerifySkill();
 
@@ -649,7 +733,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
     const grouped: Record<string, { total: number; count: number }> = {};
     skills.forEach((s) => {
       const cat = s.category || 'Other';
-      if (!grouped[cat]) grouped[cat] = { total: 0, count: 0 };
+      if (!grouped[cat]) grouped[cat] = {total: 0, count: 0};
       grouped[cat].total += s.proficiencyLevel;
       grouped[cat].count += 1;
     });
@@ -664,7 +748,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
   if (skillsQuery.isLoading || gapQuery.isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader color="indigo" size="lg" />
+        <Loader color="indigo" size="lg"/>
       </div>
     );
   }
@@ -672,7 +756,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
   return (
     <div className="space-y-6">
       {/* Team Stats */}
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
+      <SimpleGrid cols={{base: 1, sm: 2, md: 4}}>
         <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
           <div className="flex items-start justify-between">
             <div>
@@ -680,7 +764,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
               <Text size="xl" fw={700}>{skills.length}</Text>
             </div>
             <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/40">
-              <Target className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+              <Target className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
             </div>
           </div>
         </Paper>
@@ -691,7 +775,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
               <Text size="xl" fw={700}>{skills.filter((s) => s.isVerified).length}</Text>
             </div>
             <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/40">
-              <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400" />
+              <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400"/>
             </div>
           </div>
         </Paper>
@@ -702,7 +786,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
               <Text size="xl" fw={700}>{gapReport?.gaps?.length || 0}</Text>
             </div>
             <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/40">
-              <AlertTriangle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+              <AlertTriangle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
             </div>
           </div>
         </Paper>
@@ -717,7 +801,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
               </Text>
             </div>
             <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/40">
-              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600" />
+              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
             </div>
           </div>
         </Paper>
@@ -731,11 +815,11 @@ function TeamViewTab({ managerId }: { managerId: string }) {
           </Title>
           {heatmapData.length === 0 ? (
             <div className="text-center py-10">
-              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
+              <BarChart3 className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
               <Text c="dimmed">No team skills data available.</Text>
             </div>
           ) : (
-            <CompetencyHeatmapChart data={heatmapData} />
+            <CompetencyHeatmapChart data={heatmapData}/>
           )}
         </Paper>
 
@@ -746,7 +830,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
           </Title>
           {skills.filter((s) => !s.isVerified).length === 0 ? (
             <div className="text-center py-10">
-              <CheckCircle className="h-10 w-10 mx-auto text-success-500 mb-4" />
+              <CheckCircle className="h-10 w-10 mx-auto text-success-500 mb-4"/>
               <Text c="dimmed">All skills are verified.</Text>
             </div>
           ) : (
@@ -768,7 +852,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
                       size="xs"
                       variant="light"
                       color="green"
-                      leftSection={<CheckCircle className="h-3.5 w-3.5" />}
+                      leftSection={<CheckCircle className="h-3.5 w-3.5"/>}
                       onClick={() => verifySkillMutation.mutate(skill.id)}
                       loading={verifySkillMutation.isPending}
                     >
@@ -796,7 +880,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
                   className="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <BookOpen className="h-4 w-4 text-accent-600" />
+                    <BookOpen className="h-4 w-4 text-accent-600"/>
                     <Text size="sm" fw={600}>{gap.skillName}</Text>
                     <Badge size="xs" color={GAP_LEVEL_COLORS[gap.gapLevel]} variant="light">
                       {gap.gapLevel}
@@ -811,7 +895,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
                         key={course.courseId}
                         className="flex items-center gap-2 text-xs text-accent-700 dark:text-accent-400"
                       >
-                        <ChevronRight className="h-3 w-3" />
+                        <ChevronRight className="h-3 w-3"/>
                         <span>{course.title}</span>
                         <Badge size="xs" variant="outline" color="gray">
                           {course.difficulty}
@@ -834,7 +918,7 @@ function TeamViewTab({ managerId }: { managerId: string }) {
 // ─── Main Page ───────────────────────────────────────────────────────────
 
 export default function CompetencyMatrixPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const employeeId = user?.employeeId || '';
   const [activeTab, setActiveTab] = useState<string | null>('my-competencies');
 
@@ -845,10 +929,11 @@ export default function CompetencyMatrixPage() {
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-1">
             <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/40">
-              <BarChart3 className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+              <BarChart3 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+              <h1
+                className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
                 Competency Matrix
               </h1>
               <p className="text-body-muted skeuo-deboss">
@@ -863,14 +948,14 @@ export default function CompetencyMatrixPage() {
           <Tabs.List mb="lg">
             <Tabs.Tab
               value="my-competencies"
-              leftSection={<Target className="h-4 w-4" />}
+              leftSection={<Target className="h-4 w-4"/>}
             >
               My Competencies
             </Tabs.Tab>
             <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={null}>
               <Tabs.Tab
                 value="team-view"
-                leftSection={<Users className="h-4 w-4" />}
+                leftSection={<Users className="h-4 w-4"/>}
               >
                 Team View
               </Tabs.Tab>
@@ -878,7 +963,7 @@ export default function CompetencyMatrixPage() {
             <PermissionGate permission={Permissions.REVIEW_VIEW} fallback={null}>
               <Tabs.Tab
                 value="framework"
-                leftSection={<Shield className="h-4 w-4" />}
+                leftSection={<Shield className="h-4 w-4"/>}
               >
                 Competency Framework
               </Tabs.Tab>
@@ -887,10 +972,10 @@ export default function CompetencyMatrixPage() {
 
           <Tabs.Panel value="my-competencies">
             {employeeId ? (
-              <MyCompetenciesTab employeeId={employeeId} />
+              <MyCompetenciesTab employeeId={employeeId}/>
             ) : (
               <div className="text-center py-10">
-                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
+                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
                 <Text c="dimmed">Please log in to view your competencies.</Text>
               </div>
             )}
@@ -898,17 +983,17 @@ export default function CompetencyMatrixPage() {
 
           <Tabs.Panel value="team-view">
             {employeeId ? (
-              <TeamViewTab managerId={employeeId} />
+              <TeamViewTab managerId={employeeId}/>
             ) : (
               <div className="text-center py-10">
-                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4" />
+                <Info className="h-10 w-10 mx-auto text-[var(--text-muted)] mb-4"/>
                 <Text c="dimmed">Please log in to view team competencies.</Text>
               </div>
             )}
           </Tabs.Panel>
 
           <Tabs.Panel value="framework">
-            <FrameworkAdminTab />
+            <FrameworkAdminTab/>
           </Tabs.Panel>
         </Tabs>
       </div>

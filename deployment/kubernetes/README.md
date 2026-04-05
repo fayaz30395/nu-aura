@@ -34,10 +34,10 @@ kubectl apply -f network-policy.yaml
 
 ## Legacy Files (DO NOT APPLY)
 
-| File | Why deprecated |
-|------|----------------|
-| `deployment.yaml` | Superseded by `backend-deployment.yaml`; same resource name, wrong labels |
-| `service.yaml` | Superseded by `backend-service.yaml` + `frontend-service.yaml`; wrong label selectors |
+| File              | Why deprecated                                                                        |
+|-------------------|---------------------------------------------------------------------------------------|
+| `deployment.yaml` | Superseded by `backend-deployment.yaml`; same resource name, wrong labels             |
+| `service.yaml`    | Superseded by `backend-service.yaml` + `frontend-service.yaml`; wrong label selectors |
 
 ## Secret Preparation Checklist
 

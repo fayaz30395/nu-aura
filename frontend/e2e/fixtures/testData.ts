@@ -204,11 +204,11 @@ export const testUsers = {
 };
 
 export const mockProjects = [
-  { code: 'HRMS-001', name: 'NuAura HRMS', manager: 'Rajesh Kumar', status: 'IN_PROGRESS' },
-  { code: 'ECOM-001', name: 'E-Commerce Platform', manager: 'Sunita Patel', status: 'IN_PROGRESS' },
-  { code: 'BANK-001', name: 'Mobile Banking App', manager: 'Vikram Singh', status: 'IN_PROGRESS' },
-  { code: 'CRM-001', name: 'CRM System', manager: 'Rajesh Kumar', status: 'PLANNING' },
-  { code: 'AI-001', name: 'AI Analytics Dashboard', manager: 'Sunita Patel', status: 'PLANNING' },
+  {code: 'HRMS-001', name: 'NuAura HRMS', manager: 'Rajesh Kumar', status: 'IN_PROGRESS'},
+  {code: 'ECOM-001', name: 'E-Commerce Platform', manager: 'Sunita Patel', status: 'IN_PROGRESS'},
+  {code: 'BANK-001', name: 'Mobile Banking App', manager: 'Vikram Singh', status: 'IN_PROGRESS'},
+  {code: 'CRM-001', name: 'CRM System', manager: 'Rajesh Kumar', status: 'PLANNING'},
+  {code: 'AI-001', name: 'AI Analytics Dashboard', manager: 'Sunita Patel', status: 'PLANNING'},
 ];
 
 export const testEmployee = {

@@ -1,16 +1,8 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
-import {
-  Filter,
-  X,
-  Plus,
-  Trash2,
-  Save,
-  ChevronDown,
-  MoreVertical,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, {useCallback, useMemo, useState} from 'react';
+import {ChevronDown, Filter, MoreVertical, Plus, Save, Trash2, X,} from 'lucide-react';
+import {cn} from '@/lib/utils';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -62,32 +54,32 @@ export interface AdvancedFilterPanelProps {
 
 const OPERATORS: Record<string, Array<{ value: string; label: string }>> = {
   text: [
-    { value: 'equals', label: 'Equals' },
-    { value: 'contains', label: 'Contains' },
-    { value: 'startsWith', label: 'Starts With' },
-    { value: 'isEmpty', label: 'Is Empty' },
-    { value: 'isNotEmpty', label: 'Is Not Empty' },
+    {value: 'equals', label: 'Equals'},
+    {value: 'contains', label: 'Contains'},
+    {value: 'startsWith', label: 'Starts With'},
+    {value: 'isEmpty', label: 'Is Empty'},
+    {value: 'isNotEmpty', label: 'Is Not Empty'},
   ],
   number: [
-    { value: 'equals', label: 'Equals' },
-    { value: 'greaterThan', label: 'Greater Than' },
-    { value: 'lessThan', label: 'Less Than' },
-    { value: 'between', label: 'Between' },
-    { value: 'isEmpty', label: 'Is Empty' },
-    { value: 'isNotEmpty', label: 'Is Not Empty' },
+    {value: 'equals', label: 'Equals'},
+    {value: 'greaterThan', label: 'Greater Than'},
+    {value: 'lessThan', label: 'Less Than'},
+    {value: 'between', label: 'Between'},
+    {value: 'isEmpty', label: 'Is Empty'},
+    {value: 'isNotEmpty', label: 'Is Not Empty'},
   ],
   date: [
-    { value: 'equals', label: 'Equals' },
-    { value: 'greaterThan', label: 'After' },
-    { value: 'lessThan', label: 'Before' },
-    { value: 'between', label: 'Between' },
-    { value: 'isEmpty', label: 'Is Empty' },
-    { value: 'isNotEmpty', label: 'Is Not Empty' },
+    {value: 'equals', label: 'Equals'},
+    {value: 'greaterThan', label: 'After'},
+    {value: 'lessThan', label: 'Before'},
+    {value: 'between', label: 'Between'},
+    {value: 'isEmpty', label: 'Is Empty'},
+    {value: 'isNotEmpty', label: 'Is Not Empty'},
   ],
   select: [
-    { value: 'equals', label: 'Equals' },
-    { value: 'isEmpty', label: 'Is Empty' },
-    { value: 'isNotEmpty', label: 'Is Not Empty' },
+    {value: 'equals', label: 'Equals'},
+    {value: 'isEmpty', label: 'Is Empty'},
+    {value: 'isNotEmpty', label: 'Is Not Empty'},
   ],
 };
 
@@ -138,11 +130,11 @@ interface FilterRowProps {
 }
 
 const FilterRow: React.FC<FilterRowProps> = ({
-  condition,
-  fields,
-  onConditionChange,
-  onRemove,
-}) => {
+                                               condition,
+                                               fields,
+                                               onConditionChange,
+                                               onRemove,
+                                             }) => {
   const selectedField = fields.find((f) => f.key === condition.field);
   const fieldType = selectedField?.type ?? 'text';
   const operators = OPERATORS[fieldType] ?? OPERATORS.text;
@@ -401,7 +393,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
         )}
         aria-label="Remove filter"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-4 w-4"/>
       </button>
     </div>
   );
@@ -410,11 +402,11 @@ const FilterRow: React.FC<FilterRowProps> = ({
 // ─── AdvancedFilterPanel Component ──────────────────────────────────────
 
 export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
-  fields,
-  onApply,
-  onClear,
-  tableId,
-}) => {
+                                                                          fields,
+                                                                          onApply,
+                                                                          onClear,
+                                                                          tableId,
+                                                                        }) => {
   const [conditions, setConditions] = useState<FilterCondition[]>([
     {
       id: generateId(),
@@ -467,13 +459,13 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
       const newConditions = prev.filter((c) => c.id !== id);
       return newConditions.length === 0
         ? [
-            {
-              id: generateId(),
-              field: '',
-              operator: 'equals',
-              value: null,
-            },
-          ]
+          {
+            id: generateId(),
+            field: '',
+            operator: 'equals',
+            value: null,
+          },
+        ]
         : newConditions;
     });
   }, []);
@@ -531,7 +523,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
     const preset = savedPresets.find((p) => p.id === presetId);
     if (!preset) return;
 
-    setConditions(preset.conditions.map((c) => ({ ...c, id: generateId() })));
+    setConditions(preset.conditions.map((c) => ({...c, id: generateId()})));
     setLogic(preset.logic);
     setShowPresetMenu(false);
   }, [savedPresets]);
@@ -564,10 +556,11 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           aria-expanded={!isCollapsed}
           aria-controls="advanced-filter-fields"
         >
-          <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+          <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
           Advanced Filters
           {activeFilterCount > 0 && (
-            <span className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+            <span
+              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
               {activeFilterCount}
             </span>
           )}
@@ -597,7 +590,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               aria-haspopup="true"
               aria-expanded={showPresetMenu}
             >
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="h-4 w-4"/>
             </button>
 
             {showPresetMenu && (
@@ -642,7 +635,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                             )}
                             aria-label={`Delete preset ${preset.name}`}
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-3.5 w-3.5"/>
                           </button>
                         </div>
                       ))}
@@ -666,7 +659,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 'cursor-pointer'
               )}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5"/>
               Clear All
             </button>
           )}
@@ -744,7 +737,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               'cursor-pointer'
             )}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4"/>
             Add Condition
           </button>
 
@@ -785,7 +778,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                     : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] cursor-not-allowed opacity-50'
                 )}
               >
-                <Save className="h-4 w-4 inline-block mr-1.5" />
+                <Save className="h-4 w-4 inline-block mr-1.5"/>
                 Save
               </button>
             </div>

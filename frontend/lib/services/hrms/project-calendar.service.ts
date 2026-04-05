@@ -1,16 +1,16 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   CalendarEvent,
-  GanttTask,
-  CalendarStatistics,
-  GanttStatistics,
   CalendarFilterOptions,
+  CalendarStatistics,
   GanttFilterOptions,
-  getStatusColor,
+  GanttStatistics,
+  GanttTask,
   getPriorityColor,
+  getStatusColor,
 } from '../../types/hrms/project-calendar';
-import { Project } from '../../types/hrms/project';
-import { Task, TaskListItem } from '../../types/core/task';
+import {Project} from '../../types/hrms/project';
+import {Task, TaskListItem} from '../../types/core/task';
 
 class ProjectCalendarService {
   // Calendar Events
@@ -28,7 +28,7 @@ class ProjectCalendarService {
     if (filters?.statuses?.length) params.statuses = filters.statuses.join(',');
     if (filters?.priorities?.length) params.priorities = filters.priorities.join(',');
 
-    const response = await apiClient.get<CalendarEvent[]>('/projects/calendar/events', { params });
+    const response = await apiClient.get<CalendarEvent[]>('/projects/calendar/events', {params});
     return (Array.isArray(response.data) ? response.data : []).map(event => ({
       ...event,
       startDate: new Date(event.startDate),
@@ -41,7 +41,7 @@ class ProjectCalendarService {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
-    const response = await apiClient.get<CalendarStatistics>('/projects/calendar/statistics', { params });
+    const response = await apiClient.get<CalendarStatistics>('/projects/calendar/statistics', {params});
     return response.data;
   }
 
@@ -55,7 +55,7 @@ class ProjectCalendarService {
     if (filters?.showOnlyDelayed) params.showOnlyDelayed = 'true';
     if (filters?.showOnlyAtRisk) params.showOnlyAtRisk = 'true';
 
-    const response = await apiClient.get<GanttTask[]>('/projects/gantt/tasks', { params });
+    const response = await apiClient.get<GanttTask[]>('/projects/gantt/tasks', {params});
     return (Array.isArray(response.data) ? response.data : []).map(task => ({
       ...task,
       startDate: new Date(task.startDate),
@@ -64,7 +64,7 @@ class ProjectCalendarService {
   }
 
   async updateTaskDates(taskId: string, startDate: string, endDate: string): Promise<GanttTask> {
-    const response = await apiClient.put<GanttTask>(`/pm/tasks/${taskId}/dates`, { startDate, endDate });
+    const response = await apiClient.put<GanttTask>(`/pm/tasks/${taskId}/dates`, {startDate, endDate});
     return {
       ...response.data,
       startDate: new Date(response.data.startDate),
@@ -73,7 +73,7 @@ class ProjectCalendarService {
   }
 
   async updateTaskProgress(taskId: string, progress: number): Promise<GanttTask> {
-    const response = await apiClient.put<GanttTask>(`/pm/tasks/${taskId}/progress`, { progress });
+    const response = await apiClient.put<GanttTask>(`/pm/tasks/${taskId}/progress`, {progress});
     return {
       ...response.data,
       startDate: new Date(response.data.startDate),
@@ -85,7 +85,7 @@ class ProjectCalendarService {
     const params: Record<string, string> = {};
     if (filters?.projectIds?.length) params.projectIds = filters.projectIds.join(',');
 
-    const response = await apiClient.get<GanttStatistics>('/projects/gantt/statistics', { params });
+    const response = await apiClient.get<GanttStatistics>('/projects/gantt/statistics', {params});
     return response.data;
   }
 

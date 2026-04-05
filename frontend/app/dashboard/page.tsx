@@ -1,59 +1,52 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import {
-  Users,
-  CheckCircle,
-  Calendar,
-  Clock,
+  AlertCircle,
+  Bell,
   Briefcase,
+  Calendar,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  Coffee,
+  CreditCard,
+  ExternalLink,
+  FileText,
+  Gift,
+  HardDrive,
+  Loader2,
   LogIn,
   LogOut,
-  AlertCircle,
-  ChevronRight,
-  CalendarDays,
-  UserCheck,
-  UserX,
-  Coffee,
-  Gift,
-  FileText,
-  CreditCard,
-  Bell,
   Mail,
-  HardDrive,
-  Video,
-  ExternalLink,
-  RefreshCw,
-  Loader2,
-  X,
   MapPin,
+  UserCheck,
+  Users,
   Users as UsersIcon,
+  UserX,
+  Video,
+  X,
 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
-import { DashboardGrid } from '@/components/ui/DashboardGrid';
-import type { DashboardWidget } from '@/components/ui/DashboardGrid';
-import { NuAuraLoader, Skeleton, SkeletonStatCard, SkeletonChart } from '@/components/ui/Loading';
-import { getGoogleToken } from '@/lib/utils/googleToken';
-import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
-import {
-  useAttendanceByDateRange,
-  useMyTimeEntries,
-  useCheckIn,
-  useCheckOut,
-} from '@/lib/hooks/queries/useAttendance';
-import { useOnboardingProcessesByStatus } from '@/lib/hooks/queries/useOnboarding';
-import { getLocalDateString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
-import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
-import { createLogger } from '@/lib/utils/logger';
-import { formatCurrency } from '@/lib/utils';
-import { safeWindowOpen } from '@/lib/utils/url';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
+import type {DashboardWidget} from '@/components/ui/DashboardGrid';
+import {DashboardGrid} from '@/components/ui/DashboardGrid';
+import {Skeleton, SkeletonChart, SkeletonStatCard} from '@/components/ui/Loading';
+import {getGoogleToken} from '@/lib/utils/googleToken';
+import {useDashboardAnalytics} from '@/lib/hooks/queries/useAnalytics';
+import {useAttendanceByDateRange, useCheckIn, useCheckOut, useMyTimeEntries,} from '@/lib/hooks/queries/useAttendance';
+import {useOnboardingProcessesByStatus} from '@/lib/hooks/queries/useOnboarding';
+import {getLocalDateString, getLocalDateTimeString} from '@/lib/utils/dateUtils';
+import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
+import {createLogger} from '@/lib/utils/logger';
+import {formatCurrency} from '@/lib/utils';
+import {safeWindowOpen} from '@/lib/utils/url';
 
 const log = createLogger('DashboardPage');
 
@@ -103,8 +96,8 @@ interface GoogleNotification {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
   const [clockError, setClockError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
@@ -144,10 +137,15 @@ export default function DashboardPage() {
 
   // React Query hooks for loading data
   const today = getLocalDateString();
-  const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError, refetch: refetchAnalytics } = useDashboardAnalytics();
-  const { data: attendanceRangeData = [] } = useAttendanceByDateRange(today, today, !!user?.employeeId);
-  const { data: timeEntriesData = [] } = useMyTimeEntries(today, !!user?.employeeId);
-  const { data: onboardingData = [] } = useOnboardingProcessesByStatus(
+  const {
+    data: analyticsData,
+    isLoading: isAnalyticsLoading,
+    error: analyticsError,
+    refetch: refetchAnalytics
+  } = useDashboardAnalytics();
+  const {data: attendanceRangeData = []} = useAttendanceByDateRange(today, today, !!user?.employeeId);
+  const {data: timeEntriesData = []} = useMyTimeEntries(today, !!user?.employeeId);
+  const {data: onboardingData = []} = useOnboardingProcessesByStatus(
     'IN_PROGRESS'
   );
 
@@ -174,7 +172,7 @@ export default function DashboardPage() {
       // Load unread emails from Gmail
       const emailResponse = await fetch(
         'https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=is:unread',
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (emailResponse.ok) {
@@ -184,7 +182,7 @@ export default function DashboardPage() {
             emailData.messages.slice(0, 3).map(async (msg: { id: string; threadId: string }) => {
               const detailResponse = await fetch(
                 `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                {headers: {Authorization: `Bearer ${token}`}}
               );
               if (!detailResponse.ok) return null;
               const detail = await detailResponse.json();
@@ -226,7 +224,7 @@ export default function DashboardPage() {
         `q=sharedWithMe=true and modifiedTime>'${sevenDaysAgo.toISOString()}'` +
         `&fields=files(id,name,mimeType,modifiedTime,sharingUser,webViewLink)` +
         `&orderBy=modifiedTime desc&pageSize=5`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (driveResponse.ok) {
@@ -266,7 +264,7 @@ export default function DashboardPage() {
         `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
         `timeMin=${now.toISOString()}&timeMax=${tomorrow.toISOString()}` +
         `&singleEvents=true&orderBy=startTime&maxResults=5`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (calendarResponse.ok) {
@@ -279,7 +277,7 @@ export default function DashboardPage() {
               type: 'calendar',
               title: event.summary || 'Untitled Event',
               subtitle: startTime
-                ? new Date(startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                ? new Date(startTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})
                 : 'All day',
               timestamp: startTime ? new Date(startTime) : new Date(),
               link: event.htmlLink,
@@ -337,7 +335,9 @@ export default function DashboardPage() {
         attendanceDate: localDate,
       });
     } catch (err: unknown) {
-      setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
+      setClockError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to check in');
     }
   };
 
@@ -354,10 +354,11 @@ export default function DashboardPage() {
         attendanceDate: localDate,
       });
     } catch (err: unknown) {
-      setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
+      setClockError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to check out');
     }
   };
-
 
 
   const formatRelativeTime = (date: Date) => {
@@ -371,19 +372,19 @@ export default function DashboardPage() {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
   };
 
   const getNotificationIcon = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
-        return <Mail className="h-4 w-4" />;
+        return <Mail className="h-4 w-4"/>;
       case 'drive':
-        return <HardDrive className="h-4 w-4" />;
+        return <HardDrive className="h-4 w-4"/>;
       case 'calendar':
-        return <Calendar className="h-4 w-4" />;
+        return <Calendar className="h-4 w-4"/>;
       default:
-        return <Bell className="h-4 w-4" />;
+        return <Bell className="h-4 w-4"/>;
     }
   };
 
@@ -408,7 +409,7 @@ export default function DashboardPage() {
     try {
       const response = await fetch(
         `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}?format=full`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
       if (response.ok) {
         const data = await response.json();
@@ -479,12 +480,12 @@ export default function DashboardPage() {
           <div className="card-aura p-6 sm:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2 flex-1">
-                <Skeleton className="h-8 w-64 rounded" />
-                <Skeleton className="h-4 w-48 rounded" />
+                <Skeleton className="h-8 w-64 rounded"/>
+                <Skeleton className="h-4 w-48 rounded"/>
               </div>
               <div className="flex flex-wrap items-center gap-4">
-                <Skeleton className="h-16 w-32 rounded-lg" />
-                <Skeleton className="h-16 w-32 rounded-lg hidden sm:block" />
+                <Skeleton className="h-16 w-32 rounded-lg"/>
+                <Skeleton className="h-16 w-32 rounded-lg hidden sm:block"/>
               </div>
             </div>
           </div>
@@ -493,35 +494,35 @@ export default function DashboardPage() {
           <div className="card-aura p-6 pl-7 sm:p-8 sm:pl-9">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-center gap-4 flex-1">
-                <Skeleton className="h-14 w-14 rounded-xl flex-shrink-0" />
+                <Skeleton className="h-14 w-14 rounded-xl flex-shrink-0"/>
                 <div className="space-y-2 flex-1">
-                  <Skeleton className="h-6 w-40 rounded" />
-                  <Skeleton className="h-4 w-32 rounded" />
+                  <Skeleton className="h-6 w-40 rounded"/>
+                  <Skeleton className="h-4 w-32 rounded"/>
                 </div>
               </div>
               <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-                <Skeleton className="h-10 w-24 rounded-lg" />
-                <Skeleton className="h-10 w-24 rounded-lg" />
+                <Skeleton className="h-10 w-24 rounded-lg"/>
+                <Skeleton className="h-10 w-24 rounded-lg"/>
               </div>
             </div>
           </div>
 
           {/* Stats grid skeleton */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonStatCard key={i} />
+            {Array.from({length: 4}).map((_, i) => (
+              <SkeletonStatCard key={i}/>
             ))}
           </div>
 
           {/* Charts skeleton */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SkeletonChart height="h-80" />
-            <SkeletonChart height="h-80" />
+            <SkeletonChart height="h-80"/>
+            <SkeletonChart height="h-80"/>
           </div>
 
           {/* Additional sections skeleton */}
           <div className="space-y-6">
-            <SkeletonChart height="h-64" />
+            <SkeletonChart height="h-64"/>
           </div>
         </div>
       </AppLayout>
@@ -535,7 +536,7 @@ export default function DashboardPage() {
           <Card className="max-w-md">
             <CardHeader>
               <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-6 w-6" />
+                <AlertCircle className="h-6 w-6"/>
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
             </CardHeader>
@@ -545,7 +546,8 @@ export default function DashboardPage() {
               </p>
               <div className="flex gap-2">
                 <Button variant="primary" onClick={() => refetchAnalytics()} className="flex-1">Retry</Button>
-                <Button variant="outline" onClick={() => window.location.reload()} className="flex-1">Refresh Page</Button>
+                <Button variant="outline" onClick={() => window.location.reload()} className="flex-1">Refresh
+                  Page</Button>
               </div>
             </CardContent>
           </Card>
@@ -577,7 +579,7 @@ export default function DashboardPage() {
             ? `${Math.abs(analytics.headcount.growthPercentage)}%`
             : analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
           isPositive={analytics.headcount.growthPercentage >= 0}
-          icon={<Users className="h-6 w-6" />}
+          icon={<Users className="h-6 w-6"/>}
           delay={0}
         />
         <PremiumMetricCard
@@ -585,7 +587,7 @@ export default function DashboardPage() {
           value={analytics.attendance.present.toString()}
           change={`${analytics.attendance.attendancePercentage}% attendance`}
           isPositive={true}
-          icon={<UserCheck className="h-6 w-6" />}
+          icon={<UserCheck className="h-6 w-6"/>}
           delay={0.1}
         />
         <PremiumMetricCard
@@ -593,7 +595,7 @@ export default function DashboardPage() {
           value={analytics.attendance.onLeave.toString()}
           change="Approved today"
           isPositive={false}
-          icon={<Calendar className="h-6 w-6" />}
+          icon={<Calendar className="h-6 w-6"/>}
           delay={0.2}
         />
         <PremiumMetricCard
@@ -601,7 +603,7 @@ export default function DashboardPage() {
           value={analytics.leave.pending.toString()}
           change="Awaiting action"
           isPositive={false}
-          icon={<Bell className="h-6 w-6" />}
+          icon={<Bell className="h-6 w-6"/>}
           delay={0.3}
         />
       </div>
@@ -616,10 +618,10 @@ export default function DashboardPage() {
     component: (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply' },
-          { label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll' },
-          { label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses' },
-          { label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees' },
+          {label: 'Apply Leave', icon: Calendar, tone: 'status-info', href: '/leave/apply'},
+          {label: 'View Payslip', icon: FileText, tone: 'status-success', href: '/payroll'},
+          {label: 'Expenses', icon: CreditCard, tone: 'status-warning', href: '/expenses'},
+          {label: 'Directory', icon: Users, tone: 'status-neutral', href: '/employees'},
         ].map((action, idx) => (
           <button
             key={idx}
@@ -627,7 +629,7 @@ export default function DashboardPage() {
             className="group flex flex-col items-center gap-4 p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all min-h-[96px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${action.tone}`}>
-              <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              <action.icon className="h-5 w-5 sm:h-6 sm:w-6"/>
             </div>
             <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">
               {action.label}
@@ -646,21 +648,23 @@ export default function DashboardPage() {
     component: (
       <div>
         <div className="row-between mb-4">
-          <div />
-          <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
+          <div/>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')}
+                  rightIcon={<ChevronRight className="h-4 w-4"/>} className="text-xs sm:text-sm">
             View All
           </Button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success' },
-            { label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning' },
-            { label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info' },
-            { label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger' },
+            {label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success'},
+            {label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning'},
+            {label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info'},
+            {label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger'},
           ].map((item) => (
-            <div key={item.label} className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <div key={item.label}
+                 className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
               <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl ${item.tone}`}>
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5"/>
               </div>
               <p className="text-stat-medium">{item.value}</p>
               <p className="text-caption mt-1">{item.label}</p>
@@ -697,7 +701,7 @@ export default function DashboardPage() {
                 <div className="w-full h-2 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${percentage}%`, backgroundColor: colors[idx % colors.length] }}
+                    style={{width: `${percentage}%`, backgroundColor: colors[idx % colors.length]}}
                   />
                 </div>
               </div>
@@ -717,8 +721,9 @@ export default function DashboardPage() {
       component: (
         <div>
           <div className="text-center py-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
-              <Briefcase className="h-6 w-6 text-[var(--accent-primary)]" />
+            <div
+              className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
+              <Briefcase className="h-6 w-6 text-[var(--accent-primary)]"/>
             </div>
             <p className="text-stat-large mt-4">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
             <p className="text-body-secondary mt-1">Current Month</p>
@@ -726,11 +731,13 @@ export default function DashboardPage() {
           <div className="border-t border-[var(--border-main)] pt-4 mt-4">
             <div className="row-between mb-4">
               <span className="text-body-secondary">Processed</span>
-              <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
+              <span
+                className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
             </div>
             <div className="row-between">
               <span className="text-body-secondary">Pending</span>
-              <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
+              <span
+                className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
             </div>
           </div>
         </div>
@@ -746,24 +753,32 @@ export default function DashboardPage() {
     component: (
       <div className="space-y-4">
         {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
-          <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div key={idx}
+               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning flex-shrink-0">
-              <Gift className="h-5 w-5" />
+              <Gift className="h-5 w-5"/>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.employeeName}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+              })}</p>
             </div>
           </div>
         ))}
         {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
-          <div key={idx} className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div key={idx}
+               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info flex-shrink-0">
-              <Calendar className="h-5 w-5" />
+              <Calendar className="h-5 w-5"/>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">{event.name}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+              })}</p>
             </div>
           </div>
         ))}
@@ -783,8 +798,9 @@ export default function DashboardPage() {
       <div>
         {!hasGoogleToken ? (
           <div className="text-center py-6">
-            <div className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
-              <Bell className="h-6 w-6 text-[var(--text-muted)]" />
+            <div
+              className="w-12 h-12 rounded-full bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+              <Bell className="h-6 w-6 text-[var(--text-muted)]"/>
             </div>
             <p className="text-body-secondary mb-4">Connect Google to see notifications</p>
             <Button
@@ -797,11 +813,11 @@ export default function DashboardPage() {
           </div>
         ) : notificationsLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-6">
-            <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2" />
+            <CheckCircle className="h-8 w-8 text-[var(--status-success-text)] mx-auto mb-2"/>
             <p className="text-body-secondary">All caught up!</p>
           </div>
         ) : (
@@ -812,7 +828,8 @@ export default function DashboardPage() {
                 onClick={() => handleNotificationClick(notification)}
                 className="flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all"
               >
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
+                <div
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
                   {getNotificationIcon(notification.type)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -824,7 +841,7 @@ export default function DashboardPage() {
                       {notification.subtitle}
                     </p>
                     {notification.hasVideo && (
-                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" />
+                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0"/>
                     )}
                   </div>
                 </div>
@@ -841,7 +858,7 @@ export default function DashboardPage() {
                 size="sm"
                 className="flex-1 text-xs"
                 onClick={() => router.push('/nu-mail')}
-                leftIcon={<Mail className="h-3 w-3" />}
+                leftIcon={<Mail className="h-3 w-3"/>}
               >
                 Mail
               </Button>
@@ -850,7 +867,7 @@ export default function DashboardPage() {
                 size="sm"
                 className="flex-1 text-xs"
                 onClick={() => router.push('/nu-drive')}
-                leftIcon={<HardDrive className="h-3 w-3" />}
+                leftIcon={<HardDrive className="h-3 w-3"/>}
               >
                 Drive
               </Button>
@@ -859,7 +876,7 @@ export default function DashboardPage() {
                 size="sm"
                 className="flex-1 text-xs"
                 onClick={() => router.push('/nu-calendar')}
-                leftIcon={<Calendar className="h-3 w-3" />}
+                leftIcon={<Calendar className="h-3 w-3"/>}
               >
                 Calendar
               </Button>
@@ -879,8 +896,9 @@ export default function DashboardPage() {
       component: (
         <div>
           <div className="text-center py-4">
-            <div className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
-              <Users className="h-8 w-8 text-[var(--accent-primary)]" />
+            <div
+              className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
+              <Users className="h-8 w-8 text-[var(--accent-primary)]"/>
             </div>
             <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
             <p className="text-body-secondary mt-1">This Month</p>
@@ -890,11 +908,14 @@ export default function DashboardPage() {
               <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
                 View All Joiners
               </Button>
-              <Button variant="ghost" className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]" onClick={() => router.push('/onboarding')}>
+              <Button variant="ghost"
+                      className="w-full text-[var(--accent-primary)] hover:bg-[var(--accent-primary-subtle)]"
+                      onClick={() => router.push('/onboarding')}>
                 <span className="flex items-center gap-2">
                   Manage Onboarding
                   {activeOnboardingCount > 0 && (
-                    <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
                       {activeOnboardingCount} Active
                     </span>
                   )}
@@ -922,21 +943,24 @@ export default function DashboardPage() {
                   <span className={`badge-status ${viewBadgeClass}`}>{analytics.viewLabel}</span>
                 </div>
                 <p className="text-body-secondary">
-                  {currentTime?.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) ?? ''}
+                  {currentTime?.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) ?? ''}
                   {analytics.viewType !== 'EMPLOYEE' && (
-                    <span className="ml-2 text-caption">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
+                    <span
+                      className="ml-2 text-caption">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
                   )}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
+                <div
+                  className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                   <p className="text-stat-medium" suppressHydrationWarning>
-                    {currentTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) ?? '--:--'}
+                    {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
                   </p>
                   <p className="text-caption">Current time</p>
                 </div>
                 {analytics.viewType !== 'EMPLOYEE' && (
-                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
+                  <div
+                    className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                     <p className="text-caption">Team size</p>
                     <p className="text-stat-medium">{analytics.teamSize}</p>
                   </div>
@@ -948,38 +972,47 @@ export default function DashboardPage() {
 
         {/* Attendance Widget */}
         <Card className="relative overflow-hidden skeuo-card">
-          <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]" />
+          <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]"/>
           <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]" />
+                <div
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--accent-primary)]"/>
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Attendance</h3>
+                  <h3 className="text-base sm:text-xl font-semibold text-[var(--text-primary)]">Today&apos;s
+                    Attendance</h3>
                   {timeEntries.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
                       <div className="flex items-center gap-1.5 text-sm">
-                        <LogIn className="h-4 w-4 text-[var(--status-success-text)]" />
+                        <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
                         <span className="text-[var(--text-secondary)]">First In:</span>
                         <span className="font-medium text-[var(--text-primary)]">
-                          {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
                         </span>
                       </div>
                       {/* Show last check-out time if available */}
                       {timeEntries.filter(e => e.checkOutTime).length > 0 && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]" />
+                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
                           <span className="text-[var(--text-secondary)]">Last Out:</span>
                           <span className="font-medium text-[var(--text-primary)]">
-                            {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </span>
                         </div>
                       )}
                       {/* Show session count if more than 1 */}
                       {timeEntries.length > 1 && (
-                        <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card-hover)] text-[var(--text-secondary)]">
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-card-hover)] text-[var(--text-secondary)]">
                           {timeEntries.length} sessions
                         </span>
                       )}
@@ -994,19 +1027,25 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-4 mt-1">
                       {todayAttendance.checkInTime && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogIn className="h-4 w-4 text-[var(--status-success-text)]" />
+                          <LogIn className="h-4 w-4 text-[var(--status-success-text)]"/>
                           <span className="text-[var(--text-secondary)]">In:</span>
                           <span className="font-medium text-[var(--text-primary)]">
-                            {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </span>
                         </div>
                       )}
                       {todayAttendance.checkOutTime && (
                         <div className="flex items-center gap-1.5 text-sm">
-                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]" />
+                          <LogOut className="h-4 w-4 text-[var(--status-info-text)]"/>
                           <span className="text-[var(--text-secondary)]">Out:</span>
                           <span className="font-medium text-[var(--text-primary)]">
-                            {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </span>
                         </div>
                       )}
@@ -1019,12 +1058,14 @@ export default function DashboardPage() {
               <div className="flex items-center gap-4">
                 {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
                 {canCheckIn && (
-                  <Button variant="success" onClick={handleCheckIn} isLoading={checkInMutation.isPending} leftIcon={<LogIn className="h-4 w-4" />}>
+                  <Button variant="success" onClick={handleCheckIn} isLoading={checkInMutation.isPending}
+                          leftIcon={<LogIn className="h-4 w-4"/>}>
                     Check In
                   </Button>
                 )}
                 {canCheckOut && (
-                  <Button variant="danger" onClick={handleCheckOut} isLoading={checkOutMutation.isPending} leftIcon={<LogOut className="h-4 w-4" />}>
+                  <Button variant="danger" onClick={handleCheckOut} isLoading={checkOutMutation.isPending}
+                          leftIcon={<LogOut className="h-4 w-4"/>}>
                     Check Out
                   </Button>
                 )}
@@ -1059,7 +1100,7 @@ export default function DashboardPage() {
                 className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Close event details"
               >
-                <X className="h-5 w-5 text-[var(--text-secondary)]" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
@@ -1069,26 +1110,27 @@ export default function DashboardPage() {
                 </h4>
                 {selectedEvent.calendarEvent.organizer && (
                   <p className="text-body-secondary mt-1">
-                    Organized by {selectedEvent.calendarEvent.organizer.displayName || selectedEvent.calendarEvent.organizer.email}
+                    Organized
+                    by {selectedEvent.calendarEvent.organizer.displayName || selectedEvent.calendarEvent.organizer.email}
                   </p>
                 )}
               </div>
 
               <div className="flex items-center gap-4 text-[var(--text-secondary)]">
-                <Clock className="h-5 w-5 flex-shrink-0" />
+                <Clock className="h-5 w-5 flex-shrink-0"/>
                 <div>
                   <p className="font-medium">
                     {selectedEvent.calendarEvent.start.dateTime
                       ? new Date(selectedEvent.calendarEvent.start.dateTime).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          month: 'long',
-                          day: 'numeric',
-                        })
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                      })
                       : new Date(selectedEvent.calendarEvent.start.date!).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
                   </p>
                   {selectedEvent.calendarEvent.start.dateTime && (
                     <p className="text-sm">
@@ -1112,14 +1154,14 @@ export default function DashboardPage() {
 
               {selectedEvent.calendarEvent.location && (
                 <div className="flex items-center gap-4 text-[var(--text-secondary)]">
-                  <MapPin className="h-5 w-5 flex-shrink-0" />
+                  <MapPin className="h-5 w-5 flex-shrink-0"/>
                   <p>{selectedEvent.calendarEvent.location}</p>
                 </div>
               )}
 
               {selectedEvent.calendarEvent.hangoutLink && (
                 <div className="flex items-center gap-4 text-[var(--accent-primary)]">
-                  <Video className="h-5 w-5 flex-shrink-0" />
+                  <Video className="h-5 w-5 flex-shrink-0"/>
                   <a
                     href={selectedEvent.calendarEvent.hangoutLink}
                     target="_blank"
@@ -1134,7 +1176,7 @@ export default function DashboardPage() {
               {selectedEvent.calendarEvent.attendees && selectedEvent.calendarEvent.attendees.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <UsersIcon className="h-5 w-5 flex-shrink-0" />
+                    <UsersIcon className="h-5 w-5 flex-shrink-0"/>
                     <span className="font-medium">{selectedEvent.calendarEvent.attendees.length} Attendees</span>
                   </div>
                   <div className="ml-7 space-y-1">
@@ -1144,8 +1186,8 @@ export default function DashboardPage() {
                         {attendee.responseStatus && (
                           <span className={`ml-2 text-xs ${
                             attendee.responseStatus === 'accepted' ? 'text-[var(--status-success-text)]' :
-                            attendee.responseStatus === 'declined' ? 'text-[var(--status-danger-text)]' :
-                            'text-[var(--status-warning-text)]'
+                              attendee.responseStatus === 'declined' ? 'text-[var(--status-danger-text)]' :
+                                'text-[var(--status-warning-text)]'
                           }`}>
                             ({attendee.responseStatus})
                           </span>
@@ -1174,7 +1216,7 @@ export default function DashboardPage() {
                 <Button
                   variant="primary"
                   className="flex-1"
-                  leftIcon={<Video className="h-4 w-4" />}
+                  leftIcon={<Video className="h-4 w-4"/>}
                   onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
                 >
                   Join Meeting
@@ -1183,7 +1225,7 @@ export default function DashboardPage() {
               <Button
                 variant="outline"
                 className={selectedEvent.calendarEvent.hangoutLink ? '' : 'flex-1'}
-                leftIcon={<ExternalLink className="h-4 w-4" />}
+                leftIcon={<ExternalLink className="h-4 w-4"/>}
                 onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')}
               >
                 Open in Calendar
@@ -1209,13 +1251,13 @@ export default function DashboardPage() {
                 className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Close email details"
               >
-                <X className="h-5 w-5 text-[var(--text-secondary)]" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center status-danger">
-                  <Mail className="h-5 w-5" />
+                  <Mail className="h-5 w-5"/>
                 </div>
                 <div>
                   <p className="font-medium text-[var(--text-primary)]">
@@ -1230,12 +1272,12 @@ export default function DashboardPage() {
               <div className="border-t border-[var(--border-main)] pt-4">
                 {emailLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
                   </div>
                 ) : (
                   <div
                     className="prose prose-sm dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailContent) }}
+                    dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailContent)}}
                   />
                 )}
               </div>
@@ -1244,7 +1286,7 @@ export default function DashboardPage() {
               <Button
                 variant="primary"
                 className="flex-1"
-                leftIcon={<ExternalLink className="h-4 w-4" />}
+                leftIcon={<ExternalLink className="h-4 w-4"/>}
                 onClick={() => router.push('/nu-mail')}
               >
                 Open in NU-Mail
@@ -1261,7 +1303,7 @@ export default function DashboardPage() {
             <div className="row-between p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 status-warning">
-                  <HardDrive className="h-5 w-5" />
+                  <HardDrive className="h-5 w-5"/>
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] truncate">
@@ -1275,7 +1317,7 @@ export default function DashboardPage() {
                 className="p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Close file preview"
               >
-                <X className="h-5 w-5 text-[var(--text-secondary)]" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]"/>
               </button>
             </div>
             <div className="relative h-[60vh] bg-[var(--bg-elevated)]">
@@ -1299,7 +1341,7 @@ export default function DashboardPage() {
               <Button
                 variant="primary"
                 className="flex-1"
-                leftIcon={<ExternalLink className="h-4 w-4" />}
+                leftIcon={<ExternalLink className="h-4 w-4"/>}
                 onClick={() => router.push('/nu-drive')}
               >
                 Open in NU-Drive
@@ -1307,7 +1349,7 @@ export default function DashboardPage() {
               {selectedFile.driveFile.webViewLink && (
                 <Button
                   variant="outline"
-                  leftIcon={<ExternalLink className="h-4 w-4" />}
+                  leftIcon={<ExternalLink className="h-4 w-4"/>}
                   onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')}
                 >
                   Open in Drive

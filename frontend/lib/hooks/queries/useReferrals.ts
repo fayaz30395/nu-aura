@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { referralService } from '@/lib/services/hire/referral.service';
-import { ReferralRequest, ReferralPolicyRequest, ReferralStatus } from '@/lib/types/hire/referral';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {referralService} from '@/lib/services/hire/referral.service';
+import {ReferralPolicyRequest, ReferralRequest, ReferralStatus} from '@/lib/types/hire/referral';
 
 // Query keys for cache management
 export const referralKeys = {
   all: ['referrals'] as const,
   myReferrals: () => [...referralKeys.all, 'my-referrals'] as const,
   list: () => [...referralKeys.all, 'list'] as const,
-  listPaginated: (page: number, size: number) => [...referralKeys.list(), { page, size }] as const,
+  listPaginated: (page: number, size: number) => [...referralKeys.list(), {page, size}] as const,
   byStatus: (status: ReferralStatus) => [...referralKeys.all, 'status', status] as const,
   detail: (id: string) => [...referralKeys.all, 'detail', id] as const,
   bonusEligible: () => [...referralKeys.all, 'bonus-eligible'] as const,
@@ -86,9 +86,9 @@ export function useSubmitReferral() {
   return useMutation({
     mutationFn: (data: ReferralRequest) => referralService.submitReferral(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: referralKeys.myReferrals() });
-      queryClient.invalidateQueries({ queryKey: referralKeys.list() });
-      queryClient.invalidateQueries({ queryKey: referralKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: referralKeys.myReferrals()});
+      queryClient.invalidateQueries({queryKey: referralKeys.list()});
+      queryClient.invalidateQueries({queryKey: referralKeys.dashboard()});
     },
   });
 }
@@ -98,16 +98,16 @@ export function useUpdateReferralStatus() {
 
   return useMutation({
     mutationFn: ({
-      id,
-      status,
-      notes,
-    }: {
+                   id,
+                   status,
+                   notes,
+                 }: {
       id: string;
       status: ReferralStatus;
       notes?: string;
     }) => referralService.updateStatus(id, status, notes),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: referralKeys.all });
+      queryClient.invalidateQueries({queryKey: referralKeys.all});
     },
   });
 }
@@ -117,16 +117,16 @@ export function useRejectReferral() {
 
   return useMutation({
     mutationFn: ({
-      id,
-      reason,
-      stage,
-    }: {
+                   id,
+                   reason,
+                   stage,
+                 }: {
       id: string;
       reason: string;
       stage?: string;
     }) => referralService.rejectReferral(id, reason, stage),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: referralKeys.all });
+      queryClient.invalidateQueries({queryKey: referralKeys.all});
     },
   });
 }
@@ -137,7 +137,7 @@ export function useCreatePolicy() {
   return useMutation({
     mutationFn: (data: ReferralPolicyRequest) => referralService.createPolicy(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: referralKeys.policies() });
+      queryClient.invalidateQueries({queryKey: referralKeys.policies()});
     },
   });
 }
@@ -146,10 +146,10 @@ export function useTogglePolicyStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+    mutationFn: ({id, active}: { id: string; active: boolean }) =>
       referralService.togglePolicyStatus(id, active),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: referralKeys.policies() });
+      queryClient.invalidateQueries({queryKey: referralKeys.policies()});
     },
   });
 }

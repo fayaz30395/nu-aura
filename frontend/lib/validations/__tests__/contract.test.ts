@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { createContractSchema, updateContractSchema, contractTypeSchema } from '../contract';
+import {describe, expect, it} from 'vitest';
+import {contractTypeSchema, createContractSchema, updateContractSchema} from '../contract';
 
 describe('Contract Validation Schema', () => {
   describe('createContractSchema', () => {

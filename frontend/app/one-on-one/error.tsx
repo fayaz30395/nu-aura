@@ -1,11 +1,11 @@
 'use client';
 
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 
 export default function OneOnOneError({
-  error,
-  reset,
-}: {
+                                        error,
+                                        reset,
+                                      }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {

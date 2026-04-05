@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { HomePage } from './pages/HomePage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {HomePage} from './pages/HomePage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Home Page E2E Tests
@@ -20,7 +20,7 @@ test.describe('Home Page', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
@@ -32,7 +32,7 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Home Page Load', () => {
-    test('should display home page after login', async ({ page }) => {
+    test('should display home page after login', async ({page}) => {
       expect(page.url()).toContain('/home');
     });
 
@@ -61,7 +61,7 @@ test.describe('Home Page', () => {
       expect(clockInVisible || clockOutVisible).toBe(true);
     });
 
-    test('should perform clock-in from home page', async ({ page }) => {
+    test('should perform clock-in from home page', async ({page}) => {
       await homePage.waitForTimeWidget();
 
       // If already clocked in, clock out first
@@ -81,7 +81,7 @@ test.describe('Home Page', () => {
       }
     });
 
-    test('should perform clock-out from home page', async ({ page }) => {
+    test('should perform clock-out from home page', async ({page}) => {
       await homePage.waitForTimeWidget();
 
       // Ensure clocked in first
@@ -101,7 +101,7 @@ test.describe('Home Page', () => {
       }
     });
 
-    test('should maintain clock state after page refresh', async ({ page }) => {
+    test('should maintain clock state after page refresh', async ({page}) => {
       await homePage.waitForTimeWidget();
 
       // Ensure clocked in
@@ -124,7 +124,7 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Holidays Widget', () => {
-    test('should display holidays section', async ({ page }) => {
+    test('should display holidays section', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       // Holidays widget should be present
@@ -154,7 +154,7 @@ test.describe('Home Page', () => {
   });
 
   test.describe('On Leave Today Widget', () => {
-    test('should display on leave today section', async ({ page }) => {
+    test('should display on leave today section', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const onLeaveVisible = await page.locator('text=/On Leave Today/i').isVisible();
@@ -177,7 +177,7 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Celebrations Widget', () => {
-    test('should display celebrations tabs', async ({ page }) => {
+    test('should display celebrations tabs', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const birthdayTab = await page.locator('text=/Birthday/i').first().isVisible();
@@ -189,7 +189,7 @@ test.describe('Home Page', () => {
       expect(joineesTab).toBe(true);
     });
 
-    test('should switch between celebrations tabs', async ({ page }) => {
+    test('should switch between celebrations tabs', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       // Switch to anniversaries tab
@@ -205,7 +205,7 @@ test.describe('Home Page', () => {
       await page.waitForTimeout(500);
 
       // Verify we're back on birthdays
-      const birthdaysActive = await page.locator('button').filter({ hasText: /Birthday/i }).first().isVisible();
+      const birthdaysActive = await page.locator('button').filter({hasText: /Birthday/i}).first().isVisible();
       expect(birthdaysActive).toBe(true);
     });
 
@@ -244,14 +244,14 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Leave Balances Widget', () => {
-    test('should display leave balances section', async ({ page }) => {
+    test('should display leave balances section', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const leaveBalancesVisible = await page.locator('text=/Leave Balances/i').isVisible();
       expect(leaveBalancesVisible).toBe(true);
     });
 
-    test('should navigate to leave request page', async ({ page }) => {
+    test('should navigate to leave request page', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const requestLeave = await page.locator('text=/Request Leave/i').isVisible();
@@ -263,19 +263,19 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Post Creation', () => {
-    test('should display post creation tabs', async ({ page }) => {
+    test('should display post creation tabs', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
-      const postTabVisible = await page.locator('button').filter({ hasText: 'Post' }).first().isVisible();
-      const pollTabVisible = await page.locator('button').filter({ hasText: 'Poll' }).isVisible();
-      const praiseTabVisible = await page.locator('button').filter({ hasText: 'Praise' }).isVisible();
+      const postTabVisible = await page.locator('button').filter({hasText: 'Post'}).first().isVisible();
+      const pollTabVisible = await page.locator('button').filter({hasText: 'Poll'}).isVisible();
+      const praiseTabVisible = await page.locator('button').filter({hasText: 'Praise'}).isVisible();
 
       expect(postTabVisible).toBe(true);
       expect(pollTabVisible).toBe(true);
       expect(praiseTabVisible).toBe(true);
     });
 
-    test('should switch between post tabs', async ({ page }) => {
+    test('should switch between post tabs', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       // Switch to Poll tab
@@ -291,7 +291,7 @@ test.describe('Home Page', () => {
       await page.waitForTimeout(300);
     });
 
-    test('should allow entering post content', async ({ page }) => {
+    test('should allow entering post content', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const testContent = 'This is a test post from E2E tests';
@@ -303,7 +303,7 @@ test.describe('Home Page', () => {
   });
 
   test.describe('Inbox Widget', () => {
-    test('should display inbox widget', async ({ page }) => {
+    test('should display inbox widget', async ({page}) => {
       await homePage.waitForHomePageLoad();
 
       const inboxVisible = await page.locator('text=/Inbox/i').first().isVisible();
@@ -316,7 +316,7 @@ test.describe('Home Page - Employee Role', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
@@ -337,7 +337,7 @@ test.describe('Home Page - Employee Role', () => {
     expect(widgetLoaded).toBe(true);
   });
 
-  test('employee should be able to clock in', async ({ page }) => {
+  test('employee should be able to clock in', async ({page}) => {
     await homePage.waitForTimeWidget();
 
     // Ensure clocked out first
@@ -361,7 +361,7 @@ test.describe('Home Page - State Persistence', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
@@ -371,7 +371,7 @@ test.describe('Home Page - State Persistence', () => {
     await homePage.navigate();
   });
 
-  test('should maintain celebration tab state after interaction', async ({ page }) => {
+  test('should maintain celebration tab state after interaction', async ({page}) => {
     await homePage.waitForHomePageLoad();
 
     // Switch to anniversaries tab
@@ -386,7 +386,7 @@ test.describe('Home Page - State Persistence', () => {
     // (Note: This depends on the component implementation)
   });
 
-  test('should maintain post content while switching tabs', async ({ page }) => {
+  test('should maintain post content while switching tabs', async ({page}) => {
     await homePage.waitForHomePageLoad();
 
     const testContent = 'Draft post content';
@@ -407,7 +407,7 @@ test.describe('Home Page - Visual Regression', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
@@ -417,7 +417,7 @@ test.describe('Home Page - Visual Regression', () => {
     await homePage.navigate();
   });
 
-  test('should match home page snapshot', async ({ page }) => {
+  test('should match home page snapshot', async ({page}) => {
     await homePage.waitForHomePageLoad();
     await homePage.waitForTimeWidget();
     await page.waitForTimeout(1000); // Allow animations to complete
@@ -432,7 +432,7 @@ test.describe('Home Page - Navigation', () => {
   let loginPage: LoginPage;
   let homePage: HomePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     homePage = new HomePage(page);
 
@@ -442,7 +442,7 @@ test.describe('Home Page - Navigation', () => {
     await homePage.navigate();
   });
 
-  test('should navigate to attendance page from View All link', async ({ page }) => {
+  test('should navigate to attendance page from View All link', async ({page}) => {
     await homePage.waitForHomePageLoad();
 
     const viewAllLink = page.locator('button:has-text("View All")').first();
@@ -453,7 +453,7 @@ test.describe('Home Page - Navigation', () => {
     }
   });
 
-  test('should navigate to leave page from Request Leave', async ({ page }) => {
+  test('should navigate to leave page from Request Leave', async ({page}) => {
     await homePage.waitForHomePageLoad();
 
     const requestLeaveLink = page.locator('text=/Request Leave/i');
@@ -464,7 +464,7 @@ test.describe('Home Page - Navigation', () => {
     }
   });
 
-  test('should navigate to announcements from View All', async ({ page }) => {
+  test('should navigate to announcements from View All', async ({page}) => {
     await homePage.waitForHomePageLoad();
 
     if (await homePage.hasAnnouncements()) {

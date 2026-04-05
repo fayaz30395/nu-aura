@@ -48,18 +48,21 @@ interface DemoAccount {
   color: string;
 }
 
-const DEMO_ACCOUNTS: DemoAccount[] = [
-  { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-danger-500 to-danger-600' },
-  { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-accent-500 to-accent-600' },
-  { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-accent-500 to-accent-600' },
-  { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-accent-500 to-accent-600' },
-  { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-accent-600 to-accent-700' },
-  { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-accent-700 to-accent-800' },
-  { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-accent-500 to-accent-600' },
-  { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-accent-600 to-accent-700' },
-];
+// HIGH-1: Demo accounts only included in bundle when NEXT_PUBLIC_DEMO_MODE=true.
+// Tree-shaking removes the array entirely in production builds without the flag.
+const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE
+  ? [
+      { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-danger-500 to-danger-600' },
+      { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-accent-500 to-accent-600' },
+      { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-accent-500 to-accent-600' },
+      { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-accent-500 to-accent-600' },
+      { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-accent-600 to-accent-700' },
+      { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-accent-700 to-accent-800' },
+      { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-accent-500 to-accent-600' },
+      { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-accent-600 to-accent-700' },
+    ]
+  : [];
 
-// SEC-007: Demo password only used when NEXT_PUBLIC_DEMO_MODE=true (never in production)
 const DEMO_PASSWORD = IS_DEMO_MODE ? 'Welcome@123' : '';
 
 const log = createLogger('LoginPage');
@@ -81,8 +84,8 @@ function sanitizeReturnUrl(url: string | null): string {
   if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
   // Reject protocol schemes and backslash tricks
   if (/[:\\]/.test(trimmed.split('/')[1] || '')) return fallback;
-  // Only allow path characters (letters, numbers, hyphens, slashes, dots, underscores, query, hash)
-  if (!/^\/[\w\-./~?#&=%@]*$/.test(trimmed)) return fallback;
+  // MED-1: Only allow path characters — disallow @ to prevent user-info injection (user@host)
+  if (!/^\/[\w\-./~?#&=%]*$/.test(trimmed)) return fallback;
   return trimmed;
 }
 

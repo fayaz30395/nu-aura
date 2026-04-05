@@ -1,11 +1,11 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
-  PredictiveAnalyticsDashboard,
-  AttritionPrediction,
-  WorkforceTrend,
   AnalyticsInsight,
-  SkillGap,
+  AttritionPrediction,
   PaginatedResponse,
+  PredictiveAnalyticsDashboard,
+  SkillGap,
+  WorkforceTrend,
 } from '../../types/core/predictive-analytics';
 
 const BASE = '/predictive-analytics';
@@ -22,7 +22,7 @@ export const predictiveAnalyticsService = {
 
   getHighRiskEmployees: async (minScore: number = 70): Promise<AttritionPrediction[]> => {
     const response = await apiClient.get<AttritionPrediction[]>(`${BASE}/attrition/high-risk`, {
-      params: { minScore },
+      params: {minScore},
     });
     return response.data;
   },
@@ -50,7 +50,7 @@ export const predictiveAnalyticsService = {
 
   markActionTaken: async (predictionId: string, notes?: string): Promise<void> => {
     await apiClient.post(`${BASE}/attrition/${predictionId}/action-taken`, null, {
-      params: { notes },
+      params: {notes},
     });
   },
 
@@ -60,7 +60,7 @@ export const predictiveAnalyticsService = {
     leaveDate?: string
   ): Promise<void> => {
     await apiClient.post(`${BASE}/attrition/${predictionId}/outcome`, null, {
-      params: { outcome, leaveDate },
+      params: {outcome, leaveDate},
     });
   },
 
@@ -68,7 +68,7 @@ export const predictiveAnalyticsService = {
 
   getOrganizationTrends: async (year: number): Promise<WorkforceTrend[]> => {
     const response = await apiClient.get<WorkforceTrend[]>(`${BASE}/trends/organization`, {
-      params: { year },
+      params: {year},
     });
     return response.data;
   },
@@ -76,14 +76,14 @@ export const predictiveAnalyticsService = {
   getDepartmentTrends: async (departmentId: string, year: number): Promise<WorkforceTrend[]> => {
     const response = await apiClient.get<WorkforceTrend[]>(
       `${BASE}/trends/department/${departmentId}`,
-      { params: { year } }
+      {params: {year}}
     );
     return response.data;
   },
 
   compareDepartments: async (year: number, month: number): Promise<WorkforceTrend[]> => {
     const response = await apiClient.get<WorkforceTrend[]>(`${BASE}/trends/compare-departments`, {
-      params: { year, month },
+      params: {year, month},
     });
     return response.data;
   },
@@ -96,7 +96,7 @@ export const predictiveAnalyticsService = {
   ): Promise<PaginatedResponse<AnalyticsInsight>> => {
     const response = await apiClient.get<PaginatedResponse<AnalyticsInsight>>(
       `${BASE}/insights`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -123,7 +123,7 @@ export const predictiveAnalyticsService = {
     const response = await apiClient.patch<AnalyticsInsight>(
       `${BASE}/insights/${insightId}/status`,
       null,
-      { params: { status, notes } }
+      {params: {status, notes}}
     );
     return response.data;
   },

@@ -1,21 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployeeSchedule } from '@/lib/hooks/queries/useShifts';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { ScheduleEntry } from '@/lib/types/hrms/shift';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Moon,
-  Sun,
-  ArrowLeftRight,
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import {useMemo, useState} from 'react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useEmployeeSchedule} from '@/lib/hooks/queries/useShifts';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {ScheduleEntry} from '@/lib/types/hrms/shift';
+import {ArrowLeftRight, ChevronLeft, ChevronRight, Clock, Moon, Sun,} from 'lucide-react';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
 
 function getMonthDates(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
@@ -46,20 +39,20 @@ function formatTime(time: string | undefined): string {
 
 export default function MySchedulePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const employeeId = user?.employeeId ?? '';
 
   const [monthOffset, setMonthOffset] = useState(0);
 
-  const { year, month } = useMemo(() => {
+  const {year, month} = useMemo(() => {
     const now = new Date();
     const d = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
-    return { year: d.getFullYear(), month: d.getMonth() };
+    return {year: d.getFullYear(), month: d.getMonth()};
   }, [monthOffset]);
 
-  const { dates, start, end } = useMemo(() => getMonthDates(year, month), [year, month]);
+  const {dates, start, end} = useMemo(() => getMonthDates(year, month), [year, month]);
 
-  const { data: schedule = [], isLoading } = useEmployeeSchedule(employeeId, start, end, !!employeeId);
+  const {data: schedule = [], isLoading} = useEmployeeSchedule(employeeId, start, end, !!employeeId);
 
   const scheduleMap = useMemo(() => {
     const m = new Map<string, ScheduleEntry>();
@@ -93,7 +86,7 @@ export default function MySchedulePage() {
               onClick={() => router.push('/shifts')}
               className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
             >
-              <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
+              <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
             </button>
             <div>
               <h1 className="text-2xl font-bold text-surface-900 dark:text-white">My Schedule</h1>
@@ -106,14 +99,15 @@ export default function MySchedulePage() {
             onClick={() => router.push('/shifts/swaps')}
             className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <ArrowLeftRight className="w-4 h-4" />
+            <ArrowLeftRight className="w-4 h-4"/>
             Swap Request
           </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}
-          <div className="lg:col-span-2 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
+          <div
+            className="lg:col-span-2 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
             {/* Month navigation */}
             <div className="row-between mb-4">
               <button
@@ -121,7 +115,7 @@ export default function MySchedulePage() {
                 className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Previous month"
               >
-                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
+                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
               </button>
               <div className="text-center">
                 <h2 className="font-semibold text-surface-900 dark:text-white">{monthName}</h2>
@@ -137,12 +131,12 @@ export default function MySchedulePage() {
                 className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Next month"
               >
-                <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />
+                <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
               </button>
             </div>
 
             {isLoading ? (
-              <NuAuraLoader />
+              <NuAuraLoader/>
             ) : (
               <>
                 {/* Day headers */}
@@ -161,7 +155,7 @@ export default function MySchedulePage() {
                 <div className="grid grid-cols-7 gap-1">
                   {dates.map((date, idx) => {
                     if (!date) {
-                      return <div key={`empty-${idx}`} className="h-20" />;
+                      return <div key={`empty-${idx}`} className="h-20"/>;
                     }
 
                     const dateStr = date.toISOString().split('T')[0];
@@ -190,7 +184,7 @@ export default function MySchedulePage() {
                         {entry ? (
                           <div
                             className="rounded px-1 py-0.5 text-white text-xs font-medium"
-                            style={{ backgroundColor: entry.colorCode || '#6B7280' }}
+                            style={{backgroundColor: entry.colorCode || '#6B7280'}}
                           >
                             <div>{entry.shiftCode}</div>
                             <div className="opacity-80 text-2xs">
@@ -212,7 +206,7 @@ export default function MySchedulePage() {
           <div className="space-y-4">
             <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4">
               <h3 className="font-semibold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400" />
+                <Clock className="w-4 h-4 text-accent-700 dark:text-accent-400"/>
                 Upcoming Shifts
               </h3>
               {upcomingShifts.length === 0 ? (
@@ -226,8 +220,8 @@ export default function MySchedulePage() {
                     return (
                       <motion.div
                         key={entry.assignmentId}
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{opacity: 0, x: 10}}
+                        animate={{opacity: 1, x: 0}}
                         className={`flex items-center gap-4 p-4 rounded-lg ${
                           isToday
                             ? 'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
@@ -236,7 +230,7 @@ export default function MySchedulePage() {
                       >
                         <div
                           className="w-1.5 h-10 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: entry.colorCode || '#6B7280' }}
+                          style={{backgroundColor: entry.colorCode || '#6B7280'}}
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-surface-900 dark:text-white">
@@ -248,15 +242,15 @@ export default function MySchedulePage() {
                             )}
                           </p>
                           <p className="text-xs text-surface-500 dark:text-surface-400">
-                            {d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            {d.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}
                             {' '}
                             {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
                           </p>
                         </div>
                         {entry.isNightShift ? (
-                          <Moon className="w-4 h-4 text-accent-500 flex-shrink-0" />
+                          <Moon className="w-4 h-4 text-accent-500 flex-shrink-0"/>
                         ) : (
-                          <Sun className="w-4 h-4 text-warning-500 flex-shrink-0" />
+                          <Sun className="w-4 h-4 text-warning-500 flex-shrink-0"/>
                         )}
                       </motion.div>
                     );
@@ -270,15 +264,15 @@ export default function MySchedulePage() {
               <h3 className="text-sm font-medium text-surface-500 dark:text-surface-400 mb-2">Legend</h3>
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center gap-2">
-                  <Moon className="w-3.5 h-3.5 text-accent-500" />
+                  <Moon className="w-3.5 h-3.5 text-accent-500"/>
                   <span className="text-surface-600 dark:text-surface-300">Night shift</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Sun className="w-3.5 h-3.5 text-warning-500" />
+                  <Sun className="w-3.5 h-3.5 text-warning-500"/>
                   <span className="text-surface-600 dark:text-surface-300">Day shift</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3.5 h-3.5 rounded bg-surface-200 dark:bg-surface-600" />
+                  <div className="w-3.5 h-3.5 rounded bg-surface-200 dark:bg-surface-600"/>
                   <span className="text-surface-600 dark:text-surface-300">Day off</span>
                 </div>
               </div>

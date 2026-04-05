@@ -1,28 +1,24 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { compensationService } from '@/lib/services/hrms/compensation.service';
-import type {
-  CompensationCycleRequest,
-  SalaryRevisionRequest,
-  CycleStatus,
-} from '@/lib/types/hrms/compensation';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {compensationService} from '@/lib/services/hrms/compensation.service';
+import type {CompensationCycleRequest, CycleStatus, SalaryRevisionRequest,} from '@/lib/types/hrms/compensation';
 
 // Query keys for cache management
 export const compensationKeys = {
   all: ['compensation'] as const,
   cycles: () => [...compensationKeys.all, 'cycles'] as const,
-  cycleList: (page: number, size: number) => [...compensationKeys.cycles(), { page, size }] as const,
+  cycleList: (page: number, size: number) => [...compensationKeys.cycles(), {page, size}] as const,
   cycleDetail: (id: string) => [...compensationKeys.cycles(), id] as const,
   activeCycles: () => [...compensationKeys.cycles(), 'active'] as const,
   cycleStats: (id: string) => [...compensationKeys.cycles(), id, 'statistics'] as const,
   revisions: () => [...compensationKeys.all, 'revisions'] as const,
-  revisionList: (page: number, size: number) => [...compensationKeys.revisions(), { page, size }] as const,
+  revisionList: (page: number, size: number) => [...compensationKeys.revisions(), {page, size}] as const,
   revisionDetail: (id: string) => [...compensationKeys.revisions(), id] as const,
   revisionsByCycle: (cycleId: string, page: number, size: number) =>
-    [...compensationKeys.cycles(), cycleId, 'revisions', { page, size }] as const,
+    [...compensationKeys.cycles(), cycleId, 'revisions', {page, size}] as const,
   pendingApprovals: (page: number, size: number) =>
-    [...compensationKeys.revisions(), 'pending', { page, size }] as const,
+    [...compensationKeys.revisions(), 'pending', {page, size}] as const,
   employeeHistory: (employeeId: string) => [...compensationKeys.revisions(), 'history', employeeId] as const,
 };
 
@@ -85,7 +81,7 @@ export function useCreateCycle() {
     mutationFn: (data: CompensationCycleRequest) => compensationService.createCycle(data),
     onSuccess: () => {
       // Invalidate all cycle-related queries
-      queryClient.invalidateQueries({ queryKey: compensationKeys.cycles() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.cycles()});
     },
   });
 }
@@ -97,13 +93,13 @@ export function useUpdateCycleStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ cycleId, status }: { cycleId: string; status: CycleStatus }) =>
+    mutationFn: ({cycleId, status}: { cycleId: string; status: CycleStatus }) =>
       compensationService.updateCycleStatus(cycleId, status),
     onSuccess: (data) => {
       // Update the specific cycle detail
       queryClient.setQueryData(compensationKeys.cycleDetail(data.id), data);
       // Invalidate cycle lists
-      queryClient.invalidateQueries({ queryKey: compensationKeys.cycles() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.cycles()});
     },
   });
 }
@@ -180,7 +176,7 @@ export function useCreateRevision() {
     mutationFn: (data: SalaryRevisionRequest) => compensationService.createRevision(data),
     onSuccess: () => {
       // Invalidate all revision-related queries
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
     },
   });
 }
@@ -197,7 +193,7 @@ export function useSubmitRevision() {
       // Update the specific revision detail
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
     },
   });
 }
@@ -209,13 +205,13 @@ export function useReviewRevision() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ revisionId, comments }: { revisionId: string; comments?: string }) =>
+    mutationFn: ({revisionId, comments}: { revisionId: string; comments?: string }) =>
       compensationService.reviewRevision(revisionId, comments),
     onSuccess: (data) => {
       // Update the specific revision detail
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
     },
   });
 }
@@ -227,13 +223,13 @@ export function useApproveRevision() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ revisionId, comments }: { revisionId: string; comments?: string }) =>
+    mutationFn: ({revisionId, comments}: { revisionId: string; comments?: string }) =>
       compensationService.approveRevision(revisionId, comments),
     onSuccess: (data) => {
       // Update the specific revision detail
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists to refresh status
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
       // Invalidate ALL pending approval pages (not just page 0/size 10)
       queryClient.invalidateQueries({
         queryKey: [...compensationKeys.revisions(), 'pending'],
@@ -249,13 +245,13 @@ export function useRejectRevision() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ revisionId, reason }: { revisionId: string; reason: string }) =>
+    mutationFn: ({revisionId, reason}: { revisionId: string; reason: string }) =>
       compensationService.rejectRevision(revisionId, reason),
     onSuccess: (data) => {
       // Update the specific revision detail
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists to refresh status
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
       // Invalidate ALL pending approval pages (not just page 0/size 10)
       queryClient.invalidateQueries({
         queryKey: [...compensationKeys.revisions(), 'pending'],
@@ -276,7 +272,7 @@ export function useApplyRevision() {
       // Update the specific revision detail
       queryClient.setQueryData(compensationKeys.revisionDetail(data.id), data);
       // Invalidate revision lists
-      queryClient.invalidateQueries({ queryKey: compensationKeys.revisions() });
+      queryClient.invalidateQueries({queryKey: compensationKeys.revisions()});
     },
   });
 }

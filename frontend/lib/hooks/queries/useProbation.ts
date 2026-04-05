@@ -1,25 +1,25 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { probationService } from '@/lib/services/hrms/probation.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {probationService} from '@/lib/services/hrms/probation.service';
 import {
-  ProbationPeriodRequest,
+  ProbationConfirmationRequest,
   ProbationEvaluationRequest,
   ProbationExtensionRequest,
-  ProbationConfirmationRequest,
-  ProbationTerminationRequest,
+  ProbationPeriodRequest,
   ProbationStatus,
+  ProbationTerminationRequest,
 } from '@/lib/types/hrms/probation';
 
 // Query keys for cache management
 export const probationKeys = {
   all: ['probation'] as const,
   list: () => [...probationKeys.all, 'list'] as const,
-  listPaginated: (page: number, size: number) => [...probationKeys.list(), { page, size }] as const,
+  listPaginated: (page: number, size: number) => [...probationKeys.list(), {page, size}] as const,
   byStatus: (status: ProbationStatus, page: number, size: number) =>
-    [...probationKeys.all, 'status', status, { page, size }] as const,
+    [...probationKeys.all, 'status', status, {page, size}] as const,
   myTeam: (page: number, size: number) =>
-    [...probationKeys.all, 'my-team', { page, size }] as const,
+    [...probationKeys.all, 'my-team', {page, size}] as const,
   detail: (id: string) => [...probationKeys.all, 'detail', id] as const,
   byEmployee: (employeeId: string) =>
     [...probationKeys.all, 'employee', employeeId] as const,
@@ -125,7 +125,7 @@ export function useCreateProbation() {
   return useMutation({
     mutationFn: (data: ProbationPeriodRequest) => probationService.createProbation(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }
@@ -135,14 +135,14 @@ export function useExtendProbation() {
 
   return useMutation({
     mutationFn: ({
-      probationId,
-      data,
-    }: {
+                   probationId,
+                   data,
+                 }: {
       probationId: string;
       data: ProbationExtensionRequest;
     }) => probationService.extendProbation(probationId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }
@@ -152,14 +152,14 @@ export function useConfirmEmployee() {
 
   return useMutation({
     mutationFn: ({
-      probationId,
-      data,
-    }: {
+                   probationId,
+                   data,
+                 }: {
       probationId: string;
       data: ProbationConfirmationRequest;
     }) => probationService.confirmEmployee(probationId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }
@@ -169,14 +169,14 @@ export function useFailProbation() {
 
   return useMutation({
     mutationFn: ({
-      probationId,
-      data,
-    }: {
+                   probationId,
+                   data,
+                 }: {
       probationId: string;
       data: ProbationTerminationRequest;
     }) => probationService.failProbation(probationId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }
@@ -190,7 +190,7 @@ export function useAddEvaluation() {
       queryClient.invalidateQueries({
         queryKey: probationKeys.evaluations(variables.probationPeriodId),
       });
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }
@@ -200,14 +200,14 @@ export function useAcknowledgeEvaluation() {
 
   return useMutation({
     mutationFn: ({
-      evaluationId,
-      comments,
-    }: {
+                   evaluationId,
+                   comments,
+                 }: {
       evaluationId: string;
       comments?: string;
     }) => probationService.acknowledgeEvaluation(evaluationId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: probationKeys.all });
+      queryClient.invalidateQueries({queryKey: probationKeys.all});
     },
   });
 }

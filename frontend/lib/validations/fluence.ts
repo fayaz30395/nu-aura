@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // ─── Shared Field Schemas ───────────────────────────────────────────────────
 
@@ -41,27 +41,27 @@ const colorSchema = z
 
 export const wikiPageStatusSchema = z.enum(
   ['DRAFT', 'PUBLISHED', 'ARCHIVED'],
-  { errorMap: () => ({ message: 'Please select a valid page status' }) }
+  {errorMap: () => ({message: 'Please select a valid page status'})}
 );
 
 export const wikiVisibilitySchema = z.enum(
   ['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'],
-  { errorMap: () => ({ message: 'Please select a visibility level' }) }
+  {errorMap: () => ({message: 'Please select a visibility level'})}
 );
 
 export const blogPostStatusSchema = z.enum(
   ['DRAFT', 'PUBLISHED', 'ARCHIVED'],
-  { errorMap: () => ({ message: 'Please select a valid post status' }) }
+  {errorMap: () => ({message: 'Please select a valid post status'})}
 );
 
 export const blogVisibilitySchema = z.enum(
   ['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'],
-  { errorMap: () => ({ message: 'Please select a visibility level' }) }
+  {errorMap: () => ({message: 'Please select a visibility level'})}
 );
 
 export const commentContentTypeSchema = z.enum(
   ['WIKI', 'BLOG'],
-  { errorMap: () => ({ message: 'Invalid content type' }) }
+  {errorMap: () => ({message: 'Invalid content type'})}
 );
 
 // ─── Wiki Page Schemas ──────────────────────────────────────────────────────

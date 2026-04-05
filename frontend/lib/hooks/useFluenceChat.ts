@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
-import { streamFluenceChat } from '@/lib/services/platform/fluence-chat.service';
-import type { ChatMessage, ChatSource, ChatRole } from '@/lib/types/platform/fluence-chat';
+import {useCallback, useRef, useState} from 'react';
+import {streamFluenceChat} from '@/lib/services/platform/fluence-chat.service';
+import type {ChatMessage, ChatRole, ChatSource} from '@/lib/types/platform/fluence-chat';
 
 /** Generate a simple unique ID */
 function uid(): string {
@@ -63,8 +63,8 @@ export function useFluenceChat(): UseFluenceChatReturn {
     const history: Array<{ role: ChatRole; content: string }> = [
       ...messages
         .filter((m) => m.content && m.content.trim().length > 0)
-        .map((m) => ({ role: m.role, content: m.content })),
-      { role: 'user' as ChatRole, content: content.trim() },
+        .map((m) => ({role: m.role, content: m.content})),
+      {role: 'user' as ChatRole, content: content.trim()},
     ];
 
     // 4. Start streaming
@@ -85,7 +85,7 @@ export function useFluenceChat(): UseFluenceChatReturn {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
-              ? { ...m, content: currentContent }
+              ? {...m, content: currentContent}
               : m
           )
         );
@@ -96,7 +96,7 @@ export function useFluenceChat(): UseFluenceChatReturn {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
-              ? { ...m, sources }
+              ? {...m, sources}
               : m
           )
         );
@@ -107,7 +107,7 @@ export function useFluenceChat(): UseFluenceChatReturn {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
-              ? { ...m, isStreaming: false }
+              ? {...m, isStreaming: false}
               : m
           )
         );
@@ -123,10 +123,10 @@ export function useFluenceChat(): UseFluenceChatReturn {
           prev.map((m) =>
             m.id === assistantId
               ? {
-                  ...m,
-                  content: m.content || friendlyMessage,
-                  isStreaming: false,
-                }
+                ...m,
+                content: m.content || friendlyMessage,
+                isStreaming: false,
+              }
               : m
           )
         );
@@ -142,7 +142,7 @@ export function useFluenceChat(): UseFluenceChatReturn {
     setIsStreaming(false);
     // Mark the streaming message as done
     setMessages((prev) =>
-      prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
+      prev.map((m) => (m.isStreaming ? {...m, isStreaming: false} : m))
     );
   }, []);
 

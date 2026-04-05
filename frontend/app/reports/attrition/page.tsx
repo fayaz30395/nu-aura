@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { AppLayout } from '@/components/layout';
-import { apiClient } from '@/lib/api/client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Download, RefreshCw, AlertTriangle, TrendingDown, Shield, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {AppLayout} from '@/components/layout';
+import {apiClient} from '@/lib/api/client';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {AlertTriangle, Download, RefreshCw, Shield, TrendingDown, Zap} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 interface AttritionPrediction {
   id: string;
@@ -26,10 +26,10 @@ interface AttritionPrediction {
 }
 
 const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  CRITICAL: { bg: 'bg-danger-50 border-danger-200', text: 'text-danger-700', bar: 'bg-danger-500' },
-  HIGH:     { bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-500' },
-  MEDIUM:   { bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-400' },
-  LOW:      { bg: 'bg-success-50 border-success-200', text: 'text-success-700', bar: 'bg-success-400' },
+  CRITICAL: {bg: 'bg-danger-50 border-danger-200', text: 'text-danger-700', bar: 'bg-danger-500'},
+  HIGH: {bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-500'},
+  MEDIUM: {bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-400'},
+  LOW: {bg: 'bg-success-50 border-success-200', text: 'text-success-700', bar: 'bg-success-400'},
 };
 
 export default function AttritionReportPage() {
@@ -39,7 +39,7 @@ export default function AttritionReportPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [markingAction, setMarkingAction] = useState<string | null>(null);
 
-  const { data: predictions = [], isLoading: loading, error: queryError, refetch } = useQuery<AttritionPrediction[]>({
+  const {data: predictions = [], isLoading: loading, error: queryError, refetch} = useQuery<AttritionPrediction[]>({
     queryKey: ['attrition-predictions', minScore],
     queryFn: async () => {
       const res = await apiClient.get<AttritionPrediction[]>(
@@ -58,7 +58,7 @@ export default function AttritionReportPage() {
       // Optimistically update the cache
       queryClient.setQueryData<AttritionPrediction[]>(
         ['attrition-predictions', minScore],
-        (old) => old?.map(p => p.id === predictionId ? { ...p, actionTaken: true } : p) ?? []
+        (old) => old?.map(p => p.id === predictionId ? {...p, actionTaken: true} : p) ?? []
       );
     } catch {
       // ignore
@@ -80,7 +80,7 @@ export default function AttritionReportPage() {
       p.actionTaken ? 'Yes' : 'No',
     ].join(','));
     const csv = [headers.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -108,11 +108,13 @@ export default function AttritionReportPage() {
             <p className="text-body-muted mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={loading} leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />}>
+            <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={loading}
+                    leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>}>
               Refresh
             </Button>
             <PermissionGate permission={Permissions.ANALYTICS_EXPORT}>
-              <Button variant="primary" size="sm" onClick={exportCSV} disabled={filtered.length === 0} leftIcon={<Download className="h-4 w-4" />}>
+              <Button variant="primary" size="sm" onClick={exportCSV} disabled={filtered.length === 0}
+                      leftIcon={<Download className="h-4 w-4"/>}>
                 Export CSV
               </Button>
             </PermissionGate>
@@ -120,8 +122,9 @@ export default function AttritionReportPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-warning-50 border border-warning-200 rounded-md text-sm text-warning-700 flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+          <div
+            className="mb-4 p-4 bg-warning-50 border border-warning-200 rounded-md text-sm text-warning-700 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5"/>
             {error}
           </div>
         )}
@@ -129,11 +132,11 @@ export default function AttritionReportPage() {
         {/* Summary cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
-            { level: 'CRITICAL', icon: Zap, label: 'Critical Risk' },
-            { level: 'HIGH', icon: AlertTriangle, label: 'High Risk' },
-            { level: 'MEDIUM', icon: TrendingDown, label: 'Medium Risk' },
-            { level: 'LOW', icon: Shield, label: 'Low Risk' },
-          ].map(({ level, icon: Icon, label }) => {
+            {level: 'CRITICAL', icon: Zap, label: 'Critical Risk'},
+            {level: 'HIGH', icon: AlertTriangle, label: 'High Risk'},
+            {level: 'MEDIUM', icon: TrendingDown, label: 'Medium Risk'},
+            {level: 'LOW', icon: Shield, label: 'Low Risk'},
+          ].map(({level, icon: Icon, label}) => {
             const colors = RISK_COLOR[level];
             return (
               <button
@@ -143,7 +146,7 @@ export default function AttritionReportPage() {
                 className={`p-4 rounded-lg border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${colors.bg} ${selectedRisk === level ? 'ring-2 ring-offset-1 ring-accent-500' : 'hover:opacity-80'}`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <Icon className={`h-4 w-4 ${colors.text}`} />
+                  <Icon className={`h-4 w-4 ${colors.text}`}/>
                   <span className={`text-xs font-semibold uppercase ${colors.text}`}>{label}</span>
                 </div>
                 <p className={`text-3xl font-bold ${colors.text}`}>{byRisk[level] ?? 0}</p>
@@ -175,11 +178,11 @@ export default function AttritionReportPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full" />
+            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 skeuo-card">
-            <Shield className="h-12 w-12 text-success-400 mx-auto mb-4" />
+            <Shield className="h-12 w-12 text-success-400 mx-auto mb-4"/>
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
             <p className="text-body-muted mt-1">Lower the minimum risk score to see more results</p>
           </div>
@@ -191,7 +194,8 @@ export default function AttritionReportPage() {
                 const colors = RISK_COLOR[pred.riskLevel] ?? RISK_COLOR.MEDIUM;
                 const expanded = expandedId === pred.id;
                 return (
-                  <div key={pred.id} className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-[var(--shadow-elevated)]' : ''}`}>
+                  <div key={pred.id}
+                       className={`skeuo-card overflow-hidden transition-all ${expanded ? 'shadow-[var(--shadow-elevated)]' : ''}`}>
                     <button
                       onClick={() => setExpandedId(expanded ? null : pred.id)}
                       className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-[var(--bg-surface)]"
@@ -200,7 +204,7 @@ export default function AttritionReportPage() {
                       <div className="shrink-0 w-16 text-center">
                         <div className="text-lg font-bold text-[var(--text-primary)]">{Math.round(pred.riskScore)}</div>
                         <div className="h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden mt-1">
-                          <div className={`h-full ${colors.bar} rounded-full`} style={{ width: `${pred.riskScore}%` }} />
+                          <div className={`h-full ${colors.bar} rounded-full`} style={{width: `${pred.riskScore}%`}}/>
                         </div>
                       </div>
 
@@ -209,11 +213,13 @@ export default function AttritionReportPage() {
                           <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                             {pred.employeeName ?? `Employee ${pred.employeeId.slice(0, 8)}…`}
                           </p>
-                          <span className={`shrink-0 text-xs font-medium px-1.5 py-0.5 rounded ${colors.text} ${colors.bg} border ${colors.bg.replace('bg-', 'border-').replace('-50', '-200')}`}>
+                          <span
+                            className={`shrink-0 text-xs font-medium px-1.5 py-0.5 rounded ${colors.text} ${colors.bg} border ${colors.bg.replace('bg-', 'border-').replace('-50', '-200')}`}>
                             {pred.riskLevel}
                           </span>
                           {pred.actionTaken && (
-                            <span className="shrink-0 text-xs text-success-600 bg-success-50 border border-success-200 px-1.5 py-0.5 rounded">
+                            <span
+                              className="shrink-0 text-xs text-success-600 bg-success-50 border border-success-200 px-1.5 py-0.5 rounded">
                               Action Taken
                             </span>
                           )}
@@ -228,14 +234,18 @@ export default function AttritionReportPage() {
                         <div className="shrink-0 text-right hidden md:block">
                           <p className="text-caption">Predicted leave</p>
                           <p className="text-sm font-medium text-[var(--text-primary)]">
-                            {new Date(pred.predictedLeaveDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                            {new Date(pred.predictedLeaveDate).toLocaleDateString('en-IN', {
+                              month: 'short',
+                              year: 'numeric'
+                            })}
                           </p>
                         </div>
                       )}
 
                       <div className={`shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}>
-                        <svg className="h-4 w-4 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <svg className="h-4 w-4 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
                         </svg>
                       </div>
                     </button>
@@ -246,7 +256,8 @@ export default function AttritionReportPage() {
                           {/* Risk factors */}
                           {pred.riskFactors && pred.riskFactors.length > 0 && (
                             <div>
-                              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Risk Factors</p>
+                              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Risk
+                                Factors</p>
                               <div className="space-y-1.5">
                                 {pred.riskFactors.map((f, i) => (
                                   <div key={i} className="flex items-center gap-2">
@@ -254,10 +265,11 @@ export default function AttritionReportPage() {
                                     <div className="flex-1 h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden">
                                       <div
                                         className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-danger-500' : f.impact === 'MEDIUM' ? 'bg-warning-400' : 'bg-success-400'}`}
-                                        style={{ width: `${f.score}%` }}
+                                        style={{width: `${f.score}%`}}
                                       />
                                     </div>
-                                    <span className="text-xs font-medium text-[var(--text-primary)] w-8 text-right">{Math.round(f.score)}</span>
+                                    <span
+                                      className="text-xs font-medium text-[var(--text-primary)] w-8 text-right">{Math.round(f.score)}</span>
                                   </div>
                                 ))}
                               </div>
@@ -267,7 +279,8 @@ export default function AttritionReportPage() {
                           {/* Recommendations */}
                           {pred.recommendations && pred.recommendations.length > 0 && (
                             <div>
-                              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Recommendations</p>
+                              <p
+                                className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Recommendations</p>
                               <ul className="space-y-1">
                                 {pred.recommendations.map((r, i) => (
                                   <li key={i} className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">

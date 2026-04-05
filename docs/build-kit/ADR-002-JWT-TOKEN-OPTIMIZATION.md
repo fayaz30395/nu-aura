@@ -42,6 +42,7 @@ return Jwts.builder()
 **Scenario: Average HRMS User with Multiple Permissions**
 
 Base claims (~150 bytes):
+
 - `jti`: UUID (36 chars)
 - `sub`: email (avg 25 chars)
 - `userId`: UUID (36 chars)
@@ -52,6 +53,7 @@ Base claims (~150 bytes):
 **Permission Claims (Variable, can be massive):**
 
 Example user with 50+ permissions:
+
 ```json
 {
   "roles": ["ROLE_MANAGER", "ROLE_RECRUITER"],
@@ -92,12 +94,12 @@ Example user with 50+ permissions:
 
 **Estimated Token Sizes:**
 
-| User Type | Permissions Count | Estimated JWT Size | Base64 Encoded Size |
-|-----------|-------------------|--------------------|--------------------|
-| Employee (Self-Service) | 10 | ~800 bytes | ~1.1 KB |
-| Manager | 30 | ~2,200 bytes | ~3 KB |
-| HR Admin | 80 | ~5,500 bytes | ~7.3 KB |
-| Super Admin | 150+ | ~10,000 bytes | ~13.3 KB |
+| User Type               | Permissions Count | Estimated JWT Size | Base64 Encoded Size |
+|-------------------------|-------------------|--------------------|---------------------|
+| Employee (Self-Service) | 10                | ~800 bytes         | ~1.1 KB             |
+| Manager                 | 30                | ~2,200 bytes       | ~3 KB               |
+| HR Admin                | 80                | ~5,500 bytes       | ~7.3 KB             |
+| Super Admin             | 150+              | ~10,000 bytes      | ~13.3 KB            |
 
 ### Network Overhead Impact
 
@@ -109,6 +111,7 @@ Example user with 50+ permissions:
 4. **1000 Concurrent Users**: 13.5 GB memory in transit per request cycle
 
 **HTTP/2 Header Compression:**
+
 - HPACK compresses headers, but large JWTs still problematic
 - First request: Full token size
 - Subsequent requests: ~30% reduction (still 9.3 KB for Super Admin)
@@ -158,6 +161,7 @@ public String generateLightweightToken(User user, UUID tenantId, String appCode,
 ```
 
 **Reduced Token Size:**
+
 - Employee: ~350 bytes (~470 bytes base64) - **60% reduction**
 - Manager: ~380 bytes (~507 bytes base64) - **84% reduction**
 - Super Admin: ~420 bytes (~560 bytes base64) - **96% reduction**
@@ -361,28 +365,29 @@ public class RoleManagementService {
 
 ### Token Size Comparison
 
-| Metric | Current (Full Payload) | Optimized (Minimal + Redis) |
-|--------|------------------------|------------------------------|
-| Employee JWT | ~1.1 KB | ~470 bytes (57% smaller) |
-| Manager JWT | ~3 KB | ~507 bytes (83% smaller) |
-| HR Admin JWT | ~7.3 KB | ~540 bytes (93% smaller) |
-| Super Admin JWT | ~13.3 KB | ~560 bytes (96% smaller) |
-| **Network Transfer (100 req)** | **1.35 MB** | **56 KB** (96% reduction) |
-| **CDN Header Limit Risk** | **High** | **None** |
+| Metric                         | Current (Full Payload) | Optimized (Minimal + Redis) |
+|--------------------------------|------------------------|-----------------------------|
+| Employee JWT                   | ~1.1 KB                | ~470 bytes (57% smaller)    |
+| Manager JWT                    | ~3 KB                  | ~507 bytes (83% smaller)    |
+| HR Admin JWT                   | ~7.3 KB                | ~540 bytes (93% smaller)    |
+| Super Admin JWT                | ~13.3 KB               | ~560 bytes (96% smaller)    |
+| **Network Transfer (100 req)** | **1.35 MB**            | **56 KB** (96% reduction)   |
+| **CDN Header Limit Risk**      | **High**               | **None**                    |
 
 ### Performance Impact
 
-| Operation | Current | Optimized | Improvement |
-|-----------|---------|-----------|-------------|
-| JWT Parsing | 2-5 ms | 0.5-1 ms | 75% faster |
-| Permission Lookup | Inline (JWT) | Redis GET: 1-2 ms | Negligible |
-| First Request (cache miss) | N/A | +5 ms (DB lookup + cache) | Acceptable |
-| Subsequent Requests | 0 ms | 1 ms (Redis) | Negligible |
-| **Total per request** | **2-5 ms** | **1.5-3 ms** | **~40% faster** |
+| Operation                  | Current      | Optimized                 | Improvement     |
+|----------------------------|--------------|---------------------------|-----------------|
+| JWT Parsing                | 2-5 ms       | 0.5-1 ms                  | 75% faster      |
+| Permission Lookup          | Inline (JWT) | Redis GET: 1-2 ms         | Negligible      |
+| First Request (cache miss) | N/A          | +5 ms (DB lookup + cache) | Acceptable      |
+| Subsequent Requests        | 0 ms         | 1 ms (Redis)              | Negligible      |
+| **Total per request**      | **2-5 ms**   | **1.5-3 ms**              | **~40% faster** |
 
 ### Redis Memory Footprint
 
 **Per-user cache size:**
+
 - Manager (30 permissions): ~2 KB in Redis
 - 1000 concurrent users: ~2 MB Redis memory
 - **Acceptable overhead for massive token reduction**
@@ -392,30 +397,35 @@ public class RoleManagementService {
 ## Implementation Plan
 
 ### Phase 1: Foundation (Day 1, 4 hours)
+
 - [ ] Create `PermissionCacheService.java`
 - [ ] Create `PermissionCache` DTO
 - [ ] Add Redis serialization configuration
 - [ ] Write unit tests for cache service
 
 ### Phase 2: JWT Provider Update (Day 2, 6 hours)
+
 - [ ] Add `generateLightweightToken()` method
 - [ ] Add `getSessionIdFromToken()` extractor
 - [ ] Update `AuthService` to use lightweight tokens
 - [ ] Maintain backward compatibility (support both token types during migration)
 
 ### Phase 3: Filter Integration (Day 3, 8 hours)
+
 - [ ] Update `JwtAuthenticationFilter` to use cache
 - [ ] Implement cache-miss fallback logic
 - [ ] Add cache warming on login
 - [ ] Test authentication flow end-to-end
 
 ### Phase 4: Invalidation Hooks (Day 4, 6 hours)
+
 - [ ] Add cache invalidation to `RoleManagementService`
 - [ ] Add cache invalidation to `PermissionManagementService`
 - [ ] Add cache invalidation to `UserService` (password change, logout)
 - [ ] Create admin endpoint to manually clear cache if needed
 
 ### Phase 5: Migration & Rollout (Day 5, 4 hours)
+
 - [ ] Deploy to staging environment
 - [ ] Load test with 1000 concurrent users
 - [ ] Monitor Redis memory usage
@@ -437,12 +447,12 @@ public class RoleManagementService {
 
 ## Risks & Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Redis Downtime | High | Fallback to DB lookup if cache unavailable; Monitor Redis health |
-| Cache Invalidation Lag | Medium | Invalidation is synchronous; TTL ensures max 1-hour stale data |
-| Memory Overhead | Low | 2 MB per 1000 users is negligible; Set Redis max memory policy |
-| Session ID Guessing | Medium | Use cryptographically secure random UUIDs; Same security as JTI |
+| Risk                   | Impact | Mitigation                                                       |
+|------------------------|--------|------------------------------------------------------------------|
+| Redis Downtime         | High   | Fallback to DB lookup if cache unavailable; Monitor Redis health |
+| Cache Invalidation Lag | Medium | Invalidation is synchronous; TTL ensures max 1-hour stale data   |
+| Memory Overhead        | Low    | 2 MB per 1000 users is negligible; Set Redis max memory policy   |
+| Session ID Guessing    | Medium | Use cryptographically secure random UUIDs; Same security as JTI  |
 
 ---
 
@@ -451,10 +461,12 @@ public class RoleManagementService {
 ### Alternative 1: Keep Large JWT, Use HTTP/2 HPACK
 
 **Pros:**
+
 - No architecture change
 - HPACK provides ~30% compression
 
 **Cons:**
+
 - Still 9 KB per token for admins
 - Doesn't solve cookie storage issue
 - Doesn't reduce parsing overhead
@@ -464,10 +476,12 @@ public class RoleManagementService {
 ### Alternative 2: Use Opaque Tokens (Session-Based)
 
 **Pros:**
+
 - Smallest token size (random string)
 - Full control over session management
 
 **Cons:**
+
 - Loses JWT benefits (stateless, no DB lookup per request)
 - Requires distributed session storage
 - Breaks existing JWT-based integrations
@@ -477,10 +491,12 @@ public class RoleManagementService {
 ### Alternative 3: Token Refresh with Shorter TTL
 
 **Pros:**
+
 - Smaller token if fewer permissions cached
 - Frequent rotation improves security
 
 **Cons:**
+
 - Doesn't reduce token size, just lifetime
 - More token refresh requests = more load
 
@@ -493,26 +509,31 @@ public class RoleManagementService {
 **Key Metrics to Track:**
 
 1. **Token Size Distribution**
-   - p50, p95, p99 token sizes
-   - Target: p99 < 1 KB
+
+- p50, p95, p99 token sizes
+- Target: p99 < 1 KB
 
 2. **Redis Cache Performance**
-   - Hit rate (target: > 95%)
-   - Miss rate (should decrease after cache warming)
-   - Average GET latency (target: < 2 ms)
+
+- Hit rate (target: > 95%)
+- Miss rate (should decrease after cache warming)
+- Average GET latency (target: < 2 ms)
 
 3. **Authentication Latency**
-   - Before: p95 @ 5 ms
-   - After: p95 @ 3 ms (target: 40% reduction)
+
+- Before: p95 @ 5 ms
+- After: p95 @ 3 ms (target: 40% reduction)
 
 4. **Network Transfer**
-   - Total bytes transferred in Authorization headers
-   - Before: 13 KB * requests
-   - After: 560 bytes * requests
+
+- Total bytes transferred in Authorization headers
+- Before: 13 KB * requests
+- After: 560 bytes * requests
 
 5. **Redis Memory Usage**
-   - Monitor memory growth
-   - Alert if > 100 MB (unexpected)
+
+- Monitor memory growth
+- Alert if > 100 MB (unexpected)
 
 **Grafana Dashboard Queries:**
 

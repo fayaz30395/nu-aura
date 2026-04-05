@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Recognition Page Smoke Tests
@@ -6,20 +6,20 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Recognition Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/recognition');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display recognition page with heading', async ({ page }) => {
+  test('should display recognition page with heading', async ({page}) => {
     await expect(page.locator('h1').first()).toBeVisible();
   });
 
-  test('should not show application error', async ({ page }) => {
+  test('should not show application error', async ({page}) => {
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display recognition feed or empty state', async ({ page }) => {
+  test('should display recognition feed or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -29,7 +29,7 @@ test.describe('Recognition Page', () => {
     expect(hasCards || hasEmpty || hasContent).toBe(true);
   });
 
-  test('should show give recognition button', async ({ page }) => {
+  test('should show give recognition button', async ({page}) => {
     await page.waitForTimeout(500);
 
     const actionBtn = page.locator('button:has-text("Give"), button:has-text("Recognize"), button:has-text("Send"), button:has-text("Create")').first();
@@ -38,7 +38,7 @@ test.describe('Recognition Page', () => {
     expect(hasAction || true).toBe(true);
   });
 
-  test('should display tabs or sections for received/given', async ({ page }) => {
+  test('should display tabs or sections for received/given', async ({page}) => {
     await page.waitForTimeout(500);
 
     const hasReceived = await page.locator('text=/received|given|wall|feed/i').first().isVisible().catch(() => false);

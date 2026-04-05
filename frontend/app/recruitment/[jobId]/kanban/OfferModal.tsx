@@ -1,21 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Modal,
-  Stack,
-  NumberInput,
-  TextInput,
-  Textarea,
-  Button,
-  Group,
-  Text,
-} from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { recruitmentService } from '@/lib/services/hire/recruitment.service';
-import { isAxiosError } from '@/lib/utils/type-guards';
-import type { Candidate, CreateOfferRequest } from '@/lib/types/hire/recruitment';
+import {useState} from 'react';
+import {Button, Group, Modal, NumberInput, Stack, Text, Textarea, TextInput,} from '@mantine/core';
+import {notifications} from '@mantine/notifications';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {recruitmentService} from '@/lib/services/hire/recruitment.service';
+import {isAxiosError} from '@/lib/utils/type-guards';
+import type {Candidate, CreateOfferRequest} from '@/lib/types/hire/recruitment';
 
 interface OfferModalProps {
   opened: boolean;
@@ -24,7 +15,7 @@ interface OfferModalProps {
   jobId: string;
 }
 
-export function OfferModal({ opened, onClose, candidate, jobId }: OfferModalProps) {
+export function OfferModal({opened, onClose, candidate, jobId}: OfferModalProps) {
   const queryClient = useQueryClient();
 
   const [offeredSalary, setOfferedSalary] = useState<number | string>('');
@@ -42,7 +33,7 @@ export function OfferModal({ opened, onClose, candidate, jobId }: OfferModalProp
         message: `Offer letter generated for ${candidate.fullName}`,
         color: 'green',
       });
-      queryClient.invalidateQueries({ queryKey: ['kanban-candidates', jobId] });
+      queryClient.invalidateQueries({queryKey: ['kanban-candidates', jobId]});
       handleClose();
     },
     onError: (err: unknown) => {

@@ -7,17 +7,20 @@
 ## Core Responsibilities
 
 ### 1. Design System
+
 - Maintain Mantine-based design system
 - Define design tokens (colors, typography, spacing)
 - Create Figma component library
 - Ensure consistency across 4 sub-apps
 
 ### 2. Mockup Creation
+
 - High-fidelity Figma designs
 - Interactive prototypes
 - Responsive layouts (mobile, tablet, desktop)
 
 ### 3. Enterprise B2B Patterns
+
 - Data-heavy tables (1000+ rows)
 - Complex forms (multi-step wizards)
 - Dashboards and analytics
@@ -27,29 +30,30 @@
 
 ### Color Palette (Sky/Slate Migration)
 
-| Element | Color | Hex | Usage |
-|---------|-------|-----|-------|
-| **Primary CTA** | Sky 700 | `#0369A1` | Buttons, links, active states |
-| **Primary Hover** | Sky 800 | `#075985` | Button hover states |
-| **Background** | Slate 50 | `#F8FAFC` | Page background |
-| **Text Primary** | Slate 900 | `#0F172A` | Headings, body text |
-| **Text Secondary** | Slate 500 | `#64748B` | Captions, labels |
+| Element            | Color     | Hex       | Usage                         |
+|--------------------|-----------|-----------|-------------------------------|
+| **Primary CTA**    | Sky 700   | `#0369A1` | Buttons, links, active states |
+| **Primary Hover**  | Sky 800   | `#075985` | Button hover states           |
+| **Background**     | Slate 50  | `#F8FAFC` | Page background               |
+| **Text Primary**   | Slate 900 | `#0F172A` | Headings, body text           |
+| **Text Secondary** | Slate 500 | `#64748B` | Captions, labels              |
 
 ### Typography
 
 **Font**: Plus Jakarta Sans  
 **Weights**: 300, 400, 500, 600, 700
 
-| Element | Size | Weight | Usage |
-|---------|------|--------|-------|
-| **H1** | 2.5rem (40px) | 700 | Page titles |
-| **H2** | 2rem (32px) | 600 | Section headings |
-| **Body** | 1rem (16px) | 400 | Body text |
-| **Small** | 0.875rem (14px) | 400 | Captions, labels |
+| Element   | Size            | Weight | Usage            |
+|-----------|-----------------|--------|------------------|
+| **H1**    | 2.5rem (40px)   | 700    | Page titles      |
+| **H2**    | 2rem (32px)     | 600    | Section headings |
+| **Body**  | 1rem (16px)     | 400    | Body text        |
+| **Small** | 0.875rem (14px) | 400    | Captions, labels |
 
 ### Spacing Grid
 
 **8px grid system**:
+
 - xs: 8px, sm: 12px, md: 16px, lg: 24px, xl: 32px
 
 ### Component Patterns
@@ -149,12 +153,14 @@ Navigation:
 ### Design Handoff
 
 **Before Handoff**:
+
 - [ ] All states designed (default, hover, focus, disabled, error)
 - [ ] Responsive breakpoints validated
 - [ ] Color contrast checked (WCAG AA: 4.5:1)
 - [ ] Touch targets ≥44px
 
 **Developer Handoff (Figma Dev Mode)**:
+
 - Export design tokens (CSS variables)
 - Document component props
 - Specify animations (duration, easing)
@@ -198,6 +204,7 @@ Desktop: > 1024px
 - Focus trap in modals
 
 **Shortcuts**:
+
 - `/` - Focus search
 - `Esc` - Close modal
 - `Enter` - Submit form

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // Shared field schemas
 const phoneSchema = z
@@ -53,17 +53,17 @@ const optionalUuidSchema = z
 // Enum schemas
 export const genderSchema = z.enum(
   ['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY'],
-  { errorMap: () => ({ message: 'Please select a gender' }) }
+  {errorMap: () => ({message: 'Please select a gender'})}
 );
 
 export const employmentTypeSchema = z.enum(
   ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN', 'CONSULTANT'],
-  { errorMap: () => ({ message: 'Please select an employment type' }) }
+  {errorMap: () => ({message: 'Please select an employment type'})}
 );
 
 export const employeeStatusSchema = z.enum(
   ['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED'],
-  { errorMap: () => ({ message: 'Please select a status' }) }
+  {errorMap: () => ({message: 'Please select a status'})}
 );
 
 export const employeeLevelSchema = z.enum([

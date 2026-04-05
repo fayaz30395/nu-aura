@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Loader2, Plus } from 'lucide-react';
+import React, {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Loader2, Plus} from 'lucide-react';
 import {
   Badge,
   Button,
@@ -18,8 +18,8 @@ import {
   ModalHeader,
   ResponsiveTable,
 } from '@/components/ui';
-import { usePsaProjectTimesheets, useCreatePsaTimesheet, useSubmitPsaTimesheet } from '@/lib/hooks/queries/usePsa';
-import { PSATimesheet } from '@/lib/types/hrms/psa';
+import {useCreatePsaTimesheet, usePsaProjectTimesheets, useSubmitPsaTimesheet} from '@/lib/hooks/queries/usePsa';
+import {PSATimesheet} from '@/lib/types/hrms/psa';
 
 interface TimesheetsTabProps {
   projectId: string;
@@ -35,7 +35,7 @@ const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
 const formatHours = (value?: number | null) => {
@@ -43,29 +43,32 @@ const formatHours = (value?: number | null) => {
   return `${value.toFixed(1)}h`;
 };
 
-const STATUS_BADGE: Record<string, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  SUBMITTED: { label: 'Submitted', variant: 'primary' },
-  UNDER_REVIEW: { label: 'Under Review', variant: 'warning' },
-  APPROVED: { label: 'Approved', variant: 'success' },
-  REJECTED: { label: 'Rejected', variant: 'danger' },
+const STATUS_BADGE: Record<string, {
+  label: string;
+  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
+}> = {
+  DRAFT: {label: 'Draft', variant: 'secondary'},
+  SUBMITTED: {label: 'Submitted', variant: 'primary'},
+  UNDER_REVIEW: {label: 'Under Review', variant: 'warning'},
+  APPROVED: {label: 'Approved', variant: 'success'},
+  REJECTED: {label: 'Rejected', variant: 'danger'},
 };
 
 const getStatusBadge = (status?: string | null) => {
   if (status && STATUS_BADGE[status]) {
     return STATUS_BADGE[status];
   }
-  return { label: status ?? 'Unknown', variant: 'secondary' as const };
+  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
-export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
+export function TimesheetsTab({projectId}: TimesheetsTabProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
     reset: resetCreate,
-    formState: { errors: createErrors },
+    formState: {errors: createErrors},
   } = useForm<CreateTimesheetFormData>({
     resolver: zodResolver(createTimesheetSchema),
     defaultValues: {
@@ -171,7 +174,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       },
       mobilePriority: 'secondary' as const,
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 
   const handleCreateSubmit = async (data: CreateTimesheetFormData) => {
@@ -194,7 +197,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
         </CardContent>
       </Card>
     );
@@ -210,7 +213,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
               description="Create a timesheet to track hours for this project."
             />
             <Button
-              leftIcon={<Plus className="h-4 w-4" />}
+              leftIcon={<Plus className="h-4 w-4"/>}
               onClick={() => setShowCreateModal(true)}
             >
               New Timesheet
@@ -257,7 +260,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
               <p className="text-body-muted">Track hours worked on this project.</p>
             </div>
             <Button
-              leftIcon={<Plus className="h-4 w-4" />}
+              leftIcon={<Plus className="h-4 w-4"/>}
               onClick={() => setShowCreateModal(true)}
             >
               New Timesheet
@@ -265,7 +268,8 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
           </div>
 
           {timesheetsErrorMessage && (
-            <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <div
+              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
               {timesheetsErrorMessage}
             </div>
           )}

@@ -7,28 +7,33 @@
 ## Core Responsibilities
 
 ### 1. Authentication & Session Management
+
 - JWT cookie handling (HttpOnly, Secure, SameSite)
 - Token refresh logic (silent refresh before expiry)
 - Login/logout flows (Google OAuth, email/password)
 - Session persistence (Zustand persist middleware)
 
 ### 2. RBAC Frontend Implementation
+
 - Permission-based UI rendering (`usePermissions` hook)
 - Route guards (Next.js middleware)
 - Component-level access control
 - SuperAdmin bypass logic
 
 ### 3. Multi-Tenant UI
+
 - Tenant switcher (SuperAdmin only)
 - Tenant context propagation (React Context)
 - Tenant-specific theming (CSS variables)
 
 ### 4. App Switcher (Waffle Grid)
+
 - 4 sub-apps (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence)
 - Lock icons for apps without permissions
 - Active app detection (`useActiveApp` hook)
 
 ### 5. Layout System
+
 - AppLayout, Header, Sidebar components
 - Responsive breakpoints (mobile, tablet, desktop)
 - Sidebar collapse/expand state

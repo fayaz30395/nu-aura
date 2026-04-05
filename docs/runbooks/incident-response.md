@@ -2,18 +2,19 @@
 
 ## Purpose
 
-General incident handling template for the NU-AURA platform. Covers severity classification, communication protocols, escalation paths, and post-incident review.
+General incident handling template for the NU-AURA platform. Covers severity classification,
+communication protocols, escalation paths, and post-incident review.
 
 ---
 
 ## Severity Classification
 
-| Level | Name | Definition | Response Time | Examples |
-|-------|------|-----------|---------------|---------|
-| P0 | Critical | Platform-wide outage or data loss risk | 15 min | Application down, DB corruption, auth broken, payroll data loss |
-| P1 | High | Major feature broken for all users | 30 min | Payroll run fails, attendance ingestion stopped, Kafka consumers stalled |
-| P2 | Medium | Feature degraded or broken for subset | 2 hours | Slow API responses, notification delivery failures, single-tenant issue |
-| P3 | Low | Minor issue, workaround exists | 8 hours | UI cosmetic bug, non-critical scheduler skipped one run, stale cache |
+| Level | Name     | Definition                             | Response Time | Examples                                                                 |
+|-------|----------|----------------------------------------|---------------|--------------------------------------------------------------------------|
+| P0    | Critical | Platform-wide outage or data loss risk | 15 min        | Application down, DB corruption, auth broken, payroll data loss          |
+| P1    | High     | Major feature broken for all users     | 30 min        | Payroll run fails, attendance ingestion stopped, Kafka consumers stalled |
+| P2    | Medium   | Feature degraded or broken for subset  | 2 hours       | Slow API responses, notification delivery failures, single-tenant issue  |
+| P3    | Low      | Minor issue, workaround exists         | 8 hours       | UI cosmetic bug, non-critical scheduler skipped one run, stale cache     |
 
 ---
 
@@ -97,6 +98,7 @@ GROUP BY event_type;
 ### 3. Contain the Incident
 
 **If API is overloaded:**
+
 ```bash
 # Check connection pool usage
 curl -s http://localhost:8080/actuator/metrics/hikaricp.connections.active | jq .
@@ -106,6 +108,7 @@ curl -s http://localhost:8080/actuator/metrics/jvm.threads.live | jq .
 ```
 
 **If a specific tenant is causing issues:**
+
 ```sql
 -- Identify high-activity tenants
 SELECT tenant_id, COUNT(*) as request_count
@@ -117,6 +120,7 @@ LIMIT 10;
 ```
 
 **If Kafka consumers are stalled:**
+
 ```bash
 # Check consumer group lag
 kafka-consumer-groups.sh --bootstrap-server kafka:9092 --describe --group hrms-approval-consumer
@@ -128,17 +132,20 @@ kafka-consumer-groups.sh --bootstrap-server kafka:9092 --describe --group hrms-e
 ### 4. Mitigate
 
 **Restart the application (K8s):**
+
 ```bash
 kubectl rollout restart deployment/hrms-backend -n hrms
 kubectl rollout status deployment/hrms-backend -n hrms --timeout=300s
 ```
 
 **Scale up if under load:**
+
 ```bash
 kubectl scale deployment/hrms-backend --replicas=3 -n hrms
 ```
 
 **Kill long-running DB queries:**
+
 ```sql
 -- Find long-running queries (>30 seconds)
 SELECT pid, now() - pg_stat_activity.query_start AS duration, query, state
@@ -182,19 +189,19 @@ Conduct within 48 hours for P0/P1 incidents. Document:
 
 ## Key Monitoring Links
 
-| Dashboard | URL | Purpose |
-|-----------|-----|---------|
-| System Overview | `/d/hrms-overview` | App status, JVM, DB pool, request rate |
-| API Metrics | `/d/hrms-api-metrics` | Request rate, latency, errors by endpoint |
-| Business Metrics | `/d/hrms-business-metrics` | Employee, leave, payroll, attendance KPIs |
-| Webhook Deliveries | `/d/hrms-webhooks` | Webhook success rate, latency, circuit breakers |
-| Prometheus Alerts | `/alerts` | Active and pending alerts |
+| Dashboard          | URL                        | Purpose                                         |
+|--------------------|----------------------------|-------------------------------------------------|
+| System Overview    | `/d/hrms-overview`         | App status, JVM, DB pool, request rate          |
+| API Metrics        | `/d/hrms-api-metrics`      | Request rate, latency, errors by endpoint       |
+| Business Metrics   | `/d/hrms-business-metrics` | Employee, leave, payroll, attendance KPIs       |
+| Webhook Deliveries | `/d/hrms-webhooks`         | Webhook success rate, latency, circuit breakers |
+| Prometheus Alerts  | `/alerts`                  | Active and pending alerts                       |
 
 ## Key Actuator Endpoints
 
-| Endpoint | Purpose |
-|----------|---------|
-| `/actuator/health` | Application health check |
-| `/actuator/metrics` | All available metrics |
-| `/actuator/prometheus` | Prometheus scrape endpoint |
-| `/actuator/info` | Application info and version |
+| Endpoint               | Purpose                      |
+|------------------------|------------------------------|
+| `/actuator/health`     | Application health check     |
+| `/actuator/metrics`    | All available metrics        |
+| `/actuator/prometheus` | Prometheus scrape endpoint   |
+| `/actuator/info`       | Application info and version |

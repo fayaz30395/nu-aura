@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import {motion} from 'framer-motion';
+import {Slot} from '@radix-ui/react-slot';
+import {cva, type VariantProps} from 'class-variance-authority';
+import {cn} from '@/lib/utils';
+import {Loader2} from 'lucide-react';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
@@ -100,7 +100,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const MotionComp = motion(baseElement as React.ElementType);
     return (
       <MotionComp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({variant, size, className}))}
         ref={ref}
         disabled={isLoading || disabled}
         {...props}
@@ -109,7 +109,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true"/>
             {loadingText && <span>{loadingText}</span>}
           </>
         ) : (
@@ -126,4 +126,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = 'Button';
 
-export { Button, buttonVariants };
+export {Button, buttonVariants};

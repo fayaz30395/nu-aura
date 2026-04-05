@@ -1,21 +1,21 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  PaymentTransaction,
-  PaymentTransactionListItem,
   CreatePaymentTransactionRequest,
-  UpdatePaymentTransactionRequest,
+  Page,
   PaymentConfig,
-  SavePaymentConfigRequest,
-  TestConnectionRequest,
+  PaymentProvider,
   PaymentRefund,
   PaymentRefundListItem,
-  ProcessRefundRequest,
   PaymentStats,
-  PaymentStatusCheckResponse,
-  PaymentProvider,
   PaymentStatus,
+  PaymentStatusCheckResponse,
+  PaymentTransaction,
+  PaymentTransactionListItem,
   PaymentType,
-  Page,
+  ProcessRefundRequest,
+  SavePaymentConfigRequest,
+  TestConnectionRequest,
+  UpdatePaymentTransactionRequest,
 } from '../../types/core/payment';
 
 class PaymentService {
@@ -33,7 +33,7 @@ class PaymentService {
 
   async getPayments(page: number = 0, size: number = 20): Promise<Page<PaymentTransactionListItem>> {
     const response = await apiClient.get<Page<PaymentTransactionListItem>>('/payments', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -61,7 +61,7 @@ class PaymentService {
     size: number = 20
   ): Promise<Page<PaymentTransactionListItem>> {
     const response = await apiClient.get<Page<PaymentTransactionListItem>>(`/payments/status/${status}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -72,7 +72,7 @@ class PaymentService {
     size: number = 20
   ): Promise<Page<PaymentTransactionListItem>> {
     const response = await apiClient.get<Page<PaymentTransactionListItem>>(`/payments/type/${type}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -83,7 +83,7 @@ class PaymentService {
     size: number = 20
   ): Promise<Page<PaymentTransactionListItem>> {
     const response = await apiClient.get<Page<PaymentTransactionListItem>>(`/payments/provider/${provider}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -94,7 +94,7 @@ class PaymentService {
     const response = await apiClient.post<string>(
       `/payments/${data.transactionId}/refund`,
       null,
-      { params: { reason: data.reason || 'Refund requested' } }
+      {params: {reason: data.reason || 'Refund requested'}}
     );
     return response.data;
   }
@@ -108,7 +108,7 @@ class PaymentService {
 
   async getRefunds(page: number = 0, size: number = 20): Promise<Page<PaymentRefundListItem>> {
     const response = await apiClient.get<Page<PaymentRefundListItem>>('/payments/refunds', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -120,7 +120,7 @@ class PaymentService {
   ): Promise<Page<PaymentRefundListItem>> {
     const response = await apiClient.get<Page<PaymentRefundListItem>>(
       `/payments/${transactionId}/refunds`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }

@@ -8,9 +8,9 @@
  * - Integration with global error handler
  */
 
-import { AxiosError } from 'axios';
-import { handleError, ErrorCategory, getUserMessage } from './error-handler';
-import { logger } from './logger';
+import {AxiosError} from 'axios';
+import {ErrorCategory, getUserMessage, handleError} from './error-handler';
+import {logger} from './logger';
 
 /**
  * API error response structure from backend
@@ -97,7 +97,7 @@ export class ServiceError extends Error {
   getValidationErrorsMap(): Record<string, string> {
     if (!this.validationErrors) return {};
     return this.validationErrors.reduce(
-      (acc, { field, message }) => ({ ...acc, [field]: message }),
+      (acc, {field, message}) => ({...acc, [field]: message}),
       {} as Record<string, string>
     );
   }

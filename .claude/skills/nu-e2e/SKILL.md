@@ -14,6 +14,7 @@ description: Use when asked to write E2E tests, generate Playwright tests, test 
 - "Cover the expenses page with E2E tests"
 
 **This skill generates test FILES for individual features/pages.** It does NOT:
+
 - Run manual Chrome MCP QA (that is `nu-aura-full-platform-qa`)
 - Test cross-module workflows like hire-to-retire (that is `nu-aura-e2e-lifecycle`)
 
@@ -21,13 +22,13 @@ description: Use when asked to write E2E tests, generate Playwright tests, test 
 
 Before generating, gather from the user (or infer from context):
 
-| Input | Required | Example |
-|-------|----------|---------|
-| Feature/page name | Yes | "Leave Management", "Expenses", "Training Catalog" |
-| Route path | Yes (infer from `apps.ts`) | `/leave`, `/expenses`, `/training` |
-| Roles to test | No (default: Employee + Admin) | Employee, Manager, HR Admin, SuperAdmin |
-| CRUD operations | No (auto-detect from page) | Create, Read, Update, Delete |
-| Has modals/forms | No (auto-detect) | Yes — "Apply Leave" modal |
+| Input             | Required                       | Example                                            |
+|-------------------|--------------------------------|----------------------------------------------------|
+| Feature/page name | Yes                            | "Leave Management", "Expenses", "Training Catalog" |
+| Route path        | Yes (infer from `apps.ts`)     | `/leave`, `/expenses`, `/training`                 |
+| Roles to test     | No (default: Employee + Admin) | Employee, Manager, HR Admin, SuperAdmin            |
+| CRUD operations   | No (auto-detect from page)     | Create, Read, Update, Delete                       |
+| Has modals/forms  | No (auto-detect)               | Yes — "Apply Leave" modal                          |
 
 ## Pre-Generation Steps
 
@@ -38,16 +39,20 @@ Before generating, gather from the user (or infer from context):
    ```
 
 2. **Check for an existing Page Object** in `frontend/e2e/pages/`:
-   - Existing: `LoginPage.ts`, `LeavePage.ts`, `EmployeePage.ts`, `AttendancePage.ts`, `DashboardPage.ts`, `HomePage.ts`, `ProjectsPage.ts`, `BasePage.ts`
-   - If one exists for this module, import and use it
-   - If not, create a new Page Object alongside the spec file
+
+- Existing: `LoginPage.ts`, `LeavePage.ts`, `EmployeePage.ts`, `AttendancePage.ts`,
+  `DashboardPage.ts`, `HomePage.ts`, `ProjectsPage.ts`, `BasePage.ts`
+- If one exists for this module, import and use it
+- If not, create a new Page Object alongside the spec file
 
 3. **Check for existing test coverage** — `frontend/e2e/<feature>.spec.ts`
-   - If file exists, extend it rather than overwriting
+
+- If file exists, extend it rather than overwriting
 
 4. **Read fixture data** — `frontend/e2e/fixtures/testData.ts`
-   - Use existing test data constants (`testUsers`, `testEmployee`, `testLeave`, etc.)
-   - Add new fixture data to `testData.ts` if needed for the feature
+
+- Use existing test data constants (`testUsers`, `testEmployee`, `testLeave`, etc.)
+- Add new fixture data to `testData.ts` if needed for the feature
 
 ## Generated File Structure
 
@@ -171,15 +176,15 @@ test('should have no console errors', async ({ page }) => {
 
 Test with these demo users from `fixtures/testData.ts`:
 
-| Alias | Email | Role | Use For |
-|-------|-------|------|---------|
-| `demoUsers.superAdmin` | `fayaz.m@nulogic.io` | SUPER_ADMIN | Full access, bypasses all |
-| `demoUsers.managerEng` | `sumit@nulogic.io` | MANAGER | Team management views |
-| `demoUsers.teamLeadEng` | `mani@nulogic.io` | TEAM_LEAD | Team-level access |
-| `demoUsers.hrManager` | `jagadeesh@nulogic.io` | HR_MANAGER | HR admin views |
-| `demoUsers.recruitmentAdmin` | `suresh@nulogic.io` | RECRUITMENT_ADMIN | Hire module only |
-| `demoUsers.employeeSaran` | `saran@nulogic.io` | EMPLOYEE | Self-service only |
-| `demoUsers.employeeRaj` | `raj@nulogic.io` | EMPLOYEE | Reports to Mani (TL) |
+| Alias                        | Email                  | Role              | Use For                   |
+|------------------------------|------------------------|-------------------|---------------------------|
+| `demoUsers.superAdmin`       | `fayaz.m@nulogic.io`   | SUPER_ADMIN       | Full access, bypasses all |
+| `demoUsers.managerEng`       | `sumit@nulogic.io`     | MANAGER           | Team management views     |
+| `demoUsers.teamLeadEng`      | `mani@nulogic.io`      | TEAM_LEAD         | Team-level access         |
+| `demoUsers.hrManager`        | `jagadeesh@nulogic.io` | HR_MANAGER        | HR admin views            |
+| `demoUsers.recruitmentAdmin` | `suresh@nulogic.io`    | RECRUITMENT_ADMIN | Hire module only          |
+| `demoUsers.employeeSaran`    | `saran@nulogic.io`     | EMPLOYEE          | Self-service only         |
+| `demoUsers.employeeRaj`      | `raj@nulogic.io`       | EMPLOYEE          | Reports to Mani (TL)      |
 
 ```typescript
 test('Employee cannot access admin-only feature', async ({ page }) => {
@@ -372,6 +377,7 @@ Use selectors in this order of preference:
 6. `[class*="badge"]`, `[class*="skeleton"]` — class fragments (last resort)
 
 Avoid:
+
 - Fragile CSS class selectors (`div.bg-accent-600.p-4`)
 - Index-based selectors unless intentional (`nth(0)` for "first row")
 
@@ -385,16 +391,27 @@ Avoid:
 ## Route Reference (from apps.ts)
 
 ### NU-HRMS
-`/me`, `/dashboard`, `/employees`, `/departments`, `/attendance`, `/leave`, `/payroll`, `/compensation`, `/benefits`, `/expenses`, `/loans`, `/travel`, `/assets`, `/letters`, `/statutory`, `/tax`, `/helpdesk`, `/approvals`, `/announcements`, `/org-chart`, `/timesheets`, `/time-tracking`, `/projects`, `/resources`, `/allocations`, `/calendar`, `/shifts`, `/reports`, `/analytics`, `/settings`, `/admin`, `/overtime`, `/probation`
+
+`/me`, `/dashboard`, `/employees`, `/departments`, `/attendance`, `/leave`, `/payroll`,
+`/compensation`, `/benefits`, `/expenses`, `/loans`, `/travel`, `/assets`, `/letters`, `/statutory`,
+`/tax`, `/helpdesk`, `/approvals`, `/announcements`, `/org-chart`, `/timesheets`, `/time-tracking`,
+`/projects`, `/resources`, `/allocations`, `/calendar`, `/shifts`, `/reports`, `/analytics`,
+`/settings`, `/admin`, `/overtime`, `/probation`
 
 ### NU-Hire
-`/recruitment`, `/onboarding`, `/preboarding`, `/offboarding`, `/offer-portal`, `/careers`, `/referrals`
+
+`/recruitment`, `/onboarding`, `/preboarding`, `/offboarding`, `/offer-portal`, `/careers`,
+`/referrals`
 
 ### NU-Grow
-`/performance`, `/okr`, `/feedback360`, `/training`, `/learning`, `/recognition`, `/surveys`, `/wellness`, `/one-on-one`
+
+`/performance`, `/okr`, `/feedback360`, `/training`, `/learning`, `/recognition`, `/surveys`,
+`/wellness`, `/one-on-one`
 
 ### NU-Fluence
-`/fluence/wiki`, `/fluence/blogs`, `/fluence/templates`, `/fluence/drive`, `/fluence/search`, `/fluence/my-content`, `/fluence/wall`, `/fluence/dashboard`, `/fluence/analytics`
+
+`/fluence/wiki`, `/fluence/blogs`, `/fluence/templates`, `/fluence/drive`, `/fluence/search`,
+`/fluence/my-content`, `/fluence/wall`, `/fluence/dashboard`, `/fluence/analytics`
 
 ## Output
 
@@ -415,7 +432,9 @@ After generating the test file, report:
 
 ## Rate Limiting Warning
 
-The backend rate-limits `/api/v1/auth/**` at 5 requests/minute. If the test suite has multiple `test.beforeEach` blocks that each log in, consider:
+The backend rate-limits `/api/v1/auth/**` at 5 requests/minute. If the test suite has multiple
+`test.beforeEach` blocks that each log in, consider:
+
 - Using `loginAs()` (API-based, still counts toward rate limit)
 - Grouping tests that share the same role into one `test.describe` with a single `beforeEach`
 - Adding `await page.waitForTimeout(15000)` between role switches if tests fail with 429

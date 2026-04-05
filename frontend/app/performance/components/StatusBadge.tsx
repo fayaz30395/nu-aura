@@ -3,7 +3,7 @@ interface StatusBadgeProps {
   type?: 'goal' | 'review' | 'cycle' | 'feedback';
 }
 
-export default function StatusBadge({ status, type = 'goal' }: StatusBadgeProps) {
+export default function StatusBadge({status, type = 'goal'}: StatusBadgeProps) {
   const getStatusColor = () => {
     // Goal statuses
     if (type === 'goal') {

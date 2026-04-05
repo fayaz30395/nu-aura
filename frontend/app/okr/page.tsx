@@ -2,8 +2,8 @@
 
 // Duplicate route — canonical implementation lives at /performance/okr.
 // Redirect so any bookmarks or old links continue to work.
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
 export default function OkrRedirectPage() {

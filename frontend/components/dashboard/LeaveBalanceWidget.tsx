@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
-import { Calendar, ArrowRight } from 'lucide-react';
+import {ArrowRight, Calendar} from 'lucide-react';
 
 interface LeaveBalance {
   leaveTypeId: string;
@@ -18,12 +18,12 @@ interface LeaveBalanceWidgetProps {
 }
 
 const DEMO_BALANCES: LeaveBalance[] = [
-  { leaveTypeId: '1', leaveName: 'ANNUAL LEAVE', available: 24, total: 30, used: 6 },
-  { leaveTypeId: '2', leaveName: 'CASUAL LEAVE', available: 8, total: 12, used: 4 },
-  { leaveTypeId: '3', leaveName: 'SICK LEAVE', available: 10, total: 10, used: 0 },
+  {leaveTypeId: '1', leaveName: 'ANNUAL LEAVE', available: 24, total: 30, used: 6},
+  {leaveTypeId: '2', leaveName: 'CASUAL LEAVE', available: 8, total: 12, used: 4},
+  {leaveTypeId: '3', leaveName: 'SICK LEAVE', available: 10, total: 10, used: 0},
 ];
 
-function CircularProgress({ used, total }: { used: number; total: number }) {
+function CircularProgress({used, total}: { used: number; total: number }) {
   const percentage = total > 0 ? (used / total) * 100 : 0;
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
@@ -56,7 +56,7 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
           strokeLinecap="round"
           stroke={getStrokeColor()}
           className="transition-all duration-700 ease-out"
-          style={{ filter: `drop-shadow(0 0 4px ${getStrokeColor()}40)` }}
+          style={{filter: `drop-shadow(0 0 4px ${getStrokeColor()}40)`}}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -67,10 +67,12 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
   );
 }
 
-export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetProps) {
+export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
-  useEffect(() => { setIsHydrated(true); }, []);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
   if (!isHydrated) return null;
 
   const balances = leaveBalances && leaveBalances.length > 0 ? leaveBalances : DEMO_BALANCES;
@@ -80,20 +82,20 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
     <div className="skeuo-card rounded-lg border border-[var(--border-main)] p-6">
       <div className="row-between mb-4">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
+          <Calendar className="h-4 w-4 text-[var(--text-muted)]"/>
           <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
         <Link
           href="/leave"
           className="inline-flex items-center gap-0.5 text-caption hover:text-[var(--text-secondary)] transition-colors"
         >
-          View All <ArrowRight className="h-3 w-3" />
+          View All <ArrowRight className="h-3 w-3"/>
         </Link>
       </div>
 
       {/* Circular Progress */}
       <div className="flex justify-center mb-4">
-        <CircularProgress used={current.used} total={current.total} />
+        <CircularProgress used={current.used} total={current.total}/>
       </div>
 
       {/* Leave Type Label */}

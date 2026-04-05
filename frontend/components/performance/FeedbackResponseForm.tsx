@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, Save, Send, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FeedbackResponseDetailed } from '@/lib/types/grow/performance-360';
+import {useState} from 'react';
+import {AlertCircle, Save, Send, Star} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {FeedbackResponseDetailed} from '@/lib/types/grow/performance-360';
 
 interface FeedbackResponseFormProps {
   requestId: string;
@@ -65,10 +65,10 @@ const ratingCategories: RatingCategory[] = [
 ];
 
 const RatingStars = ({
-  rating,
-  onChange,
-  disabled = false,
-}: {
+                       rating,
+                       onChange,
+                       disabled = false,
+                     }: {
   rating: number;
   onChange?: (r: number) => void;
   disabled?: boolean;
@@ -97,14 +97,14 @@ const RatingStars = ({
 };
 
 export default function FeedbackResponseForm({
-  requestId,
-  subjectEmployeeName,
-  reviewerType,
-  isAnonymous,
-  onSubmit,
-  onCancel,
-  initialData,
-}: FeedbackResponseFormProps) {
+                                               requestId,
+                                               subjectEmployeeName,
+                                               reviewerType,
+                                               isAnonymous,
+                                               onSubmit,
+                                               onCancel,
+                                               initialData,
+                                             }: FeedbackResponseFormProps) {
   const [formData, setFormData] = useState<FeedbackResponseDetailed>(
     initialData || {
       requestId,
@@ -130,12 +130,12 @@ export default function FeedbackResponseForm({
   const [activeSection, setActiveSection] = useState<'ratings' | 'feedback'>('ratings');
 
   const updateRating = (key: keyof FeedbackResponseDetailed, value: number) => {
-    setFormData({ ...formData, [key]: value });
+    setFormData({...formData, [key]: value});
     setError(null);
   };
 
   const updateText = (key: keyof FeedbackResponseDetailed, value: string) => {
-    setFormData({ ...formData, [key]: value });
+    setFormData({...formData, [key]: value});
   };
 
   const handleSubmit = async (isDraft: boolean) => {
@@ -170,7 +170,7 @@ export default function FeedbackResponseForm({
     setError(null);
 
     try {
-      await onSubmit({ ...formData, isDraft }, isDraft);
+      await onSubmit({...formData, isDraft}, isDraft);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err) || 'Failed to submit feedback');
       setIsSubmitting(false);
@@ -186,7 +186,8 @@ export default function FeedbackResponseForm({
   );
 
   return (
-    <div className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div
+      className="bg-[var(--bg-elevated)] rounded-lg shadow-[var(--shadow-dropdown)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
       {/* Header */}
       <div className="px-6 py-4 border-b border-[var(--border-main)] sticky top-0 bg-[var(--bg-elevated)] z-10">
         <div className="flex items-start justify-between">
@@ -207,7 +208,7 @@ export default function FeedbackResponseForm({
         <div className="mt-4 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
           <div
             className="h-full bg-accent-500 transition-all duration-300"
-            style={{ width: `${progressPercentage}%` }}
+            style={{width: `${progressPercentage}%`}}
           />
         </div>
 
@@ -215,7 +216,7 @@ export default function FeedbackResponseForm({
         {isAnonymous && reviewerType !== 'SELF' && (
           <div className="mt-4 p-4 bg-accent-250 border border-accent-400 rounded-lg">
             <p className="text-xs text-accent-900 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="h-4 w-4"/>
               Your feedback will be anonymous and combined with other responses
             </p>
           </div>
@@ -391,14 +392,15 @@ export default function FeedbackResponseForm({
         {/* Error Message */}
         {error && (
           <div className="mt-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5"/>
             <p className="text-sm text-danger-700">{error}</p>
           </div>
         )}
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 border-t border-[var(--border-main)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">
+      <div
+        className="px-6 py-4 border-t border-[var(--border-main)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
@@ -407,7 +409,7 @@ export default function FeedbackResponseForm({
             variant="secondary"
             onClick={() => handleSubmit(true)}
             disabled={isSubmitting}
-            leftIcon={<Save className="h-4 w-4" />}
+            leftIcon={<Save className="h-4 w-4"/>}
           >
             Save Draft
           </Button>
@@ -416,7 +418,7 @@ export default function FeedbackResponseForm({
             onClick={() => handleSubmit(false)}
             disabled={isSubmitting}
             isLoading={isSubmitting}
-            leftIcon={<Send className="h-4 w-4" />}
+            leftIcon={<Send className="h-4 w-4"/>}
           >
             Submit Feedback
           </Button>

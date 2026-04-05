@@ -1,11 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import {
-  PLATFORM_APPS,
-  APP_LIST,
-  getAppForRoute,
-  APP_SIDEBAR_SECTIONS,
-} from '../apps';
-import type { AppCode } from '../apps';
+import {describe, expect, it} from 'vitest';
+import type {AppCode} from '../apps';
+import {APP_LIST, APP_SIDEBAR_SECTIONS, getAppForRoute, PLATFORM_APPS,} from '../apps';
 
 describe('Platform App Configuration', () => {
   // ─── PLATFORM_APPS structure ────────────────────────────────────────────────

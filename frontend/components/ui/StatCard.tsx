@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import {motion} from 'framer-motion';
+import {cn} from '@/lib/utils';
+import {ArrowRight, TrendingDown, TrendingUp} from 'lucide-react';
 
 export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
@@ -115,10 +115,10 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     if (isCompact) {
       return (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          whileHover={isClickable ? { y: -2 } : undefined}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3, ease: 'easeOut'}}
+          whileHover={isClickable ? {y: -2} : undefined}
         >
           <div
             ref={ref}
@@ -133,7 +133,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             {...props}
           >
             {/* Decorative accent line */}
-            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)} />
+            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)}/>
 
             <div className="flex items-center gap-2">
               {icon && (
@@ -166,7 +166,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
                 </span>
               )}
               {actionLabel && (
-                <ArrowRight className={cn('h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1', config.iconColor)} />
+                <ArrowRight
+                  className={cn('h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1', config.iconColor)}/>
               )}
             </div>
           </div>
@@ -176,10 +177,10 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        whileHover={isClickable ? { y: -4 } : undefined}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.3, ease: 'easeOut'}}
+        whileHover={isClickable ? {y: -4} : undefined}
       >
         <div
           ref={ref}
@@ -193,82 +194,84 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           )}
           {...props}
         >
-        {/* Decorative accent line */}
-        <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)} />
+          {/* Decorative accent line */}
+          <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', config.accent)}/>
 
-        {/* Card shine effect on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-        </div>
+          {/* Card shine effect on hover */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"/>
+          </div>
 
-        {/* Header Row */}
-        <div className="flex items-start justify-between mb-4">
-          {icon && (
-            <div
-              className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110',
-                config.iconBg,
-                config.iconColor
-              )}
-            >
-              {icon}
-            </div>
-          )}
-          {trend && (
-            <div
-              className={cn(
-                'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
-                trend.isPositive
-                  ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                  : 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
-              )}
-            >
-              {trend.isPositive ? (
-                <TrendingUp className="h-3.5 w-3.5" />
-              ) : (
-                <TrendingDown className="h-3.5 w-3.5" />
-              )}
-              <span>
+          {/* Header Row */}
+          <div className="flex items-start justify-between mb-4">
+            {icon && (
+              <div
+                className={cn(
+                  'flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110',
+                  config.iconBg,
+                  config.iconColor
+                )}
+              >
+                {icon}
+              </div>
+            )}
+            {trend && (
+              <div
+                className={cn(
+                  'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
+                  trend.isPositive
+                    ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+                    : 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                )}
+              >
+                {trend.isPositive ? (
+                  <TrendingUp className="h-3.5 w-3.5"/>
+                ) : (
+                  <TrendingDown className="h-3.5 w-3.5"/>
+                )}
+                <span>
                 {trend.isPositive ? '+' : ''}{trend.value}%
               </span>
+              </div>
+            )}
+          </div>
+
+          {/* Title */}
+          <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
+            {title}
+          </p>
+
+          {/* Value */}
+          <p className="text-2xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
+            {value}
+          </p>
+
+          {/* Description or Trend Label */}
+          {(description || trend?.label) && (
+            <p className="text-caption">
+              {description || trend?.label}
+            </p>
+          )}
+
+          {/* Action Link */}
+          {actionLabel && (
+            <div className="mt-4 pt-4 border-t border-surface-200/50 dark:border-surface-700/50">
+              <button
+                onClick={onAction}
+                aria-label={actionLabel}
+                className={cn(
+                  'flex items-center gap-1.5 text-sm font-medium transition-colors',
+                  config.iconColor,
+                  'hover:opacity-80'
+                )}
+              >
+                <span>{actionLabel}</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1"/>
+              </button>
             </div>
           )}
-        </div>
-
-        {/* Title */}
-        <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-          {title}
-        </p>
-
-        {/* Value */}
-        <p className="text-2xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
-          {value}
-        </p>
-
-        {/* Description or Trend Label */}
-        {(description || trend?.label) && (
-          <p className="text-caption">
-            {description || trend?.label}
-          </p>
-        )}
-
-        {/* Action Link */}
-        {actionLabel && (
-          <div className="mt-4 pt-4 border-t border-surface-200/50 dark:border-surface-700/50">
-            <button
-              onClick={onAction}
-              aria-label={actionLabel}
-              className={cn(
-                'flex items-center gap-1.5 text-sm font-medium transition-colors',
-                config.iconColor,
-                'hover:opacity-80'
-              )}
-            >
-              <span>{actionLabel}</span>
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </button>
-          </div>
-        )}
         </div>
       </motion.div>
     );
@@ -281,4 +284,4 @@ StatCard.displayName = 'StatCard';
 const MemoizedStatCard = React.memo(StatCard);
 MemoizedStatCard.displayName = 'StatCard';
 
-export { MemoizedStatCard as StatCard };
+export {MemoizedStatCard as StatCard};

@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Bell, Mail, MessageSquare, Loader2 } from 'lucide-react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/hooks/queries/useNotifications';
-import type { NotificationPreferences as NotificationPreferencesType } from '@/lib/types/core/notifications';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {logger} from '@/lib/utils/logger';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Bell, Loader2, Mail, MessageSquare} from 'lucide-react';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useNotificationPreferences, useUpdateNotificationPreferences} from '@/lib/hooks/queries/useNotifications';
+import type {NotificationPreferences as NotificationPreferencesType} from '@/lib/types/core/notifications';
 
 interface NotificationPreference {
   key: string;
@@ -25,7 +25,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'leave',
     label: 'Leave Requests',
     description: 'Notifications about leave applications and approvals',
-    icon: <Bell className="h-5 w-5 text-accent-500" />,
+    icon: <Bell className="h-5 w-5 text-accent-500"/>,
     email: true,
     push: true,
     inApp: true,
@@ -34,7 +34,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'attendance',
     label: 'Attendance Alerts',
     description: 'Alerts for check-in reminders and missed punches',
-    icon: <Bell className="h-5 w-5 text-success-500" />,
+    icon: <Bell className="h-5 w-5 text-success-500"/>,
     email: true,
     push: false,
     inApp: true,
@@ -43,7 +43,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'approvals',
     label: 'Approval Workflows',
     description: 'Updates on pending approvals and workflow status',
-    icon: <MessageSquare className="h-5 w-5 text-warning-500" />,
+    icon: <MessageSquare className="h-5 w-5 text-warning-500"/>,
     email: true,
     push: true,
     inApp: true,
@@ -52,7 +52,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'announcements',
     label: 'Company Announcements',
     description: 'Organization-wide updates and news',
-    icon: <Mail className="h-5 w-5 text-accent-700" />,
+    icon: <Mail className="h-5 w-5 text-accent-700"/>,
     email: true,
     push: false,
     inApp: true,
@@ -61,12 +61,12 @@ const preferenceCategories: NotificationPreference[] = [
 
 export default function NotificationSettingsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [preferences, setPreferences] = useState<NotificationPreference[]>(preferenceCategories);
   const [saving, setSaving] = useState(false);
 
   // Fetch notification preferences from backend
-  const { data: backendPreferences, isLoading } = useNotificationPreferences(
+  const {data: backendPreferences, isLoading} = useNotificationPreferences(
     isAuthenticated && hasHydrated
   );
 
@@ -97,7 +97,7 @@ export default function NotificationSettingsPage() {
 
   const togglePreference = async (key: string, channel: 'email' | 'push' | 'inApp') => {
     const updatedPreferences = preferences.map((p) =>
-      p.key === key ? { ...p, [channel]: !p[channel] } : p
+      p.key === key ? {...p, [channel]: !p[channel]} : p
     );
     setPreferences(updatedPreferences);
 
@@ -123,7 +123,7 @@ export default function NotificationSettingsPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading preferences...</span>
         </div>
       </AppLayout>
@@ -220,7 +220,7 @@ export default function NotificationSettingsPage() {
             </div>
             {saving && (
               <p className="text-xs text-muted-foreground mt-4">
-                <Loader2 className="h-3 w-3 animate-spin inline mr-1" />
+                <Loader2 className="h-3 w-3 animate-spin inline mr-1"/>
                 Saving preferences...
               </p>
             )}

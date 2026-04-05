@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {ChevronDown} from 'lucide-react';
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -12,7 +12,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, children, label, error, helper, selectSize = 'md', disabled, ...props }, ref) => {
+  ({className, children, label, error, helper, selectSize = 'md', disabled, ...props}, ref) => {
     const sizeStyles = {
       sm: 'h-9 text-sm pl-4 pr-9',
       md: 'h-10 text-sm pl-4 pr-9',
@@ -66,7 +66,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             'absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none',
             'text-[var(--text-muted)]',
             disabled && 'opacity-60'
-          )} />
+          )}/>
         </div>
 
         {(error || helper) && (
@@ -88,4 +88,4 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
 Select.displayName = 'Select';
 
-export { Select };
+export {Select};

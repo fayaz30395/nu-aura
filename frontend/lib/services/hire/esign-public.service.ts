@@ -1,6 +1,6 @@
 // Public (unauthenticated) e-signature endpoints — use the shared publicApiClient
 // to ensure consistent base URL, timeout, and error handling across the platform.
-import { publicApiClient } from '../../api/public-client';
+import {publicApiClient} from '../../api/public-client';
 
 export const esignPublicService = {
   async getSignatureInfo(token: string) {
@@ -24,7 +24,7 @@ export const esignPublicService = {
       `/esignature/external/${token}/decline`,
       null,
       {
-        params: { signerEmail, reason: reason || '' },
+        params: {signerEmail, reason: reason || ''},
       }
     );
     return res.data;

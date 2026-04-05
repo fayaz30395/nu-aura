@@ -1,38 +1,37 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { Users, AlertTriangle, RefreshCw, Search, Download, Info } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import {
-  ResourceManagementApiError,
-} from '@/lib/services/hrms/resource-management.service';
-import {
-  EmployeeWorkload,
-  AllocationStatus,
-} from '@/lib/types/hrms/resource-management';
-import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {AlertTriangle, Download, Info, RefreshCw, Search, Users} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {ResourceManagementApiError,} from '@/lib/services/hrms/resource-management.service';
+import {AllocationStatus, EmployeeWorkload,} from '@/lib/types/hrms/resource-management';
+import {useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function allocationColor(pct: number): { bar: string; badge: string; text: string } {
-  if (pct >= 100) return { bar: 'bg-danger-500',   badge: 'bg-danger-50 text-danger-700',   text: 'text-danger-700' };
-  if (pct >= 81)  return { bar: 'bg-warning-400', badge: 'bg-warning-100 text-warning-700', text: 'text-warning-700' };
-  if (pct >= 51)  return { bar: 'bg-success-500',  badge: 'bg-success-50 text-success-700',  text: 'text-success-700' };
-  if (pct > 0)    return { bar: 'bg-info-400',   badge: 'bg-info-50 text-info-700',    text: 'text-info-700' };
-  return { bar: 'bg-[var(--bg-secondary)]', badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]', text: 'text-[var(--text-muted)]' };
+  if (pct >= 100) return {bar: 'bg-danger-500', badge: 'bg-danger-50 text-danger-700', text: 'text-danger-700'};
+  if (pct >= 81) return {bar: 'bg-warning-400', badge: 'bg-warning-100 text-warning-700', text: 'text-warning-700'};
+  if (pct >= 51) return {bar: 'bg-success-500', badge: 'bg-success-50 text-success-700', text: 'text-success-700'};
+  if (pct > 0) return {bar: 'bg-info-400', badge: 'bg-info-50 text-info-700', text: 'text-info-700'};
+  return {
+    bar: 'bg-[var(--bg-secondary)]',
+    badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]',
+    text: 'text-[var(--text-muted)]'
+  };
 }
 
-function AllocationBar({ value }: { value: number }) {
+function AllocationBar({value}: { value: number }) {
   const clampedPct = Math.min(100, value);
-  const { bar } = allocationColor(value);
+  const {bar} = allocationColor(value);
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${bar}`}
-          style={{ width: `${clampedPct}%` }}
+          style={{width: `${clampedPct}%`}}
         />
       </div>
       <span className="text-xs font-semibold w-10 text-right text-[var(--text-secondary)]">
@@ -48,7 +47,7 @@ type StatusFilter = AllocationStatus | 'ALL';
 
 export default function ResourcePoolPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function ResourcePoolPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [deptFilter, setDeptFilter] = useState('ALL');
 
-  const { data, isLoading, error, refetch } = useWorkloadDashboard({});
+  const {data, isLoading, error, refetch} = useWorkloadDashboard({});
 
   const isApiUnavailable = (error instanceof Error &&
     (error as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
@@ -79,8 +78,8 @@ export default function ResourcePoolPage() {
   const filtered = useMemo(() => {
     return employees.filter(e => {
       if (search && !e.employeeName.toLowerCase().includes(search.toLowerCase()) &&
-          !(e.employeeCode || '').toLowerCase().includes(search.toLowerCase()) &&
-          !(e.designation || '').toLowerCase().includes(search.toLowerCase())) {
+        !(e.employeeCode || '').toLowerCase().includes(search.toLowerCase()) &&
+        !(e.designation || '').toLowerCase().includes(search.toLowerCase())) {
         return false;
       }
       if (statusFilter !== 'ALL' && e.allocationStatus !== statusFilter) return false;
@@ -110,7 +109,7 @@ export default function ResourcePoolPage() {
       (e.allocations || []).map((p: { projectName: string }) => p.projectName).join(' | '),
     ]);
     const csv = [header, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'resource-pool.csv';
@@ -121,17 +120,19 @@ export default function ResourcePoolPage() {
 
   if (isApiUnavailable) {
     return (
-      <AppLayout activeMenuItem="resources" breadcrumbs={[{ label: 'Resources', href: '/resources' }, { label: 'Pool' }]}>
+      <AppLayout activeMenuItem="resources" breadcrumbs={[{label: 'Resources', href: '/resources'}, {label: 'Pool'}]}>
         <div className="p-6 flex flex-col items-center justify-center py-24 text-center">
           <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
-            <Info size={24} className="text-warning-600" />
+            <Info size={24} className="text-warning-600"/>
           </div>
-          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not Available</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not
+            Available</h2>
           <p className="text-[var(--text-muted)] text-sm max-w-md">
             {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
-          <button onClick={() => refetch()} aria-label="Retry loading resource pool data" className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <RefreshCw size={14} /> Retry
+          <button onClick={() => refetch()} aria-label="Retry loading resource pool data"
+                  className="mt-4 flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <RefreshCw size={14}/> Retry
           </button>
         </div>
       </AppLayout>
@@ -142,8 +143,8 @@ export default function ResourcePoolPage() {
     <AppLayout
       activeMenuItem="resources"
       breadcrumbs={[
-        { label: 'Resources', href: '/resources' },
-        { label: 'Resource Pool' },
+        {label: 'Resources', href: '/resources'},
+        {label: 'Resource Pool'},
       ]}
     >
       <div className="p-6 space-y-6">
@@ -162,7 +163,7 @@ export default function ResourcePoolPage() {
               aria-label="Refresh resource pool data"
               className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''}/>
               Refresh
             </button>
             <button
@@ -171,15 +172,16 @@ export default function ResourcePoolPage() {
               aria-label="Export resource pool to CSV"
               className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Download size={14} />
+              <Download size={14}/>
               Export
             </button>
           </div>
         </div>
 
         {error && (
-          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
-            <AlertTriangle size={15} />
+          <div
+            className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
+            <AlertTriangle size={15}/>
             {error instanceof Error ? error.message : String(error)}
           </div>
         )}
@@ -188,10 +190,30 @@ export default function ResourcePoolPage() {
         {!isLoading && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'Total Employees', value: summary.total, color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]', filter: 'ALL' as StatusFilter },
-              { label: 'Over-Allocated', value: summary.overAllocated, color: 'bg-danger-50 text-danger-700', filter: 'OVER_ALLOCATED' as StatusFilter },
-              { label: 'Optimal', value: summary.optimal, color: 'bg-success-50 text-success-700', filter: 'OPTIMAL' as StatusFilter },
-              { label: 'Unassigned', value: summary.unassigned, color: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]', filter: 'UNASSIGNED' as StatusFilter },
+              {
+                label: 'Total Employees',
+                value: summary.total,
+                color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]',
+                filter: 'ALL' as StatusFilter
+              },
+              {
+                label: 'Over-Allocated',
+                value: summary.overAllocated,
+                color: 'bg-danger-50 text-danger-700',
+                filter: 'OVER_ALLOCATED' as StatusFilter
+              },
+              {
+                label: 'Optimal',
+                value: summary.optimal,
+                color: 'bg-success-50 text-success-700',
+                filter: 'OPTIMAL' as StatusFilter
+              },
+              {
+                label: 'Unassigned',
+                value: summary.unassigned,
+                color: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]',
+                filter: 'UNASSIGNED' as StatusFilter
+              },
             ].map(stat => (
               <button
                 key={stat.filter}
@@ -204,7 +226,7 @@ export default function ResourcePoolPage() {
               >
                 <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                 <div className="flex items-center gap-1.5 mt-1">
-                  <span className={`inline-block w-2 h-2 rounded-full ${stat.color.split(' ')[0]}`} />
+                  <span className={`inline-block w-2 h-2 rounded-full ${stat.color.split(' ')[0]}`}/>
                   <p className="text-caption">{stat.label}</p>
                 </div>
               </button>
@@ -215,7 +237,7 @@ export default function ResourcePoolPage() {
         {/* Filters */}
         <div className="flex flex-wrap gap-4">
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search by name, code, role..."
@@ -238,7 +260,11 @@ export default function ResourcePoolPage() {
 
           {(search || statusFilter !== 'ALL' || deptFilter !== 'ALL') && (
             <button
-              onClick={() => { setSearch(''); setStatusFilter('ALL'); setDeptFilter('ALL'); }}
+              onClick={() => {
+                setSearch('');
+                setStatusFilter('ALL');
+                setDeptFilter('ALL');
+              }}
               className="px-4 py-2 text-body-muted hover:text-[var(--text-secondary)] transition-colors"
             >
               Clear filters
@@ -250,13 +276,13 @@ export default function ResourcePoolPage() {
         {isLoading ? (
           <div className="space-y-2">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-14 bg-[var(--bg-secondary)] animate-pulse rounded-xl" />
+              <div key={i} className="h-14 bg-[var(--bg-secondary)] animate-pulse rounded-xl"/>
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-14 h-14 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
-              <Users size={24} className="text-[var(--text-muted)]" />
+              <Users size={24} className="text-[var(--text-muted)]"/>
             </div>
             <p className="text-[var(--text-secondary)] font-medium">No employees found</p>
             <p className="text-[var(--text-muted)] text-sm mt-1">Try adjusting your filters.</p>
@@ -266,76 +292,89 @@ export default function ResourcePoolPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
-                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)]">Employee</th>
-                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden sm:table-cell">Department</th>
-                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden md:table-cell">Designation</th>
-                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] w-48">Allocation</th>
-                    <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden lg:table-cell">Projects</th>
-                    <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">Status</th>
-                  </tr>
+                <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                  <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)]">Employee</th>
+                  <th
+                    className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden sm:table-cell">Department
+                  </th>
+                  <th
+                    className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden md:table-cell">Designation
+                  </th>
+                  <th className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] w-48">Allocation</th>
+                  <th
+                    className="px-4 py-2 text-left font-semibold text-[var(--text-secondary)] hidden lg:table-cell">Projects
+                  </th>
+                  <th className="px-4 py-2 text-center font-semibold text-[var(--text-secondary)]">Status</th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-subtle)]">
-                  {filtered.map(emp => {
-                    const alloc = emp.totalAllocation ?? 0;
-                    const { badge } = allocationColor(alloc);
-                    return (
-                      <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                        <td className="px-4 py-4">
-                          <div className="flex items-center gap-4">
-                            <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
+                {filtered.map(emp => {
+                  const alloc = emp.totalAllocation ?? 0;
+                  const {badge} = allocationColor(alloc);
+                  return (
+                    <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
                               <span className="text-xs font-bold text-accent-700">
                                 {(emp.employeeName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                               </span>
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-medium text-[var(--text-primary)] truncate">{emp.employeeName}</p>
-                              {emp.employeeCode && (
-                                <p className="text-caption font-mono">{emp.employeeCode}</p>
-                              )}
-                            </div>
                           </div>
-                        </td>
-                        <td className="px-4 py-4 text-[var(--text-secondary)] hidden sm:table-cell">
-                          {emp.departmentName || '—'}
-                        </td>
-                        <td className="px-4 py-4 text-[var(--text-secondary)] hidden md:table-cell">
-                          {emp.designation || '—'}
-                        </td>
-                        <td className="px-4 py-4">
-                          <AllocationBar value={alloc} />
-                        </td>
-                        <td className="px-4 py-4 hidden lg:table-cell">
-                          {(emp.allocations || []).length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {(emp.allocations || []).slice(0, 3).map((p: { projectId: string; projectName: string; allocationPercentage?: number }) => (
-                                <span key={p.projectId} className="text-xs px-2 py-0.5 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-full" title={p.projectName}>
+                          <div className="min-w-0">
+                            <p className="font-medium text-[var(--text-primary)] truncate">{emp.employeeName}</p>
+                            {emp.employeeCode && (
+                              <p className="text-caption font-mono">{emp.employeeCode}</p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-[var(--text-secondary)] hidden sm:table-cell">
+                        {emp.departmentName || '—'}
+                      </td>
+                      <td className="px-4 py-4 text-[var(--text-secondary)] hidden md:table-cell">
+                        {emp.designation || '—'}
+                      </td>
+                      <td className="px-4 py-4">
+                        <AllocationBar value={alloc}/>
+                      </td>
+                      <td className="px-4 py-4 hidden lg:table-cell">
+                        {(emp.allocations || []).length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {(emp.allocations || []).slice(0, 3).map((p: {
+                              projectId: string;
+                              projectName: string;
+                              allocationPercentage?: number
+                            }) => (
+                              <span key={p.projectId}
+                                    className="text-xs px-2 py-0.5 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-full"
+                                    title={p.projectName}>
                                   {p.projectName.length > 18 ? p.projectName.slice(0, 16) + '…' : p.projectName}
-                                  {p.allocationPercentage != null && (
-                                    <span className="ml-1 text-[var(--text-muted)]">({p.allocationPercentage}%)</span>
-                                  )}
+                                {p.allocationPercentage != null && (
+                                  <span className="ml-1 text-[var(--text-muted)]">({p.allocationPercentage}%)</span>
+                                )}
                                 </span>
-                              ))}
-                              {(emp.allocations || []).length > 3 && (
-                                <span className="text-caption">
+                            ))}
+                            {(emp.allocations || []).length > 3 && (
+                              <span className="text-caption">
                                   +{(emp.allocations || []).length - 3} more
                                 </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-[var(--text-muted)] text-xs">No active projects</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-4 text-center">
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-[var(--text-muted)] text-xs">No active projects</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 text-center">
                           <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${badge}`}>
                             {emp.allocationStatus === 'OVER_ALLOCATED' ? 'Over' :
-                             emp.allocationStatus === 'OPTIMAL' ? 'Optimal' :
-                             emp.allocationStatus === 'UNDER_UTILIZED' ? 'Under' : 'Free'}
+                              emp.allocationStatus === 'OPTIMAL' ? 'Optimal' :
+                                emp.allocationStatus === 'UNDER_UTILIZED' ? 'Under' : 'Free'}
                           </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                      </td>
+                    </tr>
+                  );
+                })}
                 </tbody>
               </table>
             </div>
@@ -343,13 +382,13 @@ export default function ResourcePoolPage() {
               <span>Showing {filtered.length} of {employees.length} employees</span>
               <div className="flex items-center gap-4">
                 {[
-                  { label: '≤80%', color: 'bg-success-500' },
-                  { label: '81–99%', color: 'bg-warning-400' },
-                  { label: '≥100%', color: 'bg-danger-500' },
-                  { label: 'Unassigned', color: 'bg-[var(--bg-secondary)]' },
+                  {label: '≤80%', color: 'bg-success-500'},
+                  {label: '81–99%', color: 'bg-warning-400'},
+                  {label: '≥100%', color: 'bg-danger-500'},
+                  {label: 'Unassigned', color: 'bg-[var(--bg-secondary)]'},
                 ].map(l => (
                   <span key={l.label} className="flex items-center gap-1">
-                    <span className={`inline-block w-2.5 h-2.5 rounded-md ${l.color}`} />
+                    <span className={`inline-block w-2.5 h-2.5 rounded-md ${l.color}`}/>
                     {l.label}
                   </span>
                 ))}

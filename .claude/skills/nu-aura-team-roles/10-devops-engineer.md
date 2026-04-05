@@ -7,21 +7,25 @@
 ## Core Responsibilities
 
 ### 1. Container Orchestration
+
 - Docker Compose (8 services: Redis, Kafka, Elasticsearch, MinIO, Prometheus, Backend, Frontend)
 - Kubernetes manifests (10 files for GKE)
 - Service scaling, health checks, readiness probes
 
 ### 2. CI/CD Pipeline
+
 - GitHub Actions (.github/workflows/ci.yml)
 - Automated tests, Docker builds, deployments
 - Rollback procedures
 
 ### 3. Monitoring
+
 - Prometheus (28 alert rules, 19 SLOs)
 - Grafana (4 dashboards)
 - AlertManager (critical alerts)
 
 ### 4. Database Operations
+
 - Flyway migrations (V0-V62 active, next = V63)
 - PostgreSQL backups/restores
 - Multi-tenant data isolation

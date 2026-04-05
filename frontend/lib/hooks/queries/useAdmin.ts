@@ -1,15 +1,15 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminService } from '@/lib/services/core/admin.service';
-import { AdminStats, AdminUserSummary, Page, HealthResponse } from '@/lib/types/core/admin';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {adminService} from '@/lib/services/core/admin.service';
+import {AdminStats, AdminUserSummary, HealthResponse, Page} from '@/lib/types/core/admin';
 
 export const adminKeys = {
   all: ['admin'] as const,
   stats: () => [...adminKeys.all, 'stats'] as const,
   users: () => [...adminKeys.all, 'users'] as const,
   userList: (page: number, size: number, search: string) =>
-    [...adminKeys.users(), { page, size, search }] as const,
+    [...adminKeys.users(), {page, size, search}] as const,
   health: () => [...adminKeys.all, 'health'] as const,
 };
 
@@ -54,9 +54,9 @@ export function useUpdateUserRole() {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, { userId: string; role: string }>({
-    mutationFn: ({ userId, role }) => adminService.updateUserRole(userId, role),
+    mutationFn: ({userId, role}) => adminService.updateUserRole(userId, role),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.users() });
+      queryClient.invalidateQueries({queryKey: adminKeys.users()});
     },
   });
 }

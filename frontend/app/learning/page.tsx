@@ -1,38 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import {useState} from 'react';
 import Image from 'next/image';
-import { AppLayout } from '@/components/layout';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import {AppLayout} from '@/components/layout';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {AlertCircle} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
 import {
-  useLearningDashboard,
-  usePublishedCourses,
-  useMyEnrollments,
-  useMyCertificates,
   useEnrollCourse,
+  useLearningDashboard,
+  useMyCertificates,
+  useMyEnrollments,
+  usePublishedCourses,
 } from '@/lib/hooks/queries/useLearning';
-import type { Course, CourseEnrollment, Certificate } from '@/lib/services/grow/lms.service';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import type {Certificate, Course, CourseEnrollment} from '@/lib/services/grow/lms.service';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
 
   // React Query hooks
-  const { data: dashboard, isLoading: dashboardLoading, isError: dashboardError } = useLearningDashboard();
-  const { data: coursesData, isLoading: coursesLoading } = usePublishedCourses(
+  const {data: dashboard, isLoading: dashboardLoading, isError: dashboardError} = useLearningDashboard();
+  const {data: coursesData, isLoading: coursesLoading} = usePublishedCourses(
     0,
     20,
     activeTab === 'catalog'
   );
-  const { data: enrollmentsData, isLoading: enrollmentsLoading } = useMyEnrollments(
+  const {data: enrollmentsData, isLoading: enrollmentsLoading} = useMyEnrollments(
     0,
     20,
     activeTab === 'my-courses'
   );
-  const { data: certificatesData, isLoading: certificatesLoading } = useMyCertificates(
+  const {data: certificatesData, isLoading: certificatesLoading} = useMyCertificates(
     0,
     20,
     activeTab === 'certificates'
@@ -50,20 +50,29 @@ export default function LearningPage() {
 
   const getDifficultyColor = (level: string | undefined): string => {
     switch (level) {
-      case 'BEGINNER': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
-      case 'INTERMEDIATE': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
-      case 'ADVANCED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'BEGINNER':
+        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+      case 'INTERMEDIATE':
+        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'ADVANCED':
+        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getStatusColor = (status: string | undefined): string => {
     switch (status) {
-      case 'ENROLLED': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400';
-      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
-      case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
-      case 'DROPPED': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'ENROLLED':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400';
+      case 'IN_PROGRESS':
+        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+      case 'DROPPED':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -81,21 +90,24 @@ export default function LearningPage() {
         {/* Dashboard Cards */}
         {dashboardLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({length: 5}).map((_, i) => (
               <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-                <Skeleton className="h-8 w-12 mb-2" />
-                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-8 w-12 mb-2"/>
+                <Skeleton className="h-4 w-20"/>
               </div>
             ))}
           </div>
         ) : dashboardError ? (
-          <div className="mb-6 p-4 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load learning dashboard. Please try refreshing the page.</p>
+          <div
+            className="mb-6 p-4 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
+            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load learning dashboard. Please try
+              refreshing the page.</p>
           </div>
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
+              <div
+                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
               <div className="text-[var(--text-secondary)]">Total Enrollments</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
@@ -107,11 +119,14 @@ export default function LearningPage() {
               <div className="text-[var(--text-secondary)]">Completed</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%</div>
+              <div
+                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%
+              </div>
               <div className="text-[var(--text-secondary)]">Avg Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
+              <div
+                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
               <div className="text-[var(--text-secondary)]">Certificates</div>
             </div>
           </div>
@@ -141,14 +156,15 @@ export default function LearningPage() {
 
         {loading || coursesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
-                <Skeleton className="h-40 w-full" />
+            {Array.from({length: 6}).map((_, i) => (
+              <div key={i}
+                   className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
+                <Skeleton className="h-40 w-full"/>
                 <div className="p-4 space-y-4">
-                  <Skeleton className="h-5 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-5 w-3/4"/>
+                  <Skeleton className="h-4 w-full"/>
+                  <Skeleton className="h-4 w-1/2"/>
+                  <Skeleton className="h-10 w-full"/>
                 </div>
               </div>
             ))}
@@ -160,13 +176,16 @@ export default function LearningPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {courses.length > 0 ? (
                   courses.map((course) => (
-                    <div key={course.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                    <div key={course.id}
+                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       {course.thumbnailUrl ? (
                         <div className="relative w-full h-40">
-                          <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                          <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover"
+                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
                         </div>
                       ) : (
-                        <div className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 dark:from-accent-600 dark:to-accent-900 flex items-center justify-center">
+                        <div
+                          className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 dark:from-accent-600 dark:to-accent-900 flex items-center justify-center">
                           <span className="text-4xl text-white">📚</span>
                         </div>
                       )}
@@ -174,18 +193,23 @@ export default function LearningPage() {
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h3>
                           {course.isMandatory && (
-                            <span className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
+                            <span
+                              className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
                           )}
                         </div>
                         {course.shortDescription && (
-                          <p className="text-[var(--text-secondary)] text-sm mb-4 line-clamp-2">{course.shortDescription}</p>
+                          <p
+                            className="text-[var(--text-secondary)] text-sm mb-4 line-clamp-2">{course.shortDescription}</p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-4">
-                          <span className={`px-2 py-1 rounded-full text-xs ${getDifficultyColor(course.difficultyLevel)}`} aria-label={`Difficulty: ${course.difficultyLevel}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs ${getDifficultyColor(course.difficultyLevel)}`}
+                            aria-label={`Difficulty: ${course.difficultyLevel}`}>
                             {course.difficultyLevel}
                           </span>
                           {course.durationHours && (
-                            <span className="px-2 py-1 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs rounded-full">
+                            <span
+                              className="px-2 py-1 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs rounded-full">
                               {course.durationHours}h
                             </span>
                           )}
@@ -193,7 +217,8 @@ export default function LearningPage() {
                         <div className="flex justify-between items-center text-body-secondary mb-4">
                           <span>{course.totalEnrollments} enrolled</span>
                           {course.avgRating && (
-                            <span className="flex items-center" aria-label={`Rating: ${course.avgRating.toFixed(1)} out of 5`}>
+                            <span className="flex items-center"
+                                  aria-label={`Rating: ${course.avgRating.toFixed(1)} out of 5`}>
                               ⭐ {course.avgRating.toFixed(1)} ({course.totalRatings})
                             </span>
                           )}
@@ -214,8 +239,9 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-3 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <div
+                    className="col-span-3 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
+                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                     <p className="text-[var(--text-muted)] text-lg font-medium">No courses available at the moment.</p>
                   </div>
                 )}
@@ -227,31 +253,41 @@ export default function LearningPage() {
               <div className="space-y-4">
                 {myEnrollments.length > 0 ? (
                   myEnrollments.map((enrollment) => (
-                    <div key={enrollment.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                    <div key={enrollment.id}
+                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course #{enrollment.courseId.slice(0, 8)}</h3>
+                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">Course
+                            #{enrollment.courseId.slice(0, 8)}</h3>
                           <div className="flex gap-2 mt-2">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(enrollment.status)}`} aria-label={`Status: ${enrollment.status}`}>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(enrollment.status)}`}
+                              aria-label={`Status: ${enrollment.status}`}>
                               {enrollment.status}
                             </span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%</div>
+                          <div
+                            className="text-2xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%
+                          </div>
                           <div className="text-body-secondary">Progress</div>
                         </div>
                       </div>
 
                       {/* Progress Bar */}
-                      <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2 mb-4" role="progressbar" aria-valuenow={enrollment.progressPercentage || 0} aria-valuemin={0} aria-valuemax={100}>
+                      <div
+                        className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2 mb-4"
+                        role="progressbar" aria-valuenow={enrollment.progressPercentage || 0} aria-valuemin={0}
+                        aria-valuemax={100}>
                         <div
                           className={`h-2 rounded-full ${getProgressColor(enrollment.progressPercentage || 0)}`}
-                          style={{ width: `${enrollment.progressPercentage || 0}%` }}
+                          style={{width: `${enrollment.progressPercentage || 0}%`}}
                         />
                       </div>
 
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-body-secondary">
+                      <div
+                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-body-secondary">
                         <div>
                           <div>Enrolled: {new Date(enrollment.enrolledAt).toLocaleDateString()}</div>
                           {enrollment.lastAccessedAt && (
@@ -275,8 +311,9 @@ export default function LearningPage() {
                   ))
                 ) : (
                   <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
-                    <p className="text-[var(--text-muted)] text-lg font-medium mb-2">You haven&apos;t enrolled in any courses yet.</p>
+                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
+                    <p className="text-[var(--text-muted)] text-lg font-medium mb-2">You haven&apos;t enrolled in any
+                      courses yet.</p>
                     <p className="text-[var(--text-secondary)]">Browse the catalog to get started!</p>
                   </div>
                 )}
@@ -288,7 +325,8 @@ export default function LearningPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {certificates.length > 0 ? (
                   certificates.map((cert) => (
-                    <div key={cert.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-warning-500 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                    <div key={cert.id}
+                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-warning-500 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>
@@ -306,12 +344,14 @@ export default function LearningPage() {
                       <div className="mt-4 pt-4 border-t border-[var(--border-main)] grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <div className="text-[var(--text-secondary)]">Issued</div>
-                          <div className="font-medium text-[var(--text-primary)]">{new Date(cert.issuedAt).toLocaleDateString()}</div>
+                          <div
+                            className="font-medium text-[var(--text-primary)]">{new Date(cert.issuedAt).toLocaleDateString()}</div>
                         </div>
                         {cert.expiryDate && (
                           <div>
                             <div className="text-[var(--text-secondary)]">Expires</div>
-                            <div className="font-medium text-[var(--text-primary)]">{new Date(cert.expiryDate).toLocaleDateString()}</div>
+                            <div
+                              className="font-medium text-[var(--text-primary)]">{new Date(cert.expiryDate).toLocaleDateString()}</div>
                           </div>
                         )}
                         {cert.scoreAchieved && (
@@ -332,8 +372,9 @@ export default function LearningPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-2 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
-                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <div
+                    className="col-span-2 bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-8 text-center">
+                    <AlertCircle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                     <p className="text-[var(--text-muted)] text-lg font-medium mb-2">No certificates earned yet.</p>
                     <p className="text-[var(--text-secondary)]">Complete courses to earn certificates!</p>
                   </div>

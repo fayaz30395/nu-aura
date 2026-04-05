@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 
 /**
  * Admin profile is a redirect shim — user profiles live at /me/profile.

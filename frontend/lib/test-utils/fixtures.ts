@@ -1,6 +1,6 @@
-import { Employee, EmployeeStatus, EmploymentType, Gender, EmployeeLevel, JobRole } from '@/lib/types/hrms/employee';
-import { LeaveRequest, LeaveType, LeaveBalance, LeaveRequestStatus } from '@/lib/types/hrms/leave';
-import { AttendanceRecord, AttendanceStatus, Shift, Holiday, HolidayType } from '@/lib/types/hrms/attendance';
+import {Employee, EmployeeLevel, EmployeeStatus, EmploymentType, Gender, JobRole} from '@/lib/types/hrms/employee';
+import {LeaveBalance, LeaveRequest, LeaveRequestStatus, LeaveType} from '@/lib/types/hrms/leave';
+import {AttendanceRecord, AttendanceStatus, Holiday, HolidayType, Shift} from '@/lib/types/hrms/attendance';
 
 // Employee Fixtures
 export const createMockEmployee = (overrides: Partial<Employee> = {}): Employee => ({
@@ -46,9 +46,22 @@ export const createMockEmployee = (overrides: Partial<Employee> = {}): Employee 
 });
 
 export const mockEmployees: Employee[] = [
-  createMockEmployee({ id: 'emp-001', firstName: 'John', lastName: 'Doe', employeeCode: 'EMP001' }),
-  createMockEmployee({ id: 'emp-002', firstName: 'Jane', lastName: 'Smith', employeeCode: 'EMP002', designation: 'Senior Engineer', level: 'SENIOR' as EmployeeLevel }),
-  createMockEmployee({ id: 'emp-003', firstName: 'Bob', lastName: 'Johnson', employeeCode: 'EMP003', status: 'ON_LEAVE' as EmployeeStatus }),
+  createMockEmployee({id: 'emp-001', firstName: 'John', lastName: 'Doe', employeeCode: 'EMP001'}),
+  createMockEmployee({
+    id: 'emp-002',
+    firstName: 'Jane',
+    lastName: 'Smith',
+    employeeCode: 'EMP002',
+    designation: 'Senior Engineer',
+    level: 'SENIOR' as EmployeeLevel
+  }),
+  createMockEmployee({
+    id: 'emp-003',
+    firstName: 'Bob',
+    lastName: 'Johnson',
+    employeeCode: 'EMP003',
+    status: 'ON_LEAVE' as EmployeeStatus
+  }),
 ];
 
 // Leave Type Fixtures
@@ -69,9 +82,9 @@ export const createMockLeaveType = (overrides: Partial<LeaveType> = {}): LeaveTy
 });
 
 export const mockLeaveTypes: LeaveType[] = [
-  createMockLeaveType({ id: 'lt-001', name: 'Annual Leave', code: 'AL', defaultDays: 20 }),
-  createMockLeaveType({ id: 'lt-002', name: 'Sick Leave', code: 'SL', defaultDays: 10 }),
-  createMockLeaveType({ id: 'lt-003', name: 'Personal Leave', code: 'PL', defaultDays: 5 }),
+  createMockLeaveType({id: 'lt-001', name: 'Annual Leave', code: 'AL', defaultDays: 20}),
+  createMockLeaveType({id: 'lt-002', name: 'Sick Leave', code: 'SL', defaultDays: 10}),
+  createMockLeaveType({id: 'lt-003', name: 'Personal Leave', code: 'PL', defaultDays: 5}),
 ];
 
 // Leave Request Fixtures
@@ -99,9 +112,14 @@ export const createMockLeaveRequest = (overrides: Partial<LeaveRequest> = {}): L
 });
 
 export const mockLeaveRequests: LeaveRequest[] = [
-  createMockLeaveRequest({ id: 'lr-001', status: 'PENDING' as LeaveRequestStatus }),
-  createMockLeaveRequest({ id: 'lr-002', status: 'APPROVED' as LeaveRequestStatus, approverId: 'mgr-001', approverName: 'Jane Smith' }),
-  createMockLeaveRequest({ id: 'lr-003', status: 'REJECTED' as LeaveRequestStatus, rejectionReason: 'Team deadline' }),
+  createMockLeaveRequest({id: 'lr-001', status: 'PENDING' as LeaveRequestStatus}),
+  createMockLeaveRequest({
+    id: 'lr-002',
+    status: 'APPROVED' as LeaveRequestStatus,
+    approverId: 'mgr-001',
+    approverName: 'Jane Smith'
+  }),
+  createMockLeaveRequest({id: 'lr-003', status: 'REJECTED' as LeaveRequestStatus, rejectionReason: 'Team deadline'}),
 ];
 
 // Leave Balance Fixtures

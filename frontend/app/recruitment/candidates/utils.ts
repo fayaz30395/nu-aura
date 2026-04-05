@@ -1,4 +1,4 @@
-import { CandidateStatus, RecruitmentStage } from '@/lib/types/hire/recruitment';
+import {CandidateStatus, RecruitmentStage} from '@/lib/types/hire/recruitment';
 
 /**
  * Status badge color mapping for candidates.
@@ -66,7 +66,13 @@ export function computeStats(candidates: { status: CandidateStatus }[]) {
  * Filter candidates based on search query, status, and job opening.
  * Generic to preserve the full Candidate type through the filter chain.
  */
-export function filterCandidates<T extends { fullName: string; email: string; candidateCode: string; status: string; jobOpeningId: string }>(
+export function filterCandidates<T extends {
+  fullName: string;
+  email: string;
+  candidateCode: string;
+  status: string;
+  jobOpeningId: string
+}>(
   candidates: T[],
   searchQuery: string,
   statusFilter: string,

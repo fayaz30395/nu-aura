@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, switchUser } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {loginAs, switchUser} from './fixtures/helpers';
 
 /**
  * Expense Management E2E Tests
@@ -7,28 +7,28 @@ import { loginAs, switchUser } from './fixtures/helpers';
  */
 
 test.describe('Expenses Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display expenses page with header', async ({ page }) => {
+  test('should display expenses page with header', async ({page}) => {
     await expect(page.locator('h1')).toContainText(/Expense/i);
   });
 
-  test('should display tab navigation', async ({ page }) => {
+  test('should display tab navigation', async ({page}) => {
     // Check for tabs
     await expect(page.locator('text=My Claims').first()).toBeVisible();
   });
 
-  test('should display create claim button', async ({ page }) => {
+  test('should display create claim button', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
     expect(hasCreate || true).toBe(true);
   });
 
-  test('should display stats or summary cards', async ({ page }) => {
+  test('should display stats or summary cards', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for summary elements
@@ -39,19 +39,19 @@ test.describe('Expenses Page', () => {
 });
 
 test.describe('Expenses - My Claims Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
     await page.click('text=My Claims');
     await page.waitForTimeout(500);
   });
 
-  test('should display My Claims tab', async ({ page }) => {
+  test('should display My Claims tab', async ({page}) => {
     const tab = page.locator('button:has-text("My Claims")');
     await expect(tab).toBeVisible();
   });
 
-  test('should display claims list or empty state', async ({ page }) => {
+  test('should display claims list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Should show claims or empty message
@@ -61,7 +61,7 @@ test.describe('Expenses - My Claims Tab', () => {
     expect(hasClaims || hasEmpty || true).toBe(true);
   });
 
-  test('should show claim status badges', async ({ page }) => {
+  test('should show claim status badges', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for status indicators
@@ -80,7 +80,7 @@ test.describe('Expenses - My Claims Tab', () => {
     expect(hasStatus || true).toBe(true);
   });
 
-  test('should display claim amounts', async ({ page }) => {
+  test('should display claim amounts', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for currency amounts
@@ -92,12 +92,12 @@ test.describe('Expenses - My Claims Tab', () => {
 });
 
 test.describe('Expenses - Pending Approval Tab', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display Pending Approval tab if available', async ({ page }) => {
+  test('should display Pending Approval tab if available', async ({page}) => {
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval').first();
     const hasTab = await pendingTab.isVisible().catch(() => false);
 
@@ -111,7 +111,7 @@ test.describe('Expenses - Pending Approval Tab', () => {
     }
   });
 
-  test('should show approve/reject buttons for pending claims', async ({ page }) => {
+  test('should show approve/reject buttons for pending claims', async ({page}) => {
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval').first();
     const hasTab = await pendingTab.isVisible().catch(() => false);
 
@@ -132,12 +132,12 @@ test.describe('Expenses - Pending Approval Tab', () => {
 });
 
 test.describe('Expenses - All Claims Tab (Admin)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display All Claims tab if admin', async ({ page }) => {
+  test('should display All Claims tab if admin', async ({page}) => {
     const allTab = page.locator('button:has-text("All Claims"), text=All Claims').first();
     const hasTab = await allTab.isVisible().catch(() => false);
 
@@ -145,7 +145,7 @@ test.describe('Expenses - All Claims Tab (Admin)', () => {
     expect(hasTab || true).toBe(true);
   });
 
-  test('should show all employee claims for admin', async ({ page }) => {
+  test('should show all employee claims for admin', async ({page}) => {
     const allTab = page.locator('button:has-text("All Claims")').first();
     const hasTab = await allTab.isVisible().catch(() => false);
 
@@ -161,12 +161,12 @@ test.describe('Expenses - All Claims Tab (Admin)', () => {
 });
 
 test.describe('Expenses - Create Claim', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should open create claim modal', async ({ page }) => {
+  test('should open create claim modal', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
@@ -182,7 +182,7 @@ test.describe('Expenses - Create Claim', () => {
     }
   });
 
-  test('should display claim form fields', async ({ page }) => {
+  test('should display claim form fields', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
@@ -199,7 +199,7 @@ test.describe('Expenses - Create Claim', () => {
     }
   });
 
-  test('should show expense categories', async ({ page }) => {
+  test('should show expense categories', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
@@ -222,7 +222,7 @@ test.describe('Expenses - Create Claim', () => {
     }
   });
 
-  test('should close modal on cancel', async ({ page }) => {
+  test('should close modal on cancel', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
@@ -250,14 +250,14 @@ test.describe('Expenses - Create Claim', () => {
 });
 
 test.describe('Expenses - Claim Actions', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
     await page.click('text=My Claims');
     await page.waitForTimeout(500);
   });
 
-  test('should show submit button for draft claims', async ({ page }) => {
+  test('should show submit button for draft claims', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for draft claims with submit button
@@ -268,7 +268,7 @@ test.describe('Expenses - Claim Actions', () => {
     expect(hasSubmit || true).toBe(true);
   });
 
-  test('should show delete button for draft claims', async ({ page }) => {
+  test('should show delete button for draft claims', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for delete button
@@ -279,7 +279,7 @@ test.describe('Expenses - Claim Actions', () => {
     expect(hasDelete || true).toBe(true);
   });
 
-  test('should show view details option', async ({ page }) => {
+  test('should show view details option', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for view/details button
@@ -292,12 +292,12 @@ test.describe('Expenses - Claim Actions', () => {
 });
 
 test.describe('Expenses - Filters and Search', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display status filter', async ({ page }) => {
+  test('should display status filter', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for status filter
@@ -307,7 +307,7 @@ test.describe('Expenses - Filters and Search', () => {
     expect(hasFilter || true).toBe(true);
   });
 
-  test('should display date filter', async ({ page }) => {
+  test('should display date filter', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for date filter
@@ -317,7 +317,7 @@ test.describe('Expenses - Filters and Search', () => {
     expect(hasDateFilter || true).toBe(true);
   });
 
-  test('should display search input', async ({ page }) => {
+  test('should display search input', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for search
@@ -329,12 +329,12 @@ test.describe('Expenses - Filters and Search', () => {
 });
 
 test.describe('Expenses - Notifications', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should show success notification on action', async ({ page }) => {
+  test('should show success notification on action', async ({page}) => {
     // This test verifies notification system is in place
     // Try to trigger an action that shows notification
 
@@ -356,12 +356,12 @@ test.describe('Expenses - Notifications', () => {
 });
 
 test.describe('Expenses - Receipt Upload', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should show receipt upload option in claim form', async ({ page }) => {
+  test('should show receipt upload option in claim form', async ({page}) => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
@@ -374,7 +374,7 @@ test.describe('Expenses - Receipt Upload', () => {
       const uploadBtn = page.locator('button:has-text("Upload"), text=Upload').first();
 
       const hasUpload = await fileInput.isVisible().catch(() => false) ||
-                        await uploadBtn.isVisible().catch(() => false);
+        await uploadBtn.isVisible().catch(() => false);
 
       expect(hasUpload || true).toBe(true);
     }
@@ -382,12 +382,12 @@ test.describe('Expenses - Receipt Upload', () => {
 });
 
 test.describe('Expenses - Visual Elements', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/expenses');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should have proper table or card layout', async ({ page }) => {
+  test('should have proper table or card layout', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasTable = await page.locator('table').first().isVisible().catch(() => false);
@@ -396,7 +396,7 @@ test.describe('Expenses - Visual Elements', () => {
     expect(hasTable || hasCards).toBe(true);
   });
 
-  test('should display icons', async ({ page }) => {
+  test('should display icons', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const icons = page.locator('svg');
@@ -405,15 +405,15 @@ test.describe('Expenses - Visual Elements', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should be responsive', async ({ page }) => {
+  test('should be responsive', async ({page}) => {
     // Test mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     await expect(page.locator('h1')).toBeVisible();
 
     // Reset
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });
 
@@ -428,7 +428,7 @@ test.describe('Expenses - Visual Elements', () => {
 test.describe('Expense Multi-Level Approval Chain', () => {
   const testRunId = `EXP-E2E-${Date.now()}`;
 
-  test('should create and submit an expense claim', async ({ page }) => {
+  test('should create and submit an expense claim', async ({page}) => {
     // Login as Saran (Employee)
     await loginAs(page, 'saran@nulogic.io');
     await page.goto('/expenses');
@@ -436,54 +436,54 @@ test.describe('Expense Multi-Level Approval Chain', () => {
 
     // Click create/new claim button
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
-    const hasCreate = await createBtn.isVisible({ timeout: 10000 }).catch(() => false);
+    const hasCreate = await createBtn.isVisible({timeout: 10000}).catch(() => false);
 
     if (hasCreate) {
       await createBtn.click();
       await page.waitForLoadState('networkidle');
 
       // Wait for modal or form to appear
-      const formVisible = await page.locator('[role="dialog"], form, [class*="modal"]').first().isVisible({ timeout: 5000 }).catch(() => false);
+      const formVisible = await page.locator('[role="dialog"], form, [class*="modal"]').first().isVisible({timeout: 5000}).catch(() => false);
 
       if (formVisible) {
         // Fill expense claim form fields
         // Title / Description
         const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
-        if (await titleInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await titleInput.isVisible({timeout: 3000}).catch(() => false)) {
           await titleInput.fill(`Travel expense — ${testRunId}`);
         }
 
         // Amount
         const amountInput = page.locator('input[type="number"], input[name*="amount"], input[placeholder*="amount" i]').first();
-        if (await amountInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await amountInput.isVisible({timeout: 3000}).catch(() => false)) {
           await amountInput.fill('5000');
         }
 
         // Category
         const categorySelect = page.locator('select, [role="combobox"]').first();
-        if (await categorySelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await categorySelect.isVisible({timeout: 3000}).catch(() => false)) {
           const options = await categorySelect.locator('option').count();
           if (options > 1) {
-            await categorySelect.selectOption({ index: 1 });
+            await categorySelect.selectOption({index: 1});
           }
         }
 
         // Description / Notes
         const descInput = page.locator('textarea, input[name*="description"], input[name*="notes"]').first();
-        if (await descInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await descInput.isVisible({timeout: 3000}).catch(() => false)) {
           await descInput.fill(`Business travel expenses — ${testRunId}`);
         }
 
         // Date
         const dateInput = page.locator('input[type="date"], input[name*="date"]').first();
-        if (await dateInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await dateInput.isVisible({timeout: 3000}).catch(() => false)) {
           const today = new Date().toISOString().split('T')[0];
           await dateInput.fill(today);
         }
 
         // Submit the claim
         const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
-        if (await submitBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await submitBtn.click();
           await page.waitForLoadState('networkidle');
         }
@@ -491,10 +491,10 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     }
 
     // Verify we are back on expenses page or claim was created
-    await expect(page.locator('h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1')).toBeVisible({timeout: 10000});
   });
 
-  test('should complete full approval chain: employee → manager → finance', async ({ page }) => {
+  test('should complete full approval chain: employee → manager → finance', async ({page}) => {
     const claimDescription = `Multi-level approval — ${testRunId}-full`;
 
     // ── Step 1: Saran creates and submits expense claim ──
@@ -503,41 +503,41 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
-    if (await createBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
+    if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
       await page.waitForLoadState('networkidle');
 
       // Fill form
       const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
-      if (await titleInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await titleInput.isVisible({timeout: 3000}).catch(() => false)) {
         await titleInput.fill(claimDescription);
       }
 
       const amountInput = page.locator('input[type="number"], input[name*="amount"]').first();
-      if (await amountInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await amountInput.isVisible({timeout: 3000}).catch(() => false)) {
         await amountInput.fill('5000');
       }
 
       const descInput = page.locator('textarea').first();
-      if (await descInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await descInput.isVisible({timeout: 3000}).catch(() => false)) {
         await descInput.fill(claimDescription);
       }
 
       const categorySelect = page.locator('select, [role="combobox"]').first();
-      if (await categorySelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await categorySelect.isVisible({timeout: 3000}).catch(() => false)) {
         const options = await categorySelect.locator('option').count();
         if (options > 1) {
-          await categorySelect.selectOption({ index: 1 });
+          await categorySelect.selectOption({index: 1});
         }
       }
 
       const dateInput = page.locator('input[type="date"]').first();
-      if (await dateInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await dateInput.isVisible({timeout: 3000}).catch(() => false)) {
         await dateInput.fill(new Date().toISOString().split('T')[0]);
       }
 
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
-      if (await submitBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
         await page.waitForLoadState('networkidle');
       }
@@ -550,24 +550,24 @@ test.describe('Expense Multi-Level Approval Chain', () => {
 
     // Navigate to pending approvals tab
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval, button:has-text("Approvals")').first();
-    if (await pendingTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
       await page.waitForLoadState('networkidle');
     }
 
     // Find and approve Saran's claim
-    const saranRow = page.locator('tbody tr', { hasText: /Saran/i }).first();
-    if (await saranRow.isVisible({ timeout: 10000 }).catch(() => false)) {
+    const saranRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
+    if (await saranRow.isVisible({timeout: 10000}).catch(() => false)) {
       const approveBtn = saranRow.locator('button:has-text("Approve")');
-      if (await approveBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await approveBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await approveBtn.click();
       } else {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
-        if (await viewBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
           await page.waitForLoadState('networkidle');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
-          if (await detailApproveBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+          if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
           }
         }
@@ -575,7 +575,7 @@ test.describe('Expense Multi-Level Approval Chain', () => {
 
       // Fill approval comment if dialog appears
       const commentInput = page.locator('textarea[placeholder*="comment" i], textarea[placeholder*="remark" i]').first();
-      if (await commentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await commentInput.isVisible({timeout: 3000}).catch(() => false)) {
         await commentInput.fill('Manager approved — E2E test');
         const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Submit"), button:has-text("Approve")').last();
         await confirmBtn.click();
@@ -590,30 +590,30 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const adminPendingTab = page.locator('button:has-text("Pending"), button:has-text("Approvals"), text=All Claims').first();
-    if (await adminPendingTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await adminPendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await adminPendingTab.click();
       await page.waitForLoadState('networkidle');
     }
 
-    const claimRow = page.locator('tbody tr', { hasText: /Saran/i }).first();
-    if (await claimRow.isVisible({ timeout: 10000 }).catch(() => false)) {
+    const claimRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
+    if (await claimRow.isVisible({timeout: 10000}).catch(() => false)) {
       const approveBtn = claimRow.locator('button:has-text("Approve")');
-      if (await approveBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await approveBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await approveBtn.click();
       } else {
         const viewBtn = claimRow.locator('button:has-text("View"), a:has-text("View")').first();
-        if (await viewBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
           await page.waitForLoadState('networkidle');
           const detailApproveBtn = page.locator('button:has-text("Approve")').first();
-          if (await detailApproveBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+          if (await detailApproveBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailApproveBtn.click();
           }
         }
       }
 
       const commentInput = page.locator('textarea[placeholder*="comment" i], textarea[placeholder*="remark" i]').first();
-      if (await commentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await commentInput.isVisible({timeout: 3000}).catch(() => false)) {
         await commentInput.fill('Finance approved — E2E test');
         const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Submit"), button:has-text("Approve")').last();
         await confirmBtn.click();
@@ -629,19 +629,19 @@ test.describe('Expense Multi-Level Approval Chain', () => {
 
     // Click My Claims tab
     const myClaimsTab = page.locator('text=My Claims').first();
-    if (await myClaimsTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await myClaimsTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myClaimsTab.click();
       await page.waitForLoadState('networkidle');
     }
 
     // Check status of the latest claim
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();
-    const statusText = await statusBadge.textContent({ timeout: 10000 }).catch(() => '');
+    const statusText = await statusBadge.textContent({timeout: 10000}).catch(() => '');
     // Accept APPROVED, PAID, or still PENDING if multi-level not fully wired
     expect(statusText?.toUpperCase()).toMatch(/APPROVED|PAID|PENDING|SUBMITTED/);
   });
 
-  test('should reject expense at manager level', async ({ page }) => {
+  test('should reject expense at manager level', async ({page}) => {
     const claimDescription = `Rejection test — ${testRunId}-reject`;
 
     // ── Step 1: Saran submits expense claim ──
@@ -650,27 +650,27 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New Claim"), button:has-text("New"), button:has-text("Add")').first();
-    if (await createBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
+    if (await createBtn.isVisible({timeout: 10000}).catch(() => false)) {
       await createBtn.click();
       await page.waitForLoadState('networkidle');
 
       const titleInput = page.locator('input[name*="title"], input[name*="name"], input[placeholder*="title" i]').first();
-      if (await titleInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await titleInput.isVisible({timeout: 3000}).catch(() => false)) {
         await titleInput.fill(claimDescription);
       }
 
       const amountInput = page.locator('input[type="number"], input[name*="amount"]').first();
-      if (await amountInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await amountInput.isVisible({timeout: 3000}).catch(() => false)) {
         await amountInput.fill('15000');
       }
 
       const descInput = page.locator('textarea').first();
-      if (await descInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await descInput.isVisible({timeout: 3000}).catch(() => false)) {
         await descInput.fill(claimDescription);
       }
 
       const submitBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create")').first();
-      if (await submitBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await submitBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await submitBtn.click();
         await page.waitForLoadState('networkidle');
       }
@@ -682,30 +682,30 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const pendingTab = page.locator('button:has-text("Pending"), text=Pending Approval, button:has-text("Approvals")').first();
-    if (await pendingTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await pendingTab.isVisible({timeout: 5000}).catch(() => false)) {
       await pendingTab.click();
       await page.waitForLoadState('networkidle');
     }
 
-    const saranRow = page.locator('tbody tr', { hasText: /Saran/i }).first();
-    if (await saranRow.isVisible({ timeout: 10000 }).catch(() => false)) {
+    const saranRow = page.locator('tbody tr', {hasText: /Saran/i}).first();
+    if (await saranRow.isVisible({timeout: 10000}).catch(() => false)) {
       const rejectBtn = saranRow.locator('button:has-text("Reject")');
-      if (await rejectBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await rejectBtn.isVisible({timeout: 3000}).catch(() => false)) {
         await rejectBtn.click();
       } else {
         const viewBtn = saranRow.locator('button:has-text("View"), a:has-text("View")').first();
-        if (await viewBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await viewBtn.isVisible({timeout: 3000}).catch(() => false)) {
           await viewBtn.click();
           await page.waitForLoadState('networkidle');
           const detailRejectBtn = page.locator('button:has-text("Reject")').first();
-          if (await detailRejectBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+          if (await detailRejectBtn.isVisible({timeout: 5000}).catch(() => false)) {
             await detailRejectBtn.click();
           }
         }
       }
 
       const commentInput = page.locator('textarea[placeholder*="comment" i], textarea[placeholder*="reason" i], textarea[placeholder*="remark" i]').first();
-      if (await commentInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await commentInput.isVisible({timeout: 3000}).catch(() => false)) {
         await commentInput.fill('Exceeds budget — rejected — E2E test');
         const confirmBtn = page.locator('button:has-text("Confirm"), button:has-text("Submit"), button:has-text("Reject")').last();
         await confirmBtn.click();
@@ -720,13 +720,13 @@ test.describe('Expense Multi-Level Approval Chain', () => {
     await page.waitForLoadState('networkidle');
 
     const myClaimsTab = page.locator('text=My Claims').first();
-    if (await myClaimsTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await myClaimsTab.isVisible({timeout: 5000}).catch(() => false)) {
       await myClaimsTab.click();
       await page.waitForLoadState('networkidle');
     }
 
     const statusBadge = page.locator('tbody tr').first().locator('[class*="badge"]').first();
-    const statusText = await statusBadge.textContent({ timeout: 10000 }).catch(() => '');
+    const statusText = await statusBadge.textContent({timeout: 10000}).catch(() => '');
     expect(statusText?.toUpperCase()).toMatch(/REJECTED|PENDING|DRAFT/);
   });
 });

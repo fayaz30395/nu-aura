@@ -396,6 +396,7 @@ For Runbooks (docs/runbooks/{module}-runbook.md):
 ## Compound Patterns
 
 ### Design → Build → Test (most common)
+
 ```
 STEP 1 — spawn @architect: "Design {feature}. Include API contract, Flyway V94 migration, RBAC, sequence diagram."
 ↓ (wait for architect output)
@@ -407,6 +408,7 @@ STEP 4 — spawn @reviewer: "Review {feature} code against architect design and 
 ```
 
 ### Parallel Research (no dependencies)
+
 ```
 SIMULTANEOUSLY spawn 3 subagents:
 1. @architect: Research Option A
@@ -416,6 +418,7 @@ SIMULTANEOUSLY spawn 3 subagents:
 ```
 
 ### Competing Hypotheses (debugging)
+
 ```
 SIMULTANEOUSLY spawn 3 investigators:
 1. @dev: Investigate security layer (SecurityConfig, JwtAuthFilter)

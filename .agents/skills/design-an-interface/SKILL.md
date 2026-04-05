@@ -5,7 +5,8 @@ description: Generate multiple radically different interface designs for a modul
 
 # Design an Interface
 
-Based on "Design It Twice" from "A Philosophy of Software Design": your first idea is unlikely to be the best. Generate multiple radically different designs, then compare.
+Based on "Design It Twice" from "A Philosophy of Software Design": your first idea is unlikely to be
+the best. Generate multiple radically different designs, then compare.
 
 ## Workflow
 
@@ -23,7 +24,8 @@ Ask: "What does this module need to do? Who will use it?"
 
 ### 2. Generate Designs (Parallel Sub-Agents)
 
-Spawn 3+ sub-agents simultaneously using Task tool. Each must produce a **radically different** approach.
+Spawn 3+ sub-agents simultaneously using Task tool. Each must produce a **radically different**
+approach.
 
 ```
 Prompt template for each sub-agent:
@@ -62,7 +64,8 @@ After showing all designs, compare them on:
 - **Interface simplicity**: fewer methods, simpler params
 - **General-purpose vs specialized**: flexibility vs focus
 - **Implementation efficiency**: does shape allow efficient internals?
-- **Depth**: small interface hiding significant complexity (good) vs large interface with thin implementation (bad)
+- **Depth**: small interface hiding significant complexity (good) vs large interface with thin
+  implementation (bad)
 - **Ease of correct use** vs **ease of misuse**
 
 Discuss trade-offs in prose, not tables. Highlight where designs diverge most.
@@ -82,9 +85,11 @@ From "A Philosophy of Software Design":
 
 **General-purpose**: Can handle future use cases without changes. But beware over-generalization.
 
-**Implementation efficiency**: Does interface shape allow efficient implementation? Or force awkward internals?
+**Implementation efficiency**: Does interface shape allow efficient implementation? Or force awkward
+internals?
 
-**Depth**: Small interface hiding significant complexity = deep module (good). Large interface with thin implementation = shallow module (avoid).
+**Depth**: Small interface hiding significant complexity = deep module (good). Large interface with
+thin implementation = shallow module (avoid).
 
 ## Anti-Patterns
 

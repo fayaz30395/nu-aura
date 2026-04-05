@@ -6,8 +6,8 @@
 
 import {
   getNotificationRoute,
-  isNotificationTypeSupported,
   getSupportedNotificationTypes,
+  isNotificationTypeSupported,
   notificationRouteConfig,
 } from './notificationRoutes';
 
@@ -33,231 +33,231 @@ describe('getNotificationRoute', () => {
 
   describe('leave notifications', () => {
     it('should route LEAVE_APPROVED with id to specific leave request', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_APPROVED', relatedEntityId: 'abc123' }))
+      expect(getNotificationRoute({type: 'LEAVE_APPROVED', relatedEntityId: 'abc123'}))
         .toBe('/leave/requests/abc123');
     });
 
     it('should route LEAVE_APPROVED without id to leave requests list', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_APPROVED' }))
+      expect(getNotificationRoute({type: 'LEAVE_APPROVED'}))
         .toBe('/leave/requests');
     });
 
     it('should route LEAVE_REJECTED with id', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_REJECTED', relatedEntityId: 'def456' }))
+      expect(getNotificationRoute({type: 'LEAVE_REJECTED', relatedEntityId: 'def456'}))
         .toBe('/leave/requests/def456');
     });
 
     it('should route LEAVE_PENDING', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_PENDING', relatedEntityId: 'ghi789' }))
+      expect(getNotificationRoute({type: 'LEAVE_PENDING', relatedEntityId: 'ghi789'}))
         .toBe('/leave/requests/ghi789');
     });
 
     it('should route LEAVE_REQUEST', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_REQUEST' }))
+      expect(getNotificationRoute({type: 'LEAVE_REQUEST'}))
         .toBe('/leave/requests');
     });
 
     it('should route LEAVE_CANCELLED', () => {
-      expect(getNotificationRoute({ type: 'LEAVE_CANCELLED', relatedEntityId: 'xyz' }))
+      expect(getNotificationRoute({type: 'LEAVE_CANCELLED', relatedEntityId: 'xyz'}))
         .toBe('/leave/requests/xyz');
     });
   });
 
   describe('attendance notifications', () => {
     it('should route ATTENDANCE_MARKED to attendance page', () => {
-      expect(getNotificationRoute({ type: 'ATTENDANCE_MARKED' }))
+      expect(getNotificationRoute({type: 'ATTENDANCE_MARKED'}))
         .toBe('/me/attendance');
     });
 
     it('should route ATTENDANCE_ALERT to attendance page', () => {
-      expect(getNotificationRoute({ type: 'ATTENDANCE_ALERT' }))
+      expect(getNotificationRoute({type: 'ATTENDANCE_ALERT'}))
         .toBe('/me/attendance');
     });
 
     it('should route CHECK_IN_REMINDER to attendance page', () => {
-      expect(getNotificationRoute({ type: 'CHECK_IN_REMINDER' }))
+      expect(getNotificationRoute({type: 'CHECK_IN_REMINDER'}))
         .toBe('/me/attendance');
     });
 
     it('should route LATE_ARRIVAL to attendance page', () => {
-      expect(getNotificationRoute({ type: 'LATE_ARRIVAL' }))
+      expect(getNotificationRoute({type: 'LATE_ARRIVAL'}))
         .toBe('/me/attendance');
     });
 
     it('should route REGULARIZATION_REQUESTED to regularizations page', () => {
-      expect(getNotificationRoute({ type: 'REGULARIZATION_REQUESTED' }))
+      expect(getNotificationRoute({type: 'REGULARIZATION_REQUESTED'}))
         .toBe('/attendance/regularizations');
     });
 
     it('should route REGULARIZATION_APPROVED to attendance page', () => {
-      expect(getNotificationRoute({ type: 'REGULARIZATION_APPROVED' }))
+      expect(getNotificationRoute({type: 'REGULARIZATION_APPROVED'}))
         .toBe('/me/attendance');
     });
   });
 
   describe('payroll notifications', () => {
     it('should route PAYROLL_GENERATED with id to specific payroll', () => {
-      expect(getNotificationRoute({ type: 'PAYROLL_GENERATED', relatedEntityId: 'pay123' }))
+      expect(getNotificationRoute({type: 'PAYROLL_GENERATED', relatedEntityId: 'pay123'}))
         .toBe('/payroll/pay123');
     });
 
     it('should route PAYROLL_GENERATED without id to payroll list', () => {
-      expect(getNotificationRoute({ type: 'PAYROLL_GENERATED' }))
+      expect(getNotificationRoute({type: 'PAYROLL_GENERATED'}))
         .toBe('/me/payroll');
     });
 
     it('should route SALARY_CREDITED to payroll page', () => {
-      expect(getNotificationRoute({ type: 'SALARY_CREDITED' }))
+      expect(getNotificationRoute({type: 'SALARY_CREDITED'}))
         .toBe('/me/payroll');
     });
 
     it('should route PAYSLIP_AVAILABLE to payroll page', () => {
-      expect(getNotificationRoute({ type: 'PAYSLIP_AVAILABLE' }))
+      expect(getNotificationRoute({type: 'PAYSLIP_AVAILABLE'}))
         .toBe('/me/payroll');
     });
   });
 
   describe('document notifications', () => {
     it('should route DOCUMENT_UPLOADED to documents page', () => {
-      expect(getNotificationRoute({ type: 'DOCUMENT_UPLOADED' }))
+      expect(getNotificationRoute({type: 'DOCUMENT_UPLOADED'}))
         .toBe('/me/documents');
     });
 
     it('should route DOCUMENT_REQUIRED to documents page', () => {
-      expect(getNotificationRoute({ type: 'DOCUMENT_REQUIRED' }))
+      expect(getNotificationRoute({type: 'DOCUMENT_REQUIRED'}))
         .toBe('/me/documents');
     });
 
     it('should route DOCUMENT_EXPIRING to documents page', () => {
-      expect(getNotificationRoute({ type: 'DOCUMENT_EXPIRING' }))
+      expect(getNotificationRoute({type: 'DOCUMENT_EXPIRING'}))
         .toBe('/me/documents');
     });
   });
 
   describe('performance notifications', () => {
     it('should route PERFORMANCE_REVIEW_DUE to reviews page', () => {
-      expect(getNotificationRoute({ type: 'PERFORMANCE_REVIEW_DUE' }))
+      expect(getNotificationRoute({type: 'PERFORMANCE_REVIEW_DUE'}))
         .toBe('/performance/reviews');
     });
 
     it('should route PERFORMANCE_GOAL_ASSIGNED to goals page', () => {
-      expect(getNotificationRoute({ type: 'PERFORMANCE_GOAL_ASSIGNED' }))
+      expect(getNotificationRoute({type: 'PERFORMANCE_GOAL_ASSIGNED'}))
         .toBe('/performance/goals');
     });
 
     it('should route PERFORMANCE_FEEDBACK_RECEIVED to feedback page', () => {
-      expect(getNotificationRoute({ type: 'PERFORMANCE_FEEDBACK_RECEIVED' }))
+      expect(getNotificationRoute({type: 'PERFORMANCE_FEEDBACK_RECEIVED'}))
         .toBe('/performance/feedback');
     });
   });
 
   describe('expense notifications', () => {
     it('should route EXPENSE_APPROVED to expenses page', () => {
-      expect(getNotificationRoute({ type: 'EXPENSE_APPROVED' }))
+      expect(getNotificationRoute({type: 'EXPENSE_APPROVED'}))
         .toBe('/expenses');
     });
 
     it('should route EXPENSE_PENDING_APPROVAL to approvals page', () => {
-      expect(getNotificationRoute({ type: 'EXPENSE_PENDING_APPROVAL' }))
+      expect(getNotificationRoute({type: 'EXPENSE_PENDING_APPROVAL'}))
         .toBe('/expenses/approvals');
     });
   });
 
   describe('recruitment notifications', () => {
     it('should route APPLICATION_RECEIVED with id to specific application', () => {
-      expect(getNotificationRoute({ type: 'APPLICATION_RECEIVED', relatedEntityId: 'app123' }))
+      expect(getNotificationRoute({type: 'APPLICATION_RECEIVED', relatedEntityId: 'app123'}))
         .toBe('/recruitment/applications/app123');
     });
 
     it('should route INTERVIEW_SCHEDULED with id to specific interview', () => {
-      expect(getNotificationRoute({ type: 'INTERVIEW_SCHEDULED', relatedEntityId: 'int456' }))
+      expect(getNotificationRoute({type: 'INTERVIEW_SCHEDULED', relatedEntityId: 'int456'}))
         .toBe('/recruitment/interviews/int456');
     });
   });
 
   describe('training notifications', () => {
     it('should route TRAINING_ASSIGNED to training page', () => {
-      expect(getNotificationRoute({ type: 'TRAINING_ASSIGNED' }))
+      expect(getNotificationRoute({type: 'TRAINING_ASSIGNED'}))
         .toBe('/training');
     });
 
     it('should route CERTIFICATION_EXPIRING to certifications page', () => {
-      expect(getNotificationRoute({ type: 'CERTIFICATION_EXPIRING' }))
+      expect(getNotificationRoute({type: 'CERTIFICATION_EXPIRING'}))
         .toBe('/training/certifications');
     });
   });
 
   describe('celebration notifications', () => {
     it('should route BIRTHDAY to dashboard', () => {
-      expect(getNotificationRoute({ type: 'BIRTHDAY' }))
+      expect(getNotificationRoute({type: 'BIRTHDAY'}))
         .toBe('/dashboard');
     });
 
     it('should route ANNIVERSARY to dashboard', () => {
-      expect(getNotificationRoute({ type: 'ANNIVERSARY' }))
+      expect(getNotificationRoute({type: 'ANNIVERSARY'}))
         .toBe('/dashboard');
     });
 
     it('should route WORK_ANNIVERSARY to dashboard', () => {
-      expect(getNotificationRoute({ type: 'WORK_ANNIVERSARY' }))
+      expect(getNotificationRoute({type: 'WORK_ANNIVERSARY'}))
         .toBe('/dashboard');
     });
   });
 
   describe('system notifications', () => {
     it('should route ANNOUNCEMENT to announcements page', () => {
-      expect(getNotificationRoute({ type: 'ANNOUNCEMENT' }))
+      expect(getNotificationRoute({type: 'ANNOUNCEMENT'}))
         .toBe('/announcements');
     });
 
     it('should route POLICY_UPDATE to policies page', () => {
-      expect(getNotificationRoute({ type: 'POLICY_UPDATE' }))
+      expect(getNotificationRoute({type: 'POLICY_UPDATE'}))
         .toBe('/policies');
     });
 
     it('should route ONBOARDING_TASK to onboarding page', () => {
-      expect(getNotificationRoute({ type: 'ONBOARDING_TASK' }))
+      expect(getNotificationRoute({type: 'ONBOARDING_TASK'}))
         .toBe('/onboarding');
     });
   });
 
   describe('case insensitivity', () => {
     it('should handle lowercase type', () => {
-      expect(getNotificationRoute({ type: 'leave_approved', relatedEntityId: 'id1' }))
+      expect(getNotificationRoute({type: 'leave_approved', relatedEntityId: 'id1'}))
         .toBe('/leave/requests/id1');
     });
 
     it('should handle mixed case type', () => {
-      expect(getNotificationRoute({ type: 'Attendance_Marked' }))
+      expect(getNotificationRoute({type: 'Attendance_Marked'}))
         .toBe('/me/attendance');
     });
   });
 
   describe('fuzzy matching', () => {
     it('should match CUSTOM_LEAVE_NOTIFICATION via fuzzy match', () => {
-      expect(getNotificationRoute({ type: 'CUSTOM_LEAVE_NOTIFICATION' }))
+      expect(getNotificationRoute({type: 'CUSTOM_LEAVE_NOTIFICATION'}))
         .toBe('/leave/requests');
     });
 
     it('should match MY_ATTENDANCE_ISSUE via fuzzy match', () => {
-      expect(getNotificationRoute({ type: 'MY_ATTENDANCE_ISSUE' }))
+      expect(getNotificationRoute({type: 'MY_ATTENDANCE_ISSUE'}))
         .toBe('/me/attendance');
     });
 
     it('should match NEW_PAYROLL_UPDATE via fuzzy match', () => {
-      expect(getNotificationRoute({ type: 'NEW_PAYROLL_UPDATE' }))
+      expect(getNotificationRoute({type: 'NEW_PAYROLL_UPDATE'}))
         .toBe('/me/payroll');
     });
 
     it('should match TEAM_UPDATE via fuzzy match', () => {
-      expect(getNotificationRoute({ type: 'TEAM_UPDATE' }))
+      expect(getNotificationRoute({type: 'TEAM_UPDATE'}))
         .toBe('/team');
     });
   });
 
   describe('default fallback', () => {
     it('should return dashboard for unknown notification type', () => {
-      expect(getNotificationRoute({ type: 'COMPLETELY_UNKNOWN_TYPE' }))
+      expect(getNotificationRoute({type: 'COMPLETELY_UNKNOWN_TYPE'}))
         .toBe('/dashboard');
     });
 
@@ -267,7 +267,7 @@ describe('getNotificationRoute', () => {
     });
 
     it('should return dashboard when type is empty string', () => {
-      expect(getNotificationRoute({ type: '' }))
+      expect(getNotificationRoute({type: ''}))
         .toBe('/dashboard');
     });
   });

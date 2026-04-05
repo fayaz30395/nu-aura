@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Steps to investigate, correct, revert, and re-run payroll when errors are detected. Payroll is a critical pipeline -- all corrections must be audited and reviewed before execution.
+Steps to investigate, correct, revert, and re-run payroll when errors are detected. Payroll is a
+critical pipeline -- all corrections must be audited and reviewed before execution.
 
 ---
 
@@ -97,14 +98,14 @@ ORDER BY attendance_date;
 
 ## 2. Common Root Causes
 
-| Symptom | Likely Cause | Fix |
-|---------|-------------|-----|
-| Net salary = 0 | Missing salary structure assignment | Assign salary structure, re-run |
-| Negative net salary | Deductions exceed gross | Review deduction formulas, cap deductions |
-| Missing employees | Employee joined mid-period or status not ACTIVE | Update employee status, re-run |
-| Wrong tax calculation | Incorrect tax slab or declaration data | Fix tax configuration, recalculate |
-| Payroll run status = ERROR | Exception during processing | Check error_message column and app logs |
-| Duplicate payslips | Re-run without reverting previous run | Revert first run, then re-run |
+| Symptom                    | Likely Cause                                    | Fix                                       |
+|----------------------------|-------------------------------------------------|-------------------------------------------|
+| Net salary = 0             | Missing salary structure assignment             | Assign salary structure, re-run           |
+| Negative net salary        | Deductions exceed gross                         | Review deduction formulas, cap deductions |
+| Missing employees          | Employee joined mid-period or status not ACTIVE | Update employee status, re-run            |
+| Wrong tax calculation      | Incorrect tax slab or declaration data          | Fix tax configuration, recalculate        |
+| Payroll run status = ERROR | Exception during processing                     | Check error_message column and app logs   |
+| Duplicate payslips         | Re-run without reverting previous run           | Revert first run, then re-run             |
 
 ---
 
@@ -217,7 +218,8 @@ AND net_salary < 0;
 
 ## 5. Audit Trail
 
-All payroll corrections must be recorded in the audit log. The application automatically logs payroll actions, but manual DB corrections should be documented:
+All payroll corrections must be recorded in the audit log. The application automatically logs
+payroll actions, but manual DB corrections should be documented:
 
 ```sql
 -- Insert manual audit entry for DB-level corrections

@@ -1,47 +1,38 @@
 'use client';
 
 import React from 'react';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Input,
-  Select,
-  Textarea,
-} from '@/components/ui';
-import { TrainingCategory, DeliveryMode, ProgramStatus } from '@/lib/types/grow/training';
-import type { TrainingProgram } from '@/lib/types/grow/training';
-import { z } from 'zod';
+import {FieldErrors, UseFormRegister} from 'react-hook-form';
+import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea,} from '@/components/ui';
+import type {TrainingProgram} from '@/lib/types/grow/training';
+import {DeliveryMode, ProgramStatus, TrainingCategory} from '@/lib/types/grow/training';
+import {z} from 'zod';
 
 const categoryOptions = [
-  { value: TrainingCategory.TECHNICAL, label: 'Technical' },
-  { value: TrainingCategory.SOFT_SKILLS, label: 'Soft Skills' },
-  { value: TrainingCategory.LEADERSHIP, label: 'Leadership' },
-  { value: TrainingCategory.COMPLIANCE, label: 'Compliance' },
-  { value: TrainingCategory.SAFETY, label: 'Safety' },
-  { value: TrainingCategory.PRODUCT, label: 'Product' },
-  { value: TrainingCategory.SALES, label: 'Sales' },
-  { value: TrainingCategory.CUSTOMER_SERVICE, label: 'Customer Service' },
-  { value: TrainingCategory.OTHER, label: 'Other' },
+  {value: TrainingCategory.TECHNICAL, label: 'Technical'},
+  {value: TrainingCategory.SOFT_SKILLS, label: 'Soft Skills'},
+  {value: TrainingCategory.LEADERSHIP, label: 'Leadership'},
+  {value: TrainingCategory.COMPLIANCE, label: 'Compliance'},
+  {value: TrainingCategory.SAFETY, label: 'Safety'},
+  {value: TrainingCategory.PRODUCT, label: 'Product'},
+  {value: TrainingCategory.SALES, label: 'Sales'},
+  {value: TrainingCategory.CUSTOMER_SERVICE, label: 'Customer Service'},
+  {value: TrainingCategory.OTHER, label: 'Other'},
 ];
 
 const deliveryModeOptions = [
-  { value: DeliveryMode.IN_PERSON, label: 'In-Person' },
-  { value: DeliveryMode.VIRTUAL, label: 'Virtual' },
-  { value: DeliveryMode.HYBRID, label: 'Hybrid' },
-  { value: DeliveryMode.SELF_PACED, label: 'Self-Paced' },
-  { value: DeliveryMode.WORKSHOP, label: 'Workshop' },
+  {value: DeliveryMode.IN_PERSON, label: 'In-Person'},
+  {value: DeliveryMode.VIRTUAL, label: 'Virtual'},
+  {value: DeliveryMode.HYBRID, label: 'Hybrid'},
+  {value: DeliveryMode.SELF_PACED, label: 'Self-Paced'},
+  {value: DeliveryMode.WORKSHOP, label: 'Workshop'},
 ];
 
 const statusOptions = [
-  { value: ProgramStatus.DRAFT, label: 'Draft' },
-  { value: ProgramStatus.SCHEDULED, label: 'Scheduled' },
-  { value: ProgramStatus.IN_PROGRESS, label: 'In Progress' },
-  { value: ProgramStatus.COMPLETED, label: 'Completed' },
-  { value: ProgramStatus.CANCELLED, label: 'Cancelled' },
+  {value: ProgramStatus.DRAFT, label: 'Draft'},
+  {value: ProgramStatus.SCHEDULED, label: 'Scheduled'},
+  {value: ProgramStatus.IN_PROGRESS, label: 'In Progress'},
+  {value: ProgramStatus.COMPLETED, label: 'Completed'},
+  {value: ProgramStatus.CANCELLED, label: 'Cancelled'},
 ];
 
 export const trainingProgramSchema = z.object({
@@ -73,14 +64,14 @@ export const trainingProgramSchema = z.object({
     ProgramStatus.COMPLETED,
     ProgramStatus.CANCELLED,
   ]),
-  durationHours: z.number({ coerce: true }).default(0),
+  durationHours: z.number({coerce: true}).default(0),
   startDate: z.string().default(''),
   endDate: z.string().default(''),
   trainerName: z.string().default(''),
   trainerEmail: z.string().email('Invalid email').default(''),
   location: z.string().default(''),
-  maxParticipants: z.number({ coerce: true }).default(0),
-  costPerParticipant: z.number({ coerce: true }).default(0),
+  maxParticipants: z.number({coerce: true}).default(0),
+  costPerParticipant: z.number({coerce: true}).default(0),
   prerequisites: z.string().default(''),
   learningObjectives: z.string().default(''),
   isMandatory: z.boolean().default(false),
@@ -98,13 +89,13 @@ interface ProgramFormModalProps {
 }
 
 export const ProgramFormModal = React.memo(function ProgramFormModal({
-  isOpen,
-  editingProgram,
-  register,
-  errors,
-  onClose,
-  onSubmit,
-}: ProgramFormModalProps) {
+                                                                       isOpen,
+                                                                       editingProgram,
+                                                                       register,
+                                                                       errors,
+                                                                       onClose,
+                                                                       onSubmit,
+                                                                     }: ProgramFormModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <form onSubmit={onSubmit}>
@@ -119,7 +110,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Program Code *
               </label>
-              <Input {...register('programCode')} placeholder="e.g., TRN-001" />
+              <Input {...register('programCode')} placeholder="e.g., TRN-001"/>
               {errors.programCode && (
                 <p className="text-xs text-danger-600 mt-1">{errors.programCode.message}</p>
               )}
@@ -128,7 +119,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Program Name *
               </label>
-              <Input {...register('programName')} placeholder="Enter program name" />
+              <Input {...register('programName')} placeholder="Enter program name"/>
               {errors.programName && (
                 <p className="text-xs text-danger-600 mt-1">{errors.programName.message}</p>
               )}
@@ -185,7 +176,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </label>
               <Input
                 type="number"
-                {...register('durationHours', { valueAsNumber: true })}
+                {...register('durationHours', {valueAsNumber: true})}
                 placeholder="Enter duration"
               />
             </div>
@@ -205,7 +196,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Trainer Name
               </label>
-              <Input {...register('trainerName')} placeholder="Enter trainer name" />
+              <Input {...register('trainerName')} placeholder="Enter trainer name"/>
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -224,7 +215,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Location
               </label>
-              <Input {...register('location')} placeholder="Enter location" />
+              <Input {...register('location')} placeholder="Enter location"/>
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -232,7 +223,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </label>
               <Input
                 type="number"
-                {...register('maxParticipants', { valueAsNumber: true })}
+                {...register('maxParticipants', {valueAsNumber: true})}
                 placeholder="Enter max participants"
               />
             </div>
@@ -242,7 +233,7 @@ export const ProgramFormModal = React.memo(function ProgramFormModal({
               </label>
               <Input
                 type="number"
-                {...register('costPerParticipant', { valueAsNumber: true })}
+                {...register('costPerParticipant', {valueAsNumber: true})}
                 placeholder="Enter cost"
               />
             </div>

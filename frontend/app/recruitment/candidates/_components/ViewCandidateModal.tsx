@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Mail, Phone, Building, MapPin, X } from 'lucide-react';
-import { Candidate } from '@/lib/types/hire/recruitment';
-import { getStatusColor, getStageColor } from '../utils';
+import {Button} from '@/components/ui/Button';
+import {Building, Mail, MapPin, Phone, X} from 'lucide-react';
+import {Candidate} from '@/lib/types/hire/recruitment';
+import {getStageColor, getStatusColor} from '../utils';
 
 interface ViewCandidateModalProps {
   open: boolean;
@@ -15,28 +15,31 @@ interface ViewCandidateModalProps {
 }
 
 export function ViewCandidateModal({
-  open,
-  candidate,
-  onClose,
-  onEdit,
-  onScheduleInterview,
-}: ViewCandidateModalProps) {
+                                     open,
+                                     candidate,
+                                     onClose,
+                                     onEdit,
+                                     onScheduleInterview,
+                                   }: ViewCandidateModalProps) {
   if (!open || !candidate) return null;
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">Candidate Details</h2>
-            <button onClick={onClose} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6" />
+            <button onClick={onClose} aria-label="Close modal"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <X className="h-6 w-6"/>
             </button>
           </div>
 
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
+              <div
+                className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
                 <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
@@ -49,7 +52,8 @@ export function ViewCandidateModal({
                     {candidate.status.replace(/_/g, ' ')}
                   </span>
                   {candidate.currentStage && (
-                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
+                    <span
+                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
                       {candidate.currentStage.replace(/_/g, ' ')}
                     </span>
                   )}
@@ -59,7 +63,7 @@ export function ViewCandidateModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                <Mail className="h-5 w-5 text-[var(--text-muted)]" />
+                <Mail className="h-5 w-5 text-[var(--text-muted)]"/>
                 <div>
                   <p className="text-caption">Email</p>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.email}</p>
@@ -67,7 +71,7 @@ export function ViewCandidateModal({
               </div>
               {candidate.phone && (
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                  <Phone className="h-5 w-5 text-[var(--text-muted)]" />
+                  <Phone className="h-5 w-5 text-[var(--text-muted)]"/>
                   <div>
                     <p className="text-caption">Phone</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.phone}</p>
@@ -76,7 +80,7 @@ export function ViewCandidateModal({
               )}
               {candidate.currentLocation && (
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                  <MapPin className="h-5 w-5 text-[var(--text-muted)]" />
+                  <MapPin className="h-5 w-5 text-[var(--text-muted)]"/>
                   <div>
                     <p className="text-caption">Location</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentLocation}</p>
@@ -85,7 +89,7 @@ export function ViewCandidateModal({
               )}
               {candidate.currentCompany && (
                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
-                  <Building className="h-5 w-5 text-[var(--text-muted)]" />
+                  <Building className="h-5 w-5 text-[var(--text-muted)]"/>
                   <div>
                     <p className="text-caption">Current Company</p>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentCompany}</p>
@@ -132,7 +136,10 @@ export function ViewCandidateModal({
               <Button variant="outline" onClick={onClose} className="flex-1">
                 Close
               </Button>
-              <Button onClick={() => { onClose(); onEdit(candidate); }} className="flex-1">
+              <Button onClick={() => {
+                onClose();
+                onEdit(candidate);
+              }} className="flex-1">
                 Edit Candidate
               </Button>
               <Button onClick={() => onScheduleInterview(candidate)} className="flex-1">

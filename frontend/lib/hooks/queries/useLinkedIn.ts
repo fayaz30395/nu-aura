@@ -1,20 +1,17 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { linkedinService } from '@/lib/services/platform/linkedin.service';
-import {
-  CreateLinkedInPostRequest,
-  UpdateLinkedInPostRequest,
-} from '@/lib/types/platform/linkedin';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {linkedinService} from '@/lib/services/platform/linkedin.service';
+import {CreateLinkedInPostRequest, UpdateLinkedInPostRequest,} from '@/lib/types/platform/linkedin';
 
 // Query keys for cache management
 export const linkedinKeys = {
   all: ['linkedin'] as const,
   posts: () => [...linkedinKeys.all, 'posts'] as const,
   active: (page: number, size: number) =>
-    [...linkedinKeys.posts(), 'active', { page, size }] as const,
+    [...linkedinKeys.posts(), 'active', {page, size}] as const,
   all_posts: (page: number, size: number) =>
-    [...linkedinKeys.posts(), 'all', { page, size }] as const,
+    [...linkedinKeys.posts(), 'all', {page, size}] as const,
   detail: (id: string) => [...linkedinKeys.posts(), 'detail', id] as const,
 };
 
@@ -61,7 +58,7 @@ export function useCreateLinkedInPost() {
     mutationFn: (data: CreateLinkedInPostRequest) => linkedinService.createLinkedInPost(data),
     onSuccess: () => {
       // Invalidate all posts queries
-      queryClient.invalidateQueries({ queryKey: linkedinKeys.posts() });
+      queryClient.invalidateQueries({queryKey: linkedinKeys.posts()});
     },
   });
 }
@@ -72,12 +69,12 @@ export function useCreateLinkedInPost() {
 export function useUpdateLinkedInPost() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateLinkedInPostRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateLinkedInPostRequest }) =>
       linkedinService.updateLinkedInPost(id, data),
     onSuccess: (_, variables) => {
       // Invalidate all posts and specific post
-      queryClient.invalidateQueries({ queryKey: linkedinKeys.posts() });
-      queryClient.invalidateQueries({ queryKey: linkedinKeys.detail(variables.id) });
+      queryClient.invalidateQueries({queryKey: linkedinKeys.posts()});
+      queryClient.invalidateQueries({queryKey: linkedinKeys.detail(variables.id)});
     },
   });
 }
@@ -91,7 +88,7 @@ export function useDeleteLinkedInPost() {
     mutationFn: (id: string) => linkedinService.deleteLinkedInPost(id),
     onSuccess: () => {
       // Invalidate all posts queries
-      queryClient.invalidateQueries({ queryKey: linkedinKeys.posts() });
+      queryClient.invalidateQueries({queryKey: linkedinKeys.posts()});
     },
   });
 }

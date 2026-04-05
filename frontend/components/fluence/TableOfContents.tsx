@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {useEffect, useState} from 'react';
+import {motion} from 'framer-motion';
+import {ChevronDown, ChevronUp} from 'lucide-react';
 
 interface Heading {
   id: string;
@@ -19,7 +19,7 @@ interface TableOfContentsProps {
  * Table of Contents component that auto-generates headings from content.
  * Scans contentRef for h1-h4 elements and creates a navigable TOC.
  */
-export function TableOfContents({ contentRef, className = '' }: TableOfContentsProps) {
+export function TableOfContents({contentRef, className = ''}: TableOfContentsProps) {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(true);
@@ -42,7 +42,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
       }
 
       if (text.trim()) {
-        extractedHeadings.push({ id, level, text });
+        extractedHeadings.push({id, level, text});
       }
     });
 
@@ -53,7 +53,7 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
   const handleHeadingClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({behavior: 'smooth', block: 'start'});
       setActiveHeadingId(id);
     }
   };
@@ -67,22 +67,23 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
   return (
     <motion.div
       className={`sticky top-24 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 max-h-[calc(100vh-120px)] overflow-y-auto ${className}`}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
+      initial={{opacity: 0, y: 8}}
+      animate={{opacity: 1, y: 0}}
+      transition={{delay: 0.2}}
     >
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="row-between w-full mb-4 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
       >
-        <h3 className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-700)] transition-colors">
+        <h3
+          className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-700)] transition-colors">
           Contents
         </h3>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-[var(--text-muted)]" />
+          <ChevronUp className="w-4 h-4 text-[var(--text-muted)]"/>
         ) : (
-          <ChevronDown className="w-4 h-4 text-[var(--text-muted)]" />
+          <ChevronDown className="w-4 h-4 text-[var(--text-muted)]"/>
         )}
       </button>
 
@@ -90,9 +91,9 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
       {isExpanded && (
         <motion.nav
           className="space-y-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          transition={{duration: 0.2}}
         >
           {headings.map((heading) => (
             <motion.button
@@ -103,8 +104,8 @@ export function TableOfContents({ contentRef, className = '' }: TableOfContentsP
                   ? 'bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] font-medium'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
               }`}
-              style={{ marginLeft: `${(heading.level - minLevel) * 12}px` }}
-              whileHover={{ x: 2 }}
+              style={{marginLeft: `${(heading.level - minLevel) * 12}px`}}
+              whileHover={{x: 2}}
               aria-label={`Jump to ${heading.text}`}
             >
               {heading.text}

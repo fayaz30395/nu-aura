@@ -1,32 +1,21 @@
 'use client';
 
-import { useCallback, useRef, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import dynamic from 'next/dynamic';
-import { AppLayout } from '@/components/layout';
-import { useCreateWikiPage, useWikiSpaces } from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { Select, Drawer, LoadingOverlay } from '@mantine/core';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft,
-  ChevronDown,
-  Globe,
-  Building2,
-  Lock,
-  Shield,
-  Eye,
-  FileText,
-  Save,
-  Send,
-} from 'lucide-react';
-import { isAxiosError } from '@/lib/utils/type-guards';
+import {AppLayout} from '@/components/layout';
+import {useCreateWikiPage, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {Drawer, LoadingOverlay, Select} from '@mantine/core';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ArrowLeft, Building2, ChevronDown, Eye, FileText, Globe, Lock, Save, Send, Shield,} from 'lucide-react';
+import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
-import { motion as dsMotion } from '@/lib/design-system';
+import {motion as dsMotion} from '@/lib/design-system';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -36,9 +25,9 @@ const FluenceEditor = dynamic(
     loading: () => (
       <div className="min-h-[400px] animate-pulse">
         <div className="space-y-4 pt-4">
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4" />
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2" />
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6" />
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4"/>
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2"/>
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6"/>
         </div>
       </div>
     ),
@@ -49,30 +38,30 @@ const createWikiPageSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
   spaceId: z.string().min(1, 'Space is required'),
   visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
-    errorMap: () => ({ message: 'Invalid visibility option' }),
+    errorMap: () => ({message: 'Invalid visibility option'}),
   }),
   parentId: z.string().optional(),
   content: z.record(z.unknown()).default({
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{type: 'paragraph'}],
   }),
 });
 
 type CreateWikiPageInput = z.infer<typeof createWikiPageSchema>;
 
 const VISIBILITY_OPTIONS = [
-  { value: 'PUBLIC', label: 'Public', icon: Globe, desc: 'Anyone can view' },
-  { value: 'ORGANIZATION', label: 'Organization', icon: Building2, desc: 'All org members' },
-  { value: 'DEPARTMENT', label: 'Department', icon: Building2, desc: 'Your department only' },
-  { value: 'PRIVATE', label: 'Private', icon: Lock, desc: 'Only you' },
-  { value: 'RESTRICTED', label: 'Restricted', icon: Shield, desc: 'Specific people' },
+  {value: 'PUBLIC', label: 'Public', icon: Globe, desc: 'Anyone can view'},
+  {value: 'ORGANIZATION', label: 'Organization', icon: Building2, desc: 'All org members'},
+  {value: 'DEPARTMENT', label: 'Department', icon: Building2, desc: 'Your department only'},
+  {value: 'PRIVATE', label: 'Private', icon: Lock, desc: 'Only you'},
+  {value: 'RESTRICTED', label: 'Restricted', icon: Shield, desc: 'Specific people'},
 ] as const;
 
 export default function CreateWikiPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [publishDrawerOpen, setPublishDrawerOpen] = useState(false);
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.WIKI_CREATE,
@@ -87,8 +76,8 @@ export default function CreateWikiPage() {
   }, [isReady, hasAccess, router]);
 
   const titleRef = useRef<HTMLTextAreaElement>(null);
-  const { mutate: createWikiPage } = useCreateWikiPage();
-  const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
+  const {mutate: createWikiPage} = useCreateWikiPage();
+  const {data: spacesData, isLoading: spacesLoading} = useWikiSpaces(0, 100);
 
   const {
     control,
@@ -96,7 +85,7 @@ export default function CreateWikiPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateWikiPageInput>({
     resolver: zodResolver(createWikiPageSchema),
     defaultValues: {
@@ -106,7 +95,7 @@ export default function CreateWikiPage() {
       parentId: '',
       content: {
         type: 'doc',
-        content: [{ type: 'paragraph' }],
+        content: [{type: 'paragraph'}],
       },
     },
   });
@@ -144,7 +133,7 @@ export default function CreateWikiPage() {
 
   const onSubmit = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {
-      notifications.show({ title: 'Validation Error', message: 'Content cannot be empty', color: 'red' });
+      notifications.show({title: 'Validation Error', message: 'Content cannot be empty', color: 'red'});
       return;
     }
 
@@ -163,7 +152,7 @@ export default function CreateWikiPage() {
         },
         {
           onSuccess: (page) => {
-            notifications.show({ title: 'Page Created', message: 'Your wiki page has been saved', color: 'green' });
+            notifications.show({title: 'Page Created', message: 'Your wiki page has been saved', color: 'green'});
             router.push(`/fluence/wiki/${page.id}`);
           },
           onError: (error: unknown) => {
@@ -174,7 +163,7 @@ export default function CreateWikiPage() {
               'message' in error.response.data
                 ? ((error.response.data as { message?: string }).message ?? 'Failed to create wiki page')
                 : 'Failed to create wiki page';
-            notifications.show({ title: 'Error', message, color: 'red' });
+            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );
@@ -197,14 +186,15 @@ export default function CreateWikiPage() {
               aria-label="Go back"
               className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4"/>
             </button>
 
-            <div className="h-5 w-px bg-[var(--border-subtle)]" />
+            <div className="h-5 w-px bg-[var(--border-subtle)]"/>
 
             {/* Draft indicator */}
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2.5 py-1 rounded-full">
-              <FileText className="w-3 h-3" />
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2.5 py-1 rounded-full">
+              <FileText className="w-3 h-3"/>
               Draft
             </span>
 
@@ -213,9 +203,9 @@ export default function CreateWikiPage() {
               onClick={() => setPublishDrawerOpen(true)}
               className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-2.5 py-1 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <VisIcon className="w-3 h-3" />
+              <VisIcon className="w-3 h-3"/>
               {selectedVisibility?.label ?? 'Organization'}
-              <ChevronDown className="w-3 h-3 opacity-50" />
+              <ChevronDown className="w-3 h-3 opacity-50"/>
             </button>
           </div>
 
@@ -224,7 +214,7 @@ export default function CreateWikiPage() {
               type="button"
               className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-4 h-4"/>
               Preview
             </button>
 
@@ -232,7 +222,7 @@ export default function CreateWikiPage() {
               type="button"
               className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-4 py-2 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4"/>
               Save Draft
             </button>
 
@@ -241,7 +231,7 @@ export default function CreateWikiPage() {
               onClick={() => setPublishDrawerOpen(true)}
               className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4"/>
               Publish
             </button>
           </div>
@@ -271,7 +261,7 @@ export default function CreateWikiPage() {
           <Controller
             control={control}
             name="content"
-            render={({ field }) => (
+            render={({field}) => (
               <FluenceEditor
                 content={field.value}
                 onChange={field.onChange}
@@ -310,7 +300,7 @@ export default function CreateWikiPage() {
                 <Controller
                   control={control}
                   name="spaceId"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <Select
                       {...field}
                       placeholder="Select a space"
@@ -333,7 +323,7 @@ export default function CreateWikiPage() {
                 <Controller
                   control={control}
                   name="visibility"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <div className="space-y-1" role="radiogroup" aria-label="Visibility">
                       {VISIBILITY_OPTIONS.map((opt) => {
                         const Icon = opt.icon;
@@ -351,15 +341,16 @@ export default function CreateWikiPage() {
                                 : 'hover:bg-[var(--bg-secondary)]'
                             }`}
                           >
-                            <Icon className={`w-4 h-4 ${isSelected ? 'text-accent-500' : 'text-[var(--text-muted)]'}`} />
+                            <Icon className={`w-4 h-4 ${isSelected ? 'text-accent-500' : 'text-[var(--text-muted)]'}`}/>
                             <div className="flex-1">
-                              <div className={`text-sm font-medium ${isSelected ? 'text-accent-500' : 'text-[var(--text-primary)]'}`}>
+                              <div
+                                className={`text-sm font-medium ${isSelected ? 'text-accent-500' : 'text-[var(--text-primary)]'}`}>
                                 {opt.label}
                               </div>
                               <div className="text-caption">{opt.desc}</div>
                             </div>
                             {isSelected && (
-                              <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-accent-500" />
+                              <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-accent-500"/>
                             )}
                           </button>
                         );
@@ -373,9 +364,9 @@ export default function CreateWikiPage() {
               <AnimatePresence>
                 {(visibility === 'DEPARTMENT' || visibility === 'RESTRICTED') && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
+                    initial={{opacity: 0, height: 0}}
+                    animate={{opacity: 1, height: 'auto'}}
+                    exit={{opacity: 0, height: 0}}
                   >
                     <AccessControlSection
                       visibility={visibility}
@@ -411,7 +402,7 @@ export default function CreateWikiPage() {
                 disabled={isSubmitting}
                 className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4"/>
                 {isSubmitting ? 'Publishing...' : 'Publish Page'}
               </button>
               <button
@@ -425,7 +416,7 @@ export default function CreateWikiPage() {
           </form>
         </Drawer>
 
-        <LoadingOverlay visible={isSubmitting} />
+        <LoadingOverlay visible={isSubmitting}/>
       </motion.div>
     </AppLayout>
   );

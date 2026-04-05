@@ -6,11 +6,11 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({
-  progress,
-  showLabel = true,
-  height = 'h-2',
-  color = 'primary'
-}: ProgressBarProps) {
+                                      progress,
+                                      showLabel = true,
+                                      height = 'h-2',
+                                      color = 'primary'
+                                    }: ProgressBarProps) {
   const percentage = Math.min(Math.max(progress, 0), 100);
 
   const colorClasses = {
@@ -34,7 +34,7 @@ export default function ProgressBar({
       <div className={`w-full ${height} bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden`}>
         <div
           className={`${height} ${getColorByProgress()} transition-all duration-300 ease-in-out`}
-          style={{ width: `${percentage}%` }}
+          style={{width: `${percentage}%`}}
         />
       </div>
       {showLabel && (

@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useActiveApp } from '@/lib/hooks/useActiveApp';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { ShieldAlert } from 'lucide-react';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {useActiveApp} from '@/lib/hooks/useActiveApp';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {ShieldAlert} from 'lucide-react';
 
 /** NU-Fluence entry page — redirect to wiki */
 export default function FluenceEntryPage() {
   const router = useRouter();
-  const { hasHydrated, isAuthenticated } = useAuth();
-  const { hasAppAccess } = useActiveApp();
+  const {hasHydrated, isAuthenticated} = useAuth();
+  const {hasAppAccess} = useActiveApp();
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -30,7 +30,8 @@ export default function FluenceEntryPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="skeuo-card p-8 text-center max-w-md">
-          <ShieldAlert className="h-12 w-12 text-danger-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
+          <ShieldAlert
+            className="h-12 w-12 text-danger-500 mx-auto mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Access Denied</h2>
           <p className="text-[var(--text-muted)] mb-4">You do not have permission to access NU-Fluence.</p>
           <button

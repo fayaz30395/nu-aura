@@ -1,36 +1,36 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout';
-import { Card } from '@/components/ui/Card';
-import { Skeleton } from '@mantine/core';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {Card} from '@/components/ui/Card';
+import {Skeleton} from '@mantine/core';
 import dynamic from 'next/dynamic';
-import { useGoogleLogin } from '@react-oauth/google';
-import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { Employee } from '@/lib/types/hrms/employee';
-import { createLogger } from '@/lib/utils/logger';
+import {useGoogleLogin} from '@react-oauth/google';
+import {clearGoogleToken, getGoogleToken, saveGoogleToken} from '@/lib/utils/googleToken';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {Employee} from '@/lib/types/hrms/employee';
+import {createLogger} from '@/lib/utils/logger';
 
 import {
-  MailSidebar,
-  EmailList,
-  EmailViewer,
-  OAuthPanel,
-  EmailMessage,
-  EmailLabel,
   ComposeEmail,
-  EmailContact,
-  SendAsAddress,
   EmailAttachment,
+  EmailContact,
+  EmailLabel,
+  EmailList,
+  EmailMessage,
+  EmailViewer,
+  MailSidebar,
+  OAuthPanel,
+  SendAsAddress,
 } from './_components';
 
 // Dynamic import — ComposeModal is a rich editor only needed when the user opens compose
 const ComposeModal = dynamic(
-  () => import('./_components/ComposeModal').then((m) => ({ default: m.ComposeModal })),
-  { loading: () => <Skeleton height={500} radius="md" />, ssr: false }
+  () => import('./_components/ComposeModal').then((m) => ({default: m.ComposeModal})),
+  {loading: () => <Skeleton height={500} radius="md"/>, ssr: false}
 );
 
 const log = createLogger('NuMailPage');
@@ -47,8 +47,8 @@ const GMAIL_SCOPES = [
 
 function MailContent() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(Permissions.EMAIL_VIEW, Permissions.EMAIL_SEND);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +145,7 @@ function MailContent() {
     try {
       const response = await fetch(
         'https://www.googleapis.com/gmail/v1/users/me/settings/sendAs',
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (response.ok) {
@@ -256,7 +256,7 @@ function MailContent() {
     try {
       const response = await fetch(
         'https://www.googleapis.com/gmail/v1/users/me/labels',
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${token}`}}
       );
 
       if (!response.ok) {
@@ -280,7 +280,7 @@ function MailContent() {
       if (inboxLabel) {
         const labelResponse = await fetch(
           `https://www.googleapis.com/gmail/v1/users/me/labels/INBOX`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {headers: {Authorization: `Bearer ${token}`}}
         );
         if (labelResponse.ok) {
           const labelData = await labelResponse.json();
@@ -301,7 +301,7 @@ function MailContent() {
       }
 
       const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {Authorization: `Bearer ${token}`},
       });
 
       if (!response.ok) {
@@ -325,7 +325,7 @@ function MailContent() {
         data.messages.slice(0, 20).map(async (msg: { id: string }) => {
           const msgResponse = await fetch(
             `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}?format=metadata&metadataHeaders=Subject&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Cc&metadataHeaders=Date`,
-            { headers: { Authorization: `Bearer ${token}` } }
+            {headers: {Authorization: `Bearer ${token}`}}
           );
 
           if (!msgResponse.ok) return null;
@@ -334,7 +334,10 @@ function MailContent() {
           const headers = msgData.payload?.headers || [];
 
           const getHeader = (name: string) =>
-            headers.find((h: { name: string; value: string }) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
+            headers.find((h: {
+              name: string;
+              value: string
+            }) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
 
           const fromHeader = getHeader('From');
           const fromMatch = fromHeader.match(/^([^<]*)<([^>]+)>/) || [null, fromHeader, fromHeader];
@@ -375,7 +378,7 @@ function MailContent() {
     try {
       const response = await fetch(
         `https://www.googleapis.com/gmail/v1/users/me/messages/${emailId}?format=full`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        {headers: {Authorization: `Bearer ${accessToken}`}}
       );
 
       if (!response.ok) {
@@ -389,7 +392,12 @@ function MailContent() {
       const attachments: EmailAttachment[] = [];
 
       const extractBody = (payload: unknown): void => {
-        const p = payload as { body?: { data?: string; size?: number; attachmentId?: string }; mimeType?: string; parts?: unknown[]; filename?: string };
+        const p = payload as {
+          body?: { data?: string; size?: number; attachmentId?: string };
+          mimeType?: string;
+          parts?: unknown[];
+          filename?: string
+        };
         if (p.body?.data) {
           const decoded = atob(p.body.data.replace(/-/g, '+').replace(/_/g, '/'));
           if (p.mimeType === 'text/html') {
@@ -401,7 +409,11 @@ function MailContent() {
 
         if (p.parts) {
           for (const part of p.parts) {
-            const partData = part as { filename?: string; body?: { attachmentId?: string; size?: number }; mimeType?: string };
+            const partData = part as {
+              filename?: string;
+              body?: { attachmentId?: string; size?: number };
+              mimeType?: string
+            };
             if (partData.filename && partData.body?.attachmentId) {
               attachments.push({
                 id: partData.body.attachmentId,
@@ -470,12 +482,12 @@ function MailContent() {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ removeLabelIds: ['UNREAD'] }),
+          body: JSON.stringify({removeLabelIds: ['UNREAD']}),
         }
       );
 
       setEmails(emails.map(e =>
-        e.id === emailId ? { ...e, isRead: true } : e
+        e.id === emailId ? {...e, isRead: true} : e
       ));
 
       if (unreadCount > 0) {
@@ -501,18 +513,18 @@ function MailContent() {
           },
           body: JSON.stringify(
             isStarred
-              ? { removeLabelIds: ['STARRED'] }
-              : { addLabelIds: ['STARRED'] }
+              ? {removeLabelIds: ['STARRED']}
+              : {addLabelIds: ['STARRED']}
           ),
         }
       );
 
       setEmails(emails.map(e =>
-        e.id === emailId ? { ...e, isStarred: !isStarred } : e
+        e.id === emailId ? {...e, isStarred: !isStarred} : e
       ));
 
       if (selectedEmail?.id === emailId) {
-        setSelectedEmail({ ...selectedEmail, isStarred: !isStarred });
+        setSelectedEmail({...selectedEmail, isStarred: !isStarred});
       }
     } catch (err) {
       log.error('Error toggling star:', err);
@@ -532,7 +544,7 @@ function MailContent() {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ removeLabelIds: ['INBOX'] }),
+          body: JSON.stringify({removeLabelIds: ['INBOX']}),
         }
       );
 
@@ -552,7 +564,7 @@ function MailContent() {
         `https://www.googleapis.com/gmail/v1/users/me/messages/${emailId}/trash`,
         {
           method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: {Authorization: `Bearer ${accessToken}`},
         }
       );
 
@@ -570,7 +582,7 @@ function MailContent() {
     try {
       const response = await fetch(
         `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}/attachments/${attachmentId}`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        {headers: {Authorization: `Bearer ${accessToken}`}}
       );
 
       if (!response.ok) throw new Error('Failed to download attachment');
@@ -606,7 +618,7 @@ function MailContent() {
     setShowSuggestions(false);
 
     if (mode === 'new') {
-      setComposeEmail({ to: '', cc: '', subject: '', body: '' });
+      setComposeEmail({to: '', cc: '', subject: '', body: ''});
     } else if (selectedEmail) {
       const originalSubject = selectedEmail.subject;
       const replySubject = originalSubject.startsWith('Re:') ? originalSubject : `Re: ${originalSubject}`;
@@ -762,13 +774,13 @@ function MailContent() {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
-      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'});
     } else if (days === 1) {
       return 'Yesterday';
     } else if (days < 7) {
-      return date.toLocaleDateString('en-US', { weekday: 'short' });
+      return date.toLocaleDateString('en-US', {weekday: 'short'});
     } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
     }
   };
 
@@ -786,9 +798,10 @@ function MailContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
+      <div
+        className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
           <p className="text-[var(--text-muted)] font-medium">Loading Nu-Mail...</p>
         </div>
       </div>
@@ -798,7 +811,7 @@ function MailContent() {
   return (
     <AppLayout
       activeMenuItem="nu-mail"
-      breadcrumbs={[{ label: 'Nu-Mail', href: '/nu-mail' }]}
+      breadcrumbs={[{label: 'Nu-Mail', href: '/nu-mail'}]}
     >
       <div className="space-y-6">
         {/* Header + OAuth Panel */}
@@ -949,5 +962,5 @@ function MailContent() {
 }
 
 export default function NuMailPage() {
-  return <MailContent />;
+  return <MailContent/>;
 }

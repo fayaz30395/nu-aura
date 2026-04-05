@@ -1,20 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { CalendarDays, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Holiday, HolidayRequest, HolidayType } from '@/lib/types/hrms/attendance';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {CalendarDays, ChevronLeft, ChevronRight, Pencil, Plus, Trash2} from 'lucide-react';
+import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui';
 import {
-  useHolidaysByYear,
   useCreateHoliday,
-  useUpdateHoliday,
   useDeleteHoliday,
+  useHolidaysByYear,
+  useUpdateHoliday,
 } from '@/lib/hooks/queries/useAttendance';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -45,8 +45,8 @@ const HOLIDAY_TYPES: HolidayType[] = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTR
 
 export default function HolidaysPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
   const currentYear = new Date().getFullYear();
 
   const isAdmin = isReady && hasAnyRole(...ADMIN_ROLES);
@@ -60,7 +60,7 @@ export default function HolidaysPage() {
   const [filterType, setFilterType] = useState<HolidayType | 'ALL'>('ALL');
 
   // React Query hooks
-  const { data: holidays = [], isLoading, error: queryError } = useHolidaysByYear(selectedYear);
+  const {data: holidays = [], isLoading, error: queryError} = useHolidaysByYear(selectedYear);
   const createMutation = useCreateHoliday();
   const updateMutation = useUpdateHoliday();
   const deleteMutation = useDeleteHoliday();
@@ -93,7 +93,7 @@ export default function HolidaysPage() {
 
   // Group by month
   const holidaysByMonth = filteredHolidays.reduce((acc, holiday) => {
-    const month = new Date(holiday.holidayDate).toLocaleDateString('en-US', { month: 'long' });
+    const month = new Date(holiday.holidayDate).toLocaleDateString('en-US', {month: 'long'});
     if (!acc[month]) acc[month] = [];
     acc[month].push(holiday);
     return acc;
@@ -158,7 +158,7 @@ export default function HolidaysPage() {
     };
 
     if (editingHoliday) {
-      updateMutation.mutate({ id: editingHoliday.id, data: submitData }, callbacks);
+      updateMutation.mutate({id: editingHoliday.id, data: submitData}, callbacks);
     } else {
       createMutation.mutate(submitData, callbacks);
     }
@@ -228,7 +228,7 @@ export default function HolidaysPage() {
               className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Previous year"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4"/>
             </button>
             <span className="text-sm font-semibold text-[var(--text-primary)] min-w-[4rem] text-center">
               {selectedYear}
@@ -238,7 +238,7 @@ export default function HolidaysPage() {
               className="p-2 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Next year"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4"/>
             </button>
           </div>
 
@@ -247,13 +247,13 @@ export default function HolidaysPage() {
             <button
               onClick={() => {
                 resetForm();
-                form.reset({ ...form.getValues(), holidayDate: `${selectedYear}-01-01` });
+                form.reset({...form.getValues(), holidayDate: `${selectedYear}-01-01`});
                 setEditingHoliday(null);
                 setShowModal(true);
               }}
               className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"/>
               Add Holiday
             </button>
           )}
@@ -262,7 +262,8 @@ export default function HolidaysPage() {
 
       {/* Error Message */}
       {(uiError || queryError) && (
-        <div className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded-lg relative">
+        <div
+          className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded-lg relative">
           <span className="block sm:inline text-sm">
             {uiError || (queryError instanceof Error ? queryError.message : 'An error occurred')}
           </span>
@@ -309,10 +310,10 @@ export default function HolidaysPage() {
           <div className="flex flex-wrap gap-4">
             {upcomingHolidays.slice(0, 3).map((h) => (
               <div key={h.id} className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-accent-500" />
+                <CalendarDays className="h-4 w-4 text-accent-500"/>
                 <span className="text-sm font-medium text-[var(--text-primary)]">{h.holidayName}</span>
                 <span className="text-caption">
-                  {new Date(h.holidayDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {new Date(h.holidayDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
                 </span>
                 <span className="text-xs font-medium text-accent-700 dark:text-accent-400">
                   {getDaysUntil(h.holidayDate)}
@@ -362,7 +363,7 @@ export default function HolidaysPage() {
           </div>
         ) : filteredHolidays.length === 0 ? (
           <div className="px-6 py-12 text-center">
-            <CalendarDays className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+            <CalendarDays className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
             <p className="text-[var(--text-secondary)]">
               {holidays.length === 0
                 ? `No holidays configured for ${selectedYear}`
@@ -391,12 +392,13 @@ export default function HolidaysPage() {
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         {/* Date box */}
-                        <div className="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)]">
+                        <div
+                          className="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)]">
                           <div className="text-lg font-bold text-[var(--text-primary)] leading-tight">
                             {new Date(holiday.holidayDate).getDate()}
                           </div>
                           <div className="text-2xs text-[var(--text-muted)] uppercase font-medium">
-                            {new Date(holiday.holidayDate).toLocaleDateString('en-US', { weekday: 'short' })}
+                            {new Date(holiday.holidayDate).toLocaleDateString('en-US', {weekday: 'short'})}
                           </div>
                         </div>
 
@@ -411,21 +413,25 @@ export default function HolidaysPage() {
                             </div>
                           )}
                           <div className="flex flex-wrap gap-2 mt-2">
-                            <span className={`px-2 py-0.5 text-xs font-medium rounded ${HOLIDAY_TYPE_COLORS[holiday.holidayType]}`}>
+                            <span
+                              className={`px-2 py-0.5 text-xs font-medium rounded ${HOLIDAY_TYPE_COLORS[holiday.holidayType]}`}>
                               {holiday.holidayType.replace('_', ' ')}
                             </span>
                             {holiday.isOptional && (
-                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
+                              <span
+                                className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
                                 Optional
                               </span>
                             )}
                             {holiday.isRestricted && (
-                              <span className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
+                              <span
+                                className="px-2 py-0.5 text-xs font-medium rounded bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300">
                                 Restricted
                               </span>
                             )}
                             {holiday.applicableLocations && (
-                              <span className="px-2 py-0.5 text-xs rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                              <span
+                                className="px-2 py-0.5 text-xs rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                                 {holiday.applicableLocations}
                               </span>
                             )}
@@ -442,7 +448,7 @@ export default function HolidaysPage() {
                             title="Edit holiday"
                             aria-label={`Edit ${holiday.holidayName}`}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-4 w-4"/>
                           </button>
                           <button
                             onClick={() => handleDelete(holiday)}
@@ -450,7 +456,7 @@ export default function HolidaysPage() {
                             title="Delete holiday"
                             aria-label={`Delete ${holiday.holidayName}`}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4"/>
                           </button>
                         </div>
                       )}
@@ -481,7 +487,8 @@ export default function HolidaysPage() {
       {/* Add/Edit Holiday Modal (Admin only) */}
       {showModal && isAdmin && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
-          <div className="bg-[var(--bg-card)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-dropdown)]">
+          <div
+            className="bg-[var(--bg-card)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[var(--shadow-dropdown)]">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">

@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {DashboardPage} from './pages/DashboardPage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Dashboard E2E Tests
@@ -12,7 +12,7 @@ test.describe('Dashboard', () => {
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
 
@@ -23,11 +23,11 @@ test.describe('Dashboard', () => {
   });
 
   test.describe('Dashboard Page Load', () => {
-    test('should display dashboard after login', async ({ page }) => {
+    test('should display dashboard after login', async ({page}) => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should display welcome message', async ({ page }) => {
+    test('should display welcome message', async ({page}) => {
       // Wait for dashboard to fully load
       await dashboardPage.waitForAttendanceWidget();
 
@@ -36,14 +36,14 @@ test.describe('Dashboard', () => {
       expect(hasWelcome).toBe(true);
     });
 
-    test('should display attendance widget', async ({ page }) => {
+    test('should display attendance widget', async ({page}) => {
       const widgetLoaded = await dashboardPage.waitForAttendanceWidget();
       expect(widgetLoaded).toBe(true);
     });
   });
 
   test.describe('Dashboard Attendance Widget - Check-In', () => {
-    test('should show check-in button when not checked in', async ({ page }) => {
+    test('should show check-in button when not checked in', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Either check-in or check-out should be visible
@@ -53,7 +53,7 @@ test.describe('Dashboard', () => {
       expect(checkInVisible || checkOutVisible).toBe(true);
     });
 
-    test('should perform check-in from dashboard', async ({ page }) => {
+    test('should perform check-in from dashboard', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // If already checked in, check out first
@@ -76,7 +76,7 @@ test.describe('Dashboard', () => {
       }
     });
 
-    test('should show working status after check-in', async ({ page }) => {
+    test('should show working status after check-in', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked in
@@ -92,7 +92,7 @@ test.describe('Dashboard', () => {
   });
 
   test.describe('Dashboard Attendance Widget - Check-Out', () => {
-    test('should show check-out button when checked in', async ({ page }) => {
+    test('should show check-out button when checked in', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked in first
@@ -105,7 +105,7 @@ test.describe('Dashboard', () => {
       expect(checkOutVisible).toBe(true);
     });
 
-    test('should perform check-out from dashboard', async ({ page }) => {
+    test('should perform check-out from dashboard', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked in first
@@ -127,7 +127,7 @@ test.describe('Dashboard', () => {
       }
     });
 
-    test('should show check-in button after check-out', async ({ page }) => {
+    test('should show check-in button after check-out', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Perform full cycle if needed
@@ -148,7 +148,7 @@ test.describe('Dashboard', () => {
   });
 
   test.describe('Dashboard Attendance Widget - Multiple Cycles', () => {
-    test('should allow check-in again after check-out', async ({ page }) => {
+    test('should allow check-in again after check-out', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // First cycle: check-out if already checked in
@@ -186,7 +186,7 @@ test.describe('Dashboard', () => {
       }
     });
 
-    test('should handle rapid check-in/check-out', async ({ page }) => {
+    test('should handle rapid check-in/check-out', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure we start checked out
@@ -215,7 +215,7 @@ test.describe('Dashboard', () => {
   });
 
   test.describe('Dashboard Attendance Widget - Error Handling', () => {
-    test('should not show error after successful check-in', async ({ page }) => {
+    test('should not show error after successful check-in', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked out first
@@ -235,7 +235,7 @@ test.describe('Dashboard', () => {
       }
     });
 
-    test('should not show error after successful check-out', async ({ page }) => {
+    test('should not show error after successful check-out', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked in first
@@ -257,7 +257,7 @@ test.describe('Dashboard', () => {
   });
 
   test.describe('Dashboard Attendance Widget - State Persistence', () => {
-    test('should maintain check-in state after page refresh', async ({ page }) => {
+    test('should maintain check-in state after page refresh', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked in
@@ -278,7 +278,7 @@ test.describe('Dashboard', () => {
       expect(stillCheckedIn).toBe(true);
     });
 
-    test('should maintain check-out state after page refresh', async ({ page }) => {
+    test('should maintain check-out state after page refresh', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
       // Ensure checked out
@@ -305,7 +305,7 @@ test.describe('Dashboard - Employee Role', () => {
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
 
@@ -315,12 +315,12 @@ test.describe('Dashboard - Employee Role', () => {
     await page.waitForURL('**/dashboard');
   });
 
-  test('should display attendance widget for employee', async ({ page }) => {
+  test('should display attendance widget for employee', async ({page}) => {
     const widgetLoaded = await dashboardPage.waitForAttendanceWidget();
     expect(widgetLoaded).toBe(true);
   });
 
-  test('employee should be able to check-in', async ({ page }) => {
+  test('employee should be able to check-in', async ({page}) => {
     await dashboardPage.waitForAttendanceWidget();
 
     // Ensure checked out first
@@ -339,7 +339,7 @@ test.describe('Dashboard - Employee Role', () => {
     }
   });
 
-  test('employee should be able to check-out', async ({ page }) => {
+  test('employee should be able to check-out', async ({page}) => {
     await dashboardPage.waitForAttendanceWidget();
 
     // Ensure checked in first
@@ -363,7 +363,7 @@ test.describe('Dashboard - Visual Regression', () => {
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
 
@@ -372,7 +372,7 @@ test.describe('Dashboard - Visual Regression', () => {
     await page.waitForURL('**/dashboard');
   });
 
-  test('should match dashboard snapshot', async ({ page }) => {
+  test('should match dashboard snapshot', async ({page}) => {
     await dashboardPage.waitForAttendanceWidget();
     await page.waitForTimeout(1000); // Allow animations to complete
 
@@ -386,7 +386,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
 
@@ -396,7 +396,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     await dashboardPage.waitForAttendanceWidget();
   });
 
-  test('dashboard widgets show numeric values (not NaN or undefined)', async ({ page }) => {
+  test('dashboard widgets show numeric values (not NaN or undefined)', async ({page}) => {
     await page.waitForTimeout(2000);
 
     // Collect all numeric displays on the dashboard
@@ -411,7 +411,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     }
   });
 
-  test('dashboard shows different data per role', async ({ page }) => {
+  test('dashboard shows different data per role', async ({page}) => {
     // Capture admin dashboard content
     await page.waitForTimeout(1500);
     const adminHeadings = await page.locator('h2, h3, h4').allTextContents();
@@ -430,7 +430,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     expect(employeeHeadings.length).toBeGreaterThan(0);
   });
 
-  test('dashboard quick actions are functional', async ({ page }) => {
+  test('dashboard quick actions are functional', async ({page}) => {
     await page.waitForTimeout(1000);
 
     // Look for quick action buttons/cards
@@ -451,7 +451,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     expect(count >= 0).toBe(true);
   });
 
-  test('dashboard charts render SVG or canvas elements', async ({ page }) => {
+  test('dashboard charts render SVG or canvas elements', async ({page}) => {
     await page.waitForTimeout(2000);
 
     // Recharts renders SVG elements

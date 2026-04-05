@@ -1,36 +1,34 @@
 'use client';
 
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {motion} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
 
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import type {ApprovalInboxItem, InboxFilterParams} from '@/lib/hooks/queries/useApprovals';
 import {
   useApprovalInbox,
   useApprovalInboxCount,
   useApproveExecution,
-  useRejectExecution,
-  useReturnForModification,
   useCreateDelegation,
   useMyDelegations,
+  useRejectExecution,
+  useReturnForModification,
 } from '@/lib/hooks/queries/useApprovals';
-import type { ApprovalInboxItem, InboxFilterParams } from '@/lib/hooks/queries/useApprovals';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useDebounce } from '@/lib/hooks/useDebounce';
-import { useWebSocket, Notification } from '@/lib/contexts/WebSocketContext';
-import { createLogger } from '@/lib/utils/logger';
-import { useQueryClient } from '@tanstack/react-query';
-import { notifications as mNotifications } from '@mantine/notifications';
-import { format } from 'date-fns';
-
-const log = createLogger('ApprovalInbox');
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useDebounce} from '@/lib/hooks/useDebounce';
+import {Notification, useWebSocket} from '@/lib/contexts/WebSocketContext';
+import {createLogger} from '@/lib/utils/logger';
+import {useQueryClient} from '@tanstack/react-query';
+import {notifications as mNotifications} from '@mantine/notifications';
+import {format} from 'date-fns';
 import {
   CheckCircle,
   ChevronLeft,
@@ -43,7 +41,9 @@ import {
   XCircle,
   Zap,
 } from 'lucide-react';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/Modal';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+
+const log = createLogger('ApprovalInbox');
 
 // ── Delegation Form Schema ─────────────────────────────────────────
 const delegationFormSchema = z.object({
@@ -72,25 +72,65 @@ interface ModuleTab {
 }
 
 const MODULE_TABS: ModuleTab[] = [
-  { key: 'ALL', label: 'All', color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]', textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200' },
-  { key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST', color: 'bg-accent-100 dark:bg-accent-900/40', textColor: 'text-accent-700 dark:text-accent-300' },
-  { key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM', color: 'bg-warning-100 dark:bg-warning-900/40', textColor: 'text-warning-700 dark:text-warning-300' },
-  { key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST', color: 'bg-[var(--bg-surface)]', textColor: 'text-[var(--text-secondary)]' },
-  { key: 'TRAVEL', label: 'Travel', entityType: 'TRAVEL_REQUEST', color: 'bg-success-100 dark:bg-success-900/40', textColor: 'text-success-700 dark:text-success-300' },
-  { key: 'RECRUITMENT', label: 'Recruitment', entityType: 'RECRUITMENT_OFFER', color: 'bg-accent-100 dark:bg-accent-900/40', textColor: 'text-accent-700 dark:text-accent-300' },
-  { key: 'OTHERS', label: 'Others', color: 'bg-accent-300 dark:bg-accent-900/40', textColor: 'text-accent-900 dark:text-accent-500' },
+  {
+    key: 'ALL',
+    label: 'All',
+    color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]',
+    textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200'
+  },
+  {
+    key: 'LEAVE',
+    label: 'Leave',
+    entityType: 'LEAVE_REQUEST',
+    color: 'bg-accent-100 dark:bg-accent-900/40',
+    textColor: 'text-accent-700 dark:text-accent-300'
+  },
+  {
+    key: 'EXPENSE',
+    label: 'Expense',
+    entityType: 'EXPENSE_CLAIM',
+    color: 'bg-warning-100 dark:bg-warning-900/40',
+    textColor: 'text-warning-700 dark:text-warning-300'
+  },
+  {
+    key: 'ASSET',
+    label: 'Asset',
+    entityType: 'ASSET_REQUEST',
+    color: 'bg-[var(--bg-surface)]',
+    textColor: 'text-[var(--text-secondary)]'
+  },
+  {
+    key: 'TRAVEL',
+    label: 'Travel',
+    entityType: 'TRAVEL_REQUEST',
+    color: 'bg-success-100 dark:bg-success-900/40',
+    textColor: 'text-success-700 dark:text-success-300'
+  },
+  {
+    key: 'RECRUITMENT',
+    label: 'Recruitment',
+    entityType: 'RECRUITMENT_OFFER',
+    color: 'bg-accent-100 dark:bg-accent-900/40',
+    textColor: 'text-accent-700 dark:text-accent-300'
+  },
+  {
+    key: 'OTHERS',
+    label: 'Others',
+    color: 'bg-accent-300 dark:bg-accent-900/40',
+    textColor: 'text-accent-900 dark:text-accent-500'
+  },
 ];
 
 // Color lookup for module badges in the list
 const MODULE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  Leave: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
-  Expense: { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300' },
-  Asset: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
-  Travel: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300' },
-  Recruitment: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300' },
+  Leave: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
+  Expense: {bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300'},
+  Asset: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]'},
+  Travel: {bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300'},
+  Recruitment: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
 };
 
-const DEFAULT_BADGE = { bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500' };
+const DEFAULT_BADGE = {bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500'};
 
 function getModuleBadgeColors(module: string) {
   return MODULE_BADGE_COLORS[module] ?? DEFAULT_BADGE;
@@ -111,8 +151,8 @@ type StatusFilter = 'PENDING' | 'ALL';
 const PAGE_SIZE = 20;
 
 export default function ApprovalInboxPage() {
-  const { hasPermission, isReady } = usePermissions();
-  const { onApprovalTaskAssigned, offApprovalTaskAssigned } = useWebSocket();
+  const {hasPermission, isReady} = usePermissions();
+  const {onApprovalTaskAssigned, offApprovalTaskAssigned} = useWebSocket();
   const queryClient = useQueryClient();
 
   // Filters
@@ -125,7 +165,7 @@ export default function ApprovalInboxPage() {
   // Delegation modal
   const [showDelegationModal, setShowDelegationModal] = useState(false);
   const createDelegationMutation = useCreateDelegation();
-  const { data: myDelegations } = useMyDelegations();
+  const {data: myDelegations} = useMyDelegations();
   const activeDelegationsCount = myDelegations?.filter(d => d.isActive).length ?? 0;
 
   const delegationForm = useForm<DelegationFormData>({
@@ -172,8 +212,8 @@ export default function ApprovalInboxPage() {
     [statusFilter, moduleParam, debouncedSearch, page]
   );
 
-  const { data: inboxPage, isLoading, refetch } = useApprovalInbox(filterParams);
-  const { data: counts } = useApprovalInboxCount();
+  const {data: inboxPage, isLoading, refetch} = useApprovalInbox(filterParams);
+  const {data: counts} = useApprovalInboxCount();
 
   const items = inboxPage?.content ?? [];
   const totalPages = inboxPage?.totalPages ?? 0;
@@ -208,7 +248,7 @@ export default function ApprovalInboxPage() {
         title: notification.title,
         message: notification.message,
         color: 'blue',
-        icon: <Zap className="h-4 w-4" />,
+        icon: <Zap className="h-4 w-4"/>,
         autoClose: 5000,
         onClick: () => {
           // Navigate to the notification's action URL if available
@@ -242,7 +282,7 @@ export default function ApprovalInboxPage() {
 
   const handleApprove = useCallback(async () => {
     if (!selectedItem) return;
-    await approveMutation.mutateAsync({ executionId: selectedItem.id, comments: comments || undefined });
+    await approveMutation.mutateAsync({executionId: selectedItem.id, comments: comments || undefined});
     setComments('');
     setShowApproveModal(false);
     setSelectedId(null);
@@ -250,7 +290,7 @@ export default function ApprovalInboxPage() {
 
   const handleReject = useCallback(async () => {
     if (!selectedItem || !comments.trim()) return;
-    await rejectMutation.mutateAsync({ executionId: selectedItem.id, comments });
+    await rejectMutation.mutateAsync({executionId: selectedItem.id, comments});
     setComments('');
     setShowRejectModal(false);
     setSelectedId(null);
@@ -258,7 +298,7 @@ export default function ApprovalInboxPage() {
 
   const handleReturn = useCallback(async () => {
     if (!selectedItem || !comments.trim()) return;
-    await returnMutation.mutateAsync({ executionId: selectedItem.id, comments });
+    await returnMutation.mutateAsync({executionId: selectedItem.id, comments});
     setComments('');
     setShowReturnModal(false);
     setSelectedId(null);
@@ -284,7 +324,8 @@ export default function ApprovalInboxPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view the approval inbox."
-            icon={<XCircle className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />}
+            icon={<XCircle
+              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>}
           />
         </div>
       </AppLayout>
@@ -294,9 +335,9 @@ export default function ApprovalInboxPage() {
   return (
     <AppLayout activeMenuItem="approvals">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="space-y-6 p-6"
       >
         {/* Header */}
@@ -311,9 +352,12 @@ export default function ApprovalInboxPage() {
           </div>
           <div className="flex items-center gap-2">
             {activeDelegationsCount > 0 && (
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
-                <Zap className="h-4 w-4 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" />
-                <span className="text-sm font-medium text-accent-700 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <div
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
+                <Zap
+                  className="h-4 w-4 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                <span
+                  className="text-sm font-medium text-accent-700 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {activeDelegationsCount} active {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
                 </span>
               </div>
@@ -322,7 +366,7 @@ export default function ApprovalInboxPage() {
               Delegate
             </Button>
             <Button variant="ghost" onClick={() => refetch()} disabled={isLoading}>
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
             </Button>
           </div>
         </div>
@@ -334,29 +378,31 @@ export default function ApprovalInboxPage() {
             value={counts?.pending ?? 0}
             color="bg-warning-50 dark:bg-warning-900/20"
             textColor="text-warning-700 dark:text-warning-300"
-            icon={<Clock className="h-5 w-5" />}
+            icon={<Clock className="h-5 w-5"/>}
           />
           <SummaryCard
             label="Approved Today"
             value={counts?.approvedToday ?? 0}
             color="bg-success-50 dark:bg-success-900/20"
             textColor="text-success-700 dark:text-success-300"
-            icon={<CheckCircle className="h-5 w-5" />}
+            icon={<CheckCircle className="h-5 w-5"/>}
           />
           <SummaryCard
             label="Rejected Today"
             value={counts?.rejectedToday ?? 0}
             color="bg-danger-50 dark:bg-danger-900/20"
             textColor="text-danger-700 dark:text-danger-300"
-            icon={<XCircle className="h-5 w-5" />}
+            icon={<XCircle className="h-5 w-5"/>}
           />
         </div>
 
         {/* Filters Row */}
-        <div className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
+        <div
+          className="flex flex-col gap-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/40 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-4">
             {/* Status toggle */}
-            <div className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
+            <div
+              className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
               <button
                 type="button"
                 onClick={() => handleStatusChange('PENDING')}
@@ -401,7 +447,7 @@ export default function ApprovalInboxPage() {
 
           {/* Search */}
           <div className="relative w-full md:w-64">
-            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search by title, requester…"
@@ -419,7 +465,7 @@ export default function ApprovalInboxPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24 rounded-xl" />
+              <Skeleton key={i} className="h-24 rounded-xl"/>
             ))}
           </div>
         ) : items.length === 0 ? (
@@ -430,7 +476,7 @@ export default function ApprovalInboxPage() {
                 ? 'No pending approvals at the moment.'
                 : 'No approvals match your current filters.'
             }
-            icon={<Inbox className="h-12 w-12" />}
+            icon={<Inbox className="h-12 w-12"/>}
           />
         ) : (
           <>
@@ -454,11 +500,11 @@ export default function ApprovalInboxPage() {
                     <CardTitle>Task Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <DetailRow label="Module" value={selectedItem.module} />
-                    <DetailRow label="Title" value={selectedItem.title} />
+                    <DetailRow label="Module" value={selectedItem.module}/>
+                    <DetailRow label="Title" value={selectedItem.title}/>
                     <div className="grid grid-cols-2 gap-4">
-                      <DetailRow label="Requester" value={selectedItem.requesterName ?? 'Unknown'} />
-                      <DetailRow label="Current Step" value={selectedItem.currentStepName ?? 'Pending'} />
+                      <DetailRow label="Requester" value={selectedItem.requesterName ?? 'Unknown'}/>
+                      <DetailRow label="Current Step" value={selectedItem.currentStepName ?? 'Pending'}/>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <DetailRow
@@ -471,7 +517,7 @@ export default function ApprovalInboxPage() {
                       />
                     </div>
                     {selectedItem.referenceNumber && (
-                      <DetailRow label="Reference" value={`#${selectedItem.referenceNumber}`} />
+                      <DetailRow label="Reference" value={`#${selectedItem.referenceNumber}`}/>
                     )}
 
                     {selectedItem.status === 'PENDING' && (
@@ -485,7 +531,7 @@ export default function ApprovalInboxPage() {
                           }}
                           disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
                         >
-                          <XCircle className="mr-2 h-4 w-4" />
+                          <XCircle className="mr-2 h-4 w-4"/>
                           Reject
                         </Button>
                         <Button
@@ -497,7 +543,7 @@ export default function ApprovalInboxPage() {
                           }}
                           disabled={rejectMutation.isPending || approveMutation.isPending || returnMutation.isPending}
                         >
-                          <RotateCcw className="mr-2 h-4 w-4" />
+                          <RotateCcw className="mr-2 h-4 w-4"/>
                           Return
                         </Button>
                         <Button
@@ -509,7 +555,7 @@ export default function ApprovalInboxPage() {
                           }}
                           disabled={approveMutation.isPending || rejectMutation.isPending || returnMutation.isPending}
                         >
-                          <CheckCircle className="mr-2 h-4 w-4" />
+                          <CheckCircle className="mr-2 h-4 w-4"/>
                           Approve
                         </Button>
                       </div>
@@ -517,7 +563,8 @@ export default function ApprovalInboxPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-body-muted dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
+                <div
+                  className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-body-muted dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
                   Select a task from the left to view details.
                 </div>
               )}
@@ -537,7 +584,7 @@ export default function ApprovalInboxPage() {
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4"/>
                     Previous
                   </Button>
                   <Button
@@ -547,7 +594,7 @@ export default function ApprovalInboxPage() {
                     disabled={page >= totalPages - 1}
                   >
                     Next
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4"/>
                   </Button>
                 </div>
               </div>
@@ -559,8 +606,9 @@ export default function ApprovalInboxPage() {
       {/* Approve modal */}
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
-          <div className="flex items-center gap-2 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <CheckCircle className="h-5 w-5" />
+          <div
+            className="flex items-center gap-2 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <CheckCircle className="h-5 w-5"/>
             Approve request
           </div>
         </ModalHeader>
@@ -603,8 +651,9 @@ export default function ApprovalInboxPage() {
       {/* Reject modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
-          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <XCircle className="h-5 w-5" />
+          <div
+            className="flex items-center gap-2 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <XCircle className="h-5 w-5"/>
             Reject request
           </div>
         </ModalHeader>
@@ -615,7 +664,8 @@ export default function ApprovalInboxPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              Reason <span
+              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
             </label>
             <textarea
               value={comments}
@@ -648,8 +698,9 @@ export default function ApprovalInboxPage() {
       {/* Return for Modification modal (DEF-44) */}
       <Modal isOpen={showReturnModal} onClose={() => setShowReturnModal(false)} size="md">
         <ModalHeader onClose={() => setShowReturnModal(false)}>
-          <div className="flex items-center gap-2 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <RotateCcw className="h-5 w-5" />
+          <div
+            className="flex items-center gap-2 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <RotateCcw className="h-5 w-5"/>
             Return for modification
           </div>
         </ModalHeader>
@@ -661,7 +712,8 @@ export default function ApprovalInboxPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              Reason <span
+              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
             </label>
             <textarea
               value={comments}
@@ -694,8 +746,9 @@ export default function ApprovalInboxPage() {
       {/* Delegation modal */}
       <Modal isOpen={showDelegationModal} onClose={() => setShowDelegationModal(false)} size="md">
         <ModalHeader onClose={() => setShowDelegationModal(false)}>
-          <div className="flex items-center gap-2 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <Zap className="h-5 w-5" />
+          <div
+            className="flex items-center gap-2 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <Zap className="h-5 w-5"/>
             Delegate approvals
           </div>
         </ModalHeader>
@@ -707,7 +760,10 @@ export default function ApprovalInboxPage() {
             {/* Delegate field */}
             <div>
               <EmployeeSearchAutocomplete
-                value={delegationForm.watch('delegateId') ? { id: delegationForm.watch('delegateId'), name: delegationForm.watch('delegateName') } : null}
+                value={delegationForm.watch('delegateId') ? {
+                  id: delegationForm.watch('delegateId'),
+                  name: delegationForm.watch('delegateName')
+                } : null}
                 onChange={(employee) => {
                   if (employee) {
                     delegationForm.setValue('delegateId', employee.id);
@@ -720,7 +776,8 @@ export default function ApprovalInboxPage() {
                 required
               />
               {delegationForm.formState.errors.delegateId && (
-                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p
+                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {delegationForm.formState.errors.delegateId.message}
                 </p>
               )}
@@ -729,7 +786,8 @@ export default function ApprovalInboxPage() {
             {/* Start date */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Start date <span className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+                Start date <span
+                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
               </label>
               <input
                 type="date"
@@ -737,7 +795,8 @@ export default function ApprovalInboxPage() {
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.startDate && (
-                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p
+                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {delegationForm.formState.errors.startDate.message}
                 </p>
               )}
@@ -746,7 +805,8 @@ export default function ApprovalInboxPage() {
             {/* End date */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                End date <span className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+                End date <span
+                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
               </label>
               <input
                 type="date"
@@ -754,7 +814,8 @@ export default function ApprovalInboxPage() {
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
               />
               {delegationForm.formState.errors.endDate && (
-                <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <p
+                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                   {delegationForm.formState.errors.endDate.message}
                 </p>
               )}
@@ -801,12 +862,12 @@ export default function ApprovalInboxPage() {
 // ── Sub-components ────────────────────────────────────────────────────
 
 function SummaryCard({
-  label,
-  value,
-  color,
-  textColor,
-  icon,
-}: {
+                       label,
+                       value,
+                       color,
+                       textColor,
+                       icon,
+                     }: {
   label: string;
   value: number;
   color: string;
@@ -827,10 +888,10 @@ function SummaryCard({
 }
 
 function InboxListItem({
-  item,
-  isSelected,
-  onClick,
-}: {
+                         item,
+                         isSelected,
+                         onClick,
+                       }: {
   item: ApprovalInboxItem;
   isSelected: boolean;
   onClick: () => void;
@@ -844,7 +905,8 @@ function InboxListItem({
     >
       <CardContent className="flex items-start gap-4 p-4">
         {/* Avatar */}
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+        <div
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
           {getInitials(item.requesterName)}
         </div>
 
@@ -867,8 +929,9 @@ function InboxListItem({
 
         <div className="flex flex-col items-end gap-1 text-xs flex-shrink-0">
           {item.deadline && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <Clock className="h-3 w-3" />
+            <span
+              className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <Clock className="h-3 w-3"/>
               {format(new Date(item.deadline), 'MMM d')}
             </span>
           )}
@@ -881,7 +944,7 @@ function InboxListItem({
   );
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DetailRow({label, value}: { label: string; value: string }) {
   return (
     <div>
       <p className="text-xs font-medium uppercase text-[var(--text-muted)]">{label}</p>

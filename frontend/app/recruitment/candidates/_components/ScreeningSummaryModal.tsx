@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Brain, CheckCircle, AlertTriangle, ShieldAlert, MessageSquare, Sparkles, X } from 'lucide-react';
-import { CandidateScreeningSummaryResponse } from '@/lib/types/hire/ai-recruitment';
+import {Button} from '@/components/ui/Button';
+import {AlertTriangle, Brain, CheckCircle, MessageSquare, ShieldAlert, Sparkles, X} from 'lucide-react';
+import {CandidateScreeningSummaryResponse} from '@/lib/types/hire/ai-recruitment';
 
 interface ScreeningSummaryModalProps {
   open: boolean;
@@ -12,20 +12,22 @@ interface ScreeningSummaryModalProps {
 }
 
 export function ScreeningSummaryModal({
-  open,
-  screeningSummary,
-  onClose,
-}: ScreeningSummaryModalProps) {
+                                        open,
+                                        screeningSummary,
+                                        onClose,
+                                      }: ScreeningSummaryModalProps) {
   if (!open || !screeningSummary) return null;
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
         <div className="p-6">
           {/* Demo Mode Banner */}
           {screeningSummary.aiModelVersion === 'mock-v1' && (
-            <div className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-700 flex items-start gap-4">
-              <Sparkles className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-700 flex items-start gap-4">
+              <Sparkles className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
               <div>
                 <p className="text-sm font-medium text-warning-800 dark:text-warning-300">Demo Mode</p>
                 <p className="text-xs text-warning-700 dark:text-warning-400">Connect OpenAI for real AI scoring</p>
@@ -36,11 +38,12 @@ export function ScreeningSummaryModal({
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Brain className="h-6 w-6 text-accent-700" />
+              <Brain className="h-6 w-6 text-accent-700"/>
               AI Screening Summary
             </h2>
-            <button onClick={onClose} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <X className="h-6 w-6" />
+            <button onClick={onClose} aria-label="Close modal"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              <X className="h-6 w-6"/>
             </button>
           </div>
 
@@ -60,16 +63,16 @@ export function ScreeningSummaryModal({
             <div className="flex gap-4 items-center">
               <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
                 screeningSummary.fitLevel === 'HIGH' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
-                screeningSummary.fitLevel === 'MEDIUM' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
-                'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
+                  screeningSummary.fitLevel === 'MEDIUM' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
+                    'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
               }`}>
                 Fit Level: {screeningSummary.fitLevel}
               </span>
 
               <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
                 screeningSummary.recommendation === 'ADVANCE' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
-                screeningSummary.recommendation === 'HOLD' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
-                'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
+                  screeningSummary.recommendation === 'HOLD' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
+                    'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
               }`}>
                 {screeningSummary.recommendation}
               </span>
@@ -81,15 +84,17 @@ export function ScreeningSummaryModal({
             {/* Left Column */}
             <div className="space-y-4">
               {screeningSummary.strengths && screeningSummary.strengths.length > 0 && (
-                <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800">
-                  <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-4 flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" />
+                <div
+                  className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800">
+                  <p
+                    className="text-sm font-medium text-success-800 dark:text-success-300 mb-4 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4"/>
                     Strengths
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.strengths.map((strength, idx) => (
                       <li key={idx} className="text-sm text-success-700 dark:text-success-400 flex items-start gap-2">
-                        <CheckCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{strength}</span>
                       </li>
                     ))}
@@ -98,9 +103,10 @@ export function ScreeningSummaryModal({
               )}
 
               {screeningSummary.followUpQuestions && screeningSummary.followUpQuestions.length > 0 && (
-                <div className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-xl border border-accent-200 dark:border-accent-800">
+                <div
+                  className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-xl border border-accent-200 dark:border-accent-800">
                   <p className="text-sm font-medium text-accent-800 dark:text-accent-300 mb-4 flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4"/>
                     Follow-up Questions
                   </p>
                   <ol className="space-y-2 list-inside">
@@ -118,15 +124,17 @@ export function ScreeningSummaryModal({
             {/* Right Column */}
             <div className="space-y-4">
               {screeningSummary.gaps && screeningSummary.gaps.length > 0 && (
-                <div className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl border border-warning-200 dark:border-warning-800">
-                  <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-4 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4" />
+                <div
+                  className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl border border-warning-200 dark:border-warning-800">
+                  <p
+                    className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-4 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4"/>
                     Gaps
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.gaps.map((gap, idx) => (
                       <li key={idx} className="text-sm text-warning-700 dark:text-warning-400 flex items-start gap-2">
-                        <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                        <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{gap}</span>
                       </li>
                     ))}
@@ -135,15 +143,16 @@ export function ScreeningSummaryModal({
               )}
 
               {screeningSummary.riskFlags && screeningSummary.riskFlags.length > 0 && (
-                <div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-xl border border-danger-200 dark:border-danger-800">
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-xl border border-danger-200 dark:border-danger-800">
                   <p className="text-sm font-medium text-danger-800 dark:text-danger-300 mb-4 flex items-center gap-2">
-                    <ShieldAlert className="h-4 w-4" />
+                    <ShieldAlert className="h-4 w-4"/>
                     Risk Flags
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.riskFlags.map((flag, idx) => (
                       <li key={idx} className="text-sm text-danger-700 dark:text-danger-400 flex items-start gap-2">
-                        <ShieldAlert className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                        <ShieldAlert className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{flag}</span>
                       </li>
                     ))}
@@ -162,9 +171,10 @@ export function ScreeningSummaryModal({
           {/* Footer */}
           <div className="flex justify-between items-center pt-4 border-t border-[var(--border-main)]">
             <div className="flex items-center gap-2 text-caption">
-              <Sparkles className="h-3.5 w-3.5" />
+              <Sparkles className="h-3.5 w-3.5"/>
               <span>Powered by AI</span>
-              <span className="px-2 py-1 rounded bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono">
+              <span
+                className="px-2 py-1 rounded bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono">
                 {screeningSummary.aiModelVersion}
               </span>
             </div>

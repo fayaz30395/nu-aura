@@ -1,22 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Drawer } from '@mantine/core';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion } from 'framer-motion';
-import {
-  Type,
-  AlignLeft,
-  Eye,
-  Palette,
-  Smile,
-  Save,
-  Plus,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import type { WikiSpace, WikiVisibility } from '@/lib/types/platform/fluence';
+import {useEffect} from 'react';
+import {Drawer} from '@mantine/core';
+import {Controller, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {motion} from 'framer-motion';
+import {AlignLeft, Eye, Palette, Plus, Save, Smile, Type,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import type {WikiSpace, WikiVisibility} from '@/lib/types/platform/fluence';
 
 // ─── Validation Schema ──────────────────────────────────────────
 
@@ -52,14 +44,14 @@ interface SpaceFormDrawerProps {
 // ─── Preset Colors ──────────────────────────────────────────────
 
 const PRESET_COLORS = [
-  { value: '#3e63dd', label: 'Indigo' },
-  { value: '#e5484d', label: 'Red' },
-  { value: '#46a758', label: 'Green' },
-  { value: '#f76b15', label: 'Orange' },
-  { value: '#6e56cf', label: 'Violet' },
-  { value: '#0091ff', label: 'Blue' },
-  { value: '#d6409f', label: 'Pink' },
-  { value: '#30a46c', label: 'Teal' },
+  {value: '#3e63dd', label: 'Indigo'},
+  {value: '#e5484d', label: 'Red'},
+  {value: '#46a758', label: 'Green'},
+  {value: '#f76b15', label: 'Orange'},
+  {value: '#6e56cf', label: 'Violet'},
+  {value: '#0091ff', label: 'Blue'},
+  {value: '#d6409f', label: 'Pink'},
+  {value: '#30a46c', label: 'Teal'},
 ];
 
 // ─── Preset Icons (emojis) ──────────────────────────────────────
@@ -97,12 +89,12 @@ const VISIBILITY_OPTIONS: { value: WikiVisibility; label: string; description: s
 // ─── Component ──────────────────────────────────────────────────
 
 export function SpaceFormDrawer({
-  opened,
-  onClose,
-  onSubmit,
-  editingSpace,
-  isSubmitting = false,
-}: SpaceFormDrawerProps) {
+                                  opened,
+                                  onClose,
+                                  onSubmit,
+                                  editingSpace,
+                                  isSubmitting = false,
+                                }: SpaceFormDrawerProps) {
   const isEdit = !!editingSpace;
 
   const {
@@ -111,7 +103,7 @@ export function SpaceFormDrawer({
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<SpaceFormData>({
     resolver: zodResolver(spaceSchema),
     defaultValues: {
@@ -157,7 +149,7 @@ export function SpaceFormDrawer({
         <div className="flex items-center gap-2">
           <div
             className="flex items-center justify-center w-8 h-8 rounded-lg text-white text-sm"
-            style={{ backgroundColor: selectedColor || '#3e63dd' }}
+            style={{backgroundColor: selectedColor || '#3e63dd'}}
           >
             {selectedIcon || '📁'}
           </div>
@@ -169,8 +161,8 @@ export function SpaceFormDrawer({
       position="right"
       size="md"
       styles={{
-        title: { width: '100%' },
-        body: { padding: '0 24px 24px' },
+        title: {width: '100%'},
+        body: {padding: '0 24px 24px'},
       }}
     >
       <form
@@ -180,7 +172,7 @@ export function SpaceFormDrawer({
         {/* Name */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
-            <Type className="h-4 w-4" />
+            <Type className="h-4 w-4"/>
             Space Name <span className="text-danger-500">*</span>
           </label>
           <input
@@ -197,7 +189,7 @@ export function SpaceFormDrawer({
         {/* Description */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
-            <AlignLeft className="h-4 w-4" />
+            <AlignLeft className="h-4 w-4"/>
             Description
           </label>
           <textarea
@@ -214,20 +206,20 @@ export function SpaceFormDrawer({
         {/* Icon Picker */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
-            <Smile className="h-4 w-4" />
+            <Smile className="h-4 w-4"/>
             Icon
           </label>
           <Controller
             name="icon"
             control={control}
-            render={({ field }) => (
+            render={({field}) => (
               <div className="flex flex-wrap gap-2">
                 {PRESET_ICONS.map((emoji) => (
                   <motion.button
                     key={emoji}
                     type="button"
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{scale: 1.15}}
+                    whileTap={{scale: 0.9}}
                     onClick={() => field.onChange(emoji)}
                     className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all duration-150 border cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === emoji
@@ -246,20 +238,20 @@ export function SpaceFormDrawer({
         {/* Color Picker */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
-            <Palette className="h-4 w-4" />
+            <Palette className="h-4 w-4"/>
             Color
           </label>
           <Controller
             name="color"
             control={control}
-            render={({ field }) => (
+            render={({field}) => (
               <div className="flex flex-wrap gap-2">
                 {PRESET_COLORS.map((c) => (
                   <motion.button
                     key={c.value}
                     type="button"
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{scale: 1.15}}
+                    whileTap={{scale: 0.9}}
                     onClick={() => field.onChange(c.value)}
                     className={`w-10 h-10 rounded-lg transition-all duration-150 border-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === c.value
@@ -269,7 +261,7 @@ export function SpaceFormDrawer({
                     style={{
                       backgroundColor: c.value,
                       ...(field.value === c.value
-                        ? { ringColor: c.value }
+                        ? {ringColor: c.value}
                         : {}),
                     }}
                     title={c.label}
@@ -284,19 +276,19 @@ export function SpaceFormDrawer({
         {/* Visibility */}
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4"/>
             Visibility <span className="text-danger-500">*</span>
           </label>
           <Controller
             name="visibility"
             control={control}
-            render={({ field }) => (
+            render={({field}) => (
               <div className="space-y-2">
                 {VISIBILITY_OPTIONS.map((opt) => (
                   <motion.button
                     key={opt.value}
                     type="button"
-                    whileTap={{ scale: 0.98 }}
+                    whileTap={{scale: 0.98}}
                     onClick={() => field.onChange(opt.value)}
                     className={`w-full text-left px-4 py-4 rounded-lg border transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       field.value === opt.value
@@ -329,11 +321,11 @@ export function SpaceFormDrawer({
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <RefreshIcon />
+              <RefreshIcon/>
             ) : isEdit ? (
-              <Save className="h-4 w-4" />
+              <Save className="h-4 w-4"/>
             ) : (
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"/>
             )}
             {isSubmitting
               ? 'Saving...'

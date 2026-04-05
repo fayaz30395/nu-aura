@@ -1,60 +1,71 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {useCallback, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
+  useAddEvaluation,
   useAllProbations,
-  useProbationsEndingSoon,
-  useProbationsByStatus,
-  useProbationStatistics,
   useConfirmEmployee,
   useExtendProbation,
-  useAddEvaluation,
+  useProbationsByStatus,
+  useProbationsEndingSoon,
+  useProbationStatistics,
 } from '@/lib/hooks/queries/useProbation';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  UserCheck,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  Users,
-  ClipboardList,
-  Star,
-  Calendar,
-} from 'lucide-react';
+import {motion} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AlertTriangle, Calendar, CheckCircle, ClipboardList, Clock, Star, UserCheck, Users,} from 'lucide-react';
 import type {
-  ProbationPeriodResponse,
-  ProbationStatus,
   EvaluationType,
+  ProbationPeriodResponse,
   ProbationRecommendation,
+  ProbationStatus,
 } from '@/lib/types/hrms/probation';
 
 // ── Status configuration ─────────────────────────────────────
 const getStatusConfig = (status: ProbationStatus) => {
   switch (status) {
     case 'ACTIVE':
-      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Active' };
+      return {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Active'};
     case 'EXTENDED':
-      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'Extended' };
+      return {
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
+        label: 'Extended'
+      };
     case 'CONFIRMED':
-      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Confirmed' };
+      return {
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
+        label: 'Confirmed'
+      };
     case 'FAILED':
-      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Failed' };
+      return {bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Failed'};
     case 'TERMINATED':
-      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Terminated' };
+      return {
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
+        label: 'Terminated'
+      };
     case 'ON_HOLD':
-      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
+      return {
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
+        label: 'On Hold'
+      };
     default:
-      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: status };
+      return {
+        bg: 'bg-surface-100 dark:bg-surface-900/30',
+        text: 'text-surface-700 dark:text-surface-400',
+        label: status
+      };
   }
 };
 
@@ -105,7 +116,7 @@ type TabKey = 'active' | 'upcoming' | 'history' | 'evaluate';
 
 export default function ProbationPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>('active');
   const [activePage, setActivePage] = useState(0);
   const [historyPage, setHistoryPage] = useState(0);
@@ -113,14 +124,14 @@ export default function ProbationPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Queries
-  const { data: activeData, isLoading: isActiveLoading } = useAllProbations(activePage, 20);
-  const { data: endingSoon = [], isLoading: isUpcomingLoading } = useProbationsEndingSoon(14);
-  const { data: historyData, isLoading: isHistoryLoading } = useProbationsByStatus(
+  const {data: activeData, isLoading: isActiveLoading} = useAllProbations(activePage, 20);
+  const {data: endingSoon = [], isLoading: isUpcomingLoading} = useProbationsEndingSoon(14);
+  const {data: historyData, isLoading: isHistoryLoading} = useProbationsByStatus(
     'CONFIRMED',
     historyPage,
     20
   );
-  const { data: statistics, isLoading: _isStatsLoading } = useProbationStatistics();
+  const {data: statistics, isLoading: _isStatsLoading} = useProbationStatistics();
 
   // Mutations
   const confirmEmployee = useConfirmEmployee();
@@ -133,7 +144,7 @@ export default function ProbationPage() {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<EvaluationFormValues>({
     resolver: zodResolver(evaluationFormSchema),
     defaultValues: {
@@ -196,9 +207,9 @@ export default function ProbationPage() {
   }
 
   const tabs: { key: TabKey; label: string }[] = [
-    { key: 'active', label: 'Active Probations' },
-    { key: 'upcoming', label: 'Upcoming Reviews' },
-    { key: 'history', label: 'History' },
+    {key: 'active', label: 'Active Probations'},
+    {key: 'upcoming', label: 'Upcoming Reviews'},
+    {key: 'history', label: 'History'},
   ];
 
   const formatDate = (dateStr: string | null | undefined) => {
@@ -219,78 +230,86 @@ export default function ProbationPage() {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Employee
+          <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Employee
+            </th>
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Period
+            </th>
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Status
+            </th>
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Days Left
+            </th>
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Manager
+            </th>
+            <th
+              className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+              Rating
+            </th>
+            {showActions && (
+              <th
+                className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                Actions
               </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Period
-              </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Status
-              </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Days Left
-              </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Manager
-              </th>
-              <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                Rating
-              </th>
-              {showActions && (
-                <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                  Actions
-                </th>
-              )}
-            </tr>
+            )}
+          </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-main)]">
-            {records.map((probation) => {
-              const statusConfig = getStatusConfig(probation.status);
-              return (
-                <tr
-                  key={probation.id}
-                  className="hover:bg-[var(--bg-card-hover)] transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="text-sm font-medium text-[var(--text-primary)]">
-                        {probation.employeeName}
-                      </p>
-                      <p className="text-caption">
-                        {probation.department} {probation.designation ? `- ${probation.designation}` : ''}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="text-body-secondary">
-                        {formatDate(probation.startDate)} - {formatDate(probation.endDate)}
-                      </p>
-                      <p className="text-caption">
-                        {probation.durationMonths} months
-                        {probation.extensionCount > 0 && (
-                          <span className="text-warning-600 dark:text-warning-400">
+          {records.map((probation) => {
+            const statusConfig = getStatusConfig(probation.status);
+            return (
+              <tr
+                key={probation.id}
+                className="hover:bg-[var(--bg-card-hover)] transition-colors"
+              >
+                <td className="px-6 py-4">
+                  <div>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
+                      {probation.employeeName}
+                    </p>
+                    <p className="text-caption">
+                      {probation.department} {probation.designation ? `- ${probation.designation}` : ''}
+                    </p>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div>
+                    <p className="text-body-secondary">
+                      {formatDate(probation.startDate)} - {formatDate(probation.endDate)}
+                    </p>
+                    <p className="text-caption">
+                      {probation.durationMonths} months
+                      {probation.extensionCount > 0 && (
+                        <span className="text-warning-600 dark:text-warning-400">
                             {' '}(+{probation.totalExtensionDays}d ext.)
                           </span>
-                        )}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
+                      )}
+                    </p>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
                     >
                       {statusConfig.label}
                     </span>
-                    {probation.isOverdue && (
-                      <span className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
+                  {probation.isOverdue && (
+                    <span
+                      className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
                         Overdue
                       </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
+                  )}
+                </td>
+                <td className="px-6 py-4">
                     <span
                       className={`text-sm font-medium ${
                         probation.daysRemaining <= 7
@@ -306,55 +325,55 @@ export default function ProbationPage() {
                           ? 'Completed'
                           : 'Overdue'}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 text-body-secondary">
-                    {probation.managerName || '-'}
-                  </td>
-                  <td className="px-6 py-4">
-                    {probation.averageRating ? (
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-warning-500 fill-warning-500" />
-                        <span className="text-sm font-medium text-[var(--text-primary)]">
+                </td>
+                <td className="px-6 py-4 text-body-secondary">
+                  {probation.managerName || '-'}
+                </td>
+                <td className="px-6 py-4">
+                  {probation.averageRating ? (
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-warning-500 fill-warning-500"/>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">
                           {probation.averageRating.toFixed(1)}
                         </span>
-                      </div>
-                    ) : (
-                      <span className="text-body-muted">-</span>
-                    )}
-                  </td>
-                  {showActions && (
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        {(probation.status === 'ACTIVE' || probation.status === 'EXTENDED') && (
-                          <>
-                            <button
-                              onClick={() => handleStartEvaluation(probation)}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                            >
-                              Evaluate
-                            </button>
-                            <PermissionGate permission={Permissions.PROBATION_MANAGE}>
-                              <button
-                                onClick={() =>
-                                  confirmEmployee.mutate({
-                                    probationId: probation.id,
-                                    data: { generateConfirmationLetter: true },
-                                  })
-                                }
-                                disabled={confirmEmployee.isPending}
-                                className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                              >
-                                Confirm
-                              </button>
-                            </PermissionGate>
-                          </>
-                        )}
-                      </div>
-                    </td>
+                    </div>
+                  ) : (
+                    <span className="text-body-muted">-</span>
                   )}
-                </tr>
-              );
-            })}
+                </td>
+                {showActions && (
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      {(probation.status === 'ACTIVE' || probation.status === 'EXTENDED') && (
+                        <>
+                          <button
+                            onClick={() => handleStartEvaluation(probation)}
+                            className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          >
+                            Evaluate
+                          </button>
+                          <PermissionGate permission={Permissions.PROBATION_MANAGE}>
+                            <button
+                              onClick={() =>
+                                confirmEmployee.mutate({
+                                  probationId: probation.id,
+                                  data: {generateConfirmationLetter: true},
+                                })
+                              }
+                              disabled={confirmEmployee.isPending}
+                              className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            >
+                              Confirm
+                            </button>
+                          </PermissionGate>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            );
+          })}
           </tbody>
         </table>
       </div>
@@ -396,9 +415,9 @@ export default function ProbationPage() {
     <AppLayout activeMenuItem="probation">
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header */}
         <div>
@@ -414,11 +433,36 @@ export default function ProbationPage() {
         {statistics && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { label: 'Active', value: statistics.totalActiveProbations, icon: Users, gradient: 'from-accent-500 to-accent-700' },
-              { label: 'Overdue', value: statistics.overdueCount, icon: AlertTriangle, gradient: 'from-danger-500 to-danger-600' },
-              { label: 'Ending This Week', value: statistics.endingThisWeek, icon: Clock, gradient: 'from-warning-500 to-warning-600' },
-              { label: 'Evaluations Due', value: statistics.evaluationsDue, icon: ClipboardList, gradient: 'from-accent-700 to-accent-800' },
-              { label: 'Confirmed (Month)', value: statistics.confirmationsThisMonth, icon: CheckCircle, gradient: 'from-success-500 to-success-600' },
+              {
+                label: 'Active',
+                value: statistics.totalActiveProbations,
+                icon: Users,
+                gradient: 'from-accent-500 to-accent-700'
+              },
+              {
+                label: 'Overdue',
+                value: statistics.overdueCount,
+                icon: AlertTriangle,
+                gradient: 'from-danger-500 to-danger-600'
+              },
+              {
+                label: 'Ending This Week',
+                value: statistics.endingThisWeek,
+                icon: Clock,
+                gradient: 'from-warning-500 to-warning-600'
+              },
+              {
+                label: 'Evaluations Due',
+                value: statistics.evaluationsDue,
+                icon: ClipboardList,
+                gradient: 'from-accent-700 to-accent-800'
+              },
+              {
+                label: 'Confirmed (Month)',
+                value: statistics.confirmationsThisMonth,
+                icon: CheckCircle,
+                gradient: 'from-success-500 to-success-600'
+              },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -426,7 +470,7 @@ export default function ProbationPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                    <stat.icon className="h-5 w-5 text-white" />
+                    <stat.icon className="h-5 w-5 text-white"/>
                   </div>
                   <div>
                     <p className="text-xs text-[var(--text-secondary)]">{stat.label}</p>
@@ -475,12 +519,12 @@ export default function ProbationPage() {
         {activeTab === 'active' && (
           <div>
             {isActiveLoading ? (
-              <NuAuraLoader message="Loading active probations..." />
+              <NuAuraLoader message="Loading active probations..."/>
             ) : !activeData || activeData.content.length === 0 ? (
               <EmptyState
                 title="No active probations"
                 description="Active probation periods will appear here."
-                icon={<UserCheck className="h-12 w-12 text-[var(--text-muted)]" />}
+                icon={<UserCheck className="h-12 w-12 text-[var(--text-muted)]"/>}
               />
             ) : (
               <>
@@ -495,12 +539,12 @@ export default function ProbationPage() {
         {activeTab === 'upcoming' && (
           <div>
             {isUpcomingLoading ? (
-              <NuAuraLoader message="Loading upcoming reviews..." />
+              <NuAuraLoader message="Loading upcoming reviews..."/>
             ) : endingSoon.length === 0 ? (
               <EmptyState
                 title="No upcoming reviews"
                 description="Probations ending in the next 14 days will appear here."
-                icon={<Calendar className="h-12 w-12 text-[var(--text-muted)]" />}
+                icon={<Calendar className="h-12 w-12 text-[var(--text-muted)]"/>}
               />
             ) : (
               <div className="space-y-4">
@@ -517,12 +561,12 @@ export default function ProbationPage() {
         {activeTab === 'history' && (
           <div>
             {isHistoryLoading ? (
-              <NuAuraLoader message="Loading history..." />
+              <NuAuraLoader message="Loading history..."/>
             ) : !historyData || historyData.content.length === 0 ? (
               <EmptyState
                 title="No completed probations"
                 description="Confirmed probation records will appear here."
-                icon={<CheckCircle className="h-12 w-12 text-[var(--text-muted)]" />}
+                icon={<CheckCircle className="h-12 w-12 text-[var(--text-muted)]"/>}
               />
             ) : (
               <>
@@ -538,8 +582,9 @@ export default function ProbationPage() {
           <PermissionGate permission={Permissions.PROBATION_MANAGE}>
             <div className="max-w-3xl">
               {submitSuccess ? (
-                <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4" />
+                <div
+                  className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
+                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4"/>
                   <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                     Evaluation Submitted Successfully!
                   </h3>
@@ -614,11 +659,11 @@ export default function ProbationPage() {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                       {[
-                        { name: 'performanceRating' as const, label: 'Performance' },
-                        { name: 'attendanceRating' as const, label: 'Attendance' },
-                        { name: 'communicationRating' as const, label: 'Communication' },
-                        { name: 'teamworkRating' as const, label: 'Teamwork' },
-                        { name: 'technicalSkillsRating' as const, label: 'Technical' },
+                        {name: 'performanceRating' as const, label: 'Performance'},
+                        {name: 'attendanceRating' as const, label: 'Attendance'},
+                        {name: 'communicationRating' as const, label: 'Communication'},
+                        {name: 'teamworkRating' as const, label: 'Teamwork'},
+                        {name: 'technicalSkillsRating' as const, label: 'Technical'},
                       ].map((field) => (
                         <div key={field.name}>
                           <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">

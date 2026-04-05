@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { attendanceService } from '@/lib/services/hrms/attendance.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {attendanceService} from '@/lib/services/hrms/attendance.service';
 import {
   AttendanceRecord,
   CheckInRequest,
   CheckOutRequest,
-  RegularizationRequest,
-  ShiftRequest,
   HolidayRequest,
   Page,
+  RegularizationRequest,
+  ShiftRequest,
 } from '@/lib/types/hrms/attendance';
 
 // Query keys for cache management
@@ -18,19 +18,19 @@ export const attendanceKeys = {
   // Attendance records
   records: () => [...attendanceKeys.all, 'records'] as const,
   employeeRecords: (employeeId: string, page: number, size: number) =>
-    [...attendanceKeys.records(), 'employee', employeeId, { page, size }] as const,
+    [...attendanceKeys.records(), 'employee', employeeId, {page, size}] as const,
   dateRange: (startDate: string, endDate: string) =>
-    [...attendanceKeys.records(), 'range', { startDate, endDate }] as const,
+    [...attendanceKeys.records(), 'range', {startDate, endDate}] as const,
   byDate: (date: string, page: number, size: number) =>
-    [...attendanceKeys.records(), 'date', date, { page, size }] as const,
+    [...attendanceKeys.records(), 'date', date, {page, size}] as const,
   pendingRegularizations: (page: number, size: number) =>
-    [...attendanceKeys.records(), 'pending-regularizations', { page, size }] as const,
+    [...attendanceKeys.records(), 'pending-regularizations', {page, size}] as const,
   timeEntries: (date: string) =>
     [...attendanceKeys.records(), 'time-entries', date] as const,
   // Shifts
   shifts: () => [...attendanceKeys.all, 'shifts'] as const,
   shiftsList: (page: number, size: number) =>
-    [...attendanceKeys.shifts(), 'list', { page, size }] as const,
+    [...attendanceKeys.shifts(), 'list', {page, size}] as const,
   shiftsActive: () => [...attendanceKeys.shifts(), 'active'] as const,
   shiftDetail: (id: string) => [...attendanceKeys.shifts(), 'detail', id] as const,
   // Holidays
@@ -185,7 +185,7 @@ export function useCheckIn() {
     mutationFn: (data: CheckInRequest) => attendanceService.checkIn(data),
     onMutate: async (data) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: attendanceKeys.records() });
+      await queryClient.cancelQueries({queryKey: attendanceKeys.records()});
 
       // Snapshot the previous value for rollback
       const today = data.attendanceDate || new Date().toISOString().split('T')[0];
@@ -193,7 +193,7 @@ export function useCheckIn() {
         attendanceKeys.dateRange(today, today)
       );
 
-      return { previousData, today };
+      return {previousData, today};
     },
     onError: (_err, _data, context) => {
       // Rollback on error
@@ -210,8 +210,8 @@ export function useCheckIn() {
       // the weekly and monthly queries too, causing the whole page to re-render
       // multiple times as each query resolves sequentially.
       const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.dateRange(today, today) });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.timeEntries(today) });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
     },
   });
 }
@@ -223,14 +223,14 @@ export function useCheckOut() {
   return useMutation({
     mutationFn: (data: CheckOutRequest) => attendanceService.checkOut(data),
     onMutate: async (data) => {
-      await queryClient.cancelQueries({ queryKey: attendanceKeys.records() });
+      await queryClient.cancelQueries({queryKey: attendanceKeys.records()});
 
       const today = data.attendanceDate || new Date().toISOString().split('T')[0];
       const previousData = queryClient.getQueryData(
         attendanceKeys.dateRange(today, today)
       );
 
-      return { previousData, today };
+      return {previousData, today};
     },
     onError: (_err, _data, context) => {
       if (context?.previousData && context?.today) {
@@ -243,8 +243,8 @@ export function useCheckOut() {
     onSettled: (_data, _error, variables) => {
       // Surgical invalidation: only today's record changes on clock-out.
       const today = variables.attendanceDate || new Date().toISOString().split('T')[0];
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.dateRange(today, today) });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.timeEntries(today) });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
     },
   });
 }
@@ -254,11 +254,11 @@ export function useRequestRegularization() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: RegularizationRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: RegularizationRequest }) =>
       attendanceService.requestRegularization(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.pendingRegularizations(0, 20) });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.records()});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.pendingRegularizations(0, 20)});
     },
   });
 }
@@ -290,7 +290,7 @@ export function useApproveRegularization() {
         );
       }
 
-      return { previousData };
+      return {previousData};
     },
     onError: (_err, _id, context) => {
       if (context?.previousData) {
@@ -301,8 +301,8 @@ export function useApproveRegularization() {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.pendingRegularizations(0, 20) });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.records()});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.pendingRegularizations(0, 20)});
     },
   });
 }
@@ -312,9 +312,9 @@ export function useRejectRegularization() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       attendanceService.rejectRegularization(id, reason),
-    onMutate: async ({ id }) => {
+    onMutate: async ({id}) => {
       await queryClient.cancelQueries({
         queryKey: attendanceKeys.pendingRegularizations(0, 20),
       });
@@ -334,7 +334,7 @@ export function useRejectRegularization() {
         );
       }
 
-      return { previousData };
+      return {previousData};
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
@@ -345,8 +345,8 @@ export function useRejectRegularization() {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.records() });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.pendingRegularizations(0, 20) });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.records()});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.pendingRegularizations(0, 20)});
     },
   });
 }
@@ -359,7 +359,7 @@ export function useCreateShift() {
   return useMutation({
     mutationFn: (data: ShiftRequest) => attendanceService.createShift(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shifts() });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shifts()});
     },
   });
 }
@@ -368,11 +368,11 @@ export function useUpdateShift() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ShiftRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ShiftRequest }) =>
       attendanceService.updateShift(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shiftDetail(id) });
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shifts() });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shiftDetail(id)});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shifts()});
     },
   });
 }
@@ -383,7 +383,7 @@ export function useDeleteShift() {
   return useMutation({
     mutationFn: (id: string) => attendanceService.deleteShift(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shifts() });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shifts()});
     },
   });
 }
@@ -394,7 +394,7 @@ export function useActivateShift() {
   return useMutation({
     mutationFn: (id: string) => attendanceService.activateShift(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shifts() });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shifts()});
     },
   });
 }
@@ -405,7 +405,7 @@ export function useDeactivateShift() {
   return useMutation({
     mutationFn: (id: string) => attendanceService.deactivateShift(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.shifts() });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.shifts()});
     },
   });
 }
@@ -429,10 +429,10 @@ export function useUpdateHoliday() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: HolidayRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: HolidayRequest }) =>
       attendanceService.updateHoliday(id, data),
-    onSuccess: (result, { id }) => {
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.holidayDetail(id) });
+    onSuccess: (result, {id}) => {
+      queryClient.invalidateQueries({queryKey: attendanceKeys.holidayDetail(id)});
       queryClient.invalidateQueries({
         queryKey: attendanceKeys.holidaysByYear(new Date(result.holidayDate).getFullYear()),
       });
@@ -447,7 +447,7 @@ export function useDeleteHoliday() {
     mutationFn: (id: string) => attendanceService.deleteHoliday(id),
     onSuccess: () => {
       // Invalidate all holiday queries since we don't know the year
-      queryClient.invalidateQueries({ queryKey: attendanceKeys.holidays() });
+      queryClient.invalidateQueries({queryKey: attendanceKeys.holidays()});
     },
   });
 }

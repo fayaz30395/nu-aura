@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { customFieldsApi } from '@/lib/api/custom-fields';
-import { logger } from '@/lib/utils/logger';
+import React, {useEffect, useState} from 'react';
+import {customFieldsApi} from '@/lib/api/custom-fields';
+import {logger} from '@/lib/utils/logger';
 import {
   CustomFieldDefinition,
   CustomFieldValue,
@@ -21,13 +21,13 @@ interface CustomFieldsSectionProps {
 }
 
 export default function CustomFieldsSection({
-  entityType,
-  entityId,
-  onChange,
-  disabled = false,
-  showGroupHeaders = true,
-  className = '',
-}: CustomFieldsSectionProps) {
+                                              entityType,
+                                              entityId,
+                                              onChange,
+                                              disabled = false,
+                                              showGroupHeaders = true,
+                                              className = '',
+                                            }: CustomFieldsSectionProps) {
   const [definitions, setDefinitions] = useState<CustomFieldDefinition[]>([]);
   const [values, setValues] = useState<CustomFieldValue[]>([]);
   const [fieldValues, setFieldValues] = useState<Record<string, CustomFieldValueRequest>>({});
@@ -149,7 +149,8 @@ export default function CustomFieldsSection({
       {showGroupHeaders ? (
         Object.entries(groupedDefinitions).map(([group, defs]) => (
           <div key={group} className="mb-6">
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-4 pb-2 border-b border-[var(--border-main)] dark:border-surface-700">
+            <h3
+              className="text-xl font-semibold text-[var(--text-primary)] mb-4 pb-2 border-b border-[var(--border-main)] dark:border-surface-700">
               {group}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,31 +1,21 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  Download,
-  FileText,
-  Calendar,
-  DollarSign,
-  TrendingUp,
-  Search,
-  Filter,
-  AlertCircle,
-  Users,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePayslipsByEmployee, usePayslips, useDownloadPayslipPdf } from '@/lib/hooks/queries/usePayroll';
-import { Payslip } from '@/lib/types/hrms/payroll';
-import { createLogger } from '@/lib/utils/logger';
-import { formatCurrency } from '@/lib/utils';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useDownloadPayslipPdf, usePayslips, usePayslipsByEmployee} from '@/lib/hooks/queries/usePayroll';
+import {Payslip} from '@/lib/types/hrms/payroll';
+import {createLogger} from '@/lib/utils/logger';
+import {formatCurrency} from '@/lib/utils';
 
 const log = createLogger('PayslipsPage');
 
 export default function MyPayslipsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminView, setIsAdminView] = useState(false);
@@ -48,7 +38,7 @@ export default function MyPayslipsPage() {
   const allPayslipsQuery = usePayslips(0, 100, undefined, undefined, hasHydrated && isAdminView);
 
   // Determine which data to use
-  const { data: payslipsData, isLoading } = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
+  const {data: payslipsData, isLoading} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
   const payslips = payslipsData?.content ?? [];
 
   useEffect(() => {
@@ -109,7 +99,9 @@ export default function MyPayslipsPage() {
       window.URL.revokeObjectURL(url);
     } catch (err: unknown) {
       log.error('Failed to download payslip:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip PDF');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to download payslip PDF');
     } finally {
       setDownloadingId(null);
     }
@@ -141,7 +133,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -151,7 +143,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="text-center py-12">
-          <DollarSign className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <DollarSign className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Payslip access requires an employee profile. Use the admin panels to manage payroll.
@@ -187,7 +179,7 @@ export default function MyPayslipsPage() {
               onClick={toggleView}
               className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Users className="h-4 w-4" />
+              <Users className="h-4 w-4"/>
               View All Employees
             </button>
           )}
@@ -196,7 +188,7 @@ export default function MyPayslipsPage() {
               onClick={toggleView}
               className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <FileText className="h-4 w-4" />
+              <FileText className="h-4 w-4"/>
               View My Payslips
             </button>
           )}
@@ -213,8 +205,9 @@ export default function MyPayslipsPage() {
                     {filteredPayslips.length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                <div
+                  className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
               </div>
             </CardContent>
@@ -230,8 +223,9 @@ export default function MyPayslipsPage() {
                       {new Set(filteredPayslips.map(p => p.employeeId)).size}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400" />
+                  <div
+                    className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
+                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                   </div>
                 </div>
               </CardContent>
@@ -249,8 +243,9 @@ export default function MyPayslipsPage() {
                     {formatCurrency(yearlyTotal)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400" />
+                <div
+                  className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
                 </div>
               </div>
             </CardContent>
@@ -267,8 +262,9 @@ export default function MyPayslipsPage() {
                     {formatCurrency(yearlyAverage)}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600" />
+                <div
+                  className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
                 </div>
               </div>
             </CardContent>
@@ -280,7 +276,7 @@ export default function MyPayslipsPage() {
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                 <input
                   type="text"
                   placeholder={isAdminView ? "Search by employee name, month, or status..." : "Search payslips..."}
@@ -290,7 +286,7 @@ export default function MyPayslipsPage() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+                <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -310,8 +306,9 @@ export default function MyPayslipsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600"/>
             <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
@@ -320,7 +317,7 @@ export default function MyPayslipsPage() {
         {filteredPayslips.length === 0 ? (
           <Card className="card-aura">
             <CardContent className="py-16 text-center">
-              <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+              <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 No Payslips Found
               </h3>
@@ -339,8 +336,9 @@ export default function MyPayslipsPage() {
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                        <div
+                          className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Calendar className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                         </div>
                         <div>
                           {isAdminView && payslip.employeeName && (
@@ -360,8 +358,8 @@ export default function MyPayslipsPage() {
                                 payslip.status === 'PAID'
                                   ? 'status-success'
                                   : payslip.status === 'FINALIZED'
-                                  ? 'status-info'
-                                  : 'status-warning'
+                                    ? 'status-info'
+                                    : 'status-warning'
                               }`}
                             >
                               {payslip.status}
@@ -389,12 +387,13 @@ export default function MyPayslipsPage() {
                         >
                           {downloadingId === payslip.id ? (
                             <>
-                              <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              <div
+                                className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
                               Downloading...
                             </>
                           ) : (
                             <>
-                              <Download className="h-4 w-4" />
+                              <Download className="h-4 w-4"/>
                               Download PDF
                             </>
                           )}

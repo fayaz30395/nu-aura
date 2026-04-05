@@ -1,43 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { notFound } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useEffect, useState} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/Button';
-import { AppLayout } from '@/components/layout';
-import {
-  useWikiPage,
-  useUpdateWikiPage,
-  useWikiSpaces,
-  useEditLock,
-} from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { TextInput, Select, LoadingOverlay, Skeleton, MultiSelect } from '@mantine/core';
-import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
-import { isAxiosError } from '@/lib/utils/type-guards';
+import {Button} from '@/components/ui/Button';
+import {AppLayout} from '@/components/layout';
+import {useEditLock, useUpdateWikiPage, useWikiPage, useWikiSpaces,} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {LoadingOverlay, MultiSelect, Select, Skeleton, TextInput} from '@mantine/core';
+import {ArrowLeft, RefreshCw, Save} from 'lucide-react';
+import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import EditLockWarning from '@/components/fluence/EditLockWarning';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
 
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
-  { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
+  {ssr: false, loading: () => <Skeleton height={400} radius="md"/>}
 );
 
 const editWikiPageSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
   visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
-    errorMap: () => ({ message: 'Invalid visibility option' }),
+    errorMap: () => ({message: 'Invalid visibility option'}),
   }),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
   content: z.record(z.unknown()).default({
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{type: 'paragraph'}],
   }),
 });
 
@@ -49,7 +43,7 @@ export default function EditWikiPage() {
   const pageId = params.slug as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editorSearchQuery, setEditorSearchQuery] = useState('');
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.WIKI_MANAGE,
@@ -63,11 +57,11 @@ export default function EditWikiPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
-  const { mutate: updateWikiPage } = useUpdateWikiPage();
-  const { data: _spacesData } = useWikiSpaces(0, 100);
-  const { isLockedByOther, lockedByName, forceAcquireLock } = useEditLock('WIKI', pageId, !!pageId);
-  const { data: editorSearchData } = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
+  const {data: page, isLoading} = useWikiPage(pageId, !!pageId);
+  const {mutate: updateWikiPage} = useUpdateWikiPage();
+  const {data: _spacesData} = useWikiSpaces(0, 100);
+  const {isLockedByOther, lockedByName, forceAcquireLock} = useEditLock('WIKI', pageId, !!pageId);
+  const {data: editorSearchData} = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
 
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
   const [sharedEmployeeIds, setSharedEmployeeIds] = useState<string[]>([]);
@@ -81,14 +75,14 @@ export default function EditWikiPage() {
     handleSubmit,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<EditWikiPageInput>({
     resolver: zodResolver(editWikiPageSchema),
     defaultValues: {
       title: '',
       visibility: 'ORGANIZATION',
       status: 'DRAFT',
-      content: { type: 'doc', content: [{ type: 'paragraph' }] },
+      content: {type: 'doc', content: [{type: 'paragraph'}]},
     },
   });
 
@@ -146,7 +140,7 @@ export default function EditWikiPage() {
             const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
               ? (error.response.data as { message?: string }).message ?? 'Failed to update wiki page'
               : 'Failed to update wiki page';
-            notifications.show({ title: 'Error', message, color: 'red' });
+            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );
@@ -159,7 +153,7 @@ export default function EditWikiPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin" />
+          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -181,7 +175,7 @@ export default function EditWikiPage() {
                 aria-label="Go back"
                 className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5"/>
               </button>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Edit Wiki Page
@@ -225,15 +219,15 @@ export default function EditWikiPage() {
             <Controller
               control={control}
               name="status"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select status"
                   disabled={isSubmitting}
                   data={[
-                    { value: 'DRAFT', label: 'Draft' },
-                    { value: 'PUBLISHED', label: 'Published' },
-                    { value: 'ARCHIVED', label: 'Archived' },
+                    {value: 'DRAFT', label: 'Draft'},
+                    {value: 'PUBLISHED', label: 'Published'},
+                    {value: 'ARCHIVED', label: 'Archived'},
                   ]}
                 />
               )}
@@ -248,17 +242,17 @@ export default function EditWikiPage() {
             <Controller
               control={control}
               name="visibility"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
-                    { value: 'PUBLIC', label: 'Public' },
-                    { value: 'ORGANIZATION', label: 'Organization' },
-                    { value: 'DEPARTMENT', label: 'My Department Only' },
-                    { value: 'PRIVATE', label: 'Private' },
-                    { value: 'RESTRICTED', label: 'Restricted' },
+                    {value: 'PUBLIC', label: 'Public'},
+                    {value: 'ORGANIZATION', label: 'Organization'},
+                    {value: 'DEPARTMENT', label: 'My Department Only'},
+                    {value: 'PRIVATE', label: 'Private'},
+                    {value: 'RESTRICTED', label: 'Restricted'},
                   ]}
                 />
               )}
@@ -304,7 +298,7 @@ export default function EditWikiPage() {
             <Controller
               control={control}
               name="content"
-              render={({ field }) => (
+              render={({field}) => (
                 <FluenceEditor
                   content={field.value}
                   onChange={field.onChange}
@@ -328,13 +322,13 @@ export default function EditWikiPage() {
               disabled={isSubmitting}
               className="gap-2 bg-accent-600 hover:bg-accent-700"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4"/>
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>
 
-        <LoadingOverlay visible={isSubmitting} />
+        <LoadingOverlay visible={isSubmitting}/>
       </div>
     </AppLayout>
   );

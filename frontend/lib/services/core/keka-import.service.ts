@@ -1,12 +1,12 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
+  KEKA_COLUMN_PRESETS,
+  KekaFileUploadResponse,
+  KekaImportHistoryEntry,
   KekaImportMapping,
   KekaImportMappingSuggestion,
   KekaImportPreview,
   KekaImportResult,
-  KekaFileUploadResponse,
-  KekaImportHistoryEntry,
-  KEKA_COLUMN_PRESETS,
 } from '../../types/core/keka-import';
 
 class KekaImportService {
@@ -149,7 +149,7 @@ class KekaImportService {
       content: KekaImportHistoryEntry[];
       totalElements: number;
     }>('/keka-import/history', {
-      params: { page, size },
+      params: {page, size},
     });
 
     return response.data;

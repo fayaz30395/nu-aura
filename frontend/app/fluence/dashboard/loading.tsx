@@ -1,29 +1,29 @@
 'use client';
 
-import { Skeleton } from '@mantine/core';
+import {Skeleton} from '@mantine/core';
 
 export default function Loading() {
   return (
     <div className="p-4 sm:p-6 space-y-6">
       {/* Header skeleton */}
       <div className="space-y-2">
-        <Skeleton height={32} width="50%" />
-        <Skeleton height={16} width="70%" />
+        <Skeleton height={32} width="50%"/>
+        <Skeleton height={16} width="70%"/>
       </div>
 
       {/* Stats cards skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <Skeleton key={index} height={100} className="rounded-lg" />
+        {Array.from({length: 4}).map((_, index) => (
+          <Skeleton key={index} height={100} className="rounded-lg"/>
         ))}
       </div>
 
       {/* Main content skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <Skeleton height={300} className="rounded-lg" />
+          <Skeleton height={300} className="rounded-lg"/>
         </div>
-        <Skeleton height={300} className="rounded-lg" />
+        <Skeleton height={300} className="rounded-lg"/>
       </div>
     </div>
   );

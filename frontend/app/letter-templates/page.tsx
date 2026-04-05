@@ -1,55 +1,41 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { sanitizeHtml } from '@/lib/utils/sanitize';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, {useCallback, useMemo, useState} from 'react';
+import {sanitizeHtml} from '@/lib/utils/sanitize';
+import {Controller, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {
-  FileText,
-  Search,
-  Plus,
-  Copy,
-  Pencil,
-  Trash2,
-  Eye,
-  ChevronDown,
-  Loader2,
   AlertCircle,
+  ChevronDown,
+  Copy,
+  Eye,
+  FileText,
+  Loader2,
+  Pencil,
+  Plus,
+  Search,
   Tag,
+  Trash2,
   Variable,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Badge, Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useRouter} from 'next/navigation';
 import {
-  Card,
-  CardContent,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Badge,
-} from '@/components/ui';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useRouter } from 'next/navigation';
-import {
-  useLetterTemplates,
-  useCreateLetterTemplate,
-  useUpdateLetterTemplate,
-  useDeleteLetterTemplate,
   useCloneLetterTemplate,
+  useCreateLetterTemplate,
+  useDeleteLetterTemplate,
   useLetterPlaceholders,
+  useLetterTemplates,
   usePreviewLetterTemplate,
+  useUpdateLetterTemplate,
 } from '@/lib/hooks/queries/useLetter';
-import {
-  LetterTemplate,
-  LetterCategory,
-  CreateLetterTemplateRequest,
-  PlaceholderItem,
-} from '@/lib/types/hrms/letter';
-import { createLogger } from '@/lib/utils/logger';
+import {CreateLetterTemplateRequest, LetterCategory, LetterTemplate, PlaceholderItem,} from '@/lib/types/hrms/letter';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('LetterTemplatesPage');
 
@@ -60,7 +46,7 @@ const TemplateFormSchema = z.object({
   code: z.string().min(1, 'Template code is required')
     .regex(/^[A-Z0-9_]+$/, 'Code must be uppercase alphanumeric with underscores'),
   description: z.string().optional().or(z.literal('')),
-  category: z.nativeEnum(LetterCategory, { errorMap: () => ({ message: 'Category is required' }) }),
+  category: z.nativeEnum(LetterCategory, {errorMap: () => ({message: 'Category is required'})}),
   templateContent: z.string().min(1, 'Template content is required'),
   headerHtml: z.string().optional().or(z.literal('')),
   footerHtml: z.string().optional().or(z.literal('')),
@@ -134,13 +120,13 @@ interface PlaceholderToolbarProps {
   onInsert: (placeholder: string) => void;
 }
 
-function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps) {
+function PlaceholderToolbar({placeholders, onInsert}: PlaceholderToolbarProps) {
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
   return (
     <div className="border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] p-4">
       <div className="flex items-center gap-2 mb-2">
-        <Variable className="h-4 w-4 text-accent-600" />
+        <Variable className="h-4 w-4 text-accent-600"/>
         <span className="text-sm font-medium text-[var(--text-primary)]">
           Insert Placeholder
         </span>
@@ -168,7 +154,7 @@ function PlaceholderToolbar({ placeholders, onInsert }: PlaceholderToolbarProps)
                     title={`${item.label} — e.g. ${item.example}`}
                     className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-50 text-accent-700 border border-accent-200 rounded-md hover:bg-accent-100 dark:bg-accent-900/30 dark:text-accent-300 dark:border-accent-800 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <Tag className="h-3 w-3" />
+                    <Tag className="h-3 w-3"/>
                     {item.label}
                   </button>
                 ))}
@@ -190,8 +176,8 @@ interface PreviewModalProps {
   onClose: () => void;
 }
 
-function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: PreviewModalProps) {
-  const { data: previewHtml, isLoading } = usePreviewLetterTemplate(templateId, isOpen);
+function TemplatePreviewModal({templateId, templateName, isOpen, onClose}: PreviewModalProps) {
+  const {data: previewHtml, isLoading} = usePreviewLetterTemplate(templateId, isOpen);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -201,13 +187,13 @@ function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: Pre
       <ModalBody>
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
-            <Loader2 className="h-6 w-6 animate-spin text-accent-500" />
+            <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
             <span className="ml-2 text-[var(--text-secondary)]">Generating preview...</span>
           </div>
         ) : previewHtml ? (
           <div
             className="prose prose-sm max-w-none dark:prose-invert p-6 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewHtml) }}
+            dangerouslySetInnerHTML={{__html: sanitizeHtml(previewHtml)}}
           />
         ) : (
           <div className="text-center text-[var(--text-muted)] py-8">
@@ -226,7 +212,7 @@ function TemplatePreviewModal({ templateId, templateName, isOpen, onClose }: Pre
 
 export default function LetterTemplatesPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
 
   // State
   const [currentPage, setCurrentPage] = useState(0);
@@ -245,7 +231,7 @@ export default function LetterTemplatesPage() {
     error,
     refetch,
   } = useLetterTemplates(currentPage, 20, isAuthenticated && hasHydrated);
-  const { data: placeholders } = useLetterPlaceholders(isAuthenticated && hasHydrated);
+  const {data: placeholders} = useLetterPlaceholders(isAuthenticated && hasHydrated);
 
   // Mutations
   const createMutation = useCreateLetterTemplate();
@@ -389,7 +375,7 @@ export default function LetterTemplatesPage() {
   const handleInsertPlaceholder = useCallback((placeholder: string) => {
     const current = form.getValues('templateContent');
     // Insert placeholder at the end (since we have no cursor tracking for textarea)
-    form.setValue('templateContent', current + placeholder, { shouldValidate: true });
+    form.setValue('templateContent', current + placeholder, {shouldValidate: true});
   }, [form]);
 
   const onSubmit = useCallback((data: TemplateFormData) => {
@@ -413,7 +399,7 @@ export default function LetterTemplatesPage() {
 
     if (editingTemplate) {
       updateMutation.mutate(
-        { id: editingTemplate.id, data: payload },
+        {id: editingTemplate.id, data: payload},
         {
           onSuccess: () => {
             setShowEditorModal(false);
@@ -436,16 +422,16 @@ export default function LetterTemplatesPage() {
   }, [editingTemplate, updateMutation, createMutation, resetForm, refetch]);
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Letters', href: '/letters' },
-    { label: 'Letter Templates' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Letters', href: '/letters'},
+    {label: 'Letter Templates'},
   ];
 
   if (isLoading && templates.length === 0) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letter-templates">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading templates...</span>
         </div>
       </AppLayout>
@@ -467,7 +453,7 @@ export default function LetterTemplatesPage() {
           </div>
           <PermissionGate permission={Permissions.LETTER_TEMPLATE_CREATE}>
             <Button onClick={handleCreateNew}>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2"/>
               New Template
             </Button>
           </PermissionGate>
@@ -478,7 +464,7 @@ export default function LetterTemplatesPage() {
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-5 w-5"/>
                 <span>{error instanceof Error ? error.message : 'Failed to load templates'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">
                   Retry
@@ -491,7 +477,7 @@ export default function LetterTemplatesPage() {
         {/* Search & Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search templates by name or code..."
@@ -526,7 +512,7 @@ export default function LetterTemplatesPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30">
-                        <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                        <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                       </div>
                       <div>
                         <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
@@ -549,7 +535,8 @@ export default function LetterTemplatesPage() {
 
                   {/* Category badge */}
                   <div className="mb-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
                       {getCategoryLabel(template.category)}
                     </span>
                   </div>
@@ -568,7 +555,8 @@ export default function LetterTemplatesPage() {
                   </div>
 
                   {/* Quick preview snippet */}
-                  <div className="border border-[var(--border-main)] rounded-md p-2 mb-4 bg-[var(--bg-secondary)] max-h-20 overflow-hidden">
+                  <div
+                    className="border border-[var(--border-main)] rounded-md p-2 mb-4 bg-[var(--bg-secondary)] max-h-20 overflow-hidden">
                     <p className="text-caption line-clamp-3 font-mono">
                       {template.templateContent?.replace(/<[^>]*>/g, '').substring(0, 150)}...
                     </p>
@@ -582,7 +570,7 @@ export default function LetterTemplatesPage() {
                       onClick={() => handlePreview(template)}
                       className="flex-1"
                     >
-                      <Eye className="h-3.5 w-3.5 mr-1" />
+                      <Eye className="h-3.5 w-3.5 mr-1"/>
                       Preview
                     </Button>
                     <PermissionGate permission={Permissions.LETTER_TEMPLATE_MANAGE}>
@@ -592,7 +580,7 @@ export default function LetterTemplatesPage() {
                         onClick={() => handleEdit(template)}
                         disabled={!!template.isSystemTemplate}
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-3.5 w-3.5"/>
                       </Button>
                     </PermissionGate>
                     <PermissionGate permission={Permissions.LETTER_TEMPLATE_CREATE}>
@@ -602,7 +590,7 @@ export default function LetterTemplatesPage() {
                         onClick={() => handleClone(template.id)}
                         disabled={cloneMutation.isPending}
                       >
-                        <Copy className="h-3.5 w-3.5" />
+                        <Copy className="h-3.5 w-3.5"/>
                       </Button>
                     </PermissionGate>
                     <PermissionGate permission={Permissions.LETTER_TEMPLATE_MANAGE}>
@@ -612,7 +600,7 @@ export default function LetterTemplatesPage() {
                         onClick={() => setShowDeleteConfirm(template.id)}
                         disabled={!!template.isSystemTemplate}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-3.5 w-3.5"/>
                       </Button>
                     </PermissionGate>
                   </div>
@@ -623,7 +611,7 @@ export default function LetterTemplatesPage() {
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
-              <FileText className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+              <FileText className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 {searchQuery || categoryFilter ? 'No templates match your filters' : 'No templates yet'}
               </h3>
@@ -635,7 +623,7 @@ export default function LetterTemplatesPage() {
               {!searchQuery && !categoryFilter && (
                 <PermissionGate permission={Permissions.LETTER_TEMPLATE_CREATE}>
                   <Button onClick={handleCreateNew}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 mr-2"/>
                     Create Template
                   </Button>
                 </PermissionGate>
@@ -774,7 +762,7 @@ export default function LetterTemplatesPage() {
                   <Controller
                     name="templateContent"
                     control={form.control}
-                    render={({ field }) => (
+                    render={({field}) => (
                       <textarea
                         {...field}
                         rows={18}
@@ -852,7 +840,8 @@ export default function LetterTemplatesPage() {
 
               {/* Advanced: Header/Footer/CSS (collapsible) */}
               <details className="border border-[var(--border-main)] rounded-lg">
-                <summary className="p-4 cursor-pointer text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
+                <summary
+                  className="p-4 cursor-pointer text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
                   Advanced Options (Header HTML, Footer HTML, CSS)
                 </summary>
                 <div className="px-4 pb-4 space-y-4">
@@ -909,7 +898,7 @@ export default function LetterTemplatesPage() {
               disabled={createMutation.isPending || updateMutation.isPending}
             >
               {(createMutation.isPending || updateMutation.isPending) && (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
               )}
               {editingTemplate ? 'Update Template' : 'Create Template'}
             </Button>
@@ -952,7 +941,7 @@ export default function LetterTemplatesPage() {
               onClick={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {deleteMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin"/>}
               Delete
             </Button>
           </ModalFooter>

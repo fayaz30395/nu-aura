@@ -1,34 +1,67 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, {useCallback, useState} from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ChevronDown,
-  ChevronRight,
-  Mail,
-  Phone,
-  Users,
-  ExternalLink,
-} from 'lucide-react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ChevronDown, ChevronRight, ExternalLink, Mail, Phone, Users,} from 'lucide-react';
 import Link from 'next/link';
-import { Employee } from '@/lib/types/hrms/employee';
-import { OrgChartNode } from '@/lib/services/hrms/orgChart.service';
-import { cn } from '@/lib/utils';
+import {Employee} from '@/lib/types/hrms/employee';
+import {OrgChartNode} from '@/lib/services/hrms/orgChart.service';
+import {cn} from '@/lib/utils';
 
 // ── Level-based styling ─────────────────────────────────────────────────────
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }> = {
-  CXO:            { bg: 'bg-accent-50 dark:bg-accent-950/40',     border: 'border-accent-400 dark:border-accent-600',     badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300' },
-  SVP:            { bg: 'bg-accent-50/80 dark:bg-accent-950/30',  border: 'border-accent-300 dark:border-accent-700',     badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300' },
-  VP:             { bg: 'bg-accent-50 dark:bg-accent-950/40',   border: 'border-accent-400 dark:border-accent-600',   badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300' },
-  DIRECTOR:       { bg: 'bg-accent-50/80 dark:bg-accent-950/30', border: 'border-accent-300 dark:border-accent-700', badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300' },
-  SENIOR_MANAGER: { bg: 'bg-success-50 dark:bg-success-950/40', border: 'border-success-400 dark:border-success-600', badge: 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-300' },
-  MANAGER:        { bg: 'bg-success-50/80 dark:bg-success-950/30', border: 'border-success-300 dark:border-success-700', badge: 'bg-success-100 text-success-700 dark:bg-success-900/80 dark:text-success-300' },
-  LEAD:           { bg: 'bg-warning-50 dark:bg-warning-950/40', border: 'border-warning-400 dark:border-warning-600', badge: 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-300' },
-  SENIOR:         { bg: 'bg-surface-50 dark:bg-surface-800/60', border: 'border-surface-300 dark:border-surface-600', badge: 'bg-surface-100 text-surface-700 dark:bg-surface-800 dark:text-surface-300' },
-  MID:            { bg: 'bg-surface-50/60 dark:bg-surface-800/40', border: 'border-surface-200 dark:border-surface-700', badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400' },
-  ENTRY:          { bg: 'bg-surface-50/40 dark:bg-surface-800/30', border: 'border-surface-200 dark:border-surface-700', badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400' },
+  CXO: {
+    bg: 'bg-accent-50 dark:bg-accent-950/40',
+    border: 'border-accent-400 dark:border-accent-600',
+    badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300'
+  },
+  SVP: {
+    bg: 'bg-accent-50/80 dark:bg-accent-950/30',
+    border: 'border-accent-300 dark:border-accent-700',
+    badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300'
+  },
+  VP: {
+    bg: 'bg-accent-50 dark:bg-accent-950/40',
+    border: 'border-accent-400 dark:border-accent-600',
+    badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300'
+  },
+  DIRECTOR: {
+    bg: 'bg-accent-50/80 dark:bg-accent-950/30',
+    border: 'border-accent-300 dark:border-accent-700',
+    badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300'
+  },
+  SENIOR_MANAGER: {
+    bg: 'bg-success-50 dark:bg-success-950/40',
+    border: 'border-success-400 dark:border-success-600',
+    badge: 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-300'
+  },
+  MANAGER: {
+    bg: 'bg-success-50/80 dark:bg-success-950/30',
+    border: 'border-success-300 dark:border-success-700',
+    badge: 'bg-success-100 text-success-700 dark:bg-success-900/80 dark:text-success-300'
+  },
+  LEAD: {
+    bg: 'bg-warning-50 dark:bg-warning-950/40',
+    border: 'border-warning-400 dark:border-warning-600',
+    badge: 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-300'
+  },
+  SENIOR: {
+    bg: 'bg-surface-50 dark:bg-surface-800/60',
+    border: 'border-surface-300 dark:border-surface-600',
+    badge: 'bg-surface-100 text-surface-700 dark:bg-surface-800 dark:text-surface-300'
+  },
+  MID: {
+    bg: 'bg-surface-50/60 dark:bg-surface-800/40',
+    border: 'border-surface-200 dark:border-surface-700',
+    badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400'
+  },
+  ENTRY: {
+    bg: 'bg-surface-50/40 dark:bg-surface-800/30',
+    border: 'border-surface-200 dark:border-surface-700',
+    badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400'
+  },
 };
 
 const DEFAULT_STYLE = LEVEL_STYLES.ENTRY;
@@ -48,13 +81,13 @@ interface ProfilePopoverProps {
   directReportsCount: number;
 }
 
-function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
+function ProfilePopover({employee, directReportsCount}: ProfilePopoverProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -8, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -8, scale: 0.96 }}
-      transition={{ duration: 0.15 }}
+      initial={{opacity: 0, y: -8, scale: 0.96}}
+      animate={{opacity: 1, y: 0, scale: 1}}
+      exit={{opacity: 0, y: -8, scale: 0.96}}
+      transition={{duration: 0.15}}
       className="absolute top-full left-1/2 -transurface-x-1/2 mt-2 z-50 w-72 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4"
       onClick={e => e.stopPropagation()}
     >
@@ -70,7 +103,8 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
             className="h-12 w-12 rounded-full object-cover border-2 border-accent-200 dark:border-accent-700"
           />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center border-2 border-accent-200 dark:border-accent-700">
+          <div
+            className="h-12 w-12 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center border-2 border-accent-200 dark:border-accent-700">
             <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
@@ -89,18 +123,18 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
       <div className="space-y-2 text-xs border-t border-[var(--border-subtle)] pt-2">
         {employee.workEmail && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Mail className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
+            <Mail className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
             <span className="truncate">{employee.workEmail}</span>
           </div>
         )}
         {employee.phoneNumber && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Phone className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
+            <Phone className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
             <span>{employee.phoneNumber}</span>
           </div>
         )}
         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-          <Users className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0" />
+          <Users className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
           <span>{directReportsCount} direct report{directReportsCount !== 1 ? 's' : ''}</span>
         </div>
       </div>
@@ -111,7 +145,7 @@ function ProfilePopover({ employee, directReportsCount }: ProfilePopoverProps) {
         className="mt-2 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-xs font-medium py-2 transition-colors"
       >
         View Full Profile
-        <ExternalLink className="h-3 w-3" />
+        <ExternalLink className="h-3 w-3"/>
       </Link>
     </motion.div>
   );
@@ -126,11 +160,11 @@ interface OrgNodeProps {
   defaultExpanded?: boolean;
 }
 
-export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = true }: OrgNodeProps) {
+export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = true}: OrgNodeProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [showPopover, setShowPopover] = useState(false);
 
-  const { employee, children } = node;
+  const {employee, children} = node;
   const hasChildren = children.length > 0;
   const style = getLevelStyle(employee.level);
 
@@ -159,7 +193,12 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         role="button"
         tabIndex={0}
         aria-expanded={hasChildren ? expanded : undefined}
-        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePopover(); } }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            togglePopover();
+          }
+        }}
       >
         <div className="flex items-center gap-2.5">
           {/* Avatar */}
@@ -173,7 +212,8 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
               className="h-9 w-9 rounded-full object-cover border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0"
             />
           ) : (
-            <div className="h-9 w-9 rounded-full bg-[var(--bg-card)] flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
+            <div
+              className="h-9 w-9 rounded-full bg-[var(--bg-card)] flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
               <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {getInitials(employee)}
               </span>
@@ -211,7 +251,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
-              <ChevronDown className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
+              <ChevronDown className="h-3.5 w-3.5 text-[var(--text-secondary)]"/>
             ) : (
               <span className="text-2xs font-semibold text-accent-700 dark:text-accent-400">
                 {children.length}
@@ -223,7 +263,7 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
         {/* Popover */}
         <AnimatePresence>
           {showPopover && (
-            <ProfilePopover employee={employee} directReportsCount={children.length} />
+            <ProfilePopover employee={employee} directReportsCount={children.length}/>
           )}
         </AnimatePresence>
       </div>
@@ -232,21 +272,22 @@ export function OrgNode({ node, isHighlighted, highlightedId, defaultExpanded = 
       {hasChildren && expanded && (
         <div className="relative mt-8">
           {/* Vertical connector from parent */}
-          <div className="absolute left-1/2 -top-5 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2" />
+          <div className="absolute left-1/2 -top-5 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2"/>
 
           {/* Horizontal connector spanning children */}
           {children.length > 1 && (
             <div className="absolute top-0 h-px bg-surface-300 dark:bg-surface-600" style={{
               left: `calc(50% - ${(children.length - 1) * 130}px)`,
               width: `${(children.length - 1) * 260}px`,
-            }} />
+            }}/>
           )}
 
           <div className="flex gap-6 justify-center">
             {children.map(child => (
               <div key={child.employee.id} className="relative flex flex-col items-center">
                 {/* Vertical connector to child */}
-                <div className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2" />
+                <div
+                  className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2"/>
                 <div className="pt-6">
                   <OrgNode
                     node={child}
@@ -272,9 +313,9 @@ interface OrgListNodeProps {
   highlightedId: string | null;
 }
 
-export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeProps) {
+export function OrgListNode({node, isHighlighted, highlightedId}: OrgListNodeProps) {
   const [expanded, setExpanded] = useState(node.depth < 2);
-  const { employee, children } = node;
+  const {employee, children} = node;
   const hasChildren = children.length > 0;
   const style = getLevelStyle(employee.level);
 
@@ -287,22 +328,27 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
             ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
             : 'hover:bg-surface-50 dark:hover:bg-surface-800/50',
         )}
-        style={{ paddingLeft: `${node.depth * 24 + 12}px` }}
+        style={{paddingLeft: `${node.depth * 24 + 12}px`}}
         onClick={() => hasChildren && setExpanded(p => !p)}
         role="button"
         tabIndex={0}
-        onKeyDown={e => { if ((e.key === 'Enter' || e.key === ' ') && hasChildren) { e.preventDefault(); setExpanded(p => !p); } }}
+        onKeyDown={e => {
+          if ((e.key === 'Enter' || e.key === ' ') && hasChildren) {
+            e.preventDefault();
+            setExpanded(p => !p);
+          }
+        }}
       >
         {/* Expand icon */}
         <div className="w-5 flex items-center justify-center flex-shrink-0">
           {hasChildren ? (
             expanded ? (
-              <ChevronDown className="h-4 w-4 text-[var(--text-secondary)]" />
+              <ChevronDown className="h-4 w-4 text-[var(--text-secondary)]"/>
             ) : (
-              <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]" />
+              <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
             )
           ) : (
-            <div className="h-1.5 w-1.5 rounded-full bg-surface-300 dark:bg-surface-600" />
+            <div className="h-1.5 w-1.5 rounded-full bg-surface-300 dark:bg-surface-600"/>
           )}
         </div>
 
@@ -317,7 +363,8 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
             className="h-8 w-8 rounded-full object-cover border border-surface-200 dark:border-surface-600 flex-shrink-0"
           />
         ) : (
-          <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
+          <div
+            className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
             <span className="text-xs font-semibold text-accent-700 dark:text-accent-300">
               {getInitials(employee)}
             </span>
@@ -356,7 +403,7 @@ export function OrgListNode({ node, isHighlighted, highlightedId }: OrgListNodeP
           className="text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex-shrink-0"
           aria-label={`View ${employee.fullName}'s profile`}
         >
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ExternalLink className="h-3.5 w-3.5"/>
         </Link>
       </div>
 

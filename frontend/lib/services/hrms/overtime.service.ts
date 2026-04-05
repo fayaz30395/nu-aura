@@ -1,9 +1,9 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
+  CompTimeBalance,
+  OvertimeApprovalRequest,
   OvertimeRecordRequest,
   OvertimeRecordResponse,
-  OvertimeApprovalRequest,
-  CompTimeBalance,
   Page,
 } from '../../types/hrms/overtime';
 
@@ -31,7 +31,7 @@ export const overtimeService = {
   ): Promise<Page<OvertimeRecordResponse>> => {
     const response = await apiClient.get<Page<OvertimeRecordResponse>>(
       `${BASE_URL}/employee/${employeeId}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -42,7 +42,7 @@ export const overtimeService = {
   ): Promise<Page<OvertimeRecordResponse>> => {
     const response = await apiClient.get<Page<OvertimeRecordResponse>>(
       `${BASE_URL}/pending`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -54,7 +54,7 @@ export const overtimeService = {
     sortDirection = 'DESC'
   ): Promise<Page<OvertimeRecordResponse>> => {
     const response = await apiClient.get<Page<OvertimeRecordResponse>>(BASE_URL, {
-      params: { page, size, sortBy, sortDirection },
+      params: {page, size, sortBy, sortDirection},
     });
     return response.data;
   },
@@ -67,7 +67,7 @@ export const overtimeService = {
     const response = await apiClient.post<OvertimeRecordResponse>(
       `${BASE_URL}/${recordId}/approve`,
       data,
-      { params: { approverId } }
+      {params: {approverId}}
     );
     return response.data;
   },

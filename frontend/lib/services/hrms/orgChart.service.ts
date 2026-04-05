@@ -1,5 +1,5 @@
-import { apiClient } from '../../api/client';
-import { Employee, Page, Department } from '../../types/hrms/employee';
+import {apiClient} from '../../api/client';
+import {Department, Employee, Page} from '../../types/hrms/employee';
 
 /**
  * Org-chart specific interfaces.
@@ -31,7 +31,7 @@ class OrgChartService {
    */
   async getOrgChartEmployees(size: number = 1000): Promise<Employee[]> {
     const response = await apiClient.get<Page<Employee>>('/employees', {
-      params: { page: 0, size, sortBy: 'fullName', sortDirection: 'ASC', status: 'ACTIVE' },
+      params: {page: 0, size, sortBy: 'fullName', sortDirection: 'ASC', status: 'ACTIVE'},
     });
     return response.data.content;
   }
@@ -92,7 +92,7 @@ class OrgChartService {
         .sort((a, b) => a.fullName.localeCompare(b.fullName))
         .map(c => build(c, depth + 1));
 
-      return { employee: emp, children: kids, depth };
+      return {employee: emp, children: kids, depth};
     };
 
     return roots

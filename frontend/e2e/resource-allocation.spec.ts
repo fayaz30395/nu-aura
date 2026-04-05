@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, switchUser } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Resource Allocation E2E Tests
@@ -13,23 +13,23 @@ import { demoUsers } from './fixtures/testData';
  */
 
 test.describe('Resource Allocation Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/allocations/summary');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display allocation summary page', async ({ page }) => {
+  test('should display allocation summary page', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
   });
 
-  test('should display allocation table or card layout', async ({ page }) => {
+  test('should display allocation table or card layout', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasTable = await page
@@ -53,7 +53,7 @@ test.describe('Resource Allocation Page', () => {
 });
 
 test.describe('Resource Allocation - Allocate Employee to Project', () => {
-  test('should allocate employee to project at 60%', async ({ page }) => {
+  test('should allocate employee to project at 60%', async ({page}) => {
     // Log in as manager who can allocate resources
     await loginAs(page, demoUsers.managerEng.email);
 
@@ -88,7 +88,7 @@ test.describe('Resource Allocation - Allocate Employee to Project', () => {
         if (await employeeSelect.isVisible().catch(() => false)) {
           const options = await employeeSelect.locator('option').count();
           if (options > 1) {
-            await employeeSelect.selectOption({ index: 1 });
+            await employeeSelect.selectOption({index: 1});
           }
         }
 
@@ -108,7 +108,7 @@ test.describe('Resource Allocation - Allocate Employee to Project', () => {
         if (await projectSelect.isVisible().catch(() => false)) {
           const options = await projectSelect.locator('option').count();
           if (options > 1) {
-            await projectSelect.selectOption({ index: 1 });
+            await projectSelect.selectOption({index: 1});
           }
         }
 
@@ -137,7 +137,7 @@ test.describe('Resource Allocation - Allocate Employee to Project', () => {
 });
 
 test.describe('Resource Allocation - View Allocation Summary', () => {
-  test('should view allocation summary and verify percentage', async ({ page }) => {
+  test('should view allocation summary and verify percentage', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
@@ -160,7 +160,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     expect(hasPercentage || hasNumericValue || true).toBe(true);
   });
 
-  test('should show allocation per employee', async ({ page }) => {
+  test('should show allocation per employee', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
@@ -177,7 +177,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     expect(hasEmployeeNames || true).toBe(true);
   });
 
-  test('should show allocation per project', async ({ page }) => {
+  test('should show allocation per project', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
@@ -194,7 +194,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
     expect(hasProjectNames || true).toBe(true);
   });
 
-  test('should display capacity utilization chart or bar', async ({ page }) => {
+  test('should display capacity utilization chart or bar', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/capacity');
@@ -215,7 +215,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
 });
 
 test.describe('Resource Allocation - Over-Allocation Detection', () => {
-  test('should detect over-allocation when total exceeds 100%', async ({ page }) => {
+  test('should detect over-allocation when total exceeds 100%', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources');
@@ -278,7 +278,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
     }
   });
 
-  test('should show over-allocated employees highlighted', async ({ page }) => {
+  test('should show over-allocated employees highlighted', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/allocations/summary');
@@ -303,7 +303,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
 });
 
 test.describe('Resource Allocation - Manager Approval for Over-Allocation', () => {
-  test('should show pending allocation approvals', async ({ page }) => {
+  test('should show pending allocation approvals', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
@@ -330,7 +330,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     expect(hasApprovals || hasEmpty).toBe(true);
   });
 
-  test('should display approve/reject actions for allocation requests', async ({ page }) => {
+  test('should display approve/reject actions for allocation requests', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
@@ -346,7 +346,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     expect(hasApprove || hasReject || true).toBe(true);
   });
 
-  test('should approve allocation and verify updated status', async ({ page }) => {
+  test('should approve allocation and verify updated status', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/resources/approvals');
@@ -389,13 +389,13 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
 });
 
 test.describe('Resource Allocation - Filters', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
     await page.goto('/resources');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should show search or filter controls', async ({ page }) => {
+  test('should show search or filter controls', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasSearch = await page
@@ -417,7 +417,7 @@ test.describe('Resource Allocation - Filters', () => {
     expect(hasSearch || hasFilter || hasDeptFilter).toBe(true);
   });
 
-  test('should filter by department if available', async ({ page }) => {
+  test('should filter by department if available', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const deptFilter = page.locator('select').first();
@@ -426,7 +426,7 @@ test.describe('Resource Allocation - Filters', () => {
     if (hasFilter) {
       const options = await deptFilter.locator('option').count();
       if (options > 1) {
-        await deptFilter.selectOption({ index: 1 });
+        await deptFilter.selectOption({index: 1});
         await page.waitForTimeout(1000);
 
         await expect(
@@ -438,15 +438,15 @@ test.describe('Resource Allocation - Filters', () => {
 });
 
 test.describe('Resource Allocation - Resource Pool', () => {
-  test('should display resource pool page', async ({ page }) => {
+  test('should display resource pool page', async ({page}) => {
     await page.goto('/resources/pool');
     await page.waitForLoadState('networkidle');
 
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should show available resources with capacity info', async ({ page }) => {
+  test('should show available resources with capacity info', async ({page}) => {
     await page.goto('/resources/pool');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
@@ -466,12 +466,12 @@ test.describe('Resource Allocation - Resource Pool', () => {
     expect(hasCapacity || hasEmployeeList || true).toBe(true);
   });
 
-  test('should load capacity timeline page', async ({ page }) => {
+  test('should load capacity timeline page', async ({page}) => {
     await page.goto('/resources/capacity');
     await page.waitForLoadState('networkidle');
 
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
 
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
@@ -480,7 +480,7 @@ test.describe('Resource Allocation - Resource Pool', () => {
 });
 
 test.describe('Resource Allocation - Visual Elements', () => {
-  test('should render allocation page with proper layout', async ({ page }) => {
+  test('should render allocation page with proper layout', async ({page}) => {
     await page.goto('/resources');
     await page.waitForLoadState('networkidle');
 
@@ -488,7 +488,7 @@ test.describe('Resource Allocation - Visual Elements', () => {
     await expect(main).toBeVisible();
   });
 
-  test('should display icons', async ({ page }) => {
+  test('should display icons', async ({page}) => {
     await page.goto('/resources');
     await page.waitForLoadState('networkidle');
 
@@ -497,15 +497,15 @@ test.describe('Resource Allocation - Visual Elements', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should be responsive', async ({ page }) => {
+  test('should be responsive', async ({page}) => {
     await page.goto('/allocations/summary');
     await page.waitForLoadState('networkidle');
 
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     await expect(page.getByRole('heading').first()).toBeVisible();
 
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });

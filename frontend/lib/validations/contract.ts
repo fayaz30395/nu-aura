@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // ─── Shared Field Schemas ───────────────────────────────────────────────────
 
@@ -20,27 +20,27 @@ const jsonContentSchema = z.record(z.any()).describe('JSON content for contract 
 
 export const contractTypeSchema = z.enum(
   ['EMPLOYMENT', 'VENDOR', 'NDA', 'SLA', 'FREELANCER', 'OTHER'],
-  { errorMap: () => ({ message: 'Please select a valid contract type' }) }
+  {errorMap: () => ({message: 'Please select a valid contract type'})}
 );
 
 export const contractStatusSchema = z.enum(
   ['DRAFT', 'PENDING_REVIEW', 'PENDING_SIGNATURES', 'ACTIVE', 'EXPIRED', 'TERMINATED', 'RENEWED'],
-  { errorMap: () => ({ message: 'Please select a valid contract status' }) }
+  {errorMap: () => ({message: 'Please select a valid contract status'})}
 );
 
 export const signatureStatusSchema = z.enum(
   ['PENDING', 'SIGNED', 'DECLINED'],
-  { errorMap: () => ({ message: 'Please select a valid signature status' }) }
+  {errorMap: () => ({message: 'Please select a valid signature status'})}
 );
 
 export const signerRoleSchema = z.enum(
   ['EMPLOYEE', 'MANAGER', 'HR', 'LEGAL', 'VENDOR'],
-  { errorMap: () => ({ message: 'Please select a valid signer role' }) }
+  {errorMap: () => ({message: 'Please select a valid signer role'})}
 );
 
 export const reminderTypeSchema = z.enum(
   ['EXPIRY', 'RENEWAL', 'REVIEW'],
-  { errorMap: () => ({ message: 'Please select a valid reminder type' }) }
+  {errorMap: () => ({message: 'Please select a valid reminder type'})}
 );
 
 // ─── Contract Schemas ────────────────────────────────────────────────────────

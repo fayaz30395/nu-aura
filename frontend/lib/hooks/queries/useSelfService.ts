@@ -1,17 +1,17 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { selfServiceService } from '@/lib/services/hrms/selfservice.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {selfServiceService} from '@/lib/services/hrms/selfservice.service';
 import {
-  SelfServiceDashboard,
-  DocumentRequestResponse,
   DocumentRequestDto,
-  ProfileUpdateResponse,
-  ProfileUpdateRequestDto,
+  DocumentRequestResponse,
   DocumentType,
   ProfileUpdateCategory,
+  ProfileUpdateRequestDto,
+  ProfileUpdateResponse,
+  SelfServiceDashboard,
 } from '@/lib/types/hrms/selfservice';
-import { Page } from '@/lib/types/hrms/employee';
+import {Page} from '@/lib/types/hrms/employee';
 
 // Query key factory for self-service queries
 export const selfServiceKeys = {
@@ -24,9 +24,9 @@ export const selfServiceKeys = {
   documentRequestById: (requestId: string) =>
     [...selfServiceKeys.documentRequests(), requestId] as const,
   myDocumentRequests: (employeeId: string, page: number, size: number) =>
-    [...selfServiceKeys.documentRequests(), 'my', { employeeId, page, size }] as const,
+    [...selfServiceKeys.documentRequests(), 'my', {employeeId, page, size}] as const,
   pendingDocumentRequests: (page: number, size: number) =>
-    [...selfServiceKeys.documentRequests(), 'pending', { page, size }] as const,
+    [...selfServiceKeys.documentRequests(), 'pending', {page, size}] as const,
   urgentDocumentRequests: () =>
     [...selfServiceKeys.documentRequests(), 'urgent'] as const,
 
@@ -35,11 +35,11 @@ export const selfServiceKeys = {
   profileUpdateById: (requestId: string) =>
     [...selfServiceKeys.profileUpdates(), requestId] as const,
   myProfileUpdates: (employeeId: string, page: number, size: number) =>
-    [...selfServiceKeys.profileUpdates(), 'my', { employeeId, page, size }] as const,
+    [...selfServiceKeys.profileUpdates(), 'my', {employeeId, page, size}] as const,
   pendingProfileUpdates: (page: number, size: number) =>
-    [...selfServiceKeys.profileUpdates(), 'pending', { page, size }] as const,
+    [...selfServiceKeys.profileUpdates(), 'pending', {page, size}] as const,
   allProfileUpdates: (page: number, size: number) =>
-    [...selfServiceKeys.profileUpdates(), 'all', { page, size }] as const,
+    [...selfServiceKeys.profileUpdates(), 'all', {page, size}] as const,
 
   // Reference data
   documentTypes: () => [...selfServiceKeys.all, 'documentTypes'] as const,
@@ -124,9 +124,9 @@ export function useCreateDocumentRequest() {
     unknown,
     { employeeId: string; data: DocumentRequestDto }
   >({
-    mutationFn: async ({ employeeId, data }) =>
+    mutationFn: async ({employeeId, data}) =>
       selfServiceService.createDocumentRequest(employeeId, data),
-    onSuccess: (_, { employeeId }) => {
+    onSuccess: (_, {employeeId}) => {
       queryClient.invalidateQueries({
         queryKey: selfServiceKeys.myDocumentRequests(employeeId, 0, 20),
       });
@@ -148,11 +148,11 @@ export function useStartProcessingDocument() {
     unknown,
     { requestId: string; processedById: string }
   >({
-    mutationFn: async ({ requestId, processedById }) =>
+    mutationFn: async ({requestId, processedById}) =>
       selfServiceService.startProcessingDocument(requestId, processedById),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.documentRequests() });
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.pendingDocumentRequests(0, 20) });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.documentRequests()});
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.pendingDocumentRequests(0, 20)});
     },
   });
 }
@@ -168,11 +168,11 @@ export function useCompleteDocumentRequest() {
     unknown,
     { requestId: string; documentUrl: string }
   >({
-    mutationFn: async ({ requestId, documentUrl }) =>
+    mutationFn: async ({requestId, documentUrl}) =>
       selfServiceService.completeDocumentRequest(requestId, documentUrl),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.documentRequests() });
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.pendingDocumentRequests(0, 20) });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.documentRequests()});
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.pendingDocumentRequests(0, 20)});
     },
   });
 }
@@ -187,7 +187,7 @@ export function useMarkDocumentDelivered() {
     mutationFn: async (requestId) =>
       selfServiceService.markDocumentDelivered(requestId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.documentRequests() });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.documentRequests()});
     },
   });
 }
@@ -203,11 +203,11 @@ export function useRejectDocumentRequest() {
     unknown,
     { requestId: string; rejectedBy: string; reason: string }
   >({
-    mutationFn: async ({ requestId, rejectedBy, reason }) =>
+    mutationFn: async ({requestId, rejectedBy, reason}) =>
       selfServiceService.rejectDocumentRequest(requestId, rejectedBy, reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.documentRequests() });
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.pendingDocumentRequests(0, 20) });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.documentRequests()});
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.pendingDocumentRequests(0, 20)});
     },
   });
 }
@@ -281,9 +281,9 @@ export function useCreateProfileUpdateRequest() {
     unknown,
     { employeeId: string; data: ProfileUpdateRequestDto }
   >({
-    mutationFn: async ({ employeeId, data }) =>
+    mutationFn: async ({employeeId, data}) =>
       selfServiceService.createProfileUpdateRequest(employeeId, data),
-    onSuccess: (_, { employeeId }) => {
+    onSuccess: (_, {employeeId}) => {
       queryClient.invalidateQueries({
         queryKey: selfServiceKeys.myProfileUpdates(employeeId, 0, 20),
       });
@@ -305,14 +305,14 @@ export function useApproveProfileUpdateRequest() {
     unknown,
     { requestId: string; reviewerId: string; comments?: string }
   >({
-    mutationFn: async ({ requestId, reviewerId, comments }) =>
+    mutationFn: async ({requestId, reviewerId, comments}) =>
       selfServiceService.approveProfileUpdateRequest(
         requestId,
         reviewerId,
         comments
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.profileUpdates() });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.profileUpdates()});
       queryClient.invalidateQueries({
         queryKey: selfServiceKeys.pendingProfileUpdates(0, 20),
       });
@@ -331,14 +331,14 @@ export function useRejectProfileUpdateRequest() {
     unknown,
     { requestId: string; reviewerId: string; reason: string }
   >({
-    mutationFn: async ({ requestId, reviewerId, reason }) =>
+    mutationFn: async ({requestId, reviewerId, reason}) =>
       selfServiceService.rejectProfileUpdateRequest(
         requestId,
         reviewerId,
         reason
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: selfServiceKeys.profileUpdates() });
+      queryClient.invalidateQueries({queryKey: selfServiceKeys.profileUpdates()});
       queryClient.invalidateQueries({
         queryKey: selfServiceKeys.pendingProfileUpdates(0, 20),
       });
@@ -357,9 +357,9 @@ export function useCancelProfileUpdateRequest() {
     unknown,
     { requestId: string; employeeId: string }
   >({
-    mutationFn: async ({ requestId, employeeId }) =>
+    mutationFn: async ({requestId, employeeId}) =>
       selfServiceService.cancelProfileUpdateRequest(requestId, employeeId),
-    onSuccess: (_, { employeeId }) => {
+    onSuccess: (_, {employeeId}) => {
       queryClient.invalidateQueries({
         queryKey: selfServiceKeys.myProfileUpdates(employeeId, 0, 20),
       });

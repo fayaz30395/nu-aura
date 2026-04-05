@@ -1,16 +1,22 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  isToday, isYesterday, parseISO,
-  startOfWeek, endOfWeek, subWeeks, isWithinInterval, startOfDay,
+  endOfWeek,
+  isToday,
+  isWithinInterval,
+  isYesterday,
+  parseISO,
+  startOfDay,
+  startOfWeek,
+  subWeeks,
 } from 'date-fns';
-import { RefreshCw } from 'lucide-react';
-import { feedService } from '@/lib/services/core/feed.service';
-import type { FeedItem, FeedItemType } from '@/lib/types/core/feed';
-import { logger } from '@/lib/utils/logger';
-import { FeedCard, FEED_LABELS } from './FeedCard';
-import { FeedDateSection } from './FeedDateSection';
-import type { DateBucket, DateGroup } from './FeedDateSection';
+import {RefreshCw} from 'lucide-react';
+import {feedService} from '@/lib/services/core/feed.service';
+import type {FeedItem, FeedItemType} from '@/lib/types/core/feed';
+import {logger} from '@/lib/utils/logger';
+import {FEED_LABELS, FeedCard} from './FeedCard';
+import type {DateBucket, DateGroup} from './FeedDateSection';
+import {FeedDateSection} from './FeedDateSection';
 
 // ─── Date Grouping ────────────────────────────────────────────────────
 const DATE_BUCKET_LABELS: Record<DateBucket, string> = {
@@ -29,13 +35,13 @@ function getDateBucket(dateStr: string): DateBucket {
     if (isToday(date)) return 'today';
     if (isYesterday(date)) return 'yesterday';
 
-    const thisWeekStart = startOfWeek(now, { weekStartsOn: 1 });
-    const thisWeekEnd = endOfWeek(now, { weekStartsOn: 1 });
-    if (isWithinInterval(date, { start: thisWeekStart, end: thisWeekEnd })) return 'this_week';
+    const thisWeekStart = startOfWeek(now, {weekStartsOn: 1});
+    const thisWeekEnd = endOfWeek(now, {weekStartsOn: 1});
+    if (isWithinInterval(date, {start: thisWeekStart, end: thisWeekEnd})) return 'this_week';
 
-    const lastWeekStart = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
-    const lastWeekEnd = endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
-    if (isWithinInterval(date, { start: lastWeekStart, end: lastWeekEnd })) return 'last_week';
+    const lastWeekStart = startOfWeek(subWeeks(now, 1), {weekStartsOn: 1});
+    const lastWeekEnd = endOfWeek(subWeeks(now, 1), {weekStartsOn: 1});
+    if (isWithinInterval(date, {start: lastWeekStart, end: lastWeekEnd})) return 'last_week';
 
     return 'earlier';
   } catch {
@@ -56,21 +62,21 @@ function groupByDate(items: FeedItem[]): DateGroup[] {
 
   return bucketOrder
     .filter(key => groups[key].length > 0)
-    .map(key => ({ key, label: DATE_BUCKET_LABELS[key], items: groups[key] }));
+    .map(key => ({key, label: DATE_BUCKET_LABELS[key], items: groups[key]}));
 }
 
 // ─── Filter config ────────────────────────────────────────────────────
 type FeedFilter = 'ALL' | FeedItemType;
 
 const FILTER_OPTIONS: { value: FeedFilter; label: string }[] = [
-  { value: 'ALL', label: 'All' },
-  { value: 'ANNOUNCEMENT', label: 'Announcements' },
-  { value: 'BIRTHDAY', label: 'Birthdays' },
-  { value: 'WORK_ANNIVERSARY', label: 'Anniversaries' },
-  { value: 'NEW_JOINER', label: 'New Joiners' },
-  { value: 'RECOGNITION', label: 'Recognition' },
-  { value: 'LINKEDIN_POST', label: 'LinkedIn' },
-  { value: 'WALL_POST', label: 'Posts' },
+  {value: 'ALL', label: 'All'},
+  {value: 'ANNOUNCEMENT', label: 'Announcements'},
+  {value: 'BIRTHDAY', label: 'Birthdays'},
+  {value: 'WORK_ANNIVERSARY', label: 'Anniversaries'},
+  {value: 'NEW_JOINER', label: 'New Joiners'},
+  {value: 'RECOGNITION', label: 'Recognition'},
+  {value: 'LINKEDIN_POST', label: 'LinkedIn'},
+  {value: 'WALL_POST', label: 'Posts'},
 ];
 
 /** Buckets that are "recent" — loaded eagerly on mount */
@@ -83,7 +89,7 @@ interface CompanyFeedProps {
 }
 
 // ─── CompanyFeed (Orchestrator) ───────────────────────────────────────
-export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
+export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FeedFilter>('ALL');
@@ -142,12 +148,16 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">Company Feed</h3>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="flex items-start gap-2.5 p-4 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
-              <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              <div className="w-8 h-8 rounded-full bg-[var(--bg-surface)] animate-pulse" />
+            <div key={i}
+                 className="flex items-start gap-2.5 p-4 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
+              <div
+                className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent"/>
+              <div className="w-8 h-8 rounded-full bg-[var(--bg-surface)] animate-pulse"/>
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 bg-[var(--bg-surface)] rounded w-1/3 animate-pulse" style={{ animationDelay: '0.1s' }} />
-                <div className="h-3 bg-[var(--bg-surface)] rounded w-2/3 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <div className="h-3.5 bg-[var(--bg-surface)] rounded w-1/3 animate-pulse"
+                     style={{animationDelay: '0.1s'}}/>
+                <div className="h-3 bg-[var(--bg-surface)] rounded w-2/3 animate-pulse"
+                     style={{animationDelay: '0.2s'}}/>
               </div>
             </div>
           ))}
@@ -170,7 +180,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
           title="Refresh"
           aria-label="Refresh feed"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`}/>
         </button>
       </div>
 
@@ -210,7 +220,11 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
                       key={item.id}
                       item={item}
                       onDeleted={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
-                      onUpdated={(id, newContent) => setItems((prev) => prev.map((i) => i.id === id ? { ...i, description: newContent, title: newContent.length > 120 ? newContent.substring(0, 120) + '...' : newContent } : i))}
+                      onUpdated={(id, newContent) => setItems((prev) => prev.map((i) => i.id === id ? {
+                        ...i,
+                        description: newContent,
+                        title: newContent.length > 120 ? newContent.substring(0, 120) + '...' : newContent
+                      } : i))}
                     />
                   ))
                 }
@@ -295,7 +309,7 @@ function getDemoFeed(): FeedItem[] {
       description: 'Thrilled to announce that Nulogic has been featured in the Top 50 HR Tech Startups to Watch in 2026.',
       linkedinAuthor: 'Nulogic', linkedinAuthorTitle: 'Official Company Page',
       linkedinPostUrl: 'https://linkedin.com/company/nulogic', linkedinImageUrl: undefined,
-      linkedinEngagement: { likes: 234, comments: 45, shares: 67 },
+      linkedinEngagement: {likes: 234, comments: 45, shares: 67},
     },
   ];
 }

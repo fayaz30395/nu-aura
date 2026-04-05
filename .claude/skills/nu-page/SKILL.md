@@ -14,17 +14,21 @@ description: Use when asked to create a new frontend page, add UI for a feature,
 ## Input Required
 
 Ask the user for:
+
 1. **Page name** (e.g., "Asset Categories", "Training Courses")
 2. **Route path** (e.g., `/admin/asset-categories`, `/training/courses`)
-3. **Page type**: `list` (table + CRUD), `detail` (single entity view), `form` (standalone form), `dashboard` (cards + charts)
+3. **Page type**: `list` (table + CRUD), `detail` (single entity view), `form` (standalone form),
+   `dashboard` (cards + charts)
 4. **Entity name** (PascalCase, e.g., `AssetCategory`) — for type imports
 5. **Module** — which service module it belongs to (`hrms`, `hire`, `performance`, `training`, etc.)
 6. **Fields to display** — column names for the table or fields for the form
-7. **Access roles** — which roles can see this page (default: `SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER`)
+7. **Access roles** — which roles can see this page (default:
+   `SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER`)
 
 ## Pre-Flight Checks
 
 Before generating, verify these files exist (generate if missing):
+
 - `frontend/lib/types/{module}/{entity-kebab}.ts` — TypeScript interfaces
 - `frontend/lib/services/{module}/{entity-kebab}.service.ts` — API service
 - `frontend/lib/hooks/queries/use{EntityName}s.ts` — React Query hooks
@@ -341,6 +345,7 @@ export default function {EntityName}sPage() {
 If the types, service, or hook files do not already exist, generate them:
 
 **Types** (`frontend/lib/types/{module}/{entity-kebab}.ts`):
+
 ```typescript
 export interface {EntityName} {
   id: string;
@@ -358,6 +363,7 @@ export interface {EntityName}Request {
 ```
 
 **Service** (`frontend/lib/services/{module}/{entity-kebab}.service.ts`):
+
 ```typescript
 import { apiClient } from '../../api/client';
 import { {EntityName}, {EntityName}Request } from '../../types/{module}/{entity-kebab}';
@@ -390,11 +396,13 @@ export const {entityName}Service = {
 ```
 
 **Hook** (`frontend/lib/hooks/queries/use{EntityName}s.ts`):
-Follow the exact pattern from `useDepartments.ts` — query key factory, staleTime, mutations with invalidation.
+Follow the exact pattern from `useDepartments.ts` — query key factory, staleTime, mutations with
+invalidation.
 
 ### Step 3: Wire the Route (if new)
 
 If this is a new top-level route prefix, add it to:
+
 - `frontend/lib/config/apps.ts` — map the route prefix to the correct sub-app
 - `frontend/components/layout/menuSections.tsx` — add the sidebar menu item with icon and permission
 

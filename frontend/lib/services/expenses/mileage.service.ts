@@ -1,9 +1,9 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  MileageLogEntry,
   CreateMileageLogRequest,
-  MileagePolicyEntity,
   CreateMileagePolicyRequest,
+  MileageLogEntry,
+  MileagePolicyEntity,
   MileageSummary,
   Page,
 } from '../../types/hrms/expense';
@@ -38,7 +38,7 @@ class MileageService {
     const response = await apiClient.post<MileageLogEntry>(
       `/expenses/mileage/${logId}/reject`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   }
@@ -50,7 +50,7 @@ class MileageService {
   ): Promise<Page<MileageLogEntry>> {
     const response = await apiClient.get<Page<MileageLogEntry>>(
       `/expenses/mileage/employee/${employeeId}`,
-      { params: { page, size, sort: 'travelDate,desc' } }
+      {params: {page, size, sort: 'travelDate,desc'}}
     );
     return response.data;
   }
@@ -62,7 +62,7 @@ class MileageService {
   ): Promise<MileageSummary> {
     const response = await apiClient.get<MileageSummary>(
       `/expenses/mileage/summary/${employeeId}`,
-      { params: { year, month } }
+      {params: {year, month}}
     );
     return response.data;
   }
@@ -70,7 +70,7 @@ class MileageService {
   async getPendingApprovals(page: number = 0, size: number = 20): Promise<Page<MileageLogEntry>> {
     const response = await apiClient.get<Page<MileageLogEntry>>(
       '/expenses/mileage/pending-approvals',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -112,7 +112,7 @@ class MileageService {
 
   async toggleMileagePolicy(policyId: string, active: boolean): Promise<void> {
     await apiClient.patch(`/expenses/mileage/policies/${policyId}/toggle`, null, {
-      params: { active },
+      params: {active},
     });
   }
 

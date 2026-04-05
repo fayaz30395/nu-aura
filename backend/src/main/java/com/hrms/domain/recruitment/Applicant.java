@@ -77,6 +77,20 @@ public class Applicant extends BaseEntity {
     @Column(name = "expected_salary", precision = 15, scale = 2)
     private BigDecimal expectedSalary;
 
+    // EEOC / diversity fields (all nullable — self-reported)
+
+    @Column(name = "gender", length = 30)
+    private String gender;
+
+    @Column(name = "ethnicity", length = 50)
+    private String ethnicity;
+
+    @Column(name = "veteran_status", length = 30)
+    private String veteranStatus;
+
+    @Column(name = "disability_status", length = 30)
+    private String disabilityStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candidate_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Candidate candidate;

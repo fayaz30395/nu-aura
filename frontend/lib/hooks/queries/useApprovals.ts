@@ -1,8 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { workflowService } from '@/lib/services/core/workflow.service';
-import type { WorkflowExecutionResponse, WorkflowExecutionStatus, Page, ApprovalDelegateRequest, ApprovalDelegateResponse } from '@/lib/types/core/workflow';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {workflowService} from '@/lib/services/core/workflow.service';
+import type {
+  ApprovalDelegateRequest,
+  ApprovalDelegateResponse,
+  Page,
+  WorkflowExecutionResponse,
+  WorkflowExecutionStatus
+} from '@/lib/types/core/workflow';
 
 export const approvalKeys = {
   all: ['approvals'] as const,
@@ -130,11 +136,11 @@ export function useApproveExecution() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
+    mutationFn: ({executionId, comments}: { executionId: string; comments?: string }) =>
       workflowService.approveExecution(executionId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
+      queryClient.invalidateQueries({queryKey: approvalKeys.inbox()});
+      queryClient.invalidateQueries({queryKey: approvalKeys.inboxCount()});
     },
   });
 }
@@ -143,11 +149,11 @@ export function useRejectExecution() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
+    mutationFn: ({executionId, comments}: { executionId: string; comments?: string }) =>
       workflowService.rejectExecution(executionId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
+      queryClient.invalidateQueries({queryKey: approvalKeys.inbox()});
+      queryClient.invalidateQueries({queryKey: approvalKeys.inboxCount()});
     },
   });
 }
@@ -156,11 +162,11 @@ export function useReturnForModification() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ executionId, comments }: { executionId: string; comments?: string }) =>
+    mutationFn: ({executionId, comments}: { executionId: string; comments?: string }) =>
       workflowService.returnForModification(executionId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inbox() });
-      queryClient.invalidateQueries({ queryKey: approvalKeys.inboxCount() });
+      queryClient.invalidateQueries({queryKey: approvalKeys.inbox()});
+      queryClient.invalidateQueries({queryKey: approvalKeys.inboxCount()});
     },
   });
 }
@@ -179,7 +185,7 @@ export function useCreateDelegation() {
   return useMutation<ApprovalDelegateResponse, Error, ApprovalDelegateRequest>({
     mutationFn: (data: ApprovalDelegateRequest) => workflowService.createDelegation(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: delegationKeys.all });
+      queryClient.invalidateQueries({queryKey: delegationKeys.all});
     },
   });
 }
@@ -204,11 +210,11 @@ export function useRevokeDelegation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+    mutationFn: async ({id, reason}: { id: string; reason: string }) => {
       await workflowService.revokeDelegation(id, reason);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: delegationKeys.all });
+      queryClient.invalidateQueries({queryKey: delegationKeys.all});
     },
   });
 }

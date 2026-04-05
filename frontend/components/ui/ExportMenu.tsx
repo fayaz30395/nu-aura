@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { Download, FileSpreadsheet, FileText, FileDown, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { exportToCsv, exportToExcel } from '@/lib/utils/export';
+import React, {useCallback, useRef, useState} from 'react';
+import {ChevronDown, Download, FileDown, FileSpreadsheet, FileText} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {exportToCsv, exportToExcel} from '@/lib/utils/export';
 
 interface ExportColumn {
   key: string;
@@ -29,14 +29,14 @@ interface ExportMenuProps<T extends Record<string, unknown>> {
 }
 
 function ExportMenu<T extends Record<string, unknown>>({
-  columns,
-  data,
-  filename = 'export',
-  onExportPdf,
-  pdfEnabled = false,
-  className,
-  disabled = false,
-}: ExportMenuProps<T>) {
+                                                         columns,
+                                                         data,
+                                                         filename = 'export',
+                                                         onExportPdf,
+                                                         pdfEnabled = false,
+                                                         className,
+                                                         disabled = false,
+                                                       }: ExportMenuProps<T>) {
   const [open, setOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -44,11 +44,13 @@ function ExportMenu<T extends Record<string, unknown>>({
   // Close on outside click
   React.useEffect(() => {
     if (!open) return;
+
     function handleClick(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
+
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
@@ -56,9 +58,11 @@ function ExportMenu<T extends Record<string, unknown>>({
   // Close on Escape
   React.useEffect(() => {
     if (!open) return;
+
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
     }
+
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
   }, [open]);
@@ -112,7 +116,7 @@ function ExportMenu<T extends Record<string, unknown>>({
       >
         {exporting ? (
           <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
             <path
               className="opacity-75"
               fill="currentColor"
@@ -120,10 +124,10 @@ function ExportMenu<T extends Record<string, unknown>>({
             />
           </svg>
         ) : (
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4"/>
         )}
         Export
-        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')}/>
       </button>
 
       {/* Dropdown menu */}
@@ -149,7 +153,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                 'min-h-[44px]'
               )}
             >
-              <FileText className="h-4 w-4 text-accent-700" />
+              <FileText className="h-4 w-4 text-accent-700"/>
               Export as CSV
             </button>
 
@@ -164,7 +168,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                 'min-h-[44px]'
               )}
             >
-              <FileSpreadsheet className="h-4 w-4 text-success-600" />
+              <FileSpreadsheet className="h-4 w-4 text-success-600"/>
               Export as Excel
             </button>
 
@@ -182,7 +186,7 @@ function ExportMenu<T extends Record<string, unknown>>({
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
-                <FileDown className="h-4 w-4 text-danger-600" />
+                <FileDown className="h-4 w-4 text-danger-600"/>
                 Export as PDF
               </button>
             )}
@@ -193,5 +197,5 @@ function ExportMenu<T extends Record<string, unknown>>({
   );
 }
 
-export { ExportMenu };
-export type { ExportMenuProps, ExportColumn };
+export {ExportMenu};
+export type {ExportMenuProps, ExportColumn};

@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { AttendancePage } from './pages/AttendancePage';
-import { testAttendance } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {AttendancePage} from './pages/AttendancePage';
+import {testAttendance} from './fixtures/testData';
 
 /**
  * Attendance E2E Tests
@@ -12,14 +12,14 @@ import { testAttendance } from './fixtures/testData';
 test.describe('Attendance Management', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     // Navigate directly to attendance page - already authenticated via setup
     await attendancePage.navigate();
   });
 
   test.describe('Attendance Page', () => {
-    test('should display attendance page', async ({ page }) => {
+    test('should display attendance page', async ({page}) => {
       // Verify page heading
       await expect(attendancePage.pageHeading).toBeVisible();
 
@@ -29,7 +29,7 @@ test.describe('Attendance Management', () => {
       expect(hasCheckIn || hasCheckOut).toBe(true);
     });
 
-    test('should navigate to my attendance', async ({ page }) => {
+    test('should navigate to my attendance', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
 
       // Verify URL
@@ -37,14 +37,14 @@ test.describe('Attendance Management', () => {
       expect(url.includes('/attendance') || url.includes('/me/attendance')).toBe(true);
     });
 
-    test('should navigate to team attendance', async ({ page }) => {
+    test('should navigate to team attendance', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
       // Verify URL
       expect(page.url()).toContain('/attendance/team');
     });
 
-    test('should navigate to regularization', async ({ page }) => {
+    test('should navigate to regularization', async ({page}) => {
       await attendancePage.navigateToRegularization();
 
       // Verify URL
@@ -53,7 +53,7 @@ test.describe('Attendance Management', () => {
   });
 
   test.describe('Check-In/Check-Out Flow', () => {
-    test('should perform check-in', async ({ page }) => {
+    test('should perform check-in', async ({page}) => {
       // Check if check-in button is available
       const hasCheckInButton = await attendancePage.isCheckInButtonVisible();
 
@@ -73,7 +73,7 @@ test.describe('Attendance Management', () => {
       }
     });
 
-    test('should perform check-out', async ({ page }) => {
+    test('should perform check-out', async ({page}) => {
       // First ensure checked in
       const hasCheckInButton = await attendancePage.isCheckInButtonVisible();
       if (hasCheckInButton) {
@@ -97,7 +97,7 @@ test.describe('Attendance Management', () => {
       }
     });
 
-    test('should perform break actions', async ({ page }) => {
+    test('should perform break actions', async ({page}) => {
       // Ensure checked in first
       const hasCheckInButton = await attendancePage.isCheckInButtonVisible();
       if (hasCheckInButton) {
@@ -124,7 +124,7 @@ test.describe('Attendance Management', () => {
   });
 
   test.describe('Attendance Records', () => {
-    test('should display attendance table', async ({ page }) => {
+    test('should display attendance table', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
 
       // Check if table exists
@@ -135,7 +135,7 @@ test.describe('Attendance Management', () => {
       }
     });
 
-    test('should display attendance statistics', async ({ page }) => {
+    test('should display attendance statistics', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
 
       // Wait for page to load
@@ -149,7 +149,7 @@ test.describe('Attendance Management', () => {
       expect(hasTotalHours || hasPresentDays).toBe(true);
     });
 
-    test('should filter attendance by date', async ({ page }) => {
+    test('should filter attendance by date', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
 
       // Check if date filter exists
@@ -165,7 +165,7 @@ test.describe('Attendance Management', () => {
       }
     });
 
-    test('should get attendance record details', async ({ page }) => {
+    test('should get attendance record details', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
 
       const count = await attendancePage.getAttendanceRecordCount();
@@ -180,7 +180,7 @@ test.describe('Attendance Management', () => {
   });
 
   test.describe('Attendance Regularization', () => {
-    test('should display regularization page', async ({ page }) => {
+    test('should display regularization page', async ({page}) => {
       await attendancePage.navigateToRegularization();
 
       // Wait for page load
@@ -191,7 +191,7 @@ test.describe('Attendance Management', () => {
       expect(hasRequestButton).toBe(true);
     });
 
-    test('should request attendance regularization', async ({ page }) => {
+    test('should request attendance regularization', async ({page}) => {
       await attendancePage.navigateToRegularization();
 
       const hasRequestButton = await attendancePage.requestRegularizationButton.isVisible().catch(() => false);
@@ -223,7 +223,7 @@ test.describe('Attendance Management', () => {
   });
 
   test.describe('Team Attendance', () => {
-    test('should view team attendance', async ({ page }) => {
+    test('should view team attendance', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
       // Verify team attendance page loaded
@@ -233,7 +233,7 @@ test.describe('Attendance Management', () => {
       await page.waitForTimeout(1000);
     });
 
-    test('should display team attendance controls', async ({ page }) => {
+    test('should display team attendance controls', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
       // Check for date picker or filters
@@ -243,7 +243,7 @@ test.describe('Attendance Management', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match attendance page snapshot', async ({ page }) => {
+    test('should match attendance page snapshot', async ({page}) => {
       // Wait for page to fully load
       await page.waitForTimeout(1000);
 
@@ -252,7 +252,7 @@ test.describe('Attendance Management', () => {
       });
     });
 
-    test('should match my attendance snapshot', async ({ page }) => {
+    test('should match my attendance snapshot', async ({page}) => {
       await attendancePage.navigateToMyAttendance();
       await page.waitForTimeout(1000);
 
@@ -266,12 +266,12 @@ test.describe('Attendance Management', () => {
 test.describe('Attendance - Edge Cases', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should handle multiple check-in attempts', async ({ page }) => {
+  test('should handle multiple check-in attempts', async ({page}) => {
     const hasCheckInButton = await attendancePage.isCheckInButtonVisible();
 
     if (hasCheckInButton) {
@@ -285,7 +285,7 @@ test.describe('Attendance - Edge Cases', () => {
     }
   });
 
-  test('should prevent check-out without check-in', async ({ page }) => {
+  test('should prevent check-out without check-in', async ({page}) => {
     // If already checked in, check out first
     const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
     if (hasCheckOut) {
@@ -302,12 +302,12 @@ test.describe('Attendance - Edge Cases', () => {
 test.describe('Attendance - Multiple Check-In/Check-Out Cycles', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should allow check-in again after check-out (break scenario)', async ({ page }) => {
+  test('should allow check-in again after check-out (break scenario)', async ({page}) => {
     // Ensure we start from a clean state
     const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
     if (hasCheckOut) {
@@ -347,7 +347,7 @@ test.describe('Attendance - Multiple Check-In/Check-Out Cycles', () => {
     }
   });
 
-  test('should maintain state after page refresh', async ({ page }) => {
+  test('should maintain state after page refresh', async ({page}) => {
     // Ensure checked in
     const hasCheckIn = await attendancePage.isCheckInButtonVisible();
     if (hasCheckIn) {
@@ -367,7 +367,7 @@ test.describe('Attendance - Multiple Check-In/Check-Out Cycles', () => {
     expect(stillCheckedIn).toBe(true);
   });
 
-  test('should handle rapid check-in/check-out cycles', async ({ page }) => {
+  test('should handle rapid check-in/check-out cycles', async ({page}) => {
     // Ensure checked out first
     const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
     if (hasCheckOut) {
@@ -397,12 +397,12 @@ test.describe('Attendance - Multiple Check-In/Check-Out Cycles', () => {
 test.describe('Attendance - Time Entry Tracking', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
     await attendancePage.navigate();
   });
 
-  test('should create time entry on check-in', async ({ page }) => {
+  test('should create time entry on check-in', async ({page}) => {
     // Ensure checked out first
     if (await attendancePage.isCheckOutButtonVisible()) {
       await attendancePage.checkOut();
@@ -420,7 +420,7 @@ test.describe('Attendance - Time Entry Tracking', () => {
     }
   });
 
-  test('should close time entry on check-out', async ({ page }) => {
+  test('should close time entry on check-out', async ({page}) => {
     // Ensure checked in first
     if (await attendancePage.isCheckInButtonVisible()) {
       await attendancePage.checkIn();
@@ -442,11 +442,11 @@ test.describe('Attendance - Time Entry Tracking', () => {
 test.describe('Attendance - Cross-Page Consistency', () => {
   let attendancePage: AttendancePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     attendancePage = new AttendancePage(page);
   });
 
-  test('check-in on attendance page should reflect on dashboard', async ({ page }) => {
+  test('check-in on attendance page should reflect on dashboard', async ({page}) => {
     // Navigate to attendance page
     await attendancePage.navigate();
     await page.waitForTimeout(1000);
@@ -477,7 +477,7 @@ test.describe('Attendance - Cross-Page Consistency', () => {
     expect(hasCheckOutButton || hasAttendanceCard || isCheckedIn).toBe(true);
   });
 
-  test('check-out on attendance page should reflect on dashboard', async ({ page }) => {
+  test('check-out on attendance page should reflect on dashboard', async ({page}) => {
     // Navigate to attendance page
     await attendancePage.navigate();
 

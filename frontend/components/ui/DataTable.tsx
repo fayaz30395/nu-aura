@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {
+  Check,
   ChevronDown,
-  ChevronUp,
-  ChevronsUpDown,
-  Columns3,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  ChevronsUpDown,
+  ChevronUp,
+  Columns3,
   X,
-  Check,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Skeleton } from './Skeleton';
-import { EmptyState } from './EmptyState';
+import {cn} from '@/lib/utils';
+import {Skeleton} from './Skeleton';
+import {EmptyState} from './EmptyState';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,11 +107,11 @@ const variantStyles: Record<string, string> = {
 };
 
 export function BulkActionBar({
-  selectedCount,
-  totalCount,
-  actions,
-  onClearSelection,
-}: BulkActionBarProps) {
+                                selectedCount,
+                                totalCount,
+                                actions,
+                                onClearSelection,
+                              }: BulkActionBarProps) {
   if (selectedCount === 0) return null;
 
   return (
@@ -156,7 +156,7 @@ export function BulkActionBar({
           )}
           aria-label="Clear selection"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4"/>
           Clear
         </button>
       </div>
@@ -175,21 +175,23 @@ interface ColumnVisibilityToggleProps<T> {
 }
 
 function ColumnVisibilityToggle<T>({
-  columns,
-  visibilityMap,
-  onToggle,
-}: ColumnVisibilityToggleProps<T>) {
+                                     columns,
+                                     visibilityMap,
+                                     onToggle,
+                                   }: ColumnVisibilityToggleProps<T>) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // Close on outside click
   React.useEffect(() => {
     if (!open) return;
+
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
+
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
@@ -210,9 +212,9 @@ function ColumnVisibilityToggle<T>({
         aria-expanded={open}
         aria-label="Toggle column visibility"
       >
-        <Columns3 className="h-4 w-4" />
+        <Columns3 className="h-4 w-4"/>
         Columns
-        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
+        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')}/>
       </button>
 
       {open && (
@@ -254,7 +256,7 @@ function ColumnVisibilityToggle<T>({
                         : 'border-[var(--border-main)]'
                     )}
                   >
-                    {isVisible && <Check className="h-3 w-3" />}
+                    {isVisible && <Check className="h-3 w-3"/>}
                   </span>
                   {col.label}
                 </button>
@@ -272,26 +274,26 @@ function ColumnVisibilityToggle<T>({
 // ---------------------------------------------------------------------------
 
 function DataTable<T>({
-  columns,
-  data,
-  totalCount,
-  page = 0,
-  pageSize = 20,
-  onPageChange,
-  onPageSizeChange,
-  onSort,
-  sortKey,
-  sortDirection,
-  isLoading = false,
-  emptyMessage = 'No data found',
-  tableId,
-  selectable = false,
-  selectedRows,
-  onSelectionChange,
-  rowKey,
-  actions,
-  className,
-}: DataTableProps<T>) {
+                        columns,
+                        data,
+                        totalCount,
+                        page = 0,
+                        pageSize = 20,
+                        onPageChange,
+                        onPageSizeChange,
+                        onSort,
+                        sortKey,
+                        sortDirection,
+                        isLoading = false,
+                        emptyMessage = 'No data found',
+                        tableId,
+                        selectable = false,
+                        selectedRows,
+                        onSelectionChange,
+                        rowKey,
+                        actions,
+                        className,
+                      }: DataTableProps<T>) {
   // -----------------------------------------------------------------------
   // Column visibility with localStorage persistence
   // -----------------------------------------------------------------------
@@ -319,7 +321,7 @@ function DataTable<T>({
   const toggleColumnVisibility = useCallback(
     (key: string) => {
       setVisibilityMap((prev) => {
-        const next = { ...prev, [key]: prev[key] === false };
+        const next = {...prev, [key]: prev[key] === false};
         if (storageKey && typeof window !== 'undefined') {
           try {
             localStorage.setItem(storageKey, JSON.stringify(next));
@@ -438,12 +440,12 @@ function DataTable<T>({
   const renderSortIcon = (col: DataTableColumn<T>) => {
     if (!col.sortable) return null;
     if (sortKey !== col.key) {
-      return <ChevronsUpDown className="h-3.5 w-3.5 opacity-40" />;
+      return <ChevronsUpDown className="h-3.5 w-3.5 opacity-40"/>;
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-3.5 w-3.5 text-accent-700" />
+      <ChevronUp className="h-3.5 w-3.5 text-accent-700"/>
     ) : (
-      <ChevronDown className="h-3.5 w-3.5 text-accent-700" />
+      <ChevronDown className="h-3.5 w-3.5 text-accent-700"/>
     );
   };
 
@@ -465,30 +467,30 @@ function DataTable<T>({
       <div className={cn('space-y-2', className)}>
         {/* Column toggle placeholder */}
         <div className="flex justify-end">
-          <Skeleton width={120} height={40} className="rounded-lg" />
+          <Skeleton width={120} height={40} className="rounded-lg"/>
         </div>
         {/* Table skeleton */}
         <div className="overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                {visibleColumns.map((col) => (
-                  <th key={col.key} className="px-4 py-2">
-                    <Skeleton height={14} width={80} />
-                  </th>
-                ))}
-              </tr>
+            <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+              {visibleColumns.map((col) => (
+                <th key={col.key} className="px-4 py-2">
+                  <Skeleton height={14} width={80}/>
+                </th>
+              ))}
+            </tr>
             </thead>
             <tbody>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i} className="border-b border-[var(--border-main)]">
-                  {visibleColumns.map((col) => (
-                    <td key={col.key} className="px-4 py-4">
-                      <Skeleton height={14} />
-                    </td>
-                  ))}
-                </tr>
-              ))}
+            {Array.from({length: 5}).map((_, i) => (
+              <tr key={i} className="border-b border-[var(--border-main)]">
+                {visibleColumns.map((col) => (
+                  <td key={col.key} className="px-4 py-4">
+                    <Skeleton height={14}/>
+                  </td>
+                ))}
+              </tr>
+            ))}
             </tbody>
           </table>
         </div>
@@ -511,7 +513,7 @@ function DataTable<T>({
           />
         </div>
         <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
-          <EmptyState title={emptyMessage} />
+          <EmptyState title={emptyMessage}/>
         </div>
       </div>
     );
@@ -536,115 +538,116 @@ function DataTable<T>({
       <div className="overflow-x-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)]">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-              {/* Selection checkbox header */}
-              {selectable && (
-                <th className="w-12 px-4 py-2 text-left sticky left-0 z-10 bg-[var(--bg-secondary)]">
-                  <div className="flex items-center justify-center">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      ref={(el) => {
-                        if (el) el.indeterminate = someSelected;
-                      }}
-                      onChange={handleSelectAll}
-                      className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
-                      aria-label="Select all rows"
-                    />
-                  </div>
-                </th>
-              )}
+          <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+            {/* Selection checkbox header */}
+            {selectable && (
+              <th className="w-12 px-4 py-2 text-left sticky left-0 z-10 bg-[var(--bg-secondary)]">
+                <div className="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someSelected;
+                    }}
+                    onChange={handleSelectAll}
+                    className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
+                    aria-label="Select all rows"
+                  />
+                </div>
+              </th>
+            )}
 
-              {visibleColumns.map((col, colIdx) => (
-                <th
-                  key={col.key}
-                  className={cn(
-                    'px-4 py-2 text-xs font-semibold uppercase tracking-wider',
-                    'text-[var(--text-muted)]',
-                    alignClass(col.align),
-                    col.sortable && 'cursor-pointer select-none hover:text-[var(--text-primary)]',
-                    // Sticky first column
-                    colIdx === 0 && !selectable && 'sticky left-0 z-10 bg-[var(--bg-secondary)]',
-                    colIdx === 0 && selectable && ''
-                  )}
-                  style={col.width ? { width: col.width, minWidth: col.width } : undefined}
-                  onClick={() => col.sortable && handleSort(col.key)}
-                  aria-sort={
-                    sortKey === col.key
-                      ? sortDirection === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : undefined
-                  }
-                >
-                  <div className={cn('inline-flex items-center gap-1.5', alignClass(col.align))}>
-                    {col.label}
-                    {renderSortIcon(col)}
-                  </div>
-                </th>
-              ))}
+            {visibleColumns.map((col, colIdx) => (
+              <th
+                key={col.key}
+                className={cn(
+                  'px-4 py-2 text-xs font-semibold uppercase tracking-wider',
+                  'text-[var(--text-muted)]',
+                  alignClass(col.align),
+                  col.sortable && 'cursor-pointer select-none hover:text-[var(--text-primary)]',
+                  // Sticky first column
+                  colIdx === 0 && !selectable && 'sticky left-0 z-10 bg-[var(--bg-secondary)]',
+                  colIdx === 0 && selectable && ''
+                )}
+                style={col.width ? {width: col.width, minWidth: col.width} : undefined}
+                onClick={() => col.sortable && handleSort(col.key)}
+                aria-sort={
+                  sortKey === col.key
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : undefined
+                }
+              >
+                <div className={cn('inline-flex items-center gap-1.5', alignClass(col.align))}>
+                  {col.label}
+                  {renderSortIcon(col)}
+                </div>
+              </th>
+            ))}
 
-              {/* Actions header */}
-              {actions && (
-                <th className="w-16 px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-                  Actions
-                </th>
-              )}
-            </tr>
+            {/* Actions header */}
+            {actions && (
+              <th
+                className="w-16 px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                Actions
+              </th>
+            )}
+          </tr>
           </thead>
 
           <tbody>
-            {data.map((row, rowIdx) => {
-              const key = getRowKey(row, rowIdx);
-              const isSelected = selectedRows?.has(key) ?? false;
+          {data.map((row, rowIdx) => {
+            const key = getRowKey(row, rowIdx);
+            const isSelected = selectedRows?.has(key) ?? false;
 
-              return (
-                <tr
-                  key={key}
-                  className={cn(
-                    'border-b border-[var(--border-main)] transition-colors',
-                    'hover:bg-[var(--bg-secondary)]',
-                    isSelected && 'bg-accent-50 dark:bg-accent-900/10'
-                  )}
-                >
-                  {/* Selection checkbox */}
-                  {selectable && (
-                    <td className="w-12 px-4 py-2.5 h-11 sticky left-0 z-10 bg-inherit">
-                      <div className="flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => handleSelectRow(key)}
-                          className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
-                          aria-label={`Select row ${key}`}
-                        />
-                      </div>
-                    </td>
-                  )}
+            return (
+              <tr
+                key={key}
+                className={cn(
+                  'border-b border-[var(--border-main)] transition-colors',
+                  'hover:bg-[var(--bg-secondary)]',
+                  isSelected && 'bg-accent-50 dark:bg-accent-900/10'
+                )}
+              >
+                {/* Selection checkbox */}
+                {selectable && (
+                  <td className="w-12 px-4 py-2.5 h-11 sticky left-0 z-10 bg-inherit">
+                    <div className="flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleSelectRow(key)}
+                        className="h-4 w-4 rounded border-surface-300 text-accent-700 focus-visible:ring-accent-700"
+                        aria-label={`Select row ${key}`}
+                      />
+                    </div>
+                  </td>
+                )}
 
-                  {visibleColumns.map((col, colIdx) => (
-                    <td
-                      key={col.key}
-                      className={cn(
-                        'px-4 py-2.5 h-11 text-sm text-[var(--text-primary)]',
-                        alignClass(col.align),
-                        colIdx === 0 && !selectable && 'sticky left-0 z-10 bg-inherit'
-                      )}
-                      style={col.width ? { width: col.width, minWidth: col.width } : undefined}
-                    >
-                      {resolveCellValue(row, col)}
-                    </td>
-                  ))}
+                {visibleColumns.map((col, colIdx) => (
+                  <td
+                    key={col.key}
+                    className={cn(
+                      'px-4 py-2.5 h-11 text-sm text-[var(--text-primary)]',
+                      alignClass(col.align),
+                      colIdx === 0 && !selectable && 'sticky left-0 z-10 bg-inherit'
+                    )}
+                    style={col.width ? {width: col.width, minWidth: col.width} : undefined}
+                  >
+                    {resolveCellValue(row, col)}
+                  </td>
+                ))}
 
-                  {/* Actions */}
-                  {actions && (
-                    <td className="px-4 py-2.5 h-11 text-right whitespace-nowrap">
-                      {actions(row)}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
+                {/* Actions */}
+                {actions && (
+                  <td className="px-4 py-2.5 h-11 text-right whitespace-nowrap">
+                    {actions(row)}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
           </tbody>
         </table>
       </div>
@@ -707,7 +710,7 @@ function DataTable<T>({
                   )}
                   aria-label="First page"
                 >
-                  <ChevronsLeft className="h-4 w-4" />
+                  <ChevronsLeft className="h-4 w-4"/>
                 </button>
                 <button
                   type="button"
@@ -721,7 +724,7 @@ function DataTable<T>({
                   )}
                   aria-label="Previous page"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4"/>
                 </button>
 
                 <span className="px-2 py-1 text-sm text-[var(--text-primary)] select-none">
@@ -740,7 +743,7 @@ function DataTable<T>({
                   )}
                   aria-label="Next page"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4"/>
                 </button>
                 <button
                   type="button"
@@ -754,7 +757,7 @@ function DataTable<T>({
                   )}
                   aria-label="Last page"
                 >
-                  <ChevronsRight className="h-4 w-4" />
+                  <ChevronsRight className="h-4 w-4"/>
                 </button>
               </div>
             )}
@@ -765,5 +768,5 @@ function DataTable<T>({
   );
 }
 
-export { DataTable };
+export {DataTable};
 export default DataTable;

@@ -1,24 +1,17 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
-import {
-  Shield,
-  Lock,
-  AlertCircle,
-  Check,
-  Clock,
-  Laptop,
-} from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useMfaStatus, useDisableMfa } from '@/lib/hooks/queries/useMfa';
-import { MfaSetup } from '@/components/auth/MfaSetup';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {logger} from '@/lib/utils/logger';
+import {AlertCircle, Check, Clock, Laptop, Lock, Shield,} from 'lucide-react';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useDisableMfa, useMfaStatus} from '@/lib/hooks/queries/useMfa';
+import {MfaSetup} from '@/components/auth/MfaSetup';
 
 // Zod schema for disable MFA form
 const disableMfaFormSchema = z.object({
@@ -30,10 +23,10 @@ const disableMfaFormSchema = z.object({
 type DisableMfaFormData = z.infer<typeof disableMfaFormSchema>;
 
 export default function SecuritySettingsPage() {
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
 
   // React Query hooks
-  const { data: mfaStatusData, isLoading: isMfaLoading, isError: isMfaError } = useMfaStatus(
+  const {data: mfaStatusData, isLoading: isMfaLoading, isError: isMfaError} = useMfaStatus(
     isAuthenticated && hasHydrated
   );
   const disableMfaMutation = useDisableMfa();
@@ -53,7 +46,7 @@ export default function SecuritySettingsPage() {
     register,
     handleSubmit,
     reset: resetForm,
-    formState: { errors },
+    formState: {errors},
   } = useForm<DisableMfaFormData>({
     resolver: zodResolver(disableMfaFormSchema),
     defaultValues: {
@@ -111,8 +104,9 @@ export default function SecuritySettingsPage() {
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <Check className="h-5 w-5 text-success-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <Check className="h-5 w-5 text-success-600"/>
             <p className="text-success-800 dark:text-success-200 font-medium">
               Security settings updated successfully!
             </p>
@@ -121,8 +115,9 @@ export default function SecuritySettingsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600"/>
             <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
@@ -132,7 +127,7 @@ export default function SecuritySettingsPage() {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
+                <Shield className="h-5 w-5"/>
                 Two-Factor Authentication
               </CardTitle>
               <CardDescription>
@@ -154,9 +149,9 @@ export default function SecuritySettingsPage() {
                         : 'bg-warning-100 dark:bg-warning-900/30'
                     }`}>
                       {mfaStatusData.enabled ? (
-                        <Check className="h-5 w-5 text-success-600 dark:text-success-400" />
+                        <Check className="h-5 w-5 text-success-600 dark:text-success-400"/>
                       ) : (
-                        <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                        <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                       )}
                     </div>
                     <div className="flex-1">
@@ -190,7 +185,7 @@ export default function SecuritySettingsPage() {
               {isMfaLoading && (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin">
-                    <div className="w-8 h-8 border-4 border-[var(--border-main)] border-t-accent-700 rounded-full" />
+                    <div className="w-8 h-8 border-4 border-[var(--border-main)] border-t-accent-700 rounded-full"/>
                   </div>
                 </div>
               )}
@@ -213,7 +208,8 @@ export default function SecuritySettingsPage() {
                     Enable Two-Factor Authentication
                   </Button>
                   <p className="text-caption mt-4">
-                    You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
+                    You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy
+                    to enable this feature.
                   </p>
                 </div>
               )}
@@ -283,7 +279,7 @@ export default function SecuritySettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Lock className="h-5 w-5" />
+                <Lock className="h-5 w-5"/>
                 Security Tips
               </CardTitle>
             </CardHeader>
@@ -307,7 +303,7 @@ export default function SecuritySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
+              <Clock className="h-5 w-5"/>
               Active Sessions
             </CardTitle>
             <CardDescription>
@@ -316,9 +312,10 @@ export default function SecuritySettingsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
+              <div
+                className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
                 <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex-shrink-0">
-                  <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                  <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">This Device</p>
@@ -328,7 +325,8 @@ export default function SecuritySettingsPage() {
                 </div>
               </div>
               <p className="text-body-muted pt-2">
-                Session management features will be available soon. You can manually log out from other devices using the logout button.
+                Session management features will be available soon. You can manually log out from other devices using
+                the logout button.
               </p>
             </div>
           </CardContent>

@@ -52,7 +52,7 @@ export function exportToCsv<T extends Record<string, unknown>>(
   );
 
   const csvContent = [headerRow, ...dataRows].join('\r\n');
-  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + csvContent], {type: 'text/csv;charset=utf-8;'});
   triggerDownload(blob, filename.endsWith('.csv') ? filename : `${filename}.csv`);
 }
 
@@ -79,13 +79,13 @@ export async function exportToExcel<T extends Record<string, unknown>>(
     const headerRowData = visibleColumns.map((col) => col.label);
     const headerRow = worksheet.addRow(headerRowData);
     headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.font = {bold: true, color: {argb: 'FFFFFFFF'}};
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF050766' }, // accent-700 (NULogic Lapis Blue)
+        fgColor: {argb: 'FF050766'}, // accent-700 (NULogic Lapis Blue)
       };
-      cell.alignment = { horizontal: 'left', vertical: 'middle' };
+      cell.alignment = {horizontal: 'left', vertical: 'middle'};
     });
 
     // Add data rows

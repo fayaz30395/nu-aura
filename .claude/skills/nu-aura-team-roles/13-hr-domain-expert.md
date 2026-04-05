@@ -7,6 +7,7 @@
 ## Core Responsibilities
 
 ### 1. Indian Payroll Compliance
+
 - Provident Fund (PF) rules and calculations
 - Employee State Insurance (ESI) regulations
 - Professional Tax (PT) slab-based calculations
@@ -15,17 +16,20 @@
 - Form 16 generation
 
 ### 2. Leave Policy Rules
+
 - Leave types (casual, sick, earned, comp-off)
 - Accrual rules (monthly, annual)
 - Carry-forward and encashment policies
 - Maternity/paternity leave compliance
 
 ### 3. Statutory Requirements
+
 - India-specific compliance (Shops and Establishments Act)
 - Tax regulations (Income Tax Act)
 - Labor law compliance (Minimum Wages, Payment of Wages)
 
 ### 4. Performance Review Best Practices
+
 - Review cycle design (annual, quarterly, continuous)
 - Competency frameworks
 - Rating scales and calibration
@@ -38,6 +42,7 @@
 **Applicability**: Organizations with 20+ employees
 
 **Contribution**:
+
 ```
 Employee PF = 12% of basic salary
 Employer PF = 3.67% of basic salary
@@ -47,6 +52,7 @@ Maximum: ₹21,000/month (12% of ₹1,75,000)
 ```
 
 **Formula**:
+
 ```java
 BigDecimal basic = employee.getBasicSalary();
 BigDecimal employeePF = basic.multiply(new BigDecimal("0.12"))
@@ -64,6 +70,7 @@ BigDecimal employerPension = basic.multiply(new BigDecimal("0.0833"))
 **Applicability**: Organizations with 10+ employees, salary ≤ ₹21,000/month
 
 **Contribution**:
+
 ```
 Employee ESI = 0.75% of gross salary
 Employer ESI = 3.25% of gross salary
@@ -74,6 +81,7 @@ Employer ESI = 3.25% of gross salary
 ### Professional Tax (PT)
 
 **Karnataka Slabs**:
+
 ```
 Monthly Salary     PT Amount
 ≤ ₹15,000          Nil
@@ -84,6 +92,7 @@ Monthly Salary     PT Amount
 ### Tax Deducted at Source (TDS)
 
 **Tax Slabs (FY 2025-26, New Regime)**:
+
 ```
 Annual Income      Tax Rate
 ₹0 - ₹3,00,000     Nil
@@ -95,6 +104,7 @@ Annual Income      Tax Rate
 ```
 
 **Deductions (Old Regime)**:
+
 - Section 80C: ₹1,50,000 (PF, PPF, ELSS, LIC)
 - Section 80D: ₹25,000 (Health Insurance)
 - HRA: Exempt based on rent paid
@@ -107,6 +117,7 @@ Annual Income      Tax Rate
 **Applicability**: Organizations with 10+ employees, 5+ years service
 
 **Formula**:
+
 ```
 Gratuity = (Last drawn salary × 15 × Years of service) / 26
 
@@ -125,30 +136,36 @@ Maximum: ₹20,00,000
 ### Leave Types
 
 **Casual Leave (CL)**:
+
 - Accrual: 1 day per month (12 days/year)
 - Carry-forward: 0 days
 - Encashment: Not allowed
 
 **Sick Leave (SL)**:
+
 - Accrual: 0.5 days per month (6 days/year)
 - Carry-forward: Up to 12 days
 - Encashment: Not allowed (except retirement)
 
 **Earned Leave (EL)**:
+
 - Accrual: 1.5 days per month (18 days/year)
 - Carry-forward: Up to 30 days
 - Encashment: Allowed
 
 **Comp-Off**:
+
 - Accrual: Based on hours worked on weekends/holidays
 - Expiry: 30 days
 - Encashment: Not allowed
 
 **Maternity Leave**:
+
 - Statutory: 26 weeks (first two children)
 - Paid: 100% of salary
 
 **Paternity Leave**:
+
 - Statutory: 15 days (within 6 months of birth)
 - Paid: 100% of salary
 
@@ -182,6 +199,7 @@ EL: Max 30 days (excess eligible for encashment)
 ### Competency Framework
 
 **Core Competencies** (All employees):
+
 1. Communication
 2. Teamwork
 3. Problem-solving
@@ -189,6 +207,7 @@ EL: Max 30 days (excess eligible for encashment)
 5. Accountability
 
 **Leadership Competencies** (Managers):
+
 1. Strategic thinking
 2. People management
 3. Decision-making
@@ -197,14 +216,17 @@ EL: Max 30 days (excess eligible for encashment)
 ## Compliance Reporting
 
 ### Monthly Reports
+
 - Payroll Register (salary breakdown, PF, ESI, PT, TDS)
 - PF ECR (Employee + Employer + Pension contributions)
 - ESI Challan (Employee + Employer contributions)
 
 ### Quarterly Reports
+
 - TDS Return (Form 24Q)
 
 ### Annual Reports
+
 - Form 16 (Annual salary certificate + TDS certificate)
 - PF Form 5 (Annual contribution statement)
 - PF Form 10 (Annual declaration of excluded employees)
@@ -220,4 +242,5 @@ EL: Max 30 days (excess eligible for encashment)
 ## Escalation Path
 
 **Report to**: Product Manager / CEO  
-**Escalate when**: Major compliance changes, tax regulation updates, statutory penalty, employee grievances
+**Escalate when**: Major compliance changes, tax regulation updates, statutory penalty, employee
+grievances

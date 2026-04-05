@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 export interface SamlConfigResponse {
   id: string;
@@ -72,7 +72,7 @@ class SamlService {
   async getMetadata(): Promise<string> {
     const response = await apiClient.get<string>('/auth/saml/metadata', {
       responseType: 'text' as never,
-      headers: { Accept: 'application/xml' },
+      headers: {Accept: 'application/xml'},
     });
     return response.data;
   }

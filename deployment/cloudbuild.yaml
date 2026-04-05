@@ -67,7 +67,7 @@ steps:
       - 'push'
       - '--all-tags'
       - 'gcr.io/$PROJECT_ID/${_BACKEND_IMAGE_NAME}'
-    waitFor: ['build-backend']
+    waitFor: [ 'build-backend' ]
 
   # ============================================================================
   # Step 4: Push Frontend Image to GCR
@@ -78,7 +78,7 @@ steps:
       - 'push'
       - '--all-tags'
       - 'gcr.io/$PROJECT_ID/${_FRONTEND_IMAGE_NAME}'
-    waitFor: ['build-frontend']
+    waitFor: [ 'build-frontend' ]
 
   # ============================================================================
   # Step 5: Get GKE Credentials
@@ -91,7 +91,7 @@ steps:
       - 'get-credentials'
       - '${_GKE_CLUSTER}'
       - '--zone=${_GKE_ZONE}'
-    waitFor: ['-']
+    waitFor: [ '-' ]
 
   # ============================================================================
   # Step 6: Create Namespace (if not exists)
@@ -105,7 +105,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['get-credentials']
+    waitFor: [ 'get-credentials' ]
 
   # ============================================================================
   # Step 7: Apply ConfigMaps
@@ -119,7 +119,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['create-namespace']
+    waitFor: [ 'create-namespace' ]
 
   # ============================================================================
   # Step 8: Apply Secrets (from GCP Secret Manager)
@@ -137,7 +137,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['create-namespace']
+    waitFor: [ 'create-namespace' ]
 
   # ============================================================================
   # Step 9: Update Backend Deployment with new image
@@ -154,7 +154,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['push-backend', 'apply-configmaps', 'verify-secrets']
+    waitFor: [ 'push-backend', 'apply-configmaps', 'verify-secrets' ]
 
   # ============================================================================
   # Step 10: Update Frontend Deployment with new image
@@ -171,7 +171,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['push-frontend', 'apply-configmaps', 'verify-secrets']
+    waitFor: [ 'push-frontend', 'apply-configmaps', 'verify-secrets' ]
 
   # ============================================================================
   # Step 11: Apply Backend Service
@@ -185,7 +185,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['deploy-backend']
+    waitFor: [ 'deploy-backend' ]
 
   # ============================================================================
   # Step 12: Apply Frontend Service
@@ -199,7 +199,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['deploy-frontend']
+    waitFor: [ 'deploy-frontend' ]
 
   # ============================================================================
   # Step 13: Apply Ingress Configuration
@@ -213,7 +213,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['apply-backend-service', 'apply-frontend-service']
+    waitFor: [ 'apply-backend-service', 'apply-frontend-service' ]
 
   # ============================================================================
   # Step 14: Apply HPA Configuration
@@ -227,7 +227,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['deploy-backend', 'deploy-frontend']
+    waitFor: [ 'deploy-backend', 'deploy-frontend' ]
 
   # ============================================================================
   # Step 15: Apply Network Policies
@@ -241,7 +241,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['create-namespace']
+    waitFor: [ 'create-namespace' ]
 
   # ============================================================================
   # Step 16: Wait for Backend Rollout
@@ -258,7 +258,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['deploy-backend', 'apply-backend-service']
+    waitFor: [ 'deploy-backend', 'apply-backend-service' ]
 
   # ============================================================================
   # Step 17: Wait for Frontend Rollout
@@ -275,7 +275,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['deploy-frontend', 'apply-frontend-service']
+    waitFor: [ 'deploy-frontend', 'apply-frontend-service' ]
 
   # ============================================================================
   # Step 18: Verify Deployment
@@ -290,7 +290,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-    waitFor: ['wait-backend-rollout', 'wait-frontend-rollout']
+    waitFor: [ 'wait-backend-rollout', 'wait-frontend-rollout' ]
 
 # Images to be pushed to Container Registry
 images:

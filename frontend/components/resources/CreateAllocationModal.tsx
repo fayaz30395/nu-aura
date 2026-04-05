@@ -1,23 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
-import { logger } from '@/lib/utils/logger';
-import {
-  AlertTriangle,
-  Check,
-  Loader2,
-  ArrowRight,
-  ArrowLeft,
-} from 'lucide-react';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { projectService } from '@/lib/services/hrms/project.service';
-import { Employee } from '@/lib/types/hrms/employee';
-import { Project, CreateProjectRequest, AssignEmployeeRequest, ProjectEmployee } from '@/lib/types/hrms/project';
-import { ProjectStep } from './ProjectStep';
-import { EmployeeStep } from './EmployeeStep';
-import type { EmployeeAllocation, EmployeeCapacityMap } from './EmployeeStep';
+import React, {useEffect, useState} from 'react';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Button} from '@/components/ui/Button';
+import {logger} from '@/lib/utils/logger';
+import {AlertTriangle, ArrowLeft, ArrowRight, Check, Loader2,} from 'lucide-react';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {projectService} from '@/lib/services/hrms/project.service';
+import {Employee} from '@/lib/types/hrms/employee';
+import {AssignEmployeeRequest, CreateProjectRequest, Project, ProjectEmployee} from '@/lib/types/hrms/project';
+import {ProjectStep} from './ProjectStep';
+import type {EmployeeAllocation, EmployeeCapacityMap} from './EmployeeStep';
+import {EmployeeStep} from './EmployeeStep';
 
 // ─── Types ────────────────────────────────────────────────────────────
 interface CreateAllocationModalProps {
@@ -32,11 +26,11 @@ type Step = 'project' | 'employees';
 
 // ─── CreateAllocationModal (Wizard Orchestrator) ──────────────────────
 export function CreateAllocationModal({
-  isOpen,
-  onClose,
-  onSuccess,
-  preselectedProjectId,
-}: CreateAllocationModalProps) {
+                                        isOpen,
+                                        onClose,
+                                        onSuccess,
+                                        preselectedProjectId,
+                                      }: CreateAllocationModalProps) {
   const [step, setStep] = useState<Step>('project');
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -122,7 +116,7 @@ export function CreateAllocationModal({
 
       setEmployeeCapacities((prev) => {
         const newMap = new Map(prev);
-        newMap.set(employeeId, { total: totalAllocated, projects: activeAllocations });
+        newMap.set(employeeId, {total: totalAllocated, projects: activeAllocations});
         return newMap;
       });
 
@@ -179,9 +173,9 @@ export function CreateAllocationModal({
         if (field === 'allocationPercentage') {
           const numValue = typeof value === 'string' ? parseInt(value) || 0 : value;
           const clampedValue = Math.min(numValue, a.availableCapacity);
-          return { ...a, [field]: clampedValue };
+          return {...a, [field]: clampedValue};
         }
-        return { ...a, [field]: value };
+        return {...a, [field]: value};
       })
     );
   };
@@ -283,7 +277,7 @@ export function CreateAllocationModal({
           <span>Add Allocation</span>
           <div className="flex items-center gap-2 text-sm font-normal text-surface-500">
             <span className={step === 'project' ? 'text-accent-700 font-medium' : ''}>1. Project</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4"/>
             <span className={step === 'employees' ? 'text-accent-700 font-medium' : ''}>2. Employees</span>
           </div>
         </div>
@@ -292,7 +286,7 @@ export function CreateAllocationModal({
       <ModalBody className="space-y-6">
         {loadingData ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
           </div>
         ) : step === 'project' ? (
           <ProjectStep
@@ -327,8 +321,9 @@ export function CreateAllocationModal({
 
         {/* Error */}
         {error && (
-          <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-4 text-danger-700 dark:text-danger-300 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+          <div
+            className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-4 text-danger-700 dark:text-danger-300 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 flex-shrink-0"/>
             {error}
           </div>
         )}
@@ -351,13 +346,13 @@ export function CreateAllocationModal({
             >
               {submitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                   {useExistingProject ? 'Loading...' : 'Creating...'}
                 </>
               ) : (
                 <>
                   Next: Add Employees
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4"/>
                 </>
               )}
             </Button>
@@ -365,7 +360,7 @@ export function CreateAllocationModal({
         ) : (
           <>
             <Button type="button" variant="outline" onClick={() => setStep('project')} disabled={submitting}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeft className="mr-2 h-4 w-4"/>
               Back
             </Button>
             <Button
@@ -376,12 +371,12 @@ export function CreateAllocationModal({
             >
               {submitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                   Allocating...
                 </>
               ) : (
                 <>
-                  <Check className="mr-2 h-4 w-4" />
+                  <Check className="mr-2 h-4 w-4"/>
                   Allocate {allocations.length} Employee{allocations.length !== 1 ? 's' : ''}
                 </>
               )}

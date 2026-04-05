@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Send, CornerDownRight, Trash2 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Button } from '@/components/ui/Button';
-import { CommentResponse, AuthorInfo } from '@/lib/services/core/wall.service';
-import { cn } from '@/lib/utils';
+import React, {useState} from 'react';
+import {motion} from 'framer-motion';
+import {CornerDownRight, Send, Trash2} from 'lucide-react';
+import {formatDistanceToNow} from 'date-fns';
+import {Button} from '@/components/ui/Button';
+import {AuthorInfo, CommentResponse} from '@/lib/services/core/wall.service';
+import {cn} from '@/lib/utils';
 
 // ==================== Props ====================
 
@@ -23,7 +23,7 @@ interface CommentThreadProps {
 
 // ==================== Avatar Component ====================
 
-function AuthorAvatar({ author }: { author: AuthorInfo }): JSX.Element {
+function AuthorAvatar({author}: { author: AuthorInfo }): JSX.Element {
   const initials = author.fullName
     .split(' ')
     .map((name) => name[0])
@@ -32,7 +32,8 @@ function AuthorAvatar({ author }: { author: AuthorInfo }): JSX.Element {
     .slice(0, 2);
 
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+    <div
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
       {initials}
     </div>
   );
@@ -49,28 +50,28 @@ interface CommentItemProps {
 }
 
 function CommentItem({
-  comment,
-  currentUserId,
-  isReply = false,
-  onReply,
-  onDelete,
-}: CommentItemProps): JSX.Element {
+                       comment,
+                       currentUserId,
+                       isReply = false,
+                       onReply,
+                       onDelete,
+                     }: CommentItemProps): JSX.Element {
   const isAuthor = currentUserId === comment.author.id;
 
   return (
     <motion.div
-      initial={{ x: -8, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.2 }}
+      initial={{x: -8, opacity: 0}}
+      animate={{x: 0, opacity: 1}}
+      transition={{duration: 0.2}}
       className={cn('flex gap-4', isReply && 'ml-12')}
     >
       {/* Left border for replies */}
       {isReply && (
-        <div className="absolute left-4 top-0 h-full w-0.5 bg-[var(--border-subtle)]" />
+        <div className="absolute left-4 top-0 h-full w-0.5 bg-[var(--border-subtle)]"/>
       )}
 
       {/* Avatar */}
-      <AuthorAvatar author={comment.author} />
+      <AuthorAvatar author={comment.author}/>
 
       {/* Comment content */}
       <div className="flex-1">
@@ -86,7 +87,7 @@ function CommentItem({
               </span>
             )}
             <span className="text-caption">
-              {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(comment.createdAt), {addSuffix: true})}
             </span>
           </div>
 
@@ -100,7 +101,7 @@ function CommentItem({
             onClick={() => onReply(comment.id, comment.author.fullName)}
             className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
           >
-            <CornerDownRight className="h-3.5 w-3.5" />
+            <CornerDownRight className="h-3.5 w-3.5"/>
             Reply
           </button>
 
@@ -109,7 +110,7 @@ function CommentItem({
               onClick={() => onDelete(comment.id)}
               className="inline-flex items-center gap-1 text-xs font-medium text-danger-600 hover:text-danger-700 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5"/>
               Delete
             </button>
           )}
@@ -138,15 +139,15 @@ function CommentItem({
 // ==================== Main Component ====================
 
 export function CommentThread({
-  comments,
-  isLoading,
-  hasMore,
-  currentUserId,
-  onAddComment,
-  onDeleteComment,
-  onLoadMore,
-  isSubmitting,
-}: CommentThreadProps): JSX.Element {
+                                comments,
+                                isLoading,
+                                hasMore,
+                                currentUserId,
+                                onAddComment,
+                                onDeleteComment,
+                                onLoadMore,
+                                isSubmitting,
+                              }: CommentThreadProps): JSX.Element {
   const [newCommentContent, setNewCommentContent] = useState('');
   const [replyingTo, setReplyingTo] = useState<{ commentId: string; authorName: string } | null>(
     null
@@ -171,8 +172,8 @@ export function CommentThread({
       {/* Load more button */}
       {hasMore && !isLoading && (
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
           onClick={onLoadMore}
           className="text-center text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
         >
@@ -183,7 +184,8 @@ export function CommentThread({
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500 dark:border-t-accent-400" />
+          <div
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500 dark:border-t-accent-400"/>
         </div>
       )}
 
@@ -194,7 +196,7 @@ export function CommentThread({
             key={comment.id}
             comment={comment}
             currentUserId={currentUserId}
-            onReply={(commentId, authorName) => setReplyingTo({ commentId, authorName })}
+            onReply={(commentId, authorName) => setReplyingTo({commentId, authorName})}
             onDelete={onDeleteComment}
           />
         ))}
@@ -203,8 +205,8 @@ export function CommentThread({
       {/* No comments state */}
       {!isLoading && comments.length === 0 && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
           className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 text-center"
         >
           <p className="text-body-muted">
@@ -218,9 +220,9 @@ export function CommentThread({
         {/* Reply indicator */}
         {replyingTo && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{opacity: 0, height: 0}}
+            animate={{opacity: 1, height: 'auto'}}
+            exit={{opacity: 0, height: 0}}
             className="rounded-lg bg-accent-50 p-2 dark:bg-accent-900"
           >
             <div className="row-between">
@@ -262,7 +264,7 @@ export function CommentThread({
             loadingText=""
             className="mt-auto"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-4 w-4"/>
           </Button>
         </div>
 

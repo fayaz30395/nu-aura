@@ -1,13 +1,13 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { systemAdminApi } from '@/lib/api/admin-system';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {systemAdminApi} from '@/lib/api/admin-system';
 import {
-  SystemOverview,
-  TenantMetrics,
+  GrowthMetrics,
   ImpersonationToken,
   PaginatedTenantList,
-  GrowthMetrics,
+  SystemOverview,
+  TenantMetrics,
 } from '@/lib/types/core/admin-system';
 
 /**
@@ -19,7 +19,7 @@ export const systemAdminKeys = {
   growthMetrics: (months: number) => [...systemAdminKeys.all, 'growth', months] as const,
   tenants: () => [...systemAdminKeys.all, 'tenants'] as const,
   tenantList: (page: number, size: number) =>
-    [...systemAdminKeys.tenants(), { page, size }] as const,
+    [...systemAdminKeys.tenants(), {page, size}] as const,
   tenantMetrics: (tenantId: string) =>
     [...systemAdminKeys.tenants(), 'metrics', tenantId] as const,
 };
@@ -82,7 +82,7 @@ export function useImpersonationToken() {
       systemAdminApi.generateImpersonationToken(tenantId),
     onSuccess: () => {
       // Invalidate relevant caches after impersonation
-      queryClient.invalidateQueries({ queryKey: systemAdminKeys.overview() });
+      queryClient.invalidateQueries({queryKey: systemAdminKeys.overview()});
     },
   });
 }

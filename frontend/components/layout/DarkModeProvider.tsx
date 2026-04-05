@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 
 // ── Types ────────────────────────────────────────────────────────────
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -56,7 +56,7 @@ function getSavedTheme(): ThemeMode {
 
 // ── Provider ─────────────────────────────────────────────────────────
 
-export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
   const [theme, setThemeState] = useState<ThemeMode>('system');
   // Default to 'dark' to match the app's enforced dark theme and prevent
   // a Mantine SSR hydration mismatch (server renders dark CSS vars via

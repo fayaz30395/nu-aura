@@ -1,17 +1,17 @@
 'use client';
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { PayrollTrendData } from '@/lib/types/core/analytics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { formatCurrency } from '@/lib/utils';
+import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {PayrollTrendData} from '@/lib/types/core/analytics';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {formatCurrency} from '@/lib/utils';
 
 interface PayrollCostTrendChartProps {
   data: PayrollTrendData[];
   className?: string;
 }
 
-export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ data, className = '' }) => {
+export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({data, className = ''}) => {
   const hasData = data && data.length > 0;
 
 
@@ -24,16 +24,16 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
       <CardContent>
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
+            <BarChart data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
               <XAxis
                 dataKey="month"
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
               />
               <YAxis
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
                 tickFormatter={(value) => `₹${(value / 100000).toFixed(0)}L`}
               />
               <Tooltip
@@ -45,8 +45,8 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
                 }}
                 formatter={(value) => [formatCurrency(value as number), 'Total Cost']}
               />
-              <Legend />
-              <Bar dataKey="amount" name="Payroll Cost" fill="var(--chart-secondary)" radius={[8, 8, 0, 0]} />
+              <Legend/>
+              <Bar dataKey="amount" name="Payroll Cost" fill="var(--chart-secondary)" radius={[8, 8, 0, 0]}/>
             </BarChart>
           </ResponsiveContainer>
         ) : (

@@ -1,4 +1,4 @@
-import { EmployeeLevel, EmployeeStatus, EmploymentType, JobRole } from './employee';
+import {EmployeeLevel, EmployeeStatus, EmploymentType, JobRole} from './employee';
 
 export type ChangeRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 

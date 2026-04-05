@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Custom Fields E2E Tests
@@ -9,7 +9,7 @@ import { testUsers } from './fixtures/testData';
  */
 
 test.describe('Custom Fields — Admin', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -17,17 +17,17 @@ test.describe('Custom Fields — Admin', () => {
   });
 
   test.describe('Page Load & Layout', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
       await page.waitForLoadState('networkidle');
     });
 
-    test('custom fields page loads with a heading', async ({ page }) => {
+    test('custom fields page loads with a heading', async ({page}) => {
       expect(page.url()).toContain('/admin/custom-fields');
       await expect(page.locator('h1, h2').first()).toBeVisible();
     });
 
-    test('displays list of custom field definitions', async ({ page }) => {
+    test('displays list of custom field definitions', async ({page}) => {
       await page.waitForTimeout(1000);
 
       const hasTable = await page.locator('table tbody tr').first().isVisible().catch(() => false);
@@ -37,7 +37,7 @@ test.describe('Custom Fields — Admin', () => {
       expect(hasTable || hasCards || hasEmpty || true).toBe(true);
     });
 
-    test('shows entity type filter or tabs', async ({ page }) => {
+    test('shows entity type filter or tabs', async ({page}) => {
       await page.waitForTimeout(500);
 
       // Entity type tabs or select (EMPLOYEE, DEPARTMENT, etc.)
@@ -47,7 +47,7 @@ test.describe('Custom Fields — Admin', () => {
       expect(hasTab || hasSelect || true).toBe(true);
     });
 
-    test('add/create custom field button is present', async ({ page }) => {
+    test('add/create custom field button is present', async ({page}) => {
       await page.waitForTimeout(500);
 
       const addBtn = page.locator(
@@ -64,13 +64,13 @@ test.describe('Custom Fields — Admin', () => {
   });
 
   test.describe('Create Custom Field', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(500);
     });
 
-    test('clicking create opens a modal or form', async ({ page }) => {
+    test('clicking create opens a modal or form', async ({page}) => {
       const addBtn = page.locator(
         'button:has-text("Add"), button:has-text("Create"), button:has-text("New Field"), button:has-text("Add Field")'
       ).first();
@@ -90,7 +90,7 @@ test.describe('Custom Fields — Admin', () => {
       expect(hasBtn || true).toBe(true);
     });
 
-    test('create form has field name and type inputs', async ({ page }) => {
+    test('create form has field name and type inputs', async ({page}) => {
       const addBtn = page.locator(
         'button:has-text("Add"), button:has-text("Create"), button:has-text("New Field"), button:has-text("Add Field")'
       ).first();
@@ -109,7 +109,7 @@ test.describe('Custom Fields — Admin', () => {
       }
     });
 
-    test('cancel button closes the create form', async ({ page }) => {
+    test('cancel button closes the create form', async ({page}) => {
       const addBtn = page.locator(
         'button:has-text("Add"), button:has-text("Create"), button:has-text("New Field"), button:has-text("Add Field")'
       ).first();
@@ -135,13 +135,13 @@ test.describe('Custom Fields — Admin', () => {
   });
 
   test.describe('Existing Fields — Actions', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       await page.goto('/admin/custom-fields');
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(1000);
     });
 
-    test('edit action opens update form for existing field', async ({ page }) => {
+    test('edit action opens update form for existing field', async ({page}) => {
       const editBtn = page.locator('button:has-text("Edit"), button[aria-label*="edit" i]').first();
       const hasEdit = await editBtn.isVisible().catch(() => false);
 
@@ -156,7 +156,7 @@ test.describe('Custom Fields — Admin', () => {
       expect(hasEdit || true).toBe(true);
     });
 
-    test('toggle active/inactive state for a custom field', async ({ page }) => {
+    test('toggle active/inactive state for a custom field', async ({page}) => {
       // Look for a toggle switch next to a field
       const toggle = page.locator('[role="switch"], input[type="checkbox"], button[class*="toggle" i]').first();
       const hasToggle = await toggle.isVisible().catch(() => false);
@@ -175,7 +175,7 @@ test.describe('Custom Fields — Admin', () => {
   });
 
   test.describe('Access Control', () => {
-    test('employee cannot access admin custom fields page', async ({ page }) => {
+    test('employee cannot access admin custom fields page', async ({page}) => {
       const loginPage = new LoginPage(page);
       await loginPage.navigate();
       await loginPage.login(testUsers.employee.email, testUsers.employee.password);

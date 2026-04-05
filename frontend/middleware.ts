@@ -244,7 +244,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       "default-src 'self'",
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
-        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
+        : "script-src 'self' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
       `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com https:`,
       "img-src 'self' data: blob: https:",

@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Clock, CheckCircle, XCircle, PlusCircle, AlertCircle } from 'lucide-react';
-import { notifications } from '@mantine/notifications';
-import { Modal } from '@mantine/core';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { TablePagination } from '@/components/ui';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AlertCircle, CheckCircle, Clock, PlusCircle, XCircle} from 'lucide-react';
+import {notifications} from '@mantine/notifications';
+import {Modal} from '@mantine/core';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {TablePagination} from '@/components/ui';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
 
 interface CompOffRequest {
   id: string;
@@ -50,17 +50,17 @@ type CompOffFormData = z.infer<typeof compOffSchema>;
 // ─── Status config ──────────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-  PENDING:  { color: 'text-warning-600 tint-warning',  icon: AlertCircle,   label: 'Pending' },
-  APPROVED: { color: 'text-accent-600 tint-info',       icon: CheckCircle,   label: 'Approved' },
-  REJECTED: { color: 'text-danger-600 tint-danger',      icon: XCircle,       label: 'Rejected' },
-  CREDITED: { color: 'text-success-600 tint-success',   icon: CheckCircle,   label: 'Credited' },
+  PENDING: {color: 'text-warning-600 tint-warning', icon: AlertCircle, label: 'Pending'},
+  APPROVED: {color: 'text-accent-600 tint-info', icon: CheckCircle, label: 'Approved'},
+  REJECTED: {color: 'text-danger-600 tint-danger', icon: XCircle, label: 'Rejected'},
+  CREDITED: {color: 'text-success-600 tint-success', icon: CheckCircle, label: 'Credited'},
 };
 
 export default function CompOffPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.ATTENDANCE_VIEW_SELF,
@@ -77,28 +77,33 @@ export default function CompOffPage() {
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
   const [pendingPage, setPendingPage] = useState(0);
   const [pendingPageSize, setPendingPageSize] = useState(20);
-  const { user } = useAuth();
+  const {user} = useAuth();
   const employeeId = user?.employeeId;
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CompOffFormData>({
     resolver: zodResolver(compOffSchema),
-    defaultValues: { attendanceDate: '', reason: '' },
+    defaultValues: {attendanceDate: '', reason: ''},
   });
 
-  const { data: myRequests, isLoading: loadingMy } = useQuery<CompOffRequest[]>({
+  const {data: myRequests, isLoading: loadingMy} = useQuery<CompOffRequest[]>({
     queryKey: ['comp-off', 'my', employeeId],
     queryFn: () => apiClient.get<CompOffRequest[]>(`/comp-off/my-pending/${employeeId}`).then(r => r.data),
     enabled: !!employeeId,
   });
 
-  const { data: pendingRequests, isLoading: loadingPending } = useQuery<PageResponse<CompOffRequest>>({
+  const {data: pendingRequests, isLoading: loadingPending} = useQuery<PageResponse<CompOffRequest>>({
     queryKey: ['comp-off', 'pending', pendingPage, pendingPageSize],
-    queryFn: () => apiClient.get<PageResponse<CompOffRequest>>('/comp-off/pending', { params: { page: pendingPage, size: pendingPageSize } }).then(r => r.data),
+    queryFn: () => apiClient.get<PageResponse<CompOffRequest>>('/comp-off/pending', {
+      params: {
+        page: pendingPage,
+        size: pendingPageSize
+      }
+    }).then(r => r.data),
     enabled: activeTab === 'pending' && !!employeeId,
   });
 
@@ -106,18 +111,18 @@ export default function CompOffPage() {
     mutationFn: (data: { employeeId: string; attendanceDate: string; reason?: string }) =>
       apiClient.post('/comp-off/request', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comp-off'] });
+      queryClient.invalidateQueries({queryKey: ['comp-off']});
       setShowRequestModal(false);
       reset();
     },
-    onError: () => notifications.show({ title: 'Error', message: 'Failed to submit comp-off request', color: 'red' }),
+    onError: () => notifications.show({title: 'Error', message: 'Failed to submit comp-off request', color: 'red'}),
   });
 
   const approveMutation = useMutation({
-    mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
-      apiClient.post(`/comp-off/${id}/${action}`, { reviewerId: employeeId, note: '' }),
+    mutationFn: ({id, action}: { id: string; action: 'approve' | 'reject' }) =>
+      apiClient.post(`/comp-off/${id}/${action}`, {reviewerId: employeeId, note: ''}),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['comp-off'] });
+      queryClient.invalidateQueries({queryKey: ['comp-off']});
       const actionLabel = variables.action === 'approve' ? 'approved' : 'rejected';
       notifications.show({
         title: 'Success',
@@ -126,14 +131,14 @@ export default function CompOffPage() {
       });
     },
     onError: () => {
-      notifications.show({ title: 'Error', message: 'Failed to process comp-off request', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to process comp-off request', color: 'red'});
     },
   });
 
   if (!isReady || !hasAccess || !employeeId) return null;
 
   const onSubmitForm = (data: CompOffFormData) => {
-    requestMutation.mutate({ employeeId, attendanceDate: data.attendanceDate, reason: data.reason });
+    requestMutation.mutate({employeeId, attendanceDate: data.attendanceDate, reason: data.reason});
   };
 
   const handleModalClose = () => {
@@ -151,10 +156,11 @@ export default function CompOffPage() {
         <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Compensatory Off</h1>
-            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request and manage comp-off credits for overtime work</p>
+            <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request and manage comp-off credits for overtime
+              work</p>
           </div>
           <Button onClick={() => setShowRequestModal(true)}>
-            <PlusCircle className="w-4 h-4 mr-2" />
+            <PlusCircle className="w-4 h-4 mr-2"/>
             Request Comp-Off
           </Button>
         </div>
@@ -163,9 +169,10 @@ export default function CompOffPage() {
         <Card className="border-accent-200 tint-info skeuo-card">
           <CardContent className="pt-4">
             <div className="flex gap-4">
-              <AlertCircle className="w-5 h-5 text-accent-600 shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-accent-600 shrink-0 mt-0.5"/>
               <div className="text-sm text-accent-800">
-                <strong>Eligibility:</strong> Minimum 60 minutes overtime required. Half-day credited for 4h+, full day for 8h+.
+                <strong>Eligibility:</strong> Minimum 60 minutes overtime required. Half-day credited for 4h+, full day
+                for 8h+.
                 Requests are auto-approved after 7 days if no manager action.
               </div>
             </div>
@@ -199,68 +206,69 @@ export default function CompOffPage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
             ) : requests.length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
-                <Clock className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]" />
+                <Clock className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>
                 <p>No comp-off requests found.</p>
               </div>
             ) : (
               <table className="w-full text-sm table-aura">
                 <thead>
-                  <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                    <th className="px-4 py-2 text-left font-medium">Date</th>
-                    <th className="px-4 py-2 text-left font-medium">Overtime</th>
-                    <th className="px-4 py-2 text-left font-medium">Days</th>
-                    <th className="px-4 py-2 text-left font-medium">Reason</th>
-                    <th className="px-4 py-2 text-left font-medium">Status</th>
-                    {activeTab === 'pending' && (
-                      <th className="px-4 py-2 text-left font-medium">Action</th>
-                    )}
-                  </tr>
+                <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
+                  <th className="px-4 py-2 text-left font-medium">Date</th>
+                  <th className="px-4 py-2 text-left font-medium">Overtime</th>
+                  <th className="px-4 py-2 text-left font-medium">Days</th>
+                  <th className="px-4 py-2 text-left font-medium">Reason</th>
+                  <th className="px-4 py-2 text-left font-medium">Status</th>
+                  {activeTab === 'pending' && (
+                    <th className="px-4 py-2 text-left font-medium">Action</th>
+                  )}
+                </tr>
                 </thead>
                 <tbody>
-                  {requests.map((req: CompOffRequest) => {
-                    const cfg = statusConfig[req.status] ?? statusConfig.PENDING;
-                    const Icon = cfg.icon;
-                    return (
-                      <tr key={req.id} className="border-b hover:bg-[var(--bg-surface)]">
-                        <td className="px-4 py-4 font-medium">{req.attendanceDate}</td>
-                        <td className="px-4 py-4">
-                          {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
-                        </td>
-                        <td className="px-4 py-4 font-semibold text-accent-700">{req.compOffDays}</td>
-                        <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
-                        <td className="px-4 py-4">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
-                            <Icon className="w-3.5 h-3.5" />
+                {requests.map((req: CompOffRequest) => {
+                  const cfg = statusConfig[req.status] ?? statusConfig.PENDING;
+                  const Icon = cfg.icon;
+                  return (
+                    <tr key={req.id} className="border-b hover:bg-[var(--bg-surface)]">
+                      <td className="px-4 py-4 font-medium">{req.attendanceDate}</td>
+                      <td className="px-4 py-4">
+                        {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
+                      </td>
+                      <td className="px-4 py-4 font-semibold text-accent-700">{req.compOffDays}</td>
+                      <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
+                      <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
+                            <Icon className="w-3.5 h-3.5"/>
                             {cfg.label}
                           </span>
+                      </td>
+                      {activeTab === 'pending' && (
+                        <td className="px-4 py-4">
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-success-700 border-success-200"
+                              disabled={approveMutation.isPending}
+                              onClick={() => approveMutation.mutate({id: req.id, action: 'approve'})}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-danger-700 border-danger-200"
+                              disabled={approveMutation.isPending}
+                              onClick={() => approveMutation.mutate({id: req.id, action: 'reject'})}
+                            >
+                              Reject
+                            </Button>
+                          </div>
                         </td>
-                        {activeTab === 'pending' && (
-                          <td className="px-4 py-4">
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="text-success-700 border-success-200"
-                                disabled={approveMutation.isPending}
-                                onClick={() => approveMutation.mutate({ id: req.id, action: 'approve' })}
-                              >
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="text-danger-700 border-danger-200"
-                                disabled={approveMutation.isPending}
-                                onClick={() => approveMutation.mutate({ id: req.id, action: 'reject' })}
-                              >
-                                Reject
-                              </Button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
+                      )}
+                    </tr>
+                  );
+                })}
                 </tbody>
               </table>
             )}

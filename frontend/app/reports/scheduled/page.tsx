@@ -1,46 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useFieldArray, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {
+  DAY_OF_WEEK_LABELS,
+  FREQUENCY_LABELS,
+  REPORT_TYPE_LABELS,
+  ReportType,
   ScheduledReport,
   ScheduledReportRequest,
-  ReportType,
-  REPORT_TYPE_LABELS,
-  FREQUENCY_LABELS,
-  DAY_OF_WEEK_LABELS,
 } from '@/lib/types/core/analytics';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
-  Plus,
-  Edit,
-  Trash2,
-  Clock,
-  Mail,
-  Play,
-  Pause,
-  FileText,
-  Users,
-  TrendingUp,
-  DollarSign,
   BarChart3,
   CalendarDays,
   CheckCircle,
+  Clock,
+  DollarSign,
+  Edit,
+  FileText,
+  Mail,
+  Pause,
+  Play,
+  Plus,
+  Trash2,
+  TrendingUp,
+  Users,
   XCircle,
 } from 'lucide-react';
-import React from 'react';
 import {
-  useScheduledReports,
   useCreateScheduledReport,
-  useUpdateScheduledReport,
   useDeleteScheduledReport,
+  useScheduledReports,
   useToggleScheduledReportStatus,
+  useUpdateScheduledReport,
 } from '@/lib/hooks/queries/useReports';
 
 const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
@@ -69,7 +68,7 @@ const scheduledReportFormSchema = z.object({
   dayOfWeek: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v) : v).optional(),
   dayOfMonth: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v) : v).optional(),
   timeOfDay: z.string().min(1, 'Time is required'),
-  recipients: z.array(z.object({ email: z.string().email('Invalid email') })),
+  recipients: z.array(z.object({email: z.string().email('Invalid email')})),
   departmentId: z.string().optional(),
   exportFormat: z.enum(['EXCEL', 'PDF', 'CSV']),
   isActive: z.boolean(),
@@ -80,7 +79,7 @@ type ScheduledReportFormData = z.infer<typeof scheduledReportFormSchema>;
 export default function ScheduledReportsPage() {
   const router = useRouter();
   const toast = useToast();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedReport, setSelectedReport] = useState<ScheduledReport | null>(null);
@@ -93,7 +92,7 @@ export default function ScheduledReportsPage() {
     control,
     reset,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ScheduledReportFormData>({
     resolver: zodResolver(scheduledReportFormSchema),
     defaultValues: {
@@ -103,21 +102,21 @@ export default function ScheduledReportsPage() {
       dayOfWeek: 1,
       dayOfMonth: 1,
       timeOfDay: '09:00',
-      recipients: [{ email: '' }],
+      recipients: [{email: ''}],
       exportFormat: 'EXCEL',
       isActive: true,
     },
   });
 
-  const { fields: recipientFields, append: appendRecipient, remove: removeRecipient } = useFieldArray({
+  const {fields: recipientFields, append: appendRecipient, remove: removeRecipient} = useFieldArray({
     control,
     name: 'recipients',
   });
 
   const frequency = watch('frequency');
 
-  const { data: response, isLoading: loading, refetch } = useScheduledReports();
-  const { data: departmentsData = [] } = useActiveDepartments();
+  const {data: response, isLoading: loading, refetch} = useScheduledReports();
+  const {data: departmentsData = []} = useActiveDepartments();
   const reports = response?.content || [];
   const departments = departmentsData;
 
@@ -162,7 +161,7 @@ export default function ScheduledReportsPage() {
 
     try {
       if (selectedReport) {
-        await updateMutation.mutateAsync({ id: selectedReport.id, data: dataToSubmit });
+        await updateMutation.mutateAsync({id: selectedReport.id, data: dataToSubmit});
         toast.success('Scheduled report updated successfully');
       } else {
         await createMutation.mutateAsync(dataToSubmit);
@@ -174,7 +173,9 @@ export default function ScheduledReportsPage() {
       setSelectedReport(null);
       refetch();
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save scheduled report');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to save scheduled report');
     }
   };
 
@@ -187,7 +188,9 @@ export default function ScheduledReportsPage() {
       setSelectedReport(null);
       refetch();
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete scheduled report');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to delete scheduled report');
     }
   };
 
@@ -197,7 +200,9 @@ export default function ScheduledReportsPage() {
       toast.success(report.isActive ? 'Report paused' : 'Report activated');
       refetch();
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to toggle report status');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to toggle report status');
     }
   };
 
@@ -210,7 +215,7 @@ export default function ScheduledReportsPage() {
       dayOfWeek: report.dayOfWeek || 1,
       dayOfMonth: report.dayOfMonth || 1,
       timeOfDay: report.timeOfDay,
-      recipients: report.recipients.length > 0 ? report.recipients.map(r => ({ email: r })) : [{ email: '' }],
+      recipients: report.recipients.length > 0 ? report.recipients.map(r => ({email: r})) : [{email: ''}],
       departmentId: report.departmentId || '',
       exportFormat: report.exportFormat,
       isActive: report.isActive,
@@ -263,13 +268,14 @@ export default function ScheduledReportsPage() {
             }}
             className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4"/>
             New Schedule
           </button>
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
+        <div
+          className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-[var(--text-secondary)]">
               Status:
@@ -298,8 +304,9 @@ export default function ScheduledReportsPage() {
             <div className="text-[var(--text-secondary)]">Loading scheduled reports...</div>
           </div>
         ) : filteredReports.length === 0 ? (
-          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
-            <Clock className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+          <div
+            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
+            <Clock className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
             <div className="text-[var(--text-secondary)] mb-4">
               {filterActive === 'ALL' ? 'No scheduled reports found' : `No ${filterActive.toLowerCase()} scheduled reports`}
             </div>
@@ -332,7 +339,7 @@ export default function ScheduledReportsPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-4">
                       <div className={`p-2 rounded-lg ${colorClass}`}>
-                        <IconComponent className="h-5 w-5" />
+                        <IconComponent className="h-5 w-5"/>
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold">{report.scheduleName}</h3>
@@ -350,32 +357,32 @@ export default function ScheduledReportsPage() {
                       }`}
                       title={report.isActive ? 'Pause schedule' : 'Activate schedule'}
                     >
-                      {report.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      {report.isActive ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4"/>}
                     </button>
                   </div>
 
                   <div className="space-y-4 mb-4">
                     <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-[var(--text-muted)]" />
+                      <Clock className="h-4 w-4 text-[var(--text-muted)]"/>
                       <span className="text-[var(--text-secondary)]">
                         {getScheduleDescription(report)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-[var(--text-muted)]" />
+                      <Mail className="h-4 w-4 text-[var(--text-muted)]"/>
                       <span className="text-[var(--text-secondary)]">
                         {report.recipients.length} recipient{report.recipients.length !== 1 ? 's' : ''}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <FileText className="h-4 w-4 text-[var(--text-muted)]" />
+                      <FileText className="h-4 w-4 text-[var(--text-muted)]"/>
                       <span className="text-[var(--text-secondary)]">
                         {report.exportFormat} format
                       </span>
                     </div>
                     {report.departmentName && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Users className="h-4 w-4 text-[var(--text-muted)]" />
+                        <Users className="h-4 w-4 text-[var(--text-muted)]"/>
                         <span className="text-[var(--text-secondary)]">
                           Filtered: {report.departmentName}
                         </span>
@@ -387,12 +394,12 @@ export default function ScheduledReportsPage() {
                     <div className="flex items-center gap-2">
                       {report.isActive ? (
                         <span className="flex items-center gap-1 text-xs text-success-600">
-                          <CheckCircle className="h-3 w-3" />
+                          <CheckCircle className="h-3 w-3"/>
                           Active
                         </span>
                       ) : (
                         <span className="flex items-center gap-1 text-caption">
-                          <XCircle className="h-3 w-3" />
+                          <XCircle className="h-3 w-3"/>
                           Inactive
                         </span>
                       )}
@@ -408,14 +415,14 @@ export default function ScheduledReportsPage() {
                         className="p-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100"
                         title="Edit"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4"/>
                       </button>
                       <button
                         onClick={() => openDeleteConfirm(report)}
                         className="p-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100"
                         title="Delete"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4"/>
                       </button>
                     </div>
                   </div>
@@ -428,7 +435,8 @@ export default function ScheduledReportsPage() {
         {/* Create/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedReport ? 'Edit Scheduled Report' : 'Create Scheduled Report'}
@@ -446,7 +454,8 @@ export default function ScheduledReportsPage() {
                         {...register('scheduleName')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                       />
-                      {errors.scheduleName && <p className="text-danger-500 text-sm mt-1">{errors.scheduleName.message}</p>}
+                      {errors.scheduleName &&
+                        <p className="text-danger-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
 
                     {/* Report Type */}
@@ -489,14 +498,15 @@ export default function ScheduledReportsPage() {
                             Day of Week *
                           </label>
                           <select
-                            {...register('dayOfWeek', { valueAsNumber: true })}
+                            {...register('dayOfWeek', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
                             ))}
                           </select>
-                          {errors.dayOfWeek && <p className="text-danger-500 text-sm mt-1">{errors.dayOfWeek.message}</p>}
+                          {errors.dayOfWeek &&
+                            <p className="text-danger-500 text-sm mt-1">{errors.dayOfWeek.message}</p>}
                         </div>
                       )}
 
@@ -506,14 +516,15 @@ export default function ScheduledReportsPage() {
                             Day of Month *
                           </label>
                           <select
-                            {...register('dayOfMonth', { valueAsNumber: true })}
+                            {...register('dayOfMonth', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
                           >
-                            {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
+                            {Array.from({length: 28}, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
                             ))}
                           </select>
-                          {errors.dayOfMonth && <p className="text-danger-500 text-sm mt-1">{errors.dayOfMonth.message}</p>}
+                          {errors.dayOfMonth &&
+                            <p className="text-danger-500 text-sm mt-1">{errors.dayOfMonth.message}</p>}
                         </div>
                       )}
                     </div>
@@ -545,7 +556,8 @@ export default function ScheduledReportsPage() {
                           <option value="PDF">PDF</option>
                           <option value="CSV">CSV</option>
                         </select>
-                        {errors.exportFormat && <p className="text-danger-500 text-sm mt-1">{errors.exportFormat.message}</p>}
+                        {errors.exportFormat &&
+                          <p className="text-danger-500 text-sm mt-1">{errors.exportFormat.message}</p>}
                       </div>
                     </div>
 
@@ -585,17 +597,17 @@ export default function ScheduledReportsPage() {
                                 onClick={() => removeRecipient(index)}
                                 className="px-4 py-2 text-danger-600 hover:bg-danger-50 rounded-lg"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-4 w-4"/>
                               </button>
                             )}
                           </div>
                         ))}
                         <button
                           type="button"
-                          onClick={() => appendRecipient({ email: '' })}
+                          onClick={() => appendRecipient({email: ''})}
                           className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1"
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-4 w-4"/>
                           Add another recipient
                         </button>
                       </div>

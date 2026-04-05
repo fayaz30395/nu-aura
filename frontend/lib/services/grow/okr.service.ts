@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 export interface Objective {
   id: string;
@@ -118,7 +118,7 @@ class OkrService {
 
   async updateObjectiveStatus(id: string, status: string): Promise<Objective> {
     const response = await apiClient.put<Objective>(`/okr/objectives/${id}/status`, null, {
-      params: { status }
+      params: {status}
     });
     return response.data;
   }
@@ -134,7 +134,7 @@ class OkrService {
 
   async updateKeyResultProgress(id: string, value: number): Promise<KeyResult> {
     const response = await apiClient.put<KeyResult>(`/okr/key-results/${id}/progress`, null, {
-      params: { value }
+      params: {value}
     });
     return response.data;
   }

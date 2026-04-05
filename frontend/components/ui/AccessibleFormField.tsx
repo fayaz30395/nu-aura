@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import {cn} from '@/lib/utils';
 
 // ─── Props ──────────────────────────────────────────────────────────────
 export interface AccessibleFormFieldProps {
@@ -44,14 +44,14 @@ export interface AccessibleFormFieldProps {
  * ```
  */
 export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
-  label,
-  htmlFor,
-  error,
-  required = false,
-  helpText,
-  children,
-  className,
-}) => {
+                                                                          label,
+                                                                          htmlFor,
+                                                                          error,
+                                                                          required = false,
+                                                                          helpText,
+                                                                          children,
+                                                                          className,
+                                                                        }) => {
   const errorId = `${htmlFor}-error`;
   const helpId = `${htmlFor}-help`;
 

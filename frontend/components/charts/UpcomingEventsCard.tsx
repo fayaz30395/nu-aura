@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Calendar, Cake, Gift } from 'lucide-react';
-import { UpcomingEvents } from '@/lib/types/core/analytics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {Cake, Calendar, Gift} from 'lucide-react';
+import {UpcomingEvents} from '@/lib/types/core/analytics';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 
 interface UpcomingEventsCardProps {
   data: UpcomingEvents;
   className?: string;
 }
 
-export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, className = '' }) => {
+export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, className = ''}) => {
   return (
     <Card className={className}>
       <CardHeader>
@@ -22,7 +22,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {data.birthdays.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Cake className="h-4 w-4 text-accent-600" />
+              <Cake className="h-4 w-4 text-accent-600"/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Birthdays</h4>
             </div>
             <div className="space-y-2">
@@ -48,7 +48,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {data.anniversaries.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Gift className="h-4 w-4 text-accent-600" />
+              <Gift className="h-4 w-4 text-accent-600"/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Work Anniversaries</h4>
             </div>
             <div className="space-y-2">
@@ -78,7 +78,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
         {data.holidays.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Calendar className="h-4 w-4 text-accent-600" />
+              <Calendar className="h-4 w-4 text-accent-600"/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h4>
             </div>
             <div className="space-y-2">
@@ -100,7 +100,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({ data, cl
 
         {data.birthdays.length === 0 && data.anniversaries.length === 0 && data.holidays.length === 0 && (
           <div className="text-center py-8 text-[var(--text-muted)]">
-            <Calendar className="h-12 w-12 mx-auto mb-2 opacity-20" />
+            <Calendar className="h-12 w-12 mx-auto mb-2 opacity-20"/>
             <p className="text-sm">No upcoming events</p>
           </div>
         )}

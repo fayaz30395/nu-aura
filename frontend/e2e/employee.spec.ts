@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { EmployeePage } from './pages/EmployeePage';
-import { testUsers, testEmployee } from './fixtures/testData';
-import { ApiMockHelper } from './utils/helpers';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {EmployeePage} from './pages/EmployeePage';
+import {testEmployee, testUsers} from './fixtures/testData';
+import {ApiMockHelper} from './utils/helpers';
 
 /**
  * Employee Management E2E Tests
@@ -13,7 +13,7 @@ test.describe('Employee Management', () => {
   let loginPage: LoginPage;
   let employeePage: EmployeePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     employeePage = new EmployeePage(page);
 
@@ -27,7 +27,7 @@ test.describe('Employee Management', () => {
   });
 
   test.describe('Employee List', () => {
-    test('should display employee list page', async ({ page }) => {
+    test('should display employee list page', async ({page}) => {
       // Verify page heading
       await expect(employeePage.pageHeading).toBeVisible();
 
@@ -40,7 +40,7 @@ test.describe('Employee Management', () => {
       await expect(employeePage.statusFilter).toBeVisible();
     });
 
-    test('should display employee table', async ({ page }) => {
+    test('should display employee table', async ({page}) => {
       // Verify table is visible
       await expect(employeePage.employeeTable).toBeVisible();
 
@@ -49,7 +49,7 @@ test.describe('Employee Management', () => {
       expect(count).toBeGreaterThanOrEqual(0);
     });
 
-    test('should search employees', async ({ page }) => {
+    test('should search employees', async ({page}) => {
       // Search for employee
       await employeePage.searchEmployee('john');
 
@@ -61,7 +61,7 @@ test.describe('Employee Management', () => {
       expect(searchValue).toBe('john');
     });
 
-    test('should filter employees by status', async ({ page }) => {
+    test('should filter employees by status', async ({page}) => {
       // Filter by active status
       await employeePage.filterByStatus('ACTIVE');
 
@@ -75,7 +75,7 @@ test.describe('Employee Management', () => {
   });
 
   test.describe('Create Employee', () => {
-    test('should open add employee modal', async ({ page }) => {
+    test('should open add employee modal', async ({page}) => {
       // Click add employee button
       await employeePage.clickAddEmployee();
 
@@ -84,7 +84,7 @@ test.describe('Employee Management', () => {
       await expect(employeePage.modalTitle).toHaveText('Add New Employee');
     });
 
-    test('should create employee with basic info', async ({ page }) => {
+    test('should create employee with basic info', async ({page}) => {
       // Open modal
       await employeePage.clickAddEmployee();
 
@@ -108,7 +108,7 @@ test.describe('Employee Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should create employee with all details', async ({ page }) => {
+    test('should create employee with all details', async ({page}) => {
       // Open modal
       await employeePage.clickAddEmployee();
 
@@ -125,7 +125,7 @@ test.describe('Employee Management', () => {
       await page.waitForTimeout(1500);
     });
 
-    test('should validate required fields', async ({ page }) => {
+    test('should validate required fields', async ({page}) => {
       // Open modal
       await employeePage.clickAddEmployee();
 
@@ -136,7 +136,7 @@ test.describe('Employee Management', () => {
       await expect(employeePage.modal).toBeVisible();
     });
 
-    test('should close modal on cancel', async ({ page }) => {
+    test('should close modal on cancel', async ({page}) => {
       // Open modal
       await employeePage.clickAddEmployee();
 
@@ -151,7 +151,7 @@ test.describe('Employee Management', () => {
       expect(isModalVisible).toBe(false);
     });
 
-    test('should navigate between tabs in employee form', async ({ page }) => {
+    test('should navigate between tabs in employee form', async ({page}) => {
       // Open modal
       await employeePage.clickAddEmployee();
 
@@ -182,7 +182,7 @@ test.describe('Employee Management', () => {
   });
 
   test.describe('View Employee', () => {
-    test('should view employee details', async ({ page }) => {
+    test('should view employee details', async ({page}) => {
       // Get employee count
       const count = await employeePage.getEmployeeCount();
 
@@ -197,7 +197,7 @@ test.describe('Employee Management', () => {
   });
 
   test.describe('Delete Employee', () => {
-    test('should open delete confirmation modal', async ({ page }) => {
+    test('should open delete confirmation modal', async ({page}) => {
       const count = await employeePage.getEmployeeCount();
 
       if (count > 0) {
@@ -209,7 +209,7 @@ test.describe('Employee Management', () => {
       }
     });
 
-    test('should cancel delete operation', async ({ page }) => {
+    test('should cancel delete operation', async ({page}) => {
       const count = await employeePage.getEmployeeCount();
 
       if (count > 0) {
@@ -225,7 +225,7 @@ test.describe('Employee Management', () => {
       }
     });
 
-    test('should delete employee', async ({ page }) => {
+    test('should delete employee', async ({page}) => {
       // First create an employee to delete
       await employeePage.clickAddEmployee();
       await employeePage.fillBasicInfo({
@@ -257,13 +257,13 @@ test.describe('Employee Management', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match employee list page snapshot', async ({ page }) => {
+    test('should match employee list page snapshot', async ({page}) => {
       await expect(page).toHaveScreenshot('employee-list.png', {
         maxDiffPixels: 200,
       });
     });
 
-    test('should match add employee modal snapshot', async ({ page }) => {
+    test('should match add employee modal snapshot', async ({page}) => {
       await employeePage.clickAddEmployee();
       await page.waitForTimeout(500);
 
@@ -275,14 +275,14 @@ test.describe('Employee Management', () => {
 });
 
 test.describe('Employee Management with API Mocking', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
     await page.waitForURL('**/dashboard');
   });
 
-  test('should display mocked employee list', async ({ page }) => {
+  test('should display mocked employee list', async ({page}) => {
     const employeePage = new EmployeePage(page);
 
     // Mock employee list
@@ -306,7 +306,7 @@ test.describe('Employee Management with API Mocking', () => {
     expect(count).toBe(1);
   });
 
-  test('should handle create employee success', async ({ page }) => {
+  test('should handle create employee success', async ({page}) => {
     const employeePage = new EmployeePage(page);
 
     // Mock successful creation
@@ -324,7 +324,7 @@ test.describe('Employee Management with API Mocking', () => {
     await page.waitForTimeout(1000);
   });
 
-  test('should handle API error gracefully', async ({ page }) => {
+  test('should handle API error gracefully', async ({page}) => {
     const employeePage = new EmployeePage(page);
 
     // Mock API error

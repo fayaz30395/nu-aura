@@ -37,80 +37,80 @@ metadata:
 spec:
   # TODO: Replace hrms.example.com and api.hrms.example.com with production domains before deployment
   tls:
-  - secretName: hrms-tls
-    hosts:
-    - hrms.example.com
-    - api.hrms.example.com
+    - secretName: hrms-tls
+      hosts:
+        - hrms.example.com
+        - api.hrms.example.com
 
   rules:
-  # Frontend routing
-  - host: hrms.example.com
-    http:
-      paths:
-      # API requests should go to backend
-      - path: /api/*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-backend
-            port:
-              number: 8080
+    # Frontend routing
+    - host: hrms.example.com
+      http:
+        paths:
+          # API requests should go to backend
+          - path: /api/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
 
-      # Actuator: only health endpoint exposed externally (for load balancer probes).
-      # All other actuator paths are blocked by routing to a non-existent service,
-      # which returns a 404/503 from the GCE load balancer.
-      - path: /actuator/health
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-backend
-            port:
-              number: 8080
-      - path: /actuator/health/*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-backend
-            port:
-              number: 8080
-      # Block all other actuator endpoints from external access
-      - path: /actuator/*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-actuator-deny
-            port:
-              number: 9999
+          # Actuator: only health endpoint exposed externally (for load balancer probes).
+          # All other actuator paths are blocked by routing to a non-existent service,
+          # which returns a 404/503 from the GCE load balancer.
+          - path: /actuator/health
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+          - path: /actuator/health/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+          # Block all other actuator endpoints from external access
+          - path: /actuator/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-actuator-deny
+                port:
+                  number: 9999
 
-      # WebSocket connections
-      - path: /ws/*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-backend
-            port:
-              number: 8080
+          # WebSocket connections
+          - path: /ws/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
 
-      # All other requests go to frontend
-      - path: /*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-frontend
-            port:
-              number: 3000
+          # All other requests go to frontend
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-frontend
+                port:
+                  number: 3000
 
-  # API subdomain (optional - direct API access)
-  - host: api.hrms.example.com
-    http:
-      paths:
-      - path: /*
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: hrms-backend
-            port:
-              number: 8080
+    # API subdomain (optional - direct API access)
+    - host: api.hrms.example.com
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
 
 ---
 # Backend configuration for GCP Load Balancer
@@ -151,5 +151,5 @@ metadata:
   namespace: hrms
 spec:
   domains:
-  - hrms.example.com
-  - api.hrms.example.com
+    - hrms.example.com
+    - api.hrms.example.com

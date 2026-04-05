@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { LeavePage } from './pages/LeavePage';
-import { testUsers, testLeave } from './fixtures/testData';
-import { loginAs, switchUser } from './fixtures/helpers';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {LeavePage} from './pages/LeavePage';
+import {testLeave, testUsers} from './fixtures/testData';
+import {loginAs, switchUser} from './fixtures/helpers';
 
 /**
  * Leave Flow E2E Tests
@@ -14,7 +14,7 @@ test.describe('Leave Flow — Employee', () => {
   let loginPage: LoginPage;
   let leavePage: LeavePage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     leavePage = new LeavePage(page);
 
@@ -24,12 +24,12 @@ test.describe('Leave Flow — Employee', () => {
     await leavePage.navigate();
   });
 
-  test('should display leave page with heading and apply button', async ({ page }) => {
+  test('should display leave page with heading and apply button', async ({page}) => {
     await expect(leavePage.pageHeading).toBeVisible();
     await expect(leavePage.applyLeaveButton).toBeVisible();
   });
 
-  test('should display leave balance cards', async ({ page }) => {
+  test('should display leave balance cards', async ({page}) => {
     const hasAnnual = await leavePage.annualLeaveBalance.isVisible().catch(() => false);
     const hasSick = await leavePage.sickLeaveBalance.isVisible().catch(() => false);
     const hasCasual = await leavePage.casualLeaveBalance.isVisible().catch(() => false);
@@ -37,7 +37,7 @@ test.describe('Leave Flow — Employee', () => {
     expect(hasAnnual || hasSick || hasCasual).toBe(true);
   });
 
-  test('should open apply leave modal with form fields', async ({ page }) => {
+  test('should open apply leave modal with form fields', async ({page}) => {
     await leavePage.clickApplyLeave();
 
     const isModalVisible = await leavePage.isLeaveModalVisible();
@@ -49,7 +49,7 @@ test.describe('Leave Flow — Employee', () => {
     await expect(leavePage.reasonTextarea).toBeVisible();
   });
 
-  test('should apply for annual leave successfully', async ({ page }) => {
+  test('should apply for annual leave successfully', async ({page}) => {
     await leavePage.applyLeave(testLeave.annual);
     await page.waitForTimeout(1500);
 
@@ -58,7 +58,7 @@ test.describe('Leave Flow — Employee', () => {
     expect(isModalVisible).toBe(false);
   });
 
-  test('should display leave requests table', async ({ page }) => {
+  test('should display leave requests table', async ({page}) => {
     const tableVisible = await leavePage.leaveTable.isVisible().catch(() => false);
 
     if (tableVisible) {
@@ -71,18 +71,18 @@ test.describe('Leave Flow — Employee', () => {
 test.describe('Leave Flow — Manager Approval', () => {
   const testRunId = `E2E-leave-${Date.now()}`;
 
-  test('should submit leave as employee and view as manager', async ({ page }) => {
+  test('should submit leave as employee and view as manager', async ({page}) => {
     // Step 1: Employee submits leave
     await loginAs(page, 'raj@nulogic.io');
     await page.goto('/leave');
     await page.waitForLoadState('networkidle');
 
     const applyBtn = page.locator('button:has-text("Apply Leave")');
-    await expect(applyBtn).toBeVisible({ timeout: 10000 });
+    await expect(applyBtn).toBeVisible({timeout: 10000});
     await applyBtn.click();
 
-    const modal = page.locator('div.fixed.inset-0').filter({ hasText: /Apply Leave|Leave Request/i });
-    await expect(modal).toBeVisible({ timeout: 10000 });
+    const modal = page.locator('div.fixed.inset-0').filter({hasText: /Apply Leave|Leave Request/i});
+    await expect(modal).toBeVisible({timeout: 10000});
 
     // Fill leave form
     const tomorrow = new Date();
@@ -95,7 +95,7 @@ test.describe('Leave Flow — Manager Approval', () => {
     await page.locator('textarea[placeholder*="reason"]').fill(`Leave flow test — ${testRunId}`);
     await page.locator('button:has-text("Submit Request")').click();
 
-    await expect(modal).toBeHidden({ timeout: 15000 });
+    await expect(modal).toBeHidden({timeout: 15000});
 
     // Step 2: Manager views team leaves
     await switchUser(page, 'raj@nulogic.io', 'mani@nulogic.io');
@@ -106,8 +106,8 @@ test.describe('Leave Flow — Manager Approval', () => {
     expect(page.url()).toContain('/leave/team');
 
     // Look for pending request from Raj
-    const pendingRow = page.locator('tbody tr', { hasText: /Raj/i }).first();
-    const hasPending = await pendingRow.isVisible({ timeout: 10000 }).catch(() => false);
+    const pendingRow = page.locator('tbody tr', {hasText: /Raj/i}).first();
+    const hasPending = await pendingRow.isVisible({timeout: 10000}).catch(() => false);
 
     // If the row is visible, we can see it in the table
     if (hasPending) {

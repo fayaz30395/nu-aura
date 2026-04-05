@@ -1,21 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import {
-  useEmployeeGoals,
-  useCreateGoal,
-  useUpdateGoal,
-  useDeleteGoal,
-} from '@/lib/hooks/queries/usePerformance';
-import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/grow/performance';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { createLogger } from '@/lib/utils/logger';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {useCreateGoal, useDeleteGoal, useEmployeeGoals, useUpdateGoal,} from '@/lib/hooks/queries/usePerformance';
+import {Goal, GoalRequest, GoalStatus, GoalType} from '@/lib/types/grow/performance';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {createLogger} from '@/lib/utils/logger';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 const log = createLogger('GoalsPage');
 
@@ -26,8 +21,8 @@ const goalFormSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   description: z.string().optional().or(z.literal('')),
   goalType: z.enum(['OKR', 'KPI', 'PERSONAL', 'TEAM', 'DEPARTMENT', 'ORGANIZATION'] as const) as z.ZodType<GoalType>,
-  targetValue: z.number({ coerce: true }).min(0, 'Target value must be >= 0'),
-  currentValue: z.number({ coerce: true }).min(0, 'Current value must be >= 0'),
+  targetValue: z.number({coerce: true}).min(0, 'Target value must be >= 0'),
+  currentValue: z.number({coerce: true}).min(0, 'Current value must be >= 0'),
   unit: z.string().min(1, 'Unit is required'),
   status: z.enum(['DRAFT', 'ACTIVE', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD'] as const) as z.ZodType<GoalStatus>,
   startDate: z.string().min(1, 'Start date is required'),
@@ -40,7 +35,7 @@ const goalFormSchema = z.object({
 type GoalFormData = z.infer<typeof goalFormSchema>;
 
 export default function GoalsPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const goalsQuery = useEmployeeGoals(user?.employeeId || '');
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
@@ -56,7 +51,7 @@ export default function GoalsPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),
     defaultValues: {
@@ -85,7 +80,7 @@ export default function GoalsPage() {
       };
 
       if (selectedGoal) {
-        await updateGoalMutation.mutateAsync({ id: selectedGoal.id, data: goalData as GoalRequest });
+        await updateGoalMutation.mutateAsync({id: selectedGoal.id, data: goalData as GoalRequest});
       } else {
         await createGoalMutation.mutateAsync(goalData as GoalRequest);
       }
@@ -148,25 +143,39 @@ export default function GoalsPage() {
 
   const getStatusColor = (status: GoalStatus) => {
     switch (status) {
-      case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-      case 'ACTIVE': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800';
-      case 'COMPLETED': return 'bg-success-100 text-success-800';
-      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
-      case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'DRAFT':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'ACTIVE':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'IN_PROGRESS':
+        return 'bg-warning-100 text-warning-800';
+      case 'COMPLETED':
+        return 'bg-success-100 text-success-800';
+      case 'CANCELLED':
+        return 'bg-danger-100 text-danger-800';
+      case 'ON_HOLD':
+        return 'bg-warning-100 text-warning-800';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
   const getTypeColor = (type: GoalType) => {
     switch (type) {
-      case 'OKR': return 'bg-accent-300 text-accent-900';
-      case 'KPI': return 'bg-accent-100 text-accent-800';
-      case 'PERSONAL': return 'bg-success-100 text-success-800';
-      case 'TEAM': return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'DEPARTMENT': return 'bg-accent-300 text-accent-900';
-      case 'ORGANIZATION': return 'bg-danger-100 text-danger-800';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+      case 'OKR':
+        return 'bg-accent-300 text-accent-900';
+      case 'KPI':
+        return 'bg-accent-100 text-accent-800';
+      case 'PERSONAL':
+        return 'bg-success-100 text-success-800';
+      case 'TEAM':
+        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+      case 'DEPARTMENT':
+        return 'bg-accent-300 text-accent-900';
+      case 'ORGANIZATION':
+        return 'bg-danger-100 text-danger-800';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -187,7 +196,7 @@ export default function GoalsPage() {
         <div className="text-center py-12">
           <div className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4">
             <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4"/>
             </svg>
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
@@ -315,7 +324,7 @@ export default function GoalsPage() {
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
                         className="bg-accent-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: progress + '%' }}
+                        style={{width: progress + '%'}}
                       ></div>
                     </div>
                     <div className="flex justify-between text-xs text-[var(--text-secondary)] mt-1">

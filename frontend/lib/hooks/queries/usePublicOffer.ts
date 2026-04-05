@@ -1,10 +1,10 @@
 'use client';
 
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import {
-  publicOfferService,
   type AcceptOfferRequest,
   type DeclineOfferRequest,
+  publicOfferService,
 } from '@/lib/services/hire/public-offer.service';
 
 // Query Key Factory
@@ -35,7 +35,7 @@ export function usePublicOffer(token: string | null, enabled: boolean = true) {
  */
 export function useAcceptPublicOffer() {
   return useMutation({
-    mutationFn: ({ token, data }: { token: string; data: AcceptOfferRequest }) =>
+    mutationFn: ({token, data}: { token: string; data: AcceptOfferRequest }) =>
       publicOfferService.acceptOffer(token, data),
   });
 }
@@ -45,7 +45,7 @@ export function useAcceptPublicOffer() {
  */
 export function useDeclinePublicOffer() {
   return useMutation({
-    mutationFn: ({ token, data }: { token: string; data: DeclineOfferRequest }) =>
+    mutationFn: ({token, data}: { token: string; data: DeclineOfferRequest }) =>
       publicOfferService.declineOffer(token, data),
   });
 }

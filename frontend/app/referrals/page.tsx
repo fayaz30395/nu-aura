@@ -1,35 +1,27 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {useCallback, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
-  useMyReferrals,
-  useAllReferrals,
   useActivePolicies,
+  useAllReferrals,
+  useMyReferrals,
   useReferralDashboard,
   useSubmitReferral,
   useUpdateReferralStatus,
 } from '@/lib/hooks/queries/useReferrals';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  Users,
-  Plus,
-  CheckCircle,
-  TrendingUp,
-  UserPlus,
-  FileText,
-  DollarSign,
-} from 'lucide-react';
-import type { ReferralResponse, ReferralStatus, ReferralRelationship } from '@/lib/types/hire/referral';
+import {motion} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {CheckCircle, DollarSign, FileText, Plus, TrendingUp, UserPlus, Users,} from 'lucide-react';
+import type {ReferralRelationship, ReferralResponse, ReferralStatus} from '@/lib/types/hire/referral';
 
 // ── Zod schema for submit referral form ──────────────────────
 const referralFormSchema = z.object({
@@ -55,27 +47,71 @@ type ReferralFormValues = z.infer<typeof referralFormSchema>;
 const getStatusConfig = (status: ReferralStatus) => {
   switch (status) {
     case 'SUBMITTED':
-      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Submitted' };
+      return {
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
+        label: 'Submitted'
+      };
     case 'SCREENING':
-      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'Screening' };
+      return {
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
+        label: 'Screening'
+      };
     case 'INTERVIEW_SCHEDULED':
-      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Interview Scheduled' };
+      return {
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
+        label: 'Interview Scheduled'
+      };
     case 'INTERVIEW_COMPLETED':
-      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Interview Done' };
+      return {
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
+        label: 'Interview Done'
+      };
     case 'OFFER_MADE':
-      return { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Offer Made' };
+      return {
+        bg: 'bg-accent-100 dark:bg-accent-900/30',
+        text: 'text-accent-700 dark:text-accent-400',
+        label: 'Offer Made'
+      };
     case 'OFFER_ACCEPTED':
-      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Offer Accepted' };
+      return {
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
+        label: 'Offer Accepted'
+      };
     case 'JOINED':
-      return { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', label: 'Joined' };
+      return {
+        bg: 'bg-success-100 dark:bg-success-900/30',
+        text: 'text-success-700 dark:text-success-400',
+        label: 'Joined'
+      };
     case 'REJECTED':
-      return { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Rejected' };
+      return {
+        bg: 'bg-danger-100 dark:bg-danger-900/30',
+        text: 'text-danger-700 dark:text-danger-400',
+        label: 'Rejected'
+      };
     case 'WITHDRAWN':
-      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: 'Withdrawn' };
+      return {
+        bg: 'bg-surface-100 dark:bg-surface-900/30',
+        text: 'text-surface-700 dark:text-surface-400',
+        label: 'Withdrawn'
+      };
     case 'ON_HOLD':
-      return { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', label: 'On Hold' };
+      return {
+        bg: 'bg-warning-100 dark:bg-warning-900/30',
+        text: 'text-warning-700 dark:text-warning-400',
+        label: 'On Hold'
+      };
     default:
-      return { bg: 'bg-surface-100 dark:bg-surface-900/30', text: 'text-surface-700 dark:text-surface-400', label: status };
+      return {
+        bg: 'bg-surface-100 dark:bg-surface-900/30',
+        text: 'text-surface-700 dark:text-surface-400',
+        label: status
+      };
   }
 };
 
@@ -92,16 +128,16 @@ type TabKey = 'my-referrals' | 'submit' | 'policies' | 'manage';
 
 export default function ReferralsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>('my-referrals');
   const [managePage, setManagePage] = useState(0);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Queries
-  const { data: myReferrals = [], isLoading: isMyLoading } = useMyReferrals();
-  const { data: allReferralsData, isLoading: isAllLoading } = useAllReferrals(managePage, 20);
-  const { data: policies = [], isLoading: isPoliciesLoading } = useActivePolicies();
-  const { data: dashboard, isLoading: _isDashLoading } = useReferralDashboard();
+  const {data: myReferrals = [], isLoading: isMyLoading} = useMyReferrals();
+  const {data: allReferralsData, isLoading: isAllLoading} = useAllReferrals(managePage, 20);
+  const {data: policies = [], isLoading: isPoliciesLoading} = useActivePolicies();
+  const {data: dashboard, isLoading: _isDashLoading} = useReferralDashboard();
 
   // Mutations
   const submitReferral = useSubmitReferral();
@@ -112,7 +148,7 @@ export default function ReferralsPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ReferralFormValues>({
     resolver: zodResolver(referralFormSchema),
     defaultValues: {
@@ -152,10 +188,10 @@ export default function ReferralsPage() {
   }
 
   const tabs: { key: TabKey; label: string; permission?: string }[] = [
-    { key: 'my-referrals', label: 'My Referrals' },
-    { key: 'submit', label: 'Submit Referral' },
-    { key: 'policies', label: 'Referral Policy' },
-    { key: 'manage', label: 'Manage', permission: Permissions.REFERRAL_MANAGE },
+    {key: 'my-referrals', label: 'My Referrals'},
+    {key: 'submit', label: 'Submit Referral'},
+    {key: 'policies', label: 'Referral Policy'},
+    {key: 'manage', label: 'Manage', permission: Permissions.REFERRAL_MANAGE},
   ];
 
   const formatDate = (dateStr: string | null | undefined) => {
@@ -180,9 +216,9 @@ export default function ReferralsPage() {
     <AppLayout activeMenuItem="referrals">
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -198,7 +234,7 @@ export default function ReferralsPage() {
             onClick={() => setActiveTab('submit')}
             className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-5 w-5"/>
             Submit Referral
           </button>
         </div>
@@ -207,10 +243,30 @@ export default function ReferralsPage() {
         {dashboard && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Referrals', value: dashboard.totalReferrals, icon: Users, gradient: 'from-accent-500 to-accent-700' },
-              { label: 'Active', value: dashboard.activeReferrals, icon: TrendingUp, gradient: 'from-warning-500 to-warning-600' },
-              { label: 'Hired', value: dashboard.hiredReferrals, icon: UserPlus, gradient: 'from-success-500 to-success-600' },
-              { label: 'Bonuses Paid', value: formatCurrency(dashboard.totalBonusesPaid), icon: DollarSign, gradient: 'from-accent-700 to-accent-800' },
+              {
+                label: 'Total Referrals',
+                value: dashboard.totalReferrals,
+                icon: Users,
+                gradient: 'from-accent-500 to-accent-700'
+              },
+              {
+                label: 'Active',
+                value: dashboard.activeReferrals,
+                icon: TrendingUp,
+                gradient: 'from-warning-500 to-warning-600'
+              },
+              {
+                label: 'Hired',
+                value: dashboard.hiredReferrals,
+                icon: UserPlus,
+                gradient: 'from-success-500 to-success-600'
+              },
+              {
+                label: 'Bonuses Paid',
+                value: formatCurrency(dashboard.totalBonusesPaid),
+                icon: DollarSign,
+                gradient: 'from-accent-700 to-accent-800'
+              },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -218,7 +274,7 @@ export default function ReferralsPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                    <stat.icon className="h-5 w-5 text-white" />
+                    <stat.icon className="h-5 w-5 text-white"/>
                   </div>
                   <div>
                     <p className="text-body-secondary">{stat.label}</p>
@@ -275,75 +331,81 @@ export default function ReferralsPage() {
         {activeTab === 'my-referrals' && (
           <div>
             {isMyLoading ? (
-              <NuAuraLoader message="Loading your referrals..." />
+              <NuAuraLoader message="Loading your referrals..."/>
             ) : myReferrals.length === 0 ? (
               <EmptyState
                 title="No referrals yet"
                 description="Submit a referral to get started and earn bonuses."
-                icon={<UserPlus className="h-12 w-12 text-[var(--text-muted)]" />}
+                icon={<UserPlus className="h-12 w-12 text-[var(--text-muted)]"/>}
               />
             ) : (
-              <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden skeuo-card">
+              <div
+                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden skeuo-card">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                          Candidate
-                        </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                          Position
-                        </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                          Status
-                        </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                          Submitted
-                        </th>
-                        <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                          Bonus
-                        </th>
-                      </tr>
+                    <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+                      <th
+                        className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                        Candidate
+                      </th>
+                      <th
+                        className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                        Position
+                      </th>
+                      <th
+                        className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                        Status
+                      </th>
+                      <th
+                        className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                        Submitted
+                      </th>
+                      <th
+                        className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                        Bonus
+                      </th>
+                    </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--border-main)]">
-                      {myReferrals.map((referral: ReferralResponse) => {
-                        const statusConfig = getStatusConfig(referral.status);
-                        return (
-                          <tr
-                            key={referral.id}
-                            className="hover:bg-[var(--bg-card-hover)] transition-colors"
-                          >
-                            <td className="px-6 py-4">
-                              <div>
-                                <p className="text-sm font-medium text-[var(--text-primary)]">
-                                  {referral.candidateName}
-                                </p>
-                                <p className="text-caption">
-                                  {referral.candidateEmail}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {referral.jobTitle || '-'}
-                            </td>
-                            <td className="px-6 py-4">
+                    {myReferrals.map((referral: ReferralResponse) => {
+                      const statusConfig = getStatusConfig(referral.status);
+                      return (
+                        <tr
+                          key={referral.id}
+                          className="hover:bg-[var(--bg-card-hover)] transition-colors"
+                        >
+                          <td className="px-6 py-4">
+                            <div>
+                              <p className="text-sm font-medium text-[var(--text-primary)]">
+                                {referral.candidateName}
+                              </p>
+                              <p className="text-caption">
+                                {referral.candidateEmail}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {referral.jobTitle || '-'}
+                          </td>
+                          <td className="px-6 py-4">
                               <span
                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
                               >
                                 {statusConfig.label}
                               </span>
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {formatDate(referral.submittedDate)}
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {referral.bonusAmount
-                                ? formatCurrency(referral.bonusAmount)
-                                : '-'}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {formatDate(referral.submittedDate)}
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {referral.bonusAmount
+                              ? formatCurrency(referral.bonusAmount)
+                              : '-'}
+                          </td>
+                        </tr>
+                      );
+                    })}
                     </tbody>
                   </table>
                 </div>
@@ -356,8 +418,9 @@ export default function ReferralsPage() {
         {activeTab === 'submit' && (
           <div className="max-w-2xl">
             {submitSuccess ? (
-              <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4" />
+              <div
+                className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
+                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4"/>
                 <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
                   Referral Submitted Successfully!
                 </h3>
@@ -515,12 +578,12 @@ export default function ReferralsPage() {
         {activeTab === 'policies' && (
           <div>
             {isPoliciesLoading ? (
-              <NuAuraLoader message="Loading policies..." />
+              <NuAuraLoader message="Loading policies..."/>
             ) : policies.length === 0 ? (
               <EmptyState
                 title="No active policies"
                 description="Referral policies will appear here once configured by HR."
-                icon={<FileText className="h-12 w-12 text-[var(--text-muted)]" />}
+                icon={<FileText className="h-12 w-12 text-[var(--text-muted)]"/>}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -596,94 +659,101 @@ export default function ReferralsPage() {
           <PermissionGate permission={Permissions.REFERRAL_MANAGE}>
             <div>
               {isAllLoading ? (
-                <NuAuraLoader message="Loading all referrals..." />
+                <NuAuraLoader message="Loading all referrals..."/>
               ) : !allReferralsData || allReferralsData.content.length === 0 ? (
                 <EmptyState
                   title="No referrals found"
                   description="Referrals submitted by employees will appear here."
-                  icon={<Users className="h-12 w-12 text-[var(--text-muted)]" />}
+                  icon={<Users className="h-12 w-12 text-[var(--text-muted)]"/>}
                 />
               ) : (
                 <>
-                  <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden skeuo-card">
+                  <div
+                    className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden skeuo-card">
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Referrer
-                            </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Candidate
-                            </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Position
-                            </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Status
-                            </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Submitted
-                            </th>
-                            <th className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
-                              Actions
-                            </th>
-                          </tr>
+                        <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Referrer
+                          </th>
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Candidate
+                          </th>
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Position
+                          </th>
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Status
+                          </th>
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Submitted
+                          </th>
+                          <th
+                            className="text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider px-6 py-2">
+                            Actions
+                          </th>
+                        </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--border-main)]">
-                          {allReferralsData.content.map((referral: ReferralResponse) => {
-                            const statusConfig = getStatusConfig(referral.status);
-                            return (
-                              <tr
-                                key={referral.id}
-                                className="hover:bg-[var(--bg-card-hover)] transition-colors"
-                              >
-                                <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                                  {referral.referrerName}
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div>
-                                    <p className="text-sm font-medium text-[var(--text-primary)]">
-                                      {referral.candidateName}
-                                    </p>
-                                    <p className="text-caption">
-                                      {referral.candidateEmail}
-                                    </p>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 text-body-secondary">
-                                  {referral.jobTitle || '-'}
-                                </td>
-                                <td className="px-6 py-4">
+                        {allReferralsData.content.map((referral: ReferralResponse) => {
+                          const statusConfig = getStatusConfig(referral.status);
+                          return (
+                            <tr
+                              key={referral.id}
+                              className="hover:bg-[var(--bg-card-hover)] transition-colors"
+                            >
+                              <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
+                                {referral.referrerName}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div>
+                                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                                    {referral.candidateName}
+                                  </p>
+                                  <p className="text-caption">
+                                    {referral.candidateEmail}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-body-secondary">
+                                {referral.jobTitle || '-'}
+                              </td>
+                              <td className="px-6 py-4">
                                   <span
                                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}
                                   >
                                     {statusConfig.label}
                                   </span>
-                                </td>
-                                <td className="px-6 py-4 text-body-secondary">
-                                  {formatDate(referral.submittedDate)}
-                                </td>
-                                <td className="px-6 py-4">
-                                  {referral.status === 'SUBMITTED' && (
-                                    <div className="flex gap-2">
-                                      <button
-                                        onClick={() =>
-                                          updateStatus.mutate({
-                                            id: referral.id,
-                                            status: 'SCREENING',
-                                          })
-                                        }
-                                        className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                      >
-                                        Screen
-                                      </button>
-                                    </div>
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          })}
+                              </td>
+                              <td className="px-6 py-4 text-body-secondary">
+                                {formatDate(referral.submittedDate)}
+                              </td>
+                              <td className="px-6 py-4">
+                                {referral.status === 'SUBMITTED' && (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        updateStatus.mutate({
+                                          id: referral.id,
+                                          status: 'SCREENING',
+                                        })
+                                      }
+                                      className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    >
+                                      Screen
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
                         </tbody>
                       </table>
                     </div>

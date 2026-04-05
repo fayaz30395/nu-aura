@@ -3,8 +3,8 @@
  * Prevents usage of 'as any' throughout the codebase
  */
 
-import type { BadgeVariant } from '@/components/ui/types';
-import type { Gender, EmploymentType, EmployeeLevel, JobRole, EmployeeStatus } from '@/lib/types/hrms/employee';
+import type {BadgeVariant} from '@/components/ui/types';
+import type {EmployeeLevel, EmployeeStatus, EmploymentType, Gender, JobRole} from '@/lib/types/hrms/employee';
 
 // ============================================
 // BADGE VARIANT MAPPING

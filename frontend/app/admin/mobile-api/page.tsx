@@ -1,34 +1,34 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Container,
-  Paper,
-  Text,
-  Title,
-  Group,
   Badge,
+  Card,
+  Code,
+  Container,
+  Grid,
+  Group,
+  Paper,
+  Stack,
   Table,
   Tabs,
-  Grid,
-  Card,
+  Text,
   ThemeIcon,
-  Stack,
-  Code,
+  Title,
 } from '@mantine/core';
 import {
-  IconDeviceMobile,
   IconApi,
-  IconGauge,
-  IconShield,
-  IconDatabase,
   IconCheck,
   IconClock,
+  IconDatabase,
+  IconDeviceMobile,
+  IconGauge,
+  IconShield,
 } from '@tabler/icons-react';
-import { AdminPageContent } from '@/components/layout';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {AdminPageContent} from '@/components/layout';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 
 // A3: Mobile API docs are sensitive infrastructure — restrict to platform admins only
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN];
@@ -43,14 +43,19 @@ interface MobileEndpoint {
 
 export default function MobileApiPage() {
   const router = useRouter();
-  const { hasAnyRole, isReady } = usePermissions();
-  const { hasHydrated, isAuthenticated } = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
+  const {hasHydrated, isAuthenticated} = useAuth();
 
   // DEF-58: RBAC gate — API surface documentation should be restricted to admins
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
-    if (!isAuthenticated) { router.replace('/auth/login'); return; }
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) { router.replace('/me/dashboard'); }
+    if (!isAuthenticated) {
+      router.replace('/auth/login');
+      return;
+    }
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.replace('/me/dashboard');
+    }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
   const dashboardEndpoints: MobileEndpoint[] = [
     {
@@ -189,7 +194,7 @@ export default function MobileApiPage() {
     },
   ];
 
-  const EndpointTable = ({ endpoints }: { endpoints: MobileEndpoint[] }) => (
+  const EndpointTable = ({endpoints}: { endpoints: MobileEndpoint[] }) => (
     <Table striped highlightOnHover>
       <Table.Thead>
         <Table.Tr>
@@ -215,7 +220,7 @@ export default function MobileApiPage() {
             </Table.Td>
             <Table.Td>{endpoint.description}</Table.Td>
             <Table.Td>
-              {endpoint.authentication && <IconCheck size={16} color="green" />}
+              {endpoint.authentication && <IconCheck size={16} color="green"/>}
             </Table.Td>
             <Table.Td>
               {endpoint.permissions && endpoint.permissions.length > 0 ? (
@@ -247,7 +252,7 @@ export default function MobileApiPage() {
             <Title order={1} size="h2" mb="xs" className="skeuo-emboss">
               <Group gap="sm">
                 <ThemeIcon size="lg" color="blue" radius="md">
-                  <IconDeviceMobile size={24} />
+                  <IconDeviceMobile size={24}/>
                 </ThemeIcon>
                 Mobile API Documentation
               </Group>
@@ -260,13 +265,13 @@ export default function MobileApiPage() {
 
         {/* Overview Cards */}
         <Grid mb="xl">
-          <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+          <Grid.Col span={{base: 12, sm: 6, md: 3}}>
             <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Total Endpoints
                 </Text>
-                <IconApi size={18} color="blue" />
+                <IconApi size={18} color="blue"/>
               </Group>
               <Text fw={700} size="xl">
                 {dashboardEndpoints.length +
@@ -279,13 +284,13 @@ export default function MobileApiPage() {
             </Card>
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+          <Grid.Col span={{base: 12, sm: 6, md: 3}}>
             <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Active Devices
                 </Text>
-                <IconDeviceMobile size={18} color="green" />
+                <IconDeviceMobile size={18} color="green"/>
               </Group>
               <Text fw={700} size="xl">
                 124
@@ -293,13 +298,13 @@ export default function MobileApiPage() {
             </Card>
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+          <Grid.Col span={{base: 12, sm: 6, md: 3}}>
             <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   API Calls (24h)
                 </Text>
-                <IconGauge size={18} color="orange" />
+                <IconGauge size={18} color="orange"/>
               </Group>
               <Text fw={700} size="xl">
                 8.2K
@@ -307,13 +312,13 @@ export default function MobileApiPage() {
             </Card>
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+          <Grid.Col span={{base: 12, sm: 6, md: 3}}>
             <Card withBorder className="skeuo-card">
               <Group justify="space-between" mb="xs">
                 <Text size="sm" fw={500} c="dimmed">
                   Avg Response
                 </Text>
-                <IconClock size={18} color="red" />
+                <IconClock size={18} color="red"/>
               </Group>
               <Text fw={700} size="xl">
                 245ms
@@ -328,7 +333,7 @@ export default function MobileApiPage() {
             <Stack gap="md">
               <Group>
                 <ThemeIcon color="blue" size="lg">
-                  <IconShield size={18} />
+                  <IconShield size={18}/>
                 </ThemeIcon>
                 <div>
                   <Text fw={500}>JWT Authentication</Text>
@@ -339,7 +344,7 @@ export default function MobileApiPage() {
               </Group>
               <Group>
                 <ThemeIcon color="green" size="lg">
-                  <IconDatabase size={18} />
+                  <IconDatabase size={18}/>
                 </ThemeIcon>
                 <div>
                   <Text fw={500}>Minimal Payloads</Text>
@@ -350,7 +355,7 @@ export default function MobileApiPage() {
               </Group>
               <Group>
                 <ThemeIcon color="orange" size="lg">
-                  <IconGauge size={18} />
+                  <IconGauge size={18}/>
                 </ThemeIcon>
                 <div>
                   <Text fw={500}>Delta Sync</Text>
@@ -366,7 +371,7 @@ export default function MobileApiPage() {
         {/* Endpoint Documentation */}
         <Tabs defaultValue="dashboard" mt="xl">
           <Tabs.List>
-            <Tabs.Tab value="dashboard" leftSection={<IconDeviceMobile size={14} />}>
+            <Tabs.Tab value="dashboard" leftSection={<IconDeviceMobile size={14}/>}>
               Dashboard
             </Tabs.Tab>
             <Tabs.Tab value="attendance">Attendance</Tabs.Tab>
@@ -381,7 +386,7 @@ export default function MobileApiPage() {
               <Title order={3} mb="md">
                 Dashboard Endpoints
               </Title>
-              <EndpointTable endpoints={dashboardEndpoints} />
+              <EndpointTable endpoints={dashboardEndpoints}/>
             </Paper>
           </Tabs.Panel>
 
@@ -393,7 +398,7 @@ export default function MobileApiPage() {
               <Text c="dimmed" mb="md">
                 Existing attendance endpoints already optimized for mobile with GPS and geofencing
               </Text>
-              <EndpointTable endpoints={attendanceEndpoints} />
+              <EndpointTable endpoints={attendanceEndpoints}/>
             </Paper>
           </Tabs.Panel>
 
@@ -402,7 +407,7 @@ export default function MobileApiPage() {
               <Title order={3} mb="md">
                 Leave Management Endpoints
               </Title>
-              <EndpointTable endpoints={leaveEndpoints} />
+              <EndpointTable endpoints={leaveEndpoints}/>
             </Paper>
           </Tabs.Panel>
 
@@ -411,7 +416,7 @@ export default function MobileApiPage() {
               <Title order={3} mb="md">
                 Approval Management Endpoints
               </Title>
-              <EndpointTable endpoints={approvalEndpoints} />
+              <EndpointTable endpoints={approvalEndpoints}/>
             </Paper>
           </Tabs.Panel>
 
@@ -420,7 +425,7 @@ export default function MobileApiPage() {
               <Title order={3} mb="md">
                 Notification Endpoints
               </Title>
-              <EndpointTable endpoints={notificationEndpoints} />
+              <EndpointTable endpoints={notificationEndpoints}/>
             </Paper>
           </Tabs.Panel>
 
@@ -432,7 +437,7 @@ export default function MobileApiPage() {
               <Text c="dimmed" mb="md">
                 For offline-first mobile patterns, sync local data with server
               </Text>
-              <EndpointTable endpoints={syncEndpoints} />
+              <EndpointTable endpoints={syncEndpoints}/>
             </Paper>
           </Tabs.Panel>
         </Tabs>

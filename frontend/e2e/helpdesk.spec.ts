@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, navigateTo } from './fixtures/helpers';
-import { testUsers, demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, navigateTo} from './fixtures/helpers';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Helpdesk E2E Tests
@@ -16,14 +16,14 @@ import { testUsers, demoUsers } from './fixtures/testData';
 // ─── Helpdesk Hub (/helpdesk) ─────────────────────────────────────────────────
 
 test.describe('Helpdesk Hub (/helpdesk)', () => {
-  test('admin sees Helpdesk page with heading', async ({ page }) => {
+  test('admin sees Helpdesk page with heading', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
     await expect(page.locator('h1')).toContainText('Helpdesk');
   });
 
-  test('admin sees SLA stat cards (compliance, response, resolution, CSAT)', async ({ page }) => {
+  test('admin sees SLA stat cards (compliance, response, resolution, CSAT)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
@@ -34,7 +34,7 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
     await expect(page.locator('text=Avg CSAT')).toBeVisible();
   });
 
-  test('quick action buttons navigate to correct pages', async ({ page }) => {
+  test('quick action buttons navigate to correct pages', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
@@ -44,7 +44,7 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
     await expect(page.locator('text=Escalations')).toBeVisible();
   });
 
-  test('clicking Tickets nav button navigates to /helpdesk/tickets', async ({ page }) => {
+  test('clicking Tickets nav button navigates to /helpdesk/tickets', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
@@ -54,7 +54,7 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
     expect(page.url()).toContain('/helpdesk/tickets');
   });
 
-  test('clicking Knowledge Base navigates to /helpdesk/knowledge-base', async ({ page }) => {
+  test('clicking Knowledge Base navigates to /helpdesk/knowledge-base', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
@@ -63,25 +63,25 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
     expect(page.url()).toContain('/helpdesk/knowledge-base');
   });
 
-  test('employee can access helpdesk hub (all users allowed)', async ({ page }) => {
+  test('employee can access helpdesk hub (all users allowed)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk');
 
     await expect(page.locator('h1')).toContainText('Helpdesk');
   });
 
-  test('employee does NOT see admin SLA stat cards', async ({ page }) => {
+  test('employee does NOT see admin SLA stat cards', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk');
 
     await page.waitForTimeout(2000);
     // Stat cards are admin-only (SYSTEM_ADMIN check)
     // "SLA Compliance" metric panel should not be visible for employee
-    const statPanel = page.locator('.grid').filter({ hasText: 'SLA Compliance' }).first();
+    const statPanel = page.locator('.grid').filter({hasText: 'SLA Compliance'}).first();
     await expect(statPanel).not.toBeVisible();
   });
 
-  test('Overview summary stats are visible when dashboard data is loaded', async ({ page }) => {
+  test('Overview summary stats are visible when dashboard data is loaded', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk');
 
@@ -97,21 +97,21 @@ test.describe('Helpdesk Hub (/helpdesk)', () => {
 // ─── Helpdesk Tickets (/helpdesk/tickets) ────────────────────────────────────
 
 test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
-  test('page loads with Support Tickets heading', async ({ page }) => {
+  test('page loads with Support Tickets heading', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
     await expect(page.locator('h1')).toContainText('Support Tickets');
   });
 
-  test('Create Ticket button is visible', async ({ page }) => {
+  test('Create Ticket button is visible', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
     await expect(page.locator('button:has-text("Create Ticket")')).toBeVisible();
   });
 
-  test('search input is present', async ({ page }) => {
+  test('search input is present', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -119,14 +119,14 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(searchInput).toBeVisible();
   });
 
-  test('Filters button is visible', async ({ page }) => {
+  test('Filters button is visible', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
     await expect(page.locator('button:has-text("Filters")')).toBeVisible();
   });
 
-  test('clicking Filters shows status and priority dropdowns', async ({ page }) => {
+  test('clicking Filters shows status and priority dropdowns', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -135,7 +135,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(page.locator('label:has-text("Priority")')).toBeVisible();
   });
 
-  test('Create Ticket modal opens when button clicked', async ({ page }) => {
+  test('Create Ticket modal opens when button clicked', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -145,7 +145,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(page.locator('label:has-text("Description")')).toBeVisible();
   });
 
-  test('Create Ticket modal has Priority and Category fields', async ({ page }) => {
+  test('Create Ticket modal has Priority and Category fields', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -155,7 +155,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(page.locator('label:has-text("Tags")')).toBeVisible();
   });
 
-  test('Create Ticket modal can be closed via Cancel', async ({ page }) => {
+  test('Create Ticket modal can be closed via Cancel', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -166,7 +166,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(page.locator('text=Create Support Ticket')).not.toBeVisible();
   });
 
-  test('submitting empty create form shows validation errors', async ({ page }) => {
+  test('submitting empty create form shows validation errors', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -178,7 +178,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(page.locator('text=Description is required')).toBeVisible();
   });
 
-  test('employee can fill and submit a new ticket', async ({ page }) => {
+  test('employee can fill and submit a new ticket', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -188,7 +188,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await page.locator('textarea[placeholder="Provide details about your issue..."]').fill('This is a test ticket description created by E2E automation.');
 
     // Select priority
-    await page.locator('select').filter({ hasText: /Low|Medium|High/ }).first().selectOption('LOW');
+    await page.locator('select').filter({hasText: /Low|Medium|High/}).first().selectOption('LOW');
 
     await page.locator('button[type="submit"]:has-text("Create Ticket")').click();
 
@@ -201,7 +201,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     expect(typeof modalVisible).toBe('boolean');
   });
 
-  test('search by subject filters visible tickets', async ({ page }) => {
+  test('search by subject filters visible tickets', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -215,7 +215,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     await expect(emptyState).toBeVisible();
   });
 
-  test('admin can see status change dropdown in ticket table rows', async ({ page }) => {
+  test('admin can see status change dropdown in ticket table rows', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -230,7 +230,7 @@ test.describe('Helpdesk Tickets (/helpdesk/tickets)', () => {
     }
   });
 
-  test('clicking a ticket row navigates to the detail page', async ({ page }) => {
+  test('clicking a ticket row navigates to the detail page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/tickets');
 
@@ -260,25 +260,25 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
     if (rowCount === 0) return false;
 
     await rows.first().click();
-    await page.waitForURL('**/helpdesk/tickets/**', { timeout: 10000 });
+    await page.waitForURL('**/helpdesk/tickets/**', {timeout: 10000});
     return true;
   }
 
-  test('ticket detail page shows Back to Tickets link', async ({ page }) => {
+  test('ticket detail page shows Back to Tickets link', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system — skip detail tests');
 
     await expect(page.locator('button:has-text("Back to Tickets")')).toBeVisible();
   });
 
-  test('ticket detail shows subject as h1', async ({ page }) => {
+  test('ticket detail shows subject as h1', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('h1')).toBeVisible();
   });
 
-  test('ticket number and priority badge are visible', async ({ page }) => {
+  test('ticket number and priority badge are visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
@@ -286,35 +286,35 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
     await expect(page.locator('span[class*="font-mono"]').first()).toBeVisible();
   });
 
-  test('Description section is visible', async ({ page }) => {
+  test('Description section is visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('text=Description').first()).toBeVisible();
   });
 
-  test('Comments section is visible with count', async ({ page }) => {
+  test('Comments section is visible with count', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('text=Comments').first()).toBeVisible();
   });
 
-  test('add comment textarea is present', async ({ page }) => {
+  test('add comment textarea is present', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('textarea[placeholder="Add a comment..."]')).toBeVisible();
   });
 
-  test('Send Reply button is visible', async ({ page }) => {
+  test('Send Reply button is visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('button:has-text("Send Reply")')).toBeVisible();
   });
 
-  test('Details metadata panel shows Requester label', async ({ page }) => {
+  test('Details metadata panel shows Requester label', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
@@ -323,14 +323,14 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
     await expect(page.locator('text=Category').first()).toBeVisible();
   });
 
-  test('admin sees Delete ticket button (SYSTEM_ADMIN permission)', async ({ page }) => {
+  test('admin sees Delete ticket button (SYSTEM_ADMIN permission)', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('button:has-text("Delete")')).toBeVisible();
   });
 
-  test('Back to Tickets navigates back to list', async ({ page }) => {
+  test('Back to Tickets navigates back to list', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
@@ -340,7 +340,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
     expect(page.url()).not.toMatch(/\/helpdesk\/tickets\/.+/);
   });
 
-  test('comment form shows empty comment validation', async ({ page }) => {
+  test('comment form shows empty comment validation', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
@@ -349,7 +349,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
     await expect(page.locator('text=Comment is required')).toBeVisible();
   });
 
-  test('SLA Metrics panel is visible if metrics are available', async ({ page }) => {
+  test('SLA Metrics panel is visible if metrics are available', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
     test.skip(!hasTickets, 'No tickets in system');
 
@@ -364,28 +364,28 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 // ─── Knowledge Base (/helpdesk/knowledge-base) ────────────────────────────────
 
 test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
-  test('any user sees Knowledge Base page heading', async ({ page }) => {
+  test('any user sees Knowledge Base page heading', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await expect(page.locator('h1')).toContainText('Knowledge Base');
   });
 
-  test('subtitle "Find answers to common questions" is visible', async ({ page }) => {
+  test('subtitle "Find answers to common questions" is visible', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await expect(page.locator('text=Find answers to common questions')).toBeVisible();
   });
 
-  test('article search input is present', async ({ page }) => {
+  test('article search input is present', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await expect(page.locator('input[placeholder="Search articles..."]')).toBeVisible();
   });
 
-  test('category sidebar is rendered with known categories', async ({ page }) => {
+  test('category sidebar is rendered with known categories', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -396,7 +396,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(page.locator('button:has-text("Leave & Attendance")')).toBeVisible();
   });
 
-  test('All Articles category button is selected by default', async ({ page }) => {
+  test('All Articles category button is selected by default', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -406,7 +406,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(allBtn).toHaveClass(/bg-accent-700/);
   });
 
-  test('clicking a category filters articles', async ({ page }) => {
+  test('clicking a category filters articles', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -418,7 +418,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(payrollBtn).toHaveClass(/bg-accent-700/);
   });
 
-  test('searching for a term filters article cards', async ({ page }) => {
+  test('searching for a term filters article cards', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -432,7 +432,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     expect(pageText).toMatch(/leave|Leave|no articles found/i);
   });
 
-  test('Clear Filters button appears after filtering', async ({ page }) => {
+  test('Clear Filters button appears after filtering', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -442,7 +442,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(page.locator('button:has-text("Clear Filters")')).toBeVisible();
   });
 
-  test('Clear Filters resets to All Articles', async ({ page }) => {
+  test('Clear Filters resets to All Articles', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -457,12 +457,12 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(allBtn).toHaveClass(/bg-accent-700/);
   });
 
-  test('clicking an article card opens article detail modal', async ({ page }) => {
+  test('clicking an article card opens article detail modal', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await page.waitForTimeout(2000);
-    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({ hasText: /views/ });
+    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({hasText: /views/});
     const count = await articleCards.count();
 
     if (count > 0) {
@@ -473,12 +473,12 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     }
   });
 
-  test('article modal has Helpful / Not Helpful feedback buttons', async ({ page }) => {
+  test('article modal has Helpful / Not Helpful feedback buttons', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await page.waitForTimeout(2000);
-    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({ hasText: /views/ });
+    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({hasText: /views/});
     const count = await articleCards.count();
 
     if (count > 0) {
@@ -489,12 +489,12 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     }
   });
 
-  test('Submit a Ticket from article modal opens ticket creation form', async ({ page }) => {
+  test('Submit a Ticket from article modal opens ticket creation form', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
     await page.waitForTimeout(2000);
-    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({ hasText: /views/ });
+    const articleCards = page.locator('[class*="card"], [class*="Card"]').filter({hasText: /views/});
     const count = await articleCards.count();
 
     if (count > 0) {
@@ -507,7 +507,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     }
   });
 
-  test('admin sees New Article button (HELPDESK_KB_CREATE permission)', async ({ page }) => {
+  test('admin sees New Article button (HELPDESK_KB_CREATE permission)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -519,7 +519,7 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
     await expect(page.locator('h1')).toContainText('Knowledge Base');
   });
 
-  test('New Article modal opens with title, category, content fields', async ({ page }) => {
+  test('New Article modal opens with title, category, content fields', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/knowledge-base');
 
@@ -540,14 +540,14 @@ test.describe('Knowledge Base (/helpdesk/knowledge-base)', () => {
 // ─── SLA Management (/helpdesk/sla) ──────────────────────────────────────────
 
 test.describe('SLA Management (/helpdesk/sla)', () => {
-  test('admin sees SLA Management page with heading', async ({ page }) => {
+  test('admin sees SLA Management page with heading', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
     await expect(page.locator('h1')).toContainText('SLA Management');
   });
 
-  test('SLA dashboard stat cards are rendered', async ({ page }) => {
+  test('SLA dashboard stat cards are rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -558,7 +558,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('text=Avg CSAT Score')).toBeVisible();
   });
 
-  test('three tabs are rendered (Dashboard, SLA Policies, Pending Escalations)', async ({ page }) => {
+  test('three tabs are rendered (Dashboard, SLA Policies, Pending Escalations)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -567,7 +567,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('button:has-text("Pending Escalations")')).toBeVisible();
   });
 
-  test('Dashboard tab shows SLA Performance Overview', async ({ page }) => {
+  test('Dashboard tab shows SLA Performance Overview', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -576,7 +576,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('text=SLA Compliance Rate')).toBeVisible();
   });
 
-  test('clicking SLA Policies tab shows policies table', async ({ page }) => {
+  test('clicking SLA Policies tab shows policies table', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -589,7 +589,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('text=Resolution').first()).toBeVisible();
   });
 
-  test('Create SLA Policy button is visible on SLA Policies tab for admin', async ({ page }) => {
+  test('Create SLA Policy button is visible on SLA Policies tab for admin', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -599,7 +599,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('button:has-text("Create SLA Policy")')).toBeVisible();
   });
 
-  test('clicking Create SLA Policy shows the form', async ({ page }) => {
+  test('clicking Create SLA Policy shows the form', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -613,7 +613,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('label:has-text("Resolution Time (minutes)")')).toBeVisible();
   });
 
-  test('SLA form validation requires policy name', async ({ page }) => {
+  test('SLA form validation requires policy name', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -629,7 +629,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('text=Policy name is required')).toBeVisible();
   });
 
-  test('SLA form Cancel button hides the form', async ({ page }) => {
+  test('SLA form Cancel button hides the form', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -642,7 +642,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('label:has-text("Policy Name")')).not.toBeVisible();
   });
 
-  test('clicking Pending Escalations tab shows escalations or empty state', async ({ page }) => {
+  test('clicking Pending Escalations tab shows escalations or empty state', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -654,7 +654,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     expect(pageText).toMatch(/escalation|No pending escalations/i);
   });
 
-  test('employee cannot access SLA settings page — page still loads but RBAC hides actions', async ({ page }) => {
+  test('employee cannot access SLA settings page — page still loads but RBAC hides actions', async ({page}) => {
     // The SLA page itself does not have a top-level RBAC redirect —
     // it uses PermissionGate on create/edit/delete/acknowledge buttons.
     // Verify it loads and does NOT show the Create SLA Policy button for an employee.
@@ -668,7 +668,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(createBtn).not.toBeVisible();
   });
 
-  test('SLA dashboard stat card shows SLAs Met / Breached counts', async ({ page }) => {
+  test('SLA dashboard stat card shows SLAs Met / Breached counts', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 
@@ -677,7 +677,7 @@ test.describe('SLA Management (/helpdesk/sla)', () => {
     await expect(page.locator('text=SLA Breached')).toBeVisible();
   });
 
-  test('SLA dashboard shows First Contact Resolutions and CSAT', async ({ page }) => {
+  test('SLA dashboard shows First Contact Resolutions and CSAT', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/helpdesk/sla');
 

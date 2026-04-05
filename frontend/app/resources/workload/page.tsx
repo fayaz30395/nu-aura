@@ -1,58 +1,70 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { Users, Download, RefreshCw, AlertCircle, Search } from 'lucide-react';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {AlertCircle, Download, RefreshCw, Search, Users} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
-  WorkloadHeatmap,
-  EmployeeWorkloadCard,
-  WorkloadSummaryStats,
   EmployeeAllocationDetailModal,
+  EmployeeWorkloadCard,
+  WorkloadHeatmap,
+  WorkloadSummaryStats,
 } from '@/components/resource-management';
-import { AllocationEditData } from '@/components/resource-management/EmployeeAllocationDetailModal';
+import {AllocationEditData} from '@/components/resource-management/EmployeeAllocationDetailModal';
+import {AllocationStatus, DepartmentWorkload, EmployeeWorkload,} from '@/lib/types/hrms/resource-management';
 import {
-  EmployeeWorkload,
-  DepartmentWorkload,
-  AllocationStatus,
-} from '@/lib/types/hrms/resource-management';
-import {
-  useWorkloadDashboard,
   useEmployeeAllocationHistory,
-  useUpdateAllocation,
   useExportWorkloadReport,
+  useUpdateAllocation,
+  useWorkloadDashboard,
 } from '@/lib/hooks/queries/useResources';
-import { cn } from '@/lib/utils';
-import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import {cn} from '@/lib/utils';
+import {endOfMonth, format, startOfMonth, subMonths} from 'date-fns';
 
 type ViewTab = 'overview' | 'employees' | 'departments' | 'heatmap';
 type DateRangeKey = 'thisMonth' | 'lastMonth' | 'thisQuarter' | 'last3Months';
 
 const dateRangeOptions: { key: DateRangeKey; label: string }[] = [
-  { key: 'thisMonth', label: 'This Month' },
-  { key: 'lastMonth', label: 'Last Month' },
-  { key: 'thisQuarter', label: 'This Quarter' },
-  { key: 'last3Months', label: 'Last 3 Months' },
+  {key: 'thisMonth', label: 'This Month'},
+  {key: 'lastMonth', label: 'Last Month'},
+  {key: 'thisQuarter', label: 'This Quarter'},
+  {key: 'last3Months', label: 'Last 3 Months'},
 ];
 
 const statusFilterOptions: { key: AllocationStatus; label: string; color: string }[] = [
-  { key: 'OVER_ALLOCATED', label: 'Over Allocated', color: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400' },
-  { key: 'OPTIMAL', label: 'Optimal', color: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400' },
-  { key: 'UNDER_UTILIZED', label: 'Under Utilized', color: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' },
-  { key: 'UNASSIGNED', label: 'Unassigned', color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]' },
+  {
+    key: 'OVER_ALLOCATED',
+    label: 'Over Allocated',
+    color: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+  },
+  {
+    key: 'OPTIMAL',
+    label: 'Optimal',
+    color: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+  },
+  {
+    key: 'UNDER_UTILIZED',
+    label: 'Under Utilized',
+    color: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
+  },
+  {
+    key: 'UNASSIGNED',
+    label: 'Unassigned',
+    color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
+  },
 ];
 
 type AllocationRange = '0-25' | '25-50' | '50-75' | '75-100' | '100+';
 
 const allocationRangeOptions: { key: AllocationRange; label: string; min: number; max: number }[] = [
-  { key: '0-25', label: '0-25%', min: 0, max: 25 },
-  { key: '25-50', label: '25-50%', min: 25, max: 50 },
-  { key: '50-75', label: '50-75%', min: 50, max: 75 },
-  { key: '75-100', label: '75-100%', min: 75, max: 100 },
-  { key: '100+', label: '100%+', min: 100, max: Infinity },
+  {key: '0-25', label: '0-25%', min: 0, max: 25},
+  {key: '25-50', label: '25-50%', min: 25, max: 50},
+  {key: '50-75', label: '50-75%', min: 50, max: 75},
+  {key: '75-100', label: '75-100%', min: 75, max: 100},
+  {key: '100+', label: '100%+', min: 100, max: Infinity},
 ];
 
 // Helper function to calculate active allocation from employee data
@@ -78,7 +90,7 @@ const calculateDynamicStatus = (activeAllocation: number): AllocationStatus => {
 
 export default function WorkloadDashboardPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
@@ -145,7 +157,7 @@ export default function WorkloadDashboardPage() {
     allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
   });
 
-  const { data: allocationHistory, isLoading: loadingHistory } = useEmployeeAllocationHistory(
+  const {data: allocationHistory, isLoading: loadingHistory} = useEmployeeAllocationHistory(
     selectedEmployee?.employeeId ?? '',
     0,
     20
@@ -287,13 +299,13 @@ export default function WorkloadDashboardPage() {
               disabled={isLoading}
               className="rounded-md p-2 text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-secondary)] dark:hover:bg-[var(--bg-secondary)] dark:hover:text-[var(--text-muted)]"
             >
-              <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
+              <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')}/>
             </button>
             <button
               onClick={handleExport}
               className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4"/>
               Export
             </button>
           </div>
@@ -312,7 +324,7 @@ export default function WorkloadDashboardPage() {
             ))}
           </select>
 
-          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]" />
+          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]"/>
 
           {/* Status pills */}
           <div className="flex items-center gap-1">
@@ -332,7 +344,7 @@ export default function WorkloadDashboardPage() {
             ))}
           </div>
 
-          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]" />
+          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]"/>
 
           {/* Allocation range pills */}
           <div className="flex items-center gap-1">
@@ -368,7 +380,7 @@ export default function WorkloadDashboardPage() {
 
           {/* Search */}
           <div className="relative ml-auto">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"/>
             <input
               type="text"
               placeholder="Search employees..."
@@ -381,8 +393,9 @@ export default function WorkloadDashboardPage() {
 
         {/* Error state */}
         {error && (
-          <div className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <div
+            className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            <AlertCircle className="h-4 w-4 flex-shrink-0"/>
             <span className="flex-1">{error instanceof Error ? error.message : 'Error loading data'}</span>
             <button onClick={() => refetchData()} className="font-medium hover:underline">
               Retry
@@ -393,8 +406,8 @@ export default function WorkloadDashboardPage() {
         {/* Loading state */}
         {isLoading && !dashboardData && (
           <div className="space-y-6">
-            <Skeleton className="h-10 w-full rounded-lg" />
-            <Skeleton className="h-64 rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg"/>
+            <Skeleton className="h-64 rounded-lg"/>
           </div>
         )}
 
@@ -402,16 +415,16 @@ export default function WorkloadDashboardPage() {
         {dashboardData && (
           <>
             {/* Summary stats */}
-            <WorkloadSummaryStats summary={dashboardData.summary} />
+            <WorkloadSummaryStats summary={dashboardData.summary}/>
 
             {/* Tabs */}
             <div className="border-b border-[var(--border-main)]">
               <nav className="-mb-px flex gap-6">
                 {[
-                  { key: 'overview', label: 'Overview' },
-                  { key: 'employees', label: 'Team' },
-                  { key: 'departments', label: 'Departments' },
-                  { key: 'heatmap', label: 'Heatmap' },
+                  {key: 'overview', label: 'Overview'},
+                  {key: 'employees', label: 'Team'},
+                  {key: 'departments', label: 'Departments'},
+                  {key: 'heatmap', label: 'Heatmap'},
                 ].map((tab) => (
                   <button
                     key={tab.key}
@@ -437,10 +450,12 @@ export default function WorkloadDashboardPage() {
                   <div>
                     <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-danger-600 dark:text-danger-400">
-                        Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
+                        Over-Allocated
+                        ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                    <div
+                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const overAllocated = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED')
@@ -465,10 +480,12 @@ export default function WorkloadDashboardPage() {
                   <div>
                     <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-warning-600 dark:text-warning-400">
-                        Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
+                        Under-Utilized
+                        ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                    <div
+                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const underUtilized = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED')
@@ -493,10 +510,12 @@ export default function WorkloadDashboardPage() {
                   <div>
                     <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-[var(--text-muted)]">
-                        Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
+                        Unassigned
+                        ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                    <div
+                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const unassigned = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED')
@@ -521,10 +540,12 @@ export default function WorkloadDashboardPage() {
                   <div>
                     <div className="mb-4 row-between">
                       <h3 className="text-sm font-medium text-success-600 dark:text-success-400">
-                        Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
+                        Optimal
+                        ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                    <div
+                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                       {(() => {
                         const optimal = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL')
@@ -552,7 +573,7 @@ export default function WorkloadDashboardPage() {
                     </h3>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                       {(dashboardData.departmentWorkloads || []).map((dept) => (
-                        <DepartmentCard key={dept.departmentId} department={dept} />
+                        <DepartmentCard key={dept.departmentId} department={dept}/>
                       ))}
                     </div>
                   </div>
@@ -560,7 +581,8 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'employees' && (
-                <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                <div
+                  className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
                       <EmployeeWorkloadCard
@@ -574,7 +596,7 @@ export default function WorkloadDashboardPage() {
                       <EmptyState
                         title="No employees found"
                         description="Try adjusting your search or filters"
-                        icon={<Users className="h-10 w-10" />}
+                        icon={<Users className="h-10 w-10"/>}
                       />
                     </div>
                   )}
@@ -584,13 +606,14 @@ export default function WorkloadDashboardPage() {
               {activeTab === 'departments' && (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {(dashboardData.departmentWorkloads || []).map((dept) => (
-                    <DepartmentCard key={dept.departmentId} department={dept} expanded />
+                    <DepartmentCard key={dept.departmentId} department={dept} expanded/>
                   ))}
                 </div>
               )}
 
               {activeTab === 'heatmap' && (
-                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                <div
+                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
                   <WorkloadHeatmap
                     data={dashboardData.heatmapData || []}
                     onEmployeeClick={(id) => {
@@ -622,9 +645,9 @@ export default function WorkloadDashboardPage() {
  * Department card - clean minimal design
  */
 function DepartmentCard({
-  department,
-  expanded = false,
-}: {
+                          department,
+                          expanded = false,
+                        }: {
   department: DepartmentWorkload;
   expanded?: boolean;
 }) {
@@ -632,7 +655,8 @@ function DepartmentCard({
   const allocationColor = avgAllocation > 100 ? 'text-danger-600' : avgAllocation >= 70 ? 'text-success-600' : 'text-warning-600';
 
   return (
-    <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+    <div
+      className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-sm font-medium text-[var(--text-primary)]">
@@ -654,7 +678,7 @@ function DepartmentCard({
             'h-full rounded-full transition-all',
             avgAllocation > 100 ? 'bg-danger-500' : avgAllocation >= 70 ? 'bg-success-500' : 'bg-warning-400'
           )}
-          style={{ width: `${Math.min(avgAllocation, 100)}%` }}
+          style={{width: `${Math.min(avgAllocation, 100)}%`}}
         />
       </div>
 

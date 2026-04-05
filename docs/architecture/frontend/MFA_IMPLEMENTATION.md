@@ -4,7 +4,9 @@ This document outlines the complete MFA implementation for the Nu-Aura HRMS fron
 
 ## Overview
 
-The MFA system provides two-factor authentication using Time-based One-Time Password (TOTP) authenticator apps. Users can:
+The MFA system provides two-factor authentication using Time-based One-Time Password (TOTP)
+authenticator apps. Users can:
+
 - Enable/disable MFA on their account
 - Use authenticator apps (Google Authenticator, Microsoft Authenticator, Authy, etc.)
 - Generate and use backup codes for emergency access
@@ -29,11 +31,13 @@ mfaApi.mfaLogin(userId, code) // POST /v1/auth/mfa-login
 ### Components
 
 #### 1. MfaSetup Component
+
 **File:** `/components/auth/MfaSetup.tsx`
 
 A modal component that guides users through the MFA setup process.
 
 **Props:**
+
 ```typescript
 interface MfaSetupProps {
   isOpen: boolean;           // Controls modal visibility
@@ -43,6 +47,7 @@ interface MfaSetupProps {
 ```
 
 **Steps:**
+
 1. **Loading** - Fetches QR code and secret from backend
 2. **Scan** - Shows QR code and manual secret entry option
 3. **Verify** - User enters 6-digit code from authenticator
@@ -50,17 +55,20 @@ interface MfaSetupProps {
 5. **Complete** - Success confirmation
 
 **Features:**
+
 - Copy-to-clipboard for secret and backup codes
 - Auto-validation of 6-digit codes
 - Error handling with user-friendly messages
 - Prevents accidental closure during critical steps
 
 #### 2. MfaVerification Component
+
 **File:** `/components/auth/MfaVerification.tsx`
 
 A card component shown during login when MFA is required.
 
 **Props:**
+
 ```typescript
 interface MfaVerificationProps {
   userId: string;            // User ID from initial login
@@ -70,6 +78,7 @@ interface MfaVerificationProps {
 ```
 
 **Features:**
+
 - Supports both authenticator codes and backup codes
 - Auto-focus on input field
 - Paste event handling for convenience
@@ -78,11 +87,13 @@ interface MfaVerificationProps {
 - Backup code toggle with 12-digit input support
 
 #### 3. Security Settings Page
+
 **File:** `/app/settings/security/page.tsx`
 
 Full-featured security management page accessible at `/settings/security`.
 
 **Features:**
+
 - View current MFA status with setup date
 - Enable/disable MFA with verification
 - Display active sessions
@@ -93,9 +104,11 @@ Full-featured security management page accessible at `/settings/security`.
 ### Updated Components
 
 #### Login Page
+
 **File:** `/app/auth/login/page.tsx`
 
 **Changes:**
+
 - Added MFA state management (`mfaRequired`, `mfaUserId`)
 - Conditional rendering of `MfaVerification` component when MFA is required
 - Handles `mfaRequired` response from login API
@@ -109,13 +122,15 @@ Full-featured security management page accessible at `/settings/security`.
 1. User navigates to `/settings/security`
 2. Clicks "Enable Two-Factor Authentication"
 3. MfaSetup modal opens:
-   - Fetches QR code and secret
-   - User scans with authenticator app
-   - User confirms scanning and enters 6-digit code
-   - System verifies code and enables MFA
-   - Backup codes are displayed
-   - User saves backup codes
-   - Setup completes
+
+- Fetches QR code and secret
+- User scans with authenticator app
+- User confirms scanning and enters 6-digit code
+- System verifies code and enables MFA
+- Backup codes are displayed
+- User saves backup codes
+- Setup completes
+
 4. User is redirected to security settings page
 
 ### Login with MFA
@@ -147,6 +162,7 @@ Full-featured security management page accessible at `/settings/security`.
 ## Dark Mode Support
 
 All MFA components support dark mode with proper color theming:
+
 - Uses `dark:` Tailwind classes
 - Follows app color scheme (slate/primary/success/amber/red/blue)
 - Proper contrast ratios in both modes
@@ -156,20 +172,24 @@ All MFA components support dark mode with proper color theming:
 ### Common Errors
 
 1. **Invalid Code**
-   - Message: "Invalid code. Please try again."
-   - Action: Clear input and refocus
+
+- Message: "Invalid code. Please try again."
+- Action: Clear input and refocus
 
 2. **Code Expired**
-   - Message: "Code has expired. Please try again."
-   - Action: Request new code from authenticator
+
+- Message: "Code has expired. Please try again."
+- Action: Request new code from authenticator
 
 3. **Setup Failed**
-   - Message: From API response
-   - Action: Retry setup process
+
+- Message: From API response
+- Action: Retry setup process
 
 4. **Network Error**
-   - Message: "Failed to load MFA setup. Please try again."
-   - Action: Retry operation
+
+- Message: "Failed to load MFA setup. Please try again."
+- Action: Retry operation
 
 ### Validation
 
@@ -181,28 +201,33 @@ All MFA components support dark mode with proper color theming:
 ## Security Considerations
 
 1. **HTTPS Only**
-   - All MFA operations require secure connections
-   - QR codes and secrets are only transmitted over HTTPS
+
+- All MFA operations require secure connections
+- QR codes and secrets are only transmitted over HTTPS
 
 2. **Backup Code Storage**
-   - Users should store backup codes separately
-   - Component shows warning about secure storage
-   - Codes are single-use only
+
+- Users should store backup codes separately
+- Component shows warning about secure storage
+- Codes are single-use only
 
 3. **Session Management**
-   - MFA verification binds token to user session
-   - Cannot reuse old tokens after disabling MFA
-   - Fresh authentication required after each MFA change
+
+- MFA verification binds token to user session
+- Cannot reuse old tokens after disabling MFA
+- Fresh authentication required after each MFA change
 
 4. **Rate Limiting**
-   - Backend should implement rate limiting on MFA endpoints
-   - Prevent brute force attacks on 6-digit codes
-   - Lock account after multiple failed attempts
+
+- Backend should implement rate limiting on MFA endpoints
+- Prevent brute force attacks on 6-digit codes
+- Lock account after multiple failed attempts
 
 5. **Input Validation**
-   - Client-side numeric validation
-   - Server-side format validation
-   - CSRF protection via cookies
+
+- Client-side numeric validation
+- Server-side format validation
+- CSRF protection via cookies
 
 ## Testing
 
@@ -266,32 +291,38 @@ curl -X POST https://api.example.com/api/v1/auth/mfa-login \
 ## Future Enhancements
 
 1. **WebAuthn Support**
-   - Add FIDO2/WebAuthn for hardware keys
-   - Support for security keys and biometrics
+
+- Add FIDO2/WebAuthn for hardware keys
+- Support for security keys and biometrics
 
 2. **Recovery Codes Management**
-   - Regenerate backup codes
-   - View previously generated codes
-   - Track code usage
+
+- Regenerate backup codes
+- View previously generated codes
+- Track code usage
 
 3. **Device Trusting**
-   - Option to trust device for 30 days
-   - Skip MFA on trusted devices
+
+- Option to trust device for 30 days
+- Skip MFA on trusted devices
 
 4. **Multi-Device Management**
-   - View all authenticated devices
-   - Remote device logout
-   - Device fingerprinting
+
+- View all authenticated devices
+- Remote device logout
+- Device fingerprinting
 
 5. **SMS/Email Backup**
-   - Alternative verification methods
-   - SMS one-time codes
-   - Email verification links
+
+- Alternative verification methods
+- SMS one-time codes
+- Email verification links
 
 6. **Admin Features**
-   - Force MFA on all users
-   - View user MFA status
-   - Reset user MFA if forgotten
+
+- Force MFA on all users
+- View user MFA status
+- Reset user MFA if forgotten
 
 ## References
 
@@ -302,6 +333,7 @@ curl -X POST https://api.example.com/api/v1/auth/mfa-login \
 ## Support
 
 For issues or questions about the MFA implementation, please refer to:
+
 - Backend MFA API documentation
 - Component prop documentation in JSDoc comments
 - Error messages for user feedback

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // Leave Type Schema
 export const leaveTypeSchema = z.object({

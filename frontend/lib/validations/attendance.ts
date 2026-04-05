@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 // Time format validation (HH:mm or HH:mm:ss)
 const timeSchema = z
@@ -80,7 +80,7 @@ export const holidaySchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), 'Please enter a valid date'),
   holidayType: z.enum(
     ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'],
-    { errorMap: () => ({ message: 'Please select a holiday type' }) }
+    {errorMap: () => ({message: 'Please select a holiday type'})}
   ),
   description: z.string().max(500).optional(),
   isOptional: z.boolean().default(false),

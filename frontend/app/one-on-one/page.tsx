@@ -1,69 +1,69 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useEffect, useMemo, useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Calendar,
-  Clock,
-  Plus,
-  Video,
-  MapPin,
-  ChevronRight,
-  CheckCircle2,
   AlertCircle,
-  ListChecks,
-  Star,
-  Filter,
-  Play,
-  Ban,
-  CalendarClock,
-  Trash2,
-  Check,
-  CircleDot,
   ArrowLeft,
-  Send,
+  Ban,
+  Calendar,
+  CalendarClock,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  CircleDot,
+  Clock,
+  Filter,
+  ListChecks,
+  MapPin,
+  Play,
+  Plus,
   Repeat,
+  Send,
+  Star,
+  Trash2,
   Users,
+  Video,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { SkeletonStatCard } from '@/components/ui/Skeleton';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {SkeletonStatCard} from '@/components/ui/Skeleton';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
-  useMyMeetings,
-  useUpcomingMeetings,
-  useMeetingDetail,
-  usePendingActionItems,
-  useOverdueActionItems,
-  useMeetingDashboard,
-  useCreateMeeting,
-  useStartMeeting,
-  useCompleteMeeting,
-  useCancelMeeting,
   useAddAgendaItem,
-  useMarkAgendaDiscussed,
-  useDeleteAgendaItem,
+  useCancelMeeting,
+  useCompleteMeeting,
   useCreateActionItem,
+  useCreateMeeting,
+  useDeleteAgendaItem,
+  useMarkAgendaDiscussed,
+  useMeetingDashboard,
+  useMeetingDetail,
+  useMyMeetings,
+  useOverdueActionItems,
+  usePendingActionItems,
+  useRescheduleMeeting,
+  useStartMeeting,
+  useSubmitMeetingFeedback,
+  useUpcomingMeetings,
   useUpdateActionItemStatus,
   useUpdateMeetingNotes,
-  useSubmitMeetingFeedback,
-  useRescheduleMeeting,
 } from '@/lib/hooks/queries/useOneOnOne';
 import type {
-  OneOnOneMeetingResponse,
+  MeetingActionItemResponse,
+  MeetingActionPriority,
+  MeetingActionStatus,
+  MeetingAgendaCategory,
+  MeetingAgendaItemResponse,
+  MeetingAgendaPriority,
   MeetingStatus,
   MeetingType,
+  OneOnOneMeetingResponse,
   RecurrencePattern,
-  MeetingAgendaItemResponse,
-  MeetingActionItemResponse,
-  MeetingAgendaPriority,
-  MeetingAgendaCategory,
-  MeetingActionStatus,
-  MeetingActionPriority,
 } from '@/lib/types/hrms/meeting';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
@@ -119,19 +119,31 @@ type FeedbackFormData = z.infer<typeof feedbackSchema>;
 function getStatusBadge(status: MeetingStatus | undefined) {
   switch (status) {
     case 'SCHEDULED':
-      return { label: 'Scheduled', classes: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400' };
+      return {label: 'Scheduled', classes: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400'};
     case 'IN_PROGRESS':
-      return { label: 'In Progress', classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' };
+      return {
+        label: 'In Progress',
+        classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
+      };
     case 'COMPLETED':
-      return { label: 'Completed', classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' };
+      return {
+        label: 'Completed',
+        classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
+      };
     case 'CANCELLED':
-      return { label: 'Cancelled', classes: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400' };
+      return {label: 'Cancelled', classes: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400'};
     case 'RESCHEDULED':
-      return { label: 'Rescheduled', classes: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400' };
+      return {
+        label: 'Rescheduled',
+        classes: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400'
+      };
     case 'NO_SHOW':
-      return { label: 'No Show', classes: 'bg-surface-100 text-surface-800 dark:bg-surface-900/30 dark:text-surface-400' };
+      return {
+        label: 'No Show',
+        classes: 'bg-surface-100 text-surface-800 dark:bg-surface-900/30 dark:text-surface-400'
+      };
     default:
-      return { label: 'Unknown', classes: 'bg-surface-100 text-surface-800' };
+      return {label: 'Unknown', classes: 'bg-surface-100 text-surface-800'};
   }
 }
 
@@ -151,28 +163,39 @@ function getMeetingTypeLabel(type: MeetingType | undefined): string {
 
 function getPriorityColor(priority: MeetingAgendaPriority | MeetingActionPriority | undefined): string {
   switch (priority) {
-    case 'URGENT': return 'text-danger-600 dark:text-danger-400';
-    case 'HIGH': return 'text-warning-600 dark:text-warning-400';
-    case 'MEDIUM': return 'text-warning-600 dark:text-warning-400';
-    case 'LOW': return 'text-surface-500 dark:text-surface-400';
-    default: return 'text-surface-500';
+    case 'URGENT':
+      return 'text-danger-600 dark:text-danger-400';
+    case 'HIGH':
+      return 'text-warning-600 dark:text-warning-400';
+    case 'MEDIUM':
+      return 'text-warning-600 dark:text-warning-400';
+    case 'LOW':
+      return 'text-surface-500 dark:text-surface-400';
+    default:
+      return 'text-surface-500';
   }
 }
 
 function getActionStatusColor(status: MeetingActionStatus): string {
   switch (status) {
-    case 'OPEN': return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
-    case 'IN_PROGRESS': return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
-    case 'COMPLETED': return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
-    case 'CANCELLED': return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
-    case 'CARRIED_OVER': return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
-    default: return 'bg-surface-100 text-surface-800';
+    case 'OPEN':
+      return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+    case 'IN_PROGRESS':
+      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+    case 'COMPLETED':
+      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+    case 'CANCELLED':
+      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+    case 'CARRIED_OVER':
+      return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
+    default:
+      return 'bg-surface-100 text-surface-800';
   }
 }
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  return date.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'});
 }
 
 function formatTime(timeStr: string): string {
@@ -186,12 +209,12 @@ function formatTime(timeStr: string): string {
 // ─── Stat Card ──────────────────────────────────────────────────────────────
 
 function StatCard({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  color,
-}: {
+                    title,
+                    value,
+                    subtitle,
+                    icon: Icon,
+                    color,
+                  }: {
   title: string;
   value: string | number;
   subtitle?: string;
@@ -199,17 +222,19 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
+    <div
+      className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
-          <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
+          <p
+            className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
             {value}
           </p>
           {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
         </div>
         <div className={`p-2 rounded-lg ${color}`}>
-          <Icon className="h-5 w-5 text-white" />
+          <Icon className="h-5 w-5 text-white"/>
         </div>
       </div>
     </div>
@@ -285,17 +310,24 @@ export default function OneOnOnePage() {
 
   const agendaForm = useForm<AgendaItemFormData>({
     resolver: zodResolver(agendaItemSchema),
-    defaultValues: { title: '', description: '', priority: 'MEDIUM', category: '' },
+    defaultValues: {title: '', description: '', priority: 'MEDIUM', category: ''},
   });
 
   const actionForm = useForm<ActionItemFormData>({
     resolver: zodResolver(actionItemSchema),
-    defaultValues: { title: '', description: '', assigneeId: '', assigneeRole: 'EMPLOYEE', dueDate: '', priority: 'MEDIUM' },
+    defaultValues: {
+      title: '',
+      description: '',
+      assigneeId: '',
+      assigneeRole: 'EMPLOYEE',
+      dueDate: '',
+      priority: 'MEDIUM'
+    },
   });
 
   const feedbackForm = useForm<FeedbackFormData>({
     resolver: zodResolver(feedbackSchema),
-    defaultValues: { rating: 5, feedback: '' },
+    defaultValues: {rating: 5, feedback: ''},
   });
 
   const isRecurring = scheduleForm.watch('isRecurring');
@@ -385,7 +417,7 @@ export default function OneOnOnePage() {
     if (!selectedMeetingId) return;
     await submitFeedbackMutation.mutateAsync({
       meetingId: selectedMeetingId,
-      data: { rating: data.rating, feedback: data.feedback },
+      data: {rating: data.rating, feedback: data.feedback},
     });
     feedbackForm.reset();
     setShowFeedbackForm(false);
@@ -398,14 +430,14 @@ export default function OneOnOnePage() {
 
   const handleCompleteMeeting = async () => {
     if (!selectedMeetingId) return;
-    await completeMutation.mutateAsync({ meetingId: selectedMeetingId, summary: completeSummary || undefined });
+    await completeMutation.mutateAsync({meetingId: selectedMeetingId, summary: completeSummary || undefined});
     setShowCompleteModal(false);
     setCompleteSummary('');
   };
 
   const handleCancelMeeting = async () => {
     if (!selectedMeetingId || !cancelReason) return;
-    await cancelMutation.mutateAsync({ meetingId: selectedMeetingId, reason: cancelReason });
+    await cancelMutation.mutateAsync({meetingId: selectedMeetingId, reason: cancelReason});
     setShowCancelModal(false);
     setCancelReason('');
     setView('list');
@@ -415,7 +447,7 @@ export default function OneOnOnePage() {
     if (!selectedMeetingId || !rescheduleDate || !rescheduleTime) return;
     await rescheduleMutation.mutateAsync({
       meetingId: selectedMeetingId,
-      data: { date: rescheduleDate, time: rescheduleTime },
+      data: {date: rescheduleDate, time: rescheduleTime},
     });
     setShowRescheduleModal(false);
     setRescheduleDate('');
@@ -470,27 +502,32 @@ export default function OneOnOnePage() {
         <div className="p-6 max-w-5xl mx-auto">
           {/* Back button */}
           <button
-            onClick={() => { setView('list'); setSelectedMeetingId(null); }}
+            onClick={() => {
+              setView('list');
+              setSelectedMeetingId(null);
+            }}
             className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] mb-4 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to meetings
+            <ArrowLeft className="h-4 w-4"/> Back to meetings
           </button>
 
           {detailQuery.isLoading ? (
             <div className="space-y-4">
-              <SkeletonStatCard />
-              <SkeletonStatCard />
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
             </div>
           ) : !meeting ? (
             <div className="text-center py-12 text-[var(--text-muted)]">Meeting not found.</div>
           ) : (
             <>
               {/* Meeting Header */}
-              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card mb-6">
+              <div
+                className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card mb-6">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-4 mb-2">
-                      <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+                      <h1
+                        className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
                         {meeting.title}
                       </h1>
                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusBadge.classes}`}>
@@ -502,10 +539,10 @@ export default function OneOnOnePage() {
                     )}
                     <div className="flex flex-wrap gap-4 text-body-muted">
                       <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" /> {formatDate(meeting.meetingDate)}
+                        <Calendar className="h-4 w-4"/> {formatDate(meeting.meetingDate)}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" /> {formatTime(meeting.startTime)}
+                        <Clock className="h-4 w-4"/> {formatTime(meeting.startTime)}
                         {meeting.endTime && ` - ${formatTime(meeting.endTime)}`}
                       </span>
                       {meeting.durationMinutes && (
@@ -515,7 +552,7 @@ export default function OneOnOnePage() {
                       )}
                       {meeting.location && (
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" /> {meeting.location}
+                          <MapPin className="h-4 w-4"/> {meeting.location}
                         </span>
                       )}
                       {meeting.meetingLink && (
@@ -525,12 +562,12 @@ export default function OneOnOnePage() {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:underline"
                         >
-                          <Video className="h-4 w-4" /> Join
+                          <Video className="h-4 w-4"/> Join
                         </a>
                       )}
                       {meeting.isRecurring && (
                         <span className="flex items-center gap-1">
-                          <Repeat className="h-4 w-4" /> {meeting.recurrencePattern?.replace('_', '-')}
+                          <Repeat className="h-4 w-4"/> {meeting.recurrencePattern?.replace('_', '-')}
                         </span>
                       )}
                     </div>
@@ -551,7 +588,7 @@ export default function OneOnOnePage() {
                             disabled={startMutation.isPending}
                             className="flex items-center gap-1 px-4 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                           >
-                            <Play className="h-3.5 w-3.5" /> Start
+                            <Play className="h-3.5 w-3.5"/> Start
                           </button>
                         </PermissionGate>
                       )}
@@ -560,20 +597,20 @@ export default function OneOnOnePage() {
                           onClick={() => setShowCompleteModal(true)}
                           className="flex items-center gap-1 px-4 py-1.5 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
                         >
-                          <CheckCircle2 className="h-3.5 w-3.5" /> Complete
+                          <CheckCircle2 className="h-3.5 w-3.5"/> Complete
                         </button>
                       </PermissionGate>
                       <button
                         onClick={() => setShowRescheduleModal(true)}
                         className="flex items-center gap-1 px-4 py-1.5 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                       >
-                        <CalendarClock className="h-3.5 w-3.5" /> Reschedule
+                        <CalendarClock className="h-3.5 w-3.5"/> Reschedule
                       </button>
                       <button
                         onClick={() => setShowCancelModal(true)}
                         className="flex items-center gap-1 px-4 py-1.5 text-sm border border-danger-300 text-danger-600 dark:text-danger-400 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
                       >
-                        <Ban className="h-3.5 w-3.5" /> Cancel
+                        <Ban className="h-3.5 w-3.5"/> Cancel
                       </button>
                     </div>
                   )}
@@ -581,7 +618,8 @@ export default function OneOnOnePage() {
               </div>
 
               {/* Detail Tabs */}
-              <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card">
+              <div
+                className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card">
                 <div className="flex border-b border-[var(--border-main)]">
                   {(['agenda', 'actions', 'notes', 'feedback'] as const).map((tab) => (
                     <button
@@ -609,13 +647,14 @@ export default function OneOnOnePage() {
                             onClick={() => setShowAgendaForm(!showAgendaForm)}
                             className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                           >
-                            <Plus className="h-4 w-4" /> Add Point
+                            <Plus className="h-4 w-4"/> Add Point
                           </button>
                         )}
                       </div>
 
                       {showAgendaForm && (
-                        <form onSubmit={agendaForm.handleSubmit(handleAddAgenda)} className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
+                        <form onSubmit={agendaForm.handleSubmit(handleAddAgenda)}
+                              className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
                           <div className="space-y-4">
                             <div>
                               <input
@@ -624,7 +663,8 @@ export default function OneOnOnePage() {
                                 className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {agendaForm.formState.errors.title && (
-                                <p className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
+                                <p
+                                  className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
                               )}
                             </div>
                             <textarea
@@ -668,7 +708,10 @@ export default function OneOnOnePage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => { agendaForm.reset(); setShowAgendaForm(false); }}
+                                onClick={() => {
+                                  agendaForm.reset();
+                                  setShowAgendaForm(false);
+                                }}
                                 className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)]"
                               >
                                 Cancel
@@ -680,7 +723,7 @@ export default function OneOnOnePage() {
 
                       {(meeting.agendaItems || []).length === 0 ? (
                         <div className="text-center py-8 text-[var(--text-muted)]">
-                          <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                          <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-40"/>
                           <p>No talking points yet. Add one to get started.</p>
                         </div>
                       ) : (
@@ -707,14 +750,15 @@ export default function OneOnOnePage() {
                                 className="mt-0.5 flex-shrink-0"
                               >
                                 {item.isDiscussed ? (
-                                  <CheckCircle2 className="h-5 w-5 text-success-600" />
+                                  <CheckCircle2 className="h-5 w-5 text-success-600"/>
                                 ) : (
-                                  <CircleDot className="h-5 w-5 text-[var(--text-muted)] hover:text-accent-700" />
+                                  <CircleDot className="h-5 w-5 text-[var(--text-muted)] hover:text-accent-700"/>
                                 )}
                               </button>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <p className={`text-sm font-medium ${item.isDiscussed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'}`}>
+                                  <p
+                                    className={`text-sm font-medium ${item.isDiscussed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'}`}>
                                     {item.title}
                                   </p>
                                   {item.priority && item.priority !== 'MEDIUM' && (
@@ -723,7 +767,8 @@ export default function OneOnOnePage() {
                                     </span>
                                   )}
                                   {item.category && (
-                                    <span className="text-xs px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-[var(--text-muted)]">
+                                    <span
+                                      className="text-xs px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-[var(--text-muted)]">
                                       {item.category.replace('_', ' ')}
                                     </span>
                                   )}
@@ -732,16 +777,17 @@ export default function OneOnOnePage() {
                                   <p className="text-caption mt-0.5">{item.description}</p>
                                 )}
                                 {item.discussionNotes && (
-                                  <p className="text-xs text-success-700 dark:text-success-400 mt-1 italic">{item.discussionNotes}</p>
+                                  <p
+                                    className="text-xs text-success-700 dark:text-success-400 mt-1 italic">{item.discussionNotes}</p>
                                 )}
                                 <span className="text-caption">Added by {item.addedBy?.toLowerCase()}</span>
                               </div>
                               {isActive && !item.isDiscussed && (
                                 <button
-                                  onClick={() => setDeleteAgendaItem({ meetingId: selectedMeetingId!, itemId: item.id })}
+                                  onClick={() => setDeleteAgendaItem({meetingId: selectedMeetingId!, itemId: item.id})}
                                   className="text-[var(--text-muted)] hover:text-danger-500 transition-colors"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-4 w-4"/>
                                 </button>
                               )}
                             </div>
@@ -762,14 +808,15 @@ export default function OneOnOnePage() {
                               onClick={() => setShowActionForm(!showActionForm)}
                               className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                             >
-                              <Plus className="h-4 w-4" /> Add Action
+                              <Plus className="h-4 w-4"/> Add Action
                             </button>
                           </PermissionGate>
                         )}
                       </div>
 
                       {showActionForm && (
-                        <form onSubmit={actionForm.handleSubmit(handleAddAction)} className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
+                        <form onSubmit={actionForm.handleSubmit(handleAddAction)}
+                              className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-main)]">
                           <div className="space-y-4">
                             <input
                               {...actionForm.register('title')}
@@ -792,7 +839,8 @@ export default function OneOnOnePage() {
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               {actionForm.formState.errors.assigneeId && (
-                                <p className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
+                                <p
+                                  className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
                                 {...actionForm.register('assigneeRole')}
@@ -828,7 +876,10 @@ export default function OneOnOnePage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => { actionForm.reset(); setShowActionForm(false); }}
+                                onClick={() => {
+                                  actionForm.reset();
+                                  setShowActionForm(false);
+                                }}
                                 className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)]"
                               >
                                 Cancel
@@ -840,7 +891,7 @@ export default function OneOnOnePage() {
 
                       {(meeting.actionItems || []).length === 0 ? (
                         <div className="text-center py-8 text-[var(--text-muted)]">
-                          <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                          <CheckCircle2 className="h-8 w-8 mx-auto mb-2 opacity-40"/>
                           <p>No action items yet.</p>
                         </div>
                       ) : (
@@ -853,15 +904,18 @@ export default function OneOnOnePage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
-                                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${getActionStatusColor(item.status)}`}>
+                                  <span
+                                    className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${getActionStatusColor(item.status)}`}>
                                     {item.status.replace('_', ' ')}
                                   </span>
                                   {item.isOverdue && (
-                                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 font-medium">
+                                    <span
+                                      className="text-xs px-1.5 py-0.5 rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 font-medium">
                                       Overdue
                                     </span>
                                   )}
-                                  <span className={`text-xs font-medium ${getPriorityColor(item.priority)}`}>{item.priority}</span>
+                                  <span
+                                    className={`text-xs font-medium ${getPriorityColor(item.priority)}`}>{item.priority}</span>
                                 </div>
                                 {item.description && (
                                   <p className="text-caption mt-0.5">{item.description}</p>
@@ -878,7 +932,7 @@ export default function OneOnOnePage() {
                                       onClick={() =>
                                         updateActionStatusMutation.mutate({
                                           actionId: item.id,
-                                          data: { status: 'IN_PROGRESS' },
+                                          data: {status: 'IN_PROGRESS'},
                                         })
                                       }
                                       className="text-xs px-2 py-1 rounded border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors"
@@ -891,13 +945,13 @@ export default function OneOnOnePage() {
                                     onClick={() =>
                                       updateActionStatusMutation.mutate({
                                         actionId: item.id,
-                                        data: { status: 'COMPLETED' },
+                                        data: {status: 'COMPLETED'},
                                       })
                                     }
                                     className="text-xs px-2 py-1 rounded bg-success-600 text-white hover:bg-success-700 transition-colors"
                                     title="Mark Complete"
                                   >
-                                    <Check className="h-3 w-3" />
+                                    <Check className="h-3 w-3"/>
                                   </button>
                                 </div>
                               )}
@@ -942,7 +996,7 @@ export default function OneOnOnePage() {
                         disabled={updateNotesMutation.isPending}
                         className="flex items-center gap-1 px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
-                        <Send className="h-3.5 w-3.5" />
+                        <Send className="h-3.5 w-3.5"/>
                         {updateNotesMutation.isPending ? 'Saving...' : 'Save Notes'}
                       </button>
                       {meeting.meetingSummary && (
@@ -977,11 +1031,12 @@ export default function OneOnOnePage() {
                           {showFeedbackForm ? (
                             <form onSubmit={feedbackForm.handleSubmit(handleSubmitFeedback)} className="space-y-4">
                               <div>
-                                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Rating</label>
+                                <label
+                                  className="block text-sm font-medium text-[var(--text-primary)] mb-2">Rating</label>
                                 <Controller
                                   name="rating"
                                   control={feedbackForm.control}
-                                  render={({ field }) => (
+                                  render={({field}) => (
                                     <div className="flex items-center gap-1">
                                       {[1, 2, 3, 4, 5].map((s) => (
                                         <button
@@ -1002,7 +1057,8 @@ export default function OneOnOnePage() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Feedback</label>
+                                <label
+                                  className="block text-sm font-medium text-[var(--text-primary)] mb-1">Feedback</label>
                                 <textarea
                                   {...feedbackForm.register('feedback')}
                                   rows={3}
@@ -1029,7 +1085,7 @@ export default function OneOnOnePage() {
                             </form>
                           ) : (
                             <div className="text-center py-8">
-                              <Star className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-40" />
+                              <Star className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-40"/>
                               <p className="text-[var(--text-muted)] mb-4">No feedback submitted yet.</p>
                               <button
                                 onClick={() => setShowFeedbackForm(true)}
@@ -1042,7 +1098,7 @@ export default function OneOnOnePage() {
                         </div>
                       ) : (
                         <div className="text-center py-8 text-[var(--text-muted)]">
-                          <Star className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                          <Star className="h-8 w-8 mx-auto mb-2 opacity-40"/>
                           <p>Feedback can be submitted after the meeting is completed.</p>
                         </div>
                       )}
@@ -1066,7 +1122,10 @@ export default function OneOnOnePage() {
                     />
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => { setShowCancelModal(false); setCancelReason(''); }}
+                        onClick={() => {
+                          setShowCancelModal(false);
+                          setCancelReason('');
+                        }}
                         className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
                       >
                         Back
@@ -1110,7 +1169,11 @@ export default function OneOnOnePage() {
                     </div>
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => { setShowRescheduleModal(false); setRescheduleDate(''); setRescheduleTime(''); }}
+                        onClick={() => {
+                          setShowRescheduleModal(false);
+                          setRescheduleDate('');
+                          setRescheduleTime('');
+                        }}
                         className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
                       >
                         Back
@@ -1141,7 +1204,10 @@ export default function OneOnOnePage() {
                     />
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => { setShowCompleteModal(false); setCompleteSummary(''); }}
+                        onClick={() => {
+                          setShowCompleteModal(false);
+                          setCompleteSummary('');
+                        }}
                         className="px-4 py-2 text-sm border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg"
                       >
                         Back
@@ -1194,11 +1260,13 @@ export default function OneOnOnePage() {
             onClick={() => setView('list')}
             className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] mb-4 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to meetings
+            <ArrowLeft className="h-4 w-4"/> Back to meetings
           </button>
 
-          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card">
-            <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-6 skeuo-emboss">
+          <div
+            className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 shadow-[var(--shadow-card)] skeuo-card">
+            <h1
+              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-6 skeuo-emboss">
               Schedule 1-on-1 Meeting
             </h1>
 
@@ -1218,7 +1286,8 @@ export default function OneOnOnePage() {
 
               {/* Participant */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Participant (Employee ID) *</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Participant (Employee ID)
+                  *</label>
                 <input
                   {...scheduleForm.register('employeeId')}
                   placeholder="Enter employee ID"
@@ -1361,7 +1430,10 @@ export default function OneOnOnePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { scheduleForm.reset(); setView('list'); }}
+                  onClick={() => {
+                    scheduleForm.reset();
+                    setView('list');
+                  }}
                   className="px-6 py-2.5 text-sm font-medium border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                 >
                   Cancel
@@ -1383,7 +1455,8 @@ export default function OneOnOnePage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+            <h1
+              className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
               1-on-1 Meetings
             </h1>
             <p className="text-body-muted mt-1 skeuo-deboss">
@@ -1395,7 +1468,7 @@ export default function OneOnOnePage() {
               onClick={() => setView('schedule')}
               className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
             >
-              <Plus className="h-4 w-4" /> Schedule Meeting
+              <Plus className="h-4 w-4"/> Schedule Meeting
             </button>
           </PermissionGate>
         </div>
@@ -1404,10 +1477,10 @@ export default function OneOnOnePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {dashboardQuery.isLoading ? (
             <>
-              <SkeletonStatCard />
-              <SkeletonStatCard />
-              <SkeletonStatCard />
-              <SkeletonStatCard />
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
             </>
           ) : (
             <>
@@ -1448,7 +1521,7 @@ export default function OneOnOnePage() {
           <div className="mb-6 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
               </div>
               <div>
                 <p className="font-medium text-warning-800 dark:text-warning-300">
@@ -1463,15 +1536,19 @@ export default function OneOnOnePage() {
         )}
 
         {/* Tabs + Filters */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card mb-6">
+        <div
+          className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card mb-6">
           <div className="flex border-b border-[var(--border-main)]">
             {([
-              { key: 'upcoming', label: 'Upcoming' },
-              { key: 'all', label: 'All Meetings' },
+              {key: 'upcoming', label: 'Upcoming'},
+              {key: 'all', label: 'All Meetings'},
             ] as const).map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => { setActiveTab(tab.key); setPage(0); }}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  setPage(0);
+                }}
                 className={`flex-1 px-4 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
@@ -1487,7 +1564,7 @@ export default function OneOnOnePage() {
           {activeTab === 'all' && (
             <div className="p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+                <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as MeetingStatus | 'ALL')}
@@ -1510,7 +1587,7 @@ export default function OneOnOnePage() {
               <div className="p-8 text-center text-[var(--text-muted)]">Loading meetings...</div>
             ) : displayMeetings.length === 0 ? (
               <div className="p-12 text-center">
-                <Users className="h-10 w-10 mx-auto mb-4 text-[var(--text-muted)] opacity-40" />
+                <Users className="h-10 w-10 mx-auto mb-4 text-[var(--text-muted)] opacity-40"/>
                 <p className="text-[var(--text-muted)] mb-1">No meetings found</p>
                 <p className="text-caption">
                   {activeTab === 'upcoming'
@@ -1524,12 +1601,16 @@ export default function OneOnOnePage() {
                 return (
                   <button
                     key={m.id}
-                    onClick={() => { setSelectedMeetingId(m.id); setView('detail'); }}
+                    onClick={() => {
+                      setSelectedMeetingId(m.id);
+                      setView('detail');
+                    }}
                     className="w-full text-left p-4 hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-4"
                   >
-                    <div className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400">
+                    <div
+                      className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400">
                       <span className="text-xs font-medium uppercase">
-                        {new Date(m.meetingDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}
+                        {new Date(m.meetingDate + 'T00:00:00').toLocaleDateString('en-US', {month: 'short'})}
                       </span>
                       <span className="text-lg font-bold leading-tight">
                         {new Date(m.meetingDate + 'T00:00:00').getDate()}
@@ -1538,16 +1619,17 @@ export default function OneOnOnePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-sm font-medium text-[var(--text-primary)] truncate">{m.title}</p>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${badge.classes}`}>
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${badge.classes}`}>
                           {badge.label}
                         </span>
                         {m.isRecurring && (
-                          <Repeat className="h-3.5 w-3.5 text-[var(--text-muted)] flex-shrink-0" />
+                          <Repeat className="h-3.5 w-3.5 text-[var(--text-muted)] flex-shrink-0"/>
                         )}
                       </div>
                       <div className="flex gap-4 text-caption">
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> {formatTime(m.startTime)}
+                          <Clock className="h-3 w-3"/> {formatTime(m.startTime)}
                         </span>
                         {m.durationMinutes && <span>{m.durationMinutes} min</span>}
                         <span>{getMeetingTypeLabel(m.meetingType)}</span>
@@ -1555,7 +1637,7 @@ export default function OneOnOnePage() {
                         {m.managerName && <span>with {m.managerName}</span>}
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <ChevronRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   </button>
                 );
               })

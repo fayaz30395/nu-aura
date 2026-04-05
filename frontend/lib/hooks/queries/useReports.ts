@@ -1,31 +1,27 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { reportService, ReportRequest } from '@/lib/services/core/report.service';
-import { scheduledReportService } from '@/lib/services/core/scheduled-report.service';
-import { utilizationService } from '@/lib/services/hrms/utilization.service';
-import {
-  ScheduledReportRequest,
-} from '@/lib/types/core/analytics';
-import {
-  UtilizationFilterOptions,
-} from '@/lib/types/hrms/utilization';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {ReportRequest, reportService} from '@/lib/services/core/report.service';
+import {scheduledReportService} from '@/lib/services/core/scheduled-report.service';
+import {utilizationService} from '@/lib/services/hrms/utilization.service';
+import {ScheduledReportRequest,} from '@/lib/types/core/analytics';
+import {UtilizationFilterOptions,} from '@/lib/types/hrms/utilization';
 
 // Query key factory for reports
 export const reportKeys = {
   all: ['reports'] as const,
   scheduled: () => [...reportKeys.all, 'scheduled'] as const,
   scheduledList: (page: number, size: number) =>
-    [...reportKeys.scheduled(), { page, size }] as const,
+    [...reportKeys.scheduled(), {page, size}] as const,
   scheduledById: (id: string) => [...reportKeys.scheduled(), id] as const,
   scheduledActive: () => [...reportKeys.scheduled(), 'active'] as const,
   utilization: () => [...reportKeys.all, 'utilization'] as const,
   utilizationDashboard: (filters: UtilizationFilterOptions) =>
     [...reportKeys.utilization(), 'dashboard', filters] as const,
   utilizationEmployee: (employeeId: string, startDate: string, endDate: string) =>
-    [...reportKeys.utilization(), 'employee', { employeeId, startDate, endDate }] as const,
+    [...reportKeys.utilization(), 'employee', {employeeId, startDate, endDate}] as const,
   utilizationAllEmployees: (startDate: string, endDate: string, page: number, size: number) =>
-    [...reportKeys.utilization(), 'all-employees', { startDate, endDate, page, size }] as const,
+    [...reportKeys.utilization(), 'all-employees', {startDate, endDate, page, size}] as const,
 };
 
 // Scheduled Report Queries
@@ -59,7 +55,7 @@ export function useCreateScheduledReport() {
     mutationFn: (data: ScheduledReportRequest) =>
       scheduledReportService.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: reportKeys.scheduled() });
+      queryClient.invalidateQueries({queryKey: reportKeys.scheduled()});
     },
   });
 }
@@ -68,10 +64,10 @@ export function useUpdateScheduledReport() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ScheduledReportRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ScheduledReportRequest }) =>
       scheduledReportService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: reportKeys.scheduled() });
+      queryClient.invalidateQueries({queryKey: reportKeys.scheduled()});
     },
   });
 }
@@ -82,7 +78,7 @@ export function useDeleteScheduledReport() {
   return useMutation({
     mutationFn: (id: string) => scheduledReportService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: reportKeys.scheduled() });
+      queryClient.invalidateQueries({queryKey: reportKeys.scheduled()});
     },
   });
 }
@@ -93,7 +89,7 @@ export function useToggleScheduledReportStatus() {
   return useMutation({
     mutationFn: (id: string) => scheduledReportService.toggleStatus(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: reportKeys.scheduled() });
+      queryClient.invalidateQueries({queryKey: reportKeys.scheduled()});
     },
   });
 }
@@ -185,9 +181,9 @@ export function useDownloadPerformanceReport() {
 export function useExportUtilizationReport() {
   return useMutation({
     mutationFn: ({
-      format,
-      filters,
-    }: {
+                   format,
+                   filters,
+                 }: {
       format: 'csv' | 'excel' | 'pdf';
       filters: UtilizationFilterOptions;
     }) => utilizationService.exportReport(format, filters),

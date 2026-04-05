@@ -1,53 +1,77 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Title, Text, Container, Tabs, Card, Table, Group, Badge, Button,
-  Grid, ThemeIcon, Select, Loader, Alert, Modal, TextInput, NumberInput,
-  Stack, ActionIcon, Tooltip,
+  ActionIcon,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Container,
+  Grid,
+  Group,
+  Loader,
+  Modal,
+  NumberInput,
+  Select,
+  Stack,
+  Table,
+  Tabs,
+  Text,
+  TextInput,
+  ThemeIcon,
+  Title,
+  Tooltip,
 } from '@mantine/core';
 import {
-  IconBuildingBank, IconCalendar, IconDownload, IconInfoCircle,
-  IconPlus, IconEdit, IconTrash, IconFileAnalytics, IconMapPin,
+  IconBuildingBank,
+  IconCalendar,
+  IconDownload,
+  IconEdit,
+  IconFileAnalytics,
+  IconInfoCircle,
+  IconMapPin,
+  IconPlus,
+  IconTrash,
 } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
+  useCreateOrUpdateLWFConfig,
+  useDeactivateLWFConfig,
   useLWFConfigurations,
   useLWFDeductions,
   useLWFRemittanceReport,
-  useCreateOrUpdateLWFConfig,
-  useDeactivateLWFConfig,
 } from '@/lib/hooks/queries/useLWF';
 import {
+  FREQUENCY_LABELS,
   LWFConfiguration,
   LWFConfigurationRequest,
   LWFFrequency,
-  FREQUENCY_LABELS,
   STATUS_CONFIG,
 } from '@/lib/types/hrms/lwf';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const MONTHS = [
-  { value: '1', label: 'January' }, { value: '2', label: 'February' },
-  { value: '3', label: 'March' }, { value: '4', label: 'April' },
-  { value: '5', label: 'May' }, { value: '6', label: 'June' },
-  { value: '7', label: 'July' }, { value: '8', label: 'August' },
-  { value: '9', label: 'September' }, { value: '10', label: 'October' },
-  { value: '11', label: 'November' }, { value: '12', label: 'December' },
+  {value: '1', label: 'January'}, {value: '2', label: 'February'},
+  {value: '3', label: 'March'}, {value: '4', label: 'April'},
+  {value: '5', label: 'May'}, {value: '6', label: 'June'},
+  {value: '7', label: 'July'}, {value: '8', label: 'August'},
+  {value: '9', label: 'September'}, {value: '10', label: 'October'},
+  {value: '11', label: 'November'}, {value: '12', label: 'December'},
 ];
 
 const FREQUENCY_OPTIONS = [
-  { value: 'MONTHLY', label: 'Monthly' },
-  { value: 'HALF_YEARLY', label: 'Half-Yearly' },
-  { value: 'YEARLY', label: 'Yearly' },
+  {value: 'MONTHLY', label: 'Monthly'},
+  {value: 'HALF_YEARLY', label: 'Half-Yearly'},
+  {value: 'YEARLY', label: 'Yearly'},
 ];
 
 /** Default applicable months by frequency */
@@ -59,7 +83,7 @@ const DEFAULT_APPLICABLE_MONTHS: Record<LWFFrequency, string> = {
 
 function fmt(n?: number | null): string {
   if (n == null || n === 0) return '--';
-  return `\u20B9${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `\u20B9${n.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 }
 
 function parseApplicableMonths(json: string): number[] {
@@ -94,8 +118,8 @@ type LWFConfigFormData = z.infer<typeof lwfConfigSchema>;
 
 export default function LWFPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // BUG-L6-005: Page-level permission gate for LWF
   useEffect(() => {
@@ -125,14 +149,14 @@ export default function LWFPage() {
   const [rptFetched, setRptFetched] = useState(false);
 
   // Queries
-  const { data: configurations = [], isLoading: configLoading } = useLWFConfigurations(
+  const {data: configurations = [], isLoading: configLoading} = useLWFConfigurations(
     activeTab === 'configurations'
   );
-  const { data: deductions = [], isLoading: dedLoading, refetch: refetchDed } = useLWFDeductions(
+  const {data: deductions = [], isLoading: dedLoading, refetch: refetchDed} = useLWFDeductions(
     Number(dedMonth), Number(dedYear),
     activeTab === 'deductions' && dedFetched
   );
-  const { data: report, isLoading: rptLoading, refetch: refetchRpt } = useLWFRemittanceReport(
+  const {data: report, isLoading: rptLoading, refetch: refetchRpt} = useLWFRemittanceReport(
     Number(rptMonth), Number(rptYear),
     activeTab === 'report' && rptFetched
   );
@@ -148,7 +172,7 @@ export default function LWFPage() {
     setValue,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<LWFConfigFormData>({
     resolver: zodResolver(lwfConfigSchema),
     defaultValues: {
@@ -228,7 +252,7 @@ export default function LWFPage() {
       d.grossSalary ?? '',
     ].join(','));
     const csv = [headers.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -253,19 +277,19 @@ export default function LWFPage() {
             </Text>
           </div>
           <ThemeIcon size="xl" radius="md" className="bg-accent-700">
-            <IconBuildingBank size={28} />
+            <IconBuildingBank size={28}/>
           </ThemeIcon>
         </Group>
 
         <Tabs value={activeTab} onChange={setActiveTab} variant="outline" radius="md" mt="lg">
           <Tabs.List>
-            <Tabs.Tab value="configurations" leftSection={<IconMapPin size={16} />}>
+            <Tabs.Tab value="configurations" leftSection={<IconMapPin size={16}/>}>
               State Configurations
             </Tabs.Tab>
-            <Tabs.Tab value="deductions" leftSection={<IconCalendar size={16} />}>
+            <Tabs.Tab value="deductions" leftSection={<IconCalendar size={16}/>}>
               Monthly Deductions
             </Tabs.Tab>
-            <Tabs.Tab value="report" leftSection={<IconFileAnalytics size={16} />}>
+            <Tabs.Tab value="report" leftSection={<IconFileAnalytics size={16}/>}>
               Remittance Report
             </Tabs.Tab>
           </Tabs.List>
@@ -276,7 +300,7 @@ export default function LWFPage() {
               <Text fw={500}>LWF rates by Indian state</Text>
               <PermissionGate permission="STATUTORY:MANAGE">
                 <Button
-                  leftSection={<IconPlus size={16} />}
+                  leftSection={<IconPlus size={16}/>}
                   className="bg-accent-700 hover:bg-accent-800"
                   onClick={openCreateModal}
                 >
@@ -286,9 +310,9 @@ export default function LWFPage() {
             </Group>
 
             {configLoading ? (
-              <Group justify="center" py="xl"><Loader color="blue" /></Group>
+              <Group justify="center" py="xl"><Loader color="blue"/></Group>
             ) : configurations.length === 0 ? (
-              <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
+              <Alert icon={<IconInfoCircle size={16}/>} color="blue" variant="light">
                 No LWF configurations found. Add state configurations to get started.
               </Alert>
             ) : (
@@ -298,8 +322,8 @@ export default function LWFPage() {
                     <Table.Tr>
                       <Table.Th>State</Table.Th>
                       <Table.Th>Code</Table.Th>
-                      <Table.Th style={{ textAlign: 'right' }}>Employee</Table.Th>
-                      <Table.Th style={{ textAlign: 'right' }}>Employer</Table.Th>
+                      <Table.Th style={{textAlign: 'right'}}>Employee</Table.Th>
+                      <Table.Th style={{textAlign: 'right'}}>Employer</Table.Th>
                       <Table.Th>Frequency</Table.Th>
                       <Table.Th>Applicable Months</Table.Th>
                       <Table.Th>Threshold</Table.Th>
@@ -314,8 +338,8 @@ export default function LWFPage() {
                         <Table.Td>
                           <Badge variant="light" color="gray" size="sm">{config.stateCode}</Badge>
                         </Table.Td>
-                        <Table.Td style={{ textAlign: 'right' }}>{fmt(config.employeeContribution)}</Table.Td>
-                        <Table.Td style={{ textAlign: 'right' }}>{fmt(config.employerContribution)}</Table.Td>
+                        <Table.Td style={{textAlign: 'right'}}>{fmt(config.employeeContribution)}</Table.Td>
+                        <Table.Td style={{textAlign: 'right'}}>{fmt(config.employerContribution)}</Table.Td>
                         <Table.Td>
                           <Badge variant="light" color="sky" size="sm">
                             {FREQUENCY_LABELS[config.frequency]}
@@ -335,13 +359,14 @@ export default function LWFPage() {
                             <Group gap="xs">
                               <Tooltip label="Edit">
                                 <ActionIcon variant="subtle" color="sky" onClick={() => openEditModal(config)}>
-                                  <IconEdit size={16} />
+                                  <IconEdit size={16}/>
                                 </ActionIcon>
                               </Tooltip>
                               {config.isActive && (
                                 <Tooltip label="Deactivate">
-                                  <ActionIcon variant="subtle" color="red" onClick={() => handleDeactivate(config.stateCode)}>
-                                    <IconTrash size={16} />
+                                  <ActionIcon variant="subtle" color="red"
+                                              onClick={() => handleDeactivate(config.stateCode)}>
+                                    <IconTrash size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
                               )}
@@ -364,20 +389,29 @@ export default function LWFPage() {
                   label="Month"
                   data={MONTHS}
                   value={dedMonth}
-                  onChange={(v) => { setDedMonth(v ?? '1'); setDedFetched(false); }}
+                  onChange={(v) => {
+                    setDedMonth(v ?? '1');
+                    setDedFetched(false);
+                  }}
                   w={160}
                 />
                 <TextInput
                   label="Year"
                   type="number"
                   value={dedYear}
-                  onChange={(e) => { setDedYear(e.target.value); setDedFetched(false); }}
+                  onChange={(e) => {
+                    setDedYear(e.target.value);
+                    setDedFetched(false);
+                  }}
                   w={120}
                 />
                 <Button
                   mt={24}
                   className="bg-accent-700 hover:bg-accent-800"
-                  onClick={() => { setDedFetched(true); refetchDed(); }}
+                  onClick={() => {
+                    setDedFetched(true);
+                    refetchDed();
+                  }}
                 >
                   Fetch Deductions
                 </Button>
@@ -385,7 +419,7 @@ export default function LWFPage() {
                   <Button
                     mt={24}
                     variant="outline"
-                    leftSection={<IconDownload size={16} />}
+                    leftSection={<IconDownload size={16}/>}
                     onClick={exportDeductionsCSV}
                   >
                     Export CSV
@@ -395,13 +429,13 @@ export default function LWFPage() {
             </Card>
 
             {dedLoading ? (
-              <Group justify="center" py="xl"><Loader color="blue" /></Group>
+              <Group justify="center" py="xl"><Loader color="blue"/></Group>
             ) : !dedFetched ? (
-              <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
+              <Alert icon={<IconInfoCircle size={16}/>} color="blue" variant="light">
                 Select a month and year, then click &quot;Fetch Deductions&quot;.
               </Alert>
             ) : deductions.length === 0 ? (
-              <Alert icon={<IconInfoCircle size={16} />} color="yellow" variant="light">
+              <Alert icon={<IconInfoCircle size={16}/>} color="yellow" variant="light">
                 No LWF deductions found for {MONTHS.find(m => m.value === dedMonth)?.label} {dedYear}.
               </Alert>
             ) : (
@@ -411,11 +445,11 @@ export default function LWFPage() {
                     <Table.Tr>
                       <Table.Th>Employee ID</Table.Th>
                       <Table.Th>State</Table.Th>
-                      <Table.Th style={{ textAlign: 'right' }}>Employee</Table.Th>
-                      <Table.Th style={{ textAlign: 'right' }}>Employer</Table.Th>
+                      <Table.Th style={{textAlign: 'right'}}>Employee</Table.Th>
+                      <Table.Th style={{textAlign: 'right'}}>Employer</Table.Th>
                       <Table.Th>Frequency</Table.Th>
                       <Table.Th>Status</Table.Th>
-                      <Table.Th style={{ textAlign: 'right' }}>Gross Salary</Table.Th>
+                      <Table.Th style={{textAlign: 'right'}}>Gross Salary</Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
@@ -425,15 +459,15 @@ export default function LWFPage() {
                           <Text size="xs" ff="monospace">{ded.employeeId.substring(0, 8)}...</Text>
                         </Table.Td>
                         <Table.Td><Badge variant="light" color="gray" size="sm">{ded.stateCode}</Badge></Table.Td>
-                        <Table.Td style={{ textAlign: 'right' }}>{fmt(ded.employeeAmount)}</Table.Td>
-                        <Table.Td style={{ textAlign: 'right' }}>{fmt(ded.employerAmount)}</Table.Td>
+                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.employeeAmount)}</Table.Td>
+                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.employerAmount)}</Table.Td>
                         <Table.Td>{FREQUENCY_LABELS[ded.frequency]}</Table.Td>
                         <Table.Td>
                           <Badge color={STATUS_CONFIG[ded.status].color} variant="light" size="sm">
                             {STATUS_CONFIG[ded.status].label}
                           </Badge>
                         </Table.Td>
-                        <Table.Td style={{ textAlign: 'right' }}>{fmt(ded.grossSalary)}</Table.Td>
+                        <Table.Td style={{textAlign: 'right'}}>{fmt(ded.grossSalary)}</Table.Td>
                       </Table.Tr>
                     ))}
                   </Table.Tbody>
@@ -450,20 +484,29 @@ export default function LWFPage() {
                   label="Month"
                   data={MONTHS}
                   value={rptMonth}
-                  onChange={(v) => { setRptMonth(v ?? '1'); setRptFetched(false); }}
+                  onChange={(v) => {
+                    setRptMonth(v ?? '1');
+                    setRptFetched(false);
+                  }}
                   w={160}
                 />
                 <TextInput
                   label="Year"
                   type="number"
                   value={rptYear}
-                  onChange={(e) => { setRptYear(e.target.value); setRptFetched(false); }}
+                  onChange={(e) => {
+                    setRptYear(e.target.value);
+                    setRptFetched(false);
+                  }}
                   w={120}
                 />
                 <Button
                   mt={24}
                   className="bg-accent-700 hover:bg-accent-800"
-                  onClick={() => { setRptFetched(true); refetchRpt(); }}
+                  onClick={() => {
+                    setRptFetched(true);
+                    refetchRpt();
+                  }}
                 >
                   Generate Report
                 </Button>
@@ -471,34 +514,36 @@ export default function LWFPage() {
             </Card>
 
             {rptLoading ? (
-              <Group justify="center" py="xl"><Loader color="blue" /></Group>
+              <Group justify="center" py="xl"><Loader color="blue"/></Group>
             ) : !rptFetched ? (
-              <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
+              <Alert icon={<IconInfoCircle size={16}/>} color="blue" variant="light">
                 Select a period and click &quot;Generate Report&quot; to view the remittance summary.
               </Alert>
             ) : report ? (
               <>
                 {/* Summary cards */}
                 <Grid mb="md">
-                  <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+                  <Grid.Col span={{base: 12, sm: 6, md: 3}}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Total Employees</Text>
                       <Text fw={700} size="xl" mt={4}>{report.totalEmployees}</Text>
                     </Card>
                   </Grid.Col>
-                  <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+                  <Grid.Col span={{base: 12, sm: 6, md: 3}}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Employee Total</Text>
-                      <Text fw={700} size="xl" mt={4} className="text-accent-700">{fmt(report.totalEmployeeContribution)}</Text>
+                      <Text fw={700} size="xl" mt={4}
+                            className="text-accent-700">{fmt(report.totalEmployeeContribution)}</Text>
                     </Card>
                   </Grid.Col>
-                  <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+                  <Grid.Col span={{base: 12, sm: 6, md: 3}}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Employer Total</Text>
-                      <Text fw={700} size="xl" mt={4} className="text-accent-700">{fmt(report.totalEmployerContribution)}</Text>
+                      <Text fw={700} size="xl" mt={4}
+                            className="text-accent-700">{fmt(report.totalEmployerContribution)}</Text>
                     </Card>
                   </Grid.Col>
-                  <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+                  <Grid.Col span={{base: 12, sm: 6, md: 3}}>
                     <Card shadow="sm" radius="md" withBorder p="md">
                       <Text c="dimmed" size="xs" tt="uppercase" fw={600}>Grand Total</Text>
                       <Text fw={700} size="xl" mt={4} c="green">{fmt(report.grandTotal)}</Text>
@@ -515,10 +560,10 @@ export default function LWFPage() {
                         <Table.Tr>
                           <Table.Th>State</Table.Th>
                           <Table.Th>Code</Table.Th>
-                          <Table.Th style={{ textAlign: 'right' }}>Employees</Table.Th>
-                          <Table.Th style={{ textAlign: 'right' }}>Employee Total</Table.Th>
-                          <Table.Th style={{ textAlign: 'right' }}>Employer Total</Table.Th>
-                          <Table.Th style={{ textAlign: 'right' }}>Total</Table.Th>
+                          <Table.Th style={{textAlign: 'right'}}>Employees</Table.Th>
+                          <Table.Th style={{textAlign: 'right'}}>Employee Total</Table.Th>
+                          <Table.Th style={{textAlign: 'right'}}>Employer Total</Table.Th>
+                          <Table.Th style={{textAlign: 'right'}}>Total</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
@@ -526,17 +571,17 @@ export default function LWFPage() {
                           <Table.Tr key={s.stateCode}>
                             <Table.Td fw={500}>{s.stateName}</Table.Td>
                             <Table.Td><Badge variant="light" color="gray" size="sm">{s.stateCode}</Badge></Table.Td>
-                            <Table.Td style={{ textAlign: 'right' }}>{s.employeeCount}</Table.Td>
-                            <Table.Td style={{ textAlign: 'right' }}>{fmt(s.employeeTotal)}</Table.Td>
-                            <Table.Td style={{ textAlign: 'right' }}>{fmt(s.employerTotal)}</Table.Td>
-                            <Table.Td style={{ textAlign: 'right' }} fw={600}>{fmt(s.total)}</Table.Td>
+                            <Table.Td style={{textAlign: 'right'}}>{s.employeeCount}</Table.Td>
+                            <Table.Td style={{textAlign: 'right'}}>{fmt(s.employeeTotal)}</Table.Td>
+                            <Table.Td style={{textAlign: 'right'}}>{fmt(s.employerTotal)}</Table.Td>
+                            <Table.Td style={{textAlign: 'right'}} fw={600}>{fmt(s.total)}</Table.Td>
                           </Table.Tr>
                         ))}
                       </Table.Tbody>
                     </Table>
                   </Card>
                 ) : (
-                  <Alert icon={<IconInfoCircle size={16} />} color="yellow" variant="light">
+                  <Alert icon={<IconInfoCircle size={16}/>} color="yellow" variant="light">
                     No LWF deductions recorded for this period.
                   </Alert>
                 )}

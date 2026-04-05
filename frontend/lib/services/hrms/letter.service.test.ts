@@ -1,6 +1,8 @@
 /// <reference types="vitest" />
 /// <vitest config="{ environment: 'node' }" />
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {letterService} from './letter.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -11,9 +13,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { letterService } from './letter.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockedApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -78,36 +77,36 @@ describe('letterService', () => {
     it('should fetch all templates with default pagination', async () => {
       const mockData: LetterTemplatesResponse = {
         content: [
-          { id: '1', name: 'Offer Letter', category: 'OFFER' },
-          { id: '2', name: 'Appointment Letter', category: 'APPOINTMENT' },
+          {id: '1', name: 'Offer Letter', category: 'OFFER'},
+          {id: '2', name: 'Appointment Letter', category: 'APPOINTMENT'},
         ],
         totalElements: 2,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getAllTemplates();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockData);
     });
 
     it('should fetch templates with custom pagination', async () => {
       const mockData: LetterTemplatesResponse = {
-        content: [{ id: '3', name: 'Salary Revision', category: 'SALARY' }],
+        content: [{id: '3', name: 'Salary Revision', category: 'SALARY'}],
         totalElements: 1,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getAllTemplates(2, 50);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates', {
-        params: { page: 2, size: 50 },
+        params: {page: 2, size: 50},
       });
       expect(result).toEqual(mockData);
     });
@@ -123,11 +122,11 @@ describe('letterService', () => {
   describe('getActiveTemplates', () => {
     it('should fetch only active templates', async () => {
       const mockData: LetterTemplate[] = [
-        { id: '1', name: 'Active Offer', category: 'OFFER' },
-        { id: '2', name: 'Active Appointment', category: 'APPOINTMENT' },
+        {id: '1', name: 'Active Offer', category: 'OFFER'},
+        {id: '2', name: 'Active Appointment', category: 'APPOINTMENT'},
       ];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getActiveTemplates();
 
@@ -139,31 +138,31 @@ describe('letterService', () => {
   describe('getTemplatesByCategory', () => {
     it('should fetch templates by category', async () => {
       const mockData: LetterTemplate[] = [
-        { id: '1', name: 'Offer Letter 1', category: 'OFFER' },
-        { id: '2', name: 'Offer Letter 2', category: 'OFFER' },
+        {id: '1', name: 'Offer Letter 1', category: 'OFFER'},
+        {id: '2', name: 'Offer Letter 2', category: 'OFFER'},
       ];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getTemplatesByCategory('OFFER');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/by-category', {
-        params: { category: 'OFFER' },
+        params: {category: 'OFFER'},
       });
       expect(result).toEqual(mockData);
     });
 
     it('should fetch templates with different categories', async () => {
       const mockData: LetterTemplate[] = [
-        { id: '3', name: 'Salary Revision', category: 'SALARY' },
+        {id: '3', name: 'Salary Revision', category: 'SALARY'},
       ];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       await letterService.getTemplatesByCategory('SALARY');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/templates/by-category', {
-        params: { category: 'SALARY' },
+        params: {category: 'SALARY'},
       });
     });
   });
@@ -176,7 +175,7 @@ describe('letterService', () => {
         category: 'OFFER',
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getTemplate('template-123');
 
@@ -199,7 +198,7 @@ describe('letterService', () => {
         category: 'OFFER',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.createTemplate(createData);
 
@@ -223,7 +222,7 @@ describe('letterService', () => {
         category: 'APPOINTMENT',
       };
 
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.updateTemplate(templateId, updateData);
 
@@ -249,7 +248,7 @@ describe('letterService', () => {
     it('should fetch all letter categories', async () => {
       const mockData: LetterCategory[] = ['OFFER', 'APPOINTMENT', 'CONFIRMATION', 'EXPERIENCE', 'SALARY'];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getCategories();
 
@@ -264,36 +263,36 @@ describe('letterService', () => {
     it('should fetch all generated letters with default pagination', async () => {
       const mockData: GeneratedLettersResponse = {
         content: [
-          { id: 'letter-1', templateId: 'tpl-1', employeeId: 'emp-1', status: 'ISSUED' },
-          { id: 'letter-2', templateId: 'tpl-2', employeeId: 'emp-2', status: 'DRAFT' },
+          {id: 'letter-1', templateId: 'tpl-1', employeeId: 'emp-1', status: 'ISSUED'},
+          {id: 'letter-2', templateId: 'tpl-2', employeeId: 'emp-2', status: 'DRAFT'},
         ],
         totalElements: 2,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getAllLetters();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockData);
     });
 
     it('should fetch letters with custom pagination', async () => {
       const mockData: GeneratedLettersResponse = {
-        content: [{ id: 'letter-3', templateId: 'tpl-3', employeeId: 'emp-3', status: 'APPROVED' }],
+        content: [{id: 'letter-3', templateId: 'tpl-3', employeeId: 'emp-3', status: 'APPROVED'}],
         totalElements: 1,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getAllLetters(1, 10);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters', {
-        params: { page: 1, size: 10 },
+        params: {page: 1, size: 10},
       });
       expect(result).toEqual(mockData);
     });
@@ -308,7 +307,7 @@ describe('letterService', () => {
         status: 'ISSUED',
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getLetter('letter-123');
 
@@ -322,36 +321,36 @@ describe('letterService', () => {
       const employeeId = 'emp-123';
       const mockData: GeneratedLettersResponse = {
         content: [
-          { id: 'letter-1', templateId: 'tpl-1', employeeId, status: 'ISSUED' },
-          { id: 'letter-2', templateId: 'tpl-2', employeeId, status: 'DRAFT' },
+          {id: 'letter-1', templateId: 'tpl-1', employeeId, status: 'ISSUED'},
+          {id: 'letter-2', templateId: 'tpl-2', employeeId, status: 'DRAFT'},
         ],
         totalElements: 2,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getLettersByEmployee(employeeId);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(`/letters/employee/${employeeId}`, {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockData);
     });
 
     it('should fetch letters with custom pagination', async () => {
       const mockData: GeneratedLettersResponse = {
-        content: [{ id: 'letter-3', templateId: 'tpl-3', employeeId: 'emp-123', status: 'APPROVED' }],
+        content: [{id: 'letter-3', templateId: 'tpl-3', employeeId: 'emp-123', status: 'APPROVED'}],
         totalElements: 1,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       await letterService.getLettersByEmployee('emp-123', 2, 50);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/employee/emp-123', {
-        params: { page: 2, size: 50 },
+        params: {page: 2, size: 50},
       });
     });
   });
@@ -360,11 +359,11 @@ describe('letterService', () => {
     it('should fetch issued letters for an employee', async () => {
       const employeeId = 'emp-123';
       const mockData: GeneratedLetter[] = [
-        { id: 'letter-1', templateId: 'tpl-1', employeeId, status: 'ISSUED' },
-        { id: 'letter-2', templateId: 'tpl-2', employeeId, status: 'ISSUED' },
+        {id: 'letter-1', templateId: 'tpl-1', employeeId, status: 'ISSUED'},
+        {id: 'letter-2', templateId: 'tpl-2', employeeId, status: 'ISSUED'},
       ];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getIssuedLettersForEmployee(employeeId);
 
@@ -379,18 +378,18 @@ describe('letterService', () => {
     it('should fetch pending approvals with default pagination', async () => {
       const mockData: GeneratedLettersResponse = {
         content: [
-          { id: 'letter-1', templateId: 'tpl-1', employeeId: 'emp-1', status: 'PENDING_APPROVAL' },
+          {id: 'letter-1', templateId: 'tpl-1', employeeId: 'emp-1', status: 'PENDING_APPROVAL'},
         ],
         totalElements: 1,
         totalPages: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await letterService.getPendingApprovals();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/pending-approvals', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockData);
     });
@@ -402,12 +401,12 @@ describe('letterService', () => {
         totalPages: 0,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       await letterService.getPendingApprovals(1, 10);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/letters/pending-approvals', {
-        params: { page: 1, size: 10 },
+        params: {page: 1, size: 10},
       });
     });
   });
@@ -426,12 +425,12 @@ describe('letterService', () => {
         status: 'DRAFT',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.generateLetter(generateData, 'user-123');
 
       expect(mockedApiClient.post).toHaveBeenCalledWith('/letters/generate', generateData, {
-        params: { generatedBy: 'user-123' },
+        params: {generatedBy: 'user-123'},
       });
       expect(result).toEqual(mockResponse);
     });
@@ -451,7 +450,7 @@ describe('letterService', () => {
         status: 'DRAFT',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.generateOfferLetter(generateData, 'recruiter-1');
 
@@ -459,7 +458,7 @@ describe('letterService', () => {
         '/letters/generate-offer',
         generateData,
         {
-          params: { generatedBy: 'recruiter-1' },
+          params: {generatedBy: 'recruiter-1'},
         }
       );
       expect(result).toEqual(mockResponse);
@@ -478,7 +477,7 @@ describe('letterService', () => {
         status: 'ISSUED',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.issueOfferLetterWithESign(letterId, issuerId);
 
@@ -486,7 +485,7 @@ describe('letterService', () => {
         `/letters/${letterId}/issue-with-esign`,
         null,
         {
-          params: { issuerId },
+          params: {issuerId},
         }
       );
       expect(result).toEqual(mockResponse);
@@ -502,7 +501,7 @@ describe('letterService', () => {
         pdfUrl: 'https://storage.example.com/pdf/letter-123.pdf',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.generatePdf(letterId);
 
@@ -522,7 +521,7 @@ describe('letterService', () => {
         status: 'PENDING_APPROVAL',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.submitForApproval(letterId);
 
@@ -543,7 +542,7 @@ describe('letterService', () => {
         status: 'APPROVED',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.approveLetter(letterId, approverId);
 
@@ -551,7 +550,7 @@ describe('letterService', () => {
         `/letters/${letterId}/approve`,
         null,
         {
-          params: { approverId, comments: undefined },
+          params: {approverId, comments: undefined},
         }
       );
       expect(result).toEqual(mockResponse);
@@ -569,7 +568,7 @@ describe('letterService', () => {
         status: 'APPROVED',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.approveLetter(letterId, approverId, comments);
 
@@ -577,7 +576,7 @@ describe('letterService', () => {
         `/letters/${letterId}/approve`,
         null,
         {
-          params: { approverId, comments },
+          params: {approverId, comments},
         }
       );
       expect(result).toEqual(mockResponse);
@@ -596,7 +595,7 @@ describe('letterService', () => {
         status: 'ISSUED',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.issueLetter(letterId, issuerId);
 
@@ -604,7 +603,7 @@ describe('letterService', () => {
         `/letters/${letterId}/issue`,
         null,
         {
-          params: { issuerId },
+          params: {issuerId},
         }
       );
       expect(result).toEqual(mockResponse);
@@ -622,7 +621,7 @@ describe('letterService', () => {
         status: 'REVOKED',
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await letterService.revokeLetter(letterId);
 
@@ -644,7 +643,7 @@ describe('letterService', () => {
         `/letters/${letterId}/downloaded`,
         null,
         {
-          params: { employeeId },
+          params: {employeeId},
         }
       );
     });

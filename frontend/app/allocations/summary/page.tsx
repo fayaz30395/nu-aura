@@ -1,26 +1,15 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Download, XCircle } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  Input,
-  ResponsiveTable,
-  TablePagination,
-} from '@/components/ui';
-import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { AllocationSummaryItem } from '@/lib/types/hrms/hrms-allocation';
-import { useAuth } from '@/lib/hooks/useAuth';
-import {
-  useAllocationSummary,
-  useExportAllocationSummary,
-} from '@/lib/hooks/queries/useProjects';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Download, XCircle} from 'lucide-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Badge, Button, Card, CardContent, Input, ResponsiveTable, TablePagination,} from '@/components/ui';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import {AllocationSummaryItem} from '@/lib/types/hrms/hrms-allocation';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {useAllocationSummary, useExportAllocationSummary,} from '@/lib/hooks/queries/useProjects';
 
 type AllocationScope = 'SELF' | 'TEAM' | 'DEPARTMENT' | 'ORG';
 
@@ -56,18 +45,18 @@ const formatPercent = (value?: number | null) => {
 const parseApiError = (error: unknown): ApiErrorPayload => {
   const response = (error as { response?: { status?: number; data?: ApiErrorPayload } })?.response;
   if (response?.status === 403) {
-    return { message: 'You do not have access to this scope.' };
+    return {message: 'You do not have access to this scope.'};
   }
   if (response?.status === 409) {
-    return { message: 'Conflict detected. Please refresh and try again.' };
+    return {message: 'Conflict detected. Please refresh and try again.'};
   }
   if (response?.data) {
-    return { message: response.data.message, details: response.data.details };
+    return {message: response.data.message, details: response.data.details};
   }
   if (error instanceof Error) {
-    return { message: error.message };
+    return {message: error.message};
   }
-  return { message: 'Something went wrong. Please try again.' };
+  return {message: 'Something went wrong. Please try again.'};
 };
 
 const buildEmployeeLabel = (employee: AllocationSummaryItem) => {
@@ -80,7 +69,7 @@ const buildEmployeeLabel = (employee: AllocationSummaryItem) => {
 
 export default function AllocationSummaryPage() {
   const router = useRouter();
-  const { hasAnyPermission, isReady: permissionsReady } = usePermissions();
+  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.PROJECT_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {
@@ -89,7 +78,7 @@ export default function AllocationSummaryPage() {
     }
   }, [permissionsReady, hasAccess, router]);
 
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [error, setError] = useState<string | null>(null);
@@ -142,7 +131,7 @@ export default function AllocationSummaryPage() {
   const activeEmployeeId = isEmployeeSearchEnabled ? selectedEmployee?.id : undefined;
 
   // Queries
-  const { data, isLoading, error: queryError } = useAllocationSummary(
+  const {data, isLoading, error: queryError} = useAllocationSummary(
     selectedScope,
     startDate,
     endDate,
@@ -234,7 +223,7 @@ export default function AllocationSummaryPage() {
   if (!permissionsReady || !hasAccess) return null;
 
   return (
-    <AppLayout breadcrumbs={[{ label: 'Allocations', href: '/allocations/summary' }, { label: 'Summary' }]}>
+    <AppLayout breadcrumbs={[{label: 'Allocations', href: '/allocations/summary'}, {label: 'Summary'}]}>
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -247,7 +236,7 @@ export default function AllocationSummaryPage() {
           </div>
           <Button
             variant="outline"
-            leftIcon={<Download className="h-4 w-4" />}
+            leftIcon={<Download className="h-4 w-4"/>}
             isLoading={exportMutation.isPending}
             onClick={handleExport}
           >
@@ -318,7 +307,7 @@ export default function AllocationSummaryPage() {
         {(error || queryError) && (
           <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/20">
             <CardContent className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-danger-500" />
+              <XCircle className="h-4 w-4 text-danger-500"/>
               <div>
                 <p className="text-sm text-danger-700 dark:text-danger-300">
                   {error || (queryError instanceof Error ? queryError.message : 'Failed to load data')}

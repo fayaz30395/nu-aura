@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 export interface Feedback360Cycle {
   id: string;
@@ -93,8 +93,14 @@ class Feedback360Service {
     return response.data;
   }
 
-  async getCycles(page: number = 0, size: number = 20): Promise<{ content: Feedback360Cycle[], totalElements: number }> {
-    const response = await apiClient.get<{ content: Feedback360Cycle[], totalElements: number }>('/feedback360/cycles', { params: { page, size } });
+  async getCycles(page: number = 0, size: number = 20): Promise<{
+    content: Feedback360Cycle[],
+    totalElements: number
+  }> {
+    const response = await apiClient.get<{
+      content: Feedback360Cycle[],
+      totalElements: number
+    }>('/feedback360/cycles', {params: {page, size}});
     return response.data;
   }
 

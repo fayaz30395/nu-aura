@@ -1,63 +1,87 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import {useCallback, useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Title, Text, Container, Card, Group, Badge, Button, Select, Table,
-  Grid, ThemeIcon, Loader, Alert, Modal, Textarea, Stack, Tooltip,
-  ActionIcon, Pagination, Tabs, Paper, Divider,
+  ActionIcon,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Container,
+  Divider,
+  Grid,
+  Group,
+  Loader,
+  Modal,
+  Pagination,
+  Paper,
+  Select,
+  Stack,
+  Table,
+  Tabs,
+  Text,
+  Textarea,
+  ThemeIcon,
+  Title,
+  Tooltip,
 } from '@mantine/core';
 import {
-  IconFileText, IconDownload, IconCheck, IconAlertTriangle,
-  IconUpload, IconRefresh, IconEye, IconBuildingBank,
-  IconFileSpreadsheet, IconFileCertificate, IconFileInvoice,
-  IconShieldCheck, IconCalendar, IconExternalLink,
+  IconAlertTriangle,
+  IconBuildingBank,
+  IconCalendar,
+  IconCheck,
+  IconDownload,
+  IconExternalLink,
+  IconEye,
+  IconFileCertificate,
+  IconFileInvoice,
+  IconFileSpreadsheet,
+  IconFileText,
+  IconRefresh,
+  IconShieldCheck,
+  IconUpload,
 } from '@tabler/icons-react';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AppLayout } from '@/components/layout';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {Controller, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {AppLayout} from '@/components/layout';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
-  useFilingTypes,
-  useFilingHistory,
-  useGenerateFiling,
-  useValidateFiling,
-  useSubmitFiling,
   useDownloadFiling,
+  useFilingHistory,
+  useFilingTypes,
+  useGenerateFiling,
+  useSubmitFiling,
+  useValidateFiling,
 } from '@/lib/hooks/queries/useStatutoryFiling';
-import type {
-  FilingType,
-  FilingStatus,
-  FilingRunResponse,
-  FilingTypeInfo,
-} from '@/lib/types/hrms/statutory-filing';
+import type {FilingRunResponse, FilingStatus, FilingType, FilingTypeInfo,} from '@/lib/types/hrms/statutory-filing';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const MONTHS = [
-  { value: '1', label: 'January' }, { value: '2', label: 'February' },
-  { value: '3', label: 'March' }, { value: '4', label: 'April' },
-  { value: '5', label: 'May' }, { value: '6', label: 'June' },
-  { value: '7', label: 'July' }, { value: '8', label: 'August' },
-  { value: '9', label: 'September' }, { value: '10', label: 'October' },
-  { value: '11', label: 'November' }, { value: '12', label: 'December' },
+  {value: '1', label: 'January'}, {value: '2', label: 'February'},
+  {value: '3', label: 'March'}, {value: '4', label: 'April'},
+  {value: '5', label: 'May'}, {value: '6', label: 'June'},
+  {value: '7', label: 'July'}, {value: '8', label: 'August'},
+  {value: '9', label: 'September'}, {value: '10', label: 'October'},
+  {value: '11', label: 'November'}, {value: '12', label: 'December'},
 ];
 
-const YEARS = Array.from({ length: 7 }, (_, i) => {
+const YEARS = Array.from({length: 7}, (_, i) => {
   const y = new Date().getFullYear() - 3 + i;
-  return { value: String(y), label: String(y) };
+  return {value: String(y), label: String(y)};
 });
 
 const FILING_TYPE_OPTIONS = [
-  { value: '', label: 'All Types' },
-  { value: 'PF_ECR', label: 'PF ECR' },
-  { value: 'ESI_RETURN', label: 'ESI Return' },
-  { value: 'PT_CHALLAN', label: 'PT Challan' },
-  { value: 'FORM_16', label: 'Form 16' },
-  { value: 'FORM_24Q', label: 'Form 24Q' },
-  { value: 'LWF_RETURN', label: 'LWF Return' },
+  {value: '', label: 'All Types'},
+  {value: 'PF_ECR', label: 'PF ECR'},
+  {value: 'ESI_RETURN', label: 'ESI Return'},
+  {value: 'PT_CHALLAN', label: 'PT Challan'},
+  {value: 'FORM_16', label: 'Form 16'},
+  {value: 'FORM_24Q', label: 'Form 24Q'},
+  {value: 'LWF_RETURN', label: 'LWF Return'},
 ];
 
 const STATUS_COLORS: Record<FilingStatus, string> = {
@@ -69,12 +93,12 @@ const STATUS_COLORS: Record<FilingStatus, string> = {
 };
 
 const FILING_ICONS: Record<FilingType, React.ReactNode> = {
-  PF_ECR: <IconBuildingBank size={20} />,
-  ESI_RETURN: <IconShieldCheck size={20} />,
-  PT_CHALLAN: <IconFileInvoice size={20} />,
-  FORM_16: <IconFileCertificate size={20} />,
-  FORM_24Q: <IconFileSpreadsheet size={20} />,
-  LWF_RETURN: <IconFileText size={20} />,
+  PF_ECR: <IconBuildingBank size={20}/>,
+  ESI_RETURN: <IconShieldCheck size={20}/>,
+  PT_CHALLAN: <IconFileInvoice size={20}/>,
+  FORM_16: <IconFileCertificate size={20}/>,
+  FORM_24Q: <IconFileSpreadsheet size={20}/>,
+  LWF_RETURN: <IconFileText size={20}/>,
 };
 
 // ─── Zod Schema ──────────────────────────────────────────────────────────────
@@ -92,8 +116,8 @@ type GenerateFormValues = z.infer<typeof generateSchema>;
 
 export default function StatutoryFilingsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // BUG-L6-002: Page-level permission gate for statutory filings
   useEffect(() => {
@@ -117,8 +141,8 @@ export default function StatutoryFilingsPage() {
   const [validationDetail, setValidationDetail] = useState<string | null>(null);
 
   // Queries
-  const { data: filingTypes = [], isLoading: typesLoading } = useFilingTypes();
-  const { data: historyData, isLoading: historyLoading, refetch: refetchHistory } = useFilingHistory(
+  const {data: filingTypes = [], isLoading: typesLoading} = useFilingTypes();
+  const {data: historyData, isLoading: historyLoading, refetch: refetchHistory} = useFilingHistory(
     page, 20, filterType || undefined
   );
 
@@ -163,7 +187,7 @@ export default function StatutoryFilingsPage() {
 
   const handleSubmit = useCallback(() => {
     if (!selectedRunId) return;
-    submitMutation.mutate({ id: selectedRunId, data: { remarks: submitRemarks } }, {
+    submitMutation.mutate({id: selectedRunId, data: {remarks: submitRemarks}}, {
       onSuccess: () => {
         setSubmitModalOpen(false);
         setSelectedRunId(null);
@@ -173,7 +197,7 @@ export default function StatutoryFilingsPage() {
   }, [submitMutation, selectedRunId, submitRemarks]);
 
   const handleDownload = useCallback((id: string, fileName: string) => {
-    downloadMutation.mutate({ id, fileName: fileName || 'filing.dat' });
+    downloadMutation.mutate({id, fileName: fileName || 'filing.dat'});
   }, [downloadMutation]);
 
   const openSubmitModal = useCallback((runId: string) => {
@@ -201,7 +225,7 @@ export default function StatutoryFilingsPage() {
             </Text>
           </div>
           <Button
-            leftSection={<IconFileText size={16} />}
+            leftSection={<IconFileText size={16}/>}
             className="bg-accent-700 hover:bg-accent-800"
             onClick={() => setGenerateModalOpen(true)}
           >
@@ -211,10 +235,10 @@ export default function StatutoryFilingsPage() {
 
         <Tabs value={activeTab} onChange={setActiveTab}>
           <Tabs.List>
-            <Tabs.Tab value="dashboard" leftSection={<IconCalendar size={16} />}>
+            <Tabs.Tab value="dashboard" leftSection={<IconCalendar size={16}/>}>
               Filing Types
             </Tabs.Tab>
-            <Tabs.Tab value="history" leftSection={<IconFileText size={16} />}>
+            <Tabs.Tab value="history" leftSection={<IconFileText size={16}/>}>
               Filing History
             </Tabs.Tab>
           </Tabs.List>
@@ -222,11 +246,11 @@ export default function StatutoryFilingsPage() {
           {/* ─── Filing Types Dashboard ─────────────────────────────────── */}
           <Tabs.Panel value="dashboard" pt="md">
             {typesLoading ? (
-              <Group justify="center" py="xl"><Loader /></Group>
+              <Group justify="center" py="xl"><Loader/></Group>
             ) : (
               <Grid>
                 {filingTypes.map((ft: FilingTypeInfo) => (
-                  <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={ft.filingType}>
+                  <Grid.Col span={{base: 12, sm: 6, md: 4}} key={ft.filingType}>
                     <Card shadow="sm" padding="lg" radius="md" withBorder className="h-full">
                       <Group mb="sm">
                         <ThemeIcon
@@ -244,10 +268,10 @@ export default function StatutoryFilingsPage() {
                         </div>
                       </Group>
                       <Text size="xs" c="dimmed" mb="sm">{ft.description}</Text>
-                      <Divider my="xs" />
+                      <Divider my="xs"/>
                       <Group justify="space-between">
                         <Text size="xs" c="dimmed">
-                          <IconCalendar size={12} style={{ display: 'inline', marginRight: 4 }} />
+                          <IconCalendar size={12} style={{display: 'inline', marginRight: 4}}/>
                           {ft.frequency}
                         </Text>
                         {ft.portalUrl && (
@@ -260,7 +284,7 @@ export default function StatutoryFilingsPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              <IconExternalLink size={14} />
+                              <IconExternalLink size={14}/>
                             </ActionIcon>
                           </Tooltip>
                         )}
@@ -279,13 +303,16 @@ export default function StatutoryFilingsPage() {
                 placeholder="Filter by type"
                 data={FILING_TYPE_OPTIONS}
                 value={filterType}
-                onChange={(val) => { setFilterType(val || ''); setPage(0); }}
+                onChange={(val) => {
+                  setFilterType(val || '');
+                  setPage(0);
+                }}
                 clearable
                 w={200}
               />
               <Button
                 variant="subtle"
-                leftSection={<IconRefresh size={16} />}
+                leftSection={<IconRefresh size={16}/>}
                 onClick={() => refetchHistory()}
               >
                 Refresh
@@ -293,7 +320,7 @@ export default function StatutoryFilingsPage() {
             </Group>
 
             {historyLoading ? (
-              <Group justify="center" py="xl"><Loader /></Group>
+              <Group justify="center" py="xl"><Loader/></Group>
             ) : historyData && historyData.content.length > 0 ? (
               <>
                 <Paper shadow="xs" radius="md" withBorder>
@@ -336,9 +363,9 @@ export default function StatutoryFilingsPage() {
                             <Text size="xs" c="dimmed">
                               {run.generatedAt
                                 ? new Date(run.generatedAt).toLocaleDateString('en-IN', {
-                                    day: '2-digit', month: 'short', year: 'numeric',
-                                    hour: '2-digit', minute: '2-digit',
-                                  })
+                                  day: '2-digit', month: 'short', year: 'numeric',
+                                  hour: '2-digit', minute: '2-digit',
+                                })
                                 : '-'}
                             </Text>
                           </Table.Td>
@@ -352,7 +379,7 @@ export default function StatutoryFilingsPage() {
                                     onClick={() => handleDownload(run.id, run.fileName ?? 'filing')}
                                     loading={downloadMutation.isPending}
                                   >
-                                    <IconDownload size={16} />
+                                    <IconDownload size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
                               )}
@@ -364,7 +391,7 @@ export default function StatutoryFilingsPage() {
                                     onClick={() => handleValidate(run.id)}
                                     loading={validateMutation.isPending}
                                   >
-                                    <IconShieldCheck size={16} />
+                                    <IconShieldCheck size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
                               )}
@@ -375,7 +402,7 @@ export default function StatutoryFilingsPage() {
                                     color="green"
                                     onClick={() => openSubmitModal(run.id)}
                                   >
-                                    <IconUpload size={16} />
+                                    <IconUpload size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
                               )}
@@ -386,7 +413,7 @@ export default function StatutoryFilingsPage() {
                                     color="orange"
                                     onClick={() => setValidationDetail(run.validationErrors)}
                                   >
-                                    <IconEye size={16} />
+                                    <IconEye size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
                               )}
@@ -409,7 +436,7 @@ export default function StatutoryFilingsPage() {
                 )}
               </>
             ) : (
-              <Alert icon={<IconFileText size={16} />} color="gray">
+              <Alert icon={<IconFileText size={16}/>} color="gray">
                 No filing runs found. Generate your first statutory filing using the button above.
               </Alert>
             )}
@@ -428,7 +455,7 @@ export default function StatutoryFilingsPage() {
               <Controller
                 name="filingType"
                 control={form.control}
-                render={({ field, fieldState }) => (
+                render={({field, fieldState}) => (
                   <Select
                     label="Filing Type"
                     placeholder="Select filing type"
@@ -445,7 +472,7 @@ export default function StatutoryFilingsPage() {
                 <Controller
                   name="month"
                   control={form.control}
-                  render={({ field, fieldState }) => (
+                  render={({field, fieldState}) => (
                     <Select
                       label="Month"
                       data={MONTHS}
@@ -459,7 +486,7 @@ export default function StatutoryFilingsPage() {
                 <Controller
                   name="year"
                   control={form.control}
-                  render={({ field, fieldState }) => (
+                  render={({field, fieldState}) => (
                     <Select
                       label="Year"
                       data={YEARS}
@@ -475,7 +502,7 @@ export default function StatutoryFilingsPage() {
               <Controller
                 name="remarks"
                 control={form.control}
-                render={({ field }) => (
+                render={({field}) => (
                   <Textarea
                     label="Remarks (optional)"
                     placeholder="Add any notes..."
@@ -487,7 +514,7 @@ export default function StatutoryFilingsPage() {
               />
 
               {generateMutation.isError && (
-                <Alert color="red" icon={<IconAlertTriangle size={16} />}>
+                <Alert color="red" icon={<IconAlertTriangle size={16}/>}>
                   {generateMutation.error?.message || 'Failed to generate filing'}
                 </Alert>
               )}
@@ -500,7 +527,7 @@ export default function StatutoryFilingsPage() {
                   type="submit"
                   className="bg-accent-700 hover:bg-accent-800"
                   loading={generateMutation.isPending}
-                  leftSection={<IconFileText size={16} />}
+                  leftSection={<IconFileText size={16}/>}
                 >
                   Generate
                 </Button>
@@ -512,7 +539,10 @@ export default function StatutoryFilingsPage() {
         {/* ─── Submit Filing Modal ────────────────────────────────────────── */}
         <Modal
           opened={submitModalOpen}
-          onClose={() => { setSubmitModalOpen(false); setSelectedRunId(null); }}
+          onClose={() => {
+            setSubmitModalOpen(false);
+            setSelectedRunId(null);
+          }}
           title="Mark Filing as Submitted"
           size="sm"
         >
@@ -528,7 +558,7 @@ export default function StatutoryFilingsPage() {
               rows={3}
             />
             {submitMutation.isError && (
-              <Alert color="red" icon={<IconAlertTriangle size={16} />}>
+              <Alert color="red" icon={<IconAlertTriangle size={16}/>}>
                 {submitMutation.error?.message || 'Failed to submit filing'}
               </Alert>
             )}
@@ -540,7 +570,7 @@ export default function StatutoryFilingsPage() {
                 color="green"
                 onClick={handleSubmit}
                 loading={submitMutation.isPending}
-                leftSection={<IconCheck size={16} />}
+                leftSection={<IconCheck size={16}/>}
               >
                 Mark as Submitted
               </Button>
@@ -555,7 +585,7 @@ export default function StatutoryFilingsPage() {
           title="Validation Results"
           size="lg"
         >
-          {validationDetail && <ValidationDetailPanel errorsJson={validationDetail} />}
+          {validationDetail && <ValidationDetailPanel errorsJson={validationDetail}/>}
         </Modal>
       </Container>
     </AppLayout>
@@ -572,7 +602,7 @@ interface ValidationError {
   employeeId?: string;
 }
 
-function ValidationDetailPanel({ errorsJson }: { errorsJson: string }) {
+function ValidationDetailPanel({errorsJson}: { errorsJson: string }) {
   let errors: ValidationError[] = [];
   try {
     errors = JSON.parse(errorsJson);
@@ -582,7 +612,7 @@ function ValidationDetailPanel({ errorsJson }: { errorsJson: string }) {
 
   if (errors.length === 0) {
     return (
-      <Alert icon={<IconCheck size={16} />} color="green">
+      <Alert icon={<IconCheck size={16}/>} color="green">
         No validation issues found. This filing is ready for submission.
       </Alert>
     );
@@ -599,7 +629,7 @@ function ValidationDetailPanel({ errorsJson }: { errorsJson: string }) {
             Errors ({errorItems.length})
           </Text>
           {errorItems.map((err, idx) => (
-            <Alert key={`err-${idx}`} color="red" icon={<IconAlertTriangle size={14} />} mb="xs">
+            <Alert key={`err-${idx}`} color="red" icon={<IconAlertTriangle size={14}/>} mb="xs">
               <Text size="xs">
                 {err.row != null && <Badge size="xs" mr="xs">Row {err.row}</Badge>}
                 {err.field && <Badge size="xs" variant="outline" mr="xs">{err.field}</Badge>}
@@ -615,7 +645,7 @@ function ValidationDetailPanel({ errorsJson }: { errorsJson: string }) {
             Warnings ({warningItems.length})
           </Text>
           {warningItems.map((warn, idx) => (
-            <Alert key={`warn-${idx}`} color="orange" icon={<IconAlertTriangle size={14} />} mb="xs">
+            <Alert key={`warn-${idx}`} color="orange" icon={<IconAlertTriangle size={14}/>} mb="xs">
               <Text size="xs">
                 {warn.row != null && <Badge size="xs" mr="xs">Row {warn.row}</Badge>}
                 {warn.field && <Badge size="xs" variant="outline" mr="xs">{warn.field}</Badge>}

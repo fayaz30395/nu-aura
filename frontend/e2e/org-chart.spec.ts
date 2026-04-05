@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Org Chart E2E Tests
@@ -6,23 +6,23 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Org Chart Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display org chart page with heading', async ({ page }) => {
+  test('should display org chart page with heading', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
   });
 
-  test('should render organizational hierarchy', async ({ page }) => {
+  test('should render organizational hierarchy', async ({page}) => {
     await page.waitForTimeout(2000);
 
     // Org chart renders as tree nodes, SVG, canvas, or card-based layout
@@ -47,7 +47,7 @@ test.describe('Org Chart Page', () => {
     expect(hasTreeNodes || hasSvg || hasCanvas || hasCards || hasEmployeeNames).toBe(true);
   });
 
-  test('should display root node (CEO/Super Admin)', async ({ page }) => {
+  test('should display root node (CEO/Super Admin)', async ({page}) => {
     await page.waitForTimeout(2000);
 
     // The root node should show the CEO (Fayaz M)
@@ -61,7 +61,7 @@ test.describe('Org Chart Page', () => {
     expect(hasRootNode || true).toBe(true);
   });
 
-  test('should display department labels or groupings', async ({ page }) => {
+  test('should display department labels or groupings', async ({page}) => {
     await page.waitForTimeout(2000);
 
     const hasDeptLabels = await page
@@ -75,13 +75,13 @@ test.describe('Org Chart Page', () => {
 });
 
 test.describe('Org Chart - Employee Node Interaction', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
   });
 
-  test('should click employee node and show profile card or link', async ({ page }) => {
+  test('should click employee node and show profile card or link', async ({page}) => {
     // Find a clickable employee node
     const employeeNode = page
       .locator(
@@ -111,7 +111,7 @@ test.describe('Org Chart - Employee Node Interaction', () => {
     }
   });
 
-  test('should display employee details on node hover or click', async ({ page }) => {
+  test('should display employee details on node hover or click', async ({page}) => {
     // Try hovering over a node
     const employeeNode = page
       .locator('[class*="node"], [class*="Node"], [class*="card"]')
@@ -139,7 +139,7 @@ test.describe('Org Chart - Employee Node Interaction', () => {
     }
   });
 
-  test('should expand/collapse tree branches if supported', async ({ page }) => {
+  test('should expand/collapse tree branches if supported', async ({page}) => {
     // Look for expand/collapse controls
     const expandBtn = page
       .locator(
@@ -159,7 +159,7 @@ test.describe('Org Chart - Employee Node Interaction', () => {
     }
   });
 
-  test('should navigate to employee profile from org chart node', async ({ page }) => {
+  test('should navigate to employee profile from org chart node', async ({page}) => {
     // Look for a link or "View Profile" action
     const viewProfileLink = page
       .locator('a:has-text("View"), a:has-text("Profile"), button:has-text("View Profile")')
@@ -176,13 +176,13 @@ test.describe('Org Chart - Employee Node Interaction', () => {
 });
 
 test.describe('Org Chart - Search', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
   });
 
-  test('should display search input', async ({ page }) => {
+  test('should display search input', async ({page}) => {
     const searchInput = page
       .locator('input[type="search"], input[placeholder*="search" i], input[placeholder*="find" i]')
       .first();
@@ -191,7 +191,7 @@ test.describe('Org Chart - Search', () => {
     expect(hasSearch).toBe(true);
   });
 
-  test('should search for employee by name', async ({ page }) => {
+  test('should search for employee by name', async ({page}) => {
     const searchInput = page
       .locator('input[type="search"], input[placeholder*="search" i], input[placeholder*="find" i]')
       .first();
@@ -213,7 +213,7 @@ test.describe('Org Chart - Search', () => {
     }
   });
 
-  test('should handle search with no results gracefully', async ({ page }) => {
+  test('should handle search with no results gracefully', async ({page}) => {
     const searchInput = page
       .locator('input[type="search"], input[placeholder*="search" i], input[placeholder*="find" i]')
       .first();
@@ -230,7 +230,7 @@ test.describe('Org Chart - Search', () => {
     }
   });
 
-  test('should clear search and restore full chart', async ({ page }) => {
+  test('should clear search and restore full chart', async ({page}) => {
     const searchInput = page
       .locator('input[type="search"], input[placeholder*="search" i], input[placeholder*="find" i]')
       .first();
@@ -252,13 +252,13 @@ test.describe('Org Chart - Search', () => {
 });
 
 test.describe('Org Chart - View Controls', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
   });
 
-  test('should show zoom controls if available', async ({ page }) => {
+  test('should show zoom controls if available', async ({page}) => {
     const zoomIn = page
       .locator('button:has-text("+"), button[aria-label*="zoom in" i], [data-testid*="zoom-in"]')
       .first();
@@ -273,7 +273,7 @@ test.describe('Org Chart - View Controls', () => {
     expect(hasZoomIn || hasZoomOut || true).toBe(true);
   });
 
-  test('should show department filter if available', async ({ page }) => {
+  test('should show department filter if available', async ({page}) => {
     const deptFilter = page
       .locator('select, [role="combobox"]')
       .first();
@@ -283,7 +283,7 @@ test.describe('Org Chart - View Controls', () => {
       // Select a department
       const options = await deptFilter.locator('option').count();
       if (options > 1) {
-        await deptFilter.selectOption({ index: 1 });
+        await deptFilter.selectOption({index: 1});
         await page.waitForTimeout(1000);
 
         await expect(
@@ -295,13 +295,13 @@ test.describe('Org Chart - View Controls', () => {
 });
 
 test.describe('Org Chart - Visual Elements', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/org-chart');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
   });
 
-  test('should render connecting lines between nodes', async ({ page }) => {
+  test('should render connecting lines between nodes', async ({page}) => {
     // Tree charts use SVG paths, CSS borders, or canvas lines
     const hasSvgPaths = await page.locator('svg path, svg line').first().isVisible().catch(() => false);
     const hasCssConnectors = await page
@@ -314,7 +314,7 @@ test.describe('Org Chart - Visual Elements', () => {
     expect(hasSvgPaths || hasCssConnectors || true).toBe(true);
   });
 
-  test('should display avatars or initials on nodes', async ({ page }) => {
+  test('should display avatars or initials on nodes', async ({page}) => {
     const hasAvatars = await page
       .locator('img[class*="avatar"], [class*="avatar"], [class*="Avatar"]')
       .first()
@@ -329,12 +329,12 @@ test.describe('Org Chart - Visual Elements', () => {
     expect(hasAvatars || hasInitials || true).toBe(true);
   });
 
-  test('should be responsive', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
+  test('should be responsive', async ({page}) => {
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     await expect(page.getByRole('heading').first()).toBeVisible();
 
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });

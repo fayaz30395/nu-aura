@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { TrendData } from '@/lib/types/core/analytics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {TrendData} from '@/lib/types/core/analytics';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 
 interface HeadcountTrendChartProps {
   data: TrendData[];
   className?: string;
 }
 
-export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({ data, className = '' }) => {
+export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({data, className = ''}) => {
   const hasData = data && data.length > 0;
 
   return (
@@ -22,20 +22,20 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({ data, 
       <CardContent>
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <AreaChart data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
               <defs>
                 <linearGradient id="colorHeadcount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--chart-primary)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="var(--chart-primary)" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="var(--chart-primary)" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="var(--chart-primary)" stopOpacity={0.1}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
               <XAxis
                 dataKey="date"
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
               />
-              <YAxis className="text-caption" tick={{ fill: 'currentColor' }} />
+              <YAxis className="text-caption" tick={{fill: 'currentColor'}}/>
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'var(--chart-tooltip-bg)',
@@ -43,9 +43,9 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({ data, 
                   borderRadius: '8px',
                   padding: '8px 12px',
                 }}
-                labelStyle={{ color: 'var(--chart-tooltip-text)', fontWeight: 600 }}
+                labelStyle={{color: 'var(--chart-tooltip-text)', fontWeight: 600}}
               />
-              <Legend />
+              <Legend/>
               <Area
                 type="monotone"
                 dataKey="value"

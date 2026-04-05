@@ -1,27 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/Button';
-import { AppLayout } from '@/components/layout';
-import { useCreateBlogPost, useBlogCategories } from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {Button} from '@/components/ui/Button';
+import {AppLayout} from '@/components/layout';
+import {useBlogCategories, useCreateBlogPost} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {LoadingOverlay, MultiSelect, Select, Skeleton, Textarea, TextInput} from '@mantine/core';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {ArrowLeft} from 'lucide-react';
+import {isAxiosError} from '@/lib/utils/type-guards';
+import AccessControlSection from '@/components/fluence/AccessControlSection';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
-  { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
+  {ssr: false, loading: () => <Skeleton height={400} radius="md"/>}
 );
-import { ArrowLeft } from 'lucide-react';
-import { isAxiosError } from '@/lib/utils/type-guards';
-import AccessControlSection from '@/components/fluence/AccessControlSection';
 
 const createBlogPostSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
@@ -30,11 +30,11 @@ const createBlogPostSchema = z.object({
   tags: z.array(z.string()).default([]),
   coverImageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
-    errorMap: () => ({ message: 'Invalid visibility option' }),
+    errorMap: () => ({message: 'Invalid visibility option'}),
   }),
   content: z.record(z.unknown()).default({
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{type: 'paragraph'}],
   }),
 });
 
@@ -43,15 +43,15 @@ type CreateBlogPostInput = z.infer<typeof createBlogPostSchema>;
 export default function CreateBlogPost() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mutate: createBlogPost } = useCreateBlogPost();
-  const { data: categoriesData, isLoading: categoriesLoading } = useBlogCategories();
+  const {mutate: createBlogPost} = useCreateBlogPost();
+  const {data: categoriesData, isLoading: categoriesLoading} = useBlogCategories();
 
   const {
     control,
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateBlogPostInput>({
     resolver: zodResolver(createBlogPostSchema),
     defaultValues: {
@@ -63,7 +63,7 @@ export default function CreateBlogPost() {
       visibility: 'ORGANIZATION',
       content: {
         type: 'doc',
-        content: [{ type: 'paragraph' }],
+        content: [{type: 'paragraph'}],
       },
     },
   });
@@ -137,7 +137,7 @@ export default function CreateBlogPost() {
                 className="p-2 hover:bg-[var(--bg-surface)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Go back"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5"/>
               </button>
               <h1 className="text-2xl font-bold skeuo-emboss">
                 Create Blog Post
@@ -186,7 +186,7 @@ export default function CreateBlogPost() {
             <Controller
               control={control}
               name="categoryId"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select a category (optional)"
@@ -209,7 +209,7 @@ export default function CreateBlogPost() {
             <Controller
               control={control}
               name="tags"
-              render={({ field }) => (
+              render={({field}) => (
                 <MultiSelect
                   {...field}
                   placeholder="Add tags (optional)"
@@ -245,17 +245,17 @@ export default function CreateBlogPost() {
             <Controller
               control={control}
               name="visibility"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
-                    { value: 'PUBLIC', label: 'Public' },
-                    { value: 'ORGANIZATION', label: 'Organization' },
-                    { value: 'DEPARTMENT', label: 'My Department Only' },
-                    { value: 'RESTRICTED', label: 'Specific People' },
-                    { value: 'PRIVATE', label: 'Private' },
+                    {value: 'PUBLIC', label: 'Public'},
+                    {value: 'ORGANIZATION', label: 'Organization'},
+                    {value: 'DEPARTMENT', label: 'My Department Only'},
+                    {value: 'RESTRICTED', label: 'Specific People'},
+                    {value: 'PRIVATE', label: 'Private'},
                   ]}
                 />
               )}
@@ -280,7 +280,7 @@ export default function CreateBlogPost() {
             <Controller
               control={control}
               name="content"
-              render={({ field }) => (
+              render={({field}) => (
                 <FluenceEditor
                   content={field.value}
                   onChange={field.onChange}
@@ -291,7 +291,8 @@ export default function CreateBlogPost() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-4 justify-end pt-6 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+          <div
+            className="flex gap-4 justify-end pt-6 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
             <Button
               onClick={() => router.back()}
               variant="secondary"
@@ -311,7 +312,7 @@ export default function CreateBlogPost() {
           </div>
         </form>
 
-        <LoadingOverlay visible={isSubmitting} />
+        <LoadingOverlay visible={isSubmitting}/>
       </div>
     </AppLayout>
   );

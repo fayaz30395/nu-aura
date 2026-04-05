@@ -1,16 +1,16 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { TrendData } from '@/lib/types/core/analytics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {TrendData} from '@/lib/types/core/analytics';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 
 interface AttendanceTrendChartProps {
   data: TrendData[];
   className?: string;
 }
 
-export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data, className = '' }) => {
+export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({data, className = ''}) => {
   const hasData = data && data.length > 0;
 
   return (
@@ -22,14 +22,14 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data
       <CardContent>
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
+            <LineChart data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
               <XAxis
                 dataKey="date"
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
               />
-              <YAxis className="text-caption" tick={{ fill: 'currentColor' }} />
+              <YAxis className="text-caption" tick={{fill: 'currentColor'}}/>
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'var(--chart-tooltip-bg)',
@@ -37,17 +37,17 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({ data
                   borderRadius: '8px',
                   padding: '8px 12px',
                 }}
-                labelStyle={{ color: 'var(--chart-tooltip-text)', fontWeight: 600 }}
+                labelStyle={{color: 'var(--chart-tooltip-text)', fontWeight: 600}}
               />
-              <Legend />
+              <Legend/>
               <Line
                 type="monotone"
                 dataKey="value"
                 name="Present"
                 stroke="var(--chart-success)"
                 strokeWidth={2}
-                dot={{ fill: 'var(--chart-success)', r: 4 }}
-                activeDot={{ r: 6 }}
+                dot={{fill: 'var(--chart-success)', r: 4}}
+                activeDot={{r: 6}}
               />
             </LineChart>
           </ResponsiveContainer>

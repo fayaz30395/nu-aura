@@ -10,38 +10,49 @@
 
 ## 1. Problem Statement
 
-The KEKA gap analysis identified third-party integrations as a key weakness (Score: 5/10). NU-AURA has strong internal integration infrastructure (Kafka, webhooks, Slack, Twilio, payment adapters) but lacks:
+The KEKA gap analysis identified third-party integrations as a key weakness (Score: 5/10). NU-AURA
+has strong internal integration infrastructure (Kafka, webhooks, Slack, Twilio, payment adapters)
+but lacks:
 
-1. **A generic connector abstraction** — Each integration is hand-coded with no shared lifecycle, config, or health monitoring pattern
-2. **DocuSign e-signatures** — No e-signature provider for offer letters, contracts, policy acknowledgements, onboarding docs
-3. **A unified admin UI** — Integration management is scattered across individual config pages with no central hub
+1. **A generic connector abstraction** — Each integration is hand-coded with no shared lifecycle,
+   config, or health monitoring pattern
+2. **DocuSign e-signatures** — No e-signature provider for offer letters, contracts, policy
+   acknowledgements, onboarding docs
+3. **A unified admin UI** — Integration management is scattered across individual config pages with
+   no central hub
 
 ### What Already Exists (Reuse, Don't Rebuild)
 
-- **Webhook system:** 31 event types, HMAC-SHA256 signatures, retry with exponential backoff, circuit breaker, delivery history — `WebhookDeliveryService`, `WebhookController`
-- **Slack integration:** Fully working webhook + bot API, Block Kit rich messages, 7+ HRMS templates — `SlackNotificationService`
+- **Webhook system:** 31 event types, HMAC-SHA256 signatures, retry with exponential backoff,
+  circuit breaker, delivery history — `WebhookDeliveryService`, `WebhookController`
+- **Slack integration:** Fully working webhook + bot API, Block Kit rich messages, 7+ HRMS
+  templates — `SlackNotificationService`
 - **Twilio SMS:** Production-ready with mock mode — `TwilioSmsServiceImpl`
 - **Payment gateway adapter pattern:** `PaymentGatewayAdapter` interface with Stripe/Razorpay stubs
-- **Multi-channel notification framework:** 8 channels (email, SMS, push, in-app, Slack, Teams, WhatsApp, webhook), per-tenant config, templates — `NotificationChannelConfig`, `NotificationTemplate`
-- **API key management:** Scoped keys, rotation, usage tracking — `ApiKeyService`, `ApiKeyController`
+- **Multi-channel notification framework:** 8 channels (email, SMS, push, in-app, Slack, Teams,
+  WhatsApp, webhook), per-tenant config, templates — `NotificationChannelConfig`,
+  `NotificationTemplate`
+- **API key management:** Scoped keys, rotation, usage tracking — `ApiKeyService`,
+  `ApiKeyController`
 - **Kafka event publishing:** 5 topics, DLT handler, type-safe publisher — `EventPublisher`
-- **Frontend integration catalog:** `/app/integrations/` showcasing 14+ integrations; `/admin/integrations/` for SMS/payment config
+- **Frontend integration catalog:** `/app/integrations/` showcasing 14+ integrations;
+  `/admin/integrations/` for SMS/payment config
 - **Encrypted config storage:** `NotificationChannelConfig.configJson` with field-level encryption
 
 ---
 
 ## 2. Architecture Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Framework depth | Thin interface (6 methods) + registry + config table | Avoids over-engineering; DocuSign validates the pattern immediately |
-| Config storage | New `integration_connector_configs` table with encrypted JSON | Separates connector config from notification-specific `notification_channel_configs` |
-| Event routing | Kafka consumer → `IntegrationEventRouter` → matching connectors | Leverages existing Kafka infrastructure; connectors subscribe declaratively |
-| DocuSign auth | OAuth 2.0 JWT Grant (server-to-server) | No per-user interaction needed; works with backend-only flows |
-| DocuSign status sync | Inbound webhook callbacks (DocuSign Connect) | Real-time status updates without polling |
-| Teams connector | DROPPED — user confirmed Slack-only | Reduces scope, deepens DocuSign quality |
-| Admin UI | New Integration Hub at `/admin/integrations/` | Central management, generic card-based layout for any connector |
-| Existing integration migration | Optional — Slack/Twilio CAN be wrapped in connector interface later | Low priority; they already work. Framework proves itself with DocuSign first |
+| Decision                       | Choice                                                              | Rationale                                                                            |
+|--------------------------------|---------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Framework depth                | Thin interface (6 methods) + registry + config table                | Avoids over-engineering; DocuSign validates the pattern immediately                  |
+| Config storage                 | New `integration_connector_configs` table with encrypted JSON       | Separates connector config from notification-specific `notification_channel_configs` |
+| Event routing                  | Kafka consumer → `IntegrationEventRouter` → matching connectors     | Leverages existing Kafka infrastructure; connectors subscribe declaratively          |
+| DocuSign auth                  | OAuth 2.0 JWT Grant (server-to-server)                              | No per-user interaction needed; works with backend-only flows                        |
+| DocuSign status sync           | Inbound webhook callbacks (DocuSign Connect)                        | Real-time status updates without polling                                             |
+| Teams connector                | DROPPED — user confirmed Slack-only                                 | Reduces scope, deepens DocuSign quality                                              |
+| Admin UI                       | New Integration Hub at `/admin/integrations/`                       | Central management, generic card-based layout for any connector                      |
+| Existing integration migration | Optional — Slack/Twilio CAN be wrapped in connector interface later | Low priority; they already work. Framework proves itself with DocuSign first         |
 
 ---
 
@@ -151,7 +162,9 @@ public class ConnectorRegistry {
 
 ### 3.4 Integration Event Router
 
-**Design decision (CRIT-001):** The router is NOT a separate Kafka consumer. Adding a second consumer group on existing topics would cause duplicate processing. Instead, the router is injected as a service dependency into existing consumers (same pattern as `WebhookDeliveryService`).
+**Design decision (CRIT-001):** The router is NOT a separate Kafka consumer. Adding a second
+consumer group on existing topics would cause duplicate processing. Instead, the router is injected
+as a service dependency into existing consumers (same pattern as `WebhookDeliveryService`).
 
 ```java
 @Service
@@ -201,11 +214,13 @@ public class IntegrationEventRouter {
 ```
 
 **Existing consumer integration points** (add `integrationEventRouter.routeToConnectors()` call):
+
 - `EmployeeLifecycleConsumer` — after HIRED, PROMOTED, TRANSFERRED, OFFBOARDED handling
 - `ApprovalConsumer` — after APPROVAL_APPROVED, APPROVAL_REJECTED handling
 - `NotificationConsumer` — after notification dispatch
 
-**New Kafka topic:** `nu-aura.integrations.dlt` — Dead Letter Topic for failed connector events. Follows existing DLT pattern with `FailedKafkaEvent` table storage.
+**New Kafka topic:** `nu-aura.integrations.dlt` — Dead Letter Topic for failed connector events.
+Follows existing DLT pattern with `FailedKafkaEvent` table storage.
 
 ---
 
@@ -324,11 +339,13 @@ CREATE POLICY rls_docusign_template_mappings ON docusign_template_mappings
 ### 5.1 Authentication
 
 OAuth 2.0 JWT Grant flow (server-to-server, no browser redirect needed):
+
 1. On configure(): Validate RSA private key can sign a JWT
 2. On each API call: Generate JWT → exchange for access token (cached, 1-hour expiry)
 3. Token refresh handled transparently by `DocuSignAuthService`
 
 Config fields (stored encrypted in `config_json`):
+
 ```json
 {
   "integrationKey": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -414,6 +431,7 @@ public class DocuSignConnector implements IntegrationConnector {
 ### 5.3 DocuSign API Client
 
 Wrapper around DocuSign REST API v2.1:
+
 ```
 DocuSignApiClient:
     createEnvelope(templateId, recipientEmail, recipientName, documentUrl, subject) → EnvelopeResponse
@@ -425,6 +443,7 @@ DocuSignApiClient:
 ```
 
 HTTP client: Use the existing Axios-equivalent (RestTemplate/WebClient) with:
+
 - Token caching (1-hour expiry)
 - Rate limiting (respect DocuSign's 1000 calls/hour)
 - Circuit breaker (same pattern as `SlackNotificationService`)
@@ -432,14 +451,14 @@ HTTP client: Use the existing Axios-equivalent (RestTemplate/WebClient) with:
 
 ### 5.4 Error Handling
 
-| Scenario | Behavior |
-|----------|----------|
-| DocuSign API down | Circuit breaker opens after 5 failures; events queued for retry |
-| Rate limit hit (429) | Exponential backoff, retry up to 3x |
-| Invalid template ID | Mark envelope as ERROR, notify admin |
-| Recipient email invalid | Mark as ERROR with reason, notify admin |
-| Webhook signature mismatch | Reject with 401, log suspicious activity |
-| Signed doc download fails | Retry 3x, then mark envelope as COMPLETED_NO_DOC and alert |
+| Scenario                   | Behavior                                                        |
+|----------------------------|-----------------------------------------------------------------|
+| DocuSign API down          | Circuit breaker opens after 5 failures; events queued for retry |
+| Rate limit hit (429)       | Exponential backoff, retry up to 3x                             |
+| Invalid template ID        | Mark envelope as ERROR, notify admin                            |
+| Recipient email invalid    | Mark as ERROR with reason, notify admin                         |
+| Webhook signature mismatch | Reject with 401, log suspicious activity                        |
+| Signed doc download fails  | Retry 3x, then mark envelope as COMPLETED_NO_DOC and alert      |
 
 ---
 
@@ -447,38 +466,40 @@ HTTP client: Use the existing Axios-equivalent (RestTemplate/WebClient) with:
 
 ### Connector Framework
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| GET | `/api/v1/integrations/connectors` | `INTEGRATION:READ` | List all available connectors with status |
-| GET | `/api/v1/integrations/connectors/{connectorId}` | `INTEGRATION:READ` | Get connector details + capabilities |
-| PUT | `/api/v1/integrations/connectors/{connectorId}/config` | `INTEGRATION:MANAGE` | Save/update connector config |
-| POST | `/api/v1/integrations/connectors/{connectorId}/test` | `INTEGRATION:MANAGE` | Test connection |
-| POST | `/api/v1/integrations/connectors/{connectorId}/activate` | `INTEGRATION:MANAGE` | Activate connector |
-| POST | `/api/v1/integrations/connectors/{connectorId}/deactivate` | `INTEGRATION:MANAGE` | Deactivate connector |
-| GET | `/api/v1/integrations/events?connectorId=&status=&page=&size=` | `INTEGRATION:READ` | Event log (paginated) |
+| Method | Path                                                           | Permission           | Description                               |
+|--------|----------------------------------------------------------------|----------------------|-------------------------------------------|
+| GET    | `/api/v1/integrations/connectors`                              | `INTEGRATION:READ`   | List all available connectors with status |
+| GET    | `/api/v1/integrations/connectors/{connectorId}`                | `INTEGRATION:READ`   | Get connector details + capabilities      |
+| PUT    | `/api/v1/integrations/connectors/{connectorId}/config`         | `INTEGRATION:MANAGE` | Save/update connector config              |
+| POST   | `/api/v1/integrations/connectors/{connectorId}/test`           | `INTEGRATION:MANAGE` | Test connection                           |
+| POST   | `/api/v1/integrations/connectors/{connectorId}/activate`       | `INTEGRATION:MANAGE` | Activate connector                        |
+| POST   | `/api/v1/integrations/connectors/{connectorId}/deactivate`     | `INTEGRATION:MANAGE` | Deactivate connector                      |
+| GET    | `/api/v1/integrations/events?connectorId=&status=&page=&size=` | `INTEGRATION:READ`   | Event log (paginated)                     |
 
 ### DocuSign-Specific
 
-| Method | Path | Permission | Description |
-|--------|------|------------|-------------|
-| POST | `/api/v1/integrations/docusign/webhook` | Public (HMAC-verified, see CRIT-002) | Inbound DocuSign Connect callbacks |
-| GET | `/api/v1/integrations/docusign/envelopes?entityType=&status=&page=&size=` | `INTEGRATION:READ` | List envelopes |
-| GET | `/api/v1/integrations/docusign/envelopes/{id}` | `INTEGRATION:READ` | Envelope details |
-| POST | `/api/v1/integrations/docusign/envelopes/{id}/void` | `INTEGRATION:MANAGE` | Void an envelope |
-| POST | `/api/v1/integrations/docusign/envelopes/{id}/resend` | `INTEGRATION:MANAGE` | Resend signing request |
-| GET | `/api/v1/integrations/docusign/templates` | `INTEGRATION:READ` | List DocuSign templates |
-| GET | `/api/v1/integrations/docusign/template-mappings` | `INTEGRATION:READ` | List NU-AURA → DocuSign mappings |
-| PUT | `/api/v1/integrations/docusign/template-mappings` | `INTEGRATION:MANAGE` | Create/update template mapping |
+| Method | Path                                                                      | Permission                           | Description                        |
+|--------|---------------------------------------------------------------------------|--------------------------------------|------------------------------------|
+| POST   | `/api/v1/integrations/docusign/webhook`                                   | Public (HMAC-verified, see CRIT-002) | Inbound DocuSign Connect callbacks |
+| GET    | `/api/v1/integrations/docusign/envelopes?entityType=&status=&page=&size=` | `INTEGRATION:READ`                   | List envelopes                     |
+| GET    | `/api/v1/integrations/docusign/envelopes/{id}`                            | `INTEGRATION:READ`                   | Envelope details                   |
+| POST   | `/api/v1/integrations/docusign/envelopes/{id}/void`                       | `INTEGRATION:MANAGE`                 | Void an envelope                   |
+| POST   | `/api/v1/integrations/docusign/envelopes/{id}/resend`                     | `INTEGRATION:MANAGE`                 | Resend signing request             |
+| GET    | `/api/v1/integrations/docusign/templates`                                 | `INTEGRATION:READ`                   | List DocuSign templates            |
+| GET    | `/api/v1/integrations/docusign/template-mappings`                         | `INTEGRATION:READ`                   | List NU-AURA → DocuSign mappings   |
+| PUT    | `/api/v1/integrations/docusign/template-mappings`                         | `INTEGRATION:MANAGE`                 | Create/update template mapping     |
 
 ### New Permissions
 
 Add to `Permission.java`:
+
 ```java
 INTEGRATION_READ("INTEGRATION:READ"),
 INTEGRATION_MANAGE("INTEGRATION:MANAGE"),
 ```
 
-Add to V60 seed data (or new migration): Grant `INTEGRATION:MANAGE` to SUPER_ADMIN, TENANT_ADMIN; `INTEGRATION:READ` to HR_MANAGER.
+Add to V60 seed data (or new migration): Grant `INTEGRATION:MANAGE` to SUPER_ADMIN, TENANT_ADMIN;
+`INTEGRATION:READ` to HR_MANAGER.
 
 ---
 
@@ -487,11 +508,13 @@ Add to V60 seed data (or new migration): Grant `INTEGRATION:MANAGE` to SUPER_ADM
 ### 7.1 Route: `/admin/integrations/page.tsx`
 
 **Layout:**
+
 - Header with title "Integration Hub" + summary badges (X connected, Y available)
 - Filter tabs: All | Notifications | E-Signatures | Payments | Storage
 - Card grid showing all connectors
 
 **Connector Card Component:**
+
 ```tsx
 <ConnectorCard
   connectorId="docusign"
@@ -506,6 +529,7 @@ Add to V60 seed data (or new migration): Grant `INTEGRATION:MANAGE` to SUPER_ADM
 ```
 
 **Config Panel (SlideOver):**
+
 - React Hook Form + Zod for config fields
 - Dynamic form generation from `configSchemaJson` (connector declares its own fields)
 - "Test Connection" button with async status
@@ -513,27 +537,30 @@ Add to V60 seed data (or new migration): Grant `INTEGRATION:MANAGE` to SUPER_ADM
 - Save → calls `PUT /api/v1/integrations/connectors/{id}/config`
 
 **Activity Log Tab:**
-- Table showing recent events: timestamp, event type, entity, status (success/failed/skipped), duration
+
+- Table showing recent events: timestamp, event type, entity, status (success/failed/skipped),
+  duration
 - Filter by status
 - React Query with `useIntegrationEvents(connectorId)` hook
 
 ### 7.2 New Frontend Files
 
-| File | Responsibility |
-|------|---------------|
-| `frontend/app/admin/integrations/page.tsx` | Integration Hub page (replace existing) |
-| `frontend/components/integrations/ConnectorCard.tsx` | Individual connector card |
-| `frontend/components/integrations/ConnectorConfigPanel.tsx` | Config slide-over panel |
-| `frontend/components/integrations/ConnectionTestButton.tsx` | Test button with async state |
-| `frontend/components/integrations/EventSubscriptionPicker.tsx` | HRMS event multi-select |
-| `frontend/components/integrations/IntegrationActivityLog.tsx` | Event log table |
-| `frontend/lib/services/connectorService.ts` | API client for connector endpoints |
-| `frontend/lib/hooks/queries/useConnectors.ts` | React Query hooks |
-| `frontend/lib/types/connector.ts` | TypeScript types |
+| File                                                           | Responsibility                          |
+|----------------------------------------------------------------|-----------------------------------------|
+| `frontend/app/admin/integrations/page.tsx`                     | Integration Hub page (replace existing) |
+| `frontend/components/integrations/ConnectorCard.tsx`           | Individual connector card               |
+| `frontend/components/integrations/ConnectorConfigPanel.tsx`    | Config slide-over panel                 |
+| `frontend/components/integrations/ConnectionTestButton.tsx`    | Test button with async state            |
+| `frontend/components/integrations/EventSubscriptionPicker.tsx` | HRMS event multi-select                 |
+| `frontend/components/integrations/IntegrationActivityLog.tsx`  | Event log table                         |
+| `frontend/lib/services/connectorService.ts`                    | API client for connector endpoints      |
+| `frontend/lib/hooks/queries/useConnectors.ts`                  | React Query hooks                       |
+| `frontend/lib/types/connector.ts`                              | TypeScript types                        |
 
 ### 7.3 DocuSign Admin Section (within Integration Hub)
 
 When DocuSign connector is configured, the config panel shows additional tabs:
+
 - **Templates** — Map NU-AURA document types to DocuSign templates
 - **Envelopes** — List all envelopes with status, filter by entity type and status
 - **Settings** — DocuSign-specific config (sandbox vs production, webhook URL)
@@ -545,6 +572,7 @@ When DocuSign connector is configured, the config panel shows additional tabs:
 ### V65 — Integration Framework Schema
 
 Single migration file:
+
 1. `CREATE TABLE integration_connector_configs` with RLS
 2. `CREATE TABLE integration_event_log` with RLS
 3. `CREATE TABLE docusign_envelopes` with RLS
@@ -558,17 +586,23 @@ Single migration file:
 ## 9. Testing Strategy
 
 ### Unit Tests
+
 - `ConnectorRegistryTest`: Auto-discovery, lookup by ID, capabilities map
-- `IntegrationEventRouterTest`: Event matching against subscriptions, tenant isolation, error isolation
-- `DocuSignConnectorTest`: Envelope creation for each entity type, webhook callback handling (completed, declined, voided), template mapping lookup, error scenarios
+- `IntegrationEventRouterTest`: Event matching against subscriptions, tenant isolation, error
+  isolation
+- `DocuSignConnectorTest`: Envelope creation for each entity type, webhook callback handling (
+  completed, declined, voided), template mapping lookup, error scenarios
 - `DocuSignApiClientTest`: Token generation, API call retries, rate limiting, circuit breaker
 
 ### Integration Tests
-- Full lifecycle: Configure DocuSign → create offer letter → verify envelope created → simulate webhook callback → verify signed PDF stored in MinIO → verify offer status updated
+
+- Full lifecycle: Configure DocuSign → create offer letter → verify envelope created → simulate
+  webhook callback → verify signed PDF stored in MinIO → verify offer status updated
 - Event routing: Publish Kafka event → verify correct connector receives it
 - Health check: Configure connector → test connection → verify status updated
 
 ### Edge Cases
+
 - DocuSign API unavailable during envelope creation (circuit breaker + queue)
 - Webhook callback for unknown envelope ID (log + ignore)
 - Duplicate webhook callbacks (idempotent processing via envelope_id)
@@ -580,30 +614,40 @@ Single migration file:
 
 ## 10. Performance Considerations
 
-- **Event routing:** O(active_connectors × subscribed_events) per Kafka message. For 5 connectors with ~10 events each: negligible
-- **DocuSign API calls:** Async with `@Async`. Rate limited to 1000/hour per tenant. Circuit breaker prevents cascading slowdowns
-- **Event log table:** Will grow fast. Add retention policy: DELETE events older than 90 days via `@Scheduled` job
-- **Config caching:** `integration_connector_configs` cached in Redis per tenant. Cache invalidated on config save
-- **Webhook callback processing:** Async. DocuSign Connect retries on its own if our endpoint fails temporarily
+- **Event routing:** O(active_connectors × subscribed_events) per Kafka message. For 5 connectors
+  with ~10 events each: negligible
+- **DocuSign API calls:** Async with `@Async`. Rate limited to 1000/hour per tenant. Circuit breaker
+  prevents cascading slowdowns
+- **Event log table:** Will grow fast. Add retention policy: DELETE events older than 90 days via
+  `@Scheduled` job
+- **Config caching:** `integration_connector_configs` cached in Redis per tenant. Cache invalidated
+  on config save
+- **Webhook callback processing:** Async. DocuSign Connect retries on its own if our endpoint fails
+  temporarily
 
 ---
 
 ## 11. Security Considerations
 
-- **Config encryption:** All provider credentials stored in `config_json` are encrypted at rest using the existing field-level encryption pattern from `NotificationChannelConfig`
+- **Config encryption:** All provider credentials stored in `config_json` are encrypted at rest
+  using the existing field-level encryption pattern from `NotificationChannelConfig`
 - **DocuSign webhook HMAC:** All inbound callbacks verified using HMAC-SHA256 before processing
 - **No credentials in logs:** Config fields are masked in all log output
 - **Admin-only access:** All connector config endpoints require `INTEGRATION:MANAGE` permission
-- **Tenant isolation:** All tables have `tenant_id` + RLS policies. Event router sets `TenantContext` per event.
-- **API key alternative:** External systems can use existing API keys with new `integration:*` scopes instead of JWT auth
+- **Tenant isolation:** All tables have `tenant_id` + RLS policies. Event router sets
+  `TenantContext` per event.
+- **API key alternative:** External systems can use existing API keys with new `integration:*`
+  scopes instead of JWT auth
 
 ---
 
 ## 12. Rollout Plan
 
 1. **Phase 1 (V65 migration):** Schema + permission seeds. No behavior change.
-2. **Phase 2 (Backend):** Connector framework, event router, DocuSign connector, webhook callback endpoint. Behind `enable_integration_hub` feature flag.
-3. **Phase 3 (Frontend):** Admin Integration Hub UI, DocuSign config panel, envelope management, template mapping.
+2. **Phase 2 (Backend):** Connector framework, event router, DocuSign connector, webhook callback
+   endpoint. Behind `enable_integration_hub` feature flag.
+3. **Phase 3 (Frontend):** Admin Integration Hub UI, DocuSign config panel, envelope management,
+   template mapping.
 4. **Phase 4 (Go-live):** Enable feature flag for demo tenant → QA sweep → production rollout.
 
 ---
@@ -614,9 +658,12 @@ Issues identified by spec reviewer and resolved below.
 
 ### CRIT-001: Kafka Consumer Architecture (RESOLVED)
 
-**Problem:** Original design had `IntegrationEventRouter` as a separate `@KafkaListener` on existing topics, which would cause duplicate message processing.
+**Problem:** Original design had `IntegrationEventRouter` as a separate `@KafkaListener` on existing
+topics, which would cause duplicate message processing.
 
-**Resolution:** Router is now a `@Service` (not a `@KafkaListener`). Existing consumers call `integrationEventRouter.routeToConnectors()` after their own processing. This follows the same pattern as `WebhookDeliveryService`. See updated Section 3.4.
+**Resolution:** Router is now a `@Service` (not a `@KafkaListener`). Existing consumers call
+`integrationEventRouter.routeToConnectors()` after their own processing. This follows the same
+pattern as `WebhookDeliveryService`. See updated Section 3.4.
 
 ### CRIT-002: DocuSign Webhook Security (RESOLVED)
 
@@ -625,12 +672,17 @@ Issues identified by spec reviewer and resolved below.
 **Resolution:**
 
 1. **SecurityConfig addition:** Add to `SecurityConfig.java`:
+
 ```java
 .requestMatchers("/api/v1/integrations/docusign/webhook").permitAll()
 ```
+
 And add to CSRF exclusions (same pattern as existing external webhook endpoints).
 
-2. **Tenant resolution:** Webhook handler extracts `envelope_id` from the DocuSign payload, queries `docusign_envelopes` table to get `tenant_id`, then sets `TenantContext` before processing. This prevents cross-tenant data exposure:
+2. **Tenant resolution:** Webhook handler extracts `envelope_id` from the DocuSign payload, queries
+   `docusign_envelopes` table to get `tenant_id`, then sets `TenantContext` before processing. This
+   prevents cross-tenant data exposure:
+
 ```java
 @PostMapping("/api/v1/integrations/docusign/webhook")
 public ResponseEntity<Void> handleDocuSignCallback(@RequestBody String payload,
@@ -654,7 +706,9 @@ public ResponseEntity<Void> handleDocuSignCallback(@RequestBody String payload,
 }
 ```
 
-3. **DocuSign signature format:** DocuSign Connect uses HMAC-SHA256 with the payload body. Header: `X-DocuSign-Signature-1`. Verification:
+3. **DocuSign signature format:** DocuSign Connect uses HMAC-SHA256 with the payload body. Header:
+   `X-DocuSign-Signature-1`. Verification:
+
 ```java
 private void verifyHmacSignature(Map<String, String> headers, String body, String secret) {
     String signature = headers.get("X-DocuSign-Signature-1");
@@ -668,7 +722,9 @@ private void verifyHmacSignature(Map<String, String> headers, String body, Strin
 
 ### IMP-001: Dead Letter Topic Integration (RESOLVED)
 
-**Resolution:** Added DLT publishing in `IntegrationEventRouter.publishToDlt()` (Section 3.4). New topic `nu-aura.integrations.dlt` follows existing DLT pattern. Failed events stored in `FailedKafkaEvent` table.
+**Resolution:** Added DLT publishing in `IntegrationEventRouter.publishToDlt()` (Section 3.4). New
+topic `nu-aura.integrations.dlt` follows existing DLT pattern. Failed events stored in
+`FailedKafkaEvent` table.
 
 ### IMP-002: Frontend TypeScript Types (RESOLVED)
 
@@ -806,7 +862,11 @@ export function useIntegrationEvents(connectorId?: string, status?: EventLogStat
 }
 ```
 
-**Config form approach:** Instead of JSON Schema → dynamic form (too complex), use `ConnectorConfigField[]` from capabilities. Each connector declares its config fields with type/label/required. The frontend `ConnectorConfigPanel` renders Mantine form fields (`TextInput`, `PasswordInput`, `Select`, `Switch`) based on field type. This is simpler than react-jsonschema-form and works natively with React Hook Form + Zod.
+**Config form approach:** Instead of JSON Schema → dynamic form (too complex), use
+`ConnectorConfigField[]` from capabilities. Each connector declares its config fields with
+type/label/required. The frontend `ConnectorConfigPanel` renders Mantine form fields (`TextInput`,
+`PasswordInput`, `Select`, `Switch`) based on field type. This is simpler than react-jsonschema-form
+and works natively with React Hook Form + Zod.
 
 ### IMP-003: V65 Migration SQL (RESOLVED)
 
@@ -845,7 +905,8 @@ ON CONFLICT DO NOTHING;
 
 ### IMP-004: Entity Encryption (RESOLVED)
 
-`IntegrationConnectorConfig` entity uses the existing `@Convert` pattern with `EncryptedStringConverter`:
+`IntegrationConnectorConfig` entity uses the existing `@Convert` pattern with
+`EncryptedStringConverter`:
 
 ```java
 @Entity
@@ -861,7 +922,9 @@ public class IntegrationConnectorConfig extends TenantAware {
 }
 ```
 
-This follows the same pattern as `NotificationChannelConfig.configJson`. The `EncryptedStringConverter` is an existing JPA `AttributeConverter` that uses the application's encryption key from `app.encryption.key` property.
+This follows the same pattern as `NotificationChannelConfig.configJson`. The
+`EncryptedStringConverter` is an existing JPA `AttributeConverter` that uses the application's
+encryption key from `app.encryption.key` property.
 
 ### IMP-005: Rate Limiting (RESOLVED)
 
@@ -888,4 +951,5 @@ public class DocuSignApiClient {
 }
 ```
 
-In practice, the bucket should be Redis-backed (per-tenant key: `docusign:ratelimit:{tenantId}`) using the existing `Bucket4jService` pattern. Falls back to in-memory if Redis is unavailable.
+In practice, the bucket should be Redis-backed (per-tenant key: `docusign:ratelimit:{tenantId}`)
+using the existing `Bucket4jService` pattern. Falls back to in-memory if Redis is unavailable.

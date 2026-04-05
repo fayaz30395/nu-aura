@@ -1,34 +1,23 @@
 'use client';
 
 import React from 'react';
-import {
-  Search,
-  Calendar,
-  Clock,
-  MapPin,
-  Eye,
-  Plus,
-  Play,
-  CheckCircle,
-  GraduationCap,
-  Loader2,
-} from 'lucide-react';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Card, CardContent, Button, Input, Select, Badge } from '@/components/ui';
-import { ProgramStatus, TrainingCategory } from '@/lib/types/grow/training';
-import type { TrainingProgram } from '@/lib/types/grow/training';
+import {Calendar, CheckCircle, Clock, Eye, GraduationCap, Loader2, MapPin, Play, Plus, Search,} from 'lucide-react';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {Badge, Button, Card, CardContent, Input, Select} from '@/components/ui';
+import type {TrainingProgram} from '@/lib/types/grow/training';
+import {ProgramStatus, TrainingCategory} from '@/lib/types/grow/training';
 
 const categoryOptions = [
-  { value: TrainingCategory.TECHNICAL, label: 'Technical' },
-  { value: TrainingCategory.SOFT_SKILLS, label: 'Soft Skills' },
-  { value: TrainingCategory.LEADERSHIP, label: 'Leadership' },
-  { value: TrainingCategory.COMPLIANCE, label: 'Compliance' },
-  { value: TrainingCategory.SAFETY, label: 'Safety' },
-  { value: TrainingCategory.PRODUCT, label: 'Product' },
-  { value: TrainingCategory.SALES, label: 'Sales' },
-  { value: TrainingCategory.CUSTOMER_SERVICE, label: 'Customer Service' },
-  { value: TrainingCategory.OTHER, label: 'Other' },
+  {value: TrainingCategory.TECHNICAL, label: 'Technical'},
+  {value: TrainingCategory.SOFT_SKILLS, label: 'Soft Skills'},
+  {value: TrainingCategory.LEADERSHIP, label: 'Leadership'},
+  {value: TrainingCategory.COMPLIANCE, label: 'Compliance'},
+  {value: TrainingCategory.SAFETY, label: 'Safety'},
+  {value: TrainingCategory.PRODUCT, label: 'Product'},
+  {value: TrainingCategory.SALES, label: 'Sales'},
+  {value: TrainingCategory.CUSTOMER_SERVICE, label: 'Customer Service'},
+  {value: TrainingCategory.OTHER, label: 'Other'},
 ];
 
 const getCategoryColor = (category: TrainingCategory): string => {
@@ -63,18 +52,18 @@ interface CourseCatalogTabProps {
 }
 
 export function CourseCatalogTab({
-  programs,
-  loading,
-  searchQuery,
-  categoryFilter,
-  isEnrolled,
-  enrolling,
-  onSearchChange,
-  onCategoryFilterChange,
-  onViewProgram,
-  onSelfEnroll,
-  onNavigateToMyTrainings,
-}: CourseCatalogTabProps) {
+                                   programs,
+                                   loading,
+                                   searchQuery,
+                                   categoryFilter,
+                                   isEnrolled,
+                                   enrolling,
+                                   onSearchChange,
+                                   onCategoryFilterChange,
+                                   onViewProgram,
+                                   onSelfEnroll,
+                                   onNavigateToMyTrainings,
+                                 }: CourseCatalogTabProps) {
   const availablePrograms = programs.filter(
     (p) => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS
   );
@@ -86,7 +75,7 @@ export function CourseCatalogTab({
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"/>
               <Input
                 type="text"
                 placeholder="Search programs..."
@@ -114,12 +103,12 @@ export function CourseCatalogTab({
       {/* Programs Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
         </div>
       ) : availablePrograms.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]" />
+            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]"/>
             <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
               No courses available
             </p>
@@ -143,7 +132,7 @@ export function CourseCatalogTab({
                       </div>
                       {enrolled && (
                         <Badge variant="success" className="bg-white/20 text-white">
-                          <CheckCircle className="h-3 w-3 mr-1" />
+                          <CheckCircle className="h-3 w-3 mr-1"/>
                           Enrolled
                         </Badge>
                       )}
@@ -156,11 +145,13 @@ export function CourseCatalogTab({
                       >
                         {program.category.replace('_', ' ')}
                       </span>
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)]">
+                      <span
+                        className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)]">
                         {program.deliveryMode.replace('_', ' ')}
                       </span>
                       {program.isMandatory && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200">
+                        <span
+                          className="px-2 py-1 text-xs font-medium rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200">
                           Mandatory
                         </span>
                       )}
@@ -173,19 +164,19 @@ export function CourseCatalogTab({
                     <div className="space-y-2 text-sm">
                       {program.durationHours && (
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-4 w-4"/>
                           <span>{program.durationHours} hours</span>
                         </div>
                       )}
                       {program.startDate && (
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-4 w-4"/>
                           <span>Starts: {new Date(program.startDate).toLocaleDateString()}</span>
                         </div>
                       )}
                       {program.location && (
                         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                          <MapPin className="h-4 w-4" />
+                          <MapPin className="h-4 w-4"/>
                           <span>{program.location}</span>
                         </div>
                       )}
@@ -198,7 +189,7 @@ export function CourseCatalogTab({
                         onClick={() => onViewProgram(program)}
                         className="flex-1"
                       >
-                        <Eye className="h-4 w-4 mr-1" />
+                        <Eye className="h-4 w-4 mr-1"/>
                         Details
                       </Button>
                       {!enrolled ? (
@@ -210,10 +201,10 @@ export function CourseCatalogTab({
                             className="flex-1"
                           >
                             {enrolling ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4 animate-spin"/>
                             ) : (
                               <>
-                                <Plus className="h-4 w-4 mr-1" />
+                                <Plus className="h-4 w-4 mr-1"/>
                                 Enroll
                               </>
                             )}
@@ -226,7 +217,7 @@ export function CourseCatalogTab({
                           onClick={onNavigateToMyTrainings}
                           className="flex-1"
                         >
-                          <Play className="h-4 w-4 mr-1" />
+                          <Play className="h-4 w-4 mr-1"/>
                           Go to Course
                         </Button>
                       )}

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Component, ReactNode } from 'react';
-import { logger } from '@/lib/utils/logger';
+import React, {Component, ReactNode} from 'react';
+import {logger} from '@/lib/utils/logger';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -18,11 +18,11 @@ interface ErrorBoundaryProps {
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = {hasError: false, error: null};
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+    return {hasError: true, error};
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -35,19 +35,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       const prevKeys = prevProps.resetKeys ?? [];
       const currKeys = this.props.resetKeys;
       if (prevKeys.some((key, i) => key !== currKeys[i])) {
-        this.setState({ hasError: false, error: null });
+        this.setState({hasError: false, error: null});
       }
     }
   }
 
   reset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({hasError: false, error: null});
   };
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
-      return <DefaultErrorFallback error={this.state.error} onReset={this.reset} />;
+      return <DefaultErrorFallback error={this.state.error} onReset={this.reset}/>;
     }
     return this.props.children;
   }
@@ -58,9 +58,10 @@ interface DefaultErrorFallbackProps {
   onReset: () => void;
 }
 
-function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
+function DefaultErrorFallback({error, onReset}: DefaultErrorFallbackProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+    <div
+      className="flex flex-col items-center justify-center min-h-[200px] p-8 rounded-xl border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
       <div className="text-danger-500 dark:text-danger-400 mb-4">
         <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -88,10 +89,10 @@ function DefaultErrorFallback({ error, onReset }: DefaultErrorFallbackProps) {
 }
 
 export function WithErrorBoundary({
-  children,
-  fallback,
-  onError,
-}: {
+                                    children,
+                                    fallback,
+                                    onError,
+                                  }: {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;

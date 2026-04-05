@@ -354,12 +354,14 @@ When adding a new page route, update:
 ## Test Checklist
 
 ### Backend (Required)
+
 - [ ] Controller test with MockMvc
 - [ ] Service test with mocked repository
 - [ ] Tenant isolation verification
 - [ ] Permission check test (@PreAuthorize)
 
 ### Frontend (Recommended)
+
 - [ ] E2E test for critical user flow
 - [ ] Permission gating test
 - [ ] Form validation test

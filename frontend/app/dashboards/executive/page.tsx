@@ -1,50 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Users,
-  DollarSign,
-  TrendingUp,
-  Building2,
+  Activity,
   AlertCircle,
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Briefcase,
+  Building2,
+  Calendar,
   CheckCircle,
   Clock,
-  Briefcase,
-  Target,
-  Activity,
-  BarChart3,
-  PieChart,
-  Calendar,
-  AlertTriangle,
+  DollarSign,
   Info,
-  ArrowUpRight,
-  ArrowDownRight,
   Minus,
+  PieChart,
   RefreshCw,
   Shield,
+  Target,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Skeleton} from '@/components/ui';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useExecutiveDashboard} from '@/lib/hooks/queries/useDashboards';
+import {StrategicAlert} from '@/lib/types/core/dashboard';
+import {formatCurrency} from '@/lib/utils';
 
 const ExecutiveHeadcountChart = dynamic(
-  () => import('./ExecutiveCharts').then((mod) => ({ default: mod.ExecutiveHeadcountChart })),
-  { loading: () => <ChartLoadingFallback />, ssr: false }
+  () => import('./ExecutiveCharts').then((mod) => ({default: mod.ExecutiveHeadcountChart})),
+  {loading: () => <ChartLoadingFallback/>, ssr: false}
 );
 
 const ExecutiveDeptPieChart = dynamic(
-  () => import('./ExecutiveCharts').then((mod) => ({ default: mod.ExecutiveDeptPieChart })),
-  { loading: () => <ChartLoadingFallback />, ssr: false }
+  () => import('./ExecutiveCharts').then((mod) => ({default: mod.ExecutiveDeptPieChart})),
+  {loading: () => <ChartLoadingFallback/>, ssr: false}
 );
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
-import { StrategicAlert } from '@/lib/types/core/dashboard';
-import { formatCurrency } from '@/lib/utils';
 
 // Use CSS vars so chart colors adapt to dark mode automatically
 const COLORS = [
@@ -60,11 +60,11 @@ const COLORS = [
 
 export default function ExecutiveDashboardPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  const { data, isLoading: loading, error, refetch } = useExecutiveDashboard(
+  const {data, isLoading: loading, error, refetch} = useExecutiveDashboard(
     isAuthenticated && hasHydrated && hasPermission(Permissions.DASHBOARD_EXECUTIVE)
   );
 
@@ -94,12 +94,12 @@ export default function ExecutiveDashboardPage() {
   const getAlertIcon = (severity: StrategicAlert['severity']) => {
     switch (severity) {
       case 'CRITICAL':
-        return <AlertCircle className="h-5 w-5 text-danger-500" />;
+        return <AlertCircle className="h-5 w-5 text-danger-500"/>;
       case 'WARNING':
-        return <AlertTriangle className="h-5 w-5 text-warning-500" />;
+        return <AlertTriangle className="h-5 w-5 text-warning-500"/>;
       case 'INFO':
       default:
-        return <Info className="h-5 w-5 text-accent-500" />;
+        return <Info className="h-5 w-5 text-accent-500"/>;
     }
   };
 
@@ -117,11 +117,11 @@ export default function ExecutiveDashboardPage() {
 
   const getTrendIcon = (trend: string) => {
     if (trend === 'UP') {
-      return <ArrowUpRight className="h-4 w-4 text-success-600" />;
+      return <ArrowUpRight className="h-4 w-4 text-success-600"/>;
     } else if (trend === 'DOWN') {
-      return <ArrowDownRight className="h-4 w-4 text-danger-600" />;
+      return <ArrowDownRight className="h-4 w-4 text-danger-600"/>;
     }
-    return <Minus className="h-4 w-4 text-[var(--text-muted)]" />;
+    return <Minus className="h-4 w-4 text-[var(--text-muted)]"/>;
   };
 
   const getStatusColor = (status: string) => {
@@ -139,32 +139,32 @@ export default function ExecutiveDashboardPage() {
 
   const getKpiIcon = (iconName: string) => {
     const icons: Record<string, React.ReactNode> = {
-      users: <Users className="h-6 w-6" />,
-      dollar: <DollarSign className="h-6 w-6" />,
-      trending: <TrendingUp className="h-6 w-6" />,
-      target: <Target className="h-6 w-6" />,
-      activity: <Activity className="h-6 w-6" />,
-      briefcase: <Briefcase className="h-6 w-6" />,
-      building: <Building2 className="h-6 w-6" />,
-      clock: <Clock className="h-6 w-6" />,
+      users: <Users className="h-6 w-6"/>,
+      dollar: <DollarSign className="h-6 w-6"/>,
+      trending: <TrendingUp className="h-6 w-6"/>,
+      target: <Target className="h-6 w-6"/>,
+      activity: <Activity className="h-6 w-6"/>,
+      briefcase: <Briefcase className="h-6 w-6"/>,
+      building: <Building2 className="h-6 w-6"/>,
+      clock: <Clock className="h-6 w-6"/>,
     };
-    return icons[iconName?.toLowerCase()] || <BarChart3 className="h-6 w-6" />;
+    return icons[iconName?.toLowerCase()] || <BarChart3 className="h-6 w-6"/>;
   };
 
   const DashboardSkeleton = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-32 rounded-xl" />
+          <Skeleton key={i} className="h-32 rounded-xl"/>
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Skeleton className="h-80 rounded-xl" />
-        <Skeleton className="h-80 rounded-xl" />
+        <Skeleton className="h-80 rounded-xl"/>
+        <Skeleton className="h-80 rounded-xl"/>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Skeleton className="h-96 lg:col-span-2 rounded-xl" />
-        <Skeleton className="h-96 rounded-xl" />
+        <Skeleton className="h-96 lg:col-span-2 rounded-xl"/>
+        <Skeleton className="h-96 rounded-xl"/>
       </div>
     </div>
   );
@@ -184,7 +184,7 @@ export default function ExecutiveDashboardPage() {
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
-          <DashboardSkeleton />
+          <DashboardSkeleton/>
         </div>
       </AppLayout>
     );
@@ -197,7 +197,7 @@ export default function ExecutiveDashboardPage() {
           <Card className="max-w-md">
             <CardHeader>
               <div className="flex items-center gap-4 text-danger-600">
-                <AlertCircle className="h-6 w-6" />
+                <AlertCircle className="h-6 w-6"/>
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
             </CardHeader>
@@ -235,7 +235,7 @@ export default function ExecutiveDashboardPage() {
                 refetch();
                 setLastUpdated(new Date());
               }}
-              leftIcon={<RefreshCw className="h-4 w-4" />}
+              leftIcon={<RefreshCw className="h-4 w-4"/>}
             >
               Refresh
             </Button>
@@ -246,7 +246,8 @@ export default function ExecutiveDashboardPage() {
         {data.keyMetrics && data.keyMetrics.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {data.keyMetrics.slice(0, 4).map((kpi, index) => (
-              <Card key={index} className="border-0 shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+              <Card key={index}
+                    className="border-0 shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -256,13 +257,15 @@ export default function ExecutiveDashboardPage() {
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         {getTrendIcon(kpi.trend)}
-                        <span className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-success-600' : kpi.trend === 'DOWN' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}>
+                        <span
+                          className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-success-600' : kpi.trend === 'DOWN' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}>
                           {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
                         </span>
                         <span className="text-caption">{kpi.changeDescription || ''}</span>
                       </div>
                     </div>
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getStatusColor(kpi.status)}`}>
+                    <div
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center ${getStatusColor(kpi.status)}`}>
                       {getKpiIcon(kpi.icon)}
                     </div>
                   </div>
@@ -279,12 +282,12 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-accent-500" />
+                  <BarChart3 className="h-5 w-5 text-accent-500"/>
                   Headcount Trend
                 </CardTitle>
               </CardHeader>
               <CardContent className="h-80">
-                <ExecutiveHeadcountChart data={data.trendCharts.headcountTrend} />
+                <ExecutiveHeadcountChart data={data.trendCharts.headcountTrend}/>
               </CardContent>
             </Card>
           )}
@@ -294,7 +297,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <PieChart className="h-5 w-5 text-accent-500" />
+                  <PieChart className="h-5 w-5 text-accent-500"/>
                   Department Distribution
                 </CardTitle>
               </CardHeader>
@@ -308,7 +311,7 @@ export default function ExecutiveDashboardPage() {
                 ) : (
                   <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
                     <div className="text-center">
-                      <PieChart className="h-10 w-10 mx-auto mb-2 opacity-40" />
+                      <PieChart className="h-10 w-10 mx-auto mb-2 opacity-40"/>
                       <p className="text-sm">No department data available</p>
                     </div>
                   </div>
@@ -325,7 +328,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-warning-500" />
+                  <AlertTriangle className="h-5 w-5 text-warning-500"/>
                   Strategic Alerts
                 </CardTitle>
               </CardHeader>
@@ -353,8 +356,8 @@ export default function ExecutiveDashboardPage() {
                               alert.impact === 'HIGH'
                                 ? 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
                                 : alert.impact === 'MEDIUM'
-                                ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
-                                : 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
+                                  ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
+                                  : 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
                             }`}
                           >
                             {alert.impact} impact
@@ -364,7 +367,7 @@ export default function ExecutiveDashboardPage() {
                     ))
                   ) : (
                     <div className="text-center py-8">
-                      <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-2" />
+                      <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-2"/>
                       <p className="text-body-muted">No active alerts</p>
                     </div>
                   )}
@@ -380,7 +383,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Users className="h-5 w-5 text-accent-500" />
+                    <Users className="h-5 w-5 text-accent-500"/>
                     Workforce Overview
                   </CardTitle>
                 </CardHeader>
@@ -388,23 +391,28 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-4">
                     <div className="row-between">
                       <span className="text-body-secondary">Total Headcount</span>
-                      <span className="text-lg font-bold text-[var(--text-primary)]">{data.workforceSummary.totalHeadcount}</span>
+                      <span
+                        className="text-lg font-bold text-[var(--text-primary)]">{data.workforceSummary.totalHeadcount}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Active Employees</span>
-                      <span className="text-lg font-bold text-success-600">{data.workforceSummary.activeEmployees}</span>
+                      <span
+                        className="text-lg font-bold text-success-600">{data.workforceSummary.activeEmployees}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">New Hires (Month)</span>
-                      <span className="text-lg font-bold text-accent-600">{data.workforceSummary.newHiresThisMonth}</span>
+                      <span
+                        className="text-lg font-bold text-accent-600">{data.workforceSummary.newHiresThisMonth}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Terminations (Month)</span>
-                      <span className="text-lg font-bold text-danger-600">{data.workforceSummary.terminationsThisMonth}</span>
+                      <span
+                        className="text-lg font-bold text-danger-600">{data.workforceSummary.terminationsThisMonth}</span>
                     </div>
                     <div className="row-between pt-4 border-t border-[var(--border-main)]">
                       <span className="text-sm font-medium text-[var(--text-secondary)]">Retention Rate</span>
-                      <span className="text-xl font-bold text-accent-700">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
+                      <span
+                        className="text-xl font-bold text-accent-700">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
                     </div>
                   </div>
                 </CardContent>
@@ -416,7 +424,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Activity className="h-5 w-5 text-accent-500" />
+                    <Activity className="h-5 w-5 text-accent-500"/>
                     Productivity
                   </CardTitle>
                 </CardHeader>
@@ -424,15 +432,18 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-4">
                     <div className="row-between">
                       <span className="text-body-secondary">Attendance Rate</span>
-                      <span className="text-lg font-bold text-success-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
+                      <span
+                        className="text-lg font-bold text-success-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Performance Rating</span>
-                      <span className="text-lg font-bold text-accent-700">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
+                      <span
+                        className="text-lg font-bold text-accent-700">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Engagement Score</span>
-                      <span className="text-lg font-bold text-accent-600">{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
+                      <span
+                        className="text-lg font-bold text-accent-600">{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">eNPS</span>
@@ -448,7 +459,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Shield className="h-5 w-5 text-danger-500" />
+                    <Shield className="h-5 w-5 text-danger-500"/>
                     Risk Indicators
                   </CardTitle>
                 </CardHeader>
@@ -460,11 +471,13 @@ export default function ExecutiveDashboardPage() {
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Predicted Attrition</span>
-                      <span className="text-lg font-bold text-warning-600">{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
+                      <span
+                        className="text-lg font-bold text-warning-600">{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Compliance Issues</span>
-                      <span className="text-lg font-bold text-warning-600">{data.riskIndicators.complianceIssuesCount}</span>
+                      <span
+                        className="text-lg font-bold text-warning-600">{data.riskIndicators.complianceIssuesCount}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Skill Gaps</span>
@@ -484,7 +497,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
-                  <DollarSign className="h-5 w-5 text-accent-500" />
+                  <DollarSign className="h-5 w-5 text-accent-500"/>
                 </div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}
@@ -492,11 +505,12 @@ export default function ExecutiveDashboardPage() {
                 {data.financialSummary.payrollCostChangePercent != null && (
                   <div className="flex items-center gap-2 mt-2">
                     {data.financialSummary.payrollCostChangePercent >= 0 ? (
-                      <ArrowUpRight className="h-4 w-4 text-danger-600" />
+                      <ArrowUpRight className="h-4 w-4 text-danger-600"/>
                     ) : (
-                      <ArrowDownRight className="h-4 w-4 text-success-600" />
+                      <ArrowDownRight className="h-4 w-4 text-success-600"/>
                     )}
-                    <span className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? 'text-danger-600' : 'text-success-600'}`}>
+                    <span
+                      className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? 'text-danger-600' : 'text-success-600'}`}>
                       {formatPercentage(data.financialSummary.payrollCostChangePercent)}
                     </span>
                   </div>
@@ -508,7 +522,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">YTD Payroll</p>
-                  <Calendar className="h-5 w-5 text-success-500" />
+                  <Calendar className="h-5 w-5 text-success-500"/>
                 </div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.yearToDatePayrollCost || 0)}
@@ -523,7 +537,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Cost/Employee</p>
-                  <Users className="h-5 w-5 text-warning-500" />
+                  <Users className="h-5 w-5 text-warning-500"/>
                 </div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.avgCostPerEmployee || 0)}
@@ -538,7 +552,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Revenue/Employee</p>
-                  <TrendingUp className="h-5 w-5 text-accent-500" />
+                  <TrendingUp className="h-5 w-5 text-accent-500"/>
                 </div>
                 <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.revenuePerEmployee || 0)}

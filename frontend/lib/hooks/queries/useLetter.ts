@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { letterService } from '@/lib/services/hrms/letter.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {letterService} from '@/lib/services/hrms/letter.service';
 import {
   CreateLetterTemplateRequest,
   GenerateLetterRequest,
@@ -16,14 +16,14 @@ export const letterKeys = {
   // Letters
   letters: () => [...letterKeys.all, 'letters'] as const,
   letterList: (page?: number, size?: number) =>
-    [...letterKeys.letters(), { page, size }] as const,
+    [...letterKeys.letters(), {page, size}] as const,
   letterDetail: (id: string) => [...letterKeys.letters(), 'detail', id] as const,
   pendingApprovals: (page?: number, size?: number) =>
-    [...letterKeys.letters(), 'pending-approvals', { page, size }] as const,
+    [...letterKeys.letters(), 'pending-approvals', {page, size}] as const,
   // Templates
   templates: () => [...letterKeys.all, 'templates'] as const,
   templateList: (page?: number, size?: number) =>
-    [...letterKeys.templates(), { page, size }] as const,
+    [...letterKeys.templates(), {page, size}] as const,
   activeTemplates: () => [...letterKeys.templates(), 'active'] as const,
   templateDetail: (id: string) => [...letterKeys.templates(), 'detail', id] as const,
   templatesByCategory: (category: LetterCategory) =>
@@ -111,10 +111,10 @@ export function useGenerateLetter() {
   const _userId = ''; // Will be set via useAuth in the component
 
   return useMutation({
-    mutationFn: ({ data, generatedBy }: { data: GenerateLetterRequest; generatedBy: string }) =>
+    mutationFn: ({data, generatedBy}: { data: GenerateLetterRequest; generatedBy: string }) =>
       letterService.generateLetter(data, generatedBy),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
     },
   });
 }
@@ -123,10 +123,10 @@ export function useGenerateOfferLetter() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data, generatedBy }: { data: GenerateOfferLetterRequest; generatedBy: string }) =>
+    mutationFn: ({data, generatedBy}: { data: GenerateOfferLetterRequest; generatedBy: string }) =>
       letterService.generateOfferLetter(data, generatedBy),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
     },
   });
 }
@@ -135,11 +135,11 @@ export function useIssueLetter() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ letterId, issuerId }: { letterId: string; issuerId: string }) =>
+    mutationFn: ({letterId, issuerId}: { letterId: string; issuerId: string }) =>
       letterService.issueLetter(letterId, issuerId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
-      queryClient.invalidateQueries({ queryKey: letterKeys.pendingApprovals() });
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
+      queryClient.invalidateQueries({queryKey: letterKeys.pendingApprovals()});
     },
   });
 }
@@ -149,17 +149,17 @@ export function useApproveLetter() {
 
   return useMutation({
     mutationFn: ({
-      letterId,
-      approverId,
-      comments,
-    }: {
+                   letterId,
+                   approverId,
+                   comments,
+                 }: {
       letterId: string;
       approverId: string;
       comments?: string;
     }) => letterService.approveLetter(letterId, approverId, comments),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.pendingApprovals() });
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+      queryClient.invalidateQueries({queryKey: letterKeys.pendingApprovals()});
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
     },
   });
 }
@@ -170,7 +170,7 @@ export function useRevokeLetter() {
   return useMutation({
     mutationFn: (letterId: string) => letterService.revokeLetter(letterId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
     },
   });
 }
@@ -190,7 +190,7 @@ export function useCreateLetterTemplate() {
     mutationFn: (data: CreateLetterTemplateRequest) =>
       letterService.createTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+      queryClient.invalidateQueries({queryKey: letterKeys.templates()});
     },
   });
 }
@@ -199,10 +199,10 @@ export function useUpdateLetterTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateLetterTemplateRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateLetterTemplateRequest }) =>
       letterService.updateTemplate(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+      queryClient.invalidateQueries({queryKey: letterKeys.templates()});
     },
   });
 }
@@ -213,7 +213,7 @@ export function useDeleteLetterTemplate() {
   return useMutation({
     mutationFn: (id: string) => letterService.deleteTemplate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+      queryClient.invalidateQueries({queryKey: letterKeys.templates()});
     },
   });
 }
@@ -224,7 +224,7 @@ export function useCloneLetterTemplate() {
   return useMutation({
     mutationFn: (id: string) => letterService.cloneTemplate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.templates() });
+      queryClient.invalidateQueries({queryKey: letterKeys.templates()});
     },
   });
 }
@@ -252,10 +252,10 @@ export function useBulkGenerateLetters() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ templateId, employeeIds }: { templateId: string; employeeIds: string[] }) =>
+    mutationFn: ({templateId, employeeIds}: { templateId: string; employeeIds: string[] }) =>
       letterService.bulkGenerate(templateId, employeeIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: letterKeys.letters() });
+      queryClient.invalidateQueries({queryKey: letterKeys.letters()});
     },
   });
 }

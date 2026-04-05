@@ -5,19 +5,23 @@ description: Use when asked to add a region-specific policy, configure holidays 
 
 # Region-Aware Policy Builder
 
-> **Purpose:** Scaffold region-specific configuration for NULogic's distributed workforce across multiple regions and timezones.
-> Covers leave policies, holiday calendars, working hours, statutory deductions, and attendance rules -- all scoped by region and timezone.
+> **Purpose:** Scaffold region-specific configuration for NULogic's distributed workforce across
+> multiple regions and timezones.
+> Covers leave policies, holiday calendars, working hours, statutory deductions, and attendance
+> rules -- all scoped by region and timezone.
 
 ## When to Use
 
-- User says "add policy for region X", "configure holidays", "regional payroll rules", "region-specific settings"
+- User says "add policy for region X", "configure holidays", "regional payroll rules", "
+  region-specific settings"
 - Setting up timezone-aware cron jobs or attendance rules
 - Adding statutory compliance rules for a specific country/region
 - Configuring different leave quotas or types per region
 
 ## Input Required
 
-- **Region/Country**: Country code (e.g., `IN`, `US`, `AE`) and optional sub-region (e.g., `IN-KA` for Karnataka)
+- **Region/Country**: Country code (e.g., `IN`, `US`, `AE`) and optional sub-region (e.g., `IN-KA`
+  for Karnataka)
 - **Policy type**: Leave, holiday, attendance, payroll/statutory, or shift configuration
 - **Effective dates**: When the policy takes effect (`effective_from`, `effective_to`)
 - **Specifics**: Leave quotas, holiday list, working hours, tax rates, etc.
@@ -27,7 +31,9 @@ description: Use when asked to add a region-specific policy, configure holidays 
 Before creating anything, understand how regions and timezones are already modeled:
 
 ### OfficeLocation Entity
+
 **File:** `backend/src/main/java/com/hrms/domain/attendance/OfficeLocation.java`
+
 - Has `timezone` field (default: `"Asia/Kolkata"`)
 - Has `workingDays` field (default: `"MON,TUE,WED,THU,FRI"`)
 - Has `city`, `state`, `country` fields
@@ -35,23 +41,30 @@ Before creating anything, understand how regions and timezones are already model
 - Used for geofencing and attendance rules
 
 ### PayrollLocation Entity
+
 **File:** `backend/src/main/java/com/hrms/domain/payroll/PayrollLocation.java`
+
 - Has `countryCode` (ISO 2-letter), `region` (state/province), `timezone`
 - Has `localCurrency`, `payFrequency`, `payDay`
 - Has tax rates: `baseIncomeTaxRate`, `socialSecurityEmployeeRate`, `socialSecurityEmployerRate`
 - Has compliance: `minWage`, `maxWorkingHoursWeek`, `overtimeMultiplier`
 
 ### Holiday Entity
+
 **File:** `backend/src/main/java/com/hrms/domain/attendance/Holiday.java`
-- Has `holidayType` enum: `NATIONAL`, `REGIONAL`, `OPTIONAL`, `RESTRICTED`, `FESTIVAL`, `COMPANY_EVENT`
+
+- Has `holidayType` enum: `NATIONAL`, `REGIONAL`, `OPTIONAL`, `RESTRICTED`, `FESTIVAL`,
+  `COMPANY_EVENT`
 - Has `applicableLocations` (TEXT, comma-separated location codes)
 - Has `applicableDepartments` (TEXT, comma-separated)
 - Has `isOptional`, `isRestricted` flags
 - Methods: `isApplicableForLocation(String)`, `isApplicableForDepartment(String)`
 
 ### Timezone Rules (Codebase Convention)
+
 - All timestamps stored in **UTC** in the database (`TIMESTAMP` columns, no timezone suffix)
-- `OfficeLocation.timezone` and `PayrollLocation.timezone` store IANA timezone IDs (e.g., `Asia/Kolkata`, `America/New_York`)
+- `OfficeLocation.timezone` and `PayrollLocation.timezone` store IANA timezone IDs (e.g.,
+  `Asia/Kolkata`, `America/New_York`)
 - Backend uses `java.time.ZoneId` for timezone conversions
 - Frontend displays in user's local timezone (derived from employee's assigned office location)
 
@@ -61,13 +74,13 @@ Before creating anything, understand how regions and timezones are already model
 
 Determine which of these regional policy patterns applies:
 
-| Policy Type | Existing Table | New Table Needed? |
-|-------------|---------------|-------------------|
-| Holiday calendar | `holidays` | No -- use existing with `applicableLocations` |
-| Leave quotas per region | `leave_types` + `leave_policies` | Maybe -- if region-specific quotas need a join table |
-| Statutory deductions | `payroll_locations` | Maybe -- for detailed slab-based tax rules |
-| Working hours / shifts | `shift_policies` + `office_locations` | No -- use existing |
-| Attendance cutoff times | `attendance_settings` | Maybe -- for timezone-specific cutoff rules |
+| Policy Type             | Existing Table                        | New Table Needed?                                    |
+|-------------------------|---------------------------------------|------------------------------------------------------|
+| Holiday calendar        | `holidays`                            | No -- use existing with `applicableLocations`        |
+| Leave quotas per region | `leave_types` + `leave_policies`      | Maybe -- if region-specific quotas need a join table |
+| Statutory deductions    | `payroll_locations`                   | Maybe -- for detailed slab-based tax rules           |
+| Working hours / shifts  | `shift_policies` + `office_locations` | No -- use existing                                   |
+| Attendance cutoff times | `attendance_settings`                 | Maybe -- for timezone-specific cutoff rules          |
 
 ### Step 2: Generate Holiday Calendar (if applicable)
 
@@ -86,14 +99,17 @@ VALUES
 ```
 
 **Rules:**
-- `NATIONAL` holidays: `applicableLocations` = NULL (applies everywhere) or all location codes for that country
+
+- `NATIONAL` holidays: `applicableLocations` = NULL (applies everywhere) or all location codes for
+  that country
 - `REGIONAL` holidays: `applicableLocations` = comma-separated location codes for affected offices
 - `OPTIONAL`/`RESTRICTED` holidays: Set `is_optional = true` or `is_restricted = true`
 - Always include `year` column for easy annual rollover
 
 ### Step 3: Generate Leave Policy (if applicable)
 
-If the region needs different leave quotas, create or extend region-specific leave policy configuration.
+If the region needs different leave quotas, create or extend region-specific leave policy
+configuration.
 
 **Option A: Use existing `leave_types` with location scoping** (preferred if simple):
 
@@ -132,7 +148,8 @@ CREATE UNIQUE INDEX uq_rlp_tenant_type_region_active
 
 ### Step 4: Generate Statutory Deduction Rules (if applicable)
 
-For region-specific tax and compliance rules, extend `PayrollLocation` or create a detailed slab table:
+For region-specific tax and compliance rules, extend `PayrollLocation` or create a detailed slab
+table:
 
 ```sql
 -- V{N}: Statutory deduction slabs for region {REGION_CODE}
@@ -215,7 +232,8 @@ public class RegionPolicyResolver {
 
 ### Step 6: Configure Timezone-Aware Cron Jobs
 
-For scheduled jobs that must respect regional timezones (leave accrual, attendance marking, payroll cutoff):
+For scheduled jobs that must respect regional timezones (leave accrual, attendance marking, payroll
+cutoff):
 
 ```java
 /**
@@ -248,21 +266,27 @@ public void processTimezoneAwareTask() {
 ```
 
 **DST rules:**
+
 - Always use `java.time.ZoneId` (not fixed UTC offsets like `+05:30`)
 - `ZoneId.of("Asia/Kolkata")` does NOT observe DST (India has no DST)
 - `ZoneId.of("America/New_York")` automatically handles EST/EDT transitions
-- For payroll cutoff: resolve the cutoff date in the employee's timezone FIRST, then convert to UTC for the DB query
+- For payroll cutoff: resolve the cutoff date in the employee's timezone FIRST, then convert to UTC
+  for the DB query
 
 ### Step 7: Common Regional Configurations
 
 **India (IN):**
+
 - Timezone: `Asia/Kolkata` (UTC+5:30, no DST)
 - Pay frequency: Monthly (pay day: last working day or 1st of next month)
-- Statutory: PF (12% employee + 12% employer), ESI (0.75% employee + 3.25% employer for gross <= 21000), Professional Tax (state-specific), LWF (state-specific)
-- Leave: Earned Leave (15-18/year), Casual Leave (7-12/year), Sick Leave (7-12/year), Maternity (26 weeks), Paternity (15 days)
+- Statutory: PF (12% employee + 12% employer), ESI (0.75% employee + 3.25% employer for gross <=
+  21000), Professional Tax (state-specific), LWF (state-specific)
+- Leave: Earned Leave (15-18/year), Casual Leave (7-12/year), Sick Leave (7-12/year), Maternity (26
+  weeks), Paternity (15 days)
 - Holidays: ~10-15 national + 5-10 regional per state
 
 **UAE (AE):**
+
 - Timezone: `Asia/Dubai` (UTC+4, no DST)
 - Pay frequency: Monthly (WPS mandatory)
 - Statutory: No income tax, GPSSA pension for Emiratis
@@ -270,15 +294,19 @@ public void processTimezoneAwareTask() {
 - Work week: Sun-Thu (Fri-Sat off) -- set `workingDays = "SUN,MON,TUE,WED,THU"` on OfficeLocation
 
 **US:**
-- Timezone: Multiple (`America/New_York`, `America/Chicago`, `America/Denver`, `America/Los_Angeles`)
+
+- Timezone: Multiple (`America/New_York`, `America/Chicago`, `America/Denver`,
+  `America/Los_Angeles`)
 - Pay frequency: Biweekly or semimonthly
-- Statutory: Federal income tax (progressive slabs), State tax (varies), FICA (6.2% SS + 1.45% Medicare)
+- Statutory: Federal income tax (progressive slabs), State tax (varies), FICA (6.2% SS + 1.45%
+  Medicare)
 - Leave: Varies by state (no federal mandate for PTO, some states mandate sick leave)
 
 ## Output Checklist
 
 - [ ] **Policy scope identified**: Country code, region code, timezone, effective dates
-- [ ] **Existing tables reused** where possible (holidays, leave_types, payroll_locations, office_locations)
+- [ ] **Existing tables reused** where possible (holidays, leave_types, payroll_locations,
+  office_locations)
 - [ ] **New tables** follow the nu-migration skill template (tenant_id, audit columns, indexes)
 - [ ] **Backend service** uses `ZoneId` for all timezone conversions (never raw UTC offsets)
 - [ ] **All timestamps in DB are UTC** -- timezone conversion happens at display/query time only
@@ -286,14 +314,21 @@ public void processTimezoneAwareTask() {
 - [ ] **DST handling**: `ZoneId` used (not `ZoneOffset`), tested for regions with DST transitions
 - [ ] **Region code format**: ISO 3166-2 (e.g., `IN-KA`, `US-CA`, `AE`)
 - [ ] **Holiday scoping**: Uses `applicableLocations` field on `holidays` table
-- [ ] **Effective date range**: Every policy row has `effective_from` and nullable `effective_to` (NULL = current)
+- [ ] **Effective date range**: Every policy row has `effective_from` and nullable `effective_to` (
+  NULL = current)
 - [ ] **Fallback**: Service resolves region-specific policy first, falls back to tenant-wide default
 
 ## Timezone Pitfalls to Avoid
 
-1. **Never store timezone as offset** (e.g., `+05:30`). Always use IANA IDs (`Asia/Kolkata`). Offsets break during DST.
-2. **Never assume all employees in a country share one timezone**. The US has 4+ timezones, Russia has 11.
-3. **Payroll cutoff**: If cutoff is "last day of month", resolve in the employee's timezone before querying UTC timestamps.
-4. **Attendance "day boundary"**: A "day" starts at midnight in the employee's timezone, not midnight UTC.
-5. **Leave balance queries**: "Today" for an employee in `America/Los_Angeles` may still be "yesterday" for `Asia/Kolkata`.
-6. **Cron scheduling**: A single `@Scheduled(cron = "0 0 0 * * *")` runs at midnight UTC -- which is 5:30 AM IST and 7:00 PM EST the previous day. Use the hourly-scan pattern in Step 6 instead.
+1. **Never store timezone as offset** (e.g., `+05:30`). Always use IANA IDs (`Asia/Kolkata`).
+   Offsets break during DST.
+2. **Never assume all employees in a country share one timezone**. The US has 4+ timezones, Russia
+   has 11.
+3. **Payroll cutoff**: If cutoff is "last day of month", resolve in the employee's timezone before
+   querying UTC timestamps.
+4. **Attendance "day boundary"**: A "day" starts at midnight in the employee's timezone, not
+   midnight UTC.
+5. **Leave balance queries**: "Today" for an employee in `America/Los_Angeles` may still be "
+   yesterday" for `Asia/Kolkata`.
+6. **Cron scheduling**: A single `@Scheduled(cron = "0 0 0 * * *")` runs at midnight UTC -- which is
+   5:30 AM IST and 7:00 PM EST the previous day. Use the hourly-scan pattern in Step 6 instead.

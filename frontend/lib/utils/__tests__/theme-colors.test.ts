@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { chartColors } from '../theme-colors';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {chartColors} from '../theme-colors';
 
 describe('theme-colors', () => {
   beforeEach(() => {

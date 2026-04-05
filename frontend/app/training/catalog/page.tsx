@@ -1,56 +1,50 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout/AppLayout';
 import {
-  BookOpen,
-  Search,
-  Clock,
-  Users,
-  Star,
-  Award,
-  Loader2,
   AlertCircle,
+  Award,
+  BookOpen,
   CheckCircle,
-  RefreshCw,
+  Clock,
   Filter,
   GraduationCap,
+  Loader2,
+  RefreshCw,
+  Search,
+  Star,
+  Users,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  Badge,
-  Button,
-  Input,
-} from '@/components/ui';
-import type { BadgeVariant } from '@/components/ui/types';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { lmsService, CourseSummaryDto } from '@/lib/services/grow/lms.service';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { createLogger } from '@/lib/utils/logger';
+import {Badge, Button, Card, CardContent, Input,} from '@/components/ui';
+import type {BadgeVariant} from '@/components/ui/types';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {CourseSummaryDto, lmsService} from '@/lib/services/grow/lms.service';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('CatalogPage');
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
 const DIFFICULTY_LABELS: Record<string, string> = {
-  BEGINNER:     'Beginner',
+  BEGINNER: 'Beginner',
   INTERMEDIATE: 'Intermediate',
-  ADVANCED:     'Advanced',
-  EXPERT:       'Expert',
+  ADVANCED: 'Advanced',
+  EXPERT: 'Expert',
 };
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  BEGINNER:     'success',
+  BEGINNER: 'success',
   INTERMEDIATE: 'warning',
-  ADVANCED:     'danger',
-  EXPERT:       'secondary',
+  ADVANCED: 'danger',
+  EXPERT: 'secondary',
 };
 
-function DifficultyBadge({ level }: { level: string }) {
+function DifficultyBadge({level}: { level: string }) {
   const variant = (DIFFICULTY_COLORS[level] ?? 'secondary') as BadgeVariant;
   return (
     <Badge variant={variant} className="text-xs">
@@ -63,7 +57,7 @@ function DifficultyBadge({ level }: { level: string }) {
 
 export default function CourseCatalogPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const {isAuthenticated, hasHydrated} = useAuth();
 
   const [courses, setCourses] = useState<CourseSummaryDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,7 +173,7 @@ export default function CourseCatalogPage() {
               onClick={() => router.push('/training/my-learning')}
               className="flex items-center gap-2"
             >
-              <BookOpen className="h-4 w-4" />
+              <BookOpen className="h-4 w-4"/>
               My Learning
             </Button>
             <Button
@@ -189,7 +183,7 @@ export default function CourseCatalogPage() {
               disabled={loading}
               className="flex items-center gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-4 w-4"/>
               Refresh
             </Button>
           </div>
@@ -198,13 +192,14 @@ export default function CourseCatalogPage() {
         {/* Notifications */}
         {error && (
           <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-700 rounded-lg border border-danger-200">
-            <AlertCircle className="h-5 w-5 shrink-0" />
+            <AlertCircle className="h-5 w-5 shrink-0"/>
             <span className="text-sm">{error}</span>
           </div>
         )}
         {successMsg && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 text-success-700 rounded-lg border border-success-200">
-            <CheckCircle className="h-5 w-5 shrink-0" />
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 text-success-700 rounded-lg border border-success-200">
+            <CheckCircle className="h-5 w-5 shrink-0"/>
             <span className="text-sm">{successMsg}</span>
           </div>
         )}
@@ -212,7 +207,7 @@ export default function CourseCatalogPage() {
         {/* Filters */}
         <div className="flex items-center gap-4 flex-wrap">
           <div className="relative flex-1 min-w-[220px] max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <Input
               placeholder="Search courses…"
               value={searchQuery}
@@ -226,7 +221,7 @@ export default function CourseCatalogPage() {
             onClick={() => setFilterMandatory((v) => !v)}
             className="flex items-center gap-2"
           >
-            <Filter className="h-4 w-4" />
+            <Filter className="h-4 w-4"/>
             Mandatory only
           </Button>
           {visibleCourses.length > 0 && (
@@ -239,18 +234,21 @@ export default function CourseCatalogPage() {
         {/* Course grid */}
         {loading && courses.length === 0 ? (
           <div className="flex items-center justify-center py-20 text-[var(--text-muted)]">
-            <Loader2 className="h-8 w-8 animate-spin mr-4" />
+            <Loader2 className="h-8 w-8 animate-spin mr-4"/>
             <span>Loading catalog…</span>
           </div>
         ) : visibleCourses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-4">
-            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]" />
+            <GraduationCap className="h-12 w-12 text-[var(--text-muted)]"/>
             <p className="text-lg font-medium text-[var(--text-muted)]">No courses found</p>
             {searchQuery && (
               <p className="text-sm">
                 Try clearing the search or{' '}
                 <button
-                  onClick={() => { setSearchQuery(''); setFilterMandatory(false); }}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilterMandatory(false);
+                  }}
                   className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                 >
                   reset filters
@@ -271,7 +269,8 @@ export default function CourseCatalogPage() {
                   className="border border-[var(--border-main)] hover:shadow-[var(--shadow-elevated)] transition-shadow flex flex-col"
                 >
                   {/* Thumbnail placeholder */}
-                  <div className="h-36 bg-gradient-to-br from-accent-50 to-accent-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+                  <div
+                    className="h-36 bg-gradient-to-br from-accent-50 to-accent-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
                     {course.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}
@@ -281,10 +280,11 @@ export default function CourseCatalogPage() {
                         className="object-cover rounded-t-lg"
                       />
                     ) : (
-                      <GraduationCap className="h-12 w-12 text-accent-300" />
+                      <GraduationCap className="h-12 w-12 text-accent-300"/>
                     )}
                     {course.isMandatory && (
-                      <span className="absolute top-2 right-2 bg-danger-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      <span
+                        className="absolute top-2 right-2 bg-danger-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                         Mandatory
                       </span>
                     )}
@@ -296,7 +296,7 @@ export default function CourseCatalogPage() {
                       <h3 className="font-semibold text-[var(--text-primary)] text-sm leading-snug line-clamp-2">
                         {course.title}
                       </h3>
-                      <DifficultyBadge level={course.difficultyLevel} />
+                      <DifficultyBadge level={course.difficultyLevel}/>
                     </div>
 
                     {/* Description */}
@@ -329,17 +329,17 @@ export default function CourseCatalogPage() {
                     <div className="flex items-center gap-4 text-caption mb-4 mt-auto">
                       {course.durationHours && (
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-3 w-3"/>
                           {course.durationHours}h
                         </span>
                       )}
                       <span className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
+                        <Users className="h-3 w-3"/>
                         {course.totalEnrollments ?? 0} enrolled
                       </span>
                       {course.avgRating && (
                         <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-warning-400 fill-warning-400" />
+                          <Star className="h-3 w-3 text-warning-400 fill-warning-400"/>
                           {course.avgRating.toFixed(1)}
                         </span>
                       )}
@@ -354,7 +354,7 @@ export default function CourseCatalogPage() {
                         onClick={() => router.push(`/training/catalog/${course.id}`)}
                       >
                         <span className="flex items-center gap-1.5">
-                          <BookOpen className="h-3.5 w-3.5" />
+                          <BookOpen className="h-3.5 w-3.5"/>
                           Details
                         </span>
                       </Button>
@@ -368,17 +368,17 @@ export default function CourseCatalogPage() {
                         >
                           {isEnrolling ? (
                             <span className="flex items-center gap-2">
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4 animate-spin"/>
                               Enrolling…
                             </span>
                           ) : isEnrolled ? (
                             <span className="flex items-center gap-2">
-                              <CheckCircle className="h-4 w-4 text-success-500" />
+                              <CheckCircle className="h-4 w-4 text-success-500"/>
                               Enrolled
                             </span>
                           ) : (
                             <span className="flex items-center gap-2">
-                              <Award className="h-4 w-4" />
+                              <Award className="h-4 w-4"/>
                               Enroll
                             </span>
                           )}
@@ -407,7 +407,7 @@ export default function CourseCatalogPage() {
 
         {loading && courses.length > 0 && (
           <div className="flex justify-center py-4 text-[var(--text-muted)]">
-            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <Loader2 className="h-6 w-6 animate-spin mr-2"/>
             <span className="text-sm">Loading more…</span>
           </div>
         )}

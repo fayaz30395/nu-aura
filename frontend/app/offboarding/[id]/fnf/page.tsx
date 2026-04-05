@@ -1,75 +1,67 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useParams, useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Title,
-  Text,
-  Paper,
-  Group,
-  Stack,
+  ActionIcon,
   Badge,
   Button,
-  Divider,
-  Loader,
   Center,
-  SimpleGrid,
+  Divider,
+  Group,
+  Loader,
   NumberInput,
-  Textarea,
+  Paper,
   Select,
-  ActionIcon,
+  SimpleGrid,
+  Stack,
+  Text,
+  Textarea,
+  Title,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
+import {IconArrowLeft, IconCash, IconCheck, IconSend,} from '@tabler/icons-react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  IconCheck,
-  IconArrowLeft,
-  IconSend,
-  IconCash,
-} from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import {
-  useExitProcess,
-  useSettlementByExitProcess,
-  useCreateSettlement,
-  useUpdateSettlement,
-  useSubmitSettlementForApproval,
   useApproveSettlement,
+  useCreateSettlement,
+  useExitProcess,
   useProcessSettlementPayment,
+  useSettlementByExitProcess,
+  useSubmitSettlementForApproval,
+  useUpdateSettlement,
 } from '@/lib/hooks/queries/useExit';
-import {
-  SettlementStatus,
-  PaymentMode,
-} from '@/lib/types/hrms/exit';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import {PaymentMode, SettlementStatus,} from '@/lib/types/hrms/exit';
+import {formatCurrency, formatDate} from '@/lib/utils';
 
 const fnfFormSchema = z.object({
-  pendingSalary: z.number({ coerce: true }).min(0).default(0),
-  leaveEncashment: z.number({ coerce: true }).min(0).default(0),
-  bonusAmount: z.number({ coerce: true }).min(0).default(0),
-  gratuityAmount: z.number({ coerce: true }).min(0).default(0),
-  noticePeriodRecovery: z.number({ coerce: true }).min(0).default(0),
-  reimbursements: z.number({ coerce: true }).min(0).default(0),
-  otherEarnings: z.number({ coerce: true }).min(0).default(0),
-  noticeBuyout: z.number({ coerce: true }).min(0).default(0),
-  loanRecovery: z.number({ coerce: true }).min(0).default(0),
-  advanceRecovery: z.number({ coerce: true }).min(0).default(0),
-  assetDamageDeduction: z.number({ coerce: true }).min(0).default(0),
-  taxDeduction: z.number({ coerce: true }).min(0).default(0),
-  otherDeductions: z.number({ coerce: true }).min(0).default(0),
-  yearsOfService: z.number({ coerce: true }).min(0).optional(),
-  lastDrawnSalary: z.number({ coerce: true }).min(0).optional(),
+  pendingSalary: z.number({coerce: true}).min(0).default(0),
+  leaveEncashment: z.number({coerce: true}).min(0).default(0),
+  bonusAmount: z.number({coerce: true}).min(0).default(0),
+  gratuityAmount: z.number({coerce: true}).min(0).default(0),
+  noticePeriodRecovery: z.number({coerce: true}).min(0).default(0),
+  reimbursements: z.number({coerce: true}).min(0).default(0),
+  otherEarnings: z.number({coerce: true}).min(0).default(0),
+  noticeBuyout: z.number({coerce: true}).min(0).default(0),
+  loanRecovery: z.number({coerce: true}).min(0).default(0),
+  advanceRecovery: z.number({coerce: true}).min(0).default(0),
+  assetDamageDeduction: z.number({coerce: true}).min(0).default(0),
+  taxDeduction: z.number({coerce: true}).min(0).default(0),
+  otherDeductions: z.number({coerce: true}).min(0).default(0),
+  yearsOfService: z.number({coerce: true}).min(0).optional(),
+  lastDrawnSalary: z.number({coerce: true}).min(0).optional(),
   remarks: z.string().optional(),
 });
 
 type FnFFormData = z.infer<typeof fnfFormSchema>;
 
 const paymentFormSchema = z.object({
-  paymentMode: z.nativeEnum(PaymentMode, { errorMap: () => ({ message: 'Payment mode is required' }) }),
+  paymentMode: z.nativeEnum(PaymentMode, {errorMap: () => ({message: 'Payment mode is required'})}),
   paymentReference: z.string().min(1, 'Payment reference is required'),
 });
 
@@ -98,8 +90,8 @@ export default function FnFSettlementPage() {
   const router = useRouter();
   const exitProcessId = params.id as string;
 
-  const { data: exitProcess } = useExitProcess(exitProcessId);
-  const { data: settlement, isLoading, error: _loadError } = useSettlementByExitProcess(exitProcessId);
+  const {data: exitProcess} = useExitProcess(exitProcessId);
+  const {data: settlement, isLoading, error: _loadError} = useSettlementByExitProcess(exitProcessId);
 
   const createMutation = useCreateSettlement();
   const updateMutation = useUpdateSettlement();
@@ -167,7 +159,12 @@ export default function FnFSettlementPage() {
             remarks: data.remarks ?? undefined,
           },
         });
-        notifications.show({ title: 'Saved', message: 'Settlement updated successfully', color: 'green', icon: <IconCheck size={16} /> });
+        notifications.show({
+          title: 'Saved',
+          message: 'Settlement updated successfully',
+          color: 'green',
+          icon: <IconCheck size={16}/>
+        });
       } else {
         await createMutation.mutateAsync({
           exitProcessId,
@@ -177,10 +174,15 @@ export default function FnFSettlementPage() {
           lastDrawnSalary: data.lastDrawnSalary ?? undefined,
           remarks: data.remarks ?? undefined,
         });
-        notifications.show({ title: 'Created', message: 'Settlement created successfully', color: 'green', icon: <IconCheck size={16} /> });
+        notifications.show({
+          title: 'Created',
+          message: 'Settlement created successfully',
+          color: 'green',
+          icon: <IconCheck size={16}/>
+        });
       }
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to save settlement', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to save settlement', color: 'red'});
     }
   };
 
@@ -188,9 +190,14 @@ export default function FnFSettlementPage() {
     if (!settlement) return;
     try {
       await submitMutation.mutateAsync(settlement.id);
-      notifications.show({ title: 'Submitted', message: 'Settlement submitted for approval', color: 'green', icon: <IconCheck size={16} /> });
+      notifications.show({
+        title: 'Submitted',
+        message: 'Settlement submitted for approval',
+        color: 'green',
+        icon: <IconCheck size={16}/>
+      });
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to submit for approval', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to submit for approval', color: 'red'});
     }
   };
 
@@ -198,9 +205,14 @@ export default function FnFSettlementPage() {
     if (!settlement) return;
     try {
       await approveMutation.mutateAsync(settlement.id);
-      notifications.show({ title: 'Approved', message: 'Settlement approved', color: 'green', icon: <IconCheck size={16} /> });
+      notifications.show({
+        title: 'Approved',
+        message: 'Settlement approved',
+        color: 'green',
+        icon: <IconCheck size={16}/>
+      });
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to approve settlement', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to approve settlement', color: 'red'});
     }
   };
 
@@ -212,16 +224,21 @@ export default function FnFSettlementPage() {
         paymentMode: data.paymentMode,
         paymentReference: data.paymentReference,
       });
-      notifications.show({ title: 'Paid', message: 'Payment processed successfully', color: 'green', icon: <IconCheck size={16} /> });
+      notifications.show({
+        title: 'Paid',
+        message: 'Payment processed successfully',
+        color: 'green',
+        icon: <IconCheck size={16}/>
+      });
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to process payment', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to process payment', color: 'red'});
     }
   };
 
   if (isLoading) {
     return (
       <AppLayout>
-        <Center h={400}><Loader size="lg" /></Center>
+        <Center h={400}><Loader size="lg"/></Center>
       </AppLayout>
     );
   }
@@ -253,480 +270,482 @@ export default function FnFSettlementPage() {
 
   return (
     <AppLayout>
-      <PermissionGate anyOf={[Permissions.EXIT_MANAGE, Permissions.SYSTEM_ADMIN]} fallback={<Stack p="md"><Text c="red">You do not have permission to view FnF settlements.</Text></Stack>}>
-      <Stack gap="lg" p="md">
-        {/* Header */}
-        <Group justify="space-between" align="flex-start">
-          <Group>
-            <ActionIcon variant="subtle" size="lg" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
-              <IconArrowLeft size={20} />
-            </ActionIcon>
-            <div>
-              <Title order={2} className="text-surface-900 dark:text-surface-50">
-                Full & Final Settlement
-              </Title>
-              <Text size="sm" c="dimmed">
-                {exitProcess?.employeeName ?? 'Employee'} | Exit Process: {exitProcessId.slice(0, 8)}...
-              </Text>
-            </div>
-          </Group>
-          <Group>
-            {settlement && (
-              <Badge
-                color={getSettlementStatusColor(settlement.status)}
-                variant="filled"
-                size="lg"
-              >
-                {formatLabel(settlement.status)}
-              </Badge>
-            )}
-          </Group>
-        </Group>
-
-        {/* Gratuity Info */}
-        {settlement?.yearsOfService != null && (
-          <Paper withBorder p="sm" bg="blue.0" radius="md">
-            <Group gap="xl">
+      <PermissionGate anyOf={[Permissions.EXIT_MANAGE, Permissions.SYSTEM_ADMIN]}
+                      fallback={<Stack p="md"><Text c="red">You do not have permission to view FnF
+                        settlements.</Text></Stack>}>
+        <Stack gap="lg" p="md">
+          {/* Header */}
+          <Group justify="space-between" align="flex-start">
+            <Group>
+              <ActionIcon variant="subtle" size="lg" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
+                <IconArrowLeft size={20}/>
+              </ActionIcon>
               <div>
-                <Text size="xs" c="dimmed">Years of Service</Text>
-                <Text fw={600}>{Number(settlement.yearsOfService).toFixed(1)} years</Text>
+                <Title order={2} className="text-surface-900 dark:text-surface-50">
+                  Full & Final Settlement
+                </Title>
+                <Text size="sm" c="dimmed">
+                  {exitProcess?.employeeName ?? 'Employee'} | Exit Process: {exitProcessId.slice(0, 8)}...
+                </Text>
               </div>
-              <div>
-                <Text size="xs" c="dimmed">Gratuity Eligible</Text>
-                <Badge color={settlement.isGratuityEligible ? 'green' : 'gray'} variant="light">
-                  {settlement.isGratuityEligible ? 'Yes (5+ years)' : 'No (< 5 years)'}
+            </Group>
+            <Group>
+              {settlement && (
+                <Badge
+                  color={getSettlementStatusColor(settlement.status)}
+                  variant="filled"
+                  size="lg"
+                >
+                  {formatLabel(settlement.status)}
                 </Badge>
-              </div>
-              {settlement.lastDrawnSalary != null && (
-                <div>
-                  <Text size="xs" c="dimmed">Last Drawn Basic</Text>
-                  <Text fw={600}>{fmt(settlement.lastDrawnSalary)}</Text>
-                </div>
               )}
             </Group>
-          </Paper>
-        )}
-
-        {/* Settlement Form or Read-only View */}
-        <form onSubmit={fnfForm.handleSubmit(handleCreateOrUpdate)}>
-          <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
-            {/* Earnings */}
-            <Paper withBorder p="md" radius="md">
-              <Title order={5} mb="sm" c="green.7">Earnings</Title>
-              <Stack gap="sm">
-                <Controller
-                  name="pendingSalary"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Pending Salary"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="leaveEncashment"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Leave Encashment"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="bonusAmount"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Bonus (Prorated)"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="gratuityAmount"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Gratuity"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="noticePeriodRecovery"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Notice Period Recovery"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="reimbursements"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Reimbursements"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="otherEarnings"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Other Earnings"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-              </Stack>
-              <Divider my="sm" />
-              <Group justify="space-between">
-                <Text fw={700}>Total Earnings</Text>
-                <Text fw={700} c="green.7">{formatCurrency(liveEarnings)}</Text>
-              </Group>
-            </Paper>
-
-            {/* Deductions */}
-            <Paper withBorder p="md" radius="md">
-              <Title order={5} mb="sm" c="red.7">Deductions</Title>
-              <Stack gap="sm">
-                <Controller
-                  name="noticeBuyout"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Notice Buyout"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="loanRecovery"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Loan Recovery"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="advanceRecovery"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Advance Recovery"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="assetDamageDeduction"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Asset Damage Deduction"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="taxDeduction"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Tax Deduction"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="otherDeductions"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Other Deductions"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value}
-                      onChange={(val) => field.onChange(val ?? 0)}
-                    />
-                  )}
-                />
-              </Stack>
-              <Divider my="sm" />
-              <Group justify="space-between">
-                <Text fw={700}>Total Deductions</Text>
-                <Text fw={700} c="red.7">{formatCurrency(liveDeductions)}</Text>
-              </Group>
-            </Paper>
-          </SimpleGrid>
-
-          {/* Net Payable */}
-          <Paper withBorder p="md" radius="md" mt="md" className="bg-accent-50 dark:bg-accent-900/20">
-            <Group justify="space-between">
-              <Title order={3}>Net Payable</Title>
-              <Title order={3} c={liveNet >= 0 ? 'sky.7' : 'red.7'}>
-                {formatCurrency(liveNet)}
-              </Title>
-            </Group>
-          </Paper>
-
-          {/* Gratuity & Remarks Section */}
-          <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md" mt="md">
-            <Paper withBorder p="md" radius="md">
-              <Title order={5} mb="sm">Gratuity Calculation</Title>
-              <Stack gap="sm">
-                <Controller
-                  name="yearsOfService"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Years of Service"
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value ?? ''}
-                      onChange={(val) => field.onChange(val ?? undefined)}
-                    />
-                  )}
-                />
-                <Controller
-                  name="lastDrawnSalary"
-                  control={fnfForm.control}
-                  render={({ field }) => (
-                    <NumberInput
-                      label="Last Drawn Basic Salary"
-                      prefix="₹ "
-                      thousandSeparator=","
-                      decimalScale={2}
-                      min={0}
-                      disabled={!!isReadonly}
-                      value={field.value ?? ''}
-                      onChange={(val) => field.onChange(val ?? undefined)}
-                    />
-                  )}
-                />
-                <Text size="xs" c="dimmed">
-                  Gratuity formula: (Last Drawn Salary x 15/26) x Years of Service. Eligible after 5+ years.
-                </Text>
-              </Stack>
-            </Paper>
-            <Paper withBorder p="md" radius="md">
-              <Title order={5} mb="sm">Remarks</Title>
-              <Controller
-                name="remarks"
-                control={fnfForm.control}
-                render={({ field }) => (
-                  <Textarea
-                    placeholder="Add any notes or remarks..."
-                    rows={5}
-                    disabled={!!isReadonly}
-                    value={field.value ?? ''}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-            </Paper>
-          </SimpleGrid>
-
-          {/* Action Buttons */}
-          <Group justify="flex-end" mt="md">
-            {canEdit && (
-              <Button
-                type="submit"
-                color="sky.7"
-                loading={createMutation.isPending || updateMutation.isPending}
-              >
-                {settlement ? 'Save Changes' : 'Create Settlement'}
-              </Button>
-            )}
-            {canSubmit && (
-              <Button
-                color="yellow"
-                leftSection={<IconSend size={16} />}
-                onClick={handleSubmitForApproval}
-                loading={submitMutation.isPending}
-              >
-                Submit for Approval
-              </Button>
-            )}
-            {canApprove && (
-              <Button
-                color="green"
-                leftSection={<IconCheck size={16} />}
-                onClick={handleApprove}
-                loading={approveMutation.isPending}
-              >
-                Approve Settlement
-              </Button>
-            )}
           </Group>
-        </form>
 
-        {/* Payment Processing */}
-        {canPay && settlement && (
-          <Paper withBorder p="md" radius="md">
-            <Title order={5} mb="md">Process Payment</Title>
-            <form onSubmit={paymentForm.handleSubmit(handleProcessPayment)}>
-              <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+          {/* Gratuity Info */}
+          {settlement?.yearsOfService != null && (
+            <Paper withBorder p="sm" bg="blue.0" radius="md">
+              <Group gap="xl">
+                <div>
+                  <Text size="xs" c="dimmed">Years of Service</Text>
+                  <Text fw={600}>{Number(settlement.yearsOfService).toFixed(1)} years</Text>
+                </div>
+                <div>
+                  <Text size="xs" c="dimmed">Gratuity Eligible</Text>
+                  <Badge color={settlement.isGratuityEligible ? 'green' : 'gray'} variant="light">
+                    {settlement.isGratuityEligible ? 'Yes (5+ years)' : 'No (< 5 years)'}
+                  </Badge>
+                </div>
+                {settlement.lastDrawnSalary != null && (
+                  <div>
+                    <Text size="xs" c="dimmed">Last Drawn Basic</Text>
+                    <Text fw={600}>{fmt(settlement.lastDrawnSalary)}</Text>
+                  </div>
+                )}
+              </Group>
+            </Paper>
+          )}
+
+          {/* Settlement Form or Read-only View */}
+          <form onSubmit={fnfForm.handleSubmit(handleCreateOrUpdate)}>
+            <SimpleGrid cols={{base: 1, md: 2}} spacing="md">
+              {/* Earnings */}
+              <Paper withBorder p="md" radius="md">
+                <Title order={5} mb="sm" c="green.7">Earnings</Title>
+                <Stack gap="sm">
+                  <Controller
+                    name="pendingSalary"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Pending Salary"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="leaveEncashment"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Leave Encashment"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="bonusAmount"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Bonus (Prorated)"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="gratuityAmount"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Gratuity"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="noticePeriodRecovery"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Notice Period Recovery"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="reimbursements"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Reimbursements"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="otherEarnings"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Other Earnings"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                </Stack>
+                <Divider my="sm"/>
+                <Group justify="space-between">
+                  <Text fw={700}>Total Earnings</Text>
+                  <Text fw={700} c="green.7">{formatCurrency(liveEarnings)}</Text>
+                </Group>
+              </Paper>
+
+              {/* Deductions */}
+              <Paper withBorder p="md" radius="md">
+                <Title order={5} mb="sm" c="red.7">Deductions</Title>
+                <Stack gap="sm">
+                  <Controller
+                    name="noticeBuyout"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Notice Buyout"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="loanRecovery"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Loan Recovery"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="advanceRecovery"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Advance Recovery"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="assetDamageDeduction"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Asset Damage Deduction"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="taxDeduction"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Tax Deduction"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="otherDeductions"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Other Deductions"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val ?? 0)}
+                      />
+                    )}
+                  />
+                </Stack>
+                <Divider my="sm"/>
+                <Group justify="space-between">
+                  <Text fw={700}>Total Deductions</Text>
+                  <Text fw={700} c="red.7">{formatCurrency(liveDeductions)}</Text>
+                </Group>
+              </Paper>
+            </SimpleGrid>
+
+            {/* Net Payable */}
+            <Paper withBorder p="md" radius="md" mt="md" className="bg-accent-50 dark:bg-accent-900/20">
+              <Group justify="space-between">
+                <Title order={3}>Net Payable</Title>
+                <Title order={3} c={liveNet >= 0 ? 'sky.7' : 'red.7'}>
+                  {formatCurrency(liveNet)}
+                </Title>
+              </Group>
+            </Paper>
+
+            {/* Gratuity & Remarks Section */}
+            <SimpleGrid cols={{base: 1, md: 2}} spacing="md" mt="md">
+              <Paper withBorder p="md" radius="md">
+                <Title order={5} mb="sm">Gratuity Calculation</Title>
+                <Stack gap="sm">
+                  <Controller
+                    name="yearsOfService"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Years of Service"
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value ?? ''}
+                        onChange={(val) => field.onChange(val ?? undefined)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="lastDrawnSalary"
+                    control={fnfForm.control}
+                    render={({field}) => (
+                      <NumberInput
+                        label="Last Drawn Basic Salary"
+                        prefix="₹ "
+                        thousandSeparator=","
+                        decimalScale={2}
+                        min={0}
+                        disabled={!!isReadonly}
+                        value={field.value ?? ''}
+                        onChange={(val) => field.onChange(val ?? undefined)}
+                      />
+                    )}
+                  />
+                  <Text size="xs" c="dimmed">
+                    Gratuity formula: (Last Drawn Salary x 15/26) x Years of Service. Eligible after 5+ years.
+                  </Text>
+                </Stack>
+              </Paper>
+              <Paper withBorder p="md" radius="md">
+                <Title order={5} mb="sm">Remarks</Title>
                 <Controller
-                  name="paymentMode"
-                  control={paymentForm.control}
-                  render={({ field, fieldState }) => (
-                    <Select
-                      label="Payment Mode"
-                      placeholder="Select payment mode"
-                      data={[
-                        { value: PaymentMode.BANK_TRANSFER, label: 'Bank Transfer' },
-                        { value: PaymentMode.CHEQUE, label: 'Cheque' },
-                        { value: PaymentMode.CASH, label: 'Cash' },
-                        { value: PaymentMode.DEMAND_DRAFT, label: 'Demand Draft' },
-                      ]}
-                      value={field.value ?? null}
-                      onChange={(val) => field.onChange(val)}
-                      error={fieldState.error?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name="paymentReference"
-                  control={paymentForm.control}
-                  render={({ field, fieldState }) => (
+                  name="remarks"
+                  control={fnfForm.control}
+                  render={({field}) => (
                     <Textarea
-                      label="Payment Reference"
-                      placeholder="Transaction ID, Cheque Number, etc."
+                      placeholder="Add any notes or remarks..."
+                      rows={5}
+                      disabled={!!isReadonly}
                       value={field.value ?? ''}
                       onChange={field.onChange}
-                      error={fieldState.error?.message}
-                      rows={1}
                     />
                   )}
                 />
-              </SimpleGrid>
-              <Group justify="flex-end" mt="md">
+              </Paper>
+            </SimpleGrid>
+
+            {/* Action Buttons */}
+            <Group justify="flex-end" mt="md">
+              {canEdit && (
                 <Button
                   type="submit"
-                  color="green"
-                  leftSection={<IconCash size={16} />}
-                  loading={paymentMutation.isPending}
+                  color="sky.7"
+                  loading={createMutation.isPending || updateMutation.isPending}
                 >
-                  Process Payment ({formatCurrency(settlement.netPayable)})
+                  {settlement ? 'Save Changes' : 'Create Settlement'}
                 </Button>
-              </Group>
-            </form>
-          </Paper>
-        )}
-
-        {/* Payment Details (if paid) */}
-        {settlement?.status === SettlementStatus.PAID && (
-          <Paper withBorder p="md" radius="md" bg="green.0">
-            <Group gap="xl">
-              <div>
-                <Text size="xs" c="dimmed">Payment Mode</Text>
-                <Text fw={600}>{settlement.paymentMode ? formatLabel(settlement.paymentMode) : '-'}</Text>
-              </div>
-              <div>
-                <Text size="xs" c="dimmed">Payment Reference</Text>
-                <Text fw={600}>{settlement.paymentReference ?? '-'}</Text>
-              </div>
-              <div>
-                <Text size="xs" c="dimmed">Payment Date</Text>
-                <Text fw={600}>{settlement.paymentDate ? formatDate(settlement.paymentDate) : '-'}</Text>
-              </div>
-              <div>
-                <Text size="xs" c="dimmed">Approved By</Text>
-                <Text fw={600}>{settlement.approvedByName ?? '-'}</Text>
-              </div>
-              <div>
-                <Text size="xs" c="dimmed">Net Amount Paid</Text>
-                <Text fw={700} c="green.7" size="lg">{formatCurrency(settlement.netPayable)}</Text>
-              </div>
+              )}
+              {canSubmit && (
+                <Button
+                  color="yellow"
+                  leftSection={<IconSend size={16}/>}
+                  onClick={handleSubmitForApproval}
+                  loading={submitMutation.isPending}
+                >
+                  Submit for Approval
+                </Button>
+              )}
+              {canApprove && (
+                <Button
+                  color="green"
+                  leftSection={<IconCheck size={16}/>}
+                  onClick={handleApprove}
+                  loading={approveMutation.isPending}
+                >
+                  Approve Settlement
+                </Button>
+              )}
             </Group>
-          </Paper>
-        )}
-      </Stack>
+          </form>
+
+          {/* Payment Processing */}
+          {canPay && settlement && (
+            <Paper withBorder p="md" radius="md">
+              <Title order={5} mb="md">Process Payment</Title>
+              <form onSubmit={paymentForm.handleSubmit(handleProcessPayment)}>
+                <SimpleGrid cols={{base: 1, md: 2}} spacing="md">
+                  <Controller
+                    name="paymentMode"
+                    control={paymentForm.control}
+                    render={({field, fieldState}) => (
+                      <Select
+                        label="Payment Mode"
+                        placeholder="Select payment mode"
+                        data={[
+                          {value: PaymentMode.BANK_TRANSFER, label: 'Bank Transfer'},
+                          {value: PaymentMode.CHEQUE, label: 'Cheque'},
+                          {value: PaymentMode.CASH, label: 'Cash'},
+                          {value: PaymentMode.DEMAND_DRAFT, label: 'Demand Draft'},
+                        ]}
+                        value={field.value ?? null}
+                        onChange={(val) => field.onChange(val)}
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="paymentReference"
+                    control={paymentForm.control}
+                    render={({field, fieldState}) => (
+                      <Textarea
+                        label="Payment Reference"
+                        placeholder="Transaction ID, Cheque Number, etc."
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        error={fieldState.error?.message}
+                        rows={1}
+                      />
+                    )}
+                  />
+                </SimpleGrid>
+                <Group justify="flex-end" mt="md">
+                  <Button
+                    type="submit"
+                    color="green"
+                    leftSection={<IconCash size={16}/>}
+                    loading={paymentMutation.isPending}
+                  >
+                    Process Payment ({formatCurrency(settlement.netPayable)})
+                  </Button>
+                </Group>
+              </form>
+            </Paper>
+          )}
+
+          {/* Payment Details (if paid) */}
+          {settlement?.status === SettlementStatus.PAID && (
+            <Paper withBorder p="md" radius="md" bg="green.0">
+              <Group gap="xl">
+                <div>
+                  <Text size="xs" c="dimmed">Payment Mode</Text>
+                  <Text fw={600}>{settlement.paymentMode ? formatLabel(settlement.paymentMode) : '-'}</Text>
+                </div>
+                <div>
+                  <Text size="xs" c="dimmed">Payment Reference</Text>
+                  <Text fw={600}>{settlement.paymentReference ?? '-'}</Text>
+                </div>
+                <div>
+                  <Text size="xs" c="dimmed">Payment Date</Text>
+                  <Text fw={600}>{settlement.paymentDate ? formatDate(settlement.paymentDate) : '-'}</Text>
+                </div>
+                <div>
+                  <Text size="xs" c="dimmed">Approved By</Text>
+                  <Text fw={600}>{settlement.approvedByName ?? '-'}</Text>
+                </div>
+                <div>
+                  <Text size="xs" c="dimmed">Net Amount Paid</Text>
+                  <Text fw={700} c="green.7" size="lg">{formatCurrency(settlement.netPayable)}</Text>
+                </div>
+              </Group>
+            </Paper>
+          )}
+        </Stack>
       </PermissionGate>
     </AppLayout>
   );

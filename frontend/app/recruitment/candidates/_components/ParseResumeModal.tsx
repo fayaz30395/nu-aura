@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Sparkles, Loader2, X, Upload, FileText, Link, Type, CheckCircle, AlertCircle } from 'lucide-react';
-import { ResumeParseFormData } from '@/lib/validations/recruitment';
-import { ResumeParseResponse } from '@/lib/types/hire/ai-recruitment';
+import React, {useCallback, useRef, useState} from 'react';
+import {UseFormReturn} from 'react-hook-form';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {AlertCircle, CheckCircle, FileText, Link, Loader2, Sparkles, Type, Upload, X} from 'lucide-react';
+import {ResumeParseFormData} from '@/lib/validations/recruitment';
+import {ResumeParseResponse} from '@/lib/types/hire/ai-recruitment';
 
 type InputMethod = 'text' | 'url' | 'file';
 
@@ -36,15 +36,15 @@ function validateFile(file: File): string | null {
 }
 
 export function ParseResumeModal({
-  open,
-  parsedResume,
-  aiLoadingState,
-  resumeParseForm,
-  onSubmit,
-  onFileUpload,
-  onApply,
-  onClose,
-}: ParseResumeModalProps) {
+                                   open,
+                                   parsedResume,
+                                   aiLoadingState,
+                                   resumeParseForm,
+                                   onSubmit,
+                                   onFileUpload,
+                                   onApply,
+                                   onClose,
+                                 }: ParseResumeModalProps) {
   const [inputMethod, setInputMethod] = useState<InputMethod>('file');
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -91,19 +91,20 @@ export function ParseResumeModal({
   const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
 
   const tabs: { key: InputMethod; label: string; Icon: React.ElementType }[] = [
-    { key: 'file', label: 'Upload File', Icon: Upload },
-    { key: 'text', label: 'Paste Text', Icon: Type },
-    { key: 'url', label: 'From URL', Icon: Link },
+    {key: 'file', label: 'Upload File', Icon: Upload},
+    {key: 'text', label: 'Paste Text', Icon: Type},
+    {key: 'url', label: 'From URL', Icon: Link},
   ];
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-xl max-w-xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent-500" />
+              <Sparkles className="h-5 w-5 text-accent-500"/>
               AI Resume Parser
             </h2>
             <button
@@ -111,7 +112,7 @@ export function ParseResumeModal({
               aria-label="Close modal"
               className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5"/>
             </button>
           </div>
 
@@ -120,7 +121,7 @@ export function ParseResumeModal({
             <div className="space-y-4">
               {/* Input Method Tabs */}
               <div className="flex rounded-lg border border-[var(--border-main)] overflow-hidden">
-                {tabs.map(({ key, label, Icon }) => (
+                {tabs.map(({key, label, Icon}) => (
                   <button
                     key={key}
                     type="button"
@@ -131,7 +132,7 @@ export function ParseResumeModal({
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                     }`}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-3.5 w-3.5"/>
                     {label}
                   </button>
                 ))}
@@ -143,7 +144,10 @@ export function ParseResumeModal({
                   <div
                     role="button"
                     tabIndex={0}
-                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragOver(true);
+                    }}
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
@@ -163,7 +167,7 @@ export function ParseResumeModal({
                     />
                     {selectedFile ? (
                       <>
-                        <FileText className="h-8 w-8 text-accent-500" />
+                        <FileText className="h-8 w-8 text-accent-500"/>
                         <div className="text-center">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{selectedFile.name}</p>
                           <p className="text-caption mt-0.5">
@@ -171,12 +175,12 @@ export function ParseResumeModal({
                           </p>
                         </div>
                         <Badge variant="success" className="text-xs flex items-center gap-1">
-                          <CheckCircle className="h-3 w-3" /> Ready to parse
+                          <CheckCircle className="h-3 w-3"/> Ready to parse
                         </Badge>
                       </>
                     ) : (
                       <>
-                        <Upload className="h-8 w-8 text-[var(--text-muted)]" />
+                        <Upload className="h-8 w-8 text-[var(--text-muted)]"/>
                         <div className="text-center">
                           <p className="text-sm font-medium text-[var(--text-primary)]">
                             {dragOver ? 'Drop file here' : 'Drag & drop or click to browse'}
@@ -190,7 +194,7 @@ export function ParseResumeModal({
                   </div>
                   {fileError && (
                     <div className="flex items-center gap-1.5 text-xs text-danger-600">
-                      <AlertCircle className="h-3.5 w-3.5" />
+                      <AlertCircle className="h-3.5 w-3.5"/>
                       {fileError}
                     </div>
                   )}
@@ -205,9 +209,9 @@ export function ParseResumeModal({
                       className="flex-1"
                     >
                       {isParsing ? (
-                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Parsing…</>
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin"/>Parsing…</>
                       ) : (
-                        <><Sparkles className="h-4 w-4 mr-2" />Parse File</>
+                        <><Sparkles className="h-4 w-4 mr-2"/>Parse File</>
                       )}
                     </Button>
                   </div>
@@ -239,7 +243,7 @@ export function ParseResumeModal({
                     </Button>
                     <Button type="submit" disabled={isParsing} className="flex-1">
                       {isParsing ? (
-                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Parsing…</>
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin"/>Parsing…</>
                       ) : (
                         'Parse Resume'
                       )}
@@ -273,7 +277,7 @@ export function ParseResumeModal({
                     </Button>
                     <Button type="submit" disabled={isParsing} className="flex-1">
                       {isParsing ? (
-                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Parsing…</>
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin"/>Parsing…</>
                       ) : (
                         'Parse Resume'
                       )}
@@ -286,13 +290,14 @@ export function ParseResumeModal({
             /* ==================== Confirmation View ==================== */
             <div className="space-y-4">
               <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
-                <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0"/>
                 <p className="text-sm text-success-700 dark:text-success-300">
                   Resume parsed successfully. Review the extracted data below before applying.
                 </p>
               </div>
 
-              <div className="border border-[var(--border-main)] rounded-xl overflow-hidden divide-y divide-[var(--border-main)]">
+              <div
+                className="border border-[var(--border-main)] rounded-xl overflow-hidden divide-y divide-[var(--border-main)]">
                 {/* Basic Info */}
                 <div className="p-4 space-y-4 bg-[var(--bg-secondary)]">
                   <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
@@ -300,13 +305,16 @@ export function ParseResumeModal({
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: 'Full Name', value: parsedResume.fullName },
-                      { label: 'Email', value: parsedResume.email },
-                      { label: 'Phone', value: parsedResume.phone },
-                      { label: 'Location', value: parsedResume.currentLocation },
-                      { label: 'Current Company', value: parsedResume.currentCompany },
-                      { label: 'Current Role', value: parsedResume.currentDesignation },
-                      { label: 'Total Experience', value: parsedResume.totalExperienceYears != null ? `${parsedResume.totalExperienceYears} years` : undefined },
+                      {label: 'Full Name', value: parsedResume.fullName},
+                      {label: 'Email', value: parsedResume.email},
+                      {label: 'Phone', value: parsedResume.phone},
+                      {label: 'Location', value: parsedResume.currentLocation},
+                      {label: 'Current Company', value: parsedResume.currentCompany},
+                      {label: 'Current Role', value: parsedResume.currentDesignation},
+                      {
+                        label: 'Total Experience',
+                        value: parsedResume.totalExperienceYears != null ? `${parsedResume.totalExperienceYears} years` : undefined
+                      },
                     ].filter((f) => f.value).map((field) => (
                       <div key={field.label}>
                         <p className="text-caption">{field.label}</p>

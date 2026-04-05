@@ -1,34 +1,34 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { logger } from '@/lib/utils/logger';
+import {useMemo, useState} from 'react';
+import {logger} from '@/lib/utils/logger';
 import {
-  Calendar,
-  Clock,
-  Users,
   AlertCircle,
-  CheckCircle,
   ArrowRight,
-  Target,
-  TrendingUp,
+  BarChart2,
+  Calendar,
+  CheckCircle,
+  Clock,
   Edit2,
-  Save,
   FileText,
   Link2,
+  Save,
+  Target,
   Timer,
-  BarChart2,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
 import {
-  GanttTask,
-  CalendarEvent,
-  getStatusColor,
-  getPriorityColor,
   calculateTaskDuration,
-  isTaskDelayed,
+  CalendarEvent,
+  GanttTask,
+  getPriorityColor,
+  getStatusColor,
   isTaskAtRisk,
+  isTaskDelayed,
 } from '@/lib/types/hrms/project-calendar';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 
 interface TaskDetailsModalProps {
   isOpen: boolean;
@@ -40,22 +40,22 @@ interface TaskDetailsModalProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: 'BACKLOG', label: 'Backlog' },
-  { value: 'TODO', label: 'To Do' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'IN_REVIEW', label: 'In Review' },
-  { value: 'BLOCKED', label: 'Blocked' },
-  { value: 'DONE', label: 'Done' },
+  {value: 'BACKLOG', label: 'Backlog'},
+  {value: 'TODO', label: 'To Do'},
+  {value: 'IN_PROGRESS', label: 'In Progress'},
+  {value: 'IN_REVIEW', label: 'In Review'},
+  {value: 'BLOCKED', label: 'Blocked'},
+  {value: 'DONE', label: 'Done'},
 ];
 
 export function TaskDetailsModal({
-  isOpen,
-  onClose,
-  task,
-  onUpdateProgress,
-  onUpdateStatus,
-  readonly = false,
-}: TaskDetailsModalProps) {
+                                   isOpen,
+                                   onClose,
+                                   task,
+                                   onUpdateProgress,
+                                   onUpdateStatus,
+                                   readonly = false,
+                                 }: TaskDetailsModalProps) {
   const [isEditingProgress, setIsEditingProgress] = useState(false);
   const [editProgress, setEditProgress] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
@@ -82,14 +82,14 @@ export function TaskDetailsModal({
       assignees: isGanttTask
         ? (task as GanttTask).assignees
         : (task as CalendarEvent).assignees?.map((a) => ({
-            id: a.id,
-            employeeId: a.id,
-            employeeName: a.name,
-            avatar: a.avatar,
-            role: a.role,
-            allocationPercentage: 100,
-            startDate: task.startDate,
-          })),
+          id: a.id,
+          employeeId: a.id,
+          employeeName: a.name,
+          avatar: a.avatar,
+          role: a.role,
+          allocationPercentage: 100,
+          startDate: task.startDate,
+        })),
       dependencies: isGanttTask ? (task as GanttTask).dependencies : undefined,
       estimatedHours: isGanttTask ? (task as GanttTask).estimatedHours : undefined,
       actualHours: isGanttTask ? (task as GanttTask).actualHours : undefined,
@@ -197,7 +197,7 @@ export function TaskDetailsModal({
                 >
                   <span
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: getStatusColor(normalizedTask.status) }}
+                    style={{backgroundColor: getStatusColor(normalizedTask.status)}}
                   />
                   {normalizedTask.status.replace('_', ' ')}
                 </span>
@@ -230,7 +230,7 @@ export function TaskDetailsModal({
                     color: getPriorityColor(normalizedTask.priority),
                   }}
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-4 h-4"/>
                   {normalizedTask.priority}
                 </span>
               </div>
@@ -241,14 +241,16 @@ export function TaskDetailsModal({
           {(isDelayed || isAtRisk) && (
             <div className="flex flex-wrap gap-2">
               {isDelayed && (
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
-                  <AlertCircle className="w-4 h-4" />
+                <span
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
+                  <AlertCircle className="w-4 h-4"/>
                   Delayed
                 </span>
               )}
               {isAtRisk && !isDelayed && (
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
-                  <AlertCircle className="w-4 h-4" />
+                <span
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
+                  <AlertCircle className="w-4 h-4"/>
                   At Risk
                 </span>
               )}
@@ -259,7 +261,7 @@ export function TaskDetailsModal({
           {normalizedTask.description && (
             <div>
               <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
-                <FileText className="w-4 h-4 inline mr-1" />
+                <FileText className="w-4 h-4 inline mr-1"/>
                 Description
               </label>
               <p className="text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
@@ -272,7 +274,7 @@ export function TaskDetailsModal({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
               <div className="flex items-center gap-2 text-surface-500 mb-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4"/>
                 <span className="text-sm">Start Date</span>
               </div>
               <p className="font-semibold text-surface-900 dark:text-surface-50">
@@ -281,7 +283,7 @@ export function TaskDetailsModal({
             </div>
             <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
               <div className="flex items-center gap-2 text-surface-500 mb-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4"/>
                 <span className="text-sm">End Date</span>
               </div>
               <p className="font-semibold text-surface-900 dark:text-surface-50">
@@ -290,7 +292,7 @@ export function TaskDetailsModal({
             </div>
             <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
               <div className="flex items-center gap-2 text-surface-500 mb-1">
-                <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4"/>
                 <span className="text-sm">Duration</span>
               </div>
               <p className="font-semibold text-surface-900 dark:text-surface-50">
@@ -304,7 +306,7 @@ export function TaskDetailsModal({
             <div>
               <div className="row-between mb-2">
                 <label className="text-sm font-medium text-surface-600 dark:text-surface-400 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
+                  <TrendingUp className="w-4 h-4"/>
                   Progress
                 </label>
                 {!readonly && onUpdateProgress && (
@@ -315,12 +317,12 @@ export function TaskDetailsModal({
                   >
                     {isEditingProgress ? (
                       <>
-                        <Save className="w-4 h-4" />
+                        <Save className="w-4 h-4"/>
                         Save
                       </>
                     ) : (
                       <>
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-4 h-4"/>
                         Edit
                       </>
                     )}
@@ -348,14 +350,14 @@ export function TaskDetailsModal({
                   <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-accent-500 rounded-full transition-all duration-300"
-                      style={{ width: `${normalizedTask.progress}%` }}
+                      style={{width: `${normalizedTask.progress}%`}}
                     />
                   </div>
                   <div className="flex justify-between text-sm text-surface-500">
                     <span>{normalizedTask.progress}% complete</span>
                     {normalizedTask.progress === 100 && (
                       <span className="flex items-center gap-1 text-success-600">
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-4 h-4"/>
                         Completed
                       </span>
                     )}
@@ -371,7 +373,7 @@ export function TaskDetailsModal({
               {normalizedTask.estimatedHours && (
                 <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-surface-500 mb-1">
-                    <Timer className="w-4 h-4" />
+                    <Timer className="w-4 h-4"/>
                     <span className="text-sm">Estimated</span>
                   </div>
                   <p className="font-semibold text-surface-900 dark:text-surface-50">
@@ -382,7 +384,7 @@ export function TaskDetailsModal({
               {normalizedTask.actualHours !== undefined && (
                 <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-surface-500 mb-1">
-                    <BarChart2 className="w-4 h-4" />
+                    <BarChart2 className="w-4 h-4"/>
                     <span className="text-sm">Actual</span>
                   </div>
                   <p className="font-semibold text-surface-900 dark:text-surface-50">
@@ -410,8 +412,9 @@ export function TaskDetailsModal({
           {/* Assignees */}
           {normalizedTask.assignees && normalizedTask.assignees.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
-                <Users className="w-4 h-4" />
+              <label
+                className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
+                <Users className="w-4 h-4"/>
                 Assigned To ({normalizedTask.assignees.length})
               </label>
               <div className="space-y-2">
@@ -421,7 +424,8 @@ export function TaskDetailsModal({
                     className="row-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center text-accent-700 font-medium">
+                      <div
+                        className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center text-accent-700 font-medium">
                         {assignee.employeeName
                           .split(' ')
                           .map((n) => n[0])
@@ -453,8 +457,9 @@ export function TaskDetailsModal({
           {/* Dependencies */}
           {normalizedTask.dependencies && normalizedTask.dependencies.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
-                <Link2 className="w-4 h-4" />
+              <label
+                className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
+                <Link2 className="w-4 h-4"/>
                 Dependencies ({normalizedTask.dependencies.length})
               </label>
               <div className="space-y-2">
@@ -463,7 +468,7 @@ export function TaskDetailsModal({
                     key={dep.id}
                     className="flex items-center gap-2 p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
-                    <ArrowRight className="w-4 h-4 text-surface-400" />
+                    <ArrowRight className="w-4 h-4 text-surface-400"/>
                     <span className="text-surface-700 dark:text-surface-300">
                       {dep.type.replace(/-/g, ' ')}
                     </span>
@@ -482,7 +487,7 @@ export function TaskDetailsModal({
           {normalizedTask.projectName && (
             <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
               <div className="flex items-center gap-2 text-surface-500 mb-1">
-                <Target className="w-4 h-4" />
+                <Target className="w-4 h-4"/>
                 <span className="text-sm">Project</span>
               </div>
               <p className="font-medium text-surface-900 dark:text-surface-50">

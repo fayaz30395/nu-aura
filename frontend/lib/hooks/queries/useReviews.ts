@@ -1,10 +1,10 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { reviewService } from '@/lib/services/grow/performance.service';
-import { PerformanceReview, ReviewRequest, ReviewCompetency } from '@/lib/types/grow/performance';
-import { notifications } from '@mantine/notifications';
-import { performanceKeys } from './performanceKeys';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {reviewService} from '@/lib/services/grow/performance.service';
+import {PerformanceReview, ReviewRequest} from '@/lib/types/grow/performance';
+import {notifications} from '@mantine/notifications';
+import {performanceKeys} from './performanceKeys';
 
 // ─── Performance Review Hooks ──────────────────────────────────────────────
 
@@ -57,11 +57,11 @@ export function useCreateReview() {
   return useMutation({
     mutationFn: (data: ReviewRequest) => reviewService.createReview(data),
     onSuccess: (_data: PerformanceReview) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
-      notifications.show({ title: 'Success', message: 'Performance review created successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
+      notifications.show({title: 'Success', message: 'Performance review created successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to create review', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to create review', color: 'red'});
     },
   });
 }
@@ -70,15 +70,15 @@ export function useUpdateReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ReviewRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ReviewRequest }) =>
       reviewService.updateReview(id, data),
     onSuccess: (data: PerformanceReview) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
-      notifications.show({ title: 'Success', message: 'Performance review updated successfully', color: 'green' });
+      notifications.show({title: 'Success', message: 'Performance review updated successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to update review', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to update review', color: 'red'});
     },
   });
 }
@@ -89,12 +89,12 @@ export function useSubmitReview() {
   return useMutation({
     mutationFn: (id: string) => reviewService.submitReview(id),
     onSuccess: (data: PerformanceReview) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
-      notifications.show({ title: 'Success', message: 'Performance review submitted', color: 'green' });
+      notifications.show({title: 'Success', message: 'Performance review submitted', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to submit review', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to submit review', color: 'red'});
     },
   });
 }
@@ -105,12 +105,12 @@ export function useCompleteReview() {
   return useMutation({
     mutationFn: (id: string) => reviewService.completeReview(id),
     onSuccess: (data: PerformanceReview) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
-      notifications.show({ title: 'Success', message: 'Performance review completed', color: 'green' });
+      notifications.show({title: 'Success', message: 'Performance review completed', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to complete review', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to complete review', color: 'red'});
     },
   });
 }
@@ -121,11 +121,11 @@ export function useDeleteReview() {
   return useMutation({
     mutationFn: (id: string) => reviewService.deleteReview(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.reviews() });
-      notifications.show({ title: 'Success', message: 'Performance review deleted successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
+      notifications.show({title: 'Success', message: 'Performance review deleted successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to delete review', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to delete review', color: 'red'});
     },
   });
 }
@@ -136,16 +136,16 @@ export function useDeleteCompetency() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, reviewId }: { id: string; reviewId: string }) =>
-      reviewService.deleteCompetency(id).then(() => ({ reviewId })),
-    onSuccess: ({ reviewId }: { reviewId: string }) => {
+    mutationFn: ({id, reviewId}: { id: string; reviewId: string }) =>
+      reviewService.deleteCompetency(id).then(() => ({reviewId})),
+    onSuccess: ({reviewId}: { reviewId: string }) => {
       queryClient.invalidateQueries({
         queryKey: performanceKeys.reviewCompetencies(reviewId),
       });
-      notifications.show({ title: 'Success', message: 'Competency removed', color: 'green' });
+      notifications.show({title: 'Success', message: 'Competency removed', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to remove competency', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to remove competency', color: 'red'});
     },
   });
 }

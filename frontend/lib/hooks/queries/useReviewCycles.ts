@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { reviewCycleService } from '@/lib/services/grow/performance.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {reviewCycleService} from '@/lib/services/grow/performance.service';
 import {
-  ReviewCycle,
-  ReviewCycleRequest,
   ActivateCycleRequest,
   ActivateCycleResponse,
+  ReviewCycle,
+  ReviewCycleRequest,
 } from '@/lib/types/grow/performance';
-import { notifications } from '@mantine/notifications';
-import { performanceKeys } from './performanceKeys';
+import {notifications} from '@mantine/notifications';
+import {performanceKeys} from './performanceKeys';
 
 // ─── Review Cycle Hooks ───────────────────────────────────────────────────
 
@@ -50,11 +50,11 @@ export function useCreatePerformanceCycle() {
   return useMutation({
     mutationFn: (data: ReviewCycleRequest) => reviewCycleService.createCycle(data),
     onSuccess: (_data: ReviewCycle) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
-      notifications.show({ title: 'Success', message: 'Review cycle created successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
+      notifications.show({title: 'Success', message: 'Review cycle created successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to create review cycle', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to create review cycle', color: 'red'});
     },
   });
 }
@@ -63,15 +63,15 @@ export function useUpdatePerformanceCycle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ReviewCycleRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ReviewCycleRequest }) =>
       reviewCycleService.updateCycle(id, data),
     onSuccess: (data: ReviewCycle) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
       queryClient.setQueryData(performanceKeys.cycleDetail(data.id), data);
-      notifications.show({ title: 'Success', message: 'Review cycle updated successfully', color: 'green' });
+      notifications.show({title: 'Success', message: 'Review cycle updated successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to update review cycle', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to update review cycle', color: 'red'});
     },
   });
 }
@@ -80,15 +80,19 @@ export function useActivatePerformanceCycle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ActivateCycleRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: ActivateCycleRequest }) =>
       reviewCycleService.activateCycle(id, data),
     onSuccess: (data: ActivateCycleResponse) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
       queryClient.setQueryData(performanceKeys.cycleDetail(data.id), data);
-      notifications.show({ title: 'Success', message: `Review cycle activated: ${data.reviewsCreated} reviews created`, color: 'green' });
+      notifications.show({
+        title: 'Success',
+        message: `Review cycle activated: ${data.reviewsCreated} reviews created`,
+        color: 'green'
+      });
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to activate review cycle', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to activate review cycle', color: 'red'});
     },
   });
 }
@@ -99,12 +103,12 @@ export function useCompletePerformanceCycle() {
   return useMutation({
     mutationFn: (id: string) => reviewCycleService.completeCycle(id),
     onSuccess: (data: ReviewCycle) => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
+      queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
       queryClient.setQueryData(performanceKeys.cycleDetail(data.id), data);
-      notifications.show({ title: 'Success', message: 'Review cycle completed', color: 'green' });
+      notifications.show({title: 'Success', message: 'Review cycle completed', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to complete review cycle', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to complete review cycle', color: 'red'});
     },
   });
 }
@@ -115,11 +119,11 @@ export function useDeletePerformanceCycle() {
   return useMutation({
     mutationFn: (id: string) => reviewCycleService.deleteCycle(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: performanceKeys.cycles() });
-      notifications.show({ title: 'Success', message: 'Review cycle deleted successfully', color: 'green' });
+      queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
+      notifications.show({title: 'Success', message: 'Review cycle deleted successfully', color: 'green'});
     },
     onError: (error: Error) => {
-      notifications.show({ title: 'Error', message: error.message || 'Failed to delete review cycle', color: 'red' });
+      notifications.show({title: 'Error', message: error.message || 'Failed to delete review cycle', color: 'red'});
     },
   });
 }

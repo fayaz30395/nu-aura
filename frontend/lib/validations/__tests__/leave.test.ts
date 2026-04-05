@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {
-  leaveTypeSchema,
-  leaveRequestSchema,
   leaveApprovalSchema,
-  leaveRejectionSchema,
   leaveCancellationSchema,
+  leaveRejectionSchema,
+  leaveRequestSchema,
+  leaveTypeSchema,
 } from '../leave';
 
 describe('Leave Validation Schemas', () => {
@@ -20,33 +20,33 @@ describe('Leave Validation Schemas', () => {
     });
 
     it('requires name', () => {
-      const invalid = { code: 'CASUAL', defaultDays: 12 };
+      const invalid = {code: 'CASUAL', defaultDays: 12};
       const result = leaveTypeSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
 
     it('requires code in uppercase with underscores', () => {
-      const invalidLowercase = { name: 'Casual', code: 'casual', defaultDays: 12 };
+      const invalidLowercase = {name: 'Casual', code: 'casual', defaultDays: 12};
       const result = leaveTypeSchema.safeParse(invalidLowercase);
       expect(result.success).toBe(false);
 
-      const validCode = { name: 'Casual', code: 'CASUAL_LEAVE', defaultDays: 12 };
+      const validCode = {name: 'Casual', code: 'CASUAL_LEAVE', defaultDays: 12};
       const result2 = leaveTypeSchema.safeParse(validCode);
       expect(result2.success).toBe(true);
     });
 
     it('requires default days', () => {
-      const invalid = { name: 'Casual', code: 'CASUAL' };
+      const invalid = {name: 'Casual', code: 'CASUAL'};
       const result = leaveTypeSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
 
     it('validates default days range', () => {
-      const negative = { name: 'Casual', code: 'CASUAL', defaultDays: -5 };
+      const negative = {name: 'Casual', code: 'CASUAL', defaultDays: -5};
       const result = leaveTypeSchema.safeParse(negative);
       expect(result.success).toBe(false);
 
-      const tooHigh = { name: 'Casual', code: 'CASUAL', defaultDays: 400 };
+      const tooHigh = {name: 'Casual', code: 'CASUAL', defaultDays: 400};
       const result2 = leaveTypeSchema.safeParse(tooHigh);
       expect(result2.success).toBe(false);
     });

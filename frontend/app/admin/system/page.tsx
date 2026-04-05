@@ -1,47 +1,26 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  BarChart3,
-  Building2,
-  Users,
-  Server,
-  TrendingUp,
-  ChevronRight,
-  RefreshCw,
-  Zap,
-} from 'lucide-react';
-import {
-  Paper,
-  SimpleGrid,
-  Text,
-  Badge,
-  Button,
-  Table,
-  Skeleton,
-  Group,
-  Stack,
-  ActionIcon,
-  Modal,
-} from '@mantine/core';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {BarChart3, Building2, ChevronRight, RefreshCw, Server, TrendingUp, Users, Zap,} from 'lucide-react';
+import {ActionIcon, Badge, Button, Group, Modal, Paper, SimpleGrid, Skeleton, Stack, Table, Text,} from '@mantine/core';
 import dynamic from 'next/dynamic';
-import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {
+  useGrowthMetrics,
+  useImpersonationToken,
+  useSystemOverview,
+  useTenantList,
+} from '@/lib/hooks/queries/useSystemAdmin';
+import {MonthlyGrowth, TenantListItem} from '@/lib/types/core/admin-system';
+import {createLogger} from '@/lib/utils/logger';
 
 const GrowthChart = dynamic(
   () => import('./GrowthChart'),
-  { loading: () => <ChartLoadingFallback />, ssr: false }
+  {loading: () => <ChartLoadingFallback/>, ssr: false}
 );
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import {
-  useSystemOverview,
-  useTenantList,
-  useImpersonationToken,
-  useGrowthMetrics,
-} from '@/lib/hooks/queries/useSystemAdmin';
-import { TenantListItem, MonthlyGrowth } from '@/lib/types/core/admin-system';
-import { createLogger } from '@/lib/utils/logger';
 
 const log = createLogger('SystemPage');
 
@@ -53,8 +32,8 @@ const SUPER_ADMIN_ONLY_ROLES = [Roles.SUPER_ADMIN];
  */
 export default function SystemDashboard() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
   const [page, setPage] = useState(0);
   const [selectedTenant, setSelectedTenant] = useState<TenantListItem | null>(null);
   const [impersonationModalOpen, setImpersonationModalOpen] = useState(false);
@@ -104,10 +83,10 @@ export default function SystemDashboard() {
   if (!isReady || !hasHydrated) {
     return (
       <div className="p-6 space-y-6">
-        <Skeleton height={40} />
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+        <Skeleton height={40}/>
+        <SimpleGrid cols={{base: 1, sm: 2, lg: 4}} spacing="lg">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={120} />
+            <Skeleton key={i} height={120}/>
           ))}
         </SimpleGrid>
       </div>
@@ -121,8 +100,9 @@ export default function SystemDashboard() {
       {/* Header */}
       <div className="row-between">
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Server className="h-6 w-6 text-white" />
+          <div
+            className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+            <Server className="h-6 w-6 text-white"/>
           </div>
           <div>
             <h1 className="text-2xl font-bold skeuo-emboss">
@@ -143,12 +123,12 @@ export default function SystemDashboard() {
           }}
           loading={overviewQuery.isRefetching || tenantListQuery.isRefetching || growthMetricsQuery.isRefetching}
         >
-          <RefreshCw className="h-5 w-5" />
+          <RefreshCw className="h-5 w-5"/>
         </ActionIcon>
       </div>
 
       {/* Overview Stats Cards */}
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+      <SimpleGrid cols={{base: 1, sm: 2, lg: 4}} spacing="lg">
         {/* Total Tenants Card */}
         <Paper
           p="lg"
@@ -160,11 +140,11 @@ export default function SystemDashboard() {
               Total Tenants
             </Text>
             <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-              <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+              <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
             </div>
           </Group>
           <div className="space-y-2">
-            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+            {overviewQuery.isLoading ? <Skeleton height={28}/> : (
               <Text size="lg" fw={700} className="text-[var(--text-primary)]">
                 {overview?.totalTenants ?? 0}
               </Text>
@@ -188,11 +168,11 @@ export default function SystemDashboard() {
               Active Users
             </Text>
             <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-              <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
+              <Users className="h-5 w-5 text-success-600 dark:text-success-400"/>
             </div>
           </Group>
           <div className="space-y-2">
-            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+            {overviewQuery.isLoading ? <Skeleton height={28}/> : (
               <Text size="lg" fw={700} className="text-[var(--text-primary)]">
                 {overview?.totalActiveUsers ?? 0}
               </Text>
@@ -214,11 +194,11 @@ export default function SystemDashboard() {
               Total Employees
             </Text>
             <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
-              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600" />
+              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
             </div>
           </Group>
           <div className="space-y-2">
-            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+            {overviewQuery.isLoading ? <Skeleton height={28}/> : (
               <Text size="lg" fw={700} className="text-[var(--text-primary)]">
                 {overview?.totalEmployees ?? 0}
               </Text>
@@ -240,11 +220,11 @@ export default function SystemDashboard() {
               Pending Approvals
             </Text>
             <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30">
-              <Zap className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+              <Zap className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
             </div>
           </Group>
           <div className="space-y-2">
-            {overviewQuery.isLoading ? <Skeleton height={28} /> : (
+            {overviewQuery.isLoading ? <Skeleton height={28}/> : (
               <Text size="lg" fw={700} className="text-[var(--text-primary)]">
                 {overview?.pendingApprovals ?? 0}
               </Text>
@@ -264,7 +244,7 @@ export default function SystemDashboard() {
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-[var(--text-secondary)]" />
+            <BarChart3 className="h-5 w-5 text-[var(--text-secondary)]"/>
             <Text fw={600} className="text-[var(--text-primary)]">
               Platform Growth
             </Text>
@@ -275,7 +255,7 @@ export default function SystemDashboard() {
         </Group>
 
         {growthData.length > 0 ? (
-          <GrowthChart data={growthData} />
+          <GrowthChart data={growthData}/>
         ) : (
           <div className="h-80 flex items-center justify-center text-[var(--text-muted)]">
             Loading chart data...
@@ -291,7 +271,7 @@ export default function SystemDashboard() {
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-[var(--text-secondary)]" />
+            <Building2 className="h-5 w-5 text-[var(--text-secondary)]"/>
             <Text fw={600} className="text-[var(--text-primary)]">
               All Tenants
             </Text>
@@ -304,7 +284,7 @@ export default function SystemDashboard() {
         {tenantListQuery.isLoading ? (
           <Stack gap="md">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} height={50} />
+              <Skeleton key={i} height={50}/>
             ))}
           </Stack>
         ) : tenantListQuery.data?.content && tenantListQuery.data.content.length > 0 ? (
@@ -371,7 +351,7 @@ export default function SystemDashboard() {
                       <Button
                         size="xs"
                         variant="light"
-                        rightSection={<ChevronRight className="h-4 w-4" />}
+                        rightSection={<ChevronRight className="h-4 w-4"/>}
                         onClick={() => {
                           setSelectedTenant(tenant);
                           setImpersonationModalOpen(true);

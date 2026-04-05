@@ -1,20 +1,20 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/hrms/office-location.service';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { ConfirmDialog } from '@/components/ui';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {OfficeLocation, OfficeLocationRequest} from '@/lib/services/hrms/office-location.service';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui';
 import {
-  useOfficeLocations,
   useCreateOfficeLocation,
-  useUpdateOfficeLocation,
   useDeleteOfficeLocation,
+  useOfficeLocations,
+  useUpdateOfficeLocation,
 } from '@/lib/hooks/queries/useOfficeLocations';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -26,9 +26,9 @@ const officeLocationSchema = z.object({
   state: z.string().min(1, 'State required'),
   country: z.string().min(1, 'Country required'),
   postalCode: z.string().optional().or(z.literal('')),
-  latitude: z.number({ coerce: true }).finite('Valid latitude required'),
-  longitude: z.number({ coerce: true }).finite('Valid longitude required'),
-  geofenceRadius: z.number({ coerce: true }).int().min(10, 'Minimum 10 meters').max(10000, 'Maximum 10000 meters'),
+  latitude: z.number({coerce: true}).finite('Valid latitude required'),
+  longitude: z.number({coerce: true}).finite('Valid longitude required'),
+  geofenceRadius: z.number({coerce: true}).int().min(10, 'Minimum 10 meters').max(10000, 'Maximum 10000 meters'),
   isDefault: z.boolean().default(false),
   timezone: z.string().optional().or(z.literal('')),
 });
@@ -38,15 +38,15 @@ type OfficeLocationFormData = z.infer<typeof officeLocationSchema>;
 export default function OfficeLocationsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // Form state
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<OfficeLocationFormData>({
     resolver: zodResolver(officeLocationSchema),
     defaultValues: {
@@ -71,7 +71,7 @@ export default function OfficeLocationsPage() {
   const [locationToDelete, setLocationToDelete] = React.useState<OfficeLocation | null>(null);
 
   // React Query hooks
-  const { data: locations = [], isLoading } = useOfficeLocations();
+  const {data: locations = [], isLoading} = useOfficeLocations();
   const createMutation = useCreateOfficeLocation();
   const updateMutation = useUpdateOfficeLocation();
   const deleteMutation = useDeleteOfficeLocation();
@@ -93,7 +93,7 @@ export default function OfficeLocationsPage() {
   const onSubmit = async (data: OfficeLocationFormData) => {
     if (editingId) {
       updateMutation.mutate(
-        { id: editingId, data: data as OfficeLocationRequest },
+        {id: editingId, data: data as OfficeLocationRequest},
         {
           onSuccess: () => {
             setShowForm(false);
@@ -298,7 +298,8 @@ export default function OfficeLocationsPage() {
                   min="10"
                   max="10000"
                 />
-                {errors.geofenceRadius && <p className="text-danger-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
+                {errors.geofenceRadius &&
+                  <p className="text-danger-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
               </div>
               <div className="flex items-end">
                 <button
@@ -339,66 +340,72 @@ export default function OfficeLocationsPage() {
           <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
               <thead className="bg-[var(--bg-secondary)]/50">
-                <tr>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Address</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Coordinates</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Radius</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
-                </tr>
+              <tr>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Address
+                </th>
+                <th
+                  className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Coordinates
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Radius
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions
+                </th>
+              </tr>
               </thead>
               <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
-                {locations.map((location) => (
-                  <tr key={location.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium">{location.name}</div>
-                      {location.isDefault && (
-                        <span className="text-xs text-accent-700 dark:text-accent-400">Default</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>{location.address}</div>
-                      <div className="text-body-secondary">
-                        {location.city}, {location.state}, {location.country}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {location.geofenceRadius}m
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+              {locations.map((location) => (
+                <tr key={location.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium">{location.name}</div>
+                    {location.isDefault && (
+                      <span className="text-xs text-accent-700 dark:text-accent-400">Default</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>{location.address}</div>
+                    <div className="text-body-secondary">
+                      {location.city}, {location.state}, {location.country}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {location.geofenceRadius}m
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         location.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                       }`}>
                         {location.isActive ? 'Active' : 'Inactive'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleEdit(location)}
-                        className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(location)}
-                        className="text-danger-600 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {locations.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-secondary)]">
-                      No office locations found. Add your first location to enable geofencing.
-                    </td>
-                  </tr>
-                )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleEdit(location)}
+                      className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(location)}
+                      className="text-danger-600 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {locations.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-secondary)]">
+                    No office locations found. Add your first location to enable geofencing.
+                  </td>
+                </tr>
+              )}
               </tbody>
             </table>
           </div>

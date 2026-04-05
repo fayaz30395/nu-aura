@@ -1,17 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PieChart,
-  BarChart2,
-  Calendar,
-  Users,
-} from 'lucide-react';
-import { ExpenseClaim, ExpenseCategory } from '@/lib/types/hrms/expense';
-import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
+import {useMemo, useState} from 'react';
+import {BarChart2, Calendar, DollarSign, PieChart, TrendingDown, TrendingUp, Users,} from 'lucide-react';
+import {ExpenseCategory, ExpenseClaim} from '@/lib/types/hrms/expense';
+import {endOfMonth, format, isWithinInterval, parseISO, startOfMonth, subMonths} from 'date-fns';
 
 interface ExpenseAnalyticsProps {
   claims: ExpenseClaim[];
@@ -72,7 +64,7 @@ const CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   OTHER: 'Other',
 };
 
-export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsProps) {
+export function ExpenseAnalytics({claims, className = ''}: ExpenseAnalyticsProps) {
   const [timeRange, setTimeRange] = useState<'3m' | '6m' | '12m'>('6m');
 
   // Filter claims based on time range
@@ -83,7 +75,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
     return claims.filter((claim) => {
       const claimDate = parseISO(claim.claimDate);
-      return isWithinInterval(claimDate, { start: startDate, end: endDate });
+      return isWithinInterval(claimDate, {start: startDate, end: endDate});
     });
   }, [claims, timeRange]);
 
@@ -93,7 +85,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
     filteredClaims.forEach((claim) => {
       if (!totals[claim.category]) {
-        totals[claim.category] = { amount: 0, count: 0 };
+        totals[claim.category] = {amount: 0, count: 0};
       }
       totals[claim.category].amount += claim.amount;
       totals[claim.category].count += 1;
@@ -124,7 +116,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
       const monthClaims = claims.filter((claim) => {
         const claimDate = parseISO(claim.claimDate);
-        return isWithinInterval(claimDate, { start: monthStart, end: monthEnd });
+        return isWithinInterval(claimDate, {start: monthStart, end: monthEnd});
       });
 
       data.push({
@@ -176,7 +168,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
     const prevEnd = endOfMonth(subMonths(new Date(), months));
     const prevPeriodClaims = claims.filter((claim) => {
       const claimDate = parseISO(claim.claimDate);
-      return isWithinInterval(claimDate, { start: prevStart, end: prevEnd });
+      return isWithinInterval(claimDate, {start: prevStart, end: prevEnd});
     });
     const prevTotal = prevPeriodClaims.reduce((sum, c) => sum + c.amount, 0);
     const percentChange = prevTotal > 0 ? ((totalAmount - prevTotal) / prevTotal) * 100 : 0;
@@ -201,7 +193,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-          <BarChart2 className="w-5 h-5" />
+          <BarChart2 className="w-5 h-5"/>
           Expense Analytics
         </h2>
         <div className="flex gap-2">
@@ -225,17 +217,17 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-surface-500 mb-2">
-            <DollarSign className="w-4 h-4" />
+            <DollarSign className="w-4 h-4"/>
             <span className="text-sm">Total Expenses</span>
           </div>
           <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-            ${summary.totalAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            ${summary.totalAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
           </p>
           <div className="flex items-center gap-1 mt-1">
             {summary.percentChange >= 0 ? (
-              <TrendingUp className="w-4 h-4 text-success-500" />
+              <TrendingUp className="w-4 h-4 text-success-500"/>
             ) : (
-              <TrendingDown className="w-4 h-4 text-danger-500" />
+              <TrendingDown className="w-4 h-4 text-danger-500"/>
             )}
             <span
               className={`text-sm ${summary.percentChange >= 0 ? 'text-success-600' : 'text-danger-600'}`}
@@ -247,33 +239,33 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
         <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-surface-500 mb-2">
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-4 h-4"/>
             <span className="text-sm">Average per Claim</span>
           </div>
           <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-            ${summary.avgClaimAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            ${summary.avgClaimAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
           </p>
           <p className="text-sm text-surface-500 mt-1">{summary.totalClaims} total claims</p>
         </div>
 
         <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-success-500 mb-2">
-            <DollarSign className="w-4 h-4" />
+            <DollarSign className="w-4 h-4"/>
             <span className="text-sm">Approved</span>
           </div>
           <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-            ${summary.approvedAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            ${summary.approvedAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
           </p>
           <p className="text-sm text-surface-500 mt-1">{summary.approvedCount} claims</p>
         </div>
 
         <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-warning-500 mb-2">
-            <DollarSign className="w-4 h-4" />
+            <DollarSign className="w-4 h-4"/>
             <span className="text-sm">Pending</span>
           </div>
           <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-            ${summary.pendingAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            ${summary.pendingAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
           </p>
           <p className="text-sm text-surface-500 mt-1">{summary.pendingCount} claims</p>
         </div>
@@ -283,7 +275,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
         {/* Monthly Trend Chart */}
         <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
+            <TrendingUp className="w-4 h-4"/>
             Monthly Trend
           </h3>
           <div className="space-y-4">
@@ -295,11 +287,11 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                 <div className="flex-1 h-6 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-accent-500 rounded-full transition-all duration-500"
-                    style={{ width: `${(data.amount / maxMonthlyAmount) * 100}%` }}
+                    style={{width: `${(data.amount / maxMonthlyAmount) * 100}%`}}
                   />
                 </div>
                 <span className="text-sm font-medium text-surface-900 dark:text-surface-50 w-24 text-right">
-                  ${data.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  ${data.amount.toLocaleString(undefined, {maximumFractionDigits: 0})}
                 </span>
               </div>
             ))}
@@ -309,7 +301,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
         {/* Category Breakdown */}
         <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
-            <PieChart className="w-4 h-4" />
+            <PieChart className="w-4 h-4"/>
             By Category
           </h3>
           {categoryData.length === 0 ? (
@@ -320,7 +312,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                 <div key={data.category} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: data.color }}
+                    style={{backgroundColor: data.color}}
                   />
                   <span className="text-sm text-surface-600 dark:text-surface-400 flex-1 truncate">
                     {CATEGORY_LABELS[data.category]}
@@ -328,7 +320,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-surface-500">{data.percentage.toFixed(1)}%</span>
                     <span className="text-sm font-medium text-surface-900 dark:text-surface-50 w-20 text-right">
-                      ${data.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      ${data.amount.toLocaleString(undefined, {maximumFractionDigits: 0})}
                     </span>
                   </div>
                 </div>
@@ -362,7 +354,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                       acc.angle = endAngle;
                       return acc;
                     },
-                    { elements: [] as JSX.Element[], angle: 0 }
+                    {elements: [] as JSX.Element[], angle: 0}
                   ).elements}
                 </svg>
               </div>
@@ -375,26 +367,26 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
       {topSpenders.length > 0 && (
         <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
-            <Users className="w-4 h-4" />
+            <Users className="w-4 h-4"/>
             Top Spenders
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="text-left text-sm text-surface-500 border-b border-surface-200 dark:border-surface-700">
-                  <th className="pb-4 font-medium">Rank</th>
-                  <th className="pb-4 font-medium">Employee</th>
-                  <th className="pb-4 font-medium text-right">Claims</th>
-                  <th className="pb-4 font-medium text-right">Total Amount</th>
-                </tr>
+              <tr className="text-left text-sm text-surface-500 border-b border-surface-200 dark:border-surface-700">
+                <th className="pb-4 font-medium">Rank</th>
+                <th className="pb-4 font-medium">Employee</th>
+                <th className="pb-4 font-medium text-right">Claims</th>
+                <th className="pb-4 font-medium text-right">Total Amount</th>
+              </tr>
               </thead>
               <tbody>
-                {topSpenders.map((spender, index) => (
-                  <tr
-                    key={spender.employeeId}
-                    className="border-b border-surface-100 dark:border-surface-800 last:border-0"
-                  >
-                    <td className="py-4">
+              {topSpenders.map((spender, index) => (
+                <tr
+                  key={spender.employeeId}
+                  className="border-b border-surface-100 dark:border-surface-800 last:border-0"
+                >
+                  <td className="py-4">
                       <span
                         className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                           index === 0
@@ -408,21 +400,21 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                       >
                         {index + 1}
                       </span>
-                    </td>
-                    <td className="py-4">
-                      <p className="font-medium text-surface-900 dark:text-surface-50">
-                        {spender.employeeName}
-                      </p>
-                      <p className="text-sm text-surface-500">{spender.employeeCode}</p>
-                    </td>
-                    <td className="py-4 text-right text-surface-600 dark:text-surface-400">
-                      {spender.claimCount}
-                    </td>
-                    <td className="py-4 text-right font-semibold text-surface-900 dark:text-surface-50">
-                      ${spender.totalAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </td>
-                  </tr>
-                ))}
+                  </td>
+                  <td className="py-4">
+                    <p className="font-medium text-surface-900 dark:text-surface-50">
+                      {spender.employeeName}
+                    </p>
+                    <p className="text-sm text-surface-500">{spender.employeeCode}</p>
+                  </td>
+                  <td className="py-4 text-right text-surface-600 dark:text-surface-400">
+                    {spender.claimCount}
+                  </td>
+                  <td className="py-4 text-right font-semibold text-surface-900 dark:text-surface-50">
+                    ${spender.totalAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  </td>
+                </tr>
+              ))}
               </tbody>
             </table>
           </div>

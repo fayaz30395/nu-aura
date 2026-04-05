@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { orgChartService, OrgChartNode, OrgChartStats } from '@/lib/services/hrms/orgChart.service';
-import { Employee, Department } from '@/lib/types/hrms/employee';
+import {useQuery} from '@tanstack/react-query';
+import {useMemo} from 'react';
+import {OrgChartNode, orgChartService, OrgChartStats} from '@/lib/services/hrms/orgChart.service';
+import {Department, Employee} from '@/lib/types/hrms/employee';
 
 // ── Query Keys ──────────────────────────────────────────────────────────────
 
@@ -66,7 +66,7 @@ interface UseOrgChartTreeReturn {
  * Pure computation is memoized so re-renders without param changes are free.
  */
 export function useOrgChartTree(options: UseOrgChartTreeOptions = {}): UseOrgChartTreeReturn {
-  const { departmentFilter, searchQuery, maxDepth } = options;
+  const {departmentFilter, searchQuery, maxDepth} = options;
 
   const {
     data: employees = [],
@@ -86,7 +86,7 @@ export function useOrgChartTree(options: UseOrgChartTreeOptions = {}): UseOrgCha
     // Prune tree to maxDepth if specified
     if (maxDepth !== undefined && maxDepth > 0) {
       const prune = (nodes: OrgChartNode[], currentMax: number): OrgChartNode[] => {
-        if (currentMax <= 0) return nodes.map(n => ({ ...n, children: [] as OrgChartNode[] }));
+        if (currentMax <= 0) return nodes.map(n => ({...n, children: [] as OrgChartNode[]}));
         return nodes.map(n => ({
           ...n,
           children: prune(n.children, currentMax - 1),

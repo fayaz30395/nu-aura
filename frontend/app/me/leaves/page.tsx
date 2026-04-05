@@ -1,37 +1,40 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Plus,
-  Calendar,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  X,
-  Send,
-  FileText,
-  Edit3,
-  User,
   Ban,
-  Filter,
   Banknote,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit3,
+  FileText,
+  Filter,
+  Plus,
+  Send,
+  User,
+  X,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useEmployeeLeaveRequests, useEmployeeBalances, useActiveLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest, useCancelLeaveRequest, useRequestLeaveEncashment } from '@/lib/hooks/queries/useLeaves';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
-  LeaveRequest,
-  LeaveRequestRequest,
-  LeaveRequestStatus,
-  LeaveBalance,
-} from '@/lib/types/hrms/leave';
-import { createLogger } from '@/lib/utils/logger';
+  useActiveLeaveTypes,
+  useCancelLeaveRequest,
+  useCreateLeaveRequest,
+  useEmployeeBalances,
+  useEmployeeLeaveRequests,
+  useRequestLeaveEncashment,
+  useUpdateLeaveRequest
+} from '@/lib/hooks/queries/useLeaves';
+import {LeaveBalance, LeaveRequest, LeaveRequestRequest, LeaveRequestStatus,} from '@/lib/types/hrms/leave';
+import {createLogger} from '@/lib/utils/logger';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -53,7 +56,7 @@ type CancelFormData = z.infer<typeof cancelFormSchema>;
 
 export default function MyLeavesPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const {user, isAuthenticated, hasHydrated} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('Leave request submitted successfully!');
@@ -67,7 +70,13 @@ export default function MyLeavesPage() {
   const [leaveTypeFilter, setLeaveTypeFilter] = useState<string>('ALL');
 
   // Leave form
-  const { register: registerLeave, handleSubmit: handleLeaveSubmit, watch: watchLeave, formState: { errors: leaveErrors, isSubmitting: leaveSubmitting }, reset: resetLeave } = useForm<LeaveFormData>({
+  const {
+    register: registerLeave,
+    handleSubmit: handleLeaveSubmit,
+    watch: watchLeave,
+    formState: {errors: leaveErrors, isSubmitting: leaveSubmitting},
+    reset: resetLeave
+  } = useForm<LeaveFormData>({
     resolver: zodResolver(leaveFormSchema),
     defaultValues: {
       leaveTypeId: '',
@@ -79,16 +88,28 @@ export default function MyLeavesPage() {
   });
 
   // Cancel form
-  const { register: registerCancel, handleSubmit: handleCancelSubmit, formState: { errors: cancelErrors, isSubmitting: cancelSubmitting }, reset: resetCancel } = useForm<CancelFormData>({
+  const {
+    register: registerCancel,
+    handleSubmit: handleCancelSubmit,
+    formState: {errors: cancelErrors, isSubmitting: cancelSubmitting},
+    reset: resetCancel
+  } = useForm<CancelFormData>({
     resolver: zodResolver(cancelFormSchema),
     defaultValues: {
       reason: '',
     },
   });
 
-  const { data: leaveRequestsData, isError: isLeaveRequestsError, error: leaveRequestsError } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
-  const { data: balancesData = [], isError: _isBalancesError } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
-  const { data: leaveTypesData = [] } = useActiveLeaveTypes(Boolean(hasHydrated && isAuthenticated));
+  const {
+    data: leaveRequestsData,
+    isError: isLeaveRequestsError,
+    error: leaveRequestsError
+  } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
+  const {
+    data: balancesData = [],
+    isError: _isBalancesError
+  } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
+  const {data: leaveTypesData = []} = useActiveLeaveTypes(Boolean(hasHydrated && isAuthenticated));
   const createLeaveRequest = useCreateLeaveRequest();
   const updateLeaveRequest = useUpdateLeaveRequest();
   const cancelLeaveRequest = useCancelLeaveRequest();
@@ -161,7 +182,9 @@ export default function MyLeavesPage() {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       log.error('Failed to submit leave request:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to submit leave request');
     }
   };
 
@@ -193,7 +216,7 @@ export default function MyLeavesPage() {
     if (!cancellingRequest) return;
 
     try {
-      await cancelLeaveRequest.mutateAsync({ id: cancellingRequest.id, reason: data.reason });
+      await cancelLeaveRequest.mutateAsync({id: cancellingRequest.id, reason: data.reason});
       setSuccessMessage('Leave request cancelled successfully!');
       setSuccess(true);
       setShowCancelModal(false);
@@ -202,7 +225,9 @@ export default function MyLeavesPage() {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       log.error('Failed to cancel leave request:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to cancel leave request');
     }
   };
 
@@ -228,11 +253,11 @@ export default function MyLeavesPage() {
   const getStatusIcon = (status: LeaveRequestStatus) => {
     switch (status) {
       case 'APPROVED':
-        return <CheckCircle className="h-4 w-4" />;
+        return <CheckCircle className="h-4 w-4"/>;
       case 'REJECTED':
-        return <XCircle className="h-4 w-4" />;
+        return <XCircle className="h-4 w-4"/>;
       default:
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="h-4 w-4"/>;
     }
   };
 
@@ -267,7 +292,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -278,7 +303,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="text-center py-12">
-          <AlertCircle className="h-16 w-16 mx-auto text-warning-400 mb-4" />
+          <AlertCircle className="h-16 w-16 mx-auto text-warning-400 mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             {is403 ? 'Access Restricted' : 'Unable to Load Leave Data'}
           </h2>
@@ -296,7 +321,7 @@ export default function MyLeavesPage() {
     return (
       <AppLayout activeMenuItem="leaves">
         <div className="text-center py-12">
-          <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+          <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Leave management requires an employee profile. Use the admin panels to manage employee leaves.
@@ -327,15 +352,16 @@ export default function MyLeavesPage() {
             onClick={() => setShowApplyModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors skeuo-button"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4"/>
             Apply for Leave
           </button>
         </div>
 
         {/* Success Message */}
         {success && (
-          <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <CheckCircle className="h-5 w-5 text-success-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <CheckCircle className="h-5 w-5 text-success-600"/>
             <p className="text-success-800 dark:text-success-200 font-medium">
               {successMessage}
             </p>
@@ -344,8 +370,9 @@ export default function MyLeavesPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600" />
+          <div
+            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+            <AlertCircle className="h-5 w-5 text-danger-600"/>
             <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
           </div>
         )}
@@ -361,11 +388,11 @@ export default function MyLeavesPage() {
                   <div className="row-between mb-4">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: `${leaveType?.colorCode || '#6b7280'}20` }}
+                      style={{backgroundColor: `${leaveType?.colorCode || '#6b7280'}20`}}
                     >
                       <Calendar
                         className="h-6 w-6"
-                        style={{ color: leaveType?.colorCode || '#6b7280' }}
+                        style={{color: leaveType?.colorCode || '#6b7280'}}
                       />
                     </div>
                     {isEncashable && (
@@ -379,7 +406,7 @@ export default function MyLeavesPage() {
                         className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 rounded-md hover:bg-success-100 dark:hover:bg-success-950/50 transition-colors"
                         title="Encash available leaves"
                       >
-                        <Banknote className="h-3 w-3" />
+                        <Banknote className="h-3 w-3"/>
                         Encash
                       </button>
                     )}
@@ -438,7 +465,7 @@ export default function MyLeavesPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2 skeuo-emboss">
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-5 w-5"/>
                   Leave History
                 </CardTitle>
                 <CardDescription>
@@ -453,7 +480,7 @@ export default function MyLeavesPage() {
               {/* Filters */}
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+                  <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
@@ -492,7 +519,7 @@ export default function MyLeavesPage() {
           <CardContent>
             {leaveRequests.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+                <Calendar className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Leave Requests
                 </h3>
@@ -502,7 +529,7 @@ export default function MyLeavesPage() {
               </div>
             ) : filteredLeaveRequests.length === 0 ? (
               <div className="text-center py-12">
-                <Filter className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4" />
+                <Filter className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4"/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   No Matching Requests
                 </h3>
@@ -540,11 +567,11 @@ export default function MyLeavesPage() {
                         </div>
                         <div className="meta-row">
                           <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
+                            <Calendar className="h-4 w-4"/>
                             {formatDate(request.startDate)} - {formatDate(request.endDate)}
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="h-4 w-4"/>
                             {request.totalDays} {request.totalDays === 1 ? 'day' : 'days'}
                             {request.isHalfDay && ' (Half Day)'}
                           </div>
@@ -555,7 +582,7 @@ export default function MyLeavesPage() {
                         {/* Approver Info for PENDING */}
                         {request.status === 'PENDING' && request.pendingApproverName && (
                           <div className="flex items-center gap-2 mt-4 text-sm">
-                            <User className="h-4 w-4 text-accent-500" />
+                            <User className="h-4 w-4 text-accent-500"/>
                             <span className="text-[var(--text-secondary)]">
                               Pending approval from:{' '}
                               <span className="font-medium text-accent-600 dark:text-accent-400">
@@ -566,7 +593,7 @@ export default function MyLeavesPage() {
                         )}
                         {(request.status === 'APPROVED' || request.status === 'REJECTED') && request.approverName && (
                           <div className="flex items-center gap-2 mt-4 text-sm">
-                            <User className="h-4 w-4 text-[var(--text-muted)]" />
+                            <User className="h-4 w-4 text-[var(--text-muted)]"/>
                             <span className="text-[var(--text-secondary)]">
                               {request.status === 'APPROVED' ? 'Approved' : 'Rejected'} by:{' '}
                               <span className="font-medium text-[var(--text-primary)]">
@@ -595,14 +622,14 @@ export default function MyLeavesPage() {
                             onClick={() => handleEdit(request)}
                             className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 hover:text-accent-700 bg-accent-50 hover:bg-accent-100 dark:bg-accent-950/30 dark:hover:bg-accent-950/50 rounded-lg transition-colors"
                           >
-                            <Edit3 className="h-3 w-3" />
+                            <Edit3 className="h-3 w-3"/>
                             Edit
                           </button>
                           <button
                             onClick={() => handleCancelClick(request)}
                             className="inline-flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 hover:text-danger-700 bg-danger-50 hover:bg-danger-100 dark:bg-danger-950/30 dark:hover:bg-danger-950/50 rounded-lg transition-colors"
                           >
-                            <Ban className="h-3 w-3" />
+                            <Ban className="h-3 w-3"/>
                             Cancel
                           </button>
                         </div>
@@ -632,132 +659,136 @@ export default function MyLeavesPage() {
         {/* Apply/Edit Leave Modal */}
         {showApplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
-                <div className="row-between p-6 border-b border-[var(--border-main)]">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
-                    {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
-                  </h2>
-                  <button
-                    onClick={handleCloseModal}
-                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            <div
+              className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
+              <div className="row-between p-6 border-b border-[var(--border-main)]">
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
+                </h2>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  <X className="h-5 w-5"/>
+                </button>
+              </div>
+
+              <form onSubmit={handleLeaveSubmit(onLeaveSubmit)} className="p-6 space-y-4">
+                {/* Leave Type */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Leave Type *
+                  </label>
+                  <select
+                    {...registerLeave('leaveTypeId')}
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                   >
-                    <X className="h-5 w-5" />
-                  </button>
+                    <option value="">Select leave type</option>
+                    {leaveTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.leaveName}
+                      </option>
+                    ))}
+                  </select>
+                  {leaveErrors.leaveTypeId &&
+                    <p className="text-danger-500 text-sm mt-1">{leaveErrors.leaveTypeId.message}</p>}
                 </div>
 
-                <form onSubmit={handleLeaveSubmit(onLeaveSubmit)} className="p-6 space-y-4">
-                  {/* Leave Type */}
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                      Leave Type *
+                      Start Date *
                     </label>
-                    <select
-                      {...registerLeave('leaveTypeId')}
-                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
-                    >
-                      <option value="">Select leave type</option>
-                      {leaveTypes.map((type) => (
-                        <option key={type.id} value={type.id}>
-                          {type.leaveName}
-                        </option>
-                      ))}
-                    </select>
-                    {leaveErrors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{leaveErrors.leaveTypeId.message}</p>}
-                  </div>
-
-                  {/* Dates */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Start Date *
-                      </label>
-                      <input
-                        type="date"
-                        {...registerLeave('startDate')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
-                      />
-                      {leaveErrors.startDate && <p className="text-danger-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        End Date *
-                      </label>
-                      <input
-                        type="date"
-                        {...registerLeave('endDate')}
-                        min={startDate}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
-                      />
-                      {leaveErrors.endDate && <p className="text-danger-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
-                    </div>
-                  </div>
-
-                  {/* Half Day */}
-                  <div className="flex items-center gap-4">
                     <input
-                      type="checkbox"
-                      id="halfDay"
-                      {...registerLeave('isHalfDay')}
-                      className="w-4 h-4 text-accent-700 rounded focus:ring-accent-500"
-                    />
-                    <label
-                      htmlFor="halfDay"
-                      className="text-sm font-medium text-[var(--text-secondary)]"
-                    >
-                      This is a half-day leave
-                    </label>
-                  </div>
-
-                  {/* Total Days */}
-                  <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
-                    <p className="text-body-secondary">
-                      Total Days: <span className="font-bold text-accent-700">{calculateDays()}</span>
-                    </p>
-                  </div>
-
-                  {/* Reason */}
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                      Reason *
-                    </label>
-                    <textarea
-                      {...registerLeave('reason')}
-                      rows={4}
-                      placeholder="Please provide a reason for your leave..."
+                      type="date"
+                      {...registerLeave('startDate')}
                       className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                     />
-                    {leaveErrors.reason && <p className="text-danger-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
+                    {leaveErrors.startDate &&
+                      <p className="text-danger-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      End Date *
+                    </label>
+                    <input
+                      type="date"
+                      {...registerLeave('endDate')}
+                      min={startDate}
+                      className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
+                    />
+                    {leaveErrors.endDate &&
+                      <p className="text-danger-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
+                  </div>
+                </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center justify-end gap-4 pt-4">
-                    <button
-                      type="button"
-                      onClick={handleCloseModal}
-                      disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
-                      className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          {editingRequest ? 'Updating...' : 'Submitting...'}
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-4 w-4" />
-                          {editingRequest ? 'Update Request' : 'Submit Request'}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
+                {/* Half Day */}
+                <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    id="halfDay"
+                    {...registerLeave('isHalfDay')}
+                    className="w-4 h-4 text-accent-700 rounded focus:ring-accent-500"
+                  />
+                  <label
+                    htmlFor="halfDay"
+                    className="text-sm font-medium text-[var(--text-secondary)]"
+                  >
+                    This is a half-day leave
+                  </label>
+                </div>
+
+                {/* Total Days */}
+                <div className="p-4 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
+                  <p className="text-body-secondary">
+                    Total Days: <span className="font-bold text-accent-700">{calculateDays()}</span>
+                  </p>
+                </div>
+
+                {/* Reason */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    Reason *
+                  </label>
+                  <textarea
+                    {...registerLeave('reason')}
+                    rows={4}
+                    placeholder="Please provide a reason for your leave..."
+                    className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
+                  />
+                  {leaveErrors.reason && <p className="text-danger-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
+                    className="px-6 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
+                    className="flex items-center gap-2 px-6 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
+                        {editingRequest ? 'Updating...' : 'Submitting...'}
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4"/>
+                        {editingRequest ? 'Update Request' : 'Submit Request'}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -765,7 +796,8 @@ export default function MyLeavesPage() {
         {/* Cancel Leave Modal */}
         {showCancelModal && cancellingRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
-            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
+            <div
+              className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-[var(--shadow-elevated)] animate-in fade-in zoom-in-95 duration-200 skeuo-card">
               <div className="row-between p-6 border-b border-[var(--border-main)]">
                 <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   Cancel Leave Request
@@ -774,12 +806,13 @@ export default function MyLeavesPage() {
                   onClick={handleCloseCancelModal}
                   className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5"/>
                 </button>
               </div>
 
               <form onSubmit={handleCancelSubmit(onCancelSubmit)} className="p-6 space-y-4">
-                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
                   <p className="text-sm text-danger-800 dark:text-danger-200">
                     Are you sure you want to cancel your{' '}
                     <span className="font-semibold">{getLeaveTypeName(cancellingRequest.leaveTypeId)}</span>{' '}
@@ -820,12 +853,12 @@ export default function MyLeavesPage() {
                   >
                     {cancelLeaveRequest.isPending || cancelSubmitting ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                         Cancelling...
                       </>
                     ) : (
                       <>
-                        <Ban className="h-4 w-4" />
+                        <Ban className="h-4 w-4"/>
                         Cancel Request
                       </>
                     )}
@@ -839,12 +872,13 @@ export default function MyLeavesPage() {
         {/* Leave Encashment Modal */}
         {showEncashModal && encashBalance && (
           <div className="modal-backdrop">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-xl max-w-md w-full shadow-[var(--shadow-dropdown)]">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="row-between">
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                      <Banknote className="h-5 w-5 text-success-600 dark:text-success-400" />
+                      <Banknote className="h-5 w-5 text-success-600 dark:text-success-400"/>
                     </div>
                     <div>
                       <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -859,14 +893,15 @@ export default function MyLeavesPage() {
                     onClick={() => setShowEncashModal(false)}
                     className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                   >
-                    <X className="h-5 w-5 text-[var(--text-muted)]" />
+                    <X className="h-5 w-5 text-[var(--text-muted)]"/>
                   </button>
                 </div>
               </div>
 
               <div className="p-6 space-y-4">
                 {/* Balance Summary */}
-                <div className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
+                <div
+                  className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
                   <div className="row-between mb-2">
                     <span className="text-sm font-medium text-success-800 dark:text-success-300">
                       {leaveTypes.find((lt) => lt.id === encashBalance.leaveTypeId)?.leaveName || 'Leave Type'}
@@ -912,10 +947,12 @@ export default function MyLeavesPage() {
                   />
                 </div>
 
-                <div className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                  <AlertCircle className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0" />
+                <div
+                  className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                  <AlertCircle className="h-4 w-4 text-warning-600 dark:text-warning-400 mt-0.5 flex-shrink-0"/>
                   <p className="text-xs text-warning-800 dark:text-warning-300">
-                    Encashment will be processed as part of your next payroll cycle. The amount will be calculated based on your current basic salary and applicable tax deductions.
+                    Encashment will be processed as part of your next payroll cycle. The amount will be calculated based
+                    on your current basic salary and applicable tax deductions.
                   </p>
                 </div>
               </div>
@@ -942,12 +979,12 @@ export default function MyLeavesPage() {
                 >
                   {encashmentMutation.isPending ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
                       Processing...
                     </>
                   ) : (
                     <>
-                      <Banknote className="h-4 w-4" />
+                      <Banknote className="h-4 w-4"/>
                       Request Encashment
                     </>
                   )}

@@ -1,104 +1,126 @@
 'use client';
 
-import { useState, useCallback, useMemo, useRef, DragEvent } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate, AdminGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
+import {DragEvent, useCallback, useMemo, useRef, useState} from 'react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {AdminGate, PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {
-  useMigrationTemplates,
-  useImportData,
-  useValidateFile,
-  usePreviewEmployeeImport,
-  useExecuteEmployeeImport,
   useDownloadEmployeeTemplate,
+  useExecuteEmployeeImport,
   useExportData,
-  useKekaFileUpload,
-  useKekaImportPreview,
+  useImportData,
   useKekaExecuteImport,
+  useKekaFileUpload,
   useKekaImportHistory,
+  useKekaImportPreview,
+  useMigrationTemplates,
+  usePreviewEmployeeImport,
+  useValidateFile,
 } from '@/lib/hooks/queries/useImportExport';
 import type {
-  ImportDataType,
+  EmployeeImportPreview,
   ExportDataType,
   ExportFormat,
+  ImportDataType,
   ImportResult,
-  EmployeeImportPreview,
 } from '@/lib/services/core/importExport.service';
 import type {
-  KekaFileUploadResponse,
-  KekaImportPreview,
-  KekaImportMapping,
-  KekaImportHistoryEntry,
   KekaEmployee,
+  KekaFileUploadResponse,
+  KekaImportHistoryEntry,
+  KekaImportMapping,
+  KekaImportPreview,
 } from '@/lib/types/core/keka-import';
 import {
-  Upload,
+  AlertTriangle,
+  ArrowRight,
+  ArrowUpDown,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Database,
   Download,
   FileSpreadsheet,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ArrowRight,
+  FileText,
+  History,
+  Info,
   RefreshCw,
   Trash2,
-  FileText,
-  Database,
-  ArrowUpDown,
-  History,
-  ChevronRight,
-  Info,
+  Upload,
+  XCircle,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { notifications } from '@mantine/notifications';
+import {AnimatePresence, motion} from 'framer-motion';
+import {notifications} from '@mantine/notifications';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const IMPORT_TYPES: Array<{ value: ImportDataType; label: string; description: string; icon: typeof Upload }> = [
-  { value: 'employees', label: 'Employees', description: 'Employee master data', icon: FileSpreadsheet },
-  { value: 'departments', label: 'Departments', description: 'Department structure', icon: Database },
-  { value: 'attendance', label: 'Attendance', description: 'Daily attendance records', icon: Clock },
-  { value: 'leave_balances', label: 'Leave Balances', description: 'Leave balance data', icon: FileText },
-  { value: 'salary_structures', label: 'Payroll Components', description: 'Salary structure data', icon: FileSpreadsheet },
+  {value: 'employees', label: 'Employees', description: 'Employee master data', icon: FileSpreadsheet},
+  {value: 'departments', label: 'Departments', description: 'Department structure', icon: Database},
+  {value: 'attendance', label: 'Attendance', description: 'Daily attendance records', icon: Clock},
+  {value: 'leave_balances', label: 'Leave Balances', description: 'Leave balance data', icon: FileText},
+  {
+    value: 'salary_structures',
+    label: 'Payroll Components',
+    description: 'Salary structure data',
+    icon: FileSpreadsheet
+  },
 ];
 
 const EXPORT_TYPES: Array<{ value: ExportDataType; label: string; description: string }> = [
-  { value: 'employees', label: 'Employees', description: 'Employee master data' },
-  { value: 'attendance', label: 'Attendance', description: 'Attendance records' },
-  { value: 'leaves', label: 'Leaves', description: 'Leave records' },
-  { value: 'payroll', label: 'Payroll', description: 'Payroll data' },
-  { value: 'timesheets', label: 'Timesheets', description: 'Timesheet records' },
-  { value: 'projects', label: 'Projects', description: 'Project data' },
+  {value: 'employees', label: 'Employees', description: 'Employee master data'},
+  {value: 'attendance', label: 'Attendance', description: 'Attendance records'},
+  {value: 'leaves', label: 'Leaves', description: 'Leave records'},
+  {value: 'payroll', label: 'Payroll', description: 'Payroll data'},
+  {value: 'timesheets', label: 'Timesheets', description: 'Timesheet records'},
+  {value: 'projects', label: 'Projects', description: 'Project data'},
 ];
 
 const FORMAT_OPTIONS: Array<{ value: ExportFormat; label: string; ext: string }> = [
-  { value: 'EXCEL', label: 'Excel (.xlsx)', ext: '.xlsx' },
-  { value: 'CSV', label: 'CSV (.csv)', ext: '.csv' },
-  { value: 'PDF', label: 'PDF (.pdf)', ext: '.pdf' },
+  {value: 'EXCEL', label: 'Excel (.xlsx)', ext: '.xlsx'},
+  {value: 'CSV', label: 'CSV (.csv)', ext: '.csv'},
+  {value: 'PDF', label: 'PDF (.pdf)', ext: '.pdf'},
 ];
 
 type ActiveTab = 'import' | 'export' | 'keka' | 'history';
 
 // ─── Status Badge ───────────────────────────────────────────────────────────
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({status}: { status: string }) {
   const config: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
-    SUCCESS: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', icon: CheckCircle2 },
-    COMPLETED: { bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-400', icon: CheckCircle2 },
-    PARTIAL_SUCCESS: { bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-400', icon: AlertTriangle },
-    FAILED: { bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', icon: XCircle },
-    IN_PROGRESS: { bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', icon: RefreshCw },
-    CANCELLED: { bg: 'bg-[var(--bg-secondary)]', text: 'text-[var(--text-secondary)]', icon: XCircle },
+    SUCCESS: {
+      bg: 'bg-success-100 dark:bg-success-900/30',
+      text: 'text-success-700 dark:text-success-400',
+      icon: CheckCircle2
+    },
+    COMPLETED: {
+      bg: 'bg-success-100 dark:bg-success-900/30',
+      text: 'text-success-700 dark:text-success-400',
+      icon: CheckCircle2
+    },
+    PARTIAL_SUCCESS: {
+      bg: 'bg-warning-100 dark:bg-warning-900/30',
+      text: 'text-warning-700 dark:text-warning-400',
+      icon: AlertTriangle
+    },
+    FAILED: {bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', icon: XCircle},
+    IN_PROGRESS: {
+      bg: 'bg-accent-100 dark:bg-accent-900/30',
+      text: 'text-accent-700 dark:text-accent-400',
+      icon: RefreshCw
+    },
+    CANCELLED: {bg: 'bg-[var(--bg-secondary)]', text: 'text-[var(--text-secondary)]', icon: XCircle},
   };
 
   const cfg = config[status] || config.FAILED;
   const Icon = cfg.icon;
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>
-      <Icon className="h-3.5 w-3.5" />
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>
+      <Icon className="h-3.5 w-3.5"/>
       {status.replace('_', ' ')}
     </span>
   );
@@ -114,11 +136,11 @@ function isAcceptedFile(file: File): boolean {
 }
 
 function FileDropZone({
-  onFileDrop,
-  disabled,
-  currentFile,
-  onClear,
-}: {
+                        onFileDrop,
+                        disabled,
+                        currentFile,
+                        onClear,
+                      }: {
   onFileDrop: (file: File) => void;
   disabled?: boolean;
   currentFile: File | null;
@@ -148,12 +170,12 @@ function FileDropZone({
     const accepted = files.find(isAcceptedFile);
     if (accepted) {
       if (accepted.size > 10 * 1024 * 1024) {
-        notifications.show({ title: 'File Too Large', message: 'File size must be under 10MB', color: 'red' });
+        notifications.show({title: 'File Too Large', message: 'File size must be under 10MB', color: 'red'});
         return;
       }
       onFileDrop(accepted);
     } else if (files.length > 0) {
-      notifications.show({ title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red' });
+      notifications.show({title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red'});
     }
   }, [disabled, onFileDrop]);
 
@@ -163,13 +185,13 @@ function FileDropZone({
       const accepted = Array.from(files).find(isAcceptedFile);
       if (accepted) {
         if (accepted.size > 10 * 1024 * 1024) {
-          notifications.show({ title: 'File Too Large', message: 'File size must be under 10MB', color: 'red' });
+          notifications.show({title: 'File Too Large', message: 'File size must be under 10MB', color: 'red'});
           if (inputRef.current) inputRef.current.value = '';
           return;
         }
         onFileDrop(accepted);
       } else {
-        notifications.show({ title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red' });
+        notifications.show({title: 'Invalid File', message: 'Please upload a .csv, .xlsx, or .xls file', color: 'red'});
       }
     }
     // Reset input so same file can be re-selected
@@ -178,9 +200,10 @@ function FileDropZone({
 
   if (currentFile) {
     return (
-      <div className="row-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
+      <div
+        className="row-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
         <div className="flex items-center gap-4">
-          <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400" />
+          <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400"/>
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">{currentFile.name}</p>
             <p className="text-caption">
@@ -189,11 +212,11 @@ function FileDropZone({
           </div>
         </div>
         <button type="button"
-          onClick={onClear}
-          className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          aria-label="Remove file"
+                onClick={onClear}
+                className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                aria-label="Remove file"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4"/>
         </button>
       </div>
     );
@@ -207,13 +230,18 @@ function FileDropZone({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={() => !disabled && inputRef.current?.click()}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click(); } }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
       className={`
         flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed cursor-pointer transition-all
         ${isDragActive
-          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-          : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-        }
+        ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+        : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+      }
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
     >
@@ -225,7 +253,7 @@ function FileDropZone({
         className="hidden"
         aria-label="Upload file"
       />
-      <Upload className="h-10 w-10 text-[var(--text-muted)] dark:text-[var(--text-muted)] mb-4" />
+      <Upload className="h-10 w-10 text-[var(--text-muted)] dark:text-[var(--text-muted)] mb-4"/>
       <p className="text-sm font-medium text-[var(--text-secondary)]">
         {isDragActive ? 'Drop file here' : 'Drag & drop a file here, or click to browse'}
       </p>
@@ -245,7 +273,7 @@ function ImportSection() {
   const [preview, setPreview] = useState<EmployeeImportPreview | null>(null);
   const [step, setStep] = useState<'select' | 'upload' | 'preview' | 'result'>('select');
 
-  const { data: templates, isLoading: templatesLoading } = useMigrationTemplates();
+  const {data: templates, isLoading: templatesLoading} = useMigrationTemplates();
   const importMutation = useImportData();
   const validateMutation = useValidateFile();
   const previewEmployeeMutation = usePreviewEmployeeImport();
@@ -279,7 +307,7 @@ function ImportSection() {
       });
     } else {
       validateMutation.mutate(
-        { file, type: selectedType },
+        {file, type: selectedType},
         {
           onSuccess: (validation) => {
             if (!validation.validFormat) {
@@ -302,7 +330,7 @@ function ImportSection() {
 
     if (selectedType === 'employees') {
       executeEmployeeMutation.mutate(
-        { file, skipInvalid: true },
+        {file, skipInvalid: true},
         {
           onSuccess: () => {
             setStep('result');
@@ -311,7 +339,7 @@ function ImportSection() {
       );
     } else {
       importMutation.mutate(
-        { type: selectedType, file },
+        {type: selectedType, file},
         {
           onSuccess: (result) => {
             setImportResult(result);
@@ -340,7 +368,7 @@ function ImportSection() {
           const isActive = steps.indexOf(step) >= i;
           return (
             <div key={label} className="flex items-center gap-2">
-              {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" />}
+              {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
@@ -355,22 +383,30 @@ function ImportSection() {
 
       {/* Step 1: Type selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {IMPORT_TYPES.map(({ value, label, description, icon: Icon }) => (
+        {IMPORT_TYPES.map(({value, label, description, icon: Icon}) => (
           <button
             key={value}
             type="button"
-            onClick={() => { setSelectedType(value); setStep('select'); setFile(null); setImportResult(null); setPreview(null); }}
+            onClick={() => {
+              setSelectedType(value);
+              setStep('select');
+              setFile(null);
+              setImportResult(null);
+              setPreview(null);
+            }}
             className={`
               flex items-center gap-4 p-4 rounded-lg border text-left transition-all
               ${selectedType === value
-                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-                : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-              }
+              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
+              : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+            }
             `}
           >
-            <Icon className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)]'}`} />
+            <Icon
+              className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)]'}`}/>
             <div>
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
+              <p
+                className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
               <p className="text-caption">{description}</p>
             </div>
           </button>
@@ -379,21 +415,24 @@ function ImportSection() {
 
       {/* Template info & download */}
       {currentTemplate && !templatesLoading && (
-        <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4">
+        <div
+          className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4">
           <div className="flex items-start justify-between">
             <div>
               <h4 className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
-                <Info className="h-4 w-4 text-accent-600" />
+                <Info className="h-4 w-4 text-accent-600"/>
                 Required Columns
               </h4>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {currentTemplate.requiredColumns.map((col: string) => (
-                  <span key={col} className="px-2 py-0.5 rounded bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 text-xs font-mono">
+                  <span key={col}
+                        className="px-2 py-0.5 rounded bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 text-xs font-mono">
                     {col} *
                   </span>
                 ))}
                 {currentTemplate.optionalColumns.slice(0, 5).map((col: string) => (
-                  <span key={col} className="px-2 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs font-mono">
+                  <span key={col}
+                        className="px-2 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs font-mono">
                     {col}
                   </span>
                 ))}
@@ -412,7 +451,7 @@ function ImportSection() {
                   disabled={downloadTemplateMutation.isPending}
                   className="px-4 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                 >
-                  <Download className="h-3.5 w-3.5 inline mr-1" />CSV
+                  <Download className="h-3.5 w-3.5 inline mr-1"/>CSV
                 </button>
                 <button
                   type="button"
@@ -420,7 +459,7 @@ function ImportSection() {
                   disabled={downloadTemplateMutation.isPending}
                   className="px-4 py-1.5 text-xs font-medium rounded-lg bg-accent-700 hover:bg-accent-800 text-white transition-colors"
                 >
-                  <Download className="h-3.5 w-3.5 inline mr-1" />XLSX
+                  <Download className="h-3.5 w-3.5 inline mr-1"/>XLSX
                 </button>
               </div>
             )}
@@ -433,14 +472,19 @@ function ImportSection() {
         onFileDrop={handleFileSelect}
         disabled={isProcessing}
         currentFile={file}
-        onClear={() => { setFile(null); setStep('select'); setPreview(null); setImportResult(null); }}
+        onClear={() => {
+          setFile(null);
+          setStep('select');
+          setPreview(null);
+          setImportResult(null);
+        }}
       />
 
       {/* Preview results (employee type) */}
       {step === 'preview' && preview && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
           className="rounded-lg border border-[var(--border-main)] overflow-hidden"
         >
           <div className="bg-[var(--bg-secondary)] px-4 py-4 border-b border-[var(--border-main)]">
@@ -452,32 +496,32 @@ function ImportSection() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead>
-                  <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Row</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Code</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Name</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Email</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Department</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Status</th>
-                  </tr>
+                <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Row</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Code</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Name</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Email</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Department</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Status</th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-subtle)]">
-                  {preview.rows.slice(0, 10).map((row) => (
-                    <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-danger-50 dark:bg-danger-900/10'}>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.rowNumber}</td>
-                      <td className="px-4 py-2 font-mono text-[var(--text-primary)]">{row.employeeCode}</td>
-                      <td className="px-4 py-2 text-[var(--text-primary)]">{row.fullName}</td>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.workEmail}</td>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.departmentName}</td>
-                      <td className="px-4 py-2">
-                        {row.isValid ? (
-                          <CheckCircle2 className="h-4 w-4 text-success-500" />
-                        ) : (
-                          <span className="text-danger-600 dark:text-danger-400">{row.rowErrors?.join(', ')}</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                {preview.rows.slice(0, 10).map((row) => (
+                  <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-danger-50 dark:bg-danger-900/10'}>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.rowNumber}</td>
+                    <td className="px-4 py-2 font-mono text-[var(--text-primary)]">{row.employeeCode}</td>
+                    <td className="px-4 py-2 text-[var(--text-primary)]">{row.fullName}</td>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.workEmail}</td>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.departmentName}</td>
+                    <td className="px-4 py-2">
+                      {row.isValid ? (
+                        <CheckCircle2 className="h-4 w-4 text-success-500"/>
+                      ) : (
+                        <span className="text-danger-600 dark:text-danger-400">{row.rowErrors?.join(', ')}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>
@@ -503,15 +547,15 @@ function ImportSection() {
       {/* Import result */}
       {step === 'result' && importResult && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
           className="rounded-lg border border-[var(--border-main)] p-6"
         >
           <div className="flex items-center gap-4 mb-4">
             {importResult.errorCount === 0 ? (
-              <CheckCircle2 className="h-8 w-8 text-success-500" />
+              <CheckCircle2 className="h-8 w-8 text-success-500"/>
             ) : (
-              <AlertTriangle className="h-8 w-8 text-warning-500" />
+              <AlertTriangle className="h-8 w-8 text-warning-500"/>
             )}
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">Import Complete</h4>
@@ -555,30 +599,32 @@ function ImportSection() {
       <div className="flex items-center gap-4">
         {step === 'upload' && file && (
           <button type="button"
-            onClick={handleValidateAndPreview}
-            disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  onClick={handleValidateAndPreview}
+                  disabled={isProcessing}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            {(previewEmployeeMutation.isPending || validateMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
+            {(previewEmployeeMutation.isPending || validateMutation.isPending) &&
+              <RefreshCw className="h-4 w-4 animate-spin"/>}
             Validate & Preview
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4"/>
           </button>
         )}
         {step === 'preview' && (
           <button type="button"
-            onClick={handleImport}
-            disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  onClick={handleImport}
+                  disabled={isProcessing}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
-            {(importMutation.isPending || executeEmployeeMutation.isPending) && <RefreshCw className="h-4 w-4 animate-spin" />}
+            {(importMutation.isPending || executeEmployeeMutation.isPending) &&
+              <RefreshCw className="h-4 w-4 animate-spin"/>}
             Start Import
-            <Upload className="h-4 w-4" />
+            <Upload className="h-4 w-4"/>
           </button>
         )}
         {(step === 'preview' || step === 'result') && (
           <button type="button"
-            onClick={handleReset}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  onClick={handleReset}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Start Over
           </button>
@@ -618,7 +664,7 @@ function ExportSection() {
           Export Type
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {EXPORT_TYPES.map(({ value, label, description }) => (
+          {EXPORT_TYPES.map(({value, label, description}) => (
             <button
               key={value}
               type="button"
@@ -626,12 +672,13 @@ function ExportSection() {
               className={`
                 p-4 rounded-lg border text-left transition-all
                 ${selectedType === value
-                  ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-                  : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                }
+                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
+                : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+              }
               `}
             >
-              <p className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
+              <p
+                className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
               <p className="text-caption">{description}</p>
             </button>
           ))}
@@ -644,7 +691,7 @@ function ExportSection() {
           Format
         </label>
         <div className="flex gap-4">
-          {FORMAT_OPTIONS.map(({ value, label }) => (
+          {FORMAT_OPTIONS.map(({value, label}) => (
             <button
               key={value}
               type="button"
@@ -652,9 +699,9 @@ function ExportSection() {
               className={`
                 px-4 py-2 rounded-lg border text-sm font-medium transition-all
                 ${selectedFormat === value
-                  ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 ring-1 ring-accent-500'
-                  : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-accent-300'
-                }
+                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 ring-1 ring-accent-500'
+                : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-accent-300'
+              }
               `}
             >
               {label}
@@ -665,14 +712,14 @@ function ExportSection() {
 
       {/* Export button */}
       <button type="button"
-        onClick={handleExport}
-        disabled={exportMutation.isPending}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              onClick={handleExport}
+              disabled={exportMutation.isPending}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         {exportMutation.isPending ? (
-          <RefreshCw className="h-4 w-4 animate-spin" />
+          <RefreshCw className="h-4 w-4 animate-spin"/>
         ) : (
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4"/>
         )}
         Export {EXPORT_TYPES.find((t) => t.value === selectedType)?.label}
       </button>
@@ -728,7 +775,7 @@ function KekaMigrationSection() {
   const handlePreview = useCallback(() => {
     if (!uploadResult) return;
     previewMutation.mutate(
-      { fileId: uploadResult.fileId, mappings },
+      {fileId: uploadResult.fileId, mappings},
       {
         onSuccess: (data) => {
           setPreviewData(data);
@@ -771,7 +818,7 @@ function KekaMigrationSection() {
     (index: number, field: keyof KekaImportMapping, value: string | boolean) => {
       setMappings((prev) => {
         const updated = [...prev];
-        updated[index] = { ...updated[index], [field]: value };
+        updated[index] = {...updated[index], [field]: value};
         return updated;
       });
     },
@@ -785,16 +832,16 @@ function KekaMigrationSection() {
       {/* Wizard progress */}
       <div className="flex items-center gap-2 text-sm">
         {[
-          { key: 'upload', label: '1. Upload' },
-          { key: 'map', label: '2. Map Columns' },
-          { key: 'preview', label: '3. Preview' },
-          { key: 'execute', label: '4. Import' },
-        ].map(({ key, label }, i) => {
+          {key: 'upload', label: '1. Upload'},
+          {key: 'map', label: '2. Map Columns'},
+          {key: 'preview', label: '3. Preview'},
+          {key: 'execute', label: '4. Import'},
+        ].map(({key, label}, i) => {
           const steps: string[] = ['upload', 'map', 'preview', 'execute', 'done'];
           const isActive = steps.indexOf(wizardStep) >= i;
           return (
             <div key={key} className="flex items-center gap-2">
-              {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" />}
+              {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
@@ -810,13 +857,15 @@ function KekaMigrationSection() {
       {/* Upload step */}
       {wizardStep === 'upload' && (
         <div className="space-y-4">
-          <div className="rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/10 p-4">
+          <div
+            className="rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/10 p-4">
             <h4 className="text-sm font-medium text-accent-800 dark:text-accent-300 flex items-center gap-2">
-              <Info className="h-4 w-4" />
+              <Info className="h-4 w-4"/>
               KEKA Migration
             </h4>
             <p className="text-xs text-accent-700 dark:text-accent-400 mt-1">
-              Upload your KEKA export file (.csv or .xlsx). The system will detect columns and let you map them to NU-AURA fields.
+              Upload your KEKA export file (.csv or .xlsx). The system will detect columns and let you map them to
+              NU-AURA fields.
             </p>
           </div>
           <FileDropZone
@@ -827,13 +876,13 @@ function KekaMigrationSection() {
           />
           {file && (
             <button type="button"
-              onClick={handleUpload}
-              disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handleUpload}
+                    disabled={isProcessing}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {uploadMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
+              {uploadMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Upload & Detect Columns
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4"/>
             </button>
           )}
         </div>
@@ -859,7 +908,7 @@ function KekaMigrationSection() {
                       {mapping.sourceColumn}
                     </p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                  <ArrowRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   <div className="flex-1">
                     <select
                       value={mapping.targetField}
@@ -881,17 +930,17 @@ function KekaMigrationSection() {
           </div>
           <div className="flex items-center gap-4">
             <button type="button"
-              onClick={handlePreview}
-              disabled={isProcessing}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handlePreview}
+                    disabled={isProcessing}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {previewMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
+              {previewMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Preview Import
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4"/>
             </button>
             <button type="button"
-              onClick={handleReset}
-              className="px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handleReset}
+                    className="px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               Start Over
             </button>
@@ -921,26 +970,27 @@ function KekaMigrationSection() {
             <div className="overflow-x-auto rounded-lg border border-[var(--border-main)]">
               <table className="min-w-full text-xs">
                 <thead>
-                  <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Emp #</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Name</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Email</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Department</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Designation</th>
-                    <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Joining</th>
-                  </tr>
+                <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Emp #</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Name</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Email</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Department</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Designation</th>
+                  <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Joining</th>
+                </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-subtle)]">
-                  {previewData.preview.slice(0, 5).map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-4 py-2 font-mono text-[var(--text-primary)]">{row.employeeNumber || '-'}</td>
-                      <td className="px-4 py-2 text-[var(--text-primary)]">{[row.firstName, row.lastName].filter(Boolean).join(' ') || '-'}</td>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.email || '-'}</td>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.department || '-'}</td>
-                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.designation || '-'}</td>
-                      <td className="px-4 py-2 text-[var(--text-muted)]">{row.joiningDate || '-'}</td>
-                    </tr>
-                  ))}
+                {previewData.preview.slice(0, 5).map((row, i) => (
+                  <tr key={i}>
+                    <td className="px-4 py-2 font-mono text-[var(--text-primary)]">{row.employeeNumber || '-'}</td>
+                    <td
+                      className="px-4 py-2 text-[var(--text-primary)]">{[row.firstName, row.lastName].filter(Boolean).join(' ') || '-'}</td>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.email || '-'}</td>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.department || '-'}</td>
+                    <td className="px-4 py-2 text-[var(--text-secondary)]">{row.designation || '-'}</td>
+                    <td className="px-4 py-2 text-[var(--text-muted)]">{row.joiningDate || '-'}</td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>
@@ -961,13 +1011,13 @@ function KekaMigrationSection() {
 
           <div className="flex items-center gap-4">
             <button type="button"
-              onClick={handleExecute}
-              disabled={isProcessing || previewData.validRows === 0}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    onClick={handleExecute}
+                    disabled={isProcessing || previewData.validRows === 0}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              {executeMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin" />}
+              {executeMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Execute Import ({previewData.validRows} rows)
-              <Upload className="h-4 w-4" />
+              <Upload className="h-4 w-4"/>
             </button>
             <button
               type="button"
@@ -983,16 +1033,16 @@ function KekaMigrationSection() {
       {/* Done step */}
       {wizardStep === 'done' && executeMutation.data && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
           className="rounded-lg border border-[var(--border-main)] p-6"
         >
           <div className="flex items-center gap-4 mb-4">
-            <CheckCircle2 className="h-8 w-8 text-success-500" />
+            <CheckCircle2 className="h-8 w-8 text-success-500"/>
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">KEKA Migration Complete</h4>
               <p className="text-body-muted">
-                <StatusBadge status={executeMutation.data.status} />
+                <StatusBadge status={executeMutation.data.status}/>
               </p>
             </div>
           </div>
@@ -1015,8 +1065,8 @@ function KekaMigrationSection() {
             </div>
           </div>
           <button type="button"
-            onClick={handleReset}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  onClick={handleReset}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Import Another File
           </button>
@@ -1030,16 +1080,16 @@ function KekaMigrationSection() {
 
 function HistorySection() {
   const [page, setPage] = useState(0);
-  const { data: historyPage, isLoading } = useKekaImportHistory(page, 20);
+  const {data: historyPage, isLoading} = useKekaImportHistory(page, 20);
 
   if (isLoading) {
-    return <NuAuraLoader message="Loading import history..." />;
+    return <NuAuraLoader message="Loading import history..."/>;
   }
 
   if (!historyPage || historyPage.content.length === 0) {
     return (
       <EmptyState
-        icon={<History className="h-12 w-12 text-[var(--text-muted)]" />}
+        icon={<History className="h-12 w-12 text-[var(--text-muted)]"/>}
         title="No import history"
         description="Import operations will appear here once you start importing data."
       />
@@ -1051,32 +1101,33 @@ function HistorySection() {
       <div className="overflow-x-auto rounded-lg border border-[var(--border-main)]">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="bg-[var(--bg-secondary)]">
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">File</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Status</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Rows</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Created</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Errors</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Duration</th>
-              <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Date</th>
-            </tr>
+          <tr className="bg-[var(--bg-secondary)]">
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">File</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Status</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Rows</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Created</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Errors</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Duration</th>
+            <th className="px-4 py-2 text-left font-medium text-[var(--text-muted)]">Date</th>
+          </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-subtle)]">
-            {historyPage.content.map((entry: KekaImportHistoryEntry) => (
-              <tr key={entry.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
-                <td className="px-4 py-4 font-medium text-[var(--text-primary)]">{entry.fileName}</td>
-                <td className="px-4 py-4"><StatusBadge status={entry.status} /></td>
-                <td className="px-4 py-4 text-[var(--text-secondary)]">{entry.totalRows ?? '-'}</td>
-                <td className="px-4 py-4 text-success-600 dark:text-success-400">{entry.created ?? '-'}</td>
-                <td className="px-4 py-4 text-danger-600 dark:text-danger-400">{entry.errors ?? '-'}</td>
-                <td className="px-4 py-4 text-[var(--text-muted)]">
-                  {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
-                </td>
-                <td className="px-4 py-4 text-[var(--text-muted)]">
-                  {entry.uploadedAt ? new Date(entry.uploadedAt).toLocaleDateString() : '-'}
-                </td>
-              </tr>
-            ))}
+          {historyPage.content.map((entry: KekaImportHistoryEntry) => (
+            <tr key={entry.id}
+                className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+              <td className="px-4 py-4 font-medium text-[var(--text-primary)]">{entry.fileName}</td>
+              <td className="px-4 py-4"><StatusBadge status={entry.status}/></td>
+              <td className="px-4 py-4 text-[var(--text-secondary)]">{entry.totalRows ?? '-'}</td>
+              <td className="px-4 py-4 text-success-600 dark:text-success-400">{entry.created ?? '-'}</td>
+              <td className="px-4 py-4 text-danger-600 dark:text-danger-400">{entry.errors ?? '-'}</td>
+              <td className="px-4 py-4 text-[var(--text-muted)]">
+                {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
+              </td>
+              <td className="px-4 py-4 text-[var(--text-muted)]">
+                {entry.uploadedAt ? new Date(entry.uploadedAt).toLocaleDateString() : '-'}
+              </td>
+            </tr>
+          ))}
           </tbody>
         </table>
       </div>
@@ -1117,10 +1168,10 @@ export default function ImportExportPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('import');
 
   const tabs: Array<{ key: ActiveTab; label: string; icon: typeof Upload; description: string }> = [
-    { key: 'import', label: 'Import', icon: Upload, description: 'Import data from files' },
-    { key: 'export', label: 'Export', icon: Download, description: 'Export data to files' },
-    { key: 'keka', label: 'KEKA Migration', icon: ArrowUpDown, description: 'Migrate from KEKA' },
-    { key: 'history', label: 'Activity Log', icon: History, description: 'Import/export history' },
+    {key: 'import', label: 'Import', icon: Upload, description: 'Import data from files'},
+    {key: 'export', label: 'Export', icon: Download, description: 'Export data to files'},
+    {key: 'keka', label: 'KEKA Migration', icon: ArrowUpDown, description: 'Migrate from KEKA'},
+    {key: 'history', label: 'Activity Log', icon: History, description: 'Import/export history'},
   ];
 
   return (
@@ -1130,7 +1181,7 @@ export default function ImportExportPage() {
         fallback={
           <div className="flex items-center justify-center h-96">
             <EmptyState
-              icon={<AlertTriangle className="h-12 w-12 text-warning-500" />}
+              icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
               title="Access Denied"
               description="You do not have permission to access the Import/Export Hub."
             />
@@ -1148,7 +1199,7 @@ export default function ImportExportPage() {
 
           {/* Tab navigation */}
           <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--bg-secondary)] w-fit">
-            {tabs.map(({ key, label, icon: Icon }) => (
+            {tabs.map(({key, label, icon: Icon}) => (
               <button
                 key={key}
                 type="button"
@@ -1156,12 +1207,12 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                    ? 'bg-[var(--bg-card)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
-                  }
+                  ? 'bg-[var(--bg-card)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
+                }
                 `}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4"/>
                 {label}
               </button>
             ))}
@@ -1171,28 +1222,28 @@ export default function ImportExportPage() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -8}}
+              transition={{duration: 0.2}}
               className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-6"
             >
-              {activeTab === 'import' && <ImportSection />}
-              {activeTab === 'export' && <ExportSection />}
+              {activeTab === 'import' && <ImportSection/>}
+              {activeTab === 'export' && <ExportSection/>}
               {activeTab === 'keka' && (
                 <AdminGate
                   fallback={
                     <EmptyState
-                      icon={<AlertTriangle className="h-12 w-12 text-warning-500" />}
+                      icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
                       title="Admin Only"
                       description="KEKA migration is restricted to system administrators."
                     />
                   }
                 >
-                  <KekaMigrationSection />
+                  <KekaMigrationSection/>
                 </AdminGate>
               )}
-              {activeTab === 'history' && <HistorySection />}
+              {activeTab === 'history' && <HistorySection/>}
             </motion.div>
           </AnimatePresence>
         </div>

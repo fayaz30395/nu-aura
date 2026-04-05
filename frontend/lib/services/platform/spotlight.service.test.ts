@@ -1,6 +1,8 @@
 /// <reference types="vitest" />
 /// <vitest config="{ environment: 'node' }" />
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {spotlightService} from './spotlight.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -11,9 +13,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { spotlightService } from './spotlight.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockedApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -73,7 +72,7 @@ describe('spotlightService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getActiveSpotlights();
 
@@ -85,7 +84,7 @@ describe('spotlightService', () => {
     it('should return empty array when no active spotlights', async () => {
       const mockData: Spotlight[] = [];
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getActiveSpotlights();
 
@@ -118,12 +117,12 @@ describe('spotlightService', () => {
         number: 0,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getAllSpotlights();
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
-        params: { page: 0, size: 10 },
+        params: {page: 0, size: 10},
       });
       expect(result).toEqual(mockData);
       expect(result.content).toHaveLength(1);
@@ -146,12 +145,12 @@ describe('spotlightService', () => {
         number: 1,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getAllSpotlights(1, 10);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
-        params: { page: 1, size: 10 },
+        params: {page: 1, size: 10},
       });
       expect(result.content).toHaveLength(1);
       expect(result.totalElements).toBe(50);
@@ -159,7 +158,7 @@ describe('spotlightService', () => {
 
     it('should fetch with large page size', async () => {
       const mockData: PagedResponse<Spotlight> = {
-        content: Array.from({ length: 50 }, (_, i) => ({
+        content: Array.from({length: 50}, (_, i) => ({
           id: `spotlight-${i}`,
           title: `Spotlight ${i}`,
           imageUrl: `https://example.com/image${i}.jpg`,
@@ -172,12 +171,12 @@ describe('spotlightService', () => {
         number: 0,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getAllSpotlights(0, 50);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith('/spotlights', {
-        params: { page: 0, size: 50 },
+        params: {page: 0, size: 50},
       });
       expect(result.content).toHaveLength(50);
     });
@@ -191,7 +190,7 @@ describe('spotlightService', () => {
         number: 0,
       };
 
-      mockedApiClient.get.mockResolvedValue({ data: mockData });
+      mockedApiClient.get.mockResolvedValue({data: mockData});
 
       const result = await spotlightService.getAllSpotlights();
 
@@ -215,7 +214,7 @@ describe('spotlightService', () => {
         displayOrder: 0,
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.createSpotlight(createData);
 
@@ -240,7 +239,7 @@ describe('spotlightService', () => {
         displayOrder: 5,
       };
 
-      mockedApiClient.post.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.post.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.createSpotlight(createData);
 
@@ -277,7 +276,7 @@ describe('spotlightService', () => {
         displayOrder: 1,
       };
 
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
@@ -302,7 +301,7 @@ describe('spotlightService', () => {
         displayOrder: 2,
       };
 
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
@@ -323,7 +322,7 @@ describe('spotlightService', () => {
         displayOrder: 10,
       };
 
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
@@ -347,7 +346,7 @@ describe('spotlightService', () => {
         displayOrder: 3,
       };
 
-      mockedApiClient.put.mockResolvedValue({ data: mockResponse });
+      mockedApiClient.put.mockResolvedValue({data: mockResponse});
 
       const result = await spotlightService.updateSpotlight(spotlightId, updateData);
 
@@ -363,7 +362,7 @@ describe('spotlightService', () => {
       mockedApiClient.put.mockRejectedValue(error);
 
       await expect(
-        spotlightService.updateSpotlight('spotlight-1', { title: 'New Title' })
+        spotlightService.updateSpotlight('spotlight-1', {title: 'New Title'})
       ).rejects.toThrow('Update failed');
     });
   });

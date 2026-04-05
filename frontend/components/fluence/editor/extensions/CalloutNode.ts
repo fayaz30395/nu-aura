@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import {mergeAttributes, Node} from '@tiptap/core';
 
 export type CalloutType = 'info' | 'warning' | 'success' | 'danger';
 
@@ -32,10 +32,10 @@ export const CalloutNode = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-callout]' }];
+    return [{tag: 'div[data-callout]'}];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({HTMLAttributes}) {
     const type = (HTMLAttributes['data-callout-type'] as string) || 'info';
     return [
       'div',
@@ -52,19 +52,19 @@ export const CalloutNode = Node.create({
     return {
       setCallout:
         (type: CalloutType) =>
-        ({ commands }) => {
-          return commands.wrapIn(this.name, { type });
-        },
+          ({commands}) => {
+            return commands.wrapIn(this.name, {type});
+          },
       toggleCallout:
         (type: CalloutType) =>
-        ({ commands }) => {
-          return commands.toggleWrap(this.name, { type });
-        },
+          ({commands}) => {
+            return commands.toggleWrap(this.name, {type});
+          },
       unsetCallout:
         () =>
-        ({ commands }) => {
-          return commands.lift(this.name);
-        },
+          ({commands}) => {
+            return commands.lift(this.name);
+          },
     };
   },
 });

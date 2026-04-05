@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Home Page Object Model
@@ -82,10 +82,10 @@ export class HomePage extends BasePage {
     // Holidays Widget
     this.holidaysWidget = page.locator('text=/Holidays/i').locator('..').locator('..');
     this.holidayName = this.holidaysWidget.locator('h2').first();
-    this.holidayDate = this.holidaysWidget.locator('p').filter({ hasText: /\d{1,2}/ });
+    this.holidayDate = this.holidaysWidget.locator('p').filter({hasText: /\d{1,2}/});
     this.holidayPrevButton = this.holidaysWidget.locator('button').first();
     this.holidayNextButton = this.holidaysWidget.locator('button').last();
-    this.viewAllHolidaysButton = page.locator('button:has-text("View All")').filter({ hasText: /View All/i }).first();
+    this.viewAllHolidaysButton = page.locator('button:has-text("View All")').filter({hasText: /View All/i}).first();
 
     // On Leave Today Widget
     this.onLeaveWidget = page.locator('text=/On Leave Today/i').locator('..').locator('..');
@@ -100,9 +100,9 @@ export class HomePage extends BasePage {
 
     // Celebrations Widget
     this.celebrationsWidget = page.locator('text=/Birthday|Anniversaries|joinees/i').locator('..').locator('..').locator('..');
-    this.birthdaysTab = page.locator('button').filter({ hasText: /Birthday/i });
-    this.anniversariesTab = page.locator('button').filter({ hasText: /Work Anniversaries/i });
-    this.newJoineesTab = page.locator('button').filter({ hasText: /New joinees/i });
+    this.birthdaysTab = page.locator('button').filter({hasText: /Birthday/i});
+    this.anniversariesTab = page.locator('button').filter({hasText: /Work Anniversaries/i});
+    this.newJoineesTab = page.locator('button').filter({hasText: /New joinees/i});
     this.todayBirthdaysSection = page.locator('text=/Birthdays today/i').locator('..');
     this.upcomingBirthdaysSection = page.locator('text=/Upcoming Birthdays/i').locator('..');
     this.todayAnniversariesSection = page.locator('text=/Work Anniversaries Today/i').locator('..');
@@ -110,20 +110,20 @@ export class HomePage extends BasePage {
     this.newJoineesList = this.celebrationsWidget.locator('[class*="space-y"]');
 
     // Welcome Banner
-    this.welcomeBanner = page.locator('[class*="gradient"]').filter({ hasText: /Welcome/i });
-    this.welcomeMessage = page.locator('h1').filter({ hasText: /Welcome/i });
+    this.welcomeBanner = page.locator('[class*="gradient"]').filter({hasText: /Welcome/i});
+    this.welcomeMessage = page.locator('h1').filter({hasText: /Welcome/i});
 
     // Inbox Widget
     this.inboxWidget = page.locator('text=/Inbox/i').locator('..').locator('..');
     this.inboxStatus = this.inboxWidget.locator('text=/Good job|pending/i');
 
     // Post Creation
-    this.postTabs = page.locator('[class*="border-b"]').filter({ has: page.locator('button:has-text("Post")') });
-    this.postTab = page.locator('button').filter({ hasText: 'Post' }).first();
-    this.pollTab = page.locator('button').filter({ hasText: 'Poll' });
-    this.praiseTab = page.locator('button').filter({ hasText: 'Praise' });
+    this.postTabs = page.locator('[class*="border-b"]').filter({has: page.locator('button:has-text("Post")')});
+    this.postTab = page.locator('button').filter({hasText: 'Post'}).first();
+    this.pollTab = page.locator('button').filter({hasText: 'Poll'});
+    this.praiseTab = page.locator('button').filter({hasText: 'Praise'});
     this.postTextarea = page.locator('textarea[placeholder*="Write your post"]');
-    this.postButton = page.locator('button').filter({ hasText: 'Post' }).last();
+    this.postButton = page.locator('button').filter({hasText: 'Post'}).last();
 
     // Announcements
     this.announcementsSection = page.locator('text=/Announcements/i').locator('..').locator('..');

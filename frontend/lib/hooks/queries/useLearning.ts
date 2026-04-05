@@ -1,9 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  lmsService,
-} from '@/lib/services/grow/lms.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {lmsService,} from '@/lib/services/grow/lms.service';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -14,16 +12,16 @@ export const learningKeys = {
   // Courses
   courses: () => [...learningKeys.all, 'courses'] as const,
   publishedCourses: (page?: number, size?: number) =>
-    [...learningKeys.courses(), 'published', { page, size }] as const,
+    [...learningKeys.courses(), 'published', {page, size}] as const,
   courseDetail: (id: string) => [...learningKeys.courses(), 'detail', id] as const,
   // Enrollments
   enrollments: () => [...learningKeys.all, 'enrollments'] as const,
   myEnrollments: (page?: number, size?: number) =>
-    [...learningKeys.enrollments(), 'my', { page, size }] as const,
+    [...learningKeys.enrollments(), 'my', {page, size}] as const,
   // Certificates
   certificates: () => [...learningKeys.all, 'certificates'] as const,
   myCertificates: (page?: number, size?: number) =>
-    [...learningKeys.certificates(), 'my', { page, size }] as const,
+    [...learningKeys.certificates(), 'my', {page, size}] as const,
   // Skill Gaps
   skillGaps: (employeeId: string) => [...learningKeys.all, 'skillGaps', employeeId] as const,
 };
@@ -99,9 +97,9 @@ export function useEnrollCourse() {
     mutationFn: (courseId: string) => lmsService.enrollSelf(courseId),
     onSuccess: () => {
       // Invalidate both dashboard and enrollments to ensure consistency
-      queryClient.invalidateQueries({ queryKey: learningKeys.dashboard() });
-      queryClient.invalidateQueries({ queryKey: learningKeys.myEnrollments() });
-      queryClient.invalidateQueries({ queryKey: learningKeys.courses() });
+      queryClient.invalidateQueries({queryKey: learningKeys.dashboard()});
+      queryClient.invalidateQueries({queryKey: learningKeys.myEnrollments()});
+      queryClient.invalidateQueries({queryKey: learningKeys.courses()});
     },
   });
 }
@@ -123,11 +121,11 @@ export function useCourseEnrollment(courseId: string, enabled: boolean = true) {
 export function useUpdateCourseProgress() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ enrollmentId, progressPercent }: { enrollmentId: string; progressPercent: number }) =>
+    mutationFn: ({enrollmentId, progressPercent}: { enrollmentId: string; progressPercent: number }) =>
       lmsService.updateEnrollmentProgress(enrollmentId, progressPercent),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: learningKeys.enrollments() });
-      queryClient.invalidateQueries({ queryKey: learningKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: learningKeys.enrollments()});
+      queryClient.invalidateQueries({queryKey: learningKeys.dashboard()});
     },
   });
 }
@@ -135,10 +133,15 @@ export function useUpdateCourseProgress() {
 export function useUpdateContentProgress() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ enrollmentId, contentId, status, timeSpentSeconds }: { enrollmentId: string; contentId: string; status: string; timeSpentSeconds?: number }) =>
+    mutationFn: ({enrollmentId, contentId, status, timeSpentSeconds}: {
+      enrollmentId: string;
+      contentId: string;
+      status: string;
+      timeSpentSeconds?: number
+    }) =>
       lmsService.updateProgress(enrollmentId, contentId, status, timeSpentSeconds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: learningKeys.enrollments() });
+      queryClient.invalidateQueries({queryKey: learningKeys.enrollments()});
     },
   });
 }

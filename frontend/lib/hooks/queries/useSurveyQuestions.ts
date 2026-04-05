@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
+import {notifications} from '@mantine/notifications';
 import type {
-  SurveyQuestion,
   QuestionRequest,
   SubmitResponseRequest,
-  SurveyAnalyticsSummary,
   Survey,
+  SurveyAnalyticsSummary,
+  SurveyQuestion,
 } from '@/lib/types/grow/survey';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────
@@ -69,12 +69,12 @@ export function useAddQuestion(surveyId: string) {
     mutationFn: async (data: Omit<QuestionRequest, 'surveyId'>) => {
       const response = await apiClient.post<SurveyQuestion>(
         `/survey-management/${surveyId}/questions`,
-        { ...data, surveyId }
+        {...data, surveyId}
       );
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: surveyQuestionKeys.list(surveyId) });
+      queryClient.invalidateQueries({queryKey: surveyQuestionKeys.list(surveyId)});
       notifications.show({
         title: 'Success',
         message: 'Question added successfully',
@@ -101,7 +101,7 @@ export function useDeleteQuestion(surveyId: string) {
       await apiClient.delete(`/survey-management/${surveyId}/questions/${questionId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: surveyQuestionKeys.list(surveyId) });
+      queryClient.invalidateQueries({queryKey: surveyQuestionKeys.list(surveyId)});
       notifications.show({
         title: 'Success',
         message: 'Question deleted successfully',
@@ -154,14 +154,14 @@ export function useCloneSurvey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ surveyId, newTitle }: { surveyId: string; newTitle: string }) => {
+    mutationFn: async ({surveyId, newTitle}: { surveyId: string; newTitle: string }) => {
       const response = await apiClient.post<Survey>(
         `/survey-management/${surveyId}/clone?newTitle=${encodeURIComponent(newTitle)}`
       );
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['surveys'] });
+      queryClient.invalidateQueries({queryKey: ['surveys']});
       notifications.show({
         title: 'Success',
         message: 'Survey cloned successfully',

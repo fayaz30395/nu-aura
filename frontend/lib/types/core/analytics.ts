@@ -165,7 +165,13 @@ export interface DataPoint {
 // ==================== Scheduled Reports Types ====================
 
 export type Frequency = 'DAILY' | 'WEEKLY' | 'MONTHLY';
-export type ReportType = 'EMPLOYEE_DIRECTORY' | 'ATTENDANCE' | 'LEAVE' | 'PAYROLL' | 'PERFORMANCE' | 'DEPARTMENT_HEADCOUNT';
+export type ReportType =
+  'EMPLOYEE_DIRECTORY'
+  | 'ATTENDANCE'
+  | 'LEAVE'
+  | 'PAYROLL'
+  | 'PERFORMANCE'
+  | 'DEPARTMENT_HEADCOUNT';
 export type ExportFormat = 'EXCEL' | 'PDF' | 'CSV';
 
 export interface ScheduledReport {

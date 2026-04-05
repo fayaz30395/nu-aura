@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Dashboard Page Object Model
@@ -56,7 +56,7 @@ export class DashboardPage extends BasePage {
 
     // Quick Stats
     this.quickStatsSection = page.locator('[data-testid="quick-stats"]').or(
-      page.locator('section').filter({ hasText: /Statistics|Overview/i })
+      page.locator('section').filter({hasText: /Statistics|Overview/i})
     );
     this.pendingLeavesCard = page.locator('text=/Pending Leaves|Leave Requests/i').locator('..');
     this.presentTodayCard = page.locator('text=/Present Today|Attendance/i').locator('..');
@@ -64,20 +64,20 @@ export class DashboardPage extends BasePage {
 
     // Announcements
     this.announcementsSection = page.locator('[data-testid="announcements"]').or(
-      page.locator('section').filter({ hasText: /Announcements/i })
+      page.locator('section').filter({hasText: /Announcements/i})
     );
 
     // Navigation
     this.sidebarNav = page.locator('nav').or(page.locator('[data-testid="sidebar"]'));
     this.userMenu = page.locator('[data-testid="user-menu"]').or(
-      page.locator('button').filter({ hasText: /@|avatar/i })
+      page.locator('button').filter({hasText: /@|avatar/i})
     );
     this.logoutButton = page.locator('button:has-text("Logout")').or(
       page.locator('button:has-text("Sign Out")')
     );
 
     // Welcome
-    this.welcomeMessage = page.locator('h1, h2').filter({ hasText: /Welcome|Good Morning|Good Afternoon|Good Evening/i });
+    this.welcomeMessage = page.locator('h1, h2').filter({hasText: /Welcome|Good Morning|Good Afternoon|Good Evening/i});
   }
 
   /**
@@ -286,6 +286,6 @@ export class DashboardPage extends BasePage {
       checkOutSuccess = await this.waitForAttendanceUpdate('checked-out', 5000);
     }
 
-    return { checkInSuccess, checkOutSuccess };
+    return {checkInSuccess, checkOutSuccess};
   }
 }

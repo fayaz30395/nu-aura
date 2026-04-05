@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Custom Reports Builder E2E Tests
@@ -7,78 +7,78 @@ import { testUsers } from './fixtures/testData';
  */
 
 test.describe('Reports Builder', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/auth/login');
     await page.fill('[name="email"]', testUsers.hrManager.email);
     await page.fill('[name="password"]', testUsers.hrManager.password);
     await page.click('button[type="submit"]');
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await page.waitForURL('**/dashboard', {timeout: 15000});
   });
 
-  test('reports page loads and shows available reports', async ({ page }) => {
+  test('reports page loads and shows available reports', async ({page}) => {
     await page.goto('/reports');
     await expect(page).not.toHaveURL(/auth\/login/);
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('report builder page is accessible', async ({ page }) => {
+  test('report builder page is accessible', async ({page}) => {
     await page.goto('/reports/builder');
     await expect(page).not.toHaveURL(/auth\/login/);
     await page.waitForLoadState('networkidle');
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('report builder has module selector', async ({ page }) => {
+  test('report builder has module selector', async ({page}) => {
     await page.goto('/reports/builder');
     await page.waitForLoadState('networkidle');
     // Should have a way to pick the module (EMPLOYEE, LEAVE, ATTENDANCE, etc.)
     const moduleInput = page.getByRole('combobox').first()
       .or(page.getByLabel(/module/i))
       .or(page.getByText(/Employee|Leave|Attendance/i).first());
-    await expect(moduleInput).toBeVisible({ timeout: 8000 });
+    await expect(moduleInput).toBeVisible({timeout: 8000});
   });
 
-  test('report builder can select columns', async ({ page }) => {
+  test('report builder can select columns', async ({page}) => {
     await page.goto('/reports/builder');
     await page.waitForLoadState('networkidle');
     // Look for column selector or checkboxes
     const colSection = page.getByText(/column|field/i).first();
-    if (await colSection.isVisible({ timeout: 5000 }).catch(() => false)) {
+    if (await colSection.isVisible({timeout: 5000}).catch(() => false)) {
       await expect(colSection).toBeVisible();
     }
   });
 
-  test('saved reports appear on reports list', async ({ page }) => {
+  test('saved reports appear on reports list', async ({page}) => {
     await page.goto('/reports');
     await page.waitForLoadState('networkidle');
     await expect(page.locator('main, [role="main"]').first()).toBeVisible();
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
-  test('leave report page loads', async ({ page }) => {
+  test('leave report page loads', async ({page}) => {
     await page.goto('/reports/leave');
     await page.waitForLoadState('networkidle');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
-  test('payroll report page loads', async ({ page }) => {
+  test('payroll report page loads', async ({page}) => {
     await page.goto('/reports/payroll');
     await page.waitForLoadState('networkidle');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
-  test('utilization report page loads', async ({ page }) => {
+  test('utilization report page loads', async ({page}) => {
     await page.goto('/reports/utilization');
     await page.waitForLoadState('networkidle');
     await expect(page).not.toHaveURL(/auth\/login/);
     await expect(page.locator('text=Something went wrong')).not.toBeVisible();
   });
 
-  test('report builder generates preview with selected module and columns', async ({ page }) => {
+  test('report builder generates preview with selected module and columns', async ({page}) => {
     await page.goto('/reports/builder');
     await page.waitForLoadState('networkidle');
 
@@ -86,13 +86,13 @@ test.describe('Reports Builder', () => {
     const moduleInput = page.getByRole('combobox').first()
       .or(page.getByLabel(/module/i))
       .or(page.locator('select').first());
-    const hasModule = await moduleInput.isVisible({ timeout: 5000 }).catch(() => false);
+    const hasModule = await moduleInput.isVisible({timeout: 5000}).catch(() => false);
 
     if (hasModule) {
       // Select the first available module option
       const isSelect = await moduleInput.evaluate((el: HTMLElement) => el.tagName === 'SELECT').catch(() => false);
       if (isSelect) {
-        await moduleInput.selectOption({ index: 1 });
+        await moduleInput.selectOption({index: 1});
       } else {
         await moduleInput.click();
         await page.waitForTimeout(300);
@@ -124,7 +124,7 @@ test.describe('Reports Builder', () => {
     expect(hasModule || true).toBe(true);
   });
 
-  test('report can be exported as PDF or Excel', async ({ page }) => {
+  test('report can be exported as PDF or Excel', async ({page}) => {
     await page.goto('/reports/builder');
     await page.waitForLoadState('networkidle');
 

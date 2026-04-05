@@ -1,8 +1,8 @@
 'use client';
 
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
-import { theme } from '@/lib/theme/mantine-theme';
-import { useDarkMode } from './DarkModeProvider';
+import {ColorSchemeScript, MantineProvider} from '@mantine/core';
+import {theme} from '@/lib/theme/mantine-theme';
+import {useDarkMode} from './DarkModeProvider';
 
 interface MantineThemeProviderProps {
   children: React.ReactNode;
@@ -12,8 +12,8 @@ interface MantineThemeProviderProps {
  * Mantine Theme Provider - Synced with DarkModeProvider.
  * Uses forceColorScheme to keep Mantine in sync with the resolved theme.
  */
-export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
-  const { resolvedTheme } = useDarkMode();
+export function MantineThemeProvider({children}: MantineThemeProviderProps) {
+  const {resolvedTheme} = useDarkMode();
 
   return (
     // suppressHydrationWarning isolates Mantine's CSS-variable <style> injection from
@@ -41,5 +41,5 @@ export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
  * This Mantine script is kept for Mantine's internal SSR hydration.
  */
 export function MantineColorSchemeScript() {
-  return <ColorSchemeScript defaultColorScheme="dark" />;
+  return <ColorSchemeScript defaultColorScheme="dark"/>;
 }

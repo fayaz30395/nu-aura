@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   ApprovalActionRequest,
   ApprovalDelegateRequest,
@@ -30,7 +30,7 @@ export const workflowService = {
     size: number = 20
   ): Promise<Page<WorkflowDefinitionResponse>> => {
     const response = await apiClient.get<Page<WorkflowDefinitionResponse>>('/workflow/definitions', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -86,7 +86,7 @@ export const workflowService = {
   },
 
   approveExecution: async (id: string, comments?: string): Promise<WorkflowExecutionResponse> => {
-    const payload = comments !== undefined ? { comments } : undefined;
+    const payload = comments !== undefined ? {comments} : undefined;
     const response = await apiClient.post<WorkflowExecutionResponse>(
       `/workflow/executions/${id}/approve`,
       payload
@@ -97,7 +97,7 @@ export const workflowService = {
   rejectExecution: async (id: string, comments?: string): Promise<WorkflowExecutionResponse> => {
     const response = await apiClient.post<WorkflowExecutionResponse>(
       `/workflow/executions/${id}/reject`,
-      { comments }
+      {comments}
     );
     return response.data;
   },
@@ -105,13 +105,13 @@ export const workflowService = {
   returnForModification: async (id: string, comments?: string): Promise<WorkflowExecutionResponse> => {
     const response = await apiClient.post<WorkflowExecutionResponse>(
       `/workflow/executions/${id}/return`,
-      { comments }
+      {comments}
     );
     return response.data;
   },
 
   cancelWorkflow: async (id: string, reason: string): Promise<void> => {
-    await apiClient.post(`/workflow/executions/${id}/cancel`, { reason });
+    await apiClient.post(`/workflow/executions/${id}/cancel`, {reason});
   },
 
   getMyPendingApprovals: async (): Promise<WorkflowExecutionResponse[]> => {
@@ -184,7 +184,7 @@ export const workflowService = {
   },
 
   revokeDelegation: async (id: string, reason: string): Promise<void> => {
-    await apiClient.post(`/workflow/delegations/${id}/revoke`, { reason });
+    await apiClient.post(`/workflow/delegations/${id}/revoke`, {reason});
   },
 
   // Dashboard & Analytics

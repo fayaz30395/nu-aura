@@ -1,5 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import {useQueryClient} from '@tanstack/react-query';
+import {useCallback, useEffect} from 'react';
 
 /**
  * Hook for prefetching data on hover or visibility
@@ -43,7 +43,7 @@ export function usePreloadData() {
       }>
     ) => {
       await Promise.all(
-        queries.map(({ queryKey, queryFn, staleTime = 60000 }) =>
+        queries.map(({queryKey, queryFn, staleTime = 60000}) =>
           queryClient.prefetchQuery({
             queryKey,
             queryFn,
@@ -60,8 +60,8 @@ export function usePreloadData() {
    */
   const invalidateAndRefetch = useCallback(
     async (queryKey: readonly unknown[]) => {
-      await queryClient.invalidateQueries({ queryKey });
-      await queryClient.refetchQueries({ queryKey });
+      await queryClient.invalidateQueries({queryKey});
+      await queryClient.refetchQueries({queryKey});
     },
     [queryClient]
   );
@@ -88,7 +88,7 @@ export function useVisibilityPrefetch<T>(
   }
 ) {
   const queryClient = useQueryClient();
-  const { threshold = 0.5, enabled = true, staleTime = 60000 } = options || {};
+  const {threshold = 0.5, enabled = true, staleTime = 60000} = options || {};
 
   const prefetchRef = useCallback(
     (element: HTMLElement | null) => {
@@ -107,7 +107,7 @@ export function useVisibilityPrefetch<T>(
             }
           });
         },
-        { threshold }
+        {threshold}
       );
 
       observer.observe(element);
@@ -139,7 +139,7 @@ export function useCriticalDataPreload(
 
     // Use requestIdleCallback for non-blocking prefetch
     const callback = () => {
-      queries.forEach(({ queryKey, queryFn, staleTime = 300000 }) => {
+      queries.forEach(({queryKey, queryFn, staleTime = 300000}) => {
         queryClient.prefetchQuery({
           queryKey,
           queryFn,
@@ -149,7 +149,7 @@ export function useCriticalDataPreload(
     };
 
     if ('requestIdleCallback' in window) {
-      const id = requestIdleCallback(callback, { timeout: 2000 });
+      const id = requestIdleCallback(callback, {timeout: 2000});
       return () => cancelIdleCallback(id);
     } else {
       // Fallback for Safari

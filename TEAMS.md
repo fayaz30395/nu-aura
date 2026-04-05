@@ -1,8 +1,10 @@
 # NU-AURA — Agent Teams Configuration
 
-> **Prerequisite**: Claude Code 2.1.32+ (current: 2.1.89) and `agentTeams: true` in `.claude/settings.json`
+> **Prerequisite**: Claude Code 2.1.32+ (current: 2.1.89) and `agentTeams: true` in
+`.claude/settings.json`
 > **When to use**: Large parallel efforts where agents need to coordinate (not sequential tasks)
-> **Token warning**: Agent Teams use 5-10x more tokens than a single session. Reserve for big sprints.
+> **Token warning**: Agent Teams use 5-10x more tokens than a single session. Reserve for big
+> sprints.
 
 ---
 
@@ -292,11 +294,11 @@ Multiple hypotheses tested in parallel. Best for complex debugging.
 
 ## Troubleshooting
 
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| Agent exits immediately | Missing context in spawn prompt | Add more project context to the prompt |
-| Agents editing same file | No file ownership boundaries | Assign explicit file paths per agent |
-| Agent stuck waiting | Dependency not posted to task list | Check task list, manually trigger |
-| High token burn, low output | Task too vague | Be more specific in the spawn prompt |
-| Agents contradicting each other | No shared design | Always have architect produce design first |
-| Wrong package paths | Stale prompt | Verify paths match: com.hrms, frontend/app/ |
+| Issue                           | Cause                              | Fix                                         |
+|---------------------------------|------------------------------------|---------------------------------------------|
+| Agent exits immediately         | Missing context in spawn prompt    | Add more project context to the prompt      |
+| Agents editing same file        | No file ownership boundaries       | Assign explicit file paths per agent        |
+| Agent stuck waiting             | Dependency not posted to task list | Check task list, manually trigger           |
+| High token burn, low output     | Task too vague                     | Be more specific in the spawn prompt        |
+| Agents contradicting each other | No shared design                   | Always have architect produce design first  |
+| Wrong package paths             | Stale prompt                       | Verify paths match: com.hrms, frontend/app/ |

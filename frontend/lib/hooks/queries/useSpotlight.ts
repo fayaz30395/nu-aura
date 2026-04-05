@@ -1,17 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { spotlightService } from '@/lib/services/platform/spotlight.service';
-import {
-  CreateSpotlightRequest,
-  UpdateSpotlightRequest,
-} from '@/lib/types/platform/spotlight';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {spotlightService} from '@/lib/services/platform/spotlight.service';
+import {CreateSpotlightRequest, UpdateSpotlightRequest,} from '@/lib/types/platform/spotlight';
 
 export const spotlightKeys = {
   all: ['spotlight'] as const,
   active: () => [...spotlightKeys.all, 'active'] as const,
   list: (page: number, size: number) =>
-    [...spotlightKeys.all, 'list', { page, size }] as const,
+    [...spotlightKeys.all, 'list', {page, size}] as const,
   detail: (id: string) => [...spotlightKeys.all, 'detail', id] as const,
 };
 
@@ -51,7 +48,7 @@ export function useCreateSpotlight() {
     mutationFn: (data: CreateSpotlightRequest) =>
       spotlightService.createSpotlight(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: spotlightKeys.all });
+      queryClient.invalidateQueries({queryKey: spotlightKeys.all});
     },
   });
 }
@@ -63,11 +60,11 @@ export function useUpdateSpotlight() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateSpotlightRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateSpotlightRequest }) =>
       spotlightService.updateSpotlight(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: spotlightKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: spotlightKeys.all });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: spotlightKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: spotlightKeys.all});
     },
   });
 }
@@ -81,7 +78,7 @@ export function useDeleteSpotlight() {
   return useMutation({
     mutationFn: (id: string) => spotlightService.deleteSpotlight(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: spotlightKeys.all });
+      queryClient.invalidateQueries({queryKey: spotlightKeys.all});
     },
   });
 }

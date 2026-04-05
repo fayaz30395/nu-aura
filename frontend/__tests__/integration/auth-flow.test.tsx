@@ -4,10 +4,11 @@
  * Uses mocked API services for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
-import { mockUser, mockAdminUser } from '@/lib/test-utils/fixtures';
+import {mockAdminUser, mockUser} from '@/lib/test-utils/fixtures';
+import {authApi} from '@/lib/api/auth';
 
 // Mock the auth API
 vi.mock('@/lib/api/auth', () => ({
@@ -34,8 +35,6 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-import { authApi } from '@/lib/api/auth';
-
 const mockedAuthApi = vi.mocked(authApi);
 
 // Mock Login Component
@@ -47,7 +46,7 @@ const MockLoginForm = () => {
     const password = formData.get('password') as string;
 
     try {
-      await authApi.login({ email, password });
+      await authApi.login({email, password});
       // Success - would trigger redirect in real app
       mockPush('/dashboard');
     } catch {
@@ -85,7 +84,7 @@ describe('Auth Flow Integration Tests', () => {
 
   describe('Login Form Rendering', () => {
     it('should render login form with email and password inputs', () => {
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       expect(screen.getByTestId('email-input')).toBeInTheDocument();
       expect(screen.getByTestId('password-input')).toBeInTheDocument();
@@ -93,7 +92,7 @@ describe('Auth Flow Integration Tests', () => {
     });
 
     it('should have required attributes on form inputs', () => {
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       const emailInput = screen.getByTestId('email-input') as HTMLInputElement;
       const passwordInput = screen.getByTestId('password-input') as HTMLInputElement;
@@ -112,7 +111,7 @@ describe('Auth Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       const emailInput = screen.getByTestId('email-input');
       const passwordInput = screen.getByTestId('password-input');
@@ -138,7 +137,7 @@ describe('Auth Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       await user.type(screen.getByTestId('email-input'), 'john.doe@company.com');
       await user.type(screen.getByTestId('password-input'), 'password123');
@@ -157,7 +156,7 @@ describe('Auth Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       await user.type(screen.getByTestId('email-input'), 'john.doe@company.com');
       await user.type(screen.getByTestId('password-input'), 'password123');
@@ -175,7 +174,7 @@ describe('Auth Flow Integration Tests', () => {
       mockedAuthApi.login.mockRejectedValueOnce(loginError);
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       await user.type(screen.getByTestId('email-input'), 'john.doe@company.com');
       await user.type(screen.getByTestId('password-input'), 'wrongpassword');
@@ -193,7 +192,7 @@ describe('Auth Flow Integration Tests', () => {
       mockedAuthApi.login.mockRejectedValueOnce(new Error('Invalid credentials'));
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       await user.type(screen.getByTestId('email-input'), 'john.doe@company.com');
       await user.type(screen.getByTestId('password-input'), 'wrongpassword');
@@ -216,7 +215,7 @@ describe('Auth Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockLoginForm />);
+      render(<MockLoginForm/>);
 
       await user.type(screen.getByTestId('email-input'), 'admin@company.com');
       await user.type(screen.getByTestId('password-input'), 'adminpass123');

@@ -8,6 +8,7 @@
 **Use**: When fixing bugs or investigating issues
 
 **Process**:
+
 1. **Reproduce**: Confirm bug exists
 2. **Isolate**: Identify exact failing component
 3. **Diagnose**: Find root cause (not symptoms)
@@ -16,6 +17,7 @@
 6. **Prevent**: Add test to prevent regression
 
 **Example**:
+
 ```
 Bug: Payroll calculation wrong for overtime
 1. Reproduce: Run payroll with overtime data
@@ -31,11 +33,13 @@ Bug: Payroll calculation wrong for overtime
 **Use**: When adding new features or fixing bugs
 
 **Red-Green-Refactor**:
+
 1. **Red**: Write failing test
 2. **Green**: Write minimal code to pass
 3. **Refactor**: Clean up code
 
 **Example**:
+
 ```java
 // 1. RED: Write test first
 @Test
@@ -64,6 +68,7 @@ private static final BigDecimal WORKING_DAYS = new BigDecimal("26");
 **Use**: When planning complex features or solving difficult problems
 
 **Steps**:
+
 1. **Define Problem**: Clear problem statement
 2. **Generate Options**: List all possible approaches
 3. **Evaluate**: Pros/cons of each
@@ -71,6 +76,7 @@ private static final BigDecimal WORKING_DAYS = new BigDecimal("26");
 5. **Plan**: Break into tasks
 
 **Example**:
+
 ```
 Problem: Multi-tenant payroll processing is slow (>5min for 1000 employees)
 
@@ -101,6 +107,7 @@ Plan:
 **Use**: Before marking any task complete
 
 **Checklist**:
+
 - [ ] Requirements met (all acceptance criteria)
 - [ ] Tests pass (unit, integration, E2E)
 - [ ] Code reviewed (2 approvals)
@@ -109,6 +116,7 @@ Plan:
 - [ ] Deployed to staging (if applicable)
 
 **Example**:
+
 ```
 Task: Add leave encashment feature
 
@@ -130,6 +138,7 @@ Status: COMPLETE
 **Use**: When task can be split into independent subtasks
 
 **Pattern**:
+
 ```
 Large Task: Implement NU-Hire Recruitment Module
 
@@ -149,6 +158,7 @@ Merge when all complete
 ```
 
 **Best For**:
+
 - Independent modules
 - Non-overlapping file changes
 - Parallel UI development
@@ -158,6 +168,7 @@ Merge when all complete
 **Use**: When working on multiple features simultaneously
 
 **Commands**:
+
 ```bash
 # Create worktree for feature
 git worktree add ../nu-aura-feature-recruitment feature/recruitment
@@ -174,6 +185,7 @@ git worktree remove ../nu-aura-feature-recruitment
 ```
 
 **Benefits**:
+
 - Work on multiple branches simultaneously
 - No need to stash changes
 - Isolated testing environments

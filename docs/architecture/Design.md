@@ -109,6 +109,7 @@ sequenceDiagram
 ```
 
 ### Isolation Layers
+
 1. **Application Layer**: `TenantContext` ThreadLocal, `TenantAwareAsyncTask` for background threads
 2. **Query Layer**: JPA Specifications add `tenant_id` filter to all queries
 3. **Database Layer**: PostgreSQL RLS policies (V36–V38) enforce at DB level
@@ -182,14 +183,15 @@ erDiagram
 ```
 
 ### Data Scope Filtering
-| Scope | Filter Applied |
-|-------|---------------|
-| GLOBAL / ALL | No additional filter |
-| LOCATION | `WHERE office_location_id = :userLocationId` |
-| DEPARTMENT | `WHERE department_id = :userDepartmentId` |
-| TEAM | `WHERE team_id = :userTeamId` |
-| SELF | `WHERE created_by = :userId OR employee_id = :userId` |
-| CUSTOM | Custom JPA Specification |
+
+| Scope        | Filter Applied                                        |
+|--------------|-------------------------------------------------------|
+| GLOBAL / ALL | No additional filter                                  |
+| LOCATION     | `WHERE office_location_id = :userLocationId`          |
+| DEPARTMENT   | `WHERE department_id = :userDepartmentId`             |
+| TEAM         | `WHERE team_id = :userTeamId`                         |
+| SELF         | `WHERE created_by = :userId OR employee_id = :userId` |
+| CUSTOM       | Custom JPA Specification                              |
 
 ---
 
@@ -293,18 +295,19 @@ graph TB
 ```
 
 ### Kubernetes Resources
-| Resource | File | Key Config |
-|----------|------|-----------|
-| Namespace | namespace.yaml | `hrms` with production labels |
-| ConfigMap | configmap.yaml | 115 non-secret config values |
-| Secrets | secrets.yaml | 80+ secret entries (template) |
-| Backend Deployment | backend-deployment.yaml | 2 replicas, init container waits for DB |
+
+| Resource            | File                     | Key Config                                   |
+|---------------------|--------------------------|----------------------------------------------|
+| Namespace           | namespace.yaml           | `hrms` with production labels                |
+| ConfigMap           | configmap.yaml           | 115 non-secret config values                 |
+| Secrets             | secrets.yaml             | 80+ secret entries (template)                |
+| Backend Deployment  | backend-deployment.yaml  | 2 replicas, init container waits for DB      |
 | Frontend Deployment | frontend-deployment.yaml | 2 replicas, init container waits for backend |
-| Backend Service | backend-service.yaml | ClusterIP, session affinity (3h) |
-| Frontend Service | frontend-service.yaml | ClusterIP, session affinity |
-| Ingress | ingress.yaml | GCE, static IP, managed cert, Cloud Armor |
-| HPA | hpa.yaml | 2-10 pods, CPU 70% / Memory 80% |
-| Network Policy | network-policy.yaml | Default deny + whitelist |
+| Backend Service     | backend-service.yaml     | ClusterIP, session affinity (3h)             |
+| Frontend Service    | frontend-service.yaml    | ClusterIP, session affinity                  |
+| Ingress             | ingress.yaml             | GCE, static IP, managed cert, Cloud Armor    |
+| HPA                 | hpa.yaml                 | 2-10 pods, CPU 70% / Memory 80%              |
+| Network Policy      | network-policy.yaml      | Default deny + whitelist                     |
 
 ---
 
@@ -325,15 +328,16 @@ graph LR
 ```
 
 ### Alert Rules
-| Alert | Condition | Severity |
-|-------|-----------|----------|
-| ApplicationDown | up == 0 for 1m | Critical |
-| HighErrorRate | API errors > 5% for 5m | Warning |
-| HighAPILatency | p95 > 2s for 5m | Warning |
-| DatabaseConnectionPoolLow | usage > 80% for 5m | Warning |
-| HighMemoryUsage | heap > 85% for 5m | Warning |
-| HighFailedLoginRate | > 0.1/s for 5m | Warning |
-| PayrollProcessingDelayed | none in 24h for 2h | Warning |
+
+| Alert                     | Condition              | Severity |
+|---------------------------|------------------------|----------|
+| ApplicationDown           | up == 0 for 1m         | Critical |
+| HighErrorRate             | API errors > 5% for 5m | Warning  |
+| HighAPILatency            | p95 > 2s for 5m        | Warning  |
+| DatabaseConnectionPoolLow | usage > 80% for 5m     | Warning  |
+| HighMemoryUsage           | heap > 85% for 5m      | Warning  |
+| HighFailedLoginRate       | > 0.1/s for 5m         | Warning  |
+| PayrollProcessingDelayed  | none in 24h for 2h     | Warning  |
 
 ---
 
@@ -394,6 +398,7 @@ graph LR
 ```
 
 ### Pipeline Steps
+
 1. **Build**: Maven compile (backend) + npm ci + tsc + lint (frontend)
 2. **Test**: JUnit + JaCoCo (backend) + vitest (frontend)
 3. **Security**: Trivy filesystem scan (CRITICAL + HIGH)
@@ -404,14 +409,14 @@ graph LR
 
 ## Architecture Decision Records (ADRs)
 
-| ADR | Decision | Status |
-|-----|----------|--------|
-| ADR-001 | Multi-tenant shared DB + tenant_id + RLS | Accepted |
-| ADR-002 | JWT in HttpOnly cookies + refresh rotation | Accepted |
-| ADR-003 | Redis caching with tenant-prefixed keys + 1h TTL | Accepted |
-| ADR-004 | Async webhook delivery with Redis queue + retry | Accepted |
-| Build-Kit ADR-001 | Theme consolidation (Mantine + Tailwind) | Accepted |
-| Build-Kit ADR-002 | JWT token optimization | Accepted |
-| Build-Kit ADR-003 | Payroll saga pattern (SpEL + DAG) | Accepted |
-| Build-Kit ADR-004 | Recruitment ATS gap analysis | Accepted |
-| Build-Kit ADR-005 | Database connection pool sizing | Accepted |
+| ADR               | Decision                                         | Status   |
+|-------------------|--------------------------------------------------|----------|
+| ADR-001           | Multi-tenant shared DB + tenant_id + RLS         | Accepted |
+| ADR-002           | JWT in HttpOnly cookies + refresh rotation       | Accepted |
+| ADR-003           | Redis caching with tenant-prefixed keys + 1h TTL | Accepted |
+| ADR-004           | Async webhook delivery with Redis queue + retry  | Accepted |
+| Build-Kit ADR-001 | Theme consolidation (Mantine + Tailwind)         | Accepted |
+| Build-Kit ADR-002 | JWT token optimization                           | Accepted |
+| Build-Kit ADR-003 | Payroll saga pattern (SpEL + DAG)                | Accepted |
+| Build-Kit ADR-004 | Recruitment ATS gap analysis                     | Accepted |
+| Build-Kit ADR-005 | Database connection pool sizing                  | Accepted |

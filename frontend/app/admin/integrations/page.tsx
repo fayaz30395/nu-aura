@@ -1,66 +1,66 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
-  Settings,
-  MessageSquare,
-  CreditCard,
-  Loader2,
-  Send,
-  TestTube,
   AlertCircle,
   CheckCircle2,
+  CreditCard,
+  Loader2,
+  MessageSquare,
+  Send,
+  Settings,
+  TestTube,
   XCircle,
   Zap,
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Label} from '@/components/ui/Label';
 import {
   IntegrationStatus,
-  SmsSendRequest,
-  SmsTestRequest,
   IntegrationTestResponse,
+  SmsSendRequest,
   SmsSendResponse,
+  SmsTestRequest,
 } from '@/lib/types/core/integration';
-import { isProduction } from '@/lib/config/env';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {isProduction} from '@/lib/config/env';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {useToast} from '@/components/notifications/ToastProvider';
 import {
-  useSmsStatus,
   useIntegrationPaymentStatus as usePaymentStatus,
-  useSmsTemplates,
-  useTestSms,
   useSendSms,
+  useSmsStatus,
+  useSmsTemplates,
   useTestPayment,
+  useTestSms,
 } from '@/lib/hooks/queries/useIntegrations';
-import { useConnectors, useSaveConnectorConfig } from '@/lib/hooks/queries/useConnectors';
-import type { ConnectorConfigRequest } from '@/lib/types/core/connector';
-import { ConnectorCard } from '@/components/integrations/ConnectorCard';
-import { ConnectorConfigPanel } from '@/components/integrations/ConnectorConfigPanel';
-import { IntegrationActivityLog } from '@/components/integrations/IntegrationActivityLog';
+import {useConnectors, useSaveConnectorConfig} from '@/lib/hooks/queries/useConnectors';
+import type {ConnectorConfigRequest} from '@/lib/types/core/connector';
+import {ConnectorCard} from '@/components/integrations/ConnectorCard';
+import {ConnectorConfigPanel} from '@/components/integrations/ConnectorConfigPanel';
+import {IntegrationActivityLog} from '@/components/integrations/IntegrationActivityLog';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function AdminIntegrationsPage() {
   const toast = useToast();
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // React Query hooks - Legacy SMS/Payment integrations
-  const { data: smsStatus, isLoading: smsLoading } = useSmsStatus();
-  const { data: paymentStatus, isLoading: paymentLoading } = usePaymentStatus();
-  const { data: smsTemplates = {} } = useSmsTemplates();
+  const {data: smsStatus, isLoading: smsLoading} = useSmsStatus();
+  const {data: paymentStatus, isLoading: paymentLoading} = usePaymentStatus();
+  const {data: smsTemplates = {}} = useSmsTemplates();
   const testSmsMutation = useTestSms();
   const sendSmsMutation = useSendSms();
   const testPaymentMutation = useTestPayment();
 
   // React Query hooks - Connector framework
-  const { data: connectors = [], isLoading: connectorsLoading } = useConnectors();
+  const {data: connectors = [], isLoading: connectorsLoading} = useConnectors();
   const saveConfigMutation = useSaveConnectorConfig();
 
   const loading = smsLoading || paymentLoading || connectorsLoading;
@@ -114,7 +114,7 @@ export default function AdminIntegrationsPage() {
     }
 
     setSmsTestResult(null);
-    const request: SmsTestRequest = { phoneNumber: testPhoneNumber };
+    const request: SmsTestRequest = {phoneNumber: testPhoneNumber};
     testSmsMutation.mutate(request, {
       onSuccess: (result) => {
         setSmsTestResult(result);
@@ -193,7 +193,7 @@ export default function AdminIntegrationsPage() {
     if (!selectedConnectorId) return;
 
     saveConfigMutation.mutate(
-      { connectorId: selectedConnectorId, data: configData },
+      {connectorId: selectedConnectorId, data: configData},
       {
         onSuccess: () => {
           toast.success('Connector configured successfully');
@@ -202,7 +202,7 @@ export default function AdminIntegrationsPage() {
         onError: (error: unknown) => {
           toast.error(
             (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-              'Failed to save configuration'
+            'Failed to save configuration'
           );
         },
       }
@@ -217,15 +217,17 @@ export default function AdminIntegrationsPage() {
     return (
       <div className="flex items-center gap-2">
         {isActive ? (
-          <div className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
-            <CheckCircle2 className="h-4 w-4 text-success-600 dark:text-success-400" />
+          <div
+            className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
+            <CheckCircle2 className="h-4 w-4 text-success-600 dark:text-success-400"/>
             <span className="text-sm font-medium text-success-700 dark:text-success-300">
               Active
             </span>
           </div>
         ) : (
-          <div className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger-100 dark:bg-danger-900/30">
-            <XCircle className="h-4 w-4 text-danger-600 dark:text-danger-400" />
+          <div
+            className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger-100 dark:bg-danger-900/30">
+            <XCircle className="h-4 w-4 text-danger-600 dark:text-danger-400"/>
             <span className="text-sm font-medium text-danger-700 dark:text-danger-300">
               Inactive
             </span>
@@ -238,7 +240,7 @@ export default function AdminIntegrationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-700" />
+        <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
       </div>
     );
   }
@@ -248,8 +250,9 @@ export default function AdminIntegrationsPage() {
       {/* Header */}
       <div className="row-between">
         <div className="flex items-center gap-4">
-          <div className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Settings className="h-6 w-6 text-white" />
+          <div
+            className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
+            <Settings className="h-6 w-6 text-white"/>
           </div>
           <div>
             <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
@@ -324,7 +327,7 @@ export default function AdminIntegrationsPage() {
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
-                <Zap className="h-5 w-5 text-accent-800 dark:text-accent-600" />
+                <Zap className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
               </div>
               <div>
                 <CardTitle>Integration Activity Log</CardTitle>
@@ -333,7 +336,7 @@ export default function AdminIntegrationsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <IntegrationActivityLog pageSize={10} />
+            <IntegrationActivityLog pageSize={10}/>
           </CardContent>
         </Card>
       )}
@@ -344,7 +347,7 @@ export default function AdminIntegrationsPage() {
           <div className="row-between">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <MessageSquare className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <MessageSquare className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
               </div>
               <div>
                 <CardTitle>SMS Notifications</CardTitle>
@@ -382,7 +385,7 @@ export default function AdminIntegrationsPage() {
           {/* Test SMS */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <TestTube className="h-4 w-4" />
+              <TestTube className="h-4 w-4"/>
               Test SMS Service
             </h3>
             <div className="flex gap-4">
@@ -397,12 +400,12 @@ export default function AdminIntegrationsPage() {
               <Button onClick={handleTestSms} disabled={testSmsMutation.isPending || !smsStatus?.configured}>
                 {testSmsMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Sending...
                   </>
                 ) : (
                   <>
-                    <Send className="h-4 w-4 mr-2" />
+                    <Send className="h-4 w-4 mr-2"/>
                     Send Test
                   </>
                 )}
@@ -417,9 +420,9 @@ export default function AdminIntegrationsPage() {
                 }`}
               >
                 {smsTestResult.success ? (
-                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 ) : (
-                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 )}
                 <span className="text-sm">{smsTestResult.message}</span>
               </div>
@@ -429,7 +432,7 @@ export default function AdminIntegrationsPage() {
           {/* Send SMS */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4"/>
               Send SMS
             </h3>
             <div className="space-y-4">
@@ -474,12 +477,12 @@ export default function AdminIntegrationsPage() {
               <Button onClick={handleSendSms} disabled={sendSmsMutation.isPending || !smsStatus?.configured}>
                 {sendSmsMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Sending...
                   </>
                 ) : (
                   <>
-                    <Send className="h-4 w-4 mr-2" />
+                    <Send className="h-4 w-4 mr-2"/>
                     Send SMS
                   </>
                 )}
@@ -494,15 +497,15 @@ export default function AdminIntegrationsPage() {
                 }`}
               >
                 {smsSendResult.success ? (
-                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 ) : (
-                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 )}
                 <div className="text-sm">
                   {smsSendResult.success ? (
                     <>
                       SMS sent successfully!
-                      <br />
+                      <br/>
                       Message ID: {smsSendResult.messageId}
                     </>
                   ) : (
@@ -515,8 +518,9 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!smsStatus?.configured && (
-            <div className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
+              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
               <div>
                 <p className="font-medium text-warning-900 dark:text-warning-100">
                   SMS Integration Not Configured
@@ -537,7 +541,7 @@ export default function AdminIntegrationsPage() {
           <div className="row-between">
             <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <CreditCard className="h-5 w-5 text-success-600 dark:text-success-400" />
+                <CreditCard className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
               <div>
                 <CardTitle>Payment Gateway</CardTitle>
@@ -573,18 +577,18 @@ export default function AdminIntegrationsPage() {
           {/* Test Payment Gateway */}
           <div className="skeuo-deboss p-4 rounded-lg bg-[var(--bg-secondary)]">
             <h3 className="font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <TestTube className="h-4 w-4" />
+              <TestTube className="h-4 w-4"/>
               Test Payment Gateway
             </h3>
             <Button onClick={handleTestPayment} disabled={testPaymentMutation.isPending || !paymentStatus?.configured}>
               {testPaymentMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                   Testing...
                 </>
               ) : (
                 <>
-                  <TestTube className="h-4 w-4 mr-2" />
+                  <TestTube className="h-4 w-4 mr-2"/>
                   Test Connection
                 </>
               )}
@@ -598,9 +602,9 @@ export default function AdminIntegrationsPage() {
                 }`}
               >
                 {paymentTestResult.success ? (
-                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 ) : (
-                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5"/>
                 )}
                 <span className="text-sm">{paymentTestResult.message}</span>
               </div>
@@ -628,8 +632,9 @@ export default function AdminIntegrationsPage() {
 
           {/* Configuration Note */}
           {!paymentStatus?.configured && (
-            <div className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5" />
+            <div
+              className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
+              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
               <div>
                 <p className="font-medium text-warning-900 dark:text-warning-100">
                   Payment Gateway Not Configured

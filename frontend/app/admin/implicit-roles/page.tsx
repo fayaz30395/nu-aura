@@ -1,28 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { CONDITION_LABELS, ImplicitRoleCondition, ImplicitRoleRule, ImplicitRoleRuleRequest } from '@/lib/types/core/implicitRoles';
-import { RoleScope, SCOPE_LABELS } from '@/lib/types/core/roles';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { AdminPageContent } from '@/components/layout';
-import { ConfirmDialog } from '@/components/ui';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  useImplicitRoleRules,
-  useCreateImplicitRoleRule,
-  useUpdateImplicitRoleRule,
-  useDeleteImplicitRoleRule,
-  useRecomputeAll,
+  CONDITION_LABELS,
+  ImplicitRoleCondition,
+  ImplicitRoleRule,
+  ImplicitRoleRuleRequest
+} from '@/lib/types/core/implicitRoles';
+import {RoleScope, SCOPE_LABELS} from '@/lib/types/core/roles';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {AdminPageContent} from '@/components/layout';
+import {ConfirmDialog} from '@/components/ui';
+import {
+  useAffectedUsers,
   useBulkActivateRules,
   useBulkDeactivateRules,
-  useAffectedUsers,
+  useCreateImplicitRoleRule,
+  useDeleteImplicitRoleRule,
+  useImplicitRoleRules,
+  useRecomputeAll,
+  useUpdateImplicitRoleRule,
 } from '@/lib/hooks/queries/useImplicitRoles';
-import { useRoles } from '@/lib/hooks/queries/useRoles';
-import { createLogger } from '@/lib/utils/logger';
+import {useRoles} from '@/lib/hooks/queries/useRoles';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('ImplicitRolesPage');
 
@@ -55,8 +60,8 @@ type CreateRuleFormData = z.infer<typeof createRuleFormSchema>;
 
 export default function ImplicitRolesPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // Queries
   const rulesQuery = useImplicitRoleRules();
@@ -214,7 +219,7 @@ export default function ImplicitRolesPage() {
   const handleBulkActivate = async () => {
     if (selectedRules.length === 0) return;
     try {
-      await bulkActivateMutation.mutateAsync({ ruleIds: selectedRules });
+      await bulkActivateMutation.mutateAsync({ruleIds: selectedRules});
       setSelectedRules([]);
     } catch (error) {
       log.error('Failed to activate rules:', error);
@@ -224,7 +229,7 @@ export default function ImplicitRolesPage() {
   const handleBulkDeactivate = async () => {
     if (selectedRules.length === 0) return;
     try {
-      await bulkDeactivateMutation.mutateAsync({ ruleIds: selectedRules });
+      await bulkDeactivateMutation.mutateAsync({ruleIds: selectedRules});
       setSelectedRules([]);
     } catch (error) {
       log.error('Failed to deactivate rules:', error);
@@ -306,7 +311,8 @@ export default function ImplicitRolesPage() {
         </div>
 
         {selectedRules.length > 0 && (
-          <div className="mb-4 p-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg flex justify-between items-center">
+          <div
+            className="mb-4 p-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg flex justify-between items-center">
             <span className="text-sm text-accent-900 dark:text-accent-100">
               {selectedRules.length} rule(s) selected
             </span>
@@ -338,92 +344,93 @@ export default function ImplicitRolesPage() {
         <div className="skeuo-card overflow-x-auto">
           <table className="table-aura">
             <thead className="skeuo-table-header">
-              <tr>
-                <th className="px-4 py-2 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedRules.length === filteredRules.length && filteredRules.length > 0}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedRules(filteredRules.map((r) => r.id));
-                      } else {
-                        setSelectedRules([]);
-                      }
-                    }}
-                    className="rounded"
-                  />
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Rule Name
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Condition
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Target Role
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Scope
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Priority
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Affected Users
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
+            <tr>
+              <th className="px-4 py-2 text-left">
+                <input
+                  type="checkbox"
+                  checked={selectedRules.length === filteredRules.length && filteredRules.length > 0}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedRules(filteredRules.map((r) => r.id));
+                    } else {
+                      setSelectedRules([]);
+                    }
+                  }}
+                  className="rounded"
+                />
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Rule Name
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Condition
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Target Role
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Scope
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Priority
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Affected Users
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Status
+              </th>
+              <th
+                className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
             </thead>
             <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
-              {filteredRules.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center">
-                    <p className="text-[var(--text-muted)] text-sm">No rules found</p>
-                    <p className="text-[var(--text-muted)] text-xs mt-1">
-                      Try adjusting your search or create a new rule.
-                    </p>
-                  </td>
-                </tr>
-              )}
-              {filteredRules.map((rule) => (
-                <tr key={rule.id}>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      checked={selectedRules.includes(rule.id)}
-                      onChange={() => toggleRuleSelection(rule.id)}
-                      className="rounded"
-                    />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
-                    {rule.ruleName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                    {CONDITION_LABELS[rule.conditionType]}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                    {rule.targetRoleName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                    {SCOPE_LABELS[rule.scope]}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                    {rule.priority}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                    <button
-                      onClick={() => openAffectedUsersModal(rule)}
-                      className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      {rule.affectedUserCount} users
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+            {filteredRules.length === 0 && (
+              <tr>
+                <td colSpan={9} className="px-6 py-12 text-center">
+                  <p className="text-[var(--text-muted)] text-sm">No rules found</p>
+                  <p className="text-[var(--text-muted)] text-xs mt-1">
+                    Try adjusting your search or create a new rule.
+                  </p>
+                </td>
+              </tr>
+            )}
+            {filteredRules.map((rule) => (
+              <tr key={rule.id}>
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    checked={selectedRules.includes(rule.id)}
+                    onChange={() => toggleRuleSelection(rule.id)}
+                    className="rounded"
+                  />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
+                  {rule.ruleName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                  {CONDITION_LABELS[rule.conditionType]}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                  {rule.targetRoleName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                  {SCOPE_LABELS[rule.scope]}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                  {rule.priority}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                  <button
+                    onClick={() => openAffectedUsersModal(rule)}
+                    className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    {rule.affectedUserCount} users
+                  </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         rule.isActive
@@ -433,23 +440,23 @@ export default function ImplicitRolesPage() {
                     >
                       {rule.isActive ? 'Active' : 'Inactive'}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => openEditModal(rule)}
-                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteRule(rule)}
-                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                  <button
+                    onClick={() => openEditModal(rule)}
+                    className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteRule(rule)}
+                    className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </table>
         </div>
@@ -545,7 +552,7 @@ export default function ImplicitRolesPage() {
                 </label>
                 <input
                   type="number"
-                  {...createForm.register('priority', { valueAsNumber: true })}
+                  {...createForm.register('priority', {valueAsNumber: true})}
                   className="input-aura"
                   placeholder="0"
                 />
@@ -665,7 +672,7 @@ export default function ImplicitRolesPage() {
                 </label>
                 <input
                   type="number"
-                  {...editForm.register('priority', { valueAsNumber: true })}
+                  {...editForm.register('priority', {valueAsNumber: true})}
                   className="input-aura"
                 />
               </div>
@@ -708,7 +715,7 @@ export default function ImplicitRolesPage() {
 
       {/* Affected Users Modal */}
       {showAffectedUsersModal && selectedRule && (
-        <AffectedUsersModal rule={selectedRule} onClose={() => setShowAffectedUsersModal(false)} />
+        <AffectedUsersModal rule={selectedRule} onClose={() => setShowAffectedUsersModal(false)}/>
       )}
     </AdminPageContent>
   );
@@ -719,7 +726,7 @@ interface AffectedUsersModalProps {
   onClose: () => void;
 }
 
-function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
+function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
   const usersQuery = useAffectedUsers(rule.id);
 
   return (
@@ -744,41 +751,41 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
           <div className="skeuo-card overflow-x-auto">
             <table className="table-aura">
               <thead className="skeuo-table-header">
-                <tr>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
-                    User Name
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
-                    Assigned Role
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
-                    Scope
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
-                    Computed At
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
-                    Status
-                  </th>
-                </tr>
+              <tr>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  User Name
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  Assigned Role
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  Scope
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  Computed At
+                </th>
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">
+                  Status
+                </th>
+              </tr>
               </thead>
               <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
-                {usersQuery.data.content.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-[var(--text-muted)]">
-                      No users affected by this rule
-                    </td>
-                  </tr>
-                )}
-                {usersQuery.data.content.map((userRole) => (
-                  <tr key={userRole.id}>
-                    <td className="px-6 py-4 text-sm text-[var(--text-primary)]">{userRole.userName}</td>
-                    <td className="px-6 py-4 text-body-muted">{userRole.roleName}</td>
-                    <td className="px-6 py-4 text-body-muted">{userRole.scope}</td>
-                    <td className="px-6 py-4 text-body-muted">
-                      {new Date(userRole.computedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
+              {usersQuery.data.content.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-[var(--text-muted)]">
+                    No users affected by this rule
+                  </td>
+                </tr>
+              )}
+              {usersQuery.data.content.map((userRole) => (
+                <tr key={userRole.id}>
+                  <td className="px-6 py-4 text-sm text-[var(--text-primary)]">{userRole.userName}</td>
+                  <td className="px-6 py-4 text-body-muted">{userRole.roleName}</td>
+                  <td className="px-6 py-4 text-body-muted">{userRole.scope}</td>
+                  <td className="px-6 py-4 text-body-muted">
+                    {new Date(userRole.computedAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
                       <span
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           userRole.isActive
@@ -788,9 +795,9 @@ function AffectedUsersModal({ rule, onClose }: AffectedUsersModalProps) {
                       >
                         {userRole.isActive ? 'Active' : 'Inactive'}
                       </span>
-                    </td>
-                  </tr>
-                ))}
+                  </td>
+                </tr>
+              ))}
               </tbody>
             </table>
           </div>

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Pencil, Loader2 } from 'lucide-react';
-import { TextInput, NumberInput, Select } from '@mantine/core';
-import { cn } from '@/lib/utils';
+import React, {useEffect, useRef, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Loader2, Pencil} from 'lucide-react';
+import {NumberInput, Select, TextInput} from '@mantine/core';
+import {cn} from '@/lib/utils';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,14 +32,14 @@ interface EditableCellProps<T = string | number> {
 // ---------------------------------------------------------------------------
 
 function EditableCell<T = string | number>({
-  value: initialValue,
-  type,
-  options,
-  onSave,
-  disabled = false,
-  placeholder,
-  validate,
-}: EditableCellProps<T>) {
+                                             value: initialValue,
+                                             type,
+                                             options,
+                                             onSave,
+                                             disabled = false,
+                                             placeholder,
+                                             validate,
+                                           }: EditableCellProps<T>) {
   // -----------------------------------------------------------------------
   // State
   // -----------------------------------------------------------------------
@@ -172,9 +172,9 @@ function EditableCell<T = string | number>({
         {/* Pencil icon - subtle, appears on hover */}
         {!disabled && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.15 }}
+            initial={{opacity: 0, scale: 0.8}}
+            whileHover={{opacity: 1, scale: 1}}
+            transition={{duration: 0.15}}
             className="hidden group-hover:flex items-center justify-center"
           >
             <Pencil
@@ -195,10 +195,10 @@ function EditableCell<T = string | number>({
     <AnimatePresence mode="wait">
       <motion.div
         key="edit-mode"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.1 }}
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        exit={{opacity: 0}}
+        transition={{duration: 0.1}}
         className="flex items-center gap-2"
       >
         {/* Input field */}
@@ -313,9 +313,9 @@ function EditableCell<T = string | number>({
           {/* Error message */}
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
+              initial={{opacity: 0, y: -4}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -4}}
               className="absolute top-full left-0 mt-1 text-xs text-danger-600 whitespace-nowrap"
             >
               {error}
@@ -339,14 +339,14 @@ function EditableCell<T = string | number>({
                 : 'text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20'
             )}
             aria-label="Save changes"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.05 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{scale: 0.8, opacity: 0}}
+            animate={{scale: 1, opacity: 1}}
+            transition={{delay: 0.05}}
+            whileHover={{scale: 1.1}}
+            whileTap={{scale: 0.95}}
           >
             {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin"/>
             ) : (
               <svg
                 className="h-4 w-4"
@@ -357,7 +357,7 @@ function EditableCell<T = string | number>({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <polyline points="20 6 9 17 4 12" />
+                <polyline points="20 6 9 17 4 12"/>
               </svg>
             )}
           </motion.button>
@@ -376,11 +376,11 @@ function EditableCell<T = string | number>({
                 : 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20'
             )}
             aria-label="Cancel editing"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{scale: 0.8, opacity: 0}}
+            animate={{scale: 1, opacity: 1}}
+            transition={{delay: 0.1}}
+            whileHover={{scale: 1.1}}
+            whileTap={{scale: 0.95}}
           >
             <svg
               className="h-4 w-4"
@@ -391,8 +391,8 @@ function EditableCell<T = string | number>({
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </motion.button>
         </div>
@@ -401,5 +401,5 @@ function EditableCell<T = string | number>({
   );
 }
 
-export { EditableCell };
-export type { EditableCellProps };
+export {EditableCell};
+export type {EditableCellProps};

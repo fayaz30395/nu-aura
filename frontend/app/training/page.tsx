@@ -1,52 +1,47 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { GraduationCap, AlertCircle, CheckCircle, Loader2, Plus } from 'lucide-react';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
-import { Button, EmptyState, ConfirmDialog } from '@/components/ui';
-import { useAuth } from '@/lib/hooks/useAuth';
-import type { TrainingProgram, TrainingEnrollmentRequest, TrainingProgramRequest } from '@/lib/types/grow/training';
-import {
-  TrainingCategory,
-  DeliveryMode,
-  ProgramStatus,
-  EnrollmentStatus,
-} from '@/lib/types/grow/training';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {AlertCircle, CheckCircle, GraduationCap, Loader2, Plus} from 'lucide-react';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {SkillGapAnalysis} from '@/components/training/SkillGapAnalysis';
+import {Button, ConfirmDialog, EmptyState} from '@/components/ui';
+import {useAuth} from '@/lib/hooks/useAuth';
+import type {TrainingEnrollmentRequest, TrainingProgram, TrainingProgramRequest} from '@/lib/types/grow/training';
+import {DeliveryMode, EnrollmentStatus, ProgramStatus, TrainingCategory,} from '@/lib/types/grow/training';
 import {
   useAllPrograms,
-  useEnrollmentsByEmployee,
-  useEnrollmentsByProgram,
   useCreateTrainingProgram,
-  useUpdateTrainingProgram,
   useDeleteTrainingProgram,
   useEnrollInTraining as useEnrollEmployee,
+  useEnrollmentsByEmployee,
+  useEnrollmentsByProgram,
   useUpdateEnrollmentStatus,
+  useUpdateTrainingProgram,
 } from '@/lib/hooks/queries/useTraining';
+import type {TabType, TrainingProgramFormData} from './_components';
 import {
+  CourseCatalogTab,
+  EnrollEmployeeModal,
+  ManageProgramsTab,
+  MyTrainingsTab,
+  ProgramFormModal,
+  trainingProgramSchema,
   TrainingStatsCards,
   TrainingTabs,
-  MyTrainingsTab,
-  CourseCatalogTab,
-  ManageProgramsTab,
-  ProgramFormModal,
   ViewProgramModal,
-  EnrollEmployeeModal,
-  trainingProgramSchema,
 } from './_components';
-import type { TabType, TrainingProgramFormData } from './_components';
 
 export default function TrainingPage() {
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('my-trainings');
 
   // React Query hooks
-  const { data: programsResponse, isLoading: programsLoading } = useAllPrograms();
-  const { data: enrollmentsResponse, isLoading: enrollmentsLoading } = useEnrollmentsByEmployee(
+  const {data: programsResponse, isLoading: programsLoading} = useAllPrograms();
+  const {data: enrollmentsResponse, isLoading: enrollmentsLoading} = useEnrollmentsByEmployee(
     user?.employeeId || ''
   );
   const createProgramMutation = useCreateTrainingProgram();
@@ -86,14 +81,14 @@ export default function TrainingPage() {
   const [deleteProgramId, setDeleteProgramId] = useState<string | null>(null);
 
   // Fetch enrollments for the selected program via React Query
-  const { data: enrollments = [] } = useEnrollmentsByProgram(selectedProgramId);
+  const {data: enrollments = []} = useEnrollmentsByProgram(selectedProgramId);
 
   // Form state with React Hook Form
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<TrainingProgramFormData>({
     resolver: zodResolver(trainingProgramSchema),
     defaultValues: {
@@ -234,7 +229,7 @@ export default function TrainingPage() {
     const requestData = data as TrainingProgramRequest;
     if (editingProgram) {
       updateProgramMutation.mutate(
-        { programId: editingProgram.id, data: requestData },
+        {programId: editingProgram.id, data: requestData},
         {
           onSuccess: () => {
             showNotification('Program updated successfully', 'success');
@@ -288,15 +283,15 @@ export default function TrainingPage() {
   const isEnrolled = (programId: string) => myEnrollments.some((e) => e.programId === programId);
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Training Programs' },
+    {label: 'Dashboard', href: '/dashboard'},
+    {label: 'Training Programs'},
   ];
 
   if (!hasHydrated) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
         </div>
       </AppLayout>
     );
@@ -306,7 +301,7 @@ export default function TrainingPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
         <EmptyState
-          icon={<GraduationCap className="h-12 w-12" />}
+          icon={<GraduationCap className="h-12 w-12"/>}
           title="No Employee Profile Linked"
           description="Training enrollment requires an employee profile. Use the admin panels to manage employee training."
         />
@@ -319,14 +314,16 @@ export default function TrainingPage() {
       <div className="space-y-6">
         {/* Notifications */}
         {error && (
-          <div className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
-            <AlertCircle className="w-5 h-5" />
+          <div
+            className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            <AlertCircle className="w-5 h-5"/>
             {error}
           </div>
         )}
         {success && (
-          <div className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
-            <CheckCircle className="w-5 h-5" />
+          <div
+            className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            <CheckCircle className="w-5 h-5"/>
             {success}
           </div>
         )}
@@ -342,7 +339,7 @@ export default function TrainingPage() {
           {activeTab === 'manage' && (
             <PermissionGate permission={Permissions.TRAINING_CREATE}>
               <Button onClick={handleCreateProgram}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4"/>
                 Create Program
               </Button>
             </PermissionGate>
@@ -350,10 +347,10 @@ export default function TrainingPage() {
         </div>
 
         {/* Stats Cards */}
-        <TrainingStatsCards stats={stats} />
+        <TrainingStatsCards stats={stats}/>
 
         {/* Tab Navigation */}
-        <TrainingTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        <TrainingTabs activeTab={activeTab} onTabChange={setActiveTab}/>
 
         {/* Tab: My Trainings */}
         {activeTab === 'my-trainings' && (
@@ -402,7 +399,7 @@ export default function TrainingPage() {
 
         {/* Tab: Growth Roadmap */}
         {activeTab === 'growth-roadmap' && user?.employeeId && (
-          <SkillGapAnalysis employeeId={user.employeeId} />
+          <SkillGapAnalysis employeeId={user.employeeId}/>
         )}
 
         {/* Delete Confirmation Dialog */}

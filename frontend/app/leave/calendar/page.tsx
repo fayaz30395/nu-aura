@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useEmployeeLeaveRequests, useLeaveRequestsByStatus, useActiveLeaveTypes } from '@/lib/hooks/queries/useLeaves';
-import { LeaveRequest } from '@/lib/types/hrms/leave';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useActiveLeaveTypes, useEmployeeLeaveRequests, useLeaveRequestsByStatus} from '@/lib/hooks/queries/useLeaves';
+import {LeaveRequest} from '@/lib/types/hrms/leave';
 
 interface Holiday {
   id: string;
@@ -25,8 +25,8 @@ interface CalendarDay {
 
 export default function LeaveCalendarPage() {
   const router = useRouter();
-  const { user, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {user, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permReady} = usePermissions();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF
@@ -42,7 +42,7 @@ export default function LeaveCalendarPage() {
   // Determine which query to use based on viewMode
   const employeeRequestsQuery = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId && viewMode === 'my'));
   const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100);
-  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const {data: leaveTypes = []} = useActiveLeaveTypes();
 
   const leaves = (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [];
   const loading = !employeeRequestsQuery.data && !approvedRequestsQuery.data;
@@ -203,13 +203,13 @@ export default function LeaveCalendarPage() {
               <div key={type.id} className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: type.colorCode }}
+                  style={{backgroundColor: type.colorCode}}
                 />
                 <span className="text-sm text-[var(--text-primary)]">{type.leaveName}</span>
               </div>
             ))}
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-danger-500" />
+              <div className="w-3 h-3 rounded-full bg-danger-500"/>
               <span className="text-sm text-[var(--text-primary)]">Holiday</span>
             </div>
           </div>
@@ -242,8 +242,8 @@ export default function LeaveCalendarPage() {
                       day.isToday
                         ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
                         : day.isCurrentMonth
-                        ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
-                        : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
+                          ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
+                          : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
                     } ${day.holiday ? 'bg-danger-50 dark:bg-danger-900/20' : ''}`}
                   >
                     <div
@@ -251,8 +251,8 @@ export default function LeaveCalendarPage() {
                         day.isToday
                           ? 'text-accent-700 dark:text-accent-400'
                           : day.isCurrentMonth
-                          ? 'text-[var(--text-primary)]'
-                          : 'text-[var(--text-muted)]'
+                            ? 'text-[var(--text-primary)]'
+                            : 'text-[var(--text-muted)]'
                       }`}
                     >
                       {day.date.getDate()}
@@ -302,7 +302,7 @@ export default function LeaveCalendarPage() {
               {leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
                 return leaveStart.getMonth() === currentDate.getMonth() &&
-                       leaveStart.getFullYear() === currentDate.getFullYear();
+                  leaveStart.getFullYear() === currentDate.getFullYear();
               }).length}
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function LeaveCalendarPage() {
           >
             <div className="text-accent-700 dark:text-accent-400 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
               </svg>
             </div>
             <h3 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">Apply for Leave</h3>
@@ -341,7 +341,8 @@ export default function LeaveCalendarPage() {
           >
             <div className="text-success-600 dark:text-success-500 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
               </svg>
             </div>
             <h3 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">My Leave History</h3>

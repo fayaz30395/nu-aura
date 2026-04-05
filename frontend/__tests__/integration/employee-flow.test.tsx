@@ -4,11 +4,12 @@
  * Uses mocked employee service for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
-import { mockEmployees, createMockPage } from '@/lib/test-utils/fixtures';
+import {createMockPage, mockEmployees} from '@/lib/test-utils/fixtures';
 import React from 'react';
+import {employeeService} from '@/lib/services/hrms/employee.service';
 
 // Mock the employee service
 vi.mock('@/lib/services/hrms/employee.service', () => ({
@@ -22,8 +23,6 @@ vi.mock('@/lib/services/hrms/employee.service', () => ({
   },
 }));
 
-import { employeeService } from '@/lib/services/hrms/employee.service';
-
 const mockedEmployeeService = vi.mocked(employeeService);
 
 // Mock Employee List Component
@@ -32,7 +31,7 @@ interface EmployeeListProps {
   onDelete?: (id: string) => void;
 }
 
-const MockEmployeeList: React.FC<EmployeeListProps> = ({ onEdit, onDelete }) => {
+const MockEmployeeList: React.FC<EmployeeListProps> = ({onEdit, onDelete}) => {
   const [employees, setEmployees] = React.useState<typeof mockEmployees>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -60,37 +59,37 @@ const MockEmployeeList: React.FC<EmployeeListProps> = ({ onEdit, onDelete }) => 
     <div data-testid="employee-list">
       <table data-testid="employees-table">
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Designation</th>
-            <th>Department</th>
-            <th>Actions</th>
-          </tr>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Designation</th>
+          <th>Department</th>
+          <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
-          {employees.map((emp) => (
-            <tr key={emp.id} data-testid={`employee-row-${emp.id}`}>
-              <td>{`${emp.firstName} ${emp.lastName}`}</td>
-              <td>{emp.workEmail}</td>
-              <td>{emp.designation}</td>
-              <td>{emp.departmentName}</td>
-              <td>
-                <button
-                  data-testid={`edit-btn-${emp.id}`}
-                  onClick={() => onEdit?.(emp.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  data-testid={`delete-btn-${emp.id}`}
-                  onClick={() => onDelete?.(emp.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
+        {employees.map((emp) => (
+          <tr key={emp.id} data-testid={`employee-row-${emp.id}`}>
+            <td>{`${emp.firstName} ${emp.lastName}`}</td>
+            <td>{emp.workEmail}</td>
+            <td>{emp.designation}</td>
+            <td>{emp.departmentName}</td>
+            <td>
+              <button
+                data-testid={`edit-btn-${emp.id}`}
+                onClick={() => onEdit?.(emp.id)}
+              >
+                Edit
+              </button>
+              <button
+                data-testid={`delete-btn-${emp.id}`}
+                onClick={() => onDelete?.(emp.id)}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
         </tbody>
       </table>
     </div>
@@ -103,7 +102,7 @@ interface EmployeeFormProps {
   onSuccess?: () => void;
 }
 
-const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }) => {
+const MockEmployeeForm: React.FC<EmployeeFormProps> = ({employeeId, onSuccess}) => {
   const [formData, setFormData] = React.useState({
     firstName: '',
     lastName: '',
@@ -153,7 +152,7 @@ const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }
       }
 
       onSuccess?.();
-      setFormData({ firstName: '', lastName: '', workEmail: '', designation: '', departmentId: '' });
+      setFormData({firstName: '', lastName: '', workEmail: '', designation: '', departmentId: ''});
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save employee');
     } finally {
@@ -171,7 +170,7 @@ const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }
           id="first-name"
           type="text"
           value={formData.firstName}
-          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
           data-testid="first-name-input"
           required
         />
@@ -183,7 +182,7 @@ const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }
           id="last-name"
           type="text"
           value={formData.lastName}
-          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
           data-testid="last-name-input"
           required
         />
@@ -195,7 +194,7 @@ const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }
           id="email"
           type="email"
           value={formData.workEmail}
-          onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
+          onChange={(e) => setFormData({...formData, workEmail: e.target.value})}
           data-testid="email-input"
           required
         />
@@ -207,7 +206,7 @@ const MockEmployeeForm: React.FC<EmployeeFormProps> = ({ employeeId, onSuccess }
           id="designation"
           type="text"
           value={formData.designation}
-          onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+          onChange={(e) => setFormData({...formData, designation: e.target.value})}
           data-testid="designation-input"
         />
       </div>
@@ -237,7 +236,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
           )
       );
 
-      render(<MockEmployeeList />);
+      render(<MockEmployeeList/>);
 
       expect(screen.getByTestId('loading')).toBeInTheDocument();
     });
@@ -247,7 +246,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
         createMockPage(mockEmployees)
       );
 
-      render(<MockEmployeeList />);
+      render(<MockEmployeeList/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('employees-table')).toBeInTheDocument();
@@ -263,7 +262,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
         createMockPage([mockEmployees[0]])
       );
 
-      render(<MockEmployeeList />);
+      render(<MockEmployeeList/>);
 
       await waitFor(() => {
         expect(
@@ -281,7 +280,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
         new Error(errorMessage)
       );
 
-      render(<MockEmployeeList />);
+      render(<MockEmployeeList/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('error')).toHaveTextContent(errorMessage);
@@ -291,7 +290,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
 
   describe('Create Employee Flow', () => {
     it('should render create employee form', () => {
-      render(<MockEmployeeForm />);
+      render(<MockEmployeeForm/>);
 
       expect(screen.getByTestId('employee-form')).toBeInTheDocument();
       expect(screen.getByTestId('first-name-input')).toBeInTheDocument();
@@ -301,7 +300,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
     });
 
     it('should validate required fields', async () => {
-      render(<MockEmployeeForm />);
+      render(<MockEmployeeForm/>);
 
       const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
       const lastNameInput = screen.getByTestId('last-name-input') as HTMLInputElement;
@@ -323,7 +322,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
 
       const user = userEvent.setup();
       const onSuccess = vi.fn();
-      render(<MockEmployeeForm onSuccess={onSuccess} />);
+      render(<MockEmployeeForm onSuccess={onSuccess}/>);
 
       await user.type(screen.getByTestId('first-name-input'), 'John');
       await user.type(screen.getByTestId('last-name-input'), 'Doe');
@@ -348,7 +347,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
       mockedEmployeeService.createEmployee.mockResolvedValueOnce(mockEmployees[0]);
       const user = userEvent.setup();
 
-      render(<MockEmployeeForm />);
+      render(<MockEmployeeForm/>);
 
       const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
       const lastNameInput = screen.getByTestId('last-name-input') as HTMLInputElement;
@@ -371,7 +370,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
     it('should load employee data for editing', async () => {
       mockedEmployeeService.getEmployee.mockResolvedValueOnce(mockEmployees[0]);
 
-      render(<MockEmployeeForm employeeId={mockEmployees[0].id} />);
+      render(<MockEmployeeForm employeeId={mockEmployees[0].id}/>);
 
       await waitFor(() => {
         const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
@@ -382,7 +381,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
     it('should pre-fill form with employee data', async () => {
       mockedEmployeeService.getEmployee.mockResolvedValueOnce(mockEmployees[0]);
 
-      render(<MockEmployeeForm employeeId={mockEmployees[0].id} />);
+      render(<MockEmployeeForm employeeId={mockEmployees[0].id}/>);
 
       await waitFor(() => {
         const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
@@ -404,7 +403,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
 
       const user = userEvent.setup();
       const onSuccess = vi.fn();
-      render(<MockEmployeeForm employeeId={mockEmployees[0].id} onSuccess={onSuccess} />);
+      render(<MockEmployeeForm employeeId={mockEmployees[0].id} onSuccess={onSuccess}/>);
 
       await waitFor(() => {
         expect(screen.getByTestId('first-name-input')).toHaveValue(mockEmployees[0].firstName);
@@ -435,7 +434,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockEmployeeList onDelete={onDelete} />);
+      render(<MockEmployeeList onDelete={onDelete}/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`delete-btn-${mockEmployees[0].id}`)).toBeInTheDocument();
@@ -455,7 +454,7 @@ describe('Employee CRUD Flow Integration Tests', () => {
 
       const onEdit = vi.fn();
       const user = userEvent.setup();
-      render(<MockEmployeeList onEdit={onEdit} />);
+      render(<MockEmployeeList onEdit={onEdit}/>);
 
       await waitFor(() => {
         expect(screen.getByTestId(`edit-btn-${mockEmployees[0].id}`)).toBeInTheDocument();

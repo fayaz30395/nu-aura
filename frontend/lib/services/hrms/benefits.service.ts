@@ -1,17 +1,17 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
+  BenefitClaim,
+  BenefitEnrollment,
   BenefitPlan,
   BenefitPlanEnhanced,
   BenefitPlanRequest,
-  BenefitEnrollment,
-  EnrollmentRequest,
-  BenefitClaim,
-  ClaimRequest,
-  FlexAllocation,
   BenefitsDashboard,
+  ClaimRequest,
   EmployeeBenefitsSummary,
+  EnrollmentRequest,
+  FlexAllocation,
 } from '../../types/hrms/benefits';
-import { Page } from '../../types/hrms/payroll';
+import {Page} from '../../types/hrms/payroll';
 
 class BenefitsService {
   // ==================== BENEFIT PLANS (Basic API) ====================
@@ -43,7 +43,7 @@ class BenefitsService {
 
   async getAllPlans(page: number = 0, size: number = 20): Promise<Page<BenefitPlan>> {
     const response = await apiClient.get<Page<BenefitPlan>>('/benefits/plans', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -66,7 +66,7 @@ class BenefitsService {
 
   async getEnhancedPlans(page: number = 0, size: number = 20): Promise<Page<BenefitPlanEnhanced>> {
     const response = await apiClient.get<Page<BenefitPlanEnhanced>>('/benefits-enhanced/plans', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -93,7 +93,7 @@ class BenefitsService {
 
   async getEligiblePlans(grade: string): Promise<BenefitPlanEnhanced[]> {
     const response = await apiClient.get<BenefitPlanEnhanced[]>('/benefits-enhanced/plans/eligible', {
-      params: { grade },
+      params: {grade},
     });
     return response.data;
   }
@@ -109,7 +109,7 @@ class BenefitsService {
     const response = await apiClient.post<BenefitEnrollment>(
       `/benefits-enhanced/enrollments/${enrollmentId}/approve`,
       null,
-      { params: { comments } }
+      {params: {comments}}
     );
     return response.data;
   }
@@ -125,7 +125,7 @@ class BenefitsService {
     const response = await apiClient.post<BenefitEnrollment>(
       `/benefits-enhanced/enrollments/${enrollmentId}/terminate`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   }
@@ -165,7 +165,7 @@ class BenefitsService {
     const response = await apiClient.post<BenefitClaim>(
       `/benefits-enhanced/claims/${claimId}/process`,
       null,
-      { params: { approvedAmount, comments } }
+      {params: {approvedAmount, comments}}
     );
     return response.data;
   }
@@ -174,7 +174,7 @@ class BenefitsService {
     const response = await apiClient.post<BenefitClaim>(
       `/benefits-enhanced/claims/${claimId}/reject`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   }
@@ -183,7 +183,7 @@ class BenefitsService {
     const response = await apiClient.post<BenefitClaim>(
       `/benefits-enhanced/claims/${claimId}/appeal`,
       null,
-      { params: { reason } }
+      {params: {reason}}
     );
     return response.data;
   }
@@ -191,7 +191,7 @@ class BenefitsService {
   async getEmployeeClaims(employeeId: string, page: number = 0, size: number = 20): Promise<Page<BenefitClaim>> {
     const response = await apiClient.get<Page<BenefitClaim>>(
       `/benefits-enhanced/claims/employee/${employeeId}`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }

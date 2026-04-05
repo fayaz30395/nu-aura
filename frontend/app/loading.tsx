@@ -1,7 +1,7 @@
 'use client';
 
-import { NuAuraLoader } from '@/components/ui/Loading';
+import {NuAuraLoader} from '@/components/ui/Loading';
 
 export default function Loading() {
-  return <NuAuraLoader />;
+  return <NuAuraLoader/>;
 }

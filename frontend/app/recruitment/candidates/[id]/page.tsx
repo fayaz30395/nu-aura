@@ -1,33 +1,21 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useCandidate } from '@/lib/hooks/queries/useRecruitment';
-import { getStatusColor, getStageColor } from '../utils';
-import {
-  ArrowLeft,
-  Mail,
-  Phone,
-  Building,
-  MapPin,
-  Briefcase,
-  Calendar,
-  Edit2,
-  ExternalLink,
-  User,
-} from 'lucide-react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useCandidate} from '@/lib/hooks/queries/useRecruitment';
+import {getStageColor, getStatusColor} from '../utils';
+import {ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
 
 export default function CandidateDetailPage() {
   const router = useRouter();
   const params = useParams();
   const candidateId = params.id as string;
 
-  const { data: candidate, isLoading, error: queryError } = useCandidate(candidateId);
+  const {data: candidate, isLoading, error: queryError} = useCandidate(candidateId);
 
   const formatDate = (date?: string) => {
     if (!date) return '-';
@@ -43,7 +31,7 @@ export default function CandidateDetailPage() {
       <AppLayout activeMenuItem="recruitment">
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700"/>
             <p className="mt-4 text-[var(--text-secondary)]">Loading candidate details...</p>
           </div>
         </div>
@@ -63,7 +51,7 @@ export default function CandidateDetailPage() {
             onClick={() => router.push('/recruitment/candidates')}
             className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4"/>
             Back to Candidates
           </button>
           <Card className="bg-[var(--bg-card)]">
@@ -88,7 +76,7 @@ export default function CandidateDetailPage() {
             onClick={() => router.push('/recruitment/candidates')}
             className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-md"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4"/>
             Back to Candidates
           </button>
           <div className="flex gap-2">
@@ -97,7 +85,7 @@ export default function CandidateDetailPage() {
               onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
               className="flex items-center gap-2"
             >
-              <Calendar className="h-4 w-4" />
+              <Calendar className="h-4 w-4"/>
               Schedule Interview
             </Button>
             {/* DEF-51: Fix permission from CANDIDATE_VIEW to RECRUITMENT_MANAGE for edit action */}
@@ -106,7 +94,7 @@ export default function CandidateDetailPage() {
                 onClick={() => router.push(`/recruitment/candidates?edit=${candidate.id}`)}
                 className="flex items-center gap-2"
               >
-                <Edit2 className="h-4 w-4" />
+                <Edit2 className="h-4 w-4"/>
                 Edit Candidate
               </Button>
             </PermissionGate>
@@ -117,7 +105,8 @@ export default function CandidateDetailPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-6">
             <div className="flex items-center gap-6">
-              <div className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
+              <div
+                className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
                 <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
@@ -132,7 +121,8 @@ export default function CandidateDetailPage() {
                     {candidate.status.replace(/_/g, ' ')}
                   </span>
                   {candidate.currentStage && (
-                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
+                    <span
+                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
                       {candidate.currentStage.replace(/_/g, ' ')}
                     </span>
                   )}
@@ -156,7 +146,7 @@ export default function CandidateDetailPage() {
               </h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <Mail className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                  <Mail className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   <div className="min-w-0">
                     <p className="text-caption">Email</p>
                     <p className="text-sm font-medium text-[var(--text-primary)] truncate">{candidate.email}</p>
@@ -164,7 +154,7 @@ export default function CandidateDetailPage() {
                 </div>
                 {candidate.phone && (
                   <div className="flex items-center gap-4">
-                    <Phone className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <Phone className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Phone</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.phone}</p>
@@ -173,7 +163,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.currentLocation && (
                   <div className="flex items-center gap-4">
-                    <MapPin className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <MapPin className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Location</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentLocation}</p>
@@ -193,7 +183,7 @@ export default function CandidateDetailPage() {
               <div className="space-y-4">
                 {candidate.currentCompany && (
                   <div className="flex items-center gap-4">
-                    <Building className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <Building className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Current Company</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentCompany}</p>
@@ -202,7 +192,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.currentDesignation && (
                   <div className="flex items-center gap-4">
-                    <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Designation</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.currentDesignation}</p>
@@ -211,7 +201,7 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.jobTitle && (
                   <div className="flex items-center gap-4">
-                    <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <Briefcase className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Applied For</p>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.jobTitle}</p>
@@ -220,10 +210,11 @@ export default function CandidateDetailPage() {
                 )}
                 {candidate.assignedRecruiterName && (
                   <div className="flex items-center gap-4">
-                    <User className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                    <User className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                     <div>
                       <p className="text-caption">Assigned Recruiter</p>
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.assignedRecruiterName}</p>
+                      <p
+                        className="text-sm font-medium text-[var(--text-primary)]">{candidate.assignedRecruiterName}</p>
                     </div>
                   </div>
                 )}
@@ -325,7 +316,8 @@ export default function CandidateDetailPage() {
                 )}
               </div>
               {candidate.offerDeclineReason && (
-                <div className="mt-4 p-4 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
+                <div
+                  className="mt-4 p-4 bg-danger-50 dark:bg-danger-900/10 rounded-xl border border-danger-200 dark:border-danger-800">
                   <p className="text-caption">Decline Reason</p>
                   <p className="text-sm text-[var(--text-primary)]">{candidate.offerDeclineReason}</p>
                 </div>
@@ -383,7 +375,7 @@ export default function CandidateDetailPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-3.5 w-3.5"/>
                       View Resume
                     </a>
                   </div>

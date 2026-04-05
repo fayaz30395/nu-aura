@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { predictiveAnalyticsService } from '@/lib/services/core/predictive-analytics.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {predictiveAnalyticsService} from '@/lib/services/core/predictive-analytics.service';
 import type {
-  PredictiveAnalyticsDashboard,
-  AttritionPrediction,
-  WorkforceTrend,
   AnalyticsInsight,
-  SkillGap,
+  AttritionPrediction,
   PaginatedResponse,
+  PredictiveAnalyticsDashboard,
+  SkillGap,
+  WorkforceTrend,
 } from '@/lib/types/core/predictive-analytics';
 
 // ==================== Query Keys ====================
@@ -84,8 +84,8 @@ export function useRunPrediction() {
   return useMutation({
     mutationFn: (employeeId: string) => predictiveAnalyticsService.runPrediction(employeeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: predictiveKeys.attrition() });
-      queryClient.invalidateQueries({ queryKey: predictiveKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: predictiveKeys.attrition()});
+      queryClient.invalidateQueries({queryKey: predictiveKeys.dashboard()});
     },
   });
 }
@@ -93,11 +93,11 @@ export function useRunPrediction() {
 export function useMarkActionTaken() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ predictionId, notes }: { predictionId: string; notes?: string }) =>
+    mutationFn: ({predictionId, notes}: { predictionId: string; notes?: string }) =>
       predictiveAnalyticsService.markActionTaken(predictionId, notes),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: predictiveKeys.attrition() });
-      queryClient.invalidateQueries({ queryKey: predictiveKeys.dashboard() });
+      queryClient.invalidateQueries({queryKey: predictiveKeys.attrition()});
+      queryClient.invalidateQueries({queryKey: predictiveKeys.dashboard()});
     },
   });
 }

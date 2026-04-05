@@ -1,15 +1,8 @@
 'use client';
 
 import React from 'react';
-import { UseFormReturn, UseFieldArrayReturn } from 'react-hook-form';
-import {
-  PayrollRun as _PayrollRun,
-  Payslip as _Payslip,
-  SalaryStructure as _SalaryStructure,
-  PayrollRunFormData,
-  PayslipFormData,
-  SalaryStructureFormData,
-} from './types';
+import {UseFieldArrayReturn, UseFormReturn} from 'react-hook-form';
+import {PayrollRunFormData, PayslipFormData, SalaryStructureFormData,} from './types';
 
 // ---- Payroll Run Modal ----
 interface PayrollRunModalProps {
@@ -22,18 +15,19 @@ interface PayrollRunModalProps {
 }
 
 export const PayrollRunModal = React.memo(function PayrollRunModal({
-  isOpen,
-  mode,
-  formHook,
-  isSaving,
-  onClose,
-  onSubmit,
-}: PayrollRunModalProps) {
+                                                                     isOpen,
+                                                                     mode,
+                                                                     formHook,
+                                                                     isSaving,
+                                                                     onClose,
+                                                                     onSubmit,
+                                                                   }: PayrollRunModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
-      <div className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
+      <div
+        className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
           <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payroll Run' : 'Edit Payroll Run'}
@@ -64,7 +58,8 @@ export const PayrollRunModal = React.memo(function PayrollRunModal({
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
                 <div>
@@ -137,18 +132,19 @@ interface PayslipModalProps {
 }
 
 export const PayslipModal = React.memo(function PayslipModal({
-  isOpen,
-  mode,
-  formHook,
-  isSaving,
-  onClose,
-  onSubmit,
-}: PayslipModalProps) {
+                                                               isOpen,
+                                                               mode,
+                                                               formHook,
+                                                               isSaving,
+                                                               onClose,
+                                                               onSubmit,
+                                                             }: PayslipModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
-      <div className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
+      <div
+        className="skeuo-card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
           <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Payslip' : 'Edit Payslip'}
@@ -168,7 +164,8 @@ export const PayslipModal = React.memo(function PayslipModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payroll Run ID *</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Payroll Run ID
+                    *</label>
                   <input
                     type="text"
                     {...formHook.register('payrollRunId')}
@@ -189,7 +186,8 @@ export const PayslipModal = React.memo(function PayslipModal({
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.payrollPeriodStart && (
-                    <p className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
+                    <p
+                      className="text-danger-500 text-xs mt-1">{formHook.formState.errors.payrollPeriodStart.message}</p>
                   )}
                 </div>
                 <div>
@@ -223,7 +221,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="number"
                     step="0.01"
-                    {...formHook.register('baseSalary', { valueAsNumber: true })}
+                    {...formHook.register('baseSalary', {valueAsNumber: true})}
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                   {formHook.formState.errors.baseSalary && (
@@ -235,7 +233,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="number"
                     step="0.01"
-                    {...formHook.register('allowances', { valueAsNumber: true })}
+                    {...formHook.register('allowances', {valueAsNumber: true})}
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
@@ -244,7 +242,7 @@ export const PayslipModal = React.memo(function PayslipModal({
                   <input
                     type="number"
                     step="0.01"
-                    {...formHook.register('deductions', { valueAsNumber: true })}
+                    {...formHook.register('deductions', {valueAsNumber: true})}
                     className="input-aura w-full px-4 py-2 rounded-lg"
                   />
                 </div>
@@ -291,24 +289,25 @@ interface SalaryStructureModalProps {
 }
 
 export const SalaryStructureModal = React.memo(function SalaryStructureModal({
-  isOpen,
-  mode,
-  formHook,
-  allowanceFields,
-  deductionFields,
-  appendAllowance,
-  removeAllowance,
-  appendDeduction,
-  removeDeduction,
-  isSaving,
-  onClose,
-  onSubmit,
-}: SalaryStructureModalProps) {
+                                                                               isOpen,
+                                                                               mode,
+                                                                               formHook,
+                                                                               allowanceFields,
+                                                                               deductionFields,
+                                                                               appendAllowance,
+                                                                               removeAllowance,
+                                                                               appendDeduction,
+                                                                               removeDeduction,
+                                                                               isSaving,
+                                                                               onClose,
+                                                                               onSubmit,
+                                                                             }: SalaryStructureModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 glass-aura flex items-center justify-center p-4 z-50">
-      <div className="skeuo-card rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
+      <div
+        className="skeuo-card rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
         <div className="p-6">
           <h2 className="skeuo-emboss text-2xl font-bold mb-6">
             {mode === 'create' ? 'Create Salary Structure' : 'Edit Salary Structure'}
@@ -328,7 +327,8 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Effective Date *</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Effective Date
+                    *</label>
                   <input
                     type="date"
                     {...formHook.register('effectiveDate')}
@@ -345,7 +345,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                 <input
                   type="number"
                   step="0.01"
-                  {...formHook.register('baseSalary', { valueAsNumber: true })}
+                  {...formHook.register('baseSalary', {valueAsNumber: true})}
                   className="input-aura w-full px-4 py-2 rounded-lg"
                 />
                 {formHook.formState.errors.baseSalary && (
@@ -359,7 +359,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <h3 className="font-semibold text-success-700">Allowances</h3>
                   <button
                     type="button"
-                    onClick={() => appendAllowance({ name: '', amount: 0, type: 'FIXED', description: '' })}
+                    onClick={() => appendAllowance({name: '', amount: 0, type: 'FIXED', description: ''})}
                     className="px-4 py-1 text-sm bg-success-100 text-success-700 rounded hover:bg-success-200"
                   >
                     Add Allowance
@@ -381,7 +381,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="number"
                           step="0.01"
                           placeholder="Amount"
-                          {...formHook.register(`allowances.${idx}.amount`, { valueAsNumber: true })}
+                          {...formHook.register(`allowances.${idx}.amount`, {valueAsNumber: true})}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
@@ -403,7 +403,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <h3 className="font-semibold text-danger-700">Deductions</h3>
                   <button
                     type="button"
-                    onClick={() => appendDeduction({ name: '', amount: 0, type: 'FIXED', description: '' })}
+                    onClick={() => appendDeduction({name: '', amount: 0, type: 'FIXED', description: ''})}
                     className="px-4 py-1 text-sm bg-danger-100 text-danger-700 rounded hover:bg-danger-200"
                   >
                     Add Deduction
@@ -425,7 +425,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                           type="number"
                           step="0.01"
                           placeholder="Amount"
-                          {...formHook.register(`deductions.${idx}.amount`, { valueAsNumber: true })}
+                          {...formHook.register(`deductions.${idx}.amount`, {valueAsNumber: true})}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"
                         />
                       </div>
@@ -476,13 +476,13 @@ interface DeleteConfirmModalProps {
 }
 
 export const DeleteConfirmModal = React.memo(function DeleteConfirmModal({
-  isOpen,
-  title,
-  message,
-  loading,
-  onCancel,
-  onConfirm,
-}: DeleteConfirmModalProps) {
+                                                                           isOpen,
+                                                                           title,
+                                                                           message,
+                                                                           loading,
+                                                                           onCancel,
+                                                                           onConfirm,
+                                                                         }: DeleteConfirmModalProps) {
   if (!isOpen) return null;
 
   return (

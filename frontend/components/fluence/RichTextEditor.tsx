@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import {useCallback, useState} from 'react';
+import {EditorContent, useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { Table } from '@tiptap/extension-table';
+import {Table} from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -17,50 +17,44 @@ import TaskItem from '@tiptap/extension-task-item';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Color from '@tiptap/extension-color';
-import { TextStyle } from '@tiptap/extension-text-style';
-import { createLowlight, common } from 'lowlight';
+import {TextStyle} from '@tiptap/extension-text-style';
+import {common, createLowlight} from 'lowlight';
+import {ActionIcon, ColorPicker, Divider, Menu, Tooltip,} from '@mantine/core';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {Input} from '@/components/ui/Input';
+import {Button} from '@/components/ui/Button';
 import {
-  ActionIcon,
-  Tooltip,
-  Divider,
-  Menu,
-  ColorPicker,
-} from '@mantine/core';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
+  IconArrowLeftCircle,
+  IconArrowRightCircle,
+  IconBlockquote,
   IconBold,
-  IconItalic,
-  IconUnderline,
-  IconStrikethrough,
+  IconChecks,
+  IconChevronDown,
   IconCode,
+  IconColumnInsertRight,
+  IconColumnRemove,
   IconH1,
   IconH2,
   IconH3,
+  IconHighlight,
+  IconItalic,
+  IconLink,
   IconList,
   IconListNumbers,
-  IconBlockquote,
-  IconRuler,
-  IconLink,
+  IconPalette,
   IconPhoto,
-  IconTable,
-  IconTablePlus,
-  IconTableMinus,
-  IconColumnInsertRight,
-  IconColumnRemove,
   IconRowInsertBottom,
   IconRowRemove,
-  IconAlignLeft,
-  IconAlignCenter,
-  IconAlignRight,
-  IconHighlight,
-  IconPalette,
-  IconArrowRightCircle,
-  IconArrowLeftCircle,
-  IconChecks,
+  IconRuler,
+  IconStrikethrough,
+  IconTable,
+  IconTableMinus,
+  IconTablePlus,
   IconTrash,
-  IconChevronDown,
+  IconUnderline,
 } from '@tabler/icons-react';
 
 const lowlight = createLowlight(common);
@@ -76,14 +70,14 @@ interface RichTextEditorProps {
 }
 
 export default function RichTextEditor({
-  content,
-  onChange,
-  placeholder = 'Start typing...',
-  editable = true,
-  minHeight = '300px',
-  maxHeight = '600px',
-  className = '',
-}: RichTextEditorProps) {
+                                         content,
+                                         onChange,
+                                         placeholder = 'Start typing...',
+                                         editable = true,
+                                         minHeight = '300px',
+                                         maxHeight = '600px',
+                                         className = '',
+                                       }: RichTextEditorProps) {
   const [urlModalOpen, setUrlModalOpen] = useState(false);
   const [urlModalType, setUrlModalType] = useState<'image' | 'link'>('image');
   const [urlInput, setUrlInput] = useState('');
@@ -131,7 +125,7 @@ export default function RichTextEditor({
     content: content as Record<string, unknown>,
     editable,
     immediatelyRender: false,
-    onUpdate: ({ editor }) => {
+    onUpdate: ({editor}) => {
       onChange(editor.getJSON());
     },
   });
@@ -152,7 +146,7 @@ export default function RichTextEditor({
     if (!urlInput.trim() || !editor) return;
 
     if (urlModalType === 'image') {
-      editor.chain().focus().setImage({ src: urlInput }).run();
+      editor.chain().focus().setImage({src: urlInput}).run();
     } else {
       if (editor.isActive('link')) {
         editor.chain().focus().extendMarkRange('link').unsetLink().run();
@@ -161,7 +155,7 @@ export default function RichTextEditor({
           .chain()
           .focus()
           .extendMarkRange('link')
-          .setLink({ href: urlInput })
+          .setLink({href: urlInput})
           .run();
       }
     }
@@ -175,7 +169,7 @@ export default function RichTextEditor({
     editor
       .chain()
       .focus()
-      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+      .insertTable({rows: 3, cols: 3, withHeaderRow: true})
       .run();
   }, [editor]);
 
@@ -208,7 +202,7 @@ export default function RichTextEditor({
     return (
       <div
         className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 flex items-center justify-center"
-        style={{ minHeight }}
+        style={{minHeight}}
       >
         <div className="text-[var(--text-muted)]">Loading editor...</div>
       </div>
@@ -218,7 +212,8 @@ export default function RichTextEditor({
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Toolbar */}
-      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border border-b-0 border-[var(--border-strong)] bg-[var(--bg-surface)] p-2 dark:border-surface-700 dark:bg-surface-950">
+      <div
+        className="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border border-b-0 border-[var(--border-strong)] bg-[var(--bg-surface)] p-2 dark:border-surface-700 dark:bg-surface-950">
         {/* Text Formatting */}
         <div className="flex items-center gap-1">
           <Tooltip label="Bold" position="bottom">
@@ -228,7 +223,7 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().toggleBold().run()}
               disabled={!editor.can().chain().focus().toggleBold().run()}
             >
-              <IconBold size={16} />
+              <IconBold size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Italic" position="bottom">
@@ -238,7 +233,7 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().toggleItalic().run()}
               disabled={!editor.can().chain().focus().toggleItalic().run()}
             >
-              <IconItalic size={16} />
+              <IconItalic size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Underline" position="bottom">
@@ -247,7 +242,7 @@ export default function RichTextEditor({
               variant={editor.isActive('underline') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleUnderline().run()}
             >
-              <IconUnderline size={16} />
+              <IconUnderline size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Strikethrough" position="bottom">
@@ -257,7 +252,7 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().toggleStrike().run()}
               disabled={!editor.can().chain().focus().toggleStrike().run()}
             >
-              <IconStrikethrough size={16} />
+              <IconStrikethrough size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Code" position="bottom">
@@ -267,12 +262,12 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().toggleCode().run()}
               disabled={!editor.can().chain().focus().toggleCode().run()}
             >
-              <IconCode size={16} />
+              <IconCode size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Headings */}
         <div className="flex items-center gap-1">
@@ -280,44 +275,44 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive('heading', { level: 1 }) ? 'filled' : 'default'
+                editor.isActive('heading', {level: 1}) ? 'filled' : 'default'
               }
               onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 1 }).run()
+                editor.chain().focus().toggleHeading({level: 1}).run()
               }
             >
-              <IconH1 size={16} />
+              <IconH1 size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Heading 2" position="bottom">
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive('heading', { level: 2 }) ? 'filled' : 'default'
+                editor.isActive('heading', {level: 2}) ? 'filled' : 'default'
               }
               onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 2 }).run()
+                editor.chain().focus().toggleHeading({level: 2}).run()
               }
             >
-              <IconH2 size={16} />
+              <IconH2 size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Heading 3" position="bottom">
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive('heading', { level: 3 }) ? 'filled' : 'default'
+                editor.isActive('heading', {level: 3}) ? 'filled' : 'default'
               }
               onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 3 }).run()
+                editor.chain().focus().toggleHeading({level: 3}).run()
               }
             >
-              <IconH3 size={16} />
+              <IconH3 size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Lists */}
         <div className="flex items-center gap-1">
@@ -327,7 +322,7 @@ export default function RichTextEditor({
               variant={editor.isActive('bulletList') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleBulletList().run()}
             >
-              <IconList size={16} />
+              <IconList size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Ordered List" position="bottom">
@@ -336,7 +331,7 @@ export default function RichTextEditor({
               variant={editor.isActive('orderedList') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
             >
-              <IconListNumbers size={16} />
+              <IconListNumbers size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Task List" position="bottom">
@@ -345,12 +340,12 @@ export default function RichTextEditor({
               variant={editor.isActive('taskList') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleTaskList().run()}
             >
-              <IconChecks size={16} />
+              <IconChecks size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Block Elements */}
         <div className="flex items-center gap-1">
@@ -360,7 +355,7 @@ export default function RichTextEditor({
               variant={editor.isActive('blockquote') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
             >
-              <IconBlockquote size={16} />
+              <IconBlockquote size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Code Block" position="bottom">
@@ -369,7 +364,7 @@ export default function RichTextEditor({
               variant={editor.isActive('codeBlock') ? 'filled' : 'default'}
               onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             >
-              <IconCode size={16} />
+              <IconCode size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Horizontal Rule" position="bottom">
@@ -377,12 +372,12 @@ export default function RichTextEditor({
               size="sm"
               onClick={() => editor.chain().focus().setHorizontalRule().run()}
             >
-              <IconRuler size={16} />
+              <IconRuler size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Link & Image */}
         <div className="flex items-center gap-1">
@@ -392,17 +387,17 @@ export default function RichTextEditor({
               variant={editor.isActive('link') ? 'filled' : 'default'}
               onClick={addLink}
             >
-              <IconLink size={16} />
+              <IconLink size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Image" position="bottom">
             <ActionIcon size="sm" onClick={addImage}>
-              <IconPhoto size={16} />
+              <IconPhoto size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Table Operations */}
         <Menu shadow="md" trigger="hover" openDelay={100} closeDelay={400}>
@@ -413,37 +408,37 @@ export default function RichTextEditor({
                 variant={editor.isActive('table') ? 'filled' : 'default'}
               >
                 <div className="flex items-center gap-0.5">
-                  <IconTable size={16} />
-                  <IconChevronDown size={12} />
+                  <IconTable size={16}/>
+                  <IconChevronDown size={12}/>
                 </div>
               </ActionIcon>
             </Tooltip>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item onClick={insertTable} leftSection={<IconTablePlus size={14} />}>
+            <Menu.Item onClick={insertTable} leftSection={<IconTablePlus size={14}/>}>
               Insert Table
             </Menu.Item>
-            <Menu.Item onClick={deleteTable} leftSection={<IconTableMinus size={14} />}>
+            <Menu.Item onClick={deleteTable} leftSection={<IconTableMinus size={14}/>}>
               Delete Table
             </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item onClick={addTableRowBelow} leftSection={<IconRowInsertBottom size={14} />}>
+            <Menu.Divider/>
+            <Menu.Item onClick={addTableRowBelow} leftSection={<IconRowInsertBottom size={14}/>}>
               Add Row Below
             </Menu.Item>
-            <Menu.Item onClick={deleteTableRow} leftSection={<IconRowRemove size={14} />}>
+            <Menu.Item onClick={deleteTableRow} leftSection={<IconRowRemove size={14}/>}>
               Delete Row
             </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item onClick={addTableColumnRight} leftSection={<IconColumnInsertRight size={14} />}>
+            <Menu.Divider/>
+            <Menu.Item onClick={addTableColumnRight} leftSection={<IconColumnInsertRight size={14}/>}>
               Add Column Right
             </Menu.Item>
-            <Menu.Item onClick={deleteTableColumn} leftSection={<IconColumnRemove size={14} />}>
+            <Menu.Item onClick={deleteTableColumn} leftSection={<IconColumnRemove size={14}/>}>
               Delete Column
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Text Align */}
         <div className="flex items-center gap-1">
@@ -451,44 +446,44 @@ export default function RichTextEditor({
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive({ textAlign: 'left' }) ? 'filled' : 'default'
+                editor.isActive({textAlign: 'left'}) ? 'filled' : 'default'
               }
               onClick={() =>
                 editor.chain().focus().setTextAlign('left').run()
               }
             >
-              <IconAlignLeft size={16} />
+              <IconAlignLeft size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Align Center" position="bottom">
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive({ textAlign: 'center' }) ? 'filled' : 'default'
+                editor.isActive({textAlign: 'center'}) ? 'filled' : 'default'
               }
               onClick={() =>
                 editor.chain().focus().setTextAlign('center').run()
               }
             >
-              <IconAlignCenter size={16} />
+              <IconAlignCenter size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Align Right" position="bottom">
             <ActionIcon
               size="sm"
               variant={
-                editor.isActive({ textAlign: 'right' }) ? 'filled' : 'default'
+                editor.isActive({textAlign: 'right'}) ? 'filled' : 'default'
               }
               onClick={() =>
                 editor.chain().focus().setTextAlign('right').run()
               }
             >
-              <IconAlignRight size={16} />
+              <IconAlignRight size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Highlight & Color */}
         <Menu shadow="md" trigger="hover" openDelay={100} closeDelay={400}>
@@ -498,7 +493,7 @@ export default function RichTextEditor({
                 size="sm"
                 variant={editor.isActive('highlight') ? 'filled' : 'default'}
               >
-                <IconHighlight size={16} />
+                <IconHighlight size={16}/>
               </ActionIcon>
             </Tooltip>
           </Menu.Target>
@@ -512,7 +507,7 @@ export default function RichTextEditor({
                   editor
                     .chain()
                     .focus()
-                    .toggleHighlight({ color })
+                    .toggleHighlight({color})
                     .run();
                 }}
                 size="xs"
@@ -535,7 +530,7 @@ export default function RichTextEditor({
           <Menu.Target>
             <Tooltip label="Text Color" position="bottom">
               <ActionIcon size="sm">
-                <IconPalette size={16} />
+                <IconPalette size={16}/>
               </ActionIcon>
             </Tooltip>
           </Menu.Target>
@@ -562,7 +557,7 @@ export default function RichTextEditor({
           </Menu.Dropdown>
         </Menu>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Undo/Redo */}
         <div className="flex items-center gap-1">
@@ -572,7 +567,7 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().undo()}
             >
-              <IconArrowLeftCircle size={16} />
+              <IconArrowLeftCircle size={16}/>
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Redo" position="bottom">
@@ -581,12 +576,12 @@ export default function RichTextEditor({
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
             >
-              <IconArrowRightCircle size={16} />
+              <IconArrowRightCircle size={16}/>
             </ActionIcon>
           </Tooltip>
         </div>
 
-        <Divider orientation="vertical" />
+        <Divider orientation="vertical"/>
 
         {/* Clear */}
         <Tooltip label="Clear Formatting" position="bottom">
@@ -594,7 +589,7 @@ export default function RichTextEditor({
             size="sm"
             onClick={() => editor.chain().focus().clearNodes().run()}
           >
-            <IconTrash size={16} />
+            <IconTrash size={16}/>
           </ActionIcon>
         </Tooltip>
       </div>
@@ -602,9 +597,9 @@ export default function RichTextEditor({
       {/* Editor */}
       <div
         className="tiptap-editor rounded-b-lg border border-t-0 border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700"
-        style={{ minHeight, maxHeight, overflow: 'auto' }}
+        style={{minHeight, maxHeight, overflow: 'auto'}}
       >
-        <EditorContent editor={editor} />
+        <EditorContent editor={editor}/>
       </div>
 
       {/* URL Input Modal */}

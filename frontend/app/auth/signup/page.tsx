@@ -1,26 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { apiClient } from '@/lib/api/client';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import {
-  Building2,
-  User,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  AlertCircle,
-  CheckCircle2,
-  Hash,
-} from 'lucide-react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {apiClient} from '@/lib/api/client';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {AlertCircle, Building2, CheckCircle2, Eye, EyeOff, Hash, Lock, Mail, User,} from 'lucide-react';
 
 const signupSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters').max(200),
@@ -52,7 +42,7 @@ export default function SignupPage() {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: {errors},
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     mode: 'onChange',
@@ -75,7 +65,7 @@ export default function SignupPage() {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .slice(0, 50);
-    setValue('companyCode', slug, { shouldValidate: true });
+    setValue('companyCode', slug, {shouldValidate: true});
   };
 
   const onSubmit = async (data: SignupFormData) => {
@@ -105,7 +95,8 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -125,11 +116,13 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <Card className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
+          <Card
+            className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
             <CardContent className="pt-8 pb-8 text-center space-y-4">
               <div className="flex justify-center">
-                <div className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-success-600 dark:text-success-400" />
+                <div
+                  className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-success-600 dark:text-success-400"/>
                 </div>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -153,7 +146,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -173,7 +167,8 @@ export default function SignupPage() {
         </div>
 
         {/* Signup Card */}
-        <Card className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
+        <Card
+          className="skeuo-card bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl skeuo-emboss">Create your account</CardTitle>
             <CardDescription>Start your free trial — no credit card required</CardDescription>
@@ -182,16 +177,18 @@ export default function SignupPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Error */}
               {error && (
-                <div className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+                <div
+                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
                   <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
                 </div>
               )}
 
               {/* Company Section */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
-                  <Building2 className="w-4 h-4" />
+                <h3
+                  className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
+                  <Building2 className="w-4 h-4"/>
                   Company Details
                 </h3>
 
@@ -225,7 +222,7 @@ export default function SignupPage() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Hash className="h-4 w-4 text-[var(--text-muted)]" />
+                      <Hash className="h-4 w-4 text-[var(--text-muted)]"/>
                     </div>
                     <input
                       {...register('companyCode')}
@@ -246,8 +243,9 @@ export default function SignupPage() {
 
               {/* Admin Account Section */}
               <div className="space-y-4 pt-2">
-                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
-                  <User className="w-4 h-4" />
+                <h3
+                  className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
+                  <User className="w-4 h-4"/>
                   Admin Account
                 </h3>
 
@@ -298,7 +296,7 @@ export default function SignupPage() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-[var(--text-muted)]" />
+                      <Mail className="h-5 w-5 text-[var(--text-muted)]"/>
                     </div>
                     <input
                       {...register('adminEmail')}
@@ -325,7 +323,7 @@ export default function SignupPage() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-[var(--text-muted)]" />
+                      <Lock className="h-5 w-5 text-[var(--text-muted)]"/>
                     </div>
                     <input
                       {...register('password')}
@@ -344,7 +342,7 @@ export default function SignupPage() {
                       className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
                       tabIndex={-1}
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? <EyeOff className="h-5 w-5"/> : <Eye className="h-5 w-5"/>}
                     </button>
                   </div>
                   {errors.password && (

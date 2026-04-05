@@ -1,31 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { notifications } from '@mantine/notifications';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { createJobOpeningSchema, CreateJobOpeningFormData } from '@/lib/validations/recruitment';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {notifications} from '@mantine/notifications';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {CreateJobOpeningFormData, createJobOpeningSchema} from '@/lib/validations/recruitment';
 import {
-  useJobOpenings,
   useCreateJobOpening,
-  useUpdateJobOpening,
   useDeleteJobOpening,
   useGenerateJobDescription,
+  useJobOpenings,
+  useUpdateJobOpening,
 } from '@/lib/hooks/queries/useRecruitment';
-import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { JobOpening, JobStatus, Priority, CreateJobOpeningRequest } from '@/lib/types/hire/recruitment';
-import { Department } from '@/lib/types/hrms/employee';
-import { JobDescriptionResponse } from '@/lib/types/hire/ai-recruitment';
-import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Eye, Edit2, Trash2, X, Sparkles } from 'lucide-react';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
+import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {CreateJobOpeningRequest, JobOpening, JobStatus, Priority} from '@/lib/types/hire/recruitment';
+import {Department} from '@/lib/types/hrms/employee';
+import {JobDescriptionResponse} from '@/lib/types/hire/ai-recruitment';
+import {
+  Briefcase,
+  Calendar,
+  DollarSign,
+  Edit2,
+  Eye,
+  MapPin,
+  Plus,
+  Search,
+  Sparkles,
+  Trash2,
+  Users,
+  X
+} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
@@ -40,8 +53,8 @@ export default function JobOpeningsPage() {
 
   // React Query hooks (already being used)
   const jobOpeningsQuery = useJobOpenings(0, 100);
-  const { data: departments } = useActiveDepartments();
-  const { data: employeesData } = useEmployees(0, 100);
+  const {data: departments} = useActiveDepartments();
+  const {data: employeesData} = useEmployees(0, 100);
   const createMutation = useCreateJobOpening();
   const updateMutation = useUpdateJobOpening();
   const deleteMutation = useDeleteJobOpening();
@@ -75,13 +88,13 @@ export default function JobOpeningsPage() {
     },
   });
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = form;
+  const {register, handleSubmit, formState: {errors}, watch, setValue, reset} = form;
 
   const onSubmit = async (data: CreateJobOpeningFormData) => {
     try {
       const payload = data as CreateJobOpeningRequest;
       if (editingJob) {
-        await updateMutation.mutateAsync({ id: editingJob.id, data: payload });
+        await updateMutation.mutateAsync({id: editingJob.id, data: payload});
         notifications.show({
           title: 'Success',
           message: 'Job opening updated successfully',
@@ -101,7 +114,9 @@ export default function JobOpeningsPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save job opening',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to save job opening',
         color: 'red',
       });
     }
@@ -146,7 +161,9 @@ export default function JobOpeningsPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete job opening',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to delete job opening',
         color: 'red',
       });
     }
@@ -179,7 +196,9 @@ export default function JobOpeningsPage() {
     } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate job description',
+        message: (err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to generate job description',
         color: 'red',
       });
       setShowAiModal(false);
@@ -215,42 +234,58 @@ export default function JobOpeningsPage() {
 
   const getStatusColor = (status: JobStatus) => {
     switch (status) {
-      case 'OPEN': return 'bg-success-100 text-success-800';
-      case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-      case 'ON_HOLD': return 'bg-warning-100 text-warning-800';
-      case 'CLOSED': return 'bg-accent-100 text-accent-800';
-      case 'CANCELLED': return 'bg-danger-100 text-danger-800';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      case 'OPEN':
+        return 'bg-success-100 text-success-800';
+      case 'DRAFT':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      case 'ON_HOLD':
+        return 'bg-warning-100 text-warning-800';
+      case 'CLOSED':
+        return 'bg-accent-100 text-accent-800';
+      case 'CANCELLED':
+        return 'bg-danger-100 text-danger-800';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
   };
 
   const getPriorityColor = (priority?: Priority) => {
     switch (priority) {
-      case 'URGENT': return 'bg-danger-100 text-danger-800';
-      case 'HIGH': return 'bg-warning-100 text-warning-800';
-      case 'MEDIUM': return 'bg-accent-100 text-accent-800';
-      case 'LOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      case 'URGENT':
+        return 'bg-danger-100 text-danger-800';
+      case 'HIGH':
+        return 'bg-warning-100 text-warning-800';
+      case 'MEDIUM':
+        return 'bg-accent-100 text-accent-800';
+      case 'LOW':
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
+      default:
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
   };
 
   return (
     <AppLayout activeMenuItem="recruitment">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 20}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
         className="p-6 space-y-6"
       >
         {/* Header */}
         <div className="row-between">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
-            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment positions</p>
+            <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment
+              positions</p>
           </div>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
-            <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
+            <Button onClick={() => {
+              reset();
+              setEditingJob(null);
+              setShowAddModal(true);
+            }} className="flex items-center gap-2">
+              <Plus className="h-4 w-4"/>
               Create Job Opening
             </Button>
           </PermissionGate>
@@ -258,87 +293,87 @@ export default function JobOpeningsPage() {
 
         {/* Stats Cards */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, staggerChildren: 0.05, delayChildren: 0.1 }}
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          transition={{duration: 0.3, staggerChildren: 0.05, delayChildren: 0.1}}
           className="grid grid-cols-1 md:grid-cols-4 gap-4"
         >
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.2, ease: 'easeOut'}}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-accent-700" />
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-accent-700"/>
+                  </div>
+                  <div>
+                    <p className="text-body-muted">Total Jobs</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-muted">Total Jobs</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-            </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.2, ease: 'easeOut'}}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-success-600" />
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-success-600"/>
+                  </div>
+                  <div>
+                    <p className="text-body-muted">Open</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.open}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-muted">Open</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.open}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-            </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.2, ease: 'easeOut'}}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-[var(--text-secondary)]" />
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-[var(--text-secondary)]"/>
+                  </div>
+                  <div>
+                    <p className="text-body-muted">Draft</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-muted">Draft</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-            </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.2, ease: 'easeOut'}}
           >
             <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-accent-600" />
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-accent-600"/>
+                  </div>
+                  <div>
+                    <p className="text-body-muted">Closed</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-body-muted">Closed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-            </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* Error */}
@@ -355,7 +390,7 @@ export default function JobOpeningsPage() {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="text"
                   placeholder="Search job openings..."
@@ -385,117 +420,124 @@ export default function JobOpeningsPage() {
           <div className="text-center py-12 text-[var(--text-muted)]">Loading job openings...</div>
         ) : filteredJobs.length === 0 ? (
           <EmptyState
-            icon={<Briefcase className="h-8 w-8" />}
+            icon={<Briefcase className="h-8 w-8"/>}
             title="No job openings found"
             description={searchQuery || statusFilter ? "Try adjusting your search filters or create a new job opening" : "Get started by creating your first job opening"}
             action={{
               label: 'Create Job Opening',
-              onClick: () => { reset(); setEditingJob(null); setShowAddModal(true); },
+              onClick: () => {
+                reset();
+                setEditingJob(null);
+                setShowAddModal(true);
+              },
             }}
             iconColor="gray"
             iconSize={64}
           />
         ) : (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, staggerChildren: 0.05, delayChildren: 0.15 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{duration: 0.3, staggerChildren: 0.05, delayChildren: 0.15}}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           >
             {filteredJobs.map((job, _index) => (
               <motion.div
                 key={job.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
+                initial={{opacity: 0, y: 10}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.2, ease: 'easeOut'}}
               >
-              <Card className="bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
-                      <p className="text-body-muted">{job.jobCode}</p>
-                    </div>
-                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
+                <Card className="bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
+                        <p className="text-body-muted">{job.jobCode}</p>
+                      </div>
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
                       {job.status}
                     </span>
-                  </div>
+                    </div>
 
-                  <div className="space-y-2 mb-4">
-                    {job.departmentName && (
-                      <div className="flex items-center gap-2 text-body-secondary">
-                        <Users className="h-4 w-4" />
-                        <span>{job.departmentName}</span>
-                      </div>
-                    )}
-                    {job.location && (
-                      <div className="flex items-center gap-2 text-body-secondary">
-                        <MapPin className="h-4 w-4" />
-                        <span>{job.location}</span>
-                      </div>
-                    )}
-                    {(job.minSalary || job.maxSalary) && (
-                      <div className="flex items-center gap-2 text-body-secondary">
-                        <DollarSign className="h-4 w-4" />
-                        <span>
+                    <div className="space-y-2 mb-4">
+                      {job.departmentName && (
+                        <div className="flex items-center gap-2 text-body-secondary">
+                          <Users className="h-4 w-4"/>
+                          <span>{job.departmentName}</span>
+                        </div>
+                      )}
+                      {job.location && (
+                        <div className="flex items-center gap-2 text-body-secondary">
+                          <MapPin className="h-4 w-4"/>
+                          <span>{job.location}</span>
+                        </div>
+                      )}
+                      {(job.minSalary || job.maxSalary) && (
+                        <div className="flex items-center gap-2 text-body-secondary">
+                          <DollarSign className="h-4 w-4"/>
+                          <span>
                           {job.minSalary && job.maxSalary
                             ? `${job.minSalary.toLocaleString()} - ${job.maxSalary.toLocaleString()}`
                             : job.minSalary?.toLocaleString() || job.maxSalary?.toLocaleString()}
                         </span>
-                      </div>
-                    )}
-                    {job.closingDate && (
-                      <div className="flex items-center gap-2 text-body-secondary">
-                        <Calendar className="h-4 w-4" />
-                        <span>Closes: {new Date(job.closingDate).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                  </div>
+                        </div>
+                      )}
+                      {job.closingDate && (
+                        <div className="flex items-center gap-2 text-body-secondary">
+                          <Calendar className="h-4 w-4"/>
+                          <span>Closes: {new Date(job.closingDate).toLocaleDateString()}</span>
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="row-between pt-4 border-t border-[var(--border-main)]">
-                    <div className="flex items-center gap-2">
-                      {job.priority && (
-                        <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(job.priority)}`}>
+                    <div className="row-between pt-4 border-t border-[var(--border-main)]">
+                      <div className="flex items-center gap-2">
+                        {job.priority && (
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(job.priority)}`}>
                           {job.priority}
                         </span>
-                      )}
-                      {job.numberOfOpenings && (
-                        <span className="text-caption">
+                        )}
+                        {job.numberOfOpenings && (
+                          <span className="text-caption">
                           {job.numberOfOpenings} position{job.numberOfOpenings > 1 ? 's' : ''}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                        title="View Candidates"
-                        aria-label="View candidates"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleEdit(job)}
-                        className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                        title="Edit"
-                        aria-label="Edit job"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
                         <button
-                          onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
-                          className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          title="Delete"
-                          aria-label="Delete job"
+                          onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
+                          className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          title="View Candidates"
+                          aria-label="View candidates"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Eye className="h-4 w-4"/>
                         </button>
-                      </PermissionGate>
+                        <button
+                          onClick={() => handleEdit(job)}
+                          className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          title="Edit"
+                          aria-label="Edit job"
+                        >
+                          <Edit2 className="h-4 w-4"/>
+                        </button>
+                        <PermissionGate permission={Permissions.RECRUITMENT_MANAGE}>
+                          <button
+                            onClick={() => {
+                              setJobToDelete(job);
+                              setShowDeleteModal(true);
+                            }}
+                            className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            title="Delete"
+                            aria-label="Delete job"
+                          >
+                            <Trash2 className="h-4 w-4"/>
+                          </button>
+                        </PermissionGate>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </motion.div>
@@ -504,14 +546,20 @@ export default function JobOpeningsPage() {
         {/* Add/Edit Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} aria-label="Close modal" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                    <X className="h-6 w-6" />
+                  <button onClick={() => {
+                    setShowAddModal(false);
+                    reset();
+                    setEditingJob(null);
+                  }} aria-label="Close modal"
+                          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    <X className="h-6 w-6"/>
                   </button>
                 </div>
 
@@ -551,10 +599,12 @@ export default function JobOpeningsPage() {
                           <option key={dept.id} value={dept.id}>{dept.name}</option>
                         ))}
                       </select>
-                      {errors.departmentId && <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
+                      {errors.departmentId &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring Manager</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring
+                        Manager</label>
                       <select
                         {...register('hiringManagerId')}
                         className="input-aura"
@@ -564,7 +614,8 @@ export default function JobOpeningsPage() {
                           <option key={mgr.id} value={mgr.id}>{mgr.fullName}</option>
                         ))}
                       </select>
-                      {errors.hiringManagerId && <p className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
+                      {errors.hiringManagerId &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
                     </div>
                   </div>
 
@@ -580,7 +631,8 @@ export default function JobOpeningsPage() {
                       {errors.location && <p className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment Type</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment
+                        Type</label>
                       <select
                         {...register('employmentType')}
                         className="input-aura"
@@ -591,17 +643,20 @@ export default function JobOpeningsPage() {
                         <option value="TEMPORARY">Temporary</option>
                         <option value="INTERNSHIP">Internship</option>
                       </select>
-                      {errors.employmentType && <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
+                      {errors.employmentType &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of Openings</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of
+                        Openings</label>
                       <input
                         type="number"
                         min="1"
                         {...register('numberOfOpenings')}
                         className="input-aura"
                       />
-                      {errors.numberOfOpenings && <p className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
+                      {errors.numberOfOpenings &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
                   </div>
 
@@ -627,14 +682,16 @@ export default function JobOpeningsPage() {
                       {errors.maxSalary && <p className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience Required</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
+                        Required</label>
                       <input
                         type="text"
                         {...register('experienceRequired')}
                         className="input-aura"
                         placeholder="3-5 years"
                       />
-                      {errors.experienceRequired && <p className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
+                      {errors.experienceRequired &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
                     </div>
                   </div>
 
@@ -667,13 +724,15 @@ export default function JobOpeningsPage() {
                       {errors.priority && <p className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing Date</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing
+                        Date</label>
                       <input
                         type="date"
                         {...register('closingDate')}
                         className="input-aura"
                       />
-                      {errors.closingDate && <p className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
+                      {errors.closingDate &&
+                        <p className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
                     </div>
                   </div>
 
@@ -686,7 +745,7 @@ export default function JobOpeningsPage() {
                         disabled={generateJDMutation.isPending}
                         className="flex items-center gap-1 text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
-                        <Sparkles className="h-3.5 w-3.5" />
+                        <Sparkles className="h-3.5 w-3.5"/>
                         Generate with AI
                       </button>
                     </div>
@@ -696,7 +755,8 @@ export default function JobOpeningsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
-                    {errors.jobDescription && <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
+                    {errors.jobDescription &&
+                      <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>
@@ -707,25 +767,32 @@ export default function JobOpeningsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="List the requirements..."
                     />
-                    {errors.requirements && <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
+                    {errors.requirements &&
+                      <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Skills Required</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Skills
+                      Required</label>
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
-                    {errors.skillsRequired && <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
+                    {errors.skillsRequired &&
+                      <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }}
+                      onClick={() => {
+                        setShowAddModal(false);
+                        reset();
+                        setEditingJob(null);
+                      }}
                       className="flex-1"
                     >
                       Cancel
@@ -747,20 +814,25 @@ export default function JobOpeningsPage() {
         {/* Delete Modal */}
         {showDeleteModal && jobToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-danger-600" />
+                  <Trash2 className="h-6 w-6 text-danger-600"/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
               </div>
               <p className="text-body-muted mb-6">
-                Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
+                Are you sure you want to delete <strong
+                className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-4">
                 <Button
                   variant="outline"
-                  onClick={() => { setShowDeleteModal(false); setJobToDelete(null); }}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setJobToDelete(null);
+                  }}
                   className="flex-1"
                   disabled={deleteMutation.isPending}
                 >
@@ -782,25 +854,30 @@ export default function JobOpeningsPage() {
         {/* AI Generated Job Description Modal */}
         {showAiModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
+            <div
+              className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-accent-700" />
+                    <Sparkles className="h-6 w-6 text-accent-700"/>
                     Generated Job Description
                   </h2>
                   <button
-                    onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
+                    onClick={() => {
+                      setShowAiModal(false);
+                      setAiGeneratedJD(null);
+                    }}
                     aria-label="Close modal"
                     className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
-                    <X className="h-6 w-6" />
+                    <X className="h-6 w-6"/>
                   </button>
                 </div>
 
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto mb-4"></div>
+                    <div
+                      className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto mb-4"></div>
                     <p className="text-[var(--text-muted)]">Generating job description with AI...</p>
                   </div>
                 ) : aiGeneratedJD ? (
@@ -836,7 +913,8 @@ export default function JobOpeningsPage() {
 
                     {aiGeneratedJD.preferredQualifications && aiGeneratedJD.preferredQualifications.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred Qualifications</h3>
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred
+                          Qualifications</h3>
                         <ul className="list-disc list-inside space-y-1 text-body-secondary">
                           {aiGeneratedJD.preferredQualifications.map((q, i) => (
                             <li key={i}>{q}</li>
@@ -860,7 +938,10 @@ export default function JobOpeningsPage() {
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
+                        onClick={() => {
+                          setShowAiModal(false);
+                          setAiGeneratedJD(null);
+                        }}
                         className="flex-1"
                       >
                         Discard

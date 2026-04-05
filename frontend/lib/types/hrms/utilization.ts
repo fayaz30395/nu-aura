@@ -248,4 +248,4 @@ export const formatPercentage = (rate: number): string => {
   return `${rate.toFixed(1)}%`;
 };
 
-export { formatCurrency } from '@/lib/utils';
+export {formatCurrency} from '@/lib/utils';

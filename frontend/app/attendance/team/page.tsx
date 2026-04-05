@@ -1,42 +1,42 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
-  Users,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  Clock,
-  Printer,
-  RefreshCw,
-  Grid3X3,
-  List,
-  Download,
-  Smartphone,
-  Globe,
-  Fingerprint,
+  ArrowLeft,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
-  ArrowLeft,
+  Clock,
+  Download,
+  Fingerprint,
+  Globe,
+  Grid3X3,
+  List,
+  Printer,
+  RefreshCw,
+  Smartphone,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { SkeletonStatCard, SkeletonTable, SkeletonCard } from '@/components/ui/Skeleton';
-import { AttendanceRecord } from '@/lib/types/hrms/attendance';
-import { getLocalDateString } from '@/lib/utils/dateUtils';
-import { useAttendanceByDate } from '@/lib/hooks/queries/useAttendance';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { useAuth } from '@/lib/hooks/useAuth';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {SkeletonCard, SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
+import {AttendanceRecord} from '@/lib/types/hrms/attendance';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
+import {useAttendanceByDate} from '@/lib/hooks/queries/useAttendance';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import dynamic from 'next/dynamic';
-import { ChartLoadingFallback } from '@/lib/utils/lazy-components';
+import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 
 const TeamStatusChart = dynamic(
   () => import('./TeamStatusChart'),
-  { loading: () => <ChartLoadingFallback />, ssr: false }
+  {loading: () => <ChartLoadingFallback/>, ssr: false}
 );
 
 interface StatusStats {
@@ -55,8 +55,8 @@ interface SortConfig {
 
 export default function TeamAttendancePage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // BUG-L6-007: Page-level permission gate for team attendance
   useEffect(() => {
@@ -74,9 +74,9 @@ export default function TeamAttendancePage() {
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({key: null, direction: 'asc'});
 
-  const { data: attendanceResponse, isLoading: loading, error, refetch } = useAttendanceByDate(
+  const {data: attendanceResponse, isLoading: loading, error, refetch} = useAttendanceByDate(
     selectedDate,
     0,
     100
@@ -101,7 +101,7 @@ export default function TeamAttendancePage() {
     const halfDay = records.filter(r => r.status === 'HALF_DAY').length;
     const total = records.length;
 
-    return { present, absent, late, onLeave, halfDay, total };
+    return {present, absent, late, onLeave, halfDay, total};
   };
 
   const stats = calculateStats();
@@ -146,10 +146,10 @@ export default function TeamAttendancePage() {
   };
 
   const chartData = [
-    { name: 'Present', value: stats.present, fill: 'var(--chart-success)' },
-    { name: 'Absent', value: stats.absent, fill: 'var(--chart-danger)' },
-    { name: 'Late', value: stats.late, fill: 'var(--chart-accent)' },
-    { name: 'Leave', value: stats.onLeave, fill: 'var(--chart-info)' },
+    {name: 'Present', value: stats.present, fill: 'var(--chart-success)'},
+    {name: 'Absent', value: stats.absent, fill: 'var(--chart-danger)'},
+    {name: 'Late', value: stats.late, fill: 'var(--chart-accent)'},
+    {name: 'Leave', value: stats.onLeave, fill: 'var(--chart-info)'},
   ].filter(item => item.value > 0);
 
   const exportToCSV = () => {
@@ -165,7 +165,7 @@ export default function TeamAttendancePage() {
     ]);
 
     const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -179,9 +179,9 @@ export default function TeamAttendancePage() {
   const getSourceIcon = (source?: string) => {
     if (!source) return null;
     const sourceUpper = source.toUpperCase();
-    if (sourceUpper.includes('MOBILE')) return <Smartphone className="h-4 w-4" />;
-    if (sourceUpper.includes('WEB')) return <Globe className="h-4 w-4" />;
-    if (sourceUpper.includes('BIOMETRIC')) return <Fingerprint className="h-4 w-4" />;
+    if (sourceUpper.includes('MOBILE')) return <Smartphone className="h-4 w-4"/>;
+    if (sourceUpper.includes('WEB')) return <Globe className="h-4 w-4"/>;
+    if (sourceUpper.includes('BIOMETRIC')) return <Fingerprint className="h-4 w-4"/>;
     return null;
   };
 
@@ -210,24 +210,29 @@ export default function TeamAttendancePage() {
     <AppLayout activeMenuItem="attendance">
       <motion.div
         className="space-y-8"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header with Breadcrumb */}
         <div className="flex flex-col gap-4">
           <motion.button
             onClick={() => router.push('/attendance')}
             className="flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors w-fit"
-            whileHover={{ x: -2 }}
+            whileHover={{x: -2}}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4"/>
             Back to Attendance
           </motion.button>
           <div>
             <h1 className="text-page-title text-[var(--text-primary)]">Team Attendance</h1>
             <p className="text-[var(--text-muted)] text-sm mt-2">
-              Monitor your team&apos;s attendance records for {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              Monitor your team&apos;s attendance records for {new Date(selectedDate).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
             </p>
           </div>
         </div>
@@ -236,12 +241,13 @@ export default function TeamAttendancePage() {
         {error && (
           <motion.div
             className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-2"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: -8}}
+            animate={{opacity: 1, y: 0}}
           >
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
             <div className="flex-1">
-              <p className="text-sm text-danger-800 dark:text-danger-300">{error?.message || 'Failed to load team attendance.'}</p>
+              <p
+                className="text-sm text-danger-800 dark:text-danger-300">{error?.message || 'Failed to load team attendance.'}</p>
             </div>
           </motion.div>
         )}
@@ -249,9 +255,9 @@ export default function TeamAttendancePage() {
         {/* Date Navigation Bar */}
         <motion.div
           className="card-aura bg-[var(--bg-card)] rounded-lg px-6 py-4 row-between gap-4 flex-wrap"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.1}}
         >
           <div className="flex items-center gap-4">
             <button
@@ -259,14 +265,14 @@ export default function TeamAttendancePage() {
               className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Previous day"
             >
-              <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]" />
+              <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]"/>
             </button>
             <div className="text-center min-w-max">
               <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {new Date(selectedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                {new Date(selectedDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}
               </p>
               <p className="text-caption">
-                {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'short' })}
+                {new Date(selectedDate).toLocaleDateString('en-US', {weekday: 'short'})}
               </p>
             </div>
             <button
@@ -274,7 +280,7 @@ export default function TeamAttendancePage() {
               className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Next day"
             >
-              <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]" />
+              <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
             </button>
             <Button
               onClick={goToToday}
@@ -293,7 +299,7 @@ export default function TeamAttendancePage() {
               size="sm"
               className="flex items-center gap-2"
             >
-              <List className="h-4 w-4" />
+              <List className="h-4 w-4"/>
               <span className="hidden sm:inline">Table</span>
             </Button>
             <Button
@@ -302,7 +308,7 @@ export default function TeamAttendancePage() {
               size="sm"
               className="flex items-center gap-2"
             >
-              <Grid3X3 className="h-4 w-4" />
+              <Grid3X3 className="h-4 w-4"/>
               <span className="hidden sm:inline">Grid</span>
             </Button>
             <Button
@@ -311,7 +317,7 @@ export default function TeamAttendancePage() {
               size="sm"
               className="flex items-center gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-4 w-4"/>
             </Button>
             <Button
               onClick={exportToCSV}
@@ -319,7 +325,7 @@ export default function TeamAttendancePage() {
               size="sm"
               className="flex items-center gap-2"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4"/>
               <span className="hidden sm:inline">CSV</span>
             </Button>
           </div>
@@ -328,26 +334,27 @@ export default function TeamAttendancePage() {
         {/* Stats Cards */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonStatCard key={i} />
+            {Array.from({length: 4}).map((_, i) => (
+              <SkeletonStatCard key={i}/>
             ))}
           </div>
         ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ staggerChildren: 0.05, delayChildren: 0.15 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{staggerChildren: 0.05, delayChildren: 0.15}}
           >
             {/* Present Card */}
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
             >
               <Card className="card-aura h-full border-l-4 border-l-success-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400" />
+                  <div
+                    className="w-10 h-10 rounded-lg bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400"/>
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-caption uppercase font-medium tracking-wide">Present</p>
@@ -362,13 +369,14 @@ export default function TeamAttendancePage() {
 
             {/* Absent Card */}
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
             >
               <Card className="card-aura h-full border-l-4 border-l-danger-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center">
-                    <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400" />
+                  <div
+                    className="w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center">
+                    <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-caption uppercase font-medium tracking-wide">Absent</p>
@@ -383,13 +391,14 @@ export default function TeamAttendancePage() {
 
             {/* Late Card */}
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
             >
               <Card className="card-aura h-full border-l-4 border-l-warning-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
-                    <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                  <div
+                    className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-caption uppercase font-medium tracking-wide">Late</p>
@@ -404,13 +413,14 @@ export default function TeamAttendancePage() {
 
             {/* On Leave Card */}
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: 8}}
+              animate={{opacity: 1, y: 0}}
             >
               <Card className="card-aura h-full border-l-4 border-l-accent-500">
                 <CardContent className="p-6 flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                  <div
+                    className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-caption uppercase font-medium tracking-wide">On Leave</p>
@@ -428,22 +438,22 @@ export default function TeamAttendancePage() {
         {/* Status Distribution Chart */}
         {!loading && chartData.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.25}}
           >
             <Card className="card-aura">
               <CardHeader>
                 <CardTitle className="text-card-title">Status Distribution</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <TeamStatusChart chartData={chartData} />
+                <TeamStatusChart chartData={chartData}/>
                 <div className="flex flex-wrap gap-4 mt-6 justify-center">
                   {chartData.map((item) => (
                     <div key={item.name} className="flex items-center gap-2">
                       <div
                         className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: item.fill }}
+                        style={{backgroundColor: item.fill}}
                       />
                       <span className="text-xs text-[var(--text-secondary)]">
                         {item.name} ({item.value})
@@ -460,9 +470,9 @@ export default function TeamAttendancePage() {
         {!loading && records.length > 0 && (
           <motion.div
             className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.3}}
           >
             <div className="flex-1">
               <Input
@@ -490,23 +500,25 @@ export default function TeamAttendancePage() {
         {/* Table View */}
         {viewMode === 'table' && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.35}}
           >
             <Card className="card-aura">
               <CardHeader>
                 <CardTitle className="text-card-title flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Team Attendance Records {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
+                  <Users className="h-5 w-5"/>
+                  Team Attendance
+                  Records {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 {loading ? (
-                  <SkeletonTable rows={8} columns={7} />
+                  <SkeletonTable rows={8} columns={7}/>
                 ) : filteredAndSortedRecords.length === 0 ? (
                   <div className="text-center py-12">
-                    <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                    <Users
+                      className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
                     <p className="text-[var(--text-muted)]">
                       {records.length === 0
                         ? 'No attendance records found for this date'
@@ -517,69 +529,83 @@ export default function TeamAttendancePage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead className="bg-[var(--bg-secondary)]/50 border-b border-[var(--border-main)]">
-                        <tr>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('employeeId')}>
-                            Employee {sortConfig.key === 'employeeId' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                          </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('checkInTime')}>
-                            Check In {sortConfig.key === 'checkInTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                          </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('checkOutTime')}>
-                            Check Out {sortConfig.key === 'checkOutTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                          </th>
-                          <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('totalWorkHours')}>
-                            Work Hours {sortConfig.key === 'totalWorkHours' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                          </th>
-                          <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]" onClick={() => handleSort('status')}>
-                            Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                          </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Source
-                          </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Remarks
-                          </th>
-                        </tr>
+                      <tr>
+                        <th
+                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
+                          onClick={() => handleSort('employeeId')}>
+                          Employee {sortConfig.key === 'employeeId' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                        </th>
+                        <th
+                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
+                          onClick={() => handleSort('checkInTime')}>
+                          Check In {sortConfig.key === 'checkInTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                        </th>
+                        <th
+                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
+                          onClick={() => handleSort('checkOutTime')}>
+                          Check Out {sortConfig.key === 'checkOutTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                        </th>
+                        <th
+                          className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
+                          onClick={() => handleSort('totalWorkHours')}>
+                          Work
+                          Hours {sortConfig.key === 'totalWorkHours' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                        </th>
+                        <th
+                          className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
+                          onClick={() => handleSort('status')}>
+                          Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                        </th>
+                        <th
+                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+                          Source
+                        </th>
+                        <th
+                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+                          Remarks
+                        </th>
+                      </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--border-main)]">
-                        {filteredAndSortedRecords.map((record, index) => (
-                          <motion.tr
-                            key={record.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: index * 0.02 }}
-                            className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                          >
-                            <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                              {record.employeeId.substring(0, 12)}
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {formatTime(record.checkInTime)}
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {formatTime(record.checkOutTime)}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <span className="text-[var(--text-secondary)] min-w-max">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
-                                <div className="w-16 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                                  <div
-                                    className="h-full bg-success-500 transition-all"
-                                    style={{
-                                      width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
-                                    }}
-                                  />
-                                </div>
+                      {filteredAndSortedRecords.map((record, index) => (
+                        <motion.tr
+                          key={record.id}
+                          initial={{opacity: 0}}
+                          animate={{opacity: 1}}
+                          transition={{delay: index * 0.02}}
+                          className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
+                        >
+                          <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
+                            {record.employeeId.substring(0, 12)}
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {formatTime(record.checkInTime)}
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {formatTime(record.checkOutTime)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <span
+                                className="text-[var(--text-secondary)] min-w-max">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
+                              <div className="w-16 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-success-500 transition-all"
+                                  style={{
+                                    width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
+                                  }}
+                                />
                               </div>
-                            </td>
-                            <td className="px-6 py-4 text-center">
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
                               <span className={`badge-status ${
                                 record.status === 'PRESENT' ? 'status-success' :
-                                record.status === 'ABSENT' ? 'status-danger' :
-                                record.status === 'LATE' ? 'status-warning' :
-                                record.status === 'LEAVE' ? 'status-info' :
-                                record.status === 'HALF_DAY' ? 'status-warning' :
-                                'status-neutral'
+                                  record.status === 'ABSENT' ? 'status-danger' :
+                                    record.status === 'LATE' ? 'status-warning' :
+                                      record.status === 'LEAVE' ? 'status-info' :
+                                        record.status === 'HALF_DAY' ? 'status-warning' :
+                                          'status-neutral'
                               } text-xs`}>
                                 {record.lateByMinutes && record.lateByMinutes > 0 && (
                                   <span className="bg-current/20 px-1.5 py-0.5 rounded text-xs">
@@ -588,25 +614,26 @@ export default function TeamAttendancePage() {
                                 )}
                                 {record.status || 'PRESENT'}
                               </span>
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              <div className="flex items-center gap-2">
-                                {getSourceIcon(record.checkInSource)}
-                                {record.checkInSource ? record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase() : 'N/A'}
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            <div className="flex items-center gap-2">
+                              {getSourceIcon(record.checkInSource)}
+                              {record.checkInSource ? record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase() : 'N/A'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-body-secondary">
+                            {record.isRegularization && (
+                              <span
+                                className="text-warning-600 dark:text-warning-400 font-medium text-xs">Regularized</span>
+                            )}
+                            {record.remarks && (
+                              <div className="text-caption truncate max-w-xs" title={record.remarks}>
+                                {record.remarks}
                               </div>
-                            </td>
-                            <td className="px-6 py-4 text-body-secondary">
-                              {record.isRegularization && (
-                                <span className="text-warning-600 dark:text-warning-400 font-medium text-xs">Regularized</span>
-                              )}
-                              {record.remarks && (
-                                <div className="text-caption truncate max-w-xs" title={record.remarks}>
-                                  {record.remarks}
-                                </div>
-                              )}
-                            </td>
-                          </motion.tr>
-                        ))}
+                            )}
+                          </td>
+                        </motion.tr>
+                      ))}
                       </tbody>
                     </table>
                   </div>
@@ -619,23 +646,23 @@ export default function TeamAttendancePage() {
         {/* Grid View */}
         {viewMode === 'grid' && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.35}}
           >
             <h2 className="text-card-title text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Users className="h-5 w-5" />
+              <Users className="h-5 w-5"/>
               Team Attendance Grid {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
             </h2>
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <SkeletonCard key={i} />
+                {Array.from({length: 6}).map((_, i) => (
+                  <SkeletonCard key={i}/>
                 ))}
               </div>
             ) : filteredAndSortedRecords.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
                 <p className="text-[var(--text-muted)]">
                   {records.length === 0
                     ? 'No attendance records found for this date'
@@ -647,30 +674,32 @@ export default function TeamAttendancePage() {
                 {filteredAndSortedRecords.map((record, index) => (
                   <motion.div
                     key={record.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.03, duration: 0.25 }}
+                    initial={{opacity: 0, y: 8}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: index * 0.03, duration: 0.25}}
                   >
-                    <Card className={`card-aura h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 ${
-                      record.status === 'PRESENT' ? 'border-t-success-500' :
-                      record.status === 'ABSENT' ? 'border-t-danger-500' :
-                      record.status === 'LATE' ? 'border-t-warning-500' :
-                      record.status === 'LEAVE' ? 'border-t-accent-500' :
-                      record.status === 'HALF_DAY' ? 'border-t-warning-500' :
-                      'border-t-[var(--border-main)]'
-                    }`}>
+                    <Card
+                      className={`card-aura h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 ${
+                        record.status === 'PRESENT' ? 'border-t-success-500' :
+                          record.status === 'ABSENT' ? 'border-t-danger-500' :
+                            record.status === 'LATE' ? 'border-t-warning-500' :
+                              record.status === 'LEAVE' ? 'border-t-accent-500' :
+                                record.status === 'HALF_DAY' ? 'border-t-warning-500' :
+                                  'border-t-[var(--border-main)]'
+                      }`}>
                       <CardContent className="p-6 flex flex-col gap-4">
                         <div className="flex items-start justify-between gap-2">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          <div
+                            className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                             {record.employeeId.substring(0, 2).toUpperCase()}
                           </div>
                           <span className={`badge-status ${
                             record.status === 'PRESENT' ? 'status-success' :
-                            record.status === 'ABSENT' ? 'status-danger' :
-                            record.status === 'LATE' ? 'status-warning' :
-                            record.status === 'LEAVE' ? 'status-info' :
-                            record.status === 'HALF_DAY' ? 'status-warning' :
-                            'status-neutral'
+                              record.status === 'ABSENT' ? 'status-danger' :
+                                record.status === 'LATE' ? 'status-warning' :
+                                  record.status === 'LEAVE' ? 'status-info' :
+                                    record.status === 'HALF_DAY' ? 'status-warning' :
+                                      'status-neutral'
                           } text-xs whitespace-nowrap`}>
                             {record.status || 'PRESENT'}
                           </span>
@@ -681,7 +710,11 @@ export default function TeamAttendancePage() {
                             {record.employeeId.substring(0, 16)}
                           </p>
                           <p className="text-caption">
-                            {new Date(record.attendanceDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            {new Date(record.attendanceDate).toLocaleDateString('en-US', {
+                              weekday: 'short',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
                           </p>
                         </div>
 
@@ -689,11 +722,13 @@ export default function TeamAttendancePage() {
                           <div className="flex gap-4 text-xs">
                             <div className="flex-1">
                               <p className="text-[var(--text-muted)] font-medium mb-1">Check-In</p>
-                              <p className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkInTime)}</p>
+                              <p
+                                className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkInTime)}</p>
                             </div>
                             <div className="flex-1">
                               <p className="text-[var(--text-muted)] font-medium mb-1">Check-Out</p>
-                              <p className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkOutTime)}</p>
+                              <p
+                                className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkOutTime)}</p>
                             </div>
                           </div>
                         </div>
@@ -701,7 +736,8 @@ export default function TeamAttendancePage() {
                         <div className="space-y-2">
                           <div className="row-between text-xs">
                             <span className="text-[var(--text-muted)] font-medium">Work Hours</span>
-                            <span className="font-semibold text-[var(--text-primary)]">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
+                            <span
+                              className="font-semibold text-[var(--text-primary)]">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
                           </div>
                           <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
@@ -714,7 +750,8 @@ export default function TeamAttendancePage() {
                         </div>
 
                         {record.lateByMinutes && record.lateByMinutes > 0 && (
-                          <div className="px-4 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
+                          <div
+                            className="px-4 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
                             <p className="text-xs font-medium text-warning-700 dark:text-warning-400">
                               Late by {record.lateByMinutes} minutes
                             </p>
@@ -739,13 +776,13 @@ export default function TeamAttendancePage() {
         {/* Quick Links */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, staggerChildren: 0.05 }}
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.45, staggerChildren: 0.05}}
         >
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
           >
             <Card
               isClickable
@@ -753,8 +790,9 @@ export default function TeamAttendancePage() {
               className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-500"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
-                  <Clock className="h-5 w-5 text-accent-700 dark:text-accent-400" />
+                <div
+                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
+                  <Clock className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">My Attendance</h3>
                 <p className="text-caption">View your own records</p>
@@ -763,8 +801,8 @@ export default function TeamAttendancePage() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
           >
             <Card
               isClickable
@@ -772,8 +810,9 @@ export default function TeamAttendancePage() {
               className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-warning-500"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center mb-4">
-                  <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400" />
+                <div
+                  className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center mb-4">
+                  <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Regularizations</h3>
                 <p className="text-caption">Review corrections</p>
@@ -782,8 +821,8 @@ export default function TeamAttendancePage() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
           >
             <Card
               isClickable
@@ -791,8 +830,9 @@ export default function TeamAttendancePage() {
               className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-700"
             >
               <CardContent className="p-6">
-                <div className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
-                  <Printer className="h-5 w-5 text-accent-800 dark:text-accent-600" />
+                <div
+                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
+                  <Printer className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
                 </div>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Print Report</h3>
                 <p className="text-caption">Generate PDF</p>

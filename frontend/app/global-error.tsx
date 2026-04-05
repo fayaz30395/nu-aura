@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { createLogger } from '@/lib/utils/logger';
+import {useEffect} from 'react';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('GlobalError');
 
@@ -19,7 +19,7 @@ interface GlobalErrorProps {
  * IMPORTANT: This must use inline styles only, no Mantine or external CSS dependencies,
  * as the root layout (and its providers) may have crashed.
  */
-export default function GlobalError({ error, reset }: GlobalErrorProps) {
+export default function GlobalError({error, reset}: GlobalErrorProps) {
   useEffect(() => {
     // Log critical error to console and any external error tracking
     log.error('[CRITICAL GlobalError]', {
@@ -133,132 +133,133 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Application Error</title>
-      </head>
-      <body style={{ margin: 0, padding: 0 }}>
-        <div style={styles.container}>
-          <div style={styles.card}>
-            <div style={styles.iconWrapper}>
-              <svg
-                style={{ width: '1.75rem', height: '1.75rem' }}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="#dc2626"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-
-            <h1 style={styles.title}>Critical Application Error</h1>
-            <p style={styles.description}>
-              A critical error occurred in the application core. Please try refreshing the page or contact support if the problem persists.
-            </p>
-
-            {isDevelopment && (
-              <div style={styles.errorBox}>
-                <p style={styles.errorText}>
-                  <strong>Error:</strong> {error.message}
-                </p>
-                {error.stack && (
-                  <p style={styles.errorStack}>{error.stack}</p>
-                )}
-                {error.digest && (
-                  <p style={{ ...styles.errorText, marginTop: '0.5rem' }}>
-                    <strong>Digest:</strong> {error.digest}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {!isDevelopment && error.digest && (
-              <div
-                style={{
-                  backgroundColor: '#F4F5F6',
-                  padding: '0.75rem',
-                  borderRadius: '0.375rem',
-                  marginBottom: '1.5rem',
-                  textAlign: 'center' as const,
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '0.75rem',
-                    color: '#3E616A',
-                    margin: '0 0 0.25rem',
-                  }}
-                >
-                  Error Reference
-                </p>
-                <p
-                  style={{
-                    fontSize: '0.875rem',
-                    fontFamily: 'monospace',
-                    color: '#050766',
-                    margin: 0,
-                  }}
-                >
-                  {error.digest}
-                </p>
-              </div>
-            )}
-
-            <div style={styles.buttonGroup}>
-              <button
-                onClick={reset}
-                style={styles.button}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--ring-primary)';
-                  e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                aria-label="Try again"
-              >
-                Try Again
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = '/me/dashboard';
-                }}
-                style={styles.secondaryButton}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#d4d4f7';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#d4d4f7';
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--ring-primary)';
-                  e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                aria-label="Go to dashboard"
-              >
-                Go Home
-              </button>
-            </div>
-          </div>
+    <head>
+      <meta charSet="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <title>Application Error</title>
+    </head>
+    <body style={{margin: 0, padding: 0}}>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <div style={styles.iconWrapper}>
+          <svg
+            style={{width: '1.75rem', height: '1.75rem'}}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="#dc2626"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
         </div>
-      </body>
+
+        <h1 style={styles.title}>Critical Application Error</h1>
+        <p style={styles.description}>
+          A critical error occurred in the application core. Please try refreshing the page or contact support if the
+          problem persists.
+        </p>
+
+        {isDevelopment && (
+          <div style={styles.errorBox}>
+            <p style={styles.errorText}>
+              <strong>Error:</strong> {error.message}
+            </p>
+            {error.stack && (
+              <p style={styles.errorStack}>{error.stack}</p>
+            )}
+            {error.digest && (
+              <p style={{...styles.errorText, marginTop: '0.5rem'}}>
+                <strong>Digest:</strong> {error.digest}
+              </p>
+            )}
+          </div>
+        )}
+
+        {!isDevelopment && error.digest && (
+          <div
+            style={{
+              backgroundColor: '#F4F5F6',
+              padding: '0.75rem',
+              borderRadius: '0.375rem',
+              marginBottom: '1.5rem',
+              textAlign: 'center' as const,
+            }}
+          >
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: '#3E616A',
+                margin: '0 0 0.25rem',
+              }}
+            >
+              Error Reference
+            </p>
+            <p
+              style={{
+                fontSize: '0.875rem',
+                fontFamily: 'monospace',
+                color: '#050766',
+                margin: 0,
+              }}
+            >
+              {error.digest}
+            </p>
+          </div>
+        )}
+
+        <div style={styles.buttonGroup}>
+          <button
+            onClick={reset}
+            style={styles.button}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--ring-primary)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'transparent';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+            aria-label="Try again"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={() => {
+              window.location.href = '/me/dashboard';
+            }}
+            style={styles.secondaryButton}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#d4d4f7';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = '#d4d4f7';
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--ring-primary)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px var(--ring-primary), 0 0 0 4px var(--bg-main)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'transparent';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+            aria-label="Go to dashboard"
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    </div>
+    </body>
     </html>
   );
 }

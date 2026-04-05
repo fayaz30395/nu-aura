@@ -476,6 +476,20 @@ public final class Permission {
     public static final String CAREER_VIEW = "CAREER:VIEW";
     public static final String CAREER_MANAGE = "CAREER:MANAGE"; // HR to manage job postings
 
+    // Interview Scorecards
+    public static final String SCORECARD_VIEW = "SCORECARD:VIEW";
+    public static final String SCORECARD_CREATE = "SCORECARD:CREATE";
+    public static final String SCORECARD_UPDATE = "SCORECARD:UPDATE";
+    public static final String SCORECARD_DELETE = "SCORECARD:DELETE";
+    public static final String SCORECARD_TEMPLATE_MANAGE = "SCORECARD:TEMPLATE_MANAGE";
+
+    // Recruitment Agency Portal
+    public static final String AGENCY_VIEW = "AGENCY:VIEW";
+    public static final String AGENCY_CREATE = "AGENCY:CREATE";
+    public static final String AGENCY_UPDATE = "AGENCY:UPDATE";
+    public static final String AGENCY_DELETE = "AGENCY:DELETE";
+    public static final String AGENCY_MANAGE = "AGENCY:MANAGE";
+
     // Knowledge Management (NU-Fluence)
     public static final String KNOWLEDGE_WIKI_CREATE = "KNOWLEDGE:WIKI_CREATE";
     public static final String KNOWLEDGE_WIKI_READ = "KNOWLEDGE:WIKI_READ";
@@ -494,6 +508,7 @@ public final class Permission {
     public static final String KNOWLEDGE_TEMPLATE_DELETE = "KNOWLEDGE:TEMPLATE_DELETE";
     public static final String KNOWLEDGE_SEARCH = "KNOWLEDGE:SEARCH";
     public static final String KNOWLEDGE_SETTINGS_MANAGE = "KNOWLEDGE:SETTINGS_MANAGE";
+    public static final String KNOWLEDGE_SPACE_MANAGE = "KNOWLEDGE:SPACE_MANAGE";
 
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");

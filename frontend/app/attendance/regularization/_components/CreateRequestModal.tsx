@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Info, Send, Check } from 'lucide-react';
-import { UseFormRegister, FieldErrors, UseFormHandleSubmit } from 'react-hook-form';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Check, Info, Send} from 'lucide-react';
+import {FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
 
 export interface RegularizationFormData {
   attendanceDate: string;
@@ -23,9 +23,9 @@ interface TimelineStep {
 
 function getTimelineSteps(step: number): TimelineStep[] {
   return [
-    { step: 1, label: 'Select Date', completed: step > 1, active: step === 1 },
-    { step: 2, label: 'Add Details', completed: step > 2, active: step === 2 },
-    { step: 3, label: 'Provide Reason', completed: step > 3, active: step === 3 },
+    {step: 1, label: 'Select Date', completed: step > 1, active: step === 1},
+    {step: 2, label: 'Add Details', completed: step > 2, active: step === 2},
+    {step: 3, label: 'Provide Reason', completed: step > 3, active: step === 3},
   ];
 }
 
@@ -56,40 +56,41 @@ interface CreateRequestModalProps {
 }
 
 export const CreateRequestModal = React.memo(function CreateRequestModal({
-  open,
-  formStep,
-  register,
-  errors,
-  isSubmitting,
-  isPending,
-  reasonValue,
-  managerName,
-  onClose,
-  onNext,
-  onPrev,
-  onSubmit,
-  onQuickReason,
-  handleSubmit,
-}: CreateRequestModalProps) {
+                                                                           open,
+                                                                           formStep,
+                                                                           register,
+                                                                           errors,
+                                                                           isSubmitting,
+                                                                           isPending,
+                                                                           reasonValue,
+                                                                           managerName,
+                                                                           onClose,
+                                                                           onNext,
+                                                                           onPrev,
+                                                                           onSubmit,
+                                                                           onQuickReason,
+                                                                           handleSubmit,
+                                                                         }: CreateRequestModalProps) {
   return (
     <AnimatePresence>
       {open && (
         <>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
             onClick={onClose}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            initial={{opacity: 0, scale: 0.95, y: 20}}
+            animate={{opacity: 1, scale: 1, y: 0}}
+            exit={{opacity: 0, scale: 0.95, y: 20}}
+            transition={{duration: 0.25, ease: 'easeOut'}}
             className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
           >
-            <div className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
+            <div
+              className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
                 <div className="row-between mb-6">
@@ -98,8 +99,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                     onClick={onClose}
                     aria-label="Close modal"
                     className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl leading-none transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{scale: 1.1}}
+                    whileTap={{scale: 0.95}}
                   >
                     ×
                   </motion.button>
@@ -117,10 +118,10 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                               ? 'bg-accent-500 text-white ring-4 ring-accent-500/30'
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                         }`}
-                        animate={step.active ? { scale: [1, 1.08, 1] } : {}}
-                        transition={{ duration: 1.5, repeat: Infinity }}
+                        animate={step.active ? {scale: [1, 1.08, 1]} : {}}
+                        transition={{duration: 1.5, repeat: Infinity}}
                       >
-                        {step.completed ? <Check className="h-3.5 w-3.5" /> : step.step}
+                        {step.completed ? <Check className="h-3.5 w-3.5"/> : step.step}
                       </motion.div>
                       <div className="hidden sm:block ml-4">
                         <p
@@ -159,10 +160,10 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                     {formStep === 1 && (
                       <motion.div
                         key="step-1"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
+                        transition={{duration: 0.25, ease: 'easeOut'}}
                         className="space-y-4"
                       >
                         <div>
@@ -177,8 +178,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           />
                           {errors.attendanceDate && (
                             <motion.p
-                              initial={{ opacity: 0, y: -4 }}
-                              animate={{ opacity: 1, y: 0 }}
+                              initial={{opacity: 0, y: -4}}
+                              animate={{opacity: 1, y: 0}}
                               className="text-danger-500 text-sm mt-2"
                             >
                               {errors.attendanceDate.message}
@@ -192,10 +193,10 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                     {formStep === 2 && (
                       <motion.div
                         key="step-2"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
+                        transition={{duration: 0.25, ease: 'easeOut'}}
                         className="space-y-4"
                       >
                         <div className="grid grid-cols-2 gap-4">
@@ -210,8 +211,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             />
                             {errors.requestedCheckIn && (
                               <motion.p
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{opacity: 0, y: -4}}
+                                animate={{opacity: 1, y: 0}}
                                 className="text-danger-500 text-xs mt-2"
                               >
                                 {errors.requestedCheckIn.message}
@@ -229,8 +230,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             />
                             {errors.requestedCheckOut && (
                               <motion.p
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{opacity: 0, y: -4}}
+                                animate={{opacity: 1, y: 0}}
                                 className="text-danger-500 text-xs mt-2"
                               >
                                 {errors.requestedCheckOut.message}
@@ -251,17 +252,17 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                     {formStep === 3 && (
                       <motion.div
                         key="step-3"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        initial={{opacity: 0, x: 20}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: -20}}
+                        transition={{duration: 0.25, ease: 'easeOut'}}
                         className="space-y-4"
                       >
                         {/* Manager Info */}
                         <Card className="card-aura tint-info border-[var(--status-info-border)]">
                           <CardContent className="p-4">
                             <div className="flex gap-4">
-                              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]" />
+                              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]"/>
                               <div className="text-sm text-[var(--status-info-text)]">
                                 <p className="font-semibold mb-1">Approval Routing</p>
                                 <p>
@@ -289,8 +290,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           <div className="row-between mt-2">
                             {errors.reason && (
                               <motion.p
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{opacity: 0, y: -4}}
+                                animate={{opacity: 1, y: 0}}
                                 className="text-danger-500 text-sm"
                               >
                                 {errors.reason.message}
@@ -312,7 +313,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
 
                         {/* Quick Templates */}
                         <div>
-                          <label className="block text-xs font-semibold text-[var(--text-muted)] mb-4 uppercase tracking-wide">
+                          <label
+                            className="block text-xs font-semibold text-[var(--text-muted)] mb-4 uppercase tracking-wide">
                             Quick Templates
                           </label>
                           <div className="flex flex-wrap gap-2">
@@ -321,8 +323,8 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                 key={template}
                                 type="button"
                                 onClick={() => onQuickReason(template)}
-                                whileHover={{ scale: 1.05, y: -1 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{scale: 1.05, y: -1}}
+                                whileTap={{scale: 0.95}}
                                 className="px-4 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-accent-400 hover:text-accent-700 dark:hover:text-accent-400 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 {template}
@@ -371,7 +373,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         onClick={handleSubmit(onSubmit)}
                         className="w-full bg-accent-500 hover:bg-accent-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Send className="h-4 w-4 mr-2" />
+                        <Send className="h-4 w-4 mr-2"/>
                         {isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}
                       </Button>
                     )}

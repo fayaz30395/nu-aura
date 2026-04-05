@@ -1,21 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
 import {
-  useEmployeeReviews,
   useCreateReview,
-  useUpdateReview,
   useDeleteReview,
+  useEmployeeReviews,
+  useUpdateReview,
 } from '@/lib/hooks/queries/usePerformance';
-import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/grow/performance';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { createLogger } from '@/lib/utils/logger';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {PerformanceReview, ReviewRequest, ReviewStatus, ReviewType} from '@/lib/types/grow/performance';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {createLogger} from '@/lib/utils/logger';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 const log = createLogger('ReviewsPage');
 
@@ -29,7 +29,7 @@ const reviewFormSchema = z.object({
   status: z.enum(['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'COMPLETED', 'APPROVED', 'REJECTED'] as const) as z.ZodType<ReviewStatus>,
   reviewPeriodStart: z.string().min(1, 'Review period start is required'),
   reviewPeriodEnd: z.string().min(1, 'Review period end is required'),
-  overallRating: z.number({ coerce: true }).min(1, 'Rating must be at least 1').max(5, 'Max 5'),
+  overallRating: z.number({coerce: true}).min(1, 'Rating must be at least 1').max(5, 'Max 5'),
   strengths: z.string().optional().or(z.literal('')),
   areasForImprovement: z.string().optional().or(z.literal('')),
   goals: z.string().optional().or(z.literal('')),
@@ -43,7 +43,7 @@ const reviewFormSchema = z.object({
 type ReviewFormData = z.infer<typeof reviewFormSchema>;
 
 export default function PerformanceReviewsPage() {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const reviewsQuery = useEmployeeReviews(user?.employeeId || '');
   const createReviewMutation = useCreateReview();
   const updateReviewMutation = useUpdateReview();
@@ -59,7 +59,7 @@ export default function PerformanceReviewsPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<ReviewFormData>({
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
@@ -97,7 +97,7 @@ export default function PerformanceReviewsPage() {
       };
 
       if (selectedReview) {
-        await updateReviewMutation.mutateAsync({ id: selectedReview.id, data: reviewData as ReviewRequest });
+        await updateReviewMutation.mutateAsync({id: selectedReview.id, data: reviewData as ReviewRequest});
       } else {
         await createReviewMutation.mutateAsync(reviewData as ReviewRequest);
       }
@@ -166,24 +166,37 @@ export default function PerformanceReviewsPage() {
 
   const getStatusColor = (status: ReviewStatus) => {
     switch (status) {
-      case 'DRAFT': return 'badge-status status-neutral';
-      case 'SUBMITTED': return 'badge-status status-info';
-      case 'IN_REVIEW': return 'badge-status status-warning';
-      case 'COMPLETED': return 'badge-status status-success';
-      case 'APPROVED': return 'badge-status status-success';
-      case 'REJECTED': return 'badge-status status-danger';
-      default: return 'badge-status status-neutral';
+      case 'DRAFT':
+        return 'badge-status status-neutral';
+      case 'SUBMITTED':
+        return 'badge-status status-info';
+      case 'IN_REVIEW':
+        return 'badge-status status-warning';
+      case 'COMPLETED':
+        return 'badge-status status-success';
+      case 'APPROVED':
+        return 'badge-status status-success';
+      case 'REJECTED':
+        return 'badge-status status-danger';
+      default:
+        return 'badge-status status-neutral';
     }
   };
 
   const getTypeColor = (type: ReviewType) => {
     switch (type) {
-      case 'SELF': return 'badge-status status-info';
-      case 'MANAGER': return 'badge-status status-warning';
-      case 'PEER': return 'badge-status status-success';
-      case 'SUBORDINATE': return 'badge-status status-neutral';
-      case 'SKIP_LEVEL': return 'badge-status status-danger';
-      default: return 'badge-status status-neutral';
+      case 'SELF':
+        return 'badge-status status-info';
+      case 'MANAGER':
+        return 'badge-status status-warning';
+      case 'PEER':
+        return 'badge-status status-success';
+      case 'SUBORDINATE':
+        return 'badge-status status-neutral';
+      case 'SKIP_LEVEL':
+        return 'badge-status status-danger';
+      default:
+        return 'badge-status status-neutral';
     }
   };
 
@@ -192,7 +205,8 @@ export default function PerformanceReviewsPage() {
     const ratingValue = rating || 0;
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <span key={i} className={i <= ratingValue ? 'text-warning-500' : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)]'}>
+        <span key={i}
+              className={i <= ratingValue ? 'text-warning-500' : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)]'}>
           ★
         </span>
       );
@@ -212,7 +226,7 @@ export default function PerformanceReviewsPage() {
         <div className="text-center py-12">
           <div className="h-16 w-16 mx-auto text-[var(--text-muted)] mb-4">
             <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4"/>
             </svg>
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
@@ -310,7 +324,8 @@ export default function PerformanceReviewsPage() {
         ) : (
           <div className="space-y-4">
             {filteredReviews.map((review) => (
-              <div key={review.id} className="skeuo-card card-interactive rounded-lg border border-[var(--border-main)] p-6 transition-shadow">
+              <div key={review.id}
+                   className="skeuo-card card-interactive rounded-lg border border-[var(--border-main)] p-6 transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-4">
@@ -341,7 +356,8 @@ export default function PerformanceReviewsPage() {
                   )}
                   {review.areasForImprovement && (
                     <div>
-                      <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Areas for Improvement</div>
+                      <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Areas for Improvement
+                      </div>
                       <p className="text-body-secondary line-clamp-2">{review.areasForImprovement}</p>
                     </div>
                   )}
@@ -371,8 +387,10 @@ export default function PerformanceReviewsPage() {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <div className="skeuo-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
+          <div
+            className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div
+              className="skeuo-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6 skeuo-emboss text-[var(--text-primary)]">
                   {selectedReview ? 'Edit Review' : 'Create Review'}

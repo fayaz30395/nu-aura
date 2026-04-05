@@ -1,23 +1,22 @@
 'use client';
 
-import { AdminPageContent } from '@/components/layout';
-import { usePayrollRuns, useSalaryStructures } from '@/lib/hooks/queries/usePayroll';
+import {AdminPageContent} from '@/components/layout';
+import {usePayrollRuns, useSalaryStructures} from '@/lib/hooks/queries/usePayroll';
 import {
+  AlertCircle,
   Banknote,
+  BarChart2,
+  CheckCircle,
+  ChevronRight,
+  Clock,
   FileText,
   Layers,
-  ChevronRight,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  Lock,
-  Settings,
   Package,
   Scale,
-  BarChart2,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { PayrollRunStatus } from '@/lib/types/hrms/payroll';
+import type {PayrollRunStatus} from '@/lib/types/hrms/payroll';
 
 // ─── Quick-link cards ─────────────────────────────────────────────────────────
 
@@ -90,17 +89,17 @@ const PAYROLL_LINKS = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function StatusIcon({ status }: { status: PayrollRunStatus }) {
+function StatusIcon({status}: { status: PayrollRunStatus }) {
   switch (status) {
     case 'LOCKED':
     case 'APPROVED':
-      return <CheckCircle className="h-4 w-4 text-success-500" />;
+      return <CheckCircle className="h-4 w-4 text-success-500"/>;
     case 'PROCESSED':
-      return <CheckCircle className="h-4 w-4 text-accent-500" />;
+      return <CheckCircle className="h-4 w-4 text-accent-500"/>;
     case 'PROCESSING':
-      return <Clock className="h-4 w-4 text-warning-500" />;
+      return <Clock className="h-4 w-4 text-warning-500"/>;
     default:
-      return <AlertCircle className="h-4 w-4 text-[var(--text-muted)]" />;
+      return <AlertCircle className="h-4 w-4 text-[var(--text-muted)]"/>;
   }
 }
 
@@ -121,8 +120,8 @@ function statusBadgeClass(status: PayrollRunStatus): string {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPayrollPage() {
-  const { data: runsPage, isLoading: runsLoading } = usePayrollRuns(0, 5);
-  const { data: structuresPage, isLoading: structuresLoading } = useSalaryStructures(0, 5);
+  const {data: runsPage, isLoading: runsLoading} = usePayrollRuns(0, 5);
+  const {data: structuresPage, isLoading: structuresLoading} = useSalaryStructures(0, 5);
 
   const runs = runsPage?.content ?? [];
   const structures = structuresPage?.content ?? [];
@@ -151,18 +150,18 @@ export default function AdminPayrollPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Runs', value: totalRuns, loading: runsLoading, color: 'text-accent-500' },
-          { label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, color: 'text-warning-500' },
-          { label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, color: 'text-success-500' },
-          { label: 'Salary Structures', value: totalStructures, loading: structuresLoading, color: 'text-accent-500' },
-        ].map(({ label, value, loading, color }) => (
+          {label: 'Total Runs', value: totalRuns, loading: runsLoading, color: 'text-accent-500'},
+          {label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, color: 'text-warning-500'},
+          {label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, color: 'text-success-500'},
+          {label: 'Salary Structures', value: totalStructures, loading: structuresLoading, color: 'text-accent-500'},
+        ].map(({label, value, loading, color}) => (
           <div
             key={label}
             className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)]"
           >
             <p className="text-caption mb-1">{label}</p>
             {loading ? (
-              <div className="h-8 w-16 rounded bg-[var(--skeleton-base)] animate-pulse" />
+              <div className="h-8 w-16 rounded bg-[var(--skeleton-base)] animate-pulse"/>
             ) : (
               <p className={`text-3xl font-bold skeuo-emboss ${color}`}>{value}</p>
             )}
@@ -174,29 +173,30 @@ export default function AdminPayrollPage() {
         {/* Left: recent data tables */}
         <div className="xl:col-span-2 space-y-4">
           {/* Recent Runs */}
-          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div
+            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
             <div className="row-between px-4 py-2 divider-b">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Recent Payroll Runs</h2>
               <Link
                 href="/payroll/runs"
                 className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                View all <ChevronRight className="h-3 w-3" />
+                View all <ChevronRight className="h-3 w-3"/>
               </Link>
             </div>
             {runsLoading ? (
               <div className="divide-y divide-[var(--border-subtle)]">
-                {Array.from({ length: 4 }).map((_, i) => (
+                {Array.from({length: 4}).map((_, i) => (
                   <div key={i} className="px-4 py-2 flex items-center gap-2">
-                    <div className="h-4 w-4 rounded-full bg-[var(--skeleton-base)] animate-pulse" />
-                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse" />
-                    <div className="h-5 w-20 rounded-full bg-[var(--skeleton-base)] animate-pulse" />
+                    <div className="h-4 w-4 rounded-full bg-[var(--skeleton-base)] animate-pulse"/>
+                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+                    <div className="h-5 w-20 rounded-full bg-[var(--skeleton-base)] animate-pulse"/>
                   </div>
                 ))}
               </div>
             ) : runs.length === 0 ? (
               <div className="py-12 text-center">
-                <Banknote className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2" />
+                <Banknote className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2"/>
                 <p className="text-body-muted">No payroll runs yet</p>
                 <Link
                   href="/payroll/runs"
@@ -213,7 +213,7 @@ export default function AdminPayrollPage() {
                     href="/payroll/runs"
                     className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
                   >
-                    <StatusIcon status={run.status} />
+                    <StatusIcon status={run.status}/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {run.runName}
@@ -234,7 +234,8 @@ export default function AdminPayrollPage() {
           </div>
 
           {/* Recent Salary Structures */}
-          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div
+            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
             <div className="row-between px-4 py-2 divider-b">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Recent Salary Structures
@@ -243,15 +244,15 @@ export default function AdminPayrollPage() {
                 href="/payroll/structures"
                 className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                View all <ChevronRight className="h-3 w-3" />
+                View all <ChevronRight className="h-3 w-3"/>
               </Link>
             </div>
             {structuresLoading ? (
               <div className="divide-y divide-[var(--border-subtle)]">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {Array.from({length: 3}).map((_, i) => (
                   <div key={i} className="px-4 py-2 flex items-center gap-2">
-                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse" />
-                    <div className="h-5 w-16 rounded-full bg-[var(--skeleton-base)] animate-pulse" />
+                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+                    <div className="h-5 w-16 rounded-full bg-[var(--skeleton-base)] animate-pulse"/>
                   </div>
                 ))}
               </div>
@@ -263,7 +264,7 @@ export default function AdminPayrollPage() {
               <div className="divide-y divide-[var(--border-subtle)]">
                 {structures.map((s) => (
                   <div key={s.id} className="flex items-center gap-2 px-4 py-2">
-                    <Layers className="h-4 w-4 text-accent-500 shrink-0" />
+                    <Layers className="h-4 w-4 text-accent-500 shrink-0"/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {s.employeeName ?? `Employee ${s.employeeId.substring(0, 8)}`}
@@ -294,20 +295,21 @@ export default function AdminPayrollPage() {
         <div>
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Quick Access</h2>
           <div className="space-y-2">
-            {PAYROLL_LINKS.map(({ href, label, description, icon: Icon, accent, bg }) => (
+            {PAYROLL_LINKS.map(({href, label, description, icon: Icon, accent, bg}) => (
               <Link
                 key={href}
                 href={href}
                 className="flex items-center gap-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 hover:bg-[var(--surface-hover)] transition-colors shadow-[var(--shadow-card)] cursor-pointer group"
               >
                 <div className={`shrink-0 rounded-lg p-2 ${bg}`}>
-                  <Icon className={`h-4 w-4 ${accent}`} />
+                  <Icon className={`h-4 w-4 ${accent}`}/>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--text-primary)] truncate">{label}</p>
                   <p className="text-caption truncate">{description}</p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0" />
+                <ChevronRight
+                  className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0"/>
               </Link>
             ))}
           </div>

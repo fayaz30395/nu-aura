@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { BulkProcessingWizard } from '@/components/payroll/BulkProcessingWizard';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {BulkProcessingWizard} from '@/components/payroll/BulkProcessingWizard';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function BulkProcessingPage() {
   const router = useRouter();
-  const { hasPermission, isReady } = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
 
   useEffect(() => {
     if (!isReady) return;
@@ -37,7 +37,7 @@ export default function BulkProcessingPage() {
           </div>
 
           {/* Wizard Component */}
-          <BulkProcessingWizard />
+          <BulkProcessingWizard/>
         </div>
       </div>
     </AppLayout>

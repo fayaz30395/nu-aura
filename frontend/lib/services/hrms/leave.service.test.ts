@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {leaveService} from './leave.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { leaveService } from './leave.service';
-import { apiClient } from '@/lib/api/client';
 
 const mockApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -71,7 +70,7 @@ describe('LeaveService', () => {
         active: true,
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveType });
+      mockApiClient.post.mockResolvedValueOnce({data: mockLeaveType});
 
       const result = await leaveService.createLeaveType(requestData as any);
 
@@ -80,7 +79,7 @@ describe('LeaveService', () => {
     });
 
     it('should handle errors when creating a leave type', async () => {
-      const requestData = { name: 'Sick Leave', description: 'Sick leave policy' };
+      const requestData = {name: 'Sick Leave', description: 'Sick leave policy'};
       const error = new Error('Creation failed');
 
       mockApiClient.post.mockRejectedValueOnce(error);
@@ -95,7 +94,7 @@ describe('LeaveService', () => {
   describe('updateLeaveType', () => {
     it('should update a leave type', async () => {
       const leaveTypeId = 'lt-1';
-      const updateData = { name: 'Sick Leave Updated' };
+      const updateData = {name: 'Sick Leave Updated'};
       const mockLeaveType: MockLeaveType = {
         id: leaveTypeId,
         name: 'Sick Leave Updated',
@@ -103,7 +102,7 @@ describe('LeaveService', () => {
         active: true,
       };
 
-      mockApiClient.put.mockResolvedValueOnce({ data: mockLeaveType });
+      mockApiClient.put.mockResolvedValueOnce({data: mockLeaveType});
 
       const result = await leaveService.updateLeaveType(leaveTypeId, updateData as any);
 
@@ -113,7 +112,7 @@ describe('LeaveService', () => {
 
     it('should handle errors when updating a leave type', async () => {
       const leaveTypeId = 'lt-1';
-      const updateData = { name: 'Sick Leave Updated' };
+      const updateData = {name: 'Sick Leave Updated'};
       const error = new Error('Update failed');
 
       mockApiClient.put.mockRejectedValueOnce(error);
@@ -135,7 +134,7 @@ describe('LeaveService', () => {
         active: true,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockLeaveType });
+      mockApiClient.get.mockResolvedValueOnce({data: mockLeaveType});
 
       const result = await leaveService.getLeaveTypeById(leaveTypeId);
 
@@ -172,12 +171,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getAllLeaveTypes();
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/leave-types', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -190,12 +189,12 @@ describe('LeaveService', () => {
         page: 1,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getAllLeaveTypes(1, 50);
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/leave-types', {
-        params: { page: 1, size: 50 },
+        params: {page: 1, size: 50},
       });
       expect(result).toEqual(mockPage);
     });
@@ -219,7 +218,7 @@ describe('LeaveService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockLeaveTypes });
+      mockApiClient.get.mockResolvedValueOnce({data: mockLeaveTypes});
 
       const result = await leaveService.getActiveLeaveTypes();
 
@@ -249,7 +248,7 @@ describe('LeaveService', () => {
         active: true,
       };
 
-      mockApiClient.patch.mockResolvedValueOnce({ data: mockLeaveType });
+      mockApiClient.patch.mockResolvedValueOnce({data: mockLeaveType});
 
       const result = await leaveService.activateLeaveType(leaveTypeId);
 
@@ -280,7 +279,7 @@ describe('LeaveService', () => {
         active: false,
       };
 
-      mockApiClient.patch.mockResolvedValueOnce({ data: mockLeaveType });
+      mockApiClient.patch.mockResolvedValueOnce({data: mockLeaveType});
 
       const result = await leaveService.deactivateLeaveType(leaveTypeId);
 
@@ -340,7 +339,7 @@ describe('LeaveService', () => {
         status: 'PENDING',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.post.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.createLeaveRequest(requestData as any);
 
@@ -378,7 +377,7 @@ describe('LeaveService', () => {
         status: 'PENDING',
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.get.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.getLeaveRequestById(leaveRequestId);
 
@@ -417,12 +416,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getAllLeaveRequests();
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/leave-requests', {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -435,12 +434,12 @@ describe('LeaveService', () => {
         page: 2,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getAllLeaveRequests(2, 50);
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/leave-requests', {
-        params: { page: 2, size: 50 },
+        params: {page: 2, size: 50},
       });
       expect(result).toEqual(mockPage);
     });
@@ -466,12 +465,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getEmployeeLeaveRequests(employeeId);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/employee/${employeeId}`, {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -485,12 +484,12 @@ describe('LeaveService', () => {
         page: 1,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getEmployeeLeaveRequests(employeeId, 1, 30);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/employee/${employeeId}`, {
-        params: { page: 1, size: 30 },
+        params: {page: 1, size: 30},
       });
       expect(result).toEqual(mockPage);
     });
@@ -516,12 +515,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getLeaveRequestsByEmployee(employeeId);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/employee/${employeeId}`, {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -535,12 +534,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       await leaveService.getLeaveRequestsByEmployee(employeeId, 1, 40);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/employee/${employeeId}`, {
-        params: { page: 1, size: 40 },
+        params: {page: 1, size: 40},
       });
     });
   });
@@ -565,12 +564,12 @@ describe('LeaveService', () => {
         page: 0,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getLeaveRequestsByStatus(status as any);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/status/${status}`, {
-        params: { page: 0, size: 20 },
+        params: {page: 0, size: 20},
       });
       expect(result).toEqual(mockPage);
     });
@@ -584,12 +583,12 @@ describe('LeaveService', () => {
         page: 1,
       };
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockPage });
+      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
 
       const result = await leaveService.getLeaveRequestsByStatus(status as any, 1, 25);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(`/leave-requests/status/${status}`, {
-        params: { page: 1, size: 25 },
+        params: {page: 1, size: 25},
       });
       expect(result).toEqual(mockPage);
     });
@@ -608,7 +607,7 @@ describe('LeaveService', () => {
         status: 'APPROVED',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.post.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.approveLeaveRequest(leaveRequestId);
 
@@ -644,14 +643,14 @@ describe('LeaveService', () => {
         status: 'REJECTED',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.post.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.rejectLeaveRequest(leaveRequestId, reason);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         `/leave-requests/${leaveRequestId}/reject`,
         null,
-        { params: { reason } }
+        {params: {reason}}
       );
       expect(result).toEqual(mockLeaveRequest);
     });
@@ -683,14 +682,14 @@ describe('LeaveService', () => {
         status: 'CANCELLED',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.post.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.cancelLeaveRequest(leaveRequestId, reason);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         `/leave-requests/${leaveRequestId}/cancel`,
         null,
-        { params: { reason } }
+        {params: {reason}}
       );
       expect(result).toEqual(mockLeaveRequest);
     });
@@ -712,7 +711,7 @@ describe('LeaveService', () => {
   describe('updateLeaveRequest', () => {
     it('should update a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const updateData = { startDate: '2026-04-02' };
+      const updateData = {startDate: '2026-04-02'};
       const mockLeaveRequest: MockLeaveRequest = {
         id: leaveRequestId,
         employeeId: 'emp-1',
@@ -722,7 +721,7 @@ describe('LeaveService', () => {
         status: 'PENDING',
       };
 
-      mockApiClient.put.mockResolvedValueOnce({ data: mockLeaveRequest });
+      mockApiClient.put.mockResolvedValueOnce({data: mockLeaveRequest});
 
       const result = await leaveService.updateLeaveRequest(leaveRequestId, updateData as any);
 
@@ -732,7 +731,7 @@ describe('LeaveService', () => {
 
     it('should handle errors when updating a leave request', async () => {
       const leaveRequestId = 'lr-1';
-      const updateData = { startDate: '2026-04-02' };
+      const updateData = {startDate: '2026-04-02'};
       const error = new Error('Update failed');
 
       mockApiClient.put.mockRejectedValueOnce(error);
@@ -756,7 +755,7 @@ describe('LeaveService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockBalances });
+      mockApiClient.get.mockResolvedValueOnce({data: mockBalances});
 
       const result = await leaveService.getEmployeeBalances(employeeId);
 
@@ -792,7 +791,7 @@ describe('LeaveService', () => {
         },
       ];
 
-      mockApiClient.get.mockResolvedValueOnce({ data: mockBalances });
+      mockApiClient.get.mockResolvedValueOnce({data: mockBalances});
 
       const result = await leaveService.getEmployeeBalancesForYear(employeeId, year);
 

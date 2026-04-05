@@ -2,22 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Target,
-  Heart,
-  Users,
-  Globe,
-  Zap,
-  TrendingUp,
-  Award,
-  Rocket,
-  Shield,
-  ArrowRight,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import {motion} from 'framer-motion';
+import {ArrowRight, Award, Globe, Heart, Rocket, Shield, Target, TrendingUp, Users, Zap,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
 
 export default function AboutPage() {
   const values = [
@@ -67,16 +56,17 @@ export default function AboutPage() {
   ];
 
   const stats = [
-    { icon: Users, value: '500+', label: 'Companies' },
-    { icon: Globe, value: '50K+', label: 'Employees Managed' },
-    { icon: Award, value: '99.9%', label: 'Uptime' },
-    { icon: TrendingUp, value: '4.8/5', label: 'Customer Rating' },
+    {icon: Users, value: '500+', label: 'Companies'},
+    {icon: Globe, value: '50K+', label: 'Employees Managed'},
+    {icon: Award, value: '99.9%', label: 'Uptime'},
+    {icon: TrendingUp, value: '4.8/5', label: 'Customer Rating'},
   ];
 
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -106,7 +96,8 @@ export default function AboutPage() {
             Building the future of HR technology
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            We&apos;re on a mission to make HR management effortless, empowering companies to focus on what matters most—their people.
+            We&apos;re on a mission to make HR management effortless, empowering companies to focus on what matters
+            most—their people.
           </p>
         </div>
       </section>
@@ -118,14 +109,15 @@ export default function AboutPage() {
             <Card padding="lg" className="border-l-4 border-l-accent-500">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                  <Target className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
                     Our Mission
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
-                    To empower organizations with intelligent HR technology that streamlines operations, enhances employee experience, and drives business growth through data-driven insights.
+                    To empower organizations with intelligent HR technology that streamlines operations, enhances
+                    employee experience, and drives business growth through data-driven insights.
                   </p>
                 </div>
               </div>
@@ -134,14 +126,15 @@ export default function AboutPage() {
             <Card padding="lg" className="border-l-4 border-l-info-500">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-info-50 dark:bg-info-950 flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-info-600 dark:text-info-400" />
+                  <Zap className="h-6 w-6 text-info-600 dark:text-info-400"/>
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
                     Our Vision
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
-                    To become the world&apos;s most trusted HR platform, enabling every organization to build thriving workplaces where people and businesses grow together.
+                    To become the world&apos;s most trusted HR platform, enabling every organization to build thriving
+                    workplaces where people and businesses grow together.
                   </p>
                 </div>
               </div>
@@ -166,14 +159,15 @@ export default function AboutPage() {
             {values.map((value, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
               >
                 <Card padding="lg" className="text-center h-full">
-                  <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="h-7 w-7 text-white" />
+                  <div
+                    className="w-14 h-14 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center mx-auto mb-4">
+                    <value.icon className="h-7 w-7 text-white"/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {value.title}
@@ -204,14 +198,15 @@ export default function AboutPage() {
             {milestones.map((milestone, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, x: -20}}
+                whileInView={{opacity: 1, x: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
                 className="flex gap-6"
               >
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-[var(--shadow-dropdown)]">
+                  <div
+                    className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-[var(--shadow-dropdown)]">
                     {milestone.year}
                   </div>
                 </div>
@@ -234,13 +229,13 @@ export default function AboutPage() {
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
                 className="text-center"
               >
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4" />
+                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
                 <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>
@@ -264,7 +259,7 @@ export default function AboutPage() {
             <Link href="/careers">
               <Button size="lg" className="gap-2">
                 View Open Positions
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5"/>
               </Button>
             </Link>
             <Link href="/contact">

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { CustomTarget, TargetType } from '@/lib/types/core/roles';
-import { employeeService } from '@/lib/services/hrms/employee.service';
-import { departmentService } from '@/lib/services/hrms/department.service';
-import { officeLocationService, OfficeLocation } from '@/lib/services/hrms/office-location.service';
-import { Employee, Department } from '@/lib/types/hrms/employee';
-import { logger } from '@/lib/utils/logger';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {CustomTarget, TargetType} from '@/lib/types/core/roles';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import {departmentService} from '@/lib/services/hrms/department.service';
+import {OfficeLocation, officeLocationService} from '@/lib/services/hrms/office-location.service';
+import {Department, Employee} from '@/lib/types/hrms/employee';
+import {logger} from '@/lib/utils/logger';
 
 interface CustomTargetPickerProps {
   targets: CustomTarget[];
@@ -56,7 +56,7 @@ async function getCachedLocations(): Promise<OfficeLocation[]> {
   return locationsCachePromise;
 }
 
-export function CustomTargetPicker({ targets, onChange, disabled = false }: CustomTargetPickerProps) {
+export function CustomTargetPicker({targets, onChange, disabled = false}: CustomTargetPickerProps) {
   const [targetType, setTargetType] = useState<TargetType>('EMPLOYEE');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -214,9 +214,12 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
   // Get target type label
   const getTargetTypeLabel = (type: TargetType) => {
     switch (type) {
-      case 'EMPLOYEE': return 'Employee';
-      case 'DEPARTMENT': return 'Department';
-      case 'LOCATION': return 'Location';
+      case 'EMPLOYEE':
+        return 'Employee';
+      case 'DEPARTMENT':
+        return 'Department';
+      case 'LOCATION':
+        return 'Location';
     }
   };
 
@@ -226,27 +229,31 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
       case 'EMPLOYEE':
         return (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
         );
       case 'DEPARTMENT':
         return (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
           </svg>
         );
       case 'LOCATION':
         return (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         );
     }
   };
 
   return (
-    <div className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
+    <div
+      className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
       <div className="row-between">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Custom Scope Targets</p>
         <span className="text-caption">
@@ -290,15 +297,18 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             disabled={disabled}
             className="w-full px-4 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-[var(--text-muted)]">
+          <div
+            className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-[var(--text-muted)]">
             {isSearching ? (
               <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
               </svg>
             ) : (
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             )}
           </div>
@@ -306,7 +316,8 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
         {/* Search Results Dropdown */}
         {showDropdown && (searchResults.length > 0 || (searchQuery && !isSearching)) && (
-          <div className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto">
+          <div
+            className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto">
             {searchResults.length > 0 ? (
               searchResults.map((result) => (
                 <button
@@ -369,7 +380,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                     aria-label="Remove target"
                   >
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                   </button>
                 )}

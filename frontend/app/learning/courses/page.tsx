@@ -2,8 +2,8 @@
 
 // Redirect to the main learning page which includes the course catalog tab.
 // Individual courses are accessible at /learning/courses/[id].
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 
 export default function CoursesRedirectPage() {
   const router = useRouter();

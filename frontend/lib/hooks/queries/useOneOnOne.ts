@@ -1,16 +1,16 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { meetingService } from '@/lib/services/hrms/meeting.service';
-import { notifications } from '@mantine/notifications';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {meetingService} from '@/lib/services/hrms/meeting.service';
+import {notifications} from '@mantine/notifications';
 import type {
-  OneOnOneMeetingRequest,
-  MeetingAgendaItemRequest,
   MeetingActionItemRequest,
-  MeetingNotesRequest,
-  MeetingFeedbackRequest,
-  MeetingRescheduleRequest,
   MeetingActionItemStatusRequest,
+  MeetingAgendaItemRequest,
+  MeetingFeedbackRequest,
+  MeetingNotesRequest,
+  MeetingRescheduleRequest,
+  OneOnOneMeetingRequest,
 } from '@/lib/types/hrms/meeting';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export function useCreateMeeting() {
   return useMutation({
     mutationFn: (data: OneOnOneMeetingRequest) => meetingService.createMeeting(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
       notifications.show({
         title: 'Meeting Scheduled',
         message: '1-on-1 meeting has been scheduled successfully.',
@@ -179,11 +179,11 @@ export function useCreateMeeting() {
 export function useUpdateMeeting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: OneOnOneMeetingRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: OneOnOneMeetingRequest }) =>
       meetingService.updateMeeting(meetingId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
       notifications.show({
         title: 'Meeting Updated',
         message: 'Meeting details have been updated.',
@@ -205,8 +205,8 @@ export function useStartMeeting() {
   return useMutation({
     mutationFn: (meetingId: string) => meetingService.startMeeting(meetingId),
     onSuccess: (_data, meetingId) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(meetingId)});
     },
   });
 }
@@ -214,11 +214,11 @@ export function useStartMeeting() {
 export function useCompleteMeeting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, summary }: { meetingId: string; summary?: string }) =>
+    mutationFn: ({meetingId, summary}: { meetingId: string; summary?: string }) =>
       meetingService.completeMeeting(meetingId, summary),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
       notifications.show({
         title: 'Meeting Completed',
         message: 'Meeting has been marked as complete.',
@@ -231,11 +231,11 @@ export function useCompleteMeeting() {
 export function useCancelMeeting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, reason }: { meetingId: string; reason: string }) =>
+    mutationFn: ({meetingId, reason}: { meetingId: string; reason: string }) =>
       meetingService.cancelMeeting(meetingId, reason),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
       notifications.show({
         title: 'Meeting Cancelled',
         message: 'Meeting has been cancelled.',
@@ -248,10 +248,10 @@ export function useCancelMeeting() {
 export function useRescheduleMeeting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: MeetingRescheduleRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: MeetingRescheduleRequest }) =>
       meetingService.rescheduleMeeting(meetingId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
       notifications.show({
         title: 'Meeting Rescheduled',
         message: 'Meeting has been rescheduled successfully.',
@@ -264,10 +264,10 @@ export function useRescheduleMeeting() {
 export function useUpdateMeetingNotes() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: MeetingNotesRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: MeetingNotesRequest }) =>
       meetingService.updateNotes(meetingId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
       notifications.show({
         title: 'Notes Saved',
         message: 'Meeting notes have been saved.',
@@ -280,10 +280,10 @@ export function useUpdateMeetingNotes() {
 export function useSubmitMeetingFeedback() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: MeetingFeedbackRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: MeetingFeedbackRequest }) =>
       meetingService.submitFeedback(meetingId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
       notifications.show({
         title: 'Feedback Submitted',
         message: 'Your feedback has been submitted.',
@@ -298,11 +298,11 @@ export function useSubmitMeetingFeedback() {
 export function useAddAgendaItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: MeetingAgendaItemRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: MeetingAgendaItemRequest }) =>
       meetingService.addAgendaItem(meetingId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.agenda(variables.meetingId) });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.agenda(variables.meetingId)});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
     },
   });
 }
@@ -311,17 +311,17 @@ export function useMarkAgendaDiscussed() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      meetingId,
-      itemId,
-      notes,
-    }: {
+                   meetingId,
+                   itemId,
+                   notes,
+                 }: {
       meetingId: string;
       itemId: string;
       notes?: string;
     }) => meetingService.markAgendaItemDiscussed(meetingId, itemId, notes),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.agenda(variables.meetingId) });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.agenda(variables.meetingId)});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
     },
   });
 }
@@ -329,11 +329,11 @@ export function useMarkAgendaDiscussed() {
 export function useDeleteAgendaItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, itemId }: { meetingId: string; itemId: string }) =>
+    mutationFn: ({meetingId, itemId}: { meetingId: string; itemId: string }) =>
       meetingService.deleteAgendaItem(meetingId, itemId),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.agenda(variables.meetingId) });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
+      queryClient.invalidateQueries({queryKey: meetingKeys.agenda(variables.meetingId)});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
     },
   });
 }
@@ -343,12 +343,12 @@ export function useDeleteAgendaItem() {
 export function useCreateActionItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ meetingId, data }: { meetingId: string; data: MeetingActionItemRequest }) =>
+    mutationFn: ({meetingId, data}: { meetingId: string; data: MeetingActionItemRequest }) =>
       meetingService.createActionItem(meetingId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.actions(variables.meetingId) });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.detail(variables.meetingId) });
-      queryClient.invalidateQueries({ queryKey: meetingKeys.pendingActions() });
+      queryClient.invalidateQueries({queryKey: meetingKeys.actions(variables.meetingId)});
+      queryClient.invalidateQueries({queryKey: meetingKeys.detail(variables.meetingId)});
+      queryClient.invalidateQueries({queryKey: meetingKeys.pendingActions()});
     },
   });
 }
@@ -356,10 +356,10 @@ export function useCreateActionItem() {
 export function useUpdateActionItemStatus() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ actionId, data }: { actionId: string; data: MeetingActionItemStatusRequest }) =>
+    mutationFn: ({actionId, data}: { actionId: string; data: MeetingActionItemStatusRequest }) =>
       meetingService.updateActionItemStatus(actionId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: meetingKeys.all });
+      queryClient.invalidateQueries({queryKey: meetingKeys.all});
     },
   });
 }

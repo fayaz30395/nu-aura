@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Employee Page Object Model
@@ -78,12 +78,12 @@ export class EmployeePage extends BasePage {
     this.importButton = page.locator('button:has-text("Import")');
     this.searchInput = page.locator('input[placeholder*="Search employees"]');
     this.searchButton = page.locator('button:has-text("Search")');
-    this.statusFilter = page.locator('select').filter({ hasText: 'All Status' });
+    this.statusFilter = page.locator('select').filter({hasText: 'All Status'});
     this.employeeTable = page.locator('table');
     this.tableRows = page.locator('tbody tr');
 
     // Modal
-    this.modal = page.locator('div.fixed.inset-0').filter({ hasText: 'Add New Employee' });
+    this.modal = page.locator('div.fixed.inset-0').filter({hasText: 'Add New Employee'});
     this.modalTitle = page.locator('h2:has-text("Add New Employee")');
     this.closeModalButton = this.modal.locator('button').first();
 
@@ -131,7 +131,7 @@ export class EmployeePage extends BasePage {
     this.cancelButton = page.locator('button:has-text("Cancel")');
 
     // Delete modal
-    this.deleteModal = page.locator('div.fixed.inset-0').filter({ hasText: 'Delete Employee' });
+    this.deleteModal = page.locator('div.fixed.inset-0').filter({hasText: 'Delete Employee'});
     this.deleteConfirmButton = page.locator('button:has-text("Delete")').last();
     this.deleteCancelButton = this.deleteModal.locator('button:has-text("Cancel")');
   }
@@ -149,7 +149,7 @@ export class EmployeePage extends BasePage {
    */
   async clickAddEmployee() {
     await this.addEmployeeButton.click();
-    await this.modalTitle.waitFor({ state: 'visible' });
+    await this.modalTitle.waitFor({state: 'visible'});
   }
 
   /**
@@ -297,7 +297,7 @@ export class EmployeePage extends BasePage {
    */
   async deleteEmployee(index: number = 0) {
     await this.tableRows.nth(index).locator('button:has-text("Delete")').click();
-    await this.deleteModal.waitFor({ state: 'visible' });
+    await this.deleteModal.waitFor({state: 'visible'});
   }
 
   /**

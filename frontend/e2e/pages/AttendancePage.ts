@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './BasePage';
 
 /**
  * Attendance Page Object Model
@@ -45,12 +45,12 @@ export class AttendancePage extends BasePage {
     super(page);
 
     // Page elements
-    this.pageHeading = page.locator('h1').filter({ hasText: /Attendance|My Attendance/i });
+    this.pageHeading = page.locator('h1').filter({hasText: /Attendance|My Attendance/i});
     this.checkInButton = page.locator('button:has-text("Check In")');
     this.checkOutButton = page.locator('button:has-text("Check Out")');
     this.breakStartButton = page.locator('button:has-text("Start Break")');
     this.breakEndButton = page.locator('button:has-text("End Break")');
-    this.statusBadge = page.locator('[class*="badge"]').filter({ hasText: /Checked In|Checked Out|On Break/ });
+    this.statusBadge = page.locator('[class*="badge"]').filter({hasText: /Checked In|Checked Out|On Break/});
     this.currentTimeDisplay = page.locator('[class*="time"]').first();
 
     // Calendar and table
@@ -60,8 +60,8 @@ export class AttendancePage extends BasePage {
 
     // Filters
     this.dateRangeFilter = page.locator('input[type="date"]').first();
-    this.statusFilter = page.locator('select').filter({ hasText: /Status|All/ });
-    this.employeeFilter = page.locator('select').filter({ hasText: /Employee|All Employees/ });
+    this.statusFilter = page.locator('select').filter({hasText: /Status|All/});
+    this.employeeFilter = page.locator('select').filter({hasText: /Employee|All Employees/});
 
     // Navigation links
     this.myAttendanceLink = page.locator('a[href*="/attendance/my-attendance"]');
@@ -76,7 +76,7 @@ export class AttendancePage extends BasePage {
 
     // Regularization
     this.requestRegularizationButton = page.locator('button:has-text("Request Regularization")');
-    this.regularizationModal = page.locator('div.fixed.inset-0').filter({ hasText: 'Regularization' });
+    this.regularizationModal = page.locator('div.fixed.inset-0').filter({hasText: 'Regularization'});
     this.regularizationDateInput = page.locator('label:has-text("Date")').locator('..').locator('input');
     this.regularizationReasonInput = page.locator('textarea[placeholder*="regularization"], textarea[placeholder*="explain"]');
     this.submitRegularizationButton = page.locator('button:has-text("Submit Request")');
@@ -224,7 +224,7 @@ export class AttendancePage extends BasePage {
    */
   async requestRegularization(date: string, reason: string) {
     await this.requestRegularizationButton.click();
-    await this.regularizationModal.waitFor({ state: 'visible' });
+    await this.regularizationModal.waitFor({state: 'visible'});
     await this.regularizationDateInput.fill(date);
     await this.regularizationReasonInput.fill(reason);
     await this.submitRegularizationButton.click();

@@ -1,26 +1,26 @@
 'use client';
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Editor } from '@tiptap/react';
+import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {Editor} from '@tiptap/react';
 import {
+  IconAlertOctagon,
+  IconAlertTriangle,
+  IconBlockquote,
+  IconChecks,
+  IconCircleCheck,
+  IconCode,
+  IconColumns,
   IconH1,
   IconH2,
   IconH3,
+  IconInfoCircle,
+  IconLine,
   IconList,
   IconListNumbers,
-  IconChecks,
-  IconBlockquote,
-  IconCode,
-  IconTable,
   IconPhoto,
-  IconLine,
-  IconInfoCircle,
-  IconAlertTriangle,
-  IconCircleCheck,
-  IconAlertOctagon,
-  IconColumns,
+  IconTable,
 } from '@tabler/icons-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 
 interface SlashMenuItem {
   title: string;
@@ -35,31 +35,31 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Heading 1',
     description: 'Large section heading',
-    icon: <IconH1 size={20} />,
+    icon: <IconH1 size={20}/>,
     category: 'Headings',
     keywords: ['h1', 'heading', 'title', 'large'],
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+    command: (editor) => editor.chain().focus().toggleHeading({level: 1}).run(),
   },
   {
     title: 'Heading 2',
     description: 'Medium section heading',
-    icon: <IconH2 size={20} />,
+    icon: <IconH2 size={20}/>,
     category: 'Headings',
     keywords: ['h2', 'heading', 'subtitle', 'medium'],
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+    command: (editor) => editor.chain().focus().toggleHeading({level: 2}).run(),
   },
   {
     title: 'Heading 3',
     description: 'Small section heading',
-    icon: <IconH3 size={20} />,
+    icon: <IconH3 size={20}/>,
     category: 'Headings',
     keywords: ['h3', 'heading', 'small'],
-    command: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+    command: (editor) => editor.chain().focus().toggleHeading({level: 3}).run(),
   },
   {
     title: 'Bullet List',
     description: 'Unordered list of items',
-    icon: <IconList size={20} />,
+    icon: <IconList size={20}/>,
     category: 'Lists',
     keywords: ['bullet', 'list', 'unordered', 'ul'],
     command: (editor) => editor.chain().focus().toggleBulletList().run(),
@@ -67,7 +67,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Numbered List',
     description: 'Ordered list with numbers',
-    icon: <IconListNumbers size={20} />,
+    icon: <IconListNumbers size={20}/>,
     category: 'Lists',
     keywords: ['number', 'list', 'ordered', 'ol'],
     command: (editor) => editor.chain().focus().toggleOrderedList().run(),
@@ -75,7 +75,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Task List',
     description: 'Checklist with checkboxes',
-    icon: <IconChecks size={20} />,
+    icon: <IconChecks size={20}/>,
     category: 'Lists',
     keywords: ['task', 'todo', 'check', 'checkbox'],
     command: (editor) => editor.chain().focus().toggleTaskList().run(),
@@ -83,7 +83,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Blockquote',
     description: 'Quote or callout text',
-    icon: <IconBlockquote size={20} />,
+    icon: <IconBlockquote size={20}/>,
     category: 'Blocks',
     keywords: ['quote', 'blockquote', 'callout'],
     command: (editor) => editor.chain().focus().toggleBlockquote().run(),
@@ -91,7 +91,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Code Block',
     description: 'Syntax-highlighted code',
-    icon: <IconCode size={20} />,
+    icon: <IconCode size={20}/>,
     category: 'Blocks',
     keywords: ['code', 'codeblock', 'snippet', 'programming'],
     command: (editor) => editor.chain().focus().toggleCodeBlock().run(),
@@ -99,27 +99,27 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Table',
     description: 'Insert a 3×3 table',
-    icon: <IconTable size={20} />,
+    icon: <IconTable size={20}/>,
     category: 'Blocks',
     keywords: ['table', 'grid', 'spreadsheet'],
     command: (editor) =>
-      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+      editor.chain().focus().insertTable({rows: 3, cols: 3, withHeaderRow: true}).run(),
   },
   {
     title: 'Image',
     description: 'Embed an image from URL',
-    icon: <IconPhoto size={20} />,
+    icon: <IconPhoto size={20}/>,
     category: 'Media',
     keywords: ['image', 'photo', 'picture', 'img'],
     command: (editor) => {
       const url = window.prompt('Image URL:');
-      if (url) editor.chain().focus().setImage({ src: url }).run();
+      if (url) editor.chain().focus().setImage({src: url}).run();
     },
   },
   {
     title: 'Divider',
     description: 'Horizontal separator line',
-    icon: <IconLine size={20} />,
+    icon: <IconLine size={20}/>,
     category: 'Blocks',
     keywords: ['divider', 'hr', 'separator', 'line', 'horizontal'],
     command: (editor) => editor.chain().focus().setHorizontalRule().run(),
@@ -127,7 +127,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Info Panel',
     description: 'Blue information callout',
-    icon: <IconInfoCircle size={20} />,
+    icon: <IconInfoCircle size={20}/>,
     category: 'Panels',
     keywords: ['info', 'panel', 'callout', 'note', 'blue'],
     command: (editor) => editor.chain().focus().setCallout('info').run(),
@@ -135,7 +135,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Warning Panel',
     description: 'Yellow warning callout',
-    icon: <IconAlertTriangle size={20} />,
+    icon: <IconAlertTriangle size={20}/>,
     category: 'Panels',
     keywords: ['warning', 'panel', 'callout', 'caution', 'yellow'],
     command: (editor) => editor.chain().focus().setCallout('warning').run(),
@@ -143,7 +143,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Success Panel',
     description: 'Green success callout',
-    icon: <IconCircleCheck size={20} />,
+    icon: <IconCircleCheck size={20}/>,
     category: 'Panels',
     keywords: ['success', 'panel', 'callout', 'done', 'green', 'tip'],
     command: (editor) => editor.chain().focus().setCallout('success').run(),
@@ -151,7 +151,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Danger Panel',
     description: 'Red danger callout',
-    icon: <IconAlertOctagon size={20} />,
+    icon: <IconAlertOctagon size={20}/>,
     category: 'Panels',
     keywords: ['danger', 'panel', 'callout', 'error', 'red', 'critical'],
     command: (editor) => editor.chain().focus().setCallout('danger').run(),
@@ -159,7 +159,7 @@ const SLASH_ITEMS: SlashMenuItem[] = [
   {
     title: 'Two Columns',
     description: 'Side-by-side layout',
-    icon: <IconColumns size={20} />,
+    icon: <IconColumns size={20}/>,
     category: 'Layout',
     keywords: ['columns', 'layout', 'two', 'side'],
     command: (editor) => {
@@ -172,8 +172,8 @@ const SLASH_ITEMS: SlashMenuItem[] = [
             {
               type: 'tableRow',
               content: [
-                { type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Column 1' }] }] },
-                { type: 'tableCell', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Column 2' }] }] },
+                {type: 'tableCell', content: [{type: 'paragraph', content: [{type: 'text', text: 'Column 1'}]}]},
+                {type: 'tableCell', content: [{type: 'paragraph', content: [{type: 'text', text: 'Column 2'}]}]},
               ],
             },
           ],
@@ -196,7 +196,7 @@ interface SlashMenuProps {
 }
 
 const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
-  ({ editor, query, position, onClose, onSelect }, ref) => {
+  ({editor, query, position, onClose, onSelect}, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const menuRef = useRef<HTMLDivElement>(null);
     const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -236,7 +236,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
     // Scroll selected item into view
     useEffect(() => {
       const el = itemRefs.current[selectedIndex];
-      if (el) el.scrollIntoView({ block: 'nearest' });
+      if (el) el.scrollIntoView({block: 'nearest'});
     }, [selectedIndex]);
 
     useImperativeHandle(ref, () => ({
@@ -265,7 +265,7 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
       return (
         <div
           className="fluence-slash-menu"
-          style={{ top: position.top, left: position.left }}
+          style={{top: position.top, left: position.left}}
         >
           <div className="px-4 py-6 text-center text-body-muted">
             No results found
@@ -281,11 +281,11 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
         <motion.div
           ref={menuRef}
           className="fluence-slash-menu"
-          style={{ top: position.top, left: position.left }}
-          initial={{ opacity: 0, y: -4, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -4, scale: 0.98 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
+          style={{top: position.top, left: position.left}}
+          initial={{opacity: 0, y: -4, scale: 0.98}}
+          animate={{opacity: 1, y: 0, scale: 1}}
+          exit={{opacity: 0, y: -4, scale: 0.98}}
+          transition={{duration: 0.15, ease: 'easeOut'}}
         >
           <div className="px-4 py-2 text-xs font-medium text-[var(--text-muted)] divider-b">
             {query ? `Results for "${query}"` : 'Type to filter...'}
@@ -293,7 +293,8 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
           <div className="max-h-[320px] overflow-y-auto py-1">
             {Object.entries(grouped).map(([category, items]) => (
               <div key={category}>
-                <div className="px-4 pt-2 pb-1 text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
+                <div
+                  className="px-4 pt-2 pb-1 text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] opacity-60">
                   {category}
                 </div>
                 {items.map((item) => {
@@ -301,7 +302,9 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
                   return (
                     <button
                       key={item.title}
-                      ref={(el) => { itemRefs.current[idx] = el; }}
+                      ref={(el) => {
+                        itemRefs.current[idx] = el;
+                      }}
                       className={`fluence-slash-item cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         idx === selectedIndex ? 'fluence-slash-item-active' : ''
                       }`}
@@ -331,5 +334,5 @@ const SlashMenu = forwardRef<SlashMenuHandle, SlashMenuProps>(
 
 SlashMenu.displayName = 'SlashMenu';
 export default SlashMenu;
-export { SLASH_ITEMS };
-export type { SlashMenuItem };
+export {SLASH_ITEMS};
+export type {SlashMenuItem};

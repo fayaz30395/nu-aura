@@ -1,30 +1,29 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { LoanStatus } from '@/lib/types/hrms/loan';
-import { useLoan } from '@/lib/hooks/queries/useLoans';
-import { loanService } from '@/lib/services/hrms/loan.service';
+import {useEffect} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {LoanStatus} from '@/lib/types/hrms/loan';
+import {useLoan} from '@/lib/hooks/queries/useLoans';
+import {loanService} from '@/lib/services/hrms/loan.service';
 import {
-  ArrowLeft,
-  Loader2,
   AlertCircle,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Wallet,
-  DollarSign,
-  TrendingUp,
+  ArrowLeft,
   Banknote,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Loader2,
+  TrendingUp,
+  Wallet,
+  XCircle,
 } from 'lucide-react';
 
 export default function LoanDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
   const loanId = params.id as string;
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function LoanDetailPage() {
     }
   }, [permissionsReady, hasPermission, router]);
 
-  const { data: loan, isLoading, error } = useLoan(loanId);
+  const {data: loan, isLoading, error} = useLoan(loanId);
 
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
@@ -91,7 +90,7 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
             <p className="text-[var(--text-secondary)]">Loading loan details...</p>
           </div>
         </div>
@@ -108,7 +107,7 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Loan not found'}
             </p>
@@ -140,7 +139,7 @@ export default function LoanDetailPage() {
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Go back"
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
@@ -150,7 +149,7 @@ export default function LoanDetailPage() {
               <span
                 className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
-                <StatusIcon className="h-4 w-4" />
+                <StatusIcon className="h-4 w-4"/>
                 {loan.status.replace('_', ' ')}
               </span>
             </div>
@@ -165,7 +164,7 @@ export default function LoanDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+                <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
               </div>
               <span className="text-body-muted">
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
@@ -179,7 +178,7 @@ export default function LoanDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400" />
+                <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400"/>
               </div>
               <span className="text-body-muted">Amount Repaid</span>
             </div>
@@ -191,7 +190,7 @@ export default function LoanDetailPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
-                <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400" />
+                <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
               </div>
               <span className="text-body-muted">
                 Outstanding Amount
@@ -217,7 +216,7 @@ export default function LoanDetailPage() {
             <div className="h-3 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-accent-500 to-accent-700 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(progress, 100)}%` }}
+                style={{width: `${Math.min(progress, 100)}%`}}
               />
             </div>
             <div className="flex justify-between mt-2 text-body-muted">
@@ -343,9 +342,10 @@ export default function LoanDetailPage() {
 
         {/* Rejection Reason */}
         {loan.status === 'REJECTED' && loan.rejectedReason && (
-          <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
+          <div
+            className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
             <div className="flex items-center gap-4 mb-4">
-              <XCircle className="h-5 w-5 text-danger-500" />
+              <XCircle className="h-5 w-5 text-danger-500"/>
               <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
                 Rejection Reason
               </h3>

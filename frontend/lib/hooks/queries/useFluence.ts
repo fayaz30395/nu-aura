@@ -20,6 +20,9 @@ import {
   UpdateCommentRequest,
   FavoriteContentType,
   WatchStatus,
+  WikiPageTreeNode,
+  WikiPageBreadcrumb,
+  SpaceMemberRole,
 } from '@/lib/types/platform/fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -36,6 +39,10 @@ export const fluenceKeys = {
     [...fluenceKeys.wikiPages(), 'slug', spaceId, slug] as const,
   wikiPageRevisions: (pageId: string) =>
     [...fluenceKeys.wikiPages(), 'revisions', pageId] as const,
+  wikiPageTree: (spaceId: string) =>
+    [...fluenceKeys.wikiPages(), 'tree', spaceId] as const,
+  wikiPageBreadcrumbs: (pageId: string) =>
+    [...fluenceKeys.wikiPages(), 'breadcrumbs', pageId] as const,
   // Wiki spaces
   wikiSpaces: () => [...fluenceKeys.all, 'wiki-spaces'] as const,
   wikiSpaceList: (page?: number, size?: number) =>
@@ -138,6 +145,38 @@ export function useWikiPageRevisions(pageId: string, enabled: boolean = true) {
     queryFn: () => fluenceService.getWikiPageRevisions(pageId),
     enabled: enabled && !!pageId,
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+// ─── Wiki Page Tree & Breadcrumb Queries ────────────────────────────────────
+
+export function usePageTree(spaceId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.wikiPageTree(spaceId),
+    queryFn: () => fluenceService.getPageTree(spaceId),
+    enabled: enabled && !!spaceId,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
+export function usePageBreadcrumbs(pageId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.wikiPageBreadcrumbs(pageId),
+    queryFn: () => fluenceService.getPageBreadcrumbs(pageId),
+    enabled: enabled && !!pageId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useMovePageMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ pageId, parentPageId }: { pageId: string; parentPageId: string | null }) =>
+      fluenceService.movePage(pageId, parentPageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+    },
   });
 }
 
@@ -915,6 +954,76 @@ export function useToggleWatchWikiPage() {
     mutationFn: (pageId: string) => fluenceService.toggleWatchWikiPage(pageId),
     onSuccess: (_data, pageId) => {
       queryClient.invalidateQueries({ queryKey: watchKeys.wikiWatch(pageId) });
+    },
+  });
+}
+
+// ─── Space Member Hooks ───────────────────────────────────────────────────────
+
+export const spaceMemberKeys = {
+  members: (spaceId: string) => [...fluenceKeys.wikiSpaces(), 'members', spaceId] as const,
+};
+
+export function useSpaceMembers(spaceId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: spaceMemberKeys.members(spaceId),
+    queryFn: () => fluenceService.getSpaceMembers(spaceId),
+    enabled: enabled && !!spaceId,
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
+export function useAddSpaceMemberMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      spaceId,
+      userId,
+      role,
+    }: {
+      spaceId: string;
+      userId: string;
+      role: SpaceMemberRole;
+    }) => fluenceService.addSpaceMember(spaceId, userId, role),
+    onSuccess: (_data, { spaceId }) => {
+      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    },
+  });
+}
+
+export function useUpdateSpaceMemberRoleMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      spaceId,
+      userId,
+      role,
+    }: {
+      spaceId: string;
+      userId: string;
+      role: SpaceMemberRole;
+    }) => fluenceService.updateSpaceMemberRole(spaceId, userId, role),
+    onSuccess: (_data, { spaceId }) => {
+      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    },
+  });
+}
+
+export function useRemoveSpaceMemberMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      spaceId,
+      userId,
+    }: {
+      spaceId: string;
+      userId: string;
+    }) => fluenceService.removeSpaceMember(spaceId, userId),
+    onSuccess: (_data, { spaceId }) => {
+      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
     },
   });
 }

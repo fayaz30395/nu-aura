@@ -1,20 +1,12 @@
 'use client';
 
 import React from 'react';
-import {
-  FileText,
-  FileImage,
-  FileSpreadsheet,
-  File,
-  Download,
-  Trash2,
-  FileCode,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FluenceAttachment } from '@/lib/types/platform/fluence';
-import { fluenceService } from '@/lib/services/platform/fluence.service';
-import { cn } from '@/lib/utils';
-import { safeWindowOpen } from '@/lib/utils/url';
+import {Download, File, FileCode, FileImage, FileSpreadsheet, FileText, Trash2,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {FluenceAttachment} from '@/lib/types/platform/fluence';
+import {fluenceService} from '@/lib/services/platform/fluence.service';
+import {cn} from '@/lib/utils';
+import {safeWindowOpen} from '@/lib/utils/url';
 
 interface FileListProps {
   attachments: FluenceAttachment[];
@@ -50,7 +42,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export function FileList({ attachments, onDelete, isDeleting, className }: FileListProps) {
+export function FileList({attachments, onDelete, isDeleting, className}: FileListProps) {
   const handleDownload = async (attachment: FluenceAttachment) => {
     try {
       const downloadUrl = await fluenceService.getAttachmentDownloadUrl(attachment.id);
@@ -67,7 +59,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
     return (
       <div className={cn('text-center py-8', className)}>
         <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-4">
-          <File className="h-6 w-6 text-[var(--text-muted)]" />
+          <File className="h-6 w-6 text-[var(--text-muted)]"/>
         </div>
         <p className="text-body-muted">No files uploaded yet</p>
       </div>
@@ -83,8 +75,9 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
             key={attachment.id}
             className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
           >
-            <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
-              <IconComponent className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+            <div
+              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
+              <IconComponent className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
             </div>
 
             <div className="flex-1 min-w-0">
@@ -107,7 +100,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
                 title="Download"
                 className="p-2"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4"/>
               </Button>
               {onDelete && (
                 <Button
@@ -118,7 +111,7 @@ export function FileList({ attachments, onDelete, isDeleting, className }: FileL
                   title="Delete"
                   className="p-2 text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4"/>
                 </Button>
               )}
             </div>

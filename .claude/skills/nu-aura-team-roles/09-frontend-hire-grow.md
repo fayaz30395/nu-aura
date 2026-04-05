@@ -7,18 +7,21 @@
 ## Core Responsibilities
 
 ### 1. Recruitment UI (NU-Hire)
+
 - Job posting creation/management
 - Candidate pipeline (drag-and-drop Kanban)
 - Interview scheduling (Google Calendar integration)
 - Offer letter generation
 
 ### 2. Performance UI (NU-Grow)
+
 - OKR dashboard (goals, key results, progress)
 - Performance review forms (self, manager, 360)
 - 1-on-1 meeting notes
 - Feedback submission
 
 ### 3. Learning & Development UI
+
 - Training catalog
 - Course enrollment
 - Completion tracking

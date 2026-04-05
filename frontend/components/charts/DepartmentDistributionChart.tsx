@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { DepartmentDistribution } from '@/lib/types/core/analytics';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {DepartmentDistribution} from '@/lib/types/core/analytics';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 
 interface DepartmentDistributionChartProps {
   data: DepartmentDistribution[];
@@ -11,9 +11,9 @@ interface DepartmentDistributionChartProps {
 }
 
 export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartProps> = ({
-  data,
-  className = '',
-}) => {
+                                                                                          data,
+                                                                                          className = '',
+                                                                                        }) => {
   const hasData = data && data.length > 0;
 
   return (
@@ -25,18 +25,18 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
       <CardContent>
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 100, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700" />
+            <BarChart data={data} layout="vertical" margin={{top: 5, right: 30, left: 100, bottom: 5}}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
               <XAxis
                 type="number"
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
               />
               <YAxis
                 type="category"
                 dataKey="department"
                 className="text-caption"
-                tick={{ fill: 'currentColor' }}
+                tick={{fill: 'currentColor'}}
                 width={90}
               />
               <Tooltip
@@ -47,8 +47,8 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
                   padding: '8px 12px',
                 }}
               />
-              <Legend />
-              <Bar dataKey="count" name="Employees" fill="var(--chart-success)" radius={[0, 8, 8, 0]} />
+              <Legend/>
+              <Bar dataKey="count" name="Employees" fill="var(--chart-success)" radius={[0, 8, 8, 0]}/>
             </BarChart>
           </ResponsiveContainer>
         ) : (

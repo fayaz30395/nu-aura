@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
-import { authApi } from '../api/auth';
-import { logger } from '../utils/logger';
+import {useCallback, useEffect, useRef} from 'react';
+import {authApi} from '../api/auth';
+import {logger} from '../utils/logger';
 
 /**
  * Proactive token refresh hook.

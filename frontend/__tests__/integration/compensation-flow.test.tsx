@@ -4,10 +4,11 @@
  * Uses mocked compensation service for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {compensationService} from '@/lib/services/hrms/compensation.service';
 
 // Mock the compensation service
 vi.mock('@/lib/services/hrms/compensation.service', () => ({
@@ -16,8 +17,6 @@ vi.mock('@/lib/services/hrms/compensation.service', () => ({
     rejectRevision: vi.fn(),
   },
 }));
-
-import { compensationService } from '@/lib/services/hrms/compensation.service';
 
 const mockedCompensationService = vi.mocked(compensationService);
 
@@ -29,10 +28,10 @@ interface CompensationApprovalProps {
 }
 
 const MockCompensationApproval: React.FC<CompensationApprovalProps> = ({
-  revisionId,
-  onApprovalSuccess,
-  onRejectionSuccess,
-}) => {
+                                                                         revisionId,
+                                                                         onApprovalSuccess,
+                                                                         onRejectionSuccess,
+                                                                       }) => {
   const [rejectReason, setRejectReason] = React.useState('');
   const [approveLoading, setApproveLoading] = React.useState(false);
   const [rejectLoading, setRejectLoading] = React.useState(false);
@@ -111,7 +110,7 @@ describe('Compensation Approval Flow Integration Tests', () => {
 
   describe('Approve Revision', () => {
     it('should render compensation approval component', () => {
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       expect(screen.getByTestId('compensation-approval')).toBeInTheDocument();
       expect(screen.getByTestId('approve-btn')).toBeInTheDocument();
@@ -174,7 +173,7 @@ describe('Compensation Approval Flow Integration Tests', () => {
       );
 
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       await user.click(screen.getByTestId('approve-btn'));
 
@@ -218,7 +217,7 @@ describe('Compensation Approval Flow Integration Tests', () => {
 
     it('should show validation error if reject reason is empty', async () => {
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       const rejectBtn = screen.getByTestId('reject-btn');
       await user.click(rejectBtn);
@@ -239,7 +238,7 @@ describe('Compensation Approval Flow Integration Tests', () => {
       });
 
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       const reasonInput = screen.getByTestId(
         'reject-reason-input'
@@ -262,7 +261,7 @@ describe('Compensation Approval Flow Integration Tests', () => {
       );
 
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       const reasonInput = screen.getByTestId('reject-reason-input');
       await user.type(reasonInput, 'Some reason');
@@ -283,12 +282,12 @@ describe('Compensation Approval Flow Integration Tests', () => {
       mockedCompensationService.approveRevision.mockImplementation(
         () =>
           new Promise((resolve) =>
-            setTimeout(() => resolve({ id: 'rev-123', status: 'APPROVED' }), 100)
+            setTimeout(() => resolve({id: 'rev-123', status: 'APPROVED'}), 100)
           )
       );
 
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       const approveBtn = screen.getByTestId('approve-btn');
       await user.click(approveBtn);
@@ -300,12 +299,12 @@ describe('Compensation Approval Flow Integration Tests', () => {
       mockedCompensationService.rejectRevision.mockImplementation(
         () =>
           new Promise((resolve) =>
-            setTimeout(() => resolve({ id: 'rev-123', status: 'REJECTED' }), 50)
+            setTimeout(() => resolve({id: 'rev-123', status: 'REJECTED'}), 50)
           )
       );
 
       const user = userEvent.setup();
-      render(<MockCompensationApproval revisionId="rev-123" />);
+      render(<MockCompensationApproval revisionId="rev-123"/>);
 
       const reasonInput = screen.getByTestId('reject-reason-input');
       const rejectBtn = screen.getByTestId('reject-btn');

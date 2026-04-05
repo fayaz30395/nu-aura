@@ -1,16 +1,16 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { expenseService } from '@/lib/services/hrms/expense.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {expenseService} from '@/lib/services/hrms/expense.service';
 import {
-  CreateExpenseClaimRequest,
-  CreateExpenseCategoryRequest,
-  CreateExpensePolicyRequest,
-  CreateExpenseItemRequest,
   CreateExpenseAdvanceRequest,
+  CreateExpenseCategoryRequest,
+  CreateExpenseClaimRequest,
+  CreateExpenseItemRequest,
+  CreateExpensePolicyRequest,
   ExpenseStatus,
 } from '@/lib/types/hrms/expense';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
 
 // Query keys for cache management
 export const expenseKeys = {
@@ -18,15 +18,15 @@ export const expenseKeys = {
   // My claims
   myClaims: () => [...expenseKeys.all, 'my-claims'] as const,
   myClaimsList: (page: number, size: number, status?: ExpenseStatus, dateFrom?: string, dateTo?: string) =>
-    [...expenseKeys.myClaims(), 'list', { page, size, status, dateFrom, dateTo }] as const,
+    [...expenseKeys.myClaims(), 'list', {page, size, status, dateFrom, dateTo}] as const,
   // All claims (admin)
   allClaims: () => [...expenseKeys.all, 'all-claims'] as const,
   allClaimsList: (page: number, size: number) =>
-    [...expenseKeys.allClaims(), 'list', { page, size }] as const,
+    [...expenseKeys.allClaims(), 'list', {page, size}] as const,
   // Pending claims for approval
   pendingClaims: () => [...expenseKeys.all, 'pending'] as const,
   pendingClaimsList: (page: number, size: number) =>
-    [...expenseKeys.pendingClaims(), 'list', { page, size }] as const,
+    [...expenseKeys.pendingClaims(), 'list', {page, size}] as const,
   // Statistics
   statistics: () => [...expenseKeys.all, 'statistics'] as const,
   statisticsForEmployee: (employeeId?: string) =>
@@ -39,25 +39,25 @@ export const expenseKeys = {
   categories: () => [...expenseKeys.all, 'categories'] as const,
   activeCategories: () => [...expenseKeys.categories(), 'active'] as const,
   allCategories: (page: number, size: number) =>
-    [...expenseKeys.categories(), 'all', { page, size }] as const,
+    [...expenseKeys.categories(), 'all', {page, size}] as const,
   // Policies
   policies: () => [...expenseKeys.all, 'policies'] as const,
   activePolicies: () => [...expenseKeys.policies(), 'active'] as const,
   allPolicies: (page: number, size: number) =>
-    [...expenseKeys.policies(), 'all', { page, size }] as const,
+    [...expenseKeys.policies(), 'all', {page, size}] as const,
   // Advances
   advances: () => [...expenseKeys.all, 'advances'] as const,
   myAdvances: (employeeId: string, page: number, size: number) =>
-    [...expenseKeys.advances(), 'my', { employeeId, page, size }] as const,
+    [...expenseKeys.advances(), 'my', {employeeId, page, size}] as const,
   allAdvances: (page: number, size: number) =>
-    [...expenseKeys.advances(), 'all', { page, size }] as const,
+    [...expenseKeys.advances(), 'all', {page, size}] as const,
   // Reports
   reports: () => [...expenseKeys.all, 'reports'] as const,
   report: (startDate: string, endDate: string) =>
-    [...expenseKeys.reports(), { startDate, endDate }] as const,
+    [...expenseKeys.reports(), {startDate, endDate}] as const,
   // Policy validation
   policyValidation: (employeeId: string, amount: number) =>
-    [...expenseKeys.all, 'validate', { employeeId, amount }] as const,
+    [...expenseKeys.all, 'validate', {employeeId, amount}] as const,
 };
 
 // ========== CLAIM QUERIES ==========
@@ -226,12 +226,12 @@ export function useScanReceipt() {
 export function useCreateExpenseClaim() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ employeeId, data }: { employeeId: string; data: CreateExpenseClaimRequest }) =>
+    mutationFn: ({employeeId, data}: { employeeId: string; data: CreateExpenseClaimRequest }) =>
       expenseService.createClaim(employeeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.statistics() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.statistics()});
     },
   });
 }
@@ -239,12 +239,12 @@ export function useCreateExpenseClaim() {
 export function useUpdateExpenseClaim() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, data }: { claimId: string; data: CreateExpenseClaimRequest }) =>
+    mutationFn: ({claimId, data}: { claimId: string; data: CreateExpenseClaimRequest }) =>
       expenseService.updateClaim(claimId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
     },
   });
 }
@@ -254,8 +254,8 @@ export function useDeleteExpenseClaim() {
   return useMutation({
     mutationFn: (claimId: string) => expenseService.deleteClaim(claimId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
     },
   });
 }
@@ -265,9 +265,9 @@ export function useSubmitExpenseClaim() {
   return useMutation({
     mutationFn: (claimId: string) => expenseService.submitClaim(claimId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.pendingClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.pendingClaims()});
     },
   });
 }
@@ -277,9 +277,9 @@ export function useApproveExpenseClaim() {
   return useMutation({
     mutationFn: (claimId: string) => expenseService.approveClaim(claimId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.pendingClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.pendingClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
     },
   });
 }
@@ -287,14 +287,14 @@ export function useApproveExpenseClaim() {
 export function useRejectExpenseClaim() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, reason }: { claimId: string; reason: string }) =>
+    mutationFn: ({claimId, reason}: { claimId: string; reason: string }) =>
       expenseService.rejectClaim(claimId, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.pendingClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.statistics() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.pendingClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.statistics()});
     },
   });
 }
@@ -302,12 +302,12 @@ export function useRejectExpenseClaim() {
 export function useMarkExpensePaid() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, paymentReference }: { claimId: string; paymentReference: string }) =>
+    mutationFn: ({claimId, paymentReference}: { claimId: string; paymentReference: string }) =>
       expenseService.markAsPaid(claimId, paymentReference),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
   });
 }
@@ -315,12 +315,12 @@ export function useMarkExpensePaid() {
 export function useMarkExpenseReimbursed() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, reimbursementRef }: { claimId: string; reimbursementRef: string }) =>
+    mutationFn: ({claimId, reimbursementRef}: { claimId: string; reimbursementRef: string }) =>
       expenseService.markAsReimbursed(claimId, reimbursementRef),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(data.id) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
   });
 }
@@ -330,12 +330,12 @@ export function useMarkExpenseReimbursed() {
 export function useAddExpenseItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, data }: { claimId: string; data: CreateExpenseItemRequest }) =>
+    mutationFn: ({claimId, data}: { claimId: string; data: CreateExpenseItemRequest }) =>
       expenseService.addClaimItem(claimId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimItems(variables.claimId) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(variables.claimId) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimItems(variables.claimId)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(variables.claimId)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
     onError: (error: Error) => {
       notifications.show({
@@ -350,11 +350,11 @@ export function useAddExpenseItem() {
 export function useUpdateExpenseItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, itemId, data }: { claimId: string; itemId: string; data: CreateExpenseItemRequest }) =>
+    mutationFn: ({claimId, itemId, data}: { claimId: string; itemId: string; data: CreateExpenseItemRequest }) =>
       expenseService.updateClaimItem(claimId, itemId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimItems(variables.claimId) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(variables.claimId) });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimItems(variables.claimId)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(variables.claimId)});
     },
   });
 }
@@ -362,12 +362,12 @@ export function useUpdateExpenseItem() {
 export function useDeleteExpenseItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ claimId, itemId }: { claimId: string; itemId: string }) =>
+    mutationFn: ({claimId, itemId}: { claimId: string; itemId: string }) =>
       expenseService.deleteClaimItem(claimId, itemId),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimItems(variables.claimId) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.claimDetail(variables.claimId) });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimItems(variables.claimId)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(variables.claimId)});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
     onError: (error: Error) => {
       notifications.show({
@@ -386,7 +386,7 @@ export function useCreateExpenseCategory() {
   return useMutation({
     mutationFn: (data: CreateExpenseCategoryRequest) => expenseService.createCategory(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.categories() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.categories()});
     },
   });
 }
@@ -394,10 +394,10 @@ export function useCreateExpenseCategory() {
 export function useUpdateExpenseCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ categoryId, data }: { categoryId: string; data: CreateExpenseCategoryRequest }) =>
+    mutationFn: ({categoryId, data}: { categoryId: string; data: CreateExpenseCategoryRequest }) =>
       expenseService.updateCategory(categoryId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.categories() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.categories()});
     },
   });
 }
@@ -405,10 +405,10 @@ export function useUpdateExpenseCategory() {
 export function useToggleExpenseCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ categoryId, active }: { categoryId: string; active: boolean }) =>
+    mutationFn: ({categoryId, active}: { categoryId: string; active: boolean }) =>
       expenseService.toggleCategory(categoryId, active),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.categories() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.categories()});
     },
   });
 }
@@ -418,7 +418,7 @@ export function useDeleteExpenseCategory() {
   return useMutation({
     mutationFn: (categoryId: string) => expenseService.deleteCategory(categoryId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.categories() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.categories()});
     },
   });
 }
@@ -430,7 +430,7 @@ export function useCreateExpensePolicy() {
   return useMutation({
     mutationFn: (data: CreateExpensePolicyRequest) => expenseService.createPolicy(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.policies() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.policies()});
     },
   });
 }
@@ -438,10 +438,10 @@ export function useCreateExpensePolicy() {
 export function useUpdateExpensePolicy() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ policyId, data }: { policyId: string; data: CreateExpensePolicyRequest }) =>
+    mutationFn: ({policyId, data}: { policyId: string; data: CreateExpensePolicyRequest }) =>
       expenseService.updatePolicy(policyId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.policies() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.policies()});
     },
   });
 }
@@ -449,10 +449,10 @@ export function useUpdateExpensePolicy() {
 export function useToggleExpensePolicy() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ policyId, active }: { policyId: string; active: boolean }) =>
+    mutationFn: ({policyId, active}: { policyId: string; active: boolean }) =>
       expenseService.togglePolicy(policyId, active),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.policies() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.policies()});
     },
   });
 }
@@ -462,10 +462,10 @@ export function useToggleExpensePolicy() {
 export function useCreateExpenseAdvance() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ employeeId, data }: { employeeId: string; data: CreateExpenseAdvanceRequest }) =>
+    mutationFn: ({employeeId, data}: { employeeId: string; data: CreateExpenseAdvanceRequest }) =>
       expenseService.createAdvance(employeeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.advances()});
     },
   });
 }
@@ -475,7 +475,7 @@ export function useApproveExpenseAdvance() {
   return useMutation({
     mutationFn: (advanceId: string) => expenseService.approveAdvance(advanceId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.advances()});
     },
   });
 }
@@ -485,7 +485,7 @@ export function useDisburseExpenseAdvance() {
   return useMutation({
     mutationFn: (advanceId: string) => expenseService.disburseAdvance(advanceId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.advances()});
     },
   });
 }
@@ -493,12 +493,12 @@ export function useDisburseExpenseAdvance() {
 export function useSettleExpenseAdvance() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ advanceId, claimId }: { advanceId: string; claimId: string }) =>
+    mutationFn: ({advanceId, claimId}: { advanceId: string; claimId: string }) =>
       expenseService.settleAdvance(advanceId, claimId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.myClaims() });
-      queryClient.invalidateQueries({ queryKey: expenseKeys.allClaims() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.advances()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
+      queryClient.invalidateQueries({queryKey: expenseKeys.allClaims()});
     },
   });
 }
@@ -508,7 +508,7 @@ export function useCancelExpenseAdvance() {
   return useMutation({
     mutationFn: (advanceId: string) => expenseService.cancelAdvance(advanceId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expenseKeys.advances() });
+      queryClient.invalidateQueries({queryKey: expenseKeys.advances()});
     },
   });
 }

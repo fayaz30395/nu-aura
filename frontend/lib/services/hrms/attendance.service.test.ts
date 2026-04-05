@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {attendanceService} from './attendance.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { attendanceService } from './attendance.service';
-import { apiClient } from '@/lib/api/client';
 
 // Types for test data
 interface Shift {
@@ -87,7 +86,7 @@ describe('AttendanceService', () => {
           active: true,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockShift });
+        mockApiClient.post.mockResolvedValue({data: mockShift});
 
         const result = await attendanceService.createShift({
           name: 'Morning Shift',
@@ -124,7 +123,7 @@ describe('AttendanceService', () => {
           active: true,
         };
 
-        mockApiClient.put.mockResolvedValue({ data: mockUpdatedShift });
+        mockApiClient.put.mockResolvedValue({data: mockUpdatedShift});
 
         const result = await attendanceService.updateShift('shift-123', {
           name: 'Evening Shift',
@@ -159,7 +158,7 @@ describe('AttendanceService', () => {
           active: true,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockShift });
+        mockApiClient.get.mockResolvedValue({data: mockShift});
 
         const result = await attendanceService.getShiftById('shift-123');
 
@@ -192,12 +191,12 @@ describe('AttendanceService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await attendanceService.getAllShifts();
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/shifts', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content).toHaveLength(1);
       });
@@ -211,12 +210,12 @@ describe('AttendanceService', () => {
           pageSize: 50,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         await attendanceService.getAllShifts(2, 50);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/shifts', {
-          params: { page: 2, size: 50 },
+          params: {page: 2, size: 50},
         });
       });
     });
@@ -240,7 +239,7 @@ describe('AttendanceService', () => {
           },
         ];
 
-        mockApiClient.get.mockResolvedValue({ data: mockShifts });
+        mockApiClient.get.mockResolvedValue({data: mockShifts});
 
         const result = await attendanceService.getActiveShifts();
 
@@ -265,7 +264,7 @@ describe('AttendanceService', () => {
           active: true,
         };
 
-        mockApiClient.patch.mockResolvedValue({ data: mockShift });
+        mockApiClient.patch.mockResolvedValue({data: mockShift});
 
         const result = await attendanceService.activateShift('shift-123');
 
@@ -292,7 +291,7 @@ describe('AttendanceService', () => {
           active: false,
         };
 
-        mockApiClient.patch.mockResolvedValue({ data: mockShift });
+        mockApiClient.patch.mockResolvedValue({data: mockShift});
 
         const result = await attendanceService.deactivateShift('shift-123');
 
@@ -339,7 +338,7 @@ describe('AttendanceService', () => {
           type: 'NATIONAL',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockHoliday });
+        mockApiClient.post.mockResolvedValue({data: mockHoliday});
 
         const result = await attendanceService.createHoliday({
           name: 'Christmas',
@@ -375,7 +374,7 @@ describe('AttendanceService', () => {
           type: 'NATIONAL',
         };
 
-        mockApiClient.put.mockResolvedValue({ data: mockHoliday });
+        mockApiClient.put.mockResolvedValue({data: mockHoliday});
 
         const result = await attendanceService.updateHoliday('hol-123', {
           name: 'Christmas Day',
@@ -405,7 +404,7 @@ describe('AttendanceService', () => {
           type: 'NATIONAL',
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockHoliday });
+        mockApiClient.get.mockResolvedValue({data: mockHoliday});
 
         const result = await attendanceService.getHolidayById('hol-123');
 
@@ -437,7 +436,7 @@ describe('AttendanceService', () => {
           },
         ];
 
-        mockApiClient.get.mockResolvedValue({ data: mockHolidays });
+        mockApiClient.get.mockResolvedValue({data: mockHolidays});
 
         const result = await attendanceService.getHolidaysByYear(2026);
 
@@ -484,7 +483,7 @@ describe('AttendanceService', () => {
           isLate: false,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockAttendance });
+        mockApiClient.post.mockResolvedValue({data: mockAttendance});
 
         const result = await attendanceService.checkIn({
           employeeId: 'emp-123',
@@ -523,7 +522,7 @@ describe('AttendanceService', () => {
           earlyDepartureMinutes: 30,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockAttendance });
+        mockApiClient.post.mockResolvedValue({data: mockAttendance});
 
         const result = await attendanceService.checkOut({
           employeeId: 'emp-123',
@@ -569,23 +568,23 @@ describe('AttendanceService', () => {
           pageSize: 50,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await attendanceService.getEmployeeAttendance('emp-123');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/employee/emp-123', {
-          params: { page: 0, size: 50 },
+          params: {page: 0, size: 50},
         });
         expect(result.content).toHaveLength(1);
       });
 
       it('should handle pagination for employee attendance', async () => {
-        mockApiClient.get.mockResolvedValue({ data: { content: [] } });
+        mockApiClient.get.mockResolvedValue({data: {content: []}});
 
         await attendanceService.getEmployeeAttendance('emp-123', 1, 100);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/employee/emp-123', {
-          params: { page: 1, size: 100 },
+          params: {page: 1, size: 100},
         });
       });
     });
@@ -603,7 +602,7 @@ describe('AttendanceService', () => {
           },
         ];
 
-        mockApiClient.get.mockResolvedValue({ data: mockRecords });
+        mockApiClient.get.mockResolvedValue({data: mockRecords});
 
         const result = await attendanceService.getAttendanceByDateRange(
           '2026-03-01',
@@ -611,7 +610,7 @@ describe('AttendanceService', () => {
         );
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/my-attendance', {
-          params: { startDate: '2026-03-01', endDate: '2026-03-31' },
+          params: {startDate: '2026-03-01', endDate: '2026-03-31'},
         });
         expect(result).toHaveLength(1);
       });
@@ -644,23 +643,23 @@ describe('AttendanceService', () => {
           pageSize: 100,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await attendanceService.getAttendanceByDate('2026-03-18');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/date/2026-03-18', {
-          params: { page: 0, size: 100 },
+          params: {page: 0, size: 100},
         });
         expect(result.content).toHaveLength(1);
       });
 
       it('should handle pagination for date-based search', async () => {
-        mockApiClient.get.mockResolvedValue({ data: { content: [] } });
+        mockApiClient.get.mockResolvedValue({data: {content: []}});
 
         await attendanceService.getAttendanceByDate('2026-03-18', 1, 50);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/date/2026-03-18', {
-          params: { page: 1, size: 50 },
+          params: {page: 1, size: 50},
         });
       });
     });
@@ -684,12 +683,12 @@ describe('AttendanceService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await attendanceService.getPendingRegularizations();
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/pending-regularizations', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content).toHaveLength(1);
       });
@@ -713,7 +712,7 @@ describe('AttendanceService', () => {
           regularizationRequested: true,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockRecord });
+        mockApiClient.post.mockResolvedValue({data: mockRecord});
 
         const result = await attendanceService.requestRegularization('att-123', {
           reason: 'Late arrival due to traffic',
@@ -723,7 +722,7 @@ describe('AttendanceService', () => {
           '/attendance/att-123/request-regularization',
           null,
           {
-            params: { reason: 'Late arrival due to traffic' },
+            params: {reason: 'Late arrival due to traffic'},
           }
         );
         expect(result.regularizationRequested).toBe(true);
@@ -733,7 +732,7 @@ describe('AttendanceService', () => {
         mockApiClient.post.mockRejectedValue(new Error('Request failed'));
 
         await expect(
-          attendanceService.requestRegularization('att-123', { reason: 'Test' })
+          attendanceService.requestRegularization('att-123', {reason: 'Test'})
         ).rejects.toThrow('Request failed');
       });
     });
@@ -749,7 +748,7 @@ describe('AttendanceService', () => {
           regularizationApproved: true,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockRecord });
+        mockApiClient.post.mockResolvedValue({data: mockRecord});
 
         const result = await attendanceService.approveRegularization('att-123');
 
@@ -779,7 +778,7 @@ describe('AttendanceService', () => {
           regularizationApproved: false,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockRecord });
+        mockApiClient.post.mockResolvedValue({data: mockRecord});
 
         const result = await attendanceService.rejectRegularization(
           'att-123',
@@ -790,7 +789,7 @@ describe('AttendanceService', () => {
           '/attendance/att-123/reject-regularization',
           null,
           {
-            params: { reason: 'Insufficient justification' },
+            params: {reason: 'Insufficient justification'},
           }
         );
         expect(result.regularizationApproved).toBe(false);
@@ -818,12 +817,12 @@ describe('AttendanceService', () => {
           },
         ];
 
-        mockApiClient.get.mockResolvedValue({ data: mockEntries });
+        mockApiClient.get.mockResolvedValue({data: mockEntries});
 
         const result = await attendanceService.getMyTimeEntries('2026-03-18');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/attendance/my-time-entries', {
-          params: { date: '2026-03-18' },
+          params: {date: '2026-03-18'},
         });
         expect(result).toHaveLength(1);
       });

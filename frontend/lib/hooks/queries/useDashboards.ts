@@ -1,10 +1,10 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '@/lib/services/core/dashboard.service';
+import {useQuery} from '@tanstack/react-query';
+import {dashboardService} from '@/lib/services/core/dashboard.service';
 import {
-  ExecutiveDashboardData,
   EmployeeDashboardData,
+  ExecutiveDashboardData,
   ManagerDashboardResponse,
   ManagerTeamProjectsResponse,
 } from '@/lib/types/core/dashboard';
@@ -14,7 +14,7 @@ export const dashboardKeys = {
   all: ['dashboards'] as const,
   executive: () => [...dashboardKeys.all, 'executive'] as const,
   executiveByDateRange: (startDate: string, endDate: string) =>
-    [...dashboardKeys.executive(), { startDate, endDate }] as const,
+    [...dashboardKeys.executive(), {startDate, endDate}] as const,
   employee: () => [...dashboardKeys.all, 'employee'] as const,
   employeeById: (employeeId: string) =>
     [...dashboardKeys.employee(), employeeId] as const,

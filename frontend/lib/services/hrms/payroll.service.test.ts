@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {payrollService} from './payroll.service';
+import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -9,9 +11,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { payrollService } from './payroll.service';
-import { apiClient } from '@/lib/api/client';
 
 // Types for test data
 interface PayrollRun {
@@ -81,7 +80,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockPayrollRun });
+        mockApiClient.post.mockResolvedValue({data: mockPayrollRun});
 
         const result = await payrollService.createPayrollRun({
           payrollPeriodStart: '2026-01-01',
@@ -118,7 +117,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.put.mockResolvedValue({ data: mockUpdatedRun });
+        mockApiClient.put.mockResolvedValue({data: mockUpdatedRun});
 
         const result = await payrollService.updatePayrollRun('run-123', {
           payrollPeriodStart: '2026-02-01',
@@ -151,7 +150,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockRun });
+        mockApiClient.get.mockResolvedValue({data: mockRun});
 
         const result = await payrollService.getPayrollRunById('run-123');
 
@@ -184,12 +183,12 @@ describe('PayrollService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await payrollService.getAllPayrollRuns();
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content).toHaveLength(1);
       });
@@ -203,12 +202,12 @@ describe('PayrollService', () => {
           pageSize: 50,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         await payrollService.getAllPayrollRuns(2, 50);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs', {
-          params: { page: 2, size: 50 },
+          params: {page: 2, size: 50},
         });
       });
     });
@@ -231,23 +230,23 @@ describe('PayrollService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await payrollService.getPayrollRunsByStatus('PROCESSING');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs/status/PROCESSING', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content[0].status).toBe('PROCESSING');
       });
 
       it('should handle pagination for status-based search', async () => {
-        mockApiClient.get.mockResolvedValue({ data: { content: [], totalElements: 0 } });
+        mockApiClient.get.mockResolvedValue({data: {content: [], totalElements: 0}});
 
         await payrollService.getPayrollRunsByStatus('APPROVED', 1, 15);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs/status/APPROVED', {
-          params: { page: 1, size: 15 },
+          params: {page: 1, size: 15},
         });
       });
     });
@@ -262,7 +261,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockProcessedRun });
+        mockApiClient.post.mockResolvedValue({data: mockProcessedRun});
 
         const result = await payrollService.processPayrollRun('run-123');
 
@@ -289,7 +288,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockApprovedRun });
+        mockApiClient.post.mockResolvedValue({data: mockApprovedRun});
 
         const result = await payrollService.approvePayrollRun('run-123');
 
@@ -316,7 +315,7 @@ describe('PayrollService', () => {
           createdAt: '2026-03-18T00:00:00Z',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockLockedRun });
+        mockApiClient.post.mockResolvedValue({data: mockLockedRun});
 
         const result = await payrollService.lockPayrollRun('run-123');
 
@@ -363,7 +362,7 @@ describe('PayrollService', () => {
           netAmount: 45000,
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockPayslip });
+        mockApiClient.post.mockResolvedValue({data: mockPayslip});
 
         const payslipData: PayslipRequest = {
           employeeId: 'emp-123',
@@ -405,7 +404,7 @@ describe('PayrollService', () => {
           netAmount: 46800,
         };
 
-        mockApiClient.put.mockResolvedValue({ data: updatedPayslip });
+        mockApiClient.put.mockResolvedValue({data: updatedPayslip});
 
         const result = await payrollService.updatePayslip('slip-123', {
           grossAmount: 52000,
@@ -437,7 +436,7 @@ describe('PayrollService', () => {
           netAmount: 45000,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPayslip });
+        mockApiClient.get.mockResolvedValue({data: mockPayslip});
 
         const result = await payrollService.getPayslipById('slip-123');
 
@@ -471,23 +470,23 @@ describe('PayrollService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await payrollService.getAllPayslips();
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/payslips', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content).toHaveLength(1);
       });
 
       it('should handle custom pagination for payslips', async () => {
-        mockApiClient.get.mockResolvedValue({ data: { content: [] } });
+        mockApiClient.get.mockResolvedValue({data: {content: []}});
 
         await payrollService.getAllPayslips(1, 50);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/payslips', {
-          params: { page: 1, size: 50 },
+          params: {page: 1, size: 50},
         });
       });
     });
@@ -511,31 +510,31 @@ describe('PayrollService', () => {
           pageSize: 20,
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockPage });
+        mockApiClient.get.mockResolvedValue({data: mockPage});
 
         const result = await payrollService.getPayslipsByEmployee('emp-123');
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/payslips/employee/emp-123', {
-          params: { page: 0, size: 20 },
+          params: {page: 0, size: 20},
         });
         expect(result.content[0].employeeId).toBe('emp-123');
       });
 
       it('should handle pagination for employee payslips', async () => {
-        mockApiClient.get.mockResolvedValue({ data: { content: [] } });
+        mockApiClient.get.mockResolvedValue({data: {content: []}});
 
         await payrollService.getPayslipsByEmployee('emp-123', 2, 15);
 
         expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/payslips/employee/emp-123', {
-          params: { page: 2, size: 15 },
+          params: {page: 2, size: 15},
         });
       });
     });
 
     describe('downloadPayslipPdf', () => {
       it('should download payslip PDF', async () => {
-        const mockBlob = new Blob(['pdf-content'], { type: 'application/pdf' });
-        mockApiClient.get.mockResolvedValue({ data: mockBlob });
+        const mockBlob = new Blob(['pdf-content'], {type: 'application/pdf'});
+        mockApiClient.get.mockResolvedValue({data: mockBlob});
 
         const result = await payrollService.downloadPayslipPdf('slip-123');
 
@@ -568,7 +567,7 @@ describe('PayrollService', () => {
           status: 'DRAFT',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockStructure });
+        mockApiClient.post.mockResolvedValue({data: mockStructure});
 
         const result = await payrollService.createSalaryStructure({
           employeeId: 'emp-123',
@@ -602,7 +601,7 @@ describe('PayrollService', () => {
           status: 'APPROVED',
         };
 
-        mockApiClient.get.mockResolvedValue({ data: mockStructure });
+        mockApiClient.get.mockResolvedValue({data: mockStructure});
 
         const result = await payrollService.getSalaryStructureById('ss-123');
 
@@ -632,7 +631,7 @@ describe('PayrollService', () => {
           status: 'INACTIVE',
         };
 
-        mockApiClient.post.mockResolvedValue({ data: mockStructure });
+        mockApiClient.post.mockResolvedValue({data: mockStructure});
 
         const result = await payrollService.deactivateSalaryStructure('ss-123');
 

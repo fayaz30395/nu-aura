@@ -290,9 +290,13 @@ export function initGlobalErrorHandlers(): () => void {
 }
 
 /**
- * Extract error message from various error types
+ * Extract error message from various error types (Axios, Error, or unknown).
+ * QUAL-3: Exported utility — use instead of inline `error as { response?: ... }` casting.
+ *
+ * @param error - The caught error object
+ * @param fallback - Optional fallback message (defaults to 'An unexpected error occurred')
  */
-function getErrorMessage(error: unknown): string {
+export function getErrorMessage(error: unknown, fallback = 'An unexpected error occurred'): string {
   // Check for Axios error with response data
   const axiosError = error as { response?: { data?: { message?: string } } };
   if (axiosError?.response?.data?.message) {
@@ -305,7 +309,7 @@ function getErrorMessage(error: unknown): string {
   }
 
   // Fallback
-  return 'An unexpected error occurred';
+  return fallback;
 }
 
 /**

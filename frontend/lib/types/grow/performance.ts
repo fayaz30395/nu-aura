@@ -236,7 +236,15 @@ export interface GoalAnalytics {
 // ==================== OKR Types ====================
 
 export type ObjectiveLevel = 'COMPANY' | 'DEPARTMENT' | 'TEAM' | 'INDIVIDUAL';
-export type ObjectiveStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'ACTIVE' | 'ON_TRACK' | 'AT_RISK' | 'BEHIND' | 'COMPLETED' | 'CANCELLED';
+export type ObjectiveStatus =
+  'DRAFT'
+  | 'PENDING_APPROVAL'
+  | 'ACTIVE'
+  | 'ON_TRACK'
+  | 'AT_RISK'
+  | 'BEHIND'
+  | 'COMPLETED'
+  | 'CANCELLED';
 export type MeasurementType = 'PERCENTAGE' | 'NUMBER' | 'CURRENCY' | 'BINARY' | 'MILESTONE';
 export type KeyResultStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'ON_TRACK' | 'AT_RISK' | 'COMPLETED' | 'CANCELLED';
 export type CheckInType = 'PROGRESS_UPDATE' | 'STATUS_CHANGE' | 'WEEKLY_REVIEW' | 'FINAL_REVIEW';

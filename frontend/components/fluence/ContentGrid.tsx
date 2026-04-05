@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { Eye, Heart, MessageCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { typography, iconSize } from '@/lib/design-system';
+import {motion} from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {Eye, Heart, MessageCircle} from 'lucide-react';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {iconSize, typography} from '@/lib/design-system';
 
 export interface ContentItem {
   id: string;
@@ -32,12 +32,12 @@ interface ContentGridProps {
  * Generic content grid component for displaying wiki pages or blog posts.
  */
 export function ContentGrid({
-  items,
-  title,
-  emptyMessage = 'No content found',
-  columns = 3,
-  className = '',
-}: ContentGridProps) {
+                              items,
+                              title,
+                              emptyMessage = 'No content found',
+                              columns = 3,
+                              className = '',
+                            }: ContentGridProps) {
   const router = useRouter();
 
   const getRoute = (item: ContentItem): string => {
@@ -83,10 +83,10 @@ export function ContentGrid({
         initial="hidden"
         animate="visible"
         variants={{
-          hidden: { opacity: 0 },
+          hidden: {opacity: 0},
           visible: {
             opacity: 1,
-            transition: { staggerChildren: 0.05 },
+            transition: {staggerChildren: 0.05},
           },
         }}
       >
@@ -94,8 +94,8 @@ export function ContentGrid({
           <motion.div
             key={item.id}
             variants={{
-              hidden: { opacity: 0, y: 8 },
-              visible: { opacity: 1, y: 0 },
+              hidden: {opacity: 0, y: 8},
+              visible: {opacity: 1, y: 0},
             }}
           >
             <Card
@@ -113,7 +113,8 @@ export function ContentGrid({
                     </span>
                   )}
                 </div>
-                <CardTitle className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--accent-700)] transition-colors`}>
+                <CardTitle
+                  className={`${typography.cardTitle} line-clamp-2 group-hover:text-[var(--accent-700)] transition-colors`}>
                   {item.title}
                 </CardTitle>
               </CardHeader>
@@ -131,19 +132,19 @@ export function ContentGrid({
                   <div className="flex items-center gap-2 text-caption">
                     {item.viewCount !== undefined && (
                       <div className="flex items-center gap-1">
-                        <Eye className={iconSize.meta} />
+                        <Eye className={iconSize.meta}/>
                         <span>{item.viewCount}</span>
                       </div>
                     )}
                     {item.likeCount !== undefined && (
                       <div className="flex items-center gap-1">
-                        <Heart className={iconSize.meta} />
+                        <Heart className={iconSize.meta}/>
                         <span>{item.likeCount}</span>
                       </div>
                     )}
                     {item.commentCount !== undefined && (
                       <div className="flex items-center gap-1">
-                        <MessageCircle className={iconSize.meta} />
+                        <MessageCircle className={iconSize.meta}/>
                         <span>{item.commentCount}</span>
                       </div>
                     )}

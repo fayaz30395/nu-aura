@@ -1,33 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useEffect, useState} from 'react';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/Button';
-import { AppLayout } from '@/components/layout';
-import {
-  useBlogPost,
-  useUpdateBlogPost,
-  useBlogCategories,
-  useEditLock,
-} from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
-import { ArrowLeft, Save, RefreshCw } from 'lucide-react';
-import { isAxiosError } from '@/lib/utils/type-guards';
+import {Button} from '@/components/ui/Button';
+import {AppLayout} from '@/components/layout';
+import {useBlogCategories, useBlogPost, useEditLock, useUpdateBlogPost,} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {LoadingOverlay, MultiSelect, Select, Skeleton, Textarea, TextInput} from '@mantine/core';
+import {ArrowLeft, RefreshCw, Save} from 'lucide-react';
+import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import EditLockWarning from '@/components/fluence/EditLockWarning';
-import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
-  { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
+  {ssr: false, loading: () => <Skeleton height={400} radius="md"/>}
 );
 
 const editBlogPostSchema = z.object({
@@ -37,12 +31,12 @@ const editBlogPostSchema = z.object({
   tags: z.array(z.string()).default([]),
   coverImageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
-    errorMap: () => ({ message: 'Invalid visibility option' }),
+    errorMap: () => ({message: 'Invalid visibility option'}),
   }),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
   content: z.record(z.unknown()).default({
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{type: 'paragraph'}],
   }),
 });
 
@@ -55,11 +49,11 @@ export default function EditBlogPost() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editorSearchQuery, setEditorSearchQuery] = useState('');
 
-  const { data: post, isLoading } = useBlogPost(postId, !!postId);
-  const { mutate: updateBlogPost } = useUpdateBlogPost();
-  const { data: categoriesData, isLoading: categoriesLoading } = useBlogCategories();
-  const { isLockedByOther, lockedByName, forceAcquireLock } = useEditLock('BLOG', postId, !!postId);
-  const { data: editorSearchData } = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
+  const {data: post, isLoading} = useBlogPost(postId, !!postId);
+  const {mutate: updateBlogPost} = useUpdateBlogPost();
+  const {data: categoriesData, isLoading: categoriesLoading} = useBlogCategories();
+  const {isLockedByOther, lockedByName, forceAcquireLock} = useEditLock('BLOG', postId, !!postId);
+  const {data: editorSearchData} = useEmployeeSearch(editorSearchQuery, 0, 20, editorSearchQuery.length > 1);
 
   const [sharedDepartmentIds, setSharedDepartmentIds] = useState<string[]>([]);
   const [sharedEmployeeIds, setSharedEmployeeIds] = useState<string[]>([]);
@@ -74,7 +68,7 @@ export default function EditBlogPost() {
     handleSubmit,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<EditBlogPostInput>({
     resolver: zodResolver(editBlogPostSchema),
     defaultValues: {
@@ -85,7 +79,7 @@ export default function EditBlogPost() {
       coverImageUrl: '',
       visibility: 'ORGANIZATION',
       status: 'DRAFT',
-      content: { type: 'doc', content: [{ type: 'paragraph' }] },
+      content: {type: 'doc', content: [{type: 'paragraph'}]},
     },
   });
 
@@ -149,7 +143,7 @@ export default function EditBlogPost() {
             const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
               ? (error.response.data as { message?: string }).message ?? 'Failed to update blog post'
               : 'Failed to update blog post';
-            notifications.show({ title: 'Error', message, color: 'red' });
+            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );
@@ -162,7 +156,7 @@ export default function EditBlogPost() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin" />
+          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin"/>
         </div>
       </AppLayout>
     );
@@ -184,7 +178,7 @@ export default function EditBlogPost() {
                 className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 aria-label="Go back"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5"/>
               </button>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Edit Blog Post
@@ -241,7 +235,7 @@ export default function EditBlogPost() {
             <Controller
               control={control}
               name="categoryId"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select a category (optional)"
@@ -264,7 +258,7 @@ export default function EditBlogPost() {
             <Controller
               control={control}
               name="tags"
-              render={({ field }) => (
+              render={({field}) => (
                 <MultiSelect
                   {...field}
                   placeholder="Add tags (optional)"
@@ -297,15 +291,15 @@ export default function EditBlogPost() {
             <Controller
               control={control}
               name="status"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select status"
                   disabled={isSubmitting}
                   data={[
-                    { value: 'DRAFT', label: 'Draft' },
-                    { value: 'PUBLISHED', label: 'Published' },
-                    { value: 'ARCHIVED', label: 'Archived' },
+                    {value: 'DRAFT', label: 'Draft'},
+                    {value: 'PUBLISHED', label: 'Published'},
+                    {value: 'ARCHIVED', label: 'Archived'},
                   ]}
                 />
               )}
@@ -320,17 +314,17 @@ export default function EditBlogPost() {
             <Controller
               control={control}
               name="visibility"
-              render={({ field }) => (
+              render={({field}) => (
                 <Select
                   {...field}
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
-                    { value: 'PUBLIC', label: 'Public' },
-                    { value: 'ORGANIZATION', label: 'Organization' },
-                    { value: 'DEPARTMENT', label: 'My Department Only' },
-                    { value: 'RESTRICTED', label: 'Specific People' },
-                    { value: 'PRIVATE', label: 'Private' },
+                    {value: 'PUBLIC', label: 'Public'},
+                    {value: 'ORGANIZATION', label: 'Organization'},
+                    {value: 'DEPARTMENT', label: 'My Department Only'},
+                    {value: 'RESTRICTED', label: 'Specific People'},
+                    {value: 'PRIVATE', label: 'Private'},
                   ]}
                 />
               )}
@@ -376,7 +370,7 @@ export default function EditBlogPost() {
             <Controller
               control={control}
               name="content"
-              render={({ field }) => (
+              render={({field}) => (
                 <FluenceEditor
                   content={field.value}
                   onChange={field.onChange}
@@ -401,14 +395,14 @@ export default function EditBlogPost() {
                 disabled={isSubmitting}
                 className="gap-2 bg-warning-600 hover:bg-warning-700"
               >
-                <Save className="w-4 h-4" />
+                <Save className="w-4 h-4"/>
                 {isSubmitting ? 'Saving...' : 'Save Changes'}
               </Button>
             </PermissionGate>
           </div>
         </form>
 
-        <LoadingOverlay visible={isSubmitting} />
+        <LoadingOverlay visible={isSubmitting}/>
       </div>
     </AppLayout>
   );

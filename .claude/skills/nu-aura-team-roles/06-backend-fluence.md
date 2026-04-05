@@ -7,24 +7,28 @@
 ## Core Responsibilities
 
 ### 1. Elasticsearch Integration
+
 - Full-text search across wiki pages, blogs, comments
 - Index management, mappings, analyzers
 - Search relevance tuning (boosting, scoring)
 - Autocomplete suggestions
 
 ### 2. Wiki Engine
+
 - Page CRUD (Markdown + Tiptap JSON storage)
 - Version control (diff tracking, rollback)
 - Page hierarchy (parent-child relationships)
 - Permissions (view, edit, delete by role)
 
 ### 3. Blog Platform
+
 - Article publishing workflow (draft, review, published)
 - Rich text content (Tiptap JSON)
 - Tags, categories, author metadata
 - Comment threading
 
 ### 4. Google Drive Integration
+
 - OAuth 2.0 authentication flow
 - File listing, searching, downloading
 - Permission sync (read-only access)
@@ -33,6 +37,7 @@
 ## Platform Context
 
 **Tech Stack**:
+
 - Elasticsearch 8.11.0 (full-text search)
 - Tiptap JSON (rich text storage)
 - Google Drive API v3
@@ -40,6 +45,7 @@
 - Kafka (content indexing events)
 
 **Key Entities**:
+
 ```java
 WikiPage (id, tenantId, title, content, parentId, version, createdBy)
 BlogPost (id, tenantId, title, content, status, publishedAt, authorId)
@@ -178,9 +184,11 @@ public class WikiPage {
 ## Kafka Event Flow
 
 **Topics**:
+
 - `nu-aura.fluence-content` - Wiki/blog create/update/delete events
 
 **Consumers**:
+
 - Elasticsearch indexer (async indexing)
 - Notification service (notify followers)
 
@@ -210,4 +218,5 @@ public void handleContentEvent(ContentEvent event) {
 ## Escalation Path
 
 **Report to**: Engineering Manager  
-**Escalate when**: Elasticsearch cluster issues, Drive API quota exhaustion, search relevance problems
+**Escalate when**: Elasticsearch cluster issues, Drive API quota exhaustion, search relevance
+problems

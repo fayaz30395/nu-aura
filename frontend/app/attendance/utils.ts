@@ -23,7 +23,7 @@ export function formatDuration(hours: number): string {
 
 /** Format ISO string to "HH:MM AM/PM". */
 export function formatTime(isoStr: string): string {
-  return new Date(isoStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  return new Date(isoStr).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
 }
 
 /** Compute the attendance streak (consecutive present weekdays counting back from today). */
@@ -88,7 +88,7 @@ export function computeMonthStats(
   const absent = Math.max(0, businessDays - present);
   const attendanceRate = businessDays > 0 ? Math.round((present / businessDays) * 100) : 0;
 
-  return { present, absent, late, totalHours, overtimeTotal, avgHours, businessDays, attendanceRate };
+  return {present, absent, late, totalHours, overtimeTotal, avgHours, businessDays, attendanceRate};
 }
 
 /** Compute weekly averages. */

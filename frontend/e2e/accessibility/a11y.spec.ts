@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -8,11 +8,11 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Accessibility Tests', () => {
   test.describe('Dashboard Accessibility', () => {
-    test('should not have any automatically detectable accessibility issues', async ({ page }) => {
+    test('should not have any automatically detectable accessibility issues', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
-      const accessibilityScanResults = await new AxeBuilder({ page })
+      const accessibilityScanResults = await new AxeBuilder({page})
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze();
 
@@ -35,7 +35,7 @@ test.describe('Accessibility Tests', () => {
       expect(violations.length).toBe(0);
     });
 
-    test('should have proper heading hierarchy', async ({ page }) => {
+    test('should have proper heading hierarchy', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -61,7 +61,7 @@ test.describe('Accessibility Tests', () => {
       }
     });
 
-    test('should have proper ARIA landmarks', async ({ page }) => {
+    test('should have proper ARIA landmarks', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -80,7 +80,7 @@ test.describe('Accessibility Tests', () => {
   });
 
   test.describe('Navigation Accessibility', () => {
-    test('should support keyboard navigation', async ({ page }) => {
+    test('should support keyboard navigation', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -107,7 +107,7 @@ test.describe('Accessibility Tests', () => {
       expect(currentFocused).toBeTruthy();
     });
 
-    test('should have visible focus indicators', async ({ page }) => {
+    test('should have visible focus indicators', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -136,12 +136,12 @@ test.describe('Accessibility Tests', () => {
       expect(hasFocusIndicator).toBeTruthy();
     });
 
-    test('should allow Escape key to close modals', async ({ page }) => {
+    test('should allow Escape key to close modals', async ({page}) => {
       await page.goto('/employees');
       await page.waitForLoadState('networkidle');
 
       // Try to open a modal
-      const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+      const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
       if (await addButton.isVisible()) {
         await addButton.click();
 
@@ -158,16 +158,16 @@ test.describe('Accessibility Tests', () => {
           await page.keyboard.press('Escape');
 
           // Modal should close
-          await expect(modal.first()).toBeHidden({ timeout: 2000 });
+          await expect(modal.first()).toBeHidden({timeout: 2000});
         }
       }
     });
 
-    test('should trap focus within modals', async ({ page }) => {
+    test('should trap focus within modals', async ({page}) => {
       await page.goto('/employees');
       await page.waitForLoadState('networkidle');
 
-      const addButton = page.getByRole('button', { name: /add|new|create/i }).first();
+      const addButton = page.getByRole('button', {name: /add|new|create/i}).first();
       if (await addButton.isVisible()) {
         await addButton.click();
         await page.waitForTimeout(500);
@@ -200,16 +200,16 @@ test.describe('Accessibility Tests', () => {
   });
 
   test.describe('Form Accessibility', () => {
-    test('should have labels for all form inputs', async ({ page }) => {
+    test('should have labels for all form inputs', async ({page}) => {
       await page.goto('/auth/login');
       await page.waitForLoadState('networkidle');
 
-      const accessibilityScanResults = await new AxeBuilder({ page })
+      const accessibilityScanResults = await new AxeBuilder({page})
         .withTags(['wcag2a'])
         .options({
           rules: {
-            'label': { enabled: true },
-            'label-title-only': { enabled: true },
+            'label': {enabled: true},
+            'label-title-only': {enabled: true},
           },
         })
         .analyze();
@@ -226,12 +226,12 @@ test.describe('Accessibility Tests', () => {
       expect(labelViolations.length).toBe(0);
     });
 
-    test('should announce form errors to screen readers', async ({ page }) => {
+    test('should announce form errors to screen readers', async ({page}) => {
       await page.goto('/auth/login');
       await page.waitForLoadState('networkidle');
 
       // Submit empty form
-      const submitButton = page.getByRole('button', { name: /sign in|log in|submit/i });
+      const submitButton = page.getByRole('button', {name: /sign in|log in|submit/i});
       await submitButton.click();
 
       // Error messages should have role="alert" or be in aria-live region
@@ -248,7 +248,7 @@ test.describe('Accessibility Tests', () => {
       expect(hasAccessibleError || page.url().includes('/login')).toBeTruthy();
     });
 
-    test('should have proper autocomplete attributes', async ({ page }) => {
+    test('should have proper autocomplete attributes', async ({page}) => {
       await page.goto('/auth/login');
       await page.waitForLoadState('networkidle');
 
@@ -268,14 +268,14 @@ test.describe('Accessibility Tests', () => {
   });
 
   test.describe('Color Contrast', () => {
-    test('should meet color contrast requirements', async ({ page }) => {
+    test('should meet color contrast requirements', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
-      const accessibilityScanResults = await new AxeBuilder({ page })
+      const accessibilityScanResults = await new AxeBuilder({page})
         .options({
           rules: {
-            'color-contrast': { enabled: true },
+            'color-contrast': {enabled: true},
           },
         })
         .analyze();
@@ -303,7 +303,7 @@ test.describe('Accessibility Tests', () => {
   });
 
   test.describe('Images and Media', () => {
-    test('should have alt text for all images', async ({ page }) => {
+    test('should have alt text for all images', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -321,7 +321,7 @@ test.describe('Accessibility Tests', () => {
       }
     });
 
-    test('should have accessible icons', async ({ page }) => {
+    test('should have accessible icons', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -351,7 +351,7 @@ test.describe('Accessibility Tests', () => {
   });
 
   test.describe('Interactive Elements', () => {
-    test('should have accessible names for all buttons', async ({ page }) => {
+    test('should have accessible names for all buttons', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -360,15 +360,15 @@ test.describe('Accessibility Tests', () => {
       for (const button of buttons.slice(0, 10)) {
         const accessibleName = await button.evaluate((el) => {
           return el.getAttribute('aria-label') ||
-                 el.getAttribute('title') ||
-                 el.textContent?.trim();
+            el.getAttribute('title') ||
+            el.textContent?.trim();
         });
 
         expect(accessibleName).toBeTruthy();
       }
     });
 
-    test('should have accessible names for all links', async ({ page }) => {
+    test('should have accessible names for all links', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
 
@@ -377,8 +377,8 @@ test.describe('Accessibility Tests', () => {
       for (const link of links.slice(0, 10)) {
         const accessibleName = await link.evaluate((el) => {
           return el.getAttribute('aria-label') ||
-                 el.getAttribute('title') ||
-                 el.textContent?.trim();
+            el.getAttribute('title') ||
+            el.textContent?.trim();
         });
 
         expect(accessibleName).toBeTruthy();
@@ -388,19 +388,19 @@ test.describe('Accessibility Tests', () => {
 
   test.describe('Page-specific Accessibility', () => {
     const pagesToTest = [
-      { path: '/dashboard', name: 'Dashboard' },
-      { path: '/employees', name: 'Employees' },
-      { path: '/leave', name: 'Leave' },
-      { path: '/me/profile', name: 'Profile' },
-      { path: '/expenses', name: 'Expenses' },
+      {path: '/dashboard', name: 'Dashboard'},
+      {path: '/employees', name: 'Employees'},
+      {path: '/leave', name: 'Leave'},
+      {path: '/me/profile', name: 'Profile'},
+      {path: '/expenses', name: 'Expenses'},
     ];
 
     for (const pageConfig of pagesToTest) {
-      test(`${pageConfig.name} page should pass accessibility checks`, async ({ page }) => {
+      test(`${pageConfig.name} page should pass accessibility checks`, async ({page}) => {
         await page.goto(pageConfig.path);
         await page.waitForLoadState('networkidle');
 
-        const accessibilityScanResults = await new AxeBuilder({ page })
+        const accessibilityScanResults = await new AxeBuilder({page})
           .withTags(['wcag2a', 'wcag2aa'])
           .analyze();
 

@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import {
-  format,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
   eachDayOfInterval,
-  isSameMonth,
+  endOfMonth,
+  endOfWeek,
+  format,
   isSameDay,
-  startOfDay,
+  isSameMonth,
   isToday,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
 } from 'date-fns';
-import { CalendarEvent } from '@/lib/types/hrms/project-calendar';
+import {CalendarEvent} from '@/lib/types/hrms/project-calendar';
 
 interface CalendarGridViewProps {
   currentDate: Date;
@@ -24,19 +24,19 @@ interface CalendarGridViewProps {
 }
 
 export function CalendarGridView({
-  currentDate,
-  onDateChange,
-  events,
-  onEventClick,
-  viewMode,
-}: CalendarGridViewProps) {
+                                   currentDate,
+                                   onDateChange,
+                                   events,
+                                   onEventClick,
+                                   viewMode,
+                                 }: CalendarGridViewProps) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
 
   const calendarDays = useMemo(() => {
-    return eachDayOfInterval({ start: startDate, end: endDate });
+    return eachDayOfInterval({start: startDate, end: endDate});
   }, [startDate, endDate]);
 
   const getDayEvents = (day: Date) => {
@@ -48,16 +48,18 @@ export function CalendarGridView({
   };
 
   const renderMonthView = () => (
-    <div className="grid grid-cols-7 gap-px bg-surface-200 dark:bg-surface-700 rounded-lg overflow-hidden border border-surface-200 dark:border-surface-700">
+    <div
+      className="grid grid-cols-7 gap-px bg-surface-200 dark:bg-surface-700 rounded-lg overflow-hidden border border-surface-200 dark:border-surface-700">
       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-        <div key={day} className="bg-surface-50 dark:bg-surface-800 p-2 text-center text-sm font-medium text-surface-600 dark:text-surface-400">
+        <div key={day}
+             className="bg-surface-50 dark:bg-surface-800 p-2 text-center text-sm font-medium text-surface-600 dark:text-surface-400">
           {day}
         </div>
       ))}
       {calendarDays.map((day, _idx) => {
         const dayEvents = getDayEvents(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
-        
+
         return (
           <div
             key={day.toISOString()}
@@ -98,13 +100,13 @@ export function CalendarGridView({
                   }}
                 >
                   {event.type === 'milestone' && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-current shrink-0"/>
                   )}
                   <span className="truncate">{event.title}</span>
                 </button>
               ))}
               {dayEvents.length > 4 && (
-                <button 
+                <button
                   className="w-full text-center text-xs text-surface-500 hover:text-accent-700 dark:hover:text-accent-400 p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -126,7 +128,8 @@ export function CalendarGridView({
       {viewMode === 'month' && renderMonthView()}
       {/* Implement Week/Day views later if needed, for now Month is priority */}
       {viewMode !== 'month' && (
-        <div className="flex items-center justify-center h-64 bg-surface-50 dark:bg-surface-900/50 rounded-lg border border-dashed border-surface-300 dark:border-surface-700">
+        <div
+          className="flex items-center justify-center h-64 bg-surface-50 dark:bg-surface-900/50 rounded-lg border border-dashed border-surface-300 dark:border-surface-700">
           <p className="text-surface-500">
             {viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} view coming soon
           </p>

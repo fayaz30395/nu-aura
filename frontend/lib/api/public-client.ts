@@ -1,6 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { apiConfig, isProduction } from '@/lib/config';
-import { logger } from '@/lib/utils/logger';
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {apiConfig, isProduction} from '@/lib/config';
+import {logger} from '@/lib/utils/logger';
 
 /**
  * Get the API base URL with proper handling
@@ -55,8 +55,8 @@ class PublicApiClient {
         if (error.response) {
           // Server responded with error status
           const errorMessage = error.response.data?.message ||
-                               error.response.data?.error ||
-                               'An error occurred';
+            error.response.data?.error ||
+            'An error occurred';
           const enhancedError = new Error(errorMessage);
           (enhancedError as Error & { status: number }).status = error.response.status;
           return Promise.reject(enhancedError);
@@ -68,15 +68,6 @@ class PublicApiClient {
         return Promise.reject(error);
       }
     );
-  }
-
-  private normalizeUrl(url: string): string {
-    const baseUrl = this.client.defaults.baseURL || '';
-    const apiPrefix = '/api/v1';
-    if (baseUrl.endsWith(apiPrefix) && url.startsWith(apiPrefix)) {
-      return url.slice(apiPrefix.length) || '/';
-    }
-    return url;
   }
 
   get<T>(url: string, config?: AxiosRequestConfig) {
@@ -97,6 +88,15 @@ class PublicApiClient {
 
   delete<T>(url: string, config?: AxiosRequestConfig) {
     return this.client.delete<T>(this.normalizeUrl(url), config);
+  }
+
+  private normalizeUrl(url: string): string {
+    const baseUrl = this.client.defaults.baseURL || '';
+    const apiPrefix = '/api/v1';
+    if (baseUrl.endsWith(apiPrefix) && url.startsWith(apiPrefix)) {
+      return url.slice(apiPrefix.length) || '/';
+    }
+    return url;
   }
 }
 

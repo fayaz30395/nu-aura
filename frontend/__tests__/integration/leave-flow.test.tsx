@@ -4,10 +4,12 @@
  * Uses mocked leave service and React Query for reliable testing
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@/lib/test-utils';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {render, screen, waitFor} from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
-import { createMockLeaveRequest, createMockLeaveBalance, mockLeaveTypes } from '@/lib/test-utils/fixtures';
+import {createMockLeaveBalance, createMockLeaveRequest, mockLeaveTypes} from '@/lib/test-utils/fixtures';
+import {leaveService} from '@/lib/services/hrms/leave.service';
+import React from 'react';
 
 // Mock the leave service
 vi.mock('@/lib/services/hrms/leave.service', () => ({
@@ -20,8 +22,6 @@ vi.mock('@/lib/services/hrms/leave.service', () => ({
   },
 }));
 
-import { leaveService } from '@/lib/services/hrms/leave.service';
-
 const mockedLeaveService = vi.mocked(leaveService);
 
 // Mock Leave Application Form Component
@@ -29,7 +29,7 @@ interface LeaveFormProps {
   onSuccess?: () => void;
 }
 
-const MockLeaveForm: React.FC<LeaveFormProps> = ({ onSuccess }) => {
+const MockLeaveForm: React.FC<LeaveFormProps> = ({onSuccess}) => {
   const [startDate, setStartDate] = React.useState('');
   const [endDate, setEndDate] = React.useState('');
   const [leaveTypeId, setLeaveTypeId] = React.useState('');
@@ -141,8 +141,6 @@ const MockLeaveForm: React.FC<LeaveFormProps> = ({ onSuccess }) => {
   );
 };
 
-import React from 'react';
-
 describe('Leave Application Flow Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -150,7 +148,7 @@ describe('Leave Application Flow Integration Tests', () => {
 
   describe('Leave Form Rendering', () => {
     it('should render leave form with all required fields', () => {
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       expect(screen.getByTestId('leave-form')).toBeInTheDocument();
       expect(screen.getByTestId('leave-type-select')).toBeInTheDocument();
@@ -161,7 +159,7 @@ describe('Leave Application Flow Integration Tests', () => {
     });
 
     it('should display all available leave types', () => {
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
       const options = leaveTypeSelect.querySelectorAll('option');
@@ -173,7 +171,7 @@ describe('Leave Application Flow Integration Tests', () => {
 
   describe('Leave Form Validation', () => {
     it('should show error when required fields are empty', async () => {
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select') as HTMLSelectElement;
       const startDateInput = screen.getByTestId('start-date-input') as HTMLInputElement;
@@ -198,7 +196,7 @@ describe('Leave Application Flow Integration Tests', () => {
       });
       const user = userEvent.setup();
 
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const startDateInput = screen.getByTestId('start-date-input');
       const endDateInput = screen.getByTestId('end-date-input');
@@ -221,12 +219,12 @@ describe('Leave Application Flow Integration Tests', () => {
 
     it('should allow valid date range', async () => {
       mockedLeaveService.createLeaveRequest.mockResolvedValueOnce(
-        createMockLeaveRequest({ status: 'PENDING' as const })
+        createMockLeaveRequest({status: 'PENDING' as const})
       );
 
       const user = userEvent.setup();
       const onSuccess = vi.fn();
-      render(<MockLeaveForm onSuccess={onSuccess} />);
+      render(<MockLeaveForm onSuccess={onSuccess}/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
       const startDateInput = screen.getByTestId('start-date-input');
@@ -253,7 +251,7 @@ describe('Leave Application Flow Integration Tests', () => {
       );
       const user = userEvent.setup();
 
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
       const startDateInput = screen.getByTestId('start-date-input');
@@ -284,7 +282,7 @@ describe('Leave Application Flow Integration Tests', () => {
 
       const onSuccess = vi.fn();
       const user = userEvent.setup();
-      render(<MockLeaveForm onSuccess={onSuccess} />);
+      render(<MockLeaveForm onSuccess={onSuccess}/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
       const startDateInput = screen.getByTestId('start-date-input');
@@ -309,7 +307,7 @@ describe('Leave Application Flow Integration Tests', () => {
       );
       const user = userEvent.setup();
 
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select') as HTMLSelectElement;
       const startDateInput = screen.getByTestId('start-date-input') as HTMLInputElement;
@@ -338,7 +336,7 @@ describe('Leave Application Flow Integration Tests', () => {
       );
       const user = userEvent.setup();
 
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const leaveTypeSelect = screen.getByTestId('leave-type-select');
       const startDateInput = screen.getByTestId('start-date-input');
@@ -361,8 +359,8 @@ describe('Leave Application Flow Integration Tests', () => {
   describe('Leave Balance Updates', () => {
     it('should fetch employee leave balances', async () => {
       mockedLeaveService.getEmployeeBalances.mockResolvedValueOnce([
-        createMockLeaveBalance({ leaveTypeId: 'lt-001', availableDays: 15 }),
-        createMockLeaveBalance({ leaveTypeId: 'lt-002', availableDays: 8 }),
+        createMockLeaveBalance({leaveTypeId: 'lt-001', availableDays: 15}),
+        createMockLeaveBalance({leaveTypeId: 'lt-002', availableDays: 8}),
       ]);
 
       const balances = await leaveService.getEmployeeBalances('emp-001');
@@ -398,7 +396,7 @@ describe('Leave Application Flow Integration Tests', () => {
             setTimeout(
               () =>
                 resolve(
-                  createMockLeaveRequest({ status: 'PENDING' as const })
+                  createMockLeaveRequest({status: 'PENDING' as const})
                 ),
               100
             )
@@ -406,7 +404,7 @@ describe('Leave Application Flow Integration Tests', () => {
       );
       const user = userEvent.setup();
 
-      render(<MockLeaveForm />);
+      render(<MockLeaveForm/>);
 
       const submitButton = screen.getByTestId('submit-button') as HTMLButtonElement;
       const leaveTypeSelect = screen.getByTestId('leave-type-select');

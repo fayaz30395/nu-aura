@@ -1,49 +1,43 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import {useCallback, useState} from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
   BookOpen,
-  Plus,
-  Search,
-  Folder,
   Clock,
   Eye,
-  Lock,
-  Users,
+  Folder,
   Globe,
-  RefreshCw,
-  Pencil,
-  Trash2,
   Heart,
+  Lock,
   MessageCircle,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Search,
   Shield,
+  Trash2,
+  Users,
 } from 'lucide-react';
-import { Tooltip } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
+import {Tooltip} from '@mantine/core';
+import {notifications} from '@mantine/notifications';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
 import {
-  useWikiSpaces,
-  useWikiPages,
   useCreateWikiSpace,
-  useUpdateWikiSpace,
   useDeleteWikiSpace,
+  useUpdateWikiSpace,
+  useWikiPages,
+  useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
-import { usePermissions } from '@/lib/hooks/usePermissions';
-import { SpaceFormDrawer, type SpaceFormValues } from '@/components/fluence/SpaceFormDrawer';
-import { DeleteSpaceModal } from '@/components/fluence/DeleteSpaceModal';
-import { SpacePermissionsDrawer } from '@/components/fluence/SpacePermissionsDrawer';
-import type { WikiSpace } from '@/lib/types/platform/fluence';
-import {
-  layout,
-  typography,
-  card,
-  motion as dsMotion,
-  iconSize,
-} from '@/lib/design-system';
+import {usePermissions} from '@/lib/hooks/usePermissions';
+import {SpaceFormDrawer, type SpaceFormValues} from '@/components/fluence/SpaceFormDrawer';
+import {DeleteSpaceModal} from '@/components/fluence/DeleteSpaceModal';
+import {SpacePermissionsDrawer} from '@/components/fluence/SpacePermissionsDrawer';
+import type {WikiSpace} from '@/lib/types/platform/fluence';
+import {card, iconSize, layout, motion as dsMotion, typography,} from '@/lib/design-system';
 
 // ─── Roles that can manage spaces ────────────────────────────────
 
@@ -63,7 +57,7 @@ const SPACE_MANAGER_ROLES = [
 
 export default function WikiPage() {
   const router = useRouter();
-  const { hasAnyRole, isAdmin } = usePermissions();
+  const {hasAnyRole, isAdmin} = usePermissions();
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -78,8 +72,8 @@ export default function WikiPage() {
   const [permissionsSpace, setPermissionsSpace] = useState<WikiSpace | null>(null);
 
   // Queries
-  const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
-  const { data: pagesData, isLoading: pagesLoading } = useWikiPages(
+  const {data: spacesData, isLoading: spacesLoading} = useWikiSpaces(0, 100);
+  const {data: pagesData, isLoading: pagesLoading} = useWikiPages(
     selectedSpaceId,
     0,
     20
@@ -256,8 +250,9 @@ export default function WikiPage() {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-2">
-                <div className="flex items-center justify-center rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 p-2">
-                  <BookOpen className={`${iconSize.pageHeader} text-white`} />
+                <div
+                  className="flex items-center justify-center rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 p-2">
+                  <BookOpen className={`${iconSize.pageHeader} text-white`}/>
                 </div>
                 <h1 className={typography.pageTitle}>Wiki Pages</h1>
               </div>
@@ -270,7 +265,7 @@ export default function WikiPage() {
               variant="primary"
               className="gap-2"
             >
-              <Plus className={iconSize.button} />
+              <Plus className={iconSize.button}/>
               New Page
             </Button>
           </div>
@@ -285,19 +280,19 @@ export default function WikiPage() {
                 {/* Spaces header with manage button */}
                 <div className="row-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Folder className={iconSize.cardInline} />
+                    <Folder className={iconSize.cardInline}/>
                     <h2 className={typography.sectionTitle}>Spaces</h2>
                   </div>
                   {canManageSpaces && (
                     <Tooltip label="Create new space" withArrow>
                       <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={{scale: 1.1}}
+                        whileTap={{scale: 0.9}}
                         onClick={handleOpenCreateSpace}
                         className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         aria-label="Create new space"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4"/>
                       </motion.button>
                     </Tooltip>
                   )}
@@ -322,7 +317,7 @@ export default function WikiPage() {
                         className="gap-1"
                         onClick={handleOpenCreateSpace}
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-3 w-3"/>
                         Create Space
                       </Button>
                     )}
@@ -337,8 +332,8 @@ export default function WikiPage() {
                           ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium'
                           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                       }`}
-                      whileHover={{ x: 4 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{x: 4}}
+                      whileTap={{scale: 0.98}}
                     >
                       <p className="text-sm font-medium">All Spaces</p>
                       <p className={`${typography.caption} mt-0.5`}>
@@ -351,8 +346,8 @@ export default function WikiPage() {
                       <motion.div
                         key={space.id}
                         className="group relative"
-                        whileHover={{ x: 4 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover={{x: 4}}
+                        whileTap={{scale: 0.98}}
                       >
                         <button
                           onClick={() => setSelectedSpaceId(space.id)}
@@ -365,7 +360,7 @@ export default function WikiPage() {
                           <div className="flex items-center gap-2">
                             <span
                               className="flex items-center justify-center w-6 h-6 rounded text-sm text-white flex-shrink-0"
-                              style={{ backgroundColor: space.color || '#3e63dd' }}
+                              style={{backgroundColor: space.color || '#3e63dd'}}
                             >
                               {space.icon || '📁'}
                             </span>
@@ -382,38 +377,39 @@ export default function WikiPage() {
 
                         {/* Edit / Permissions / Delete actions — show on hover for authorized roles */}
                         {canManageSpaces && (
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div
+                            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Tooltip label="Edit space" withArrow>
                               <motion.button
-                                whileHover={{ scale: 1.15 }}
-                                whileTap={{ scale: 0.9 }}
+                                whileHover={{scale: 1.15}}
+                                whileTap={{scale: 0.9}}
                                 onClick={(e) => handleOpenEditSpace(space, e)}
                                 className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-700)] hover:border-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 aria-label="Edit space"
                               >
-                                <Pencil className="h-3 w-3" />
+                                <Pencil className="h-3 w-3"/>
                               </motion.button>
                             </Tooltip>
                             <Tooltip label="Space permissions" withArrow>
                               <motion.button
-                                whileHover={{ scale: 1.15 }}
-                                whileTap={{ scale: 0.9 }}
+                                whileHover={{scale: 1.15}}
+                                whileTap={{scale: 0.9}}
                                 onClick={(e) => handleOpenPermissionsSpace(space, e)}
                                 className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-700)] hover:border-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 aria-label="Space permissions"
                               >
-                                <Shield className="h-3 w-3" />
+                                <Shield className="h-3 w-3"/>
                               </motion.button>
                             </Tooltip>
                             <Tooltip label="Delete space" withArrow>
                               <motion.button
-                                whileHover={{ scale: 1.15 }}
-                                whileTap={{ scale: 0.9 }}
+                                whileHover={{scale: 1.15}}
+                                whileTap={{scale: 0.9}}
                                 onClick={(e) => handleOpenDeleteSpace(space, e)}
                                 className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-danger-600 hover:border-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                 aria-label="Delete space"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-3 w-3"/>
                               </motion.button>
                             </Tooltip>
                           </div>
@@ -462,7 +458,8 @@ export default function WikiPage() {
                   className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}
                 >
                   <div className="py-16 text-center">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-4">
+                    <div
+                      className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-4">
                       <BookOpen
                         className={`${iconSize.statCard} text-[var(--text-muted)]`}
                       />
@@ -481,7 +478,7 @@ export default function WikiPage() {
                         variant="primary"
                         className="gap-2"
                       >
-                        <Plus className={iconSize.button} />
+                        <Plus className={iconSize.button}/>
                         Create Page
                       </Button>
                     )}
@@ -578,7 +575,8 @@ export default function WikiPage() {
                                   }}
                                 />
                               ) : null}
-                              <div className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
+                              <div
+                                className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {authorInitials}
                               </div>
                               <span

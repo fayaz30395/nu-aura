@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Procedures for inspecting, triaging, replaying, and discarding Kafka events that have exhausted all retry attempts and landed in a dead letter topic (DLT). DLT events indicate processing failures that could not be recovered automatically.
+Procedures for inspecting, triaging, replaying, and discarding Kafka events that have exhausted all
+retry attempts and landed in a dead letter topic (DLT). DLT events indicate processing failures that
+could not be recovered automatically.
 
 ---
 
@@ -28,11 +30,11 @@ Producer --> Topic (e.g., nu-aura.approvals)
 
 ### DLT Topics
 
-| DLT Topic | Source Topic | Consumer Group |
-|-----------|-------------|---------------|
-| `nu-aura.approvals.dlt` | `nu-aura.approvals` | `hrms-approval-consumer` |
-| `nu-aura.notifications.dlt` | `nu-aura.notifications` | `hrms-notification-consumer` |
-| `nu-aura.audit.dlt` | `nu-aura.audit` | `hrms-audit-consumer` |
+| DLT Topic                        | Source Topic                 | Consumer Group                     |
+|----------------------------------|------------------------------|------------------------------------|
+| `nu-aura.approvals.dlt`          | `nu-aura.approvals`          | `hrms-approval-consumer`           |
+| `nu-aura.notifications.dlt`      | `nu-aura.notifications`      | `hrms-notification-consumer`       |
+| `nu-aura.audit.dlt`              | `nu-aura.audit`              | `hrms-audit-consumer`              |
 | `nu-aura.employee-lifecycle.dlt` | `nu-aura.employee-lifecycle` | `hrms-employee-lifecycle-consumer` |
 
 ### Event Lifecycle
@@ -134,14 +136,14 @@ Is the event payload valid JSON?
 
 ### Common Root Causes
 
-| Topic | Common Failure | Fix | Action |
-|-------|---------------|-----|--------|
-| `approvals.dlt` | Missing workflow definition | Create the workflow_def | Replay |
-| `approvals.dlt` | Assignee user not found | Verify user exists, check tenant_id | Fix data, replay |
-| `notifications.dlt` | Invalid email address | Fix the user's email | Replay |
-| `notifications.dlt` | SMTP provider timeout | Transient -- safe to replay | Replay |
-| `audit.dlt` | Payload too large | Truncated payload stored | Ignore (audit event lost) |
-| `employee-lifecycle.dlt` | Missing employee record | Check if employee was deleted | Depends |
+| Topic                    | Common Failure              | Fix                                 | Action                    |
+|--------------------------|-----------------------------|-------------------------------------|---------------------------|
+| `approvals.dlt`          | Missing workflow definition | Create the workflow_def             | Replay                    |
+| `approvals.dlt`          | Assignee user not found     | Verify user exists, check tenant_id | Fix data, replay          |
+| `notifications.dlt`      | Invalid email address       | Fix the user's email                | Replay                    |
+| `notifications.dlt`      | SMTP provider timeout       | Transient -- safe to replay         | Replay                    |
+| `audit.dlt`              | Payload too large           | Truncated payload stored            | Ignore (audit event lost) |
+| `employee-lifecycle.dlt` | Missing employee record     | Check if employee was deleted       | Depends                   |
 
 ---
 

@@ -4,15 +4,15 @@ Performance management frontend pages for the NU-AURA platform (NU-Grow sub-app)
 
 ## Pages
 
-| Page | Route | Description |
-|------|-------|-------------|
-| Performance Dashboard | `/performance` | Overview of reviews, goals, team performance |
-| Review Cycles | `/performance/reviews` | Create and manage review cycles |
-| Self Assessment | `/performance/self-assessment` | Employee self-review form |
-| Manager Review | `/performance/manager-review` | Manager evaluation of direct reports |
-| PIP (Performance Improvement) | `/performance/pip` | Performance improvement plans |
-| Calibration | `/performance/calibration` | Cross-team rating calibration |
-| 9-Box Grid | `/performance/9-box` | Potential vs. performance matrix |
+| Page                          | Route                          | Description                                  |
+|-------------------------------|--------------------------------|----------------------------------------------|
+| Performance Dashboard         | `/performance`                 | Overview of reviews, goals, team performance |
+| Review Cycles                 | `/performance/reviews`         | Create and manage review cycles              |
+| Self Assessment               | `/performance/self-assessment` | Employee self-review form                    |
+| Manager Review                | `/performance/manager-review`  | Manager evaluation of direct reports         |
+| PIP (Performance Improvement) | `/performance/pip`             | Performance improvement plans                |
+| Calibration                   | `/performance/calibration`     | Cross-team rating calibration                |
+| 9-Box Grid                    | `/performance/9-box`           | Potential vs. performance matrix             |
 
 ## Tech Stack
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { createJobOpeningSchema, createCandidateSchema } from '../recruitment';
+import {describe, expect, it} from 'vitest';
+import {createCandidateSchema, createJobOpeningSchema} from '../recruitment';
 
 describe('Recruitment Validation Schemas', () => {
   // ─── createJobOpeningSchema ─────────────────────────────────────────────────
@@ -14,52 +14,52 @@ describe('Recruitment Validation Schemas', () => {
     });
 
     it('rejects empty job code', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, jobCode: '' });
+      const r = createJobOpeningSchema.safeParse({...valid, jobCode: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects empty job title', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, jobTitle: '' });
+      const r = createJobOpeningSchema.safeParse({...valid, jobTitle: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects job code exceeding 50 chars', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, jobCode: 'J'.repeat(51) });
+      const r = createJobOpeningSchema.safeParse({...valid, jobCode: 'J'.repeat(51)});
       expect(r.success).toBe(false);
     });
 
     it('rejects job title exceeding 200 chars', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, jobTitle: 'T'.repeat(201) });
+      const r = createJobOpeningSchema.safeParse({...valid, jobTitle: 'T'.repeat(201)});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid employment type', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, employmentType: 'FULL_TIME' });
+      const r = createJobOpeningSchema.safeParse({...valid, employmentType: 'FULL_TIME'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid employment type', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, employmentType: 'INVALID' });
+      const r = createJobOpeningSchema.safeParse({...valid, employmentType: 'INVALID'});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid status enum', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, status: 'OPEN' });
+      const r = createJobOpeningSchema.safeParse({...valid, status: 'OPEN'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid status', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, status: 'UNKNOWN' });
+      const r = createJobOpeningSchema.safeParse({...valid, status: 'UNKNOWN'});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid priority', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, priority: 'URGENT' });
+      const r = createJobOpeningSchema.safeParse({...valid, priority: 'URGENT'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid priority', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, priority: 'EXTREME' });
+      const r = createJobOpeningSchema.safeParse({...valid, priority: 'EXTREME'});
       expect(r.success).toBe(false);
     });
 
@@ -74,7 +74,7 @@ describe('Recruitment Validation Schemas', () => {
     });
 
     it('rejects numberOfOpenings less than 1', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, numberOfOpenings: 0 });
+      const r = createJobOpeningSchema.safeParse({...valid, numberOfOpenings: 0});
       expect(r.success).toBe(false);
     });
 
@@ -87,7 +87,7 @@ describe('Recruitment Validation Schemas', () => {
     });
 
     it('rejects invalid UUID for departmentId', () => {
-      const r = createJobOpeningSchema.safeParse({ ...valid, departmentId: 'not-a-uuid' });
+      const r = createJobOpeningSchema.safeParse({...valid, departmentId: 'not-a-uuid'});
       expect(r.success).toBe(false);
     });
   });
@@ -107,71 +107,71 @@ describe('Recruitment Validation Schemas', () => {
     });
 
     it('rejects empty candidate code', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, candidateCode: '' });
+      const r = createCandidateSchema.safeParse({...valid, candidateCode: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects invalid job opening UUID', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, jobOpeningId: 'bad-id' });
+      const r = createCandidateSchema.safeParse({...valid, jobOpeningId: 'bad-id'});
       expect(r.success).toBe(false);
     });
 
     it('rejects empty first name', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, firstName: '' });
+      const r = createCandidateSchema.safeParse({...valid, firstName: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects empty last name', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, lastName: '' });
+      const r = createCandidateSchema.safeParse({...valid, lastName: ''});
       expect(r.success).toBe(false);
     });
 
     it('rejects invalid email', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, email: 'not-email' });
+      const r = createCandidateSchema.safeParse({...valid, email: 'not-email'});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid phone number', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, phone: '+1-555-1234' });
+      const r = createCandidateSchema.safeParse({...valid, phone: '+1-555-1234'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid phone number', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, phone: 'abc' });
+      const r = createCandidateSchema.safeParse({...valid, phone: 'abc'});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid source enum', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, source: 'REFERRAL' });
+      const r = createCandidateSchema.safeParse({...valid, source: 'REFERRAL'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid source', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, source: 'TWITTER' });
+      const r = createCandidateSchema.safeParse({...valid, source: 'TWITTER'});
       expect(r.success).toBe(false);
     });
 
     it('accepts valid status enum', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, status: 'INTERVIEW' });
+      const r = createCandidateSchema.safeParse({...valid, status: 'INTERVIEW'});
       expect(r.success).toBe(true);
     });
 
     it('validates notice period range', () => {
-      const neg = createCandidateSchema.safeParse({ ...valid, noticePeriodDays: -1 });
+      const neg = createCandidateSchema.safeParse({...valid, noticePeriodDays: -1});
       expect(neg.success).toBe(false);
-      const high = createCandidateSchema.safeParse({ ...valid, noticePeriodDays: 400 });
+      const high = createCandidateSchema.safeParse({...valid, noticePeriodDays: 400});
       expect(high.success).toBe(false);
-      const ok = createCandidateSchema.safeParse({ ...valid, noticePeriodDays: 30 });
+      const ok = createCandidateSchema.safeParse({...valid, noticePeriodDays: 30});
       expect(ok.success).toBe(true);
     });
 
     it('accepts valid resume URL', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, resumeUrl: 'https://cdn.example.com/resume.pdf' });
+      const r = createCandidateSchema.safeParse({...valid, resumeUrl: 'https://cdn.example.com/resume.pdf'});
       expect(r.success).toBe(true);
     });
 
     it('rejects invalid resume URL', () => {
-      const r = createCandidateSchema.safeParse({ ...valid, resumeUrl: 'not-a-url' });
+      const r = createCandidateSchema.safeParse({...valid, resumeUrl: 'not-a-url'});
       expect(r.success).toBe(false);
     });
   });

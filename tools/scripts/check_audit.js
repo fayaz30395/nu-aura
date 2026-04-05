@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const {Client} = require('pg');
 
 async function checkAudit() {
   const client = new Client({

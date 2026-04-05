@@ -7,30 +7,35 @@
 ## Core Responsibilities
 
 ### 1. Employee Management UI
+
 - Employee directory (table with 1000+ rows)
 - Employee profile pages (personal, employment, documents)
 - Onboarding forms (multi-step wizard)
 - Bulk actions (export, import, archive)
 
 ### 2. Attendance UI
+
 - Attendance calendar (monthly view)
 - Clock in/out widget (real-time)
 - Attendance reports (filters, date range)
 - Manual attendance entry form
 
 ### 3. Leave Management UI
+
 - Leave request form (type, dates, reason)
 - Leave calendar (team view)
 - Leave balance widget (MY SPACE)
 - Approval workflow UI (approve/reject)
 
 ### 4. Payroll UI
+
 - Payslip viewer (PDF preview)
 - Payroll reports (filters, export)
 - Payroll component configuration (SpEL formulas)
 - Tax declaration forms (IT, 80C, 80D)
 
 ### 5. Benefits UI
+
 - Benefits enrollment form
 - Benefits dashboard (coverage, claims)
 - Dependent management

@@ -1,32 +1,32 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
   CustomFieldDefinition,
   CustomFieldDefinitionRequest,
+  ENTITY_TYPE_INFO,
   EntityType,
+  FIELD_TYPE_INFO,
   FieldType,
   FieldVisibility,
-  FIELD_TYPE_INFO,
-  ENTITY_TYPE_INFO,
   VISIBILITY_INFO,
 } from '@/lib/types/core/custom-fields';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { ConfirmDialog } from '@/components/ui';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {ConfirmDialog} from '@/components/ui';
 import {
-  useCustomFieldDefinitions,
-  useCreateCustomFieldDefinition,
-  useUpdateCustomFieldDefinition,
-  useDeleteCustomFieldDefinition,
   useActivateCustomFieldDefinition,
+  useCreateCustomFieldDefinition,
+  useCustomFieldDefinitions,
   useDeactivateCustomFieldDefinition,
+  useDeleteCustomFieldDefinition,
+  useUpdateCustomFieldDefinition,
 } from '@/lib/hooks/queries/useCustomFields';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('CustomFieldsPage');
 
@@ -43,7 +43,7 @@ const customFieldSchema = z.object({
   entityType: z.string().min(1, 'Entity type required'),
   fieldType: z.string().min(1, 'Field type required'),
   fieldGroup: z.string().optional().or(z.literal('')),
-  displayOrder: z.number({ coerce: true }).int().min(0).default(0),
+  displayOrder: z.number({coerce: true}).int().min(0).default(0),
   isRequired: z.boolean().default(false),
   isSearchable: z.boolean().default(false),
   showInList: z.boolean().default(false),
@@ -58,8 +58,8 @@ type CustomFieldFormData = z.infer<typeof customFieldSchema> & { optionsText: st
 
 export default function CustomFieldsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasHydrated } = useAuth();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // Query hook
   const definitionsQuery = useCustomFieldDefinitions(0, 100);
@@ -91,7 +91,7 @@ export default function CustomFieldsPage() {
     control,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CustomFieldFormData>({
     resolver: zodResolver(customFieldSchema),
     defaultValues: {
@@ -168,7 +168,9 @@ export default function CustomFieldsPage() {
       setSelectedDefinition(null);
     } catch (err: unknown) {
       log.error('Failed to save custom field:', err);
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save custom field';
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to save custom field';
       setError(message);
     }
   };
@@ -255,9 +257,12 @@ export default function CustomFieldsPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/20 border border-danger-400 dark:border-danger-600 text-danger-700 dark:text-danger-400 rounded-lg">
+          <div
+            className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/20 border border-danger-400 dark:border-danger-600 text-danger-700 dark:text-danger-400 rounded-lg">
             {error}
-            <button onClick={() => setError(null)} className="ml-2 text-danger-900 dark:text-danger-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2" aria-label="Close error message">
+            <button onClick={() => setError(null)}
+                    className="ml-2 text-danger-900 dark:text-danger-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    aria-label="Close error message">
               &times;
             </button>
           </div>
@@ -300,89 +305,91 @@ export default function CustomFieldsPage() {
         <div className="skeuo-card overflow-hidden">
           <table className="table-aura">
             <thead className="skeuo-table-header">
-              <tr>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Field
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Entity Type
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Field Type
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Group
-                </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
+            <tr>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Field
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Entity Type
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Field Type
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Group
+              </th>
+              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Status
+              </th>
+              <th
+                className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
             </thead>
             <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
-              {filteredDefinitions.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-muted)]">
-                    No custom fields found. Create your first custom field to get started.
+            {filteredDefinitions.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-muted)]">
+                  No custom fields found. Create your first custom field to get started.
+                </td>
+              </tr>
+            ) : (
+              filteredDefinitions.map((definition) => (
+                <tr key={definition.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-[var(--text-primary)]">
+                      {definition.fieldName}
+                      {definition.isRequired && (
+                        <span className="ml-1 text-danger-500">*</span>
+                      )}
+                    </div>
+                    <div className="text-caption">
+                      {definition.fieldCode}
+                    </div>
                   </td>
-                </tr>
-              ) : (
-                filteredDefinitions.map((definition) => (
-                  <tr key={definition.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-[var(--text-primary)]">
-                        {definition.fieldName}
-                        {definition.isRequired && (
-                          <span className="ml-1 text-danger-500">*</span>
-                        )}
-                      </div>
-                      <div className="text-caption">
-                        {definition.fieldCode}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className="px-2 py-1 text-xs font-semibold rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300">
                         {ENTITY_TYPE_INFO[definition.entityType].label}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                      {FIELD_TYPE_INFO[definition.fieldType].label}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-body-muted">
-                      {definition.fieldGroup || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleToggleActive(definition)}
-                        className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                          definition.isActive
-                            ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
-                            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
-                        }`}
-                        aria-label={`Toggle ${definition.fieldName} status`}
-                      >
-                        {definition.isActive ? 'Active' : 'Inactive'}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => openEditModal(definition)}
-                        className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteField(definition)}
-                        className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                    {FIELD_TYPE_INFO[definition.fieldType].label}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-body-muted">
+                    {definition.fieldGroup || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleToggleActive(definition)}
+                      className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                        definition.isActive
+                          ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
+                          : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
+                      }`}
+                      aria-label={`Toggle ${definition.fieldName} status`}
+                    >
+                      {definition.isActive ? 'Active' : 'Inactive'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => openEditModal(definition)}
+                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteField(definition)}
+                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
             </tbody>
           </table>
         </div>
@@ -459,7 +466,7 @@ export default function CustomFieldsPage() {
                     <Controller
                       name="entityType"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura"
@@ -482,7 +489,7 @@ export default function CustomFieldsPage() {
                     <Controller
                       name="fieldType"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura"
@@ -522,7 +529,8 @@ export default function CustomFieldsPage() {
                       {...register('displayOrder')}
                       className="input-aura"
                     />
-                    {errors.displayOrder && <p className="text-danger-500 text-sm mt-1">{errors.displayOrder.message}</p>}
+                    {errors.displayOrder &&
+                      <p className="text-danger-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
                 </div>
 
@@ -563,7 +571,8 @@ export default function CustomFieldsPage() {
                       {...register('defaultValue')}
                       className="input-aura"
                     />
-                    {errors.defaultValue && <p className="text-danger-500 text-sm mt-1">{errors.defaultValue.message}</p>}
+                    {errors.defaultValue &&
+                      <p className="text-danger-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
                 </div>
 
@@ -575,7 +584,7 @@ export default function CustomFieldsPage() {
                     <Controller
                       name="viewVisibility"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura"
@@ -588,7 +597,8 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.viewVisibility && <p className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
+                    {errors.viewVisibility &&
+                      <p className="text-danger-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -597,7 +607,7 @@ export default function CustomFieldsPage() {
                     <Controller
                       name="editVisibility"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <select
                           {...field}
                           className="input-aura"
@@ -610,7 +620,8 @@ export default function CustomFieldsPage() {
                         </select>
                       )}
                     />
-                    {errors.editVisibility && <p className="text-danger-500 text-sm mt-1">{errors.editVisibility.message}</p>}
+                    {errors.editVisibility &&
+                      <p className="text-danger-500 text-sm mt-1">{errors.editVisibility.message}</p>}
                   </div>
                 </div>
 
@@ -618,7 +629,7 @@ export default function CustomFieldsPage() {
                   <Controller
                     name="isRequired"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={({field: {value, onChange}}) => (
                       <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
@@ -633,7 +644,7 @@ export default function CustomFieldsPage() {
                   <Controller
                     name="isSearchable"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={({field: {value, onChange}}) => (
                       <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"
@@ -648,7 +659,7 @@ export default function CustomFieldsPage() {
                   <Controller
                     name="showInList"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={({field: {value, onChange}}) => (
                       <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                           type="checkbox"

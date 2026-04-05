@@ -1,11 +1,11 @@
-import { apiClient } from './client';
+import {apiClient} from './client';
 import {
-  Shift,
-  CreateShiftRequest,
-  UpdateShiftRequest,
-  ShiftAssignment,
   CreateShiftAssignmentRequest,
+  CreateShiftRequest,
   PagedResponse,
+  Shift,
+  ShiftAssignment,
+  UpdateShiftRequest,
 } from '../types/hrms/shifts';
 
 export const shiftsApi = {

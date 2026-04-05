@@ -33,7 +33,7 @@ export type EmployeeLevel =
   | 'CXO';
 
 export type JobRole =
-  // Engineering
+// Engineering
   | 'SOFTWARE_ENGINEER'
   | 'FRONTEND_DEVELOPER'
   | 'BACKEND_DEVELOPER'

@@ -1,26 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Check,
-  X,
-  ArrowRight,
-  Zap,
-  Building2,
-  Users,
-  HelpCircle,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import {motion} from 'framer-motion';
+import {ArrowRight, Building2, Check, ChevronDown, ChevronUp, HelpCircle, Users, X, Zap,} from 'lucide-react';
+import {Button} from '@/components/ui/Button';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+  hidden: {opacity: 0, y: 20},
+  visible: {opacity: 1, y: 0},
 };
 
 export default function PricingPage() {
@@ -152,7 +142,8 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-main)]">
       {/* Header */}
-      <header className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
+      <header
+        className="border-b border-[var(--border-main)] sticky top-0 z-50 bg-[var(--bg-elevated)] backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="row-between h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -179,7 +170,7 @@ export default function PricingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            transition={{ duration: 0.5 }}
+            transition={{duration: 0.5}}
           >
             <Badge size="lg" variant="primary" className="mb-6">
               Pricing
@@ -192,7 +183,8 @@ export default function PricingPage() {
             </p>
 
             {/* Billing Toggle */}
-            <div className="inline-flex items-center gap-4 p-1 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)]">
+            <div
+              className="inline-flex items-center gap-4 p-1 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)]">
               <button
                 onClick={() => setBillingCycle('monthly')}
                 aria-label="Switch to monthly billing"
@@ -230,9 +222,9 @@ export default function PricingPage() {
             {plans.map((plan, index) => (
               <motion.div
                 key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: index * 0.1}}
                 className="relative"
               >
                 {plan.popular && (
@@ -257,7 +249,7 @@ export default function PricingPage() {
                           : 'from-surface-600 to-surface-700'
                       } flex items-center justify-center mb-4`}
                     >
-                      <plan.icon className="h-6 w-6 text-white" />
+                      <plan.icon className="h-6 w-6 text-white"/>
                     </div>
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <p className="text-body-muted">{plan.description}</p>
@@ -292,20 +284,20 @@ export default function PricingPage() {
                         size="lg"
                       >
                         {plan.price !== null ? 'Start Free Trial' : 'Contact Sales'}
-                        <ArrowRight className="h-4 w-4 ml-2" />
+                        <ArrowRight className="h-4 w-4 ml-2"/>
                       </Button>
                     </Link>
 
                     <div className="space-y-4 pt-4">
                       {plan.features.map((feature, i) => (
                         <div key={i} className="flex items-start gap-4">
-                          <Check className="h-5 w-5 text-success-500 flex-shrink-0 mt-0.5" />
+                          <Check className="h-5 w-5 text-success-500 flex-shrink-0 mt-0.5"/>
                           <span className="text-body-secondary">{feature}</span>
                         </div>
                       ))}
                       {plan.notIncluded.map((feature, i) => (
                         <div key={i} className="flex items-start gap-4 opacity-40">
-                          <X className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
+                          <X className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-0.5"/>
                           <span className="text-body-muted">{feature}</span>
                         </div>
                       ))}
@@ -334,10 +326,10 @@ export default function PricingPage() {
             {addons.map((addon, index) => (
               <motion.div
                 key={addon.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                initial={{opacity: 0, y: 20}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: index * 0.1}}
               >
                 <Card hover padding="lg">
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
@@ -387,15 +379,15 @@ export default function PricingPage() {
                   className="w-full px-6 py-4 row-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0" />
+                    <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0"/>
                     <span className="font-medium text-[var(--text-primary)]">
                       {faq.question}
                     </span>
                   </div>
                   {openFaq === index ? (
-                    <ChevronUp className="h-5 w-5 text-[var(--text-muted)]" />
+                    <ChevronUp className="h-5 w-5 text-[var(--text-muted)]"/>
                   ) : (
-                    <ChevronDown className="h-5 w-5 text-[var(--text-muted)]" />
+                    <ChevronDown className="h-5 w-5 text-[var(--text-muted)]"/>
                   )}
                 </button>
                 {openFaq === index && (

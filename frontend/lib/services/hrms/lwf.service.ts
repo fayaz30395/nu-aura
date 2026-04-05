@@ -1,9 +1,9 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 import {
+  LWFCalculationRequest,
   LWFConfiguration,
   LWFConfigurationRequest,
   LWFDeduction,
-  LWFCalculationRequest,
   LWFRemittanceReport,
 } from '@/lib/types/hrms/lwf';
 
@@ -35,7 +35,7 @@ export const lwfService = {
 
   getDeductions: async (month: number, year: number): Promise<LWFDeduction[]> => {
     const response = await apiClient.get<LWFDeduction[]>(`${BASE_URL}/deductions`, {
-      params: { month, year },
+      params: {month, year},
     });
     return response.data;
   },
@@ -46,7 +46,7 @@ export const lwfService = {
   ): Promise<LWFDeduction[]> => {
     const response = await apiClient.get<LWFDeduction[]>(
       `${BASE_URL}/deductions/employee/${employeeId}`,
-      { params: year ? { year } : undefined }
+      {params: year ? {year} : undefined}
     );
     return response.data;
   },
@@ -58,7 +58,7 @@ export const lwfService = {
     year: number
   ): Promise<LWFRemittanceReport> => {
     const response = await apiClient.get<LWFRemittanceReport>(`${BASE_URL}/report`, {
-      params: { month, year },
+      params: {month, year},
     });
     return response.data;
   },

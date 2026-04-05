@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { testUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {testUsers} from './fixtures/testData';
 
 /**
  * Navigation and Routing E2E Tests
@@ -10,7 +10,7 @@ import { testUsers } from './fixtures/testData';
 test.describe('Navigation and Routing', () => {
   let loginPage: LoginPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -18,7 +18,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Main Navigation Menu', () => {
-    test('should display main navigation menu', async ({ page }) => {
+    test('should display main navigation menu', async ({page}) => {
       // Check for navigation elements
       const hasNav = await page.locator('nav').isVisible();
       expect(hasNav).toBe(true);
@@ -30,7 +30,7 @@ test.describe('Navigation and Routing', () => {
       expect(hasSidebar || hasHeader).toBe(true);
     });
 
-    test('should navigate to Dashboard', async ({ page }) => {
+    test('should navigate to Dashboard', async ({page}) => {
       // Click on Dashboard link
       const dashboardLink = page.locator('a[href*="/dashboard"], button:has-text("Dashboard")').first();
       await dashboardLink.click();
@@ -40,7 +40,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should navigate to Employees', async ({ page }) => {
+    test('should navigate to Employees', async ({page}) => {
       // Click on Employees link
       const employeesLink = page.locator('a[href*="/employees"], button:has-text("Employees")').first();
       await employeesLink.click();
@@ -50,7 +50,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/employees');
     });
 
-    test('should navigate to Leave Management', async ({ page }) => {
+    test('should navigate to Leave Management', async ({page}) => {
       // Click on Leave link
       const leaveLink = page.locator('a[href*="/leave"], button:has-text("Leave")').first();
       await leaveLink.click();
@@ -60,7 +60,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/leave');
     });
 
-    test('should navigate to Attendance', async ({ page }) => {
+    test('should navigate to Attendance', async ({page}) => {
       // Click on Attendance link
       const attendanceLink = page.locator('a[href*="/attendance"], button:has-text("Attendance")').first();
       await attendanceLink.click();
@@ -70,7 +70,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/attendance');
     });
 
-    test('should navigate to Projects', async ({ page }) => {
+    test('should navigate to Projects', async ({page}) => {
       // Click on Projects link
       const projectsLink = page.locator('a[href*="/projects"], button:has-text("Projects")').first();
       await projectsLink.click();
@@ -80,7 +80,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/projects');
     });
 
-    test('should navigate to Departments', async ({ page }) => {
+    test('should navigate to Departments', async ({page}) => {
       // Click on Departments link (if available)
       const departmentsLink = page.locator('a[href*="/departments"], button:has-text("Departments")').first();
       const hasDepartments = await departmentsLink.isVisible().catch(() => false);
@@ -92,7 +92,7 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should navigate to Settings', async ({ page }) => {
+    test('should navigate to Settings', async ({page}) => {
       // Click on Settings link
       const settingsLink = page.locator('a[href*="/settings"], button:has-text("Settings")').first();
       const hasSettings = await settingsLink.isVisible().catch(() => false);
@@ -106,7 +106,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Breadcrumb Navigation', () => {
-    test('should display breadcrumbs on nested pages', async ({ page }) => {
+    test('should display breadcrumbs on nested pages', async ({page}) => {
       // Navigate to employees
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -118,7 +118,7 @@ test.describe('Navigation and Routing', () => {
       expect(typeof hasBreadcrumb).toBe('boolean');
     });
 
-    test('should navigate using breadcrumbs', async ({ page }) => {
+    test('should navigate using breadcrumbs', async ({page}) => {
       // Navigate to a deep page if available
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -149,7 +149,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('User Profile Menu', () => {
-    test('should display user profile menu', async ({ page }) => {
+    test('should display user profile menu', async ({page}) => {
       // Look for user menu/avatar
       const userMenu = page.locator('[class*="user"], [class*="profile"], [class*="avatar"]').first();
       const hasUserMenu = await userMenu.isVisible().catch(() => false);
@@ -157,9 +157,9 @@ test.describe('Navigation and Routing', () => {
       expect(hasUserMenu).toBe(true);
     });
 
-    test('should open user dropdown menu', async ({ page }) => {
+    test('should open user dropdown menu', async ({page}) => {
       // Click on user menu
-      const userMenuButton = page.locator('button').filter({ has: page.locator('[class*="user"], [class*="avatar"]') }).first();
+      const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
       const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
 
       if (hasUserMenuButton) {
@@ -173,14 +173,14 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should navigate to profile page', async ({ page }) => {
+    test('should navigate to profile page', async ({page}) => {
       // Look for profile link
       const profileLink = page.locator('a[href*="/profile"], button:has-text("Profile")').first();
       const hasProfileLink = await profileLink.isVisible().catch(() => false);
 
       if (!hasProfileLink) {
         // Try opening user menu first
-        const userMenuButton = page.locator('button').filter({ has: page.locator('[class*="user"], [class*="avatar"]') }).first();
+        const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
         const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
 
         if (hasUserMenuButton) {
@@ -203,14 +203,14 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should have logout option', async ({ page }) => {
+    test('should have logout option', async ({page}) => {
       // Look for logout button
       let logoutButton = page.locator('button:has-text("Logout"), button:has-text("Sign Out"), a:has-text("Logout")').first();
       let hasLogout = await logoutButton.isVisible().catch(() => false);
 
       if (!hasLogout) {
         // Try opening user menu first
-        const userMenuButton = page.locator('button').filter({ has: page.locator('[class*="user"], [class*="avatar"]') }).first();
+        const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
         const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
 
         if (hasUserMenuButton) {
@@ -227,7 +227,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Page Navigation', () => {
-    test('should navigate using browser back button', async ({ page }) => {
+    test('should navigate using browser back button', async ({page}) => {
       // Navigate to employees
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -245,7 +245,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toBe(employeesUrl);
     });
 
-    test('should navigate using browser forward button', async ({ page }) => {
+    test('should navigate using browser forward button', async ({page}) => {
       // Navigate to employees
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -267,7 +267,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toBe(leaveUrl);
     });
 
-    test('should handle page refresh without losing state', async ({ page }) => {
+    test('should handle page refresh without losing state', async ({page}) => {
       // Navigate to a page
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -285,35 +285,35 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Direct URL Navigation', () => {
-    test('should access dashboard via direct URL', async ({ page }) => {
+    test('should access dashboard via direct URL', async ({page}) => {
       await page.goto('/dashboard');
       await page.waitForTimeout(1000);
 
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should access employees via direct URL', async ({ page }) => {
+    test('should access employees via direct URL', async ({page}) => {
       await page.goto('/employees');
       await page.waitForTimeout(1000);
 
       expect(page.url()).toContain('/employees');
     });
 
-    test('should access leave via direct URL', async ({ page }) => {
+    test('should access leave via direct URL', async ({page}) => {
       await page.goto('/leave');
       await page.waitForTimeout(1000);
 
       expect(page.url()).toContain('/leave');
     });
 
-    test('should access attendance via direct URL', async ({ page }) => {
+    test('should access attendance via direct URL', async ({page}) => {
       await page.goto('/attendance');
       await page.waitForTimeout(1000);
 
       expect(page.url()).toContain('/attendance');
     });
 
-    test('should handle 404 for invalid routes', async ({ page }) => {
+    test('should handle 404 for invalid routes', async ({page}) => {
       const _response = await page.goto('/this-page-does-not-exist-12345');
       await page.waitForTimeout(1000);
 
@@ -326,7 +326,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Sidebar/Menu Functionality', () => {
-    test('should expand and collapse sidebar', async ({ page }) => {
+    test('should expand and collapse sidebar', async ({page}) => {
       // Look for sidebar toggle button
       const sidebarToggle = page.locator('button[aria-label*="menu"], button[aria-label*="sidebar"], button:has-text("☰")').first();
       const hasToggle = await sidebarToggle.isVisible().catch(() => false);
@@ -350,7 +350,7 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should highlight active menu item', async ({ page }) => {
+    test('should highlight active menu item', async ({page}) => {
       // Navigate to employees
       await page.goto('/employees');
       await page.waitForTimeout(1000);
@@ -361,9 +361,9 @@ test.describe('Navigation and Routing', () => {
 
       // Active link should have active, current, or selected class
       const isActive = classes.includes('active') ||
-                      classes.includes('current') ||
-                      classes.includes('selected') ||
-                      await activeLink.evaluate(el => el.getAttribute('aria-current') === 'page').catch(() => false);
+        classes.includes('current') ||
+        classes.includes('selected') ||
+        await activeLink.evaluate(el => el.getAttribute('aria-current') === 'page').catch(() => false);
 
       // Test may pass or fail depending on implementation
       expect(typeof isActive).toBe('boolean');
@@ -371,12 +371,12 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Mobile Navigation', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({page}) => {
       // Set mobile viewport
-      await page.setViewportSize({ width: 375, height: 667 });
+      await page.setViewportSize({width: 375, height: 667});
     });
 
-    test('should display mobile menu button', async ({ page }) => {
+    test('should display mobile menu button', async ({page}) => {
       await page.reload();
       await page.waitForTimeout(1000);
 
@@ -388,7 +388,7 @@ test.describe('Navigation and Routing', () => {
       expect(typeof hasMobileMenu).toBe('boolean');
     });
 
-    test('should open mobile navigation menu', async ({ page }) => {
+    test('should open mobile navigation menu', async ({page}) => {
       await page.reload();
       await page.waitForTimeout(1000);
 
@@ -406,7 +406,7 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should navigate on mobile', async ({ page }) => {
+    test('should navigate on mobile', async ({page}) => {
       await page.reload();
       await page.waitForTimeout(1000);
 
@@ -432,7 +432,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Tab Navigation', () => {
-    test('should navigate in leave module tabs', async ({ page }) => {
+    test('should navigate in leave module tabs', async ({page}) => {
       await page.goto('/leave');
       await page.waitForTimeout(1000);
 
@@ -452,7 +452,7 @@ test.describe('Navigation and Routing', () => {
       }
     });
 
-    test('should navigate in attendance module tabs', async ({ page }) => {
+    test('should navigate in attendance module tabs', async ({page}) => {
       await page.goto('/attendance');
       await page.waitForTimeout(1000);
 
@@ -473,7 +473,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Authentication and Route Protection', () => {
-    test('should redirect to login when accessing protected route without auth', async ({ page, context }) => {
+    test('should redirect to login when accessing protected route without auth', async ({page, context}) => {
       // Clear cookies to logout
       await context.clearCookies();
 
@@ -485,7 +485,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/login');
     });
 
-    test('should redirect to dashboard after login', async ({ page, context }) => {
+    test('should redirect to dashboard after login', async ({page, context}) => {
       // Clear cookies
       await context.clearCookies();
 
@@ -498,7 +498,7 @@ test.describe('Navigation and Routing', () => {
       expect(page.url()).toContain('/dashboard');
     });
 
-    test('should maintain intended route after login', async ({ page, context }) => {
+    test('should maintain intended route after login', async ({page, context}) => {
       // Clear cookies
       await context.clearCookies();
 
@@ -521,7 +521,7 @@ test.describe('Navigation and Routing', () => {
   });
 
   test.describe('Visual Regression', () => {
-    test('should match navigation snapshot on dashboard', async ({ page }) => {
+    test('should match navigation snapshot on dashboard', async ({page}) => {
       const nav = page.locator('nav').first();
       await expect(nav).toHaveScreenshot('navigation-menu.png', {
         maxDiffPixels: 100,
@@ -531,7 +531,7 @@ test.describe('Navigation and Routing', () => {
 });
 
 test.describe('Navigation - Role-Based Access', () => {
-  test('admin should see all menu items', async ({ page }) => {
+  test('admin should see all menu items', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
@@ -542,7 +542,7 @@ test.describe('Navigation - Role-Based Access', () => {
     expect(hasEmployees).toBe(true);
   });
 
-  test('employee should have limited menu access', async ({ page }) => {
+  test('employee should have limited menu access', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
@@ -555,7 +555,7 @@ test.describe('Navigation - Role-Based Access', () => {
     expect(hasLeave || hasAttendance).toBe(true);
   });
 
-  test('manager should see team-related menu items', async ({ page }) => {
+  test('manager should see team-related menu items', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.manager.email, testUsers.manager.password);
@@ -570,14 +570,14 @@ test.describe('Navigation - Role-Based Access', () => {
 test.describe('Navigation — App-Aware Sidebar', () => {
   let loginPage: LoginPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
     await page.waitForURL('**/dashboard');
   });
 
-  test('HRMS routes show HR-specific sidebar items', async ({ page }) => {
+  test('HRMS routes show HR-specific sidebar items', async ({page}) => {
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
 
@@ -597,7 +597,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     expect(visibleCount).toBeGreaterThanOrEqual(1);
   });
 
-  test('Hire routes show recruitment-specific sidebar items', async ({ page }) => {
+  test('Hire routes show recruitment-specific sidebar items', async ({page}) => {
     await page.goto('/recruitment');
     await page.waitForLoadState('networkidle');
 
@@ -618,7 +618,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     expect(visibleCount).toBeGreaterThanOrEqual(1);
   });
 
-  test('Grow routes show performance-specific sidebar items', async ({ page }) => {
+  test('Grow routes show performance-specific sidebar items', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('networkidle');
 
@@ -638,7 +638,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     expect(visibleCount).toBeGreaterThanOrEqual(1);
   });
 
-  test('sidebar switches context when navigating between app routes', async ({ page }) => {
+  test('sidebar switches context when navigating between app routes', async ({page}) => {
     // Start on HRMS
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');
@@ -656,7 +656,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     expect(hasPerformanceInSidebar || true).toBe(true);
   });
 
-  test('sidebar maintains scroll position within same app', async ({ page }) => {
+  test('sidebar maintains scroll position within same app', async ({page}) => {
     // Navigate to a page within HRMS
     await page.goto('/employees');
     await page.waitForLoadState('networkidle');

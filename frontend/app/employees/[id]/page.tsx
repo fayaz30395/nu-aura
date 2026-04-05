@@ -1,50 +1,44 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import {useMemo, useState} from 'react';
 import Image from 'next/image';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
-import { motion } from 'framer-motion';
+import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
+import {motion} from 'framer-motion';
 import {
-  Mail,
-  Phone,
-  MapPin,
-  IdCard,
+  AlertTriangle,
+  Award,
+  Briefcase,
+  CheckCircle2,
   ChevronLeft,
+  FileText,
+  FolderOpen,
+  IdCard,
+  Laptop,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Package,
   Pencil,
+  Phone,
+  Search,
+  Shield,
+  Star,
   Trash2,
   Users,
-  Briefcase,
-  Star,
-  Search,
-  FolderOpen,
-  FileText,
-  Shield,
-  Award,
-  MessageSquare,
-  CheckCircle2,
-  Laptop,
-  Package,
-  AlertTriangle,
 } from 'lucide-react';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
-import { EntityType } from '@/lib/types/core/custom-fields';
-import { AppLayout } from '@/components/layout';
+import {EntityType} from '@/lib/types/core/custom-fields';
+import {AppLayout} from '@/components/layout';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
-import {
-  useEmployee,
-  useDeleteEmployee,
-  useDottedLineReports,
-  useSubordinates,
-} from '@/lib/hooks/queries/useEmployees';
-import { useAssetsByEmployee } from '@/lib/hooks/queries/useAssets';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { createLogger } from '@/lib/utils/logger';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Asset } from '@/lib/types/hrms/asset';
-import { Skeleton } from '@mantine/core';
+import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates,} from '@/lib/hooks/queries/useEmployees';
+import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {createLogger} from '@/lib/utils/logger';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Asset} from '@/lib/types/hrms/asset';
+import {Skeleton} from '@mantine/core';
 
 const log = createLogger('EmployeePage');
 
@@ -54,36 +48,36 @@ type AboutSubTab = 'summary' | 'timeline' | 'wall';
 type AssetSubTab = 'assigned' | 'requests' | 'damages';
 
 const MAIN_TABS: { key: MainTab; label: string }[] = [
-  { key: 'about', label: 'About' },
-  { key: 'profile', label: 'Profile' },
-  { key: 'job', label: 'Job' },
-  { key: 'documents', label: 'Documents' },
-  { key: 'assets', label: 'Assets' },
+  {key: 'about', label: 'About'},
+  {key: 'profile', label: 'Profile'},
+  {key: 'job', label: 'Job'},
+  {key: 'documents', label: 'Documents'},
+  {key: 'assets', label: 'Assets'},
 ];
 
 const ABOUT_SUB_TABS: { key: AboutSubTab; label: string }[] = [
-  { key: 'summary', label: 'Summary' },
-  { key: 'timeline', label: 'Timeline' },
-  { key: 'wall', label: 'Wall Activity' },
+  {key: 'summary', label: 'Summary'},
+  {key: 'timeline', label: 'Timeline'},
+  {key: 'wall', label: 'Wall Activity'},
 ];
 
 const ASSET_SUB_TABS: { key: AssetSubTab; label: string }[] = [
-  { key: 'assigned', label: 'Assigned Assets' },
-  { key: 'requests', label: 'Asset Requests' },
-  { key: 'damages', label: 'Damage Charges' },
+  {key: 'assigned', label: 'Assigned Assets'},
+  {key: 'requests', label: 'Asset Requests'},
+  {key: 'damages', label: 'Damage Charges'},
 ];
 
 // ─── Document categories ─────────────────────────────────────────────
 const DOCUMENT_CATEGORIES = [
-  { name: 'Performance Reviews', icon: Star, count: 0 },
-  { name: 'Previous Experience', icon: Briefcase, count: 0 },
-  { name: 'Form 16', icon: FileText, count: 0 },
-  { name: 'Identity', icon: Shield, count: 0 },
-  { name: 'Employee Letters', icon: Mail, count: 0 },
-  { name: 'Degrees & Certificates', icon: Award, count: 0 },
-  { name: 'Course Certificates', icon: CheckCircle2, count: 0 },
-  { name: 'Resume', icon: FileText, count: 0 },
-  { name: 'Roles & Responsibilities', icon: Users, count: 0 },
+  {name: 'Performance Reviews', icon: Star, count: 0},
+  {name: 'Previous Experience', icon: Briefcase, count: 0},
+  {name: 'Form 16', icon: FileText, count: 0},
+  {name: 'Identity', icon: Shield, count: 0},
+  {name: 'Employee Letters', icon: Mail, count: 0},
+  {name: 'Degrees & Certificates', icon: Award, count: 0},
+  {name: 'Course Certificates', icon: CheckCircle2, count: 0},
+  {name: 'Resume', icon: FileText, count: 0},
+  {name: 'Roles & Responsibilities', icon: Users, count: 0},
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────
@@ -117,7 +111,7 @@ function formatEnumValue(value?: string) {
 }
 
 // ─── Reusable UI pieces ──────────────────────────────────────────────
-function InfoField({ label, value }: { label: string; value: string | undefined | null }) {
+function InfoField({label, value}: { label: string; value: string | undefined | null }) {
   return (
     <div className="space-y-1">
       <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
@@ -129,10 +123,10 @@ function InfoField({ label, value }: { label: string; value: string | undefined 
 }
 
 function SectionCard({
-  title,
-  children,
-  className = '',
-}: {
+                       title,
+                       children,
+                       className = '',
+                     }: {
   title: string;
   children: React.ReactNode;
   className?: string;
@@ -150,9 +144,9 @@ function SectionCard({
 }
 
 function AvatarInitials({
-  name,
-  size = 'md',
-}: {
+                          name,
+                          size = 'md',
+                        }: {
   name: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }) {
@@ -213,15 +207,15 @@ export default function EmployeeDetailPage() {
   const [docSearch, setDocSearch] = useState('');
 
   // React Query hooks
-  const { data: employee, isLoading: loading, error: queryError } = useEmployee(employeeId);
-  const { data: dottedReports = [] } = useDottedLineReports(employeeId);
-  const { data: subordinates = [] } = useSubordinates(employeeId);
-  const { data: employeeAssets = [] } = useAssetsByEmployee(employeeId);
+  const {data: employee, isLoading: loading, error: queryError} = useEmployee(employeeId);
+  const {data: dottedReports = []} = useDottedLineReports(employeeId);
+  const {data: subordinates = []} = useSubordinates(employeeId);
+  const {data: employeeAssets = []} = useAssetsByEmployee(employeeId);
   const deleteEmployeeMutation = useDeleteEmployee();
 
   const error = queryError
     ? (queryError as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-      'Failed to load employee'
+    'Failed to load employee'
     : null;
 
   // Update URL when tab changes
@@ -280,17 +274,17 @@ export default function EmployeeDetailPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header skeleton */}
             <div className="mb-8 flex items-center space-x-4">
-              <Skeleton circle height={80} width={80} />
+              <Skeleton circle height={80} width={80}/>
               <div className="flex-1">
-                <Skeleton height={28} width="30%" mb="md" />
-                <Skeleton height={16} width="20%" />
+                <Skeleton height={28} width="30%" mb="md"/>
+                <Skeleton height={16} width="20%"/>
               </div>
             </div>
 
             {/* Tabs skeleton */}
             <div className="flex space-x-4 mb-6 border-b border-[var(--border-main)]">
               {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} height={40} width={100} />
+                <Skeleton key={i} height={40} width={100}/>
               ))}
             </div>
 
@@ -298,10 +292,10 @@ export default function EmployeeDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="space-y-4">
-                  <Skeleton height={24} width="40%" />
-                  <Skeleton height={16} mb="sm" />
-                  <Skeleton height={16} width="80%" mb="sm" />
-                  <Skeleton height={16} width="75%" />
+                  <Skeleton height={24} width="40%"/>
+                  <Skeleton height={16} mb="sm"/>
+                  <Skeleton height={16} width="80%" mb="sm"/>
+                  <Skeleton height={16} width="75%"/>
                 </div>
               ))}
             </div>
@@ -319,7 +313,8 @@ export default function EmployeeDetailPage() {
     return (
       <AppLayout activeMenuItem="employees">
         <div className="min-h-screen bg-[var(--bg-secondary)]">
-          <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
+          <nav
+            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-4">
@@ -328,7 +323,7 @@ export default function EmployeeDetailPage() {
                     aria-label="Back to employees list"
                     className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-5 w-5"/>
                   </button>
                   <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
                 </div>
@@ -336,7 +331,8 @@ export default function EmployeeDetailPage() {
             </div>
           </nav>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
+            <div
+              className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
               <p className="text-sm text-danger-600 dark:text-danger-400">
                 {error || 'Employee not found'}
               </p>
@@ -354,7 +350,8 @@ export default function EmployeeDetailPage() {
     <AppLayout activeMenuItem="employees">
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* ── HERO BANNER ──────────────────────────────────────────── */}
-        <div className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
+        <div
+          className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {/* Back + Actions row */}
             <div className="row-between mb-6">
@@ -363,7 +360,7 @@ export default function EmployeeDetailPage() {
                 aria-label="Back to employees list"
                 className="flex items-center gap-1 text-surface-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4"/>
                 <span className="text-sm">Employees</span>
               </button>
               <div className="flex gap-4">
@@ -373,7 +370,7 @@ export default function EmployeeDetailPage() {
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <Pencil className="h-3.5 w-3.5"/>
                     Edit
                   </button>
                 </PermissionGate>
@@ -382,7 +379,7 @@ export default function EmployeeDetailPage() {
                     onClick={() => setShowDeleteModal(true)}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-danger-600 hover:bg-danger-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3.5 w-3.5"/>
                     Delete
                   </button>
                 </PermissionGate>
@@ -401,7 +398,7 @@ export default function EmployeeDetailPage() {
                   className="h-20 w-20 rounded-full object-cover border-2 border-accent-500/30"
                 />
               ) : (
-                <AvatarInitials name={employee.fullName} size="xl" />
+                <AvatarInitials name={employee.fullName} size="xl"/>
               )}
               <div>
                 <div className="flex items-center gap-4">
@@ -424,7 +421,7 @@ export default function EmployeeDetailPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center gap-6 py-4">
               <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-[var(--text-muted)]" />
+                <Mail className="h-4 w-4 text-[var(--text-muted)]"/>
                 <a
                   href={`mailto:${employee.workEmail}`}
                   className="text-accent-700 dark:text-accent-400 hover:underline"
@@ -434,7 +431,7 @@ export default function EmployeeDetailPage() {
               </div>
               {employee.phoneNumber && (
                 <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-[var(--text-muted)]" />
+                  <Phone className="h-4 w-4 text-[var(--text-muted)]"/>
                   <a
                     href={`tel:${employee.phoneNumber}`}
                     className="text-[var(--text-primary)] hover:underline"
@@ -445,14 +442,14 @@ export default function EmployeeDetailPage() {
               )}
               {(employee.city || employee.state || employee.country) && (
                 <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-[var(--text-muted)]" />
+                  <MapPin className="h-4 w-4 text-[var(--text-muted)]"/>
                   <span className="text-[var(--text-primary)]">
                     {[employee.city, employee.state, employee.country].filter(Boolean).join(', ')}
                   </span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm">
-                <IdCard className="h-4 w-4 text-[var(--text-muted)]" />
+                <IdCard className="h-4 w-4 text-[var(--text-muted)]"/>
                 <span className="text-[var(--text-primary)]">{employee.employeeCode}</span>
               </div>
             </div>
@@ -494,7 +491,7 @@ export default function EmployeeDetailPage() {
                     onClick={() => router.push(`/employees/${employee.managerId}`)}
                     className="flex items-center gap-2 group"
                   >
-                    <AvatarInitials name={employee.managerName || 'M'} size="sm" />
+                    <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
                     <span className="text-sm font-medium text-accent-700 dark:text-accent-400 group-hover:underline">
                       {employee.managerName}
                     </span>
@@ -568,13 +565,13 @@ export default function EmployeeDetailPage() {
 
                     <SectionCard title="Professional Summary">
                       <div className="grid grid-cols-2 gap-4">
-                        <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)} />
-                        <InfoField label="Level" value={formatEnumValue(employee.level)} />
+                        <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)}/>
+                        <InfoField label="Level" value={formatEnumValue(employee.level)}/>
                         <InfoField
                           label="Employment Type"
                           value={formatEnumValue(employee.employmentType)}
                         />
-                        <InfoField label="Department" value={employee.departmentName} />
+                        <InfoField label="Department" value={employee.departmentName}/>
                       </div>
                     </SectionCard>
 
@@ -601,7 +598,7 @@ export default function EmployeeDetailPage() {
                               onClick={() => router.push(`/employees/${sub.id}`)}
                               className="flex items-center gap-4 w-full text-left hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                             >
-                              <AvatarInitials name={sub.fullName} size="sm" />
+                              <AvatarInitials name={sub.fullName} size="sm"/>
                               <div className="min-w-0">
                                 <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                                   {sub.fullName}
@@ -626,11 +623,11 @@ export default function EmployeeDetailPage() {
                     {/* System Information */}
                     <SectionCard title="System Information">
                       <div className="space-y-4">
-                        <InfoField label="Created At" value={formatDate(employee.createdAt)} />
-                        <InfoField label="Last Updated" value={formatDate(employee.updatedAt)} />
-                        <InfoField label="Employee ID" value={employee.id} />
+                        <InfoField label="Created At" value={formatDate(employee.createdAt)}/>
+                        <InfoField label="Last Updated" value={formatDate(employee.updatedAt)}/>
+                        <InfoField label="Employee ID" value={employee.id}/>
                         {employee.userId && (
-                          <InfoField label="User ID" value={employee.userId} />
+                          <InfoField label="User ID" value={employee.userId}/>
                         )}
                       </div>
                     </SectionCard>
@@ -640,13 +637,13 @@ export default function EmployeeDetailPage() {
 
               {/* Timeline sub-tab */}
               {aboutSubTab === 'timeline' && (
-                <TalentJourneyTab employeeId={employeeId} />
+                <TalentJourneyTab employeeId={employeeId}/>
               )}
 
               {/* Wall Activity sub-tab */}
               {aboutSubTab === 'wall' && (
                 <div className="text-center py-16">
-                  <MessageSquare className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <MessageSquare className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Wall Activity
                   </h3>
@@ -665,21 +662,21 @@ export default function EmployeeDetailPage() {
               {/* Primary Details */}
               <SectionCard title="Primary Details">
                 <div className="grid grid-cols-2 gap-4">
-                  <InfoField label="First Name" value={employee.firstName} />
-                  <InfoField label="Last Name" value={employee.lastName} />
-                  <InfoField label="Middle Name" value={employee.middleName} />
-                  <InfoField label="Gender" value={formatEnumValue(employee.gender)} />
-                  <InfoField label="Date of Birth" value={formatDate(employee.dateOfBirth)} />
-                  <InfoField label="Nationality" value={employee.country} />
+                  <InfoField label="First Name" value={employee.firstName}/>
+                  <InfoField label="Last Name" value={employee.lastName}/>
+                  <InfoField label="Middle Name" value={employee.middleName}/>
+                  <InfoField label="Gender" value={formatEnumValue(employee.gender)}/>
+                  <InfoField label="Date of Birth" value={formatDate(employee.dateOfBirth)}/>
+                  <InfoField label="Nationality" value={employee.country}/>
                 </div>
               </SectionCard>
 
               {/* Contact Details */}
               <SectionCard title="Contact Details">
                 <div className="grid grid-cols-1 gap-4">
-                  <InfoField label="Work Email" value={employee.workEmail} />
-                  <InfoField label="Personal Email" value={employee.personalEmail} />
-                  <InfoField label="Mobile" value={employee.phoneNumber} />
+                  <InfoField label="Work Email" value={employee.workEmail}/>
+                  <InfoField label="Personal Email" value={employee.personalEmail}/>
+                  <InfoField label="Mobile" value={employee.phoneNumber}/>
                   <InfoField
                     label="Emergency Contact"
                     value={employee.emergencyContactNumber}
@@ -691,12 +688,12 @@ export default function EmployeeDetailPage() {
               <SectionCard title="Address">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <InfoField label="Street Address" value={employee.address} />
+                    <InfoField label="Street Address" value={employee.address}/>
                   </div>
-                  <InfoField label="City" value={employee.city} />
-                  <InfoField label="State / Province" value={employee.state} />
-                  <InfoField label="Postal Code" value={employee.postalCode} />
-                  <InfoField label="Country" value={employee.country} />
+                  <InfoField label="City" value={employee.city}/>
+                  <InfoField label="State / Province" value={employee.state}/>
+                  <InfoField label="Postal Code" value={employee.postalCode}/>
+                  <InfoField label="Country" value={employee.country}/>
                 </div>
               </SectionCard>
 
@@ -704,10 +701,10 @@ export default function EmployeeDetailPage() {
               <PermissionGate permission={Permissions.EMPLOYEE_BANK_READ} fallback={null}>
                 <SectionCard title="Banking & Tax">
                   <div className="grid grid-cols-1 gap-4">
-                    <InfoField label="Bank Name" value={employee.bankName} />
-                    <InfoField label="Account Number" value={employee.bankAccountNumber} />
-                    <InfoField label="IFSC / Routing" value={employee.bankIfscCode} />
-                    <InfoField label="Tax ID / SSN" value={employee.taxId} />
+                    <InfoField label="Bank Name" value={employee.bankName}/>
+                    <InfoField label="Account Number" value={employee.bankAccountNumber}/>
+                    <InfoField label="IFSC / Routing" value={employee.bankIfscCode}/>
+                    <InfoField label="Tax ID / SSN" value={employee.taxId}/>
                   </div>
                   <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
                     <p className="text-xs text-accent-700 dark:text-accent-400">
@@ -725,19 +722,19 @@ export default function EmployeeDetailPage() {
               {/* Job Details */}
               <SectionCard title="Job Details">
                 <div className="grid grid-cols-2 gap-4">
-                  <InfoField label="Employee Number" value={employee.employeeCode} />
-                  <InfoField label="Date of Joining" value={formatDate(employee.joiningDate)} />
-                  <InfoField label="Job Title" value={employee.designation} />
-                  <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)} />
+                  <InfoField label="Employee Number" value={employee.employeeCode}/>
+                  <InfoField label="Date of Joining" value={formatDate(employee.joiningDate)}/>
+                  <InfoField label="Job Title" value={employee.designation}/>
+                  <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)}/>
                   <InfoField
                     label="Confirmation Date"
                     value={formatDate(employee.confirmationDate)}
                   />
-                  <InfoField label="Worker Type" value={formatEnumValue(employee.employmentType)} />
-                  <InfoField label="Level" value={formatEnumValue(employee.level)} />
-                  <InfoField label="Status" value={formatEnumValue(employee.status)} />
+                  <InfoField label="Worker Type" value={formatEnumValue(employee.employmentType)}/>
+                  <InfoField label="Level" value={formatEnumValue(employee.level)}/>
+                  <InfoField label="Status" value={formatEnumValue(employee.status)}/>
                   {employee.exitDate && (
-                    <InfoField label="Exit Date" value={formatDate(employee.exitDate)} />
+                    <InfoField label="Exit Date" value={formatDate(employee.exitDate)}/>
                   )}
                 </div>
               </SectionCard>
@@ -746,8 +743,8 @@ export default function EmployeeDetailPage() {
               <SectionCard title="Organization">
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <InfoField label="Department" value={employee.departmentName} />
-                    <InfoField label="Cost Center" value="Not Set" />
+                    <InfoField label="Department" value={employee.departmentName}/>
+                    <InfoField label="Cost Center" value="Not Set"/>
                   </div>
 
                   {/* Reporting Manager */}
@@ -760,7 +757,7 @@ export default function EmployeeDetailPage() {
                         onClick={() => router.push(`/employees/${employee.managerId}`)}
                         className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                       >
-                        <AvatarInitials name={employee.managerName || 'M'} size="sm" />
+                        <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
                         <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
                           {employee.managerName}
                         </span>
@@ -851,57 +848,62 @@ export default function EmployeeDetailPage() {
                     <div className="overflow-x-auto">
                       <table className="table-aura w-full">
                         <thead>
-                          <tr>
-                            <th className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                              Employee
-                            </th>
-                            <th className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                              Code
-                            </th>
-                            <th className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                              Designation
-                            </th>
-                            <th className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                              Department
-                            </th>
-                            <th className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                              Status
-                            </th>
-                          </tr>
+                        <tr>
+                          <th
+                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
+                            Employee
+                          </th>
+                          <th
+                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
+                            Code
+                          </th>
+                          <th
+                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
+                            Designation
+                          </th>
+                          <th
+                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
+                            Department
+                          </th>
+                          <th
+                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
+                            Status
+                          </th>
+                        </tr>
                         </thead>
                         <tbody>
-                          {dottedReports.map((report) => (
-                            <tr
-                              key={report.id}
-                              className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
-                              onClick={() => router.push(`/employees/${report.id}`)}
-                            >
-                              <td className="whitespace-nowrap py-2">
-                                <div className="flex items-center gap-2">
-                                  <AvatarInitials name={report.fullName} size="sm" />
-                                  <span className="font-medium text-sm text-[var(--text-primary)]">
+                        {dottedReports.map((report) => (
+                          <tr
+                            key={report.id}
+                            className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
+                            onClick={() => router.push(`/employees/${report.id}`)}
+                          >
+                            <td className="whitespace-nowrap py-2">
+                              <div className="flex items-center gap-2">
+                                <AvatarInitials name={report.fullName} size="sm"/>
+                                <span className="font-medium text-sm text-[var(--text-primary)]">
                                     {report.fullName}
                                   </span>
-                                </div>
-                              </td>
-                              <td className="whitespace-nowrap text-body-secondary py-2">
-                                {report.employeeCode}
-                              </td>
-                              <td className="whitespace-nowrap text-body-secondary py-2">
-                                {report.designation || '-'}
-                              </td>
-                              <td className="whitespace-nowrap text-body-secondary py-2">
-                                {report.departmentName || '-'}
-                              </td>
-                              <td className="py-2">
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap text-body-secondary py-2">
+                              {report.employeeCode}
+                            </td>
+                            <td className="whitespace-nowrap text-body-secondary py-2">
+                              {report.designation || '-'}
+                            </td>
+                            <td className="whitespace-nowrap text-body-secondary py-2">
+                              {report.departmentName || '-'}
+                            </td>
+                            <td className="py-2">
                                 <span
                                   className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(report.status)}`}
                                 >
                                   {formatEnumValue(report.status)}
                                 </span>
-                              </td>
-                            </tr>
-                          ))}
+                            </td>
+                          </tr>
+                        ))}
                         </tbody>
                       </table>
                     </div>
@@ -917,7 +919,7 @@ export default function EmployeeDetailPage() {
               {/* Search */}
               <div className="mb-6">
                 <div className="relative max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                   <input
                     type="text"
                     placeholder="Search document categories..."
@@ -935,13 +937,14 @@ export default function EmployeeDetailPage() {
                   return (
                     <motion.div
                       key={cat.name}
-                      whileHover={{ y: -2 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                      whileHover={{y: -2}}
+                      transition={{type: 'spring', stiffness: 400, damping: 25}}
                     >
                       <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
                         <CardContent className="p-6 text-center">
-                          <div className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400" />
+                          <div
+                            className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                            <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                           </div>
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                             {cat.name}
@@ -958,7 +961,7 @@ export default function EmployeeDetailPage() {
 
               {filteredDocCategories.length === 0 && (
                 <div className="text-center py-12">
-                  <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4" />
+                  <FolderOpen className="h-10 w-10 text-[var(--text-muted)] mx-auto mb-4"/>
                   <p className="text-body-muted">No matching categories found.</p>
                 </div>
               )}
@@ -988,50 +991,50 @@ export default function EmployeeDetailPage() {
                     <div className="overflow-x-auto">
                       <table className="table-aura w-full">
                         <thead>
-                          <tr>
-                            {[
-                              'Asset Name',
-                              'Category',
-                              'Serial Number',
-                              'Status',
-                              'Purchase Date',
-                              'Location',
-                            ].map((h) => (
-                              <th
-                                key={h}
-                                className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2"
-                              >
-                                {h}
-                              </th>
-                            ))}
-                          </tr>
+                        <tr>
+                          {[
+                            'Asset Name',
+                            'Category',
+                            'Serial Number',
+                            'Status',
+                            'Purchase Date',
+                            'Location',
+                          ].map((h) => (
+                            <th
+                              key={h}
+                              className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2"
+                            >
+                              {h}
+                            </th>
+                          ))}
+                        </tr>
                         </thead>
                         <tbody>
-                          {(employeeAssets as Asset[]).map((asset) => (
-                            <tr
-                              key={asset.id}
-                              className="hover:bg-[var(--bg-card-hover)] transition-colors"
-                            >
-                              <td className="py-2">
-                                <div className="flex items-center gap-2">
-                                  <Laptop className="h-4 w-4 text-[var(--text-muted)]" />
-                                  <div>
-                                    <p className="text-sm font-medium text-[var(--text-primary)]">
-                                      {asset.assetName}
-                                    </p>
-                                    <p className="text-caption">
-                                      {asset.assetCode}
-                                    </p>
-                                  </div>
+                        {(employeeAssets as Asset[]).map((asset) => (
+                          <tr
+                            key={asset.id}
+                            className="hover:bg-[var(--bg-card-hover)] transition-colors"
+                          >
+                            <td className="py-2">
+                              <div className="flex items-center gap-2">
+                                <Laptop className="h-4 w-4 text-[var(--text-muted)]"/>
+                                <div>
+                                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                                    {asset.assetName}
+                                  </p>
+                                  <p className="text-caption">
+                                    {asset.assetCode}
+                                  </p>
                                 </div>
-                              </td>
-                              <td className="text-body-secondary py-2">
-                                {formatEnumValue(asset.category)}
-                              </td>
-                              <td className="text-body-secondary py-2 font-mono">
-                                {asset.serialNumber || '-'}
-                              </td>
-                              <td className="py-2">
+                              </div>
+                            </td>
+                            <td className="text-body-secondary py-2">
+                              {formatEnumValue(asset.category)}
+                            </td>
+                            <td className="text-body-secondary py-2 font-mono">
+                              {asset.serialNumber || '-'}
+                            </td>
+                            <td className="py-2">
                                 <span
                                   className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
                                     asset.status === 'ASSIGNED'
@@ -1041,21 +1044,21 @@ export default function EmployeeDetailPage() {
                                 >
                                   {formatEnumValue(asset.status)}
                                 </span>
-                              </td>
-                              <td className="text-body-secondary py-2">
-                                {formatDate(asset.purchaseDate)}
-                              </td>
-                              <td className="text-body-secondary py-2">
-                                {asset.location || '-'}
-                              </td>
-                            </tr>
-                          ))}
+                            </td>
+                            <td className="text-body-secondary py-2">
+                              {formatDate(asset.purchaseDate)}
+                            </td>
+                            <td className="text-body-secondary py-2">
+                              {asset.location || '-'}
+                            </td>
+                          </tr>
+                        ))}
                         </tbody>
                       </table>
                     </div>
                   ) : (
                     <div className="text-center py-16">
-                      <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                      <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                       <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                         No Assets Assigned
                       </h3>
@@ -1070,7 +1073,7 @@ export default function EmployeeDetailPage() {
               {/* Asset Requests */}
               {assetSubTab === 'requests' && (
                 <div className="text-center py-16">
-                  <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Requests
                   </h3>
@@ -1083,7 +1086,7 @@ export default function EmployeeDetailPage() {
               {/* Damage Charges */}
               {assetSubTab === 'damages' && (
                 <div className="text-center py-16">
-                  <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     Asset Damage Charges
                   </h3>
@@ -1101,8 +1104,9 @@ export default function EmployeeDetailPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400" />
+                <div
+                  className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                  <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">
                   Delete Employee

@@ -27,14 +27,14 @@ export * from './useUnsavedChangesWarning';
 export * from './useAriaAnnounce';
 // useUnifiedNotifications is re-exported from './useNotifications' — the query-level
 // useNotifications comes from './queries/useNotifications' to avoid name collision.
-export { useUnifiedNotifications } from './useNotifications';
-export type { UnifiedNotification, UseNotificationsReturn } from './useNotifications';
+export {useUnifiedNotifications} from './useNotifications';
+export type {UnifiedNotification, UseNotificationsReturn} from './useNotifications';
 
 // ── All React Query module hooks (re-exported from queries/) ─────────────────
 // Note: usePermissions from queries/useRoles is intentionally excluded here
 // to avoid conflict with the platform-level usePermissions hook above.
 // Import from '@/lib/hooks/queries/useRoles' directly if needed.
-export { useRoles, usePermissionsByResource } from './queries/useRoles';
+export {useRoles, usePermissionsByResource} from './queries/useRoles';
 export * from './queries/useAdmin';
 export * from './queries/useAnalytics';
 export * from './queries/useAnnouncements';

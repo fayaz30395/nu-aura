@@ -1,9 +1,9 @@
-import { apiClient } from './client';
+import {apiClient} from './client';
 import {
+  BulkRuleIdsRequest,
   ImplicitRoleRule,
   ImplicitRoleRuleRequest,
   ImplicitUserRole,
-  BulkRuleIdsRequest,
 } from '../types/core/implicitRoles';
 
 interface PaginatedResponse<T> {
@@ -26,7 +26,7 @@ export const implicitRolesApi = {
   listRules: async (params?: ListParams): Promise<PaginatedResponse<ImplicitRoleRule>> => {
     const response = await apiClient.get<PaginatedResponse<ImplicitRoleRule>>(
       '/implicit-role-rules',
-      { params }
+      {params}
     );
     return response.data;
   },
@@ -49,7 +49,7 @@ export const implicitRolesApi = {
   getAffectedUsers: async (ruleId: string, page: number = 0, size: number = 20): Promise<PaginatedResponse<ImplicitUserRole>> => {
     const response = await apiClient.get<PaginatedResponse<ImplicitUserRole>>(
       `/implicit-role-rules/${ruleId}/affected-users`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -63,7 +63,11 @@ export const implicitRolesApi = {
   },
 
   // Bulk Operations
-  bulkActivate: async (data: BulkRuleIdsRequest): Promise<{ operationType: string; totalRequested: number; totalProcessed: number }> => {
+  bulkActivate: async (data: BulkRuleIdsRequest): Promise<{
+    operationType: string;
+    totalRequested: number;
+    totalProcessed: number
+  }> => {
     const response = await apiClient.post<{ operationType: string; totalRequested: number; totalProcessed: number }>(
       '/implicit-role-rules/bulk-activate',
       data
@@ -71,7 +75,11 @@ export const implicitRolesApi = {
     return response.data;
   },
 
-  bulkDeactivate: async (data: BulkRuleIdsRequest): Promise<{ operationType: string; totalRequested: number; totalProcessed: number }> => {
+  bulkDeactivate: async (data: BulkRuleIdsRequest): Promise<{
+    operationType: string;
+    totalRequested: number;
+    totalProcessed: number
+  }> => {
     const response = await apiClient.post<{ operationType: string; totalRequested: number; totalProcessed: number }>(
       '/implicit-role-rules/bulk-deactivate',
       data

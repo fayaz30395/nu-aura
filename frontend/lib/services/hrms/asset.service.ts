@@ -1,11 +1,5 @@
-import { apiClient } from '../../api/client';
-import {
-  Asset,
-  CreateAssetRequest,
-  UpdateAssetRequest,
-  AssetsResponse,
-  AssetStatus,
-} from '../../types/hrms/asset';
+import {apiClient} from '../../api/client';
+import {Asset, AssetsResponse, AssetStatus, CreateAssetRequest, UpdateAssetRequest,} from '../../types/hrms/asset';
 
 const BASE_URL = '/assets';
 
@@ -13,7 +7,7 @@ export const assetService = {
   // Get all assets with pagination
   getAllAssets: async (page = 0, size = 20): Promise<AssetsResponse> => {
     const response = await apiClient.get<AssetsResponse>(BASE_URL, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   },
@@ -44,7 +38,7 @@ export const assetService = {
   // Assign asset to employee
   assignAsset: async (assetId: string, employeeId: string): Promise<Asset> => {
     const response = await apiClient.post<Asset>(`${BASE_URL}/${assetId}/assign`, null, {
-      params: { employeeId },
+      params: {employeeId},
     });
     return response.data;
   },

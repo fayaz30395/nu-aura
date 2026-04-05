@@ -4,7 +4,14 @@
 
 export type ContractType = 'EMPLOYMENT' | 'VENDOR' | 'NDA' | 'SLA' | 'FREELANCER' | 'OTHER';
 
-export type ContractStatus = 'DRAFT' | 'PENDING_REVIEW' | 'PENDING_SIGNATURES' | 'ACTIVE' | 'EXPIRED' | 'TERMINATED' | 'RENEWED';
+export type ContractStatus =
+  'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'PENDING_SIGNATURES'
+  | 'ACTIVE'
+  | 'EXPIRED'
+  | 'TERMINATED'
+  | 'RENEWED';
 
 export type SignatureStatus = 'PENDING' | 'SIGNED' | 'DECLINED';
 

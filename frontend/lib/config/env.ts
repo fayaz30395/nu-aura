@@ -9,7 +9,7 @@
  * const apiUrl = env.NEXT_PUBLIC_API_URL;
  */
 
-import { z } from 'zod';
+import {z} from 'zod';
 
 /**
  * Environment variable schema with validation rules.

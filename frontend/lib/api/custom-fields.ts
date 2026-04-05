@@ -1,10 +1,10 @@
-import { apiClient } from './client';
+import {apiClient} from './client';
 import {
+  BulkCustomFieldValueRequest,
   CustomFieldDefinition,
   CustomFieldDefinitionRequest,
   CustomFieldValue,
   CustomFieldValueRequest,
-  BulkCustomFieldValueRequest,
   EntityType,
   Page,
 } from '../types/core/custom-fields';

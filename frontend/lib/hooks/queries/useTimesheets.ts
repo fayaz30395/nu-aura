@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { timesheetService } from '@/lib/services/hrms/timesheet.service';
-import { CreateTimesheetRequest, CreateTimeEntryRequest } from '@/lib/types/hrms/timesheet';
-import { useToast } from '@/components/notifications/ToastProvider';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {timesheetService} from '@/lib/services/hrms/timesheet.service';
+import {CreateTimeEntryRequest, CreateTimesheetRequest} from '@/lib/types/hrms/timesheet';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management
 export const timesheetKeys = {
@@ -86,7 +86,7 @@ export function useSubmitTimesheet() {
   return useMutation({
     mutationFn: (id: string) => timesheetService.submitTimesheet(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: timesheetKeys.detail(id) });
+      queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
     },
     onError: (error: Error) => {
@@ -103,10 +103,10 @@ export function useApproveTimesheet() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, approverId }: { id: string; approverId: string }) =>
+    mutationFn: ({id, approverId}: { id: string; approverId: string }) =>
       timesheetService.approveTimesheet(id, approverId),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: timesheetKeys.detail(id) });
+    onSuccess: (_data, {id}) => {
+      queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.success('Timesheet Approved', 'Timesheet has been approved');
     },
     onError: (error: Error) => {
@@ -123,10 +123,10 @@ export function useRejectTimesheet() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       timesheetService.rejectTimesheet(id, reason),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: timesheetKeys.detail(id) });
+    onSuccess: (_data, {id}) => {
+      queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.info('Timesheet Rejected', 'Timesheet has been rejected');
     },
     onError: (error: Error) => {
@@ -143,11 +143,11 @@ export function useAddTimeEntry() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ timesheetId, entry }: { timesheetId: string; entry: CreateTimeEntryRequest }) =>
+    mutationFn: ({timesheetId, entry}: { timesheetId: string; entry: CreateTimeEntryRequest }) =>
       timesheetService.addTimeEntry(timesheetId, entry),
-    onSuccess: (_data, { timesheetId }) => {
-      queryClient.invalidateQueries({ queryKey: timesheetKeys.entries(timesheetId) });
-      queryClient.invalidateQueries({ queryKey: timesheetKeys.detail(timesheetId) });
+    onSuccess: (_data, {timesheetId}) => {
+      queryClient.invalidateQueries({queryKey: timesheetKeys.entries(timesheetId)});
+      queryClient.invalidateQueries({queryKey: timesheetKeys.detail(timesheetId)});
       toast.success('Time Entry Added', 'Time entry has been recorded');
     },
     onError: (error: Error) => {

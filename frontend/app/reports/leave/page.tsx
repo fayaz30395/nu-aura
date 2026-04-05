@@ -1,20 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import {
-  Download,
-  FileText,
-  Calendar,
-  Filter,
-  Loader2,
-  X,
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { reportService, ReportRequest } from '@/lib/services/core/report.service';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import React, {useEffect, useState} from 'react';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Calendar, Download, FileText, Filter, Loader2, X,} from 'lucide-react';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
+import {ReportRequest, reportService} from '@/lib/services/core/report.service';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 export default function LeaveReportsPage() {
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
@@ -53,7 +46,9 @@ export default function LeaveReportsPage() {
       await reportService.downloadLeaveReport(request);
       setSuccessMessage(`Leave report downloaded successfully in ${format} format!`);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
+      setError((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to download report. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -64,8 +59,8 @@ export default function LeaveReportsPage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: -20}}
+          animate={{opacity: 1, y: 0}}
           className="row-between"
         >
           <div>
@@ -79,9 +74,9 @@ export default function LeaveReportsPage() {
         {/* Success Message */}
         {successMessage && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            initial={{opacity: 0, y: -10}}
+            animate={{opacity: 1, y: 0}}
+            exit={{opacity: 0, y: -10}}
             className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg"
           >
             <span className="text-success-700 dark:text-success-400">{successMessage}</span>
@@ -90,14 +85,14 @@ export default function LeaveReportsPage() {
 
         {/* Main Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{opacity: 0, y: 20}}
+          animate={{opacity: 1, y: 0}}
+          transition={{delay: 0.1}}
         >
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-warning-600" />
+                <FileText className="h-5 w-5 text-warning-600"/>
                 Leave Report Configuration
               </CardTitle>
               <CardDescription>
@@ -135,7 +130,7 @@ export default function LeaveReportsPage() {
               {/* Filters */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4 flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
+                  <Filter className="h-4 w-4"/>
                   Filters (Optional)
                 </label>
                 <div className="space-y-4">
@@ -172,7 +167,8 @@ export default function LeaveReportsPage() {
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
-                      <p className={`font-medium text-sm ${format === fmt ? 'text-warning-700' : 'text-[var(--text-secondary)]'}`}>
+                      <p
+                        className={`font-medium text-sm ${format === fmt ? 'text-warning-700' : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-caption">
@@ -185,8 +181,9 @@ export default function LeaveReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
-                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5" />
+                <div
+                  className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
+                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5"/>
                   <span className="text-sm text-danger-600 dark:text-danger-400">{error}</span>
                 </div>
               )}
@@ -200,12 +197,12 @@ export default function LeaveReportsPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin"/>
                       Generating Report...
                     </>
                   ) : (
                     <>
-                      <Download className="h-5 w-5" />
+                      <Download className="h-5 w-5"/>
                       Download Leave Report
                     </>
                   )}
@@ -216,11 +213,11 @@ export default function LeaveReportsPage() {
         </motion.div>
 
         {/* Info Card */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
           <Card className="bg-warning-50 dark:bg-warning-950/20 border-warning-200 dark:border-warning-900">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5" />
+                <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400 mt-0.5"/>
                 <div>
                   <h3 className="font-semibold text-warning-900 dark:text-warning-100">Report Details</h3>
                   <ul className="text-sm text-warning-700 dark:text-warning-300 mt-2 space-y-1">

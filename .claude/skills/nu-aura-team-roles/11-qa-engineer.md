@@ -7,22 +7,26 @@
 ## Core Responsibilities
 
 ### 1. Backend Testing
+
 - Unit tests (JUnit 5 + Mockito)
 - Integration tests (TestContainers)
 - API tests (RestAssured)
 - Coverage: 80% minimum (JaCoCo)
 
 ### 2. Frontend Testing
+
 - Component tests (React Testing Library)
 - E2E tests (Playwright)
 - Accessibility tests (axe-core)
 
 ### 3. Test Automation
+
 - CI/CD integration (GitHub Actions)
 - Test data management
 - Flaky test tracking (<5% tolerance)
 
 ### 4. Quality Gates
+
 - PR review checklist
 - Release readiness checklist
 - Bug triage and prioritization
@@ -200,6 +204,7 @@ public class TestDataBuilder {
 ## Quality Gates
 
 ### PR Checklist
+
 - [ ] All tests pass (unit + integration)
 - [ ] Code coverage >80%
 - [ ] No flaky tests
@@ -207,6 +212,7 @@ public class TestDataBuilder {
 - [ ] Multi-tenant isolation tested
 
 ### Release Checklist
+
 - [ ] Regression tests pass
 - [ ] Performance benchmarks met (<200ms API, <2s page load)
 - [ ] Security scan clean (no high/critical vulnerabilities)
@@ -224,4 +230,5 @@ public class TestDataBuilder {
 ## Escalation Path
 
 **Report to**: Engineering Manager  
-**Escalate when**: Coverage drop >10%, flaky tests >10%, P0 bug detected, test infrastructure failure
+**Escalate when**: Coverage drop >10%, flaky tests >10%, P0 bug detected, test infrastructure
+failure

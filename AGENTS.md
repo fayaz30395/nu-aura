@@ -1,7 +1,8 @@
 # NU-AURA — Subagent Spawn Prompts
 
 > **Usage**: Use these prompts when invoking subagents via Claude Code's `Agent` tool.
-> Each prompt is self-contained — the subagent gets full context without needing conversation history.
+> Each prompt is self-contained — the subagent gets full context without needing conversation
+> history.
 
 ---
 
@@ -19,7 +20,8 @@ You (main session)
 ```
 
 **When to use**: Sequential workflows where each step feeds the next.
-**When NOT to use**: Tasks requiring inter-agent debate or parallel coordination (use Agent Teams instead).
+**When NOT to use**: Tasks requiring inter-agent debate or parallel coordination (use Agent Teams
+instead).
 
 ---
 
@@ -364,7 +366,8 @@ Compare their findings."
 ## Tips
 
 1. **Be specific in the TASK section** — vague prompts get vague results
-2. **Include file paths** — "Implement in `backend/src/main/java/com/hrms/application/leave/LeaveService.java`"
+2. **Include file paths** — "Implement in
+   `backend/src/main/java/com/hrms/application/leave/LeaveService.java`"
 3. **Reference the design** — "Based on the schema in `V94__create_leave_tables.sql`"
 4. **Set constraints** — "Must support pagination, handle 10K+ records, complete in < 200ms"
 5. **One task per subagent** — don't overload a single subagent with multiple unrelated tasks

@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { apiClient } from '../api/client';
-import { is401Error } from '../utils/type-guards';
+import {useCallback, useEffect, useState} from 'react';
+import {apiClient} from '../api/client';
+import {is401Error} from '../utils/type-guards';
 
 /**
  * Hook to verify authentication status via the backend.

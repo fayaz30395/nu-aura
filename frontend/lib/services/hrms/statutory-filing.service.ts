@@ -1,11 +1,11 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 import {
-  FilingTypeInfo,
   FilingRunResponse,
+  FilingTypeInfo,
   GenerateFilingRequest,
+  Page,
   SubmitFilingRequest,
   ValidationResult,
-  Page,
 } from '@/lib/types/hrms/statutory-filing';
 
 const BASE_URL = '/payroll/statutory-filings';
@@ -35,9 +35,9 @@ export const statutoryFilingService = {
     size: number = 20,
     filingType?: string
   ): Promise<Page<FilingRunResponse>> => {
-    const params: Record<string, string | number> = { page, size };
+    const params: Record<string, string | number> = {page, size};
     if (filingType) params.filingType = filingType;
-    const response = await apiClient.get<Page<FilingRunResponse>>(BASE_URL, { params });
+    const response = await apiClient.get<Page<FilingRunResponse>>(BASE_URL, {params});
     return response.data;
   },
 

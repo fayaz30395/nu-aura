@@ -9,18 +9,22 @@
 
 ## Executive Summary
 
-NU-AURA is an enterprise-grade, multi-tenant SaaS HRMS platform built as a **monolithic Spring Boot 3.4.1 backend** with a **Next.js 14 frontend**. The platform demonstrates **production-ready architecture** with strong foundations in security, multi-tenancy, and event-driven patterns. However, critical performance issues (25-second dashboard load times) and architectural constraints limit scalability at enterprise scale.
+NU-AURA is an enterprise-grade, multi-tenant SaaS HRMS platform built as a **monolithic Spring Boot
+3.4.1 backend** with a **Next.js 14 frontend**. The platform demonstrates **production-ready
+architecture** with strong foundations in security, multi-tenancy, and event-driven patterns.
+However, critical performance issues (25-second dashboard load times) and architectural constraints
+limit scalability at enterprise scale.
 
 ### Key Findings
 
-| Dimension | Score | Assessment |
-|-----------|-------|------------|
-| **System Architecture** | 7/10 | Solid monolith with clean domain separation, but lacks microservice scalability |
-| **Data Architecture** | 8/10 | Well-normalized schema (254 tables), strong RLS, but missing critical indexes |
-| **Integration Architecture** | 8/10 | Event-driven with Kafka, REST APIs, but no GraphQL or gRPC |
-| **Security Architecture** | 9/10 | Industry-leading JWT+RBAC, OWASP headers, rate limiting, tenant isolation |
-| **Performance & Reliability** | 4/10 | **CRITICAL**: 25s dashboard, N+1 queries, no caching strategy implemented |
-| **Scalability** | 6/10 | Limited by monolith + shared DB, HikariCP pool size (10), single tenant context |
+| Dimension                     | Score | Assessment                                                                      |
+|-------------------------------|-------|---------------------------------------------------------------------------------|
+| **System Architecture**       | 7/10  | Solid monolith with clean domain separation, but lacks microservice scalability |
+| **Data Architecture**         | 8/10  | Well-normalized schema (254 tables), strong RLS, but missing critical indexes   |
+| **Integration Architecture**  | 8/10  | Event-driven with Kafka, REST APIs, but no GraphQL or gRPC                      |
+| **Security Architecture**     | 9/10  | Industry-leading JWT+RBAC, OWASP headers, rate limiting, tenant isolation       |
+| **Performance & Reliability** | 4/10  | **CRITICAL**: 25s dashboard, N+1 queries, no caching strategy implemented       |
+| **Scalability**               | 6/10  | Limited by monolith + shared DB, HikariCP pool size (10), single tenant context |
 
 **Overall Grade:** **7.2/10** — Strong foundations with critical performance gaps
 
@@ -71,18 +75,20 @@ graph TB
 
 ### 1.2 Monolith vs Microservices Tradeoffs
 
-| Dimension | Monolith (Current) | Microservices (Alternative) |
-|-----------|-------------------|----------------------------|
-| **Deployment** | Single JAR, simple | Multiple services, complex orchestration |
-| **Development Speed** | Fast for small team | Slower, coordination overhead |
-| **Scalability** | Vertical only (CPU/RAM) | Horizontal per service |
-| **Technology Diversity** | Single stack (Java 17) | Polyglot possible |
-| **Transaction Management** | ACID guarantees | Distributed sagas |
-| **Debugging** | Single codebase | Distributed tracing required |
-| **Team Size** | Optimal: 3-10 devs | Optimal: 15+ devs |
-| **Data Consistency** | Strong consistency | Eventual consistency |
+| Dimension                  | Monolith (Current)      | Microservices (Alternative)              |
+|----------------------------|-------------------------|------------------------------------------|
+| **Deployment**             | Single JAR, simple      | Multiple services, complex orchestration |
+| **Development Speed**      | Fast for small team     | Slower, coordination overhead            |
+| **Scalability**            | Vertical only (CPU/RAM) | Horizontal per service                   |
+| **Technology Diversity**   | Single stack (Java 17)  | Polyglot possible                        |
+| **Transaction Management** | ACID guarantees         | Distributed sagas                        |
+| **Debugging**              | Single codebase         | Distributed tracing required             |
+| **Team Size**              | Optimal: 3-10 devs      | Optimal: 15+ devs                        |
+| **Data Consistency**       | Strong consistency      | Eventual consistency                     |
 
-**Decision:** Monolith is **appropriate** for current scale (1,622 Java files, 10-20 concurrent users). Consider microservices when:
+**Decision:** Monolith is **appropriate** for current scale (1,622 Java files, 10-20 concurrent
+users). Consider microservices when:
+
 - Tenant count exceeds 100
 - Concurrent users exceed 500
 - Team size exceeds 15 developers
@@ -110,25 +116,29 @@ com.hrms
 └── common/                      # 30+ Config, Security, Validation
 ```
 
-**Clean domain separation** with minimal cross-domain dependencies. Strong candidate for **domain-driven design (DDD)** patterns if microservices migration is planned.
+**Clean domain separation** with minimal cross-domain dependencies. Strong candidate for *
+*domain-driven design (DDD)** patterns if microservices migration is planned.
 
 ### 1.4 API Gateway Pattern
 
 **Status:** ❌ **MISSING**
 
 Current architecture has **no dedicated API Gateway**. Spring Boot monolith handles:
+
 - Authentication (JWT validation)
 - Rate limiting (Bucket4j + Redis)
 - CORS (Spring Security)
 - Request routing (internal @RequestMapping)
 
 **KEKA Comparison:** KEKA likely uses Kong or AWS API Gateway for centralized:
+
 - Authentication offloading
 - Traffic shaping
 - Analytics
 - Protocol translation (REST → gRPC)
 
 **Recommendation:** Add **Spring Cloud Gateway** or **Kong** in front of Spring Boot for:
+
 - Centralized auth (JWT validation before hitting app)
 - Circuit breakers
 - Request/response transformation
@@ -136,21 +146,23 @@ Current architecture has **no dedicated API Gateway**. Spring Boot monolith hand
 
 ### 1.5 Scalability Bottlenecks
 
-| Bottleneck | Impact | Mitigation |
-|------------|--------|------------|
-| **Single JVM** | CPU-bound, max 8-16 cores | Horizontal pod scaling (K8s) |
-| **HikariCP Pool (10 max)** | 10 concurrent DB queries max | Increase to 50-100 for prod |
-| **ThreadLocal TenantContext** | Thread-per-request model | Async processing (WebFlux) or reactive patterns |
-| **No read replicas** | All queries hit primary DB | PostgreSQL read replicas for dashboards |
-| **No query caching** | Every request hits DB | Redis query result cache (implemented but disabled) |
-| **Synchronous APIs** | Blocking I/O on long operations | Async endpoints with CompletableFuture |
+| Bottleneck                    | Impact                          | Mitigation                                          |
+|-------------------------------|---------------------------------|-----------------------------------------------------|
+| **Single JVM**                | CPU-bound, max 8-16 cores       | Horizontal pod scaling (K8s)                        |
+| **HikariCP Pool (10 max)**    | 10 concurrent DB queries max    | Increase to 50-100 for prod                         |
+| **ThreadLocal TenantContext** | Thread-per-request model        | Async processing (WebFlux) or reactive patterns     |
+| **No read replicas**          | All queries hit primary DB      | PostgreSQL read replicas for dashboards             |
+| **No query caching**          | Every request hits DB           | Redis query result cache (implemented but disabled) |
+| **Synchronous APIs**          | Blocking I/O on long operations | Async endpoints with CompletableFuture              |
 
 **Current Capacity (Estimated):**
+
 - Concurrent users: 50-100 (limited by DB pool)
 - Requests/sec: 200-300 (limited by monolith CPU)
 - Tenants: 10-50 (limited by shared schema query performance)
 
 **Target Capacity (Enterprise):**
+
 - Concurrent users: 1,000+
 - Requests/sec: 2,000+
 - Tenants: 500+
@@ -191,16 +203,17 @@ erDiagram
 
 **Pattern:** **3rd Normal Form (3NF)** with selective denormalization
 
-| Domain | Tables | Strategy |
-|--------|--------|----------|
-| **IAM** | 10 | Fully normalized (users, roles, permissions) |
-| **Employee** | 30 | Normalized with separate address, education, family tables |
-| **Payroll** | 30 | Normalized components, denormalized payslip line items for speed |
-| **Attendance** | 20 | Hybrid: normalized shifts, denormalized daily_attendance for queries |
-| **Approvals** | 15 | Generic workflow engine (polymorphic entity references) |
-| **Audit** | 5 | JSONB for flexible schema (old_values, new_values) |
+| Domain         | Tables | Strategy                                                             |
+|----------------|--------|----------------------------------------------------------------------|
+| **IAM**        | 10     | Fully normalized (users, roles, permissions)                         |
+| **Employee**   | 30     | Normalized with separate address, education, family tables           |
+| **Payroll**    | 30     | Normalized components, denormalized payslip line items for speed     |
+| **Attendance** | 20     | Hybrid: normalized shifts, denormalized daily_attendance for queries |
+| **Approvals**  | 15     | Generic workflow engine (polymorphic entity references)              |
+| **Audit**      | 5      | JSONB for flexible schema (old_values, new_values)                   |
 
 **KEKA Comparison:**
+
 - KEKA likely denormalizes more aggressively for dashboard performance
 - NU-AURA prioritizes data integrity over query speed (a trade-off)
 
@@ -243,11 +256,13 @@ ON user_roles(user_id);
 ```
 
 **Impact:** Missing indexes cause:
+
 - Dashboard load: **25 seconds** (target: <2s)
 - Auth query: **1,338ms** (target: <200ms)
 - Attendance query: **450ms** (target: <50ms)
 
 **KEKA Comparison:**
+
 - KEKA likely has comprehensive covering indexes
 - NU-AURA has **structural indexes** but missing **performance indexes**
 
@@ -282,6 +297,7 @@ List<PayslipDetails> details = payslipRepository
 - Migration discipline: Clean version history, no merge conflicts
 
 **Best Practice:** All migrations are:
+
 - Idempotent (safe to rerun)
 - Backward compatible (blue-green deployments)
 - Tested in Neon cloud before production
@@ -290,17 +306,19 @@ List<PayslipDetails> details = payslipRepository
 
 **HikariCP Configuration:**
 
-| Profile | Max Pool | Min Idle | Connection Timeout | Max Lifetime |
-|---------|----------|----------|-------------------|--------------|
-| **Dev** | 10 | 2 | 30s | 30min |
-| **Prod** | 20 | 5 | 30s | 10min |
+| Profile  | Max Pool | Min Idle | Connection Timeout | Max Lifetime |
+|----------|----------|----------|--------------------|--------------|
+| **Dev**  | 10       | 2        | 30s                | 30min        |
+| **Prod** | 20       | 5        | 30s                | 10min        |
 
 **Analysis:**
+
 - Max pool of **10 (dev)** and **20 (prod)** is **LOW** for enterprise SaaS
 - Industry standard: 50-100 for monolith serving 100+ concurrent users
 - **Bottleneck:** With 20 connections and 200ms avg query time, max throughput is 100 req/sec
 
 **Recommendation:**
+
 ```yaml
 spring.datasource.hikari:
   maximum-pool-size: 100  # Up from 20
@@ -379,6 +397,7 @@ graph LR
 ```
 
 **Configuration:**
+
 - **Kafka Version:** Confluent 7.6.0
 - **Replication Factor:** 1 (dev), 3 (prod recommended)
 - **Retention:** 168 hours (7 days)
@@ -386,6 +405,7 @@ graph LR
 - **Consumer Groups:** 6 (5 domain consumers + 1 DLT handler)
 
 **Idempotency Pattern:**
+
 ```java
 @KafkaListener(topics = "nu-aura.approvals", groupId = "nu-aura-approvals-service")
 public void handleApprovalEvent(ApprovalEvent event) {
@@ -399,6 +419,7 @@ public void handleApprovalEvent(ApprovalEvent event) {
 ```
 
 **KEKA Comparison:**
+
 - KEKA likely uses AWS SNS/SQS or Kafka
 - NU-AURA has **production-grade DLT pattern** (not common in HRMS platforms)
 - Dead-letter topic handling stores failed events in `FailedKafkaEvent` table for manual recovery
@@ -406,6 +427,7 @@ public void handleApprovalEvent(ApprovalEvent event) {
 ### 3.2 Synchronous Communication (REST APIs)
 
 **API Design:**
+
 - **Protocol:** REST only (no GraphQL, no gRPC)
 - **Versioning:** URL-based (`/api/v1/...`)
 - **Format:** JSON (application/json)
@@ -413,6 +435,7 @@ public void handleApprovalEvent(ApprovalEvent event) {
 - **Rate Limiting:** 100 req/min per user
 
 **API Structure:**
+
 ```
 /api/v1/
 ├── auth/              # Login, logout, refresh, MFA
@@ -429,29 +452,32 @@ public void handleApprovalEvent(ApprovalEvent event) {
 ```
 
 **Missing Capabilities:**
+
 - ❌ **GraphQL:** No support for flexible queries (over-fetching in dashboards)
 - ❌ **gRPC:** No support for high-performance inter-service calls
 - ❌ **WebHooks:** Implemented but limited to 3rd-party integrations (DocuSign, job boards)
 - ✅ **WebSocket/STOMP:** Real-time notifications at `/ws/**`
 
 **KEKA Comparison:**
+
 - KEKA may offer GraphQL for dashboard flexibility
 - NU-AURA's REST-only approach simpler but less flexible
 
 ### 3.3 External Integrations
 
-| Integration | Type | Purpose | Status |
-|-------------|------|---------|--------|
-| **Google OAuth** | OAuth 2.0 | Social login + Calendar | ✅ Active |
-| **Twilio** | REST API | SMS notifications | ✅ Active (mock in dev) |
-| **MinIO** | S3-compatible | File storage (docs, resumes) | ✅ Active |
-| **Elasticsearch** | REST API | Full-text search (NU-Fluence) | ✅ Active |
-| **SMTP** | Email | Email delivery | ✅ Active |
-| **Job Boards** | REST APIs | Naukri, Indeed, LinkedIn posting | 🚧 Configured (pending credentials) |
-| **DocuSign** | Webhook | E-signature callbacks | ✅ Active (HMAC-verified) |
-| **Razorpay** | Future | Payment gateway | ❌ Not implemented |
+| Integration       | Type          | Purpose                          | Status                              |
+|-------------------|---------------|----------------------------------|-------------------------------------|
+| **Google OAuth**  | OAuth 2.0     | Social login + Calendar          | ✅ Active                            |
+| **Twilio**        | REST API      | SMS notifications                | ✅ Active (mock in dev)              |
+| **MinIO**         | S3-compatible | File storage (docs, resumes)     | ✅ Active                            |
+| **Elasticsearch** | REST API      | Full-text search (NU-Fluence)    | ✅ Active                            |
+| **SMTP**          | Email         | Email delivery                   | ✅ Active                            |
+| **Job Boards**    | REST APIs     | Naukri, Indeed, LinkedIn posting | 🚧 Configured (pending credentials) |
+| **DocuSign**      | Webhook       | E-signature callbacks            | ✅ Active (HMAC-verified)            |
+| **Razorpay**      | Future        | Payment gateway                  | ❌ Not implemented                   |
 
 **Integration Patterns:**
+
 - **Retry Logic:** Exponential backoff for transient failures
 - **Circuit Breaker:** Not implemented (recommendation: Resilience4j)
 - **Webhook Security:** HMAC verification for DocuSign callbacks
@@ -497,12 +523,14 @@ sequenceDiagram
 ```
 
 **Token Optimization (ADR-002 / CRIT-001):**
+
 - Permissions **removed from JWT** to keep cookie < 4096 bytes (96% size reduction)
 - JWT contains **roles only** (e.g., `["SUPER_ADMIN", "HR_MANAGER"]`)
 - Permissions loaded from DB via `SecurityService.getCachedPermissions()` on each request
 - Redis cache: 1-hour TTL
 
 **Security Features:**
+
 - ✅ httpOnly cookies (XSS protection)
 - ✅ Secure flag (HTTPS only)
 - ✅ SameSite=Strict (CSRF protection)
@@ -516,16 +544,19 @@ sequenceDiagram
 **Scale:** 500+ granular permissions across 16 modules
 
 **Permission Format:**
+
 - Database: `module.action` (e.g., `employee.read`)
 - Java constants: `MODULE:ACTION` (e.g., `EMPLOYEE:READ`)
 - Normalization: `JwtAuthenticationFilter.normalizePermissionCode()` converts at load time
 
 **Permission Hierarchy:**
+
 ```
 MODULE:MANAGE → MODULE:READ → MODULE:VIEW_ALL → MODULE:VIEW_TEAM → MODULE:VIEW_SELF
 ```
 
 **SuperAdmin Bypass:**
+
 ```java
 // PermissionAspect.java
 @Around("@annotation(requiresPermission)")
@@ -538,6 +569,7 @@ public Object checkPermission(ProceedingJoinPoint joinPoint, RequiresPermission 
 ```
 
 **KEKA Comparison:**
+
 - KEKA likely has 200-300 permissions (less granular)
 - NU-AURA's 500+ permissions provide **fine-grained control** but higher complexity
 - Both use RBAC (not ABAC — attribute-based access control)
@@ -547,6 +579,7 @@ public Object checkPermission(ProceedingJoinPoint joinPoint, RequiresPermission 
 **Pattern:** Shared database + Row-Level Security (RLS)
 
 **PostgreSQL RLS Policy Example:**
+
 ```sql
 CREATE POLICY tenant_isolation_policy ON employees
 FOR ALL
@@ -554,6 +587,7 @@ USING (tenant_id = current_setting('app.current_tenant_id')::uuid);
 ```
 
 **TenantContext Flow:**
+
 ```java
 // TenantFilter.java (runs before JwtAuthenticationFilter)
 public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
@@ -569,6 +603,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
 ```
 
 **Security Guarantees:**
+
 - ✅ PostgreSQL RLS enforces tenant_id filter at database level
 - ✅ ThreadLocal cleared after every request
 - ✅ All queries must include tenant_id (Hibernate filter)
@@ -576,6 +611,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
 - ❌ No tenant-level encryption (all tenants share same encryption key)
 
 **KEKA Comparison:**
+
 - KEKA may use **separate schemas per tenant** (more isolation, higher ops cost)
 - NU-AURA's **shared schema** is cost-efficient but riskier
 
@@ -583,14 +619,15 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
 
 **Pattern:** Token bucket algorithm (Bucket4j + Redis)
 
-| Endpoint Category | Capacity | Refill Rate |
-|-------------------|----------|-------------|
-| Auth (`/api/v1/auth/**`) | 5 requests | 5 per minute |
-| General API | 100 requests | 100 per minute |
-| Export/Reporting | 5 requests | 5 per 5 minutes |
-| Social Feed | 30 requests | 30 per minute |
+| Endpoint Category        | Capacity     | Refill Rate     |
+|--------------------------|--------------|-----------------|
+| Auth (`/api/v1/auth/**`) | 5 requests   | 5 per minute    |
+| General API              | 100 requests | 100 per minute  |
+| Export/Reporting         | 5 requests   | 5 per 5 minutes |
+| Social Feed              | 30 requests  | 30 per minute   |
 
 **Implementation:**
+
 ```java
 // RateLimitingFilter.java
 Bucket bucket = Bucket4j.builder()
@@ -604,12 +641,14 @@ if (!bucket.tryConsume(1)) {
 ```
 
 **KEKA Comparison:**
+
 - KEKA likely uses AWS WAF or Cloudflare rate limiting
 - NU-AURA's **application-level** rate limiting is flexible but higher overhead
 
 ### 4.5 OWASP Security Headers
 
 **Enforced at TWO levels:**
+
 1. **Next.js Middleware (Edge)** — first line of defense
 2. **Spring Security (Backend)** — defense in depth
 
@@ -632,16 +671,17 @@ Content-Security-Policy: default-src 'self'; frame-ancestors 'none'
 
 **From docs/issues.md:**
 
-| Issue | Current | Target | Impact |
-|-------|---------|--------|--------|
-| **Dashboard Load Time** | 25,146ms | <2,000ms | **CRITICAL** — unusable UX |
-| **User Authentication** | 1,338ms | <200ms | High — slow login |
-| **Attendance Query** | 450ms | <50ms | High — laggy check-in |
-| **Payslip Queries (N+1)** | 2,500ms (11 queries) | <100ms | High — slow payroll |
-| **Leave Balance Query** | 517ms | <50ms | Medium — dashboard component |
-| **Holiday Query** | 270ms | <20ms | Medium — repeated calls |
+| Issue                     | Current              | Target   | Impact                       |
+|---------------------------|----------------------|----------|------------------------------|
+| **Dashboard Load Time**   | 25,146ms             | <2,000ms | **CRITICAL** — unusable UX   |
+| **User Authentication**   | 1,338ms              | <200ms   | High — slow login            |
+| **Attendance Query**      | 450ms                | <50ms    | High — laggy check-in        |
+| **Payslip Queries (N+1)** | 2,500ms (11 queries) | <100ms   | High — slow payroll          |
+| **Leave Balance Query**   | 517ms                | <50ms    | Medium — dashboard component |
+| **Holiday Query**         | 270ms                | <20ms    | Medium — repeated calls      |
 
 **Root Causes:**
+
 1. **N+1 Query Pattern** — 11 sequential payslip queries instead of batch
 2. **Missing Indexes** — attendance, payslips, leave_balances tables
 3. **No Caching** — Redis configured but disabled (`@Cacheable` not used)
@@ -653,6 +693,7 @@ Content-Security-Policy: default-src 'self'; frame-ancestors 'none'
 **Status:** ⚠️ **CONFIGURED BUT NOT IMPLEMENTED**
 
 **Redis Cache Configuration:**
+
 ```yaml
 spring:
   cache:
@@ -662,6 +703,7 @@ spring:
 ```
 
 **Missing Implementation:**
+
 ```java
 // SHOULD BE:
 @Cacheable(value = "dashboard", key = "#tenantId + ':' + #employeeId")
@@ -676,6 +718,7 @@ public void approveLeave(UUID tenantId, UUID employeeId, UUID leaveRequestId) {
 ```
 
 **Recommended Cache Keys:**
+
 ```
 hrms:dashboard:{tenantId}:{employeeId}:v1          # TTL: 5 minutes
 hrms:permissions:{userId}:v1                       # TTL: 15 minutes (already cached)
@@ -685,6 +728,7 @@ hrms:leave-balance:{tenantId}:{employeeId}:{year}:v1  # TTL: 5 minutes
 ```
 
 **KEKA Comparison:**
+
 - KEKA likely has **aggressive caching** at multiple layers (CDN, Redis, in-memory)
 - NU-AURA has **infrastructure** but missing **application-level** cache annotations
 
@@ -723,6 +767,7 @@ CompletableFuture.allOf(attendanceFuture, leaveFuture, payslipFuture, balanceFut
 ### 5.4 Scheduled Jobs
 
 **Scale:** 24 `@Scheduled` jobs across:
+
 - Attendance: Auto-regularization
 - Contracts: Lifecycle management
 - Email: Scheduled delivery
@@ -745,6 +790,7 @@ public void runDailyPayroll() {
 ```
 
 **Recommendation:** Add **ShedLock** for distributed lock:
+
 ```java
 @Scheduled(cron = "0 0 0 * * ?")
 @SchedulerLock(name = "runDailyPayroll", lockAtMostFor = "30m", lockAtLeastFor = "5m")
@@ -756,11 +802,13 @@ public void runDailyPayroll() {
 ### 5.5 Observability
 
 **Monitoring Stack:**
+
 - **Prometheus:** 28 alert rules, 19 SLOs
 - **Grafana:** 4 dashboards (System, API, Business, Webhooks)
 - **AlertManager:** Email + webhook + PagerDuty
 
 **Key Metrics:**
+
 ```yaml
 # Query timing histogram
 hrms.query.duration{repository="AttendanceRecordRepository", method="findByTenantId"}
@@ -778,6 +826,7 @@ hikari.pool.pending.connections
 ```
 
 **Missing Metrics:**
+
 - ❌ Business metrics (daily active users, payroll runs/month)
 - ❌ Error rate by endpoint
 - ❌ Kafka consumer lag
@@ -787,25 +836,26 @@ hikari.pool.pending.connections
 
 ## 6. Architecture Scorecard vs KEKA
 
-| Capability | NU-AURA | KEKA (Estimated) | Gap Analysis |
-|------------|---------|------------------|--------------|
-| **Multi-Tenancy** | Shared DB + RLS | Likely separate schemas | KEKA: Better isolation, NU-AURA: Lower cost |
-| **Authentication** | JWT + httpOnly cookies | OAuth 2.0 + SAML | KEKA: Enterprise SSO, NU-AURA: Consumer-grade |
-| **RBAC Granularity** | 500+ permissions | 200-300 permissions | NU-AURA: More granular (overkill?) |
-| **API Protocols** | REST only | REST + GraphQL (maybe) | KEKA: More flexible dashboards |
-| **Event-Driven** | Kafka + DLT | AWS SNS/SQS or Kafka | NU-AURA: Production-grade |
-| **Caching** | Redis (not used) | Multi-layer (CDN, Redis, in-memory) | **KEKA: 10x better** |
-| **Database Indexes** | **Missing critical indexes** | Likely comprehensive | **KEKA: 5x faster queries** |
-| **Query Optimization** | **N+1 queries** | Likely batched + cached | **KEKA: 10x faster** |
-| **Horizontal Scaling** | Manual (K8s HPA) | Auto-scaling + read replicas | KEKA: Better |
-| **Observability** | Prometheus + Grafana | DataDog or New Relic | KEKA: Better APM |
-| **Security Headers** | OWASP A+ | Likely A+ | Parity |
-| **Rate Limiting** | Application-level | WAF-level (Cloudflare) | KEKA: Lower overhead |
-| **File Storage** | MinIO (self-hosted) | AWS S3 | KEKA: Better uptime |
-| **Search** | Elasticsearch | Elasticsearch or Algolia | Parity |
-| **Mobile Support** | None | iOS + Android apps | **KEKA: Mobile-first** |
+| Capability             | NU-AURA                      | KEKA (Estimated)                    | Gap Analysis                                  |
+|------------------------|------------------------------|-------------------------------------|-----------------------------------------------|
+| **Multi-Tenancy**      | Shared DB + RLS              | Likely separate schemas             | KEKA: Better isolation, NU-AURA: Lower cost   |
+| **Authentication**     | JWT + httpOnly cookies       | OAuth 2.0 + SAML                    | KEKA: Enterprise SSO, NU-AURA: Consumer-grade |
+| **RBAC Granularity**   | 500+ permissions             | 200-300 permissions                 | NU-AURA: More granular (overkill?)            |
+| **API Protocols**      | REST only                    | REST + GraphQL (maybe)              | KEKA: More flexible dashboards                |
+| **Event-Driven**       | Kafka + DLT                  | AWS SNS/SQS or Kafka                | NU-AURA: Production-grade                     |
+| **Caching**            | Redis (not used)             | Multi-layer (CDN, Redis, in-memory) | **KEKA: 10x better**                          |
+| **Database Indexes**   | **Missing critical indexes** | Likely comprehensive                | **KEKA: 5x faster queries**                   |
+| **Query Optimization** | **N+1 queries**              | Likely batched + cached             | **KEKA: 10x faster**                          |
+| **Horizontal Scaling** | Manual (K8s HPA)             | Auto-scaling + read replicas        | KEKA: Better                                  |
+| **Observability**      | Prometheus + Grafana         | DataDog or New Relic                | KEKA: Better APM                              |
+| **Security Headers**   | OWASP A+                     | Likely A+                           | Parity                                        |
+| **Rate Limiting**      | Application-level            | WAF-level (Cloudflare)              | KEKA: Lower overhead                          |
+| **File Storage**       | MinIO (self-hosted)          | AWS S3                              | KEKA: Better uptime                           |
+| **Search**             | Elasticsearch                | Elasticsearch or Algolia            | Parity                                        |
+| **Mobile Support**     | None                         | iOS + Android apps                  | **KEKA: Mobile-first**                        |
 
 **Overall Assessment:**
+
 - NU-AURA has **better foundations** (event-driven, RBAC, security)
 - KEKA has **better execution** (performance, caching, mobile)
 - NU-AURA needs **3-6 months of optimization** to match KEKA performance
@@ -864,17 +914,18 @@ C4Context
 
 ### 8.1 Current Limits
 
-| Resource | Current Limit | Bottleneck |
-|----------|--------------|------------|
-| **Concurrent Users** | 50-100 | DB pool (10-20 connections) |
-| **Requests/Second** | 200-300 | Monolith CPU (single JVM) |
-| **Tenants** | 10-50 | Shared schema query performance |
-| **Database Size** | 100 GB | Single PostgreSQL instance |
-| **File Storage** | 1 TB | MinIO single-node |
+| Resource             | Current Limit | Bottleneck                      |
+|----------------------|---------------|---------------------------------|
+| **Concurrent Users** | 50-100        | DB pool (10-20 connections)     |
+| **Requests/Second**  | 200-300       | Monolith CPU (single JVM)       |
+| **Tenants**          | 10-50         | Shared schema query performance |
+| **Database Size**    | 100 GB        | Single PostgreSQL instance      |
+| **File Storage**     | 1 TB          | MinIO single-node               |
 
 ### 8.2 Growth Path (3 Phases)
 
 **Phase 1: Optimize Monolith (0-3 months)**
+
 - Add missing database indexes (P0) → **10x query speedup**
 - Implement Redis caching (`@Cacheable`) → **5x dashboard speedup**
 - Parallelize dashboard queries (CompletableFuture) → **10x dashboard speedup**
@@ -884,6 +935,7 @@ C4Context
 **Expected Capacity:** 500 concurrent users, 1,000 req/sec, 100 tenants
 
 **Phase 2: Modernize (3-9 months)**
+
 - Migrate to WebFlux (reactive programming) → **3x CPU efficiency**
 - Add API Gateway (Spring Cloud Gateway) → **centralized auth, circuit breakers**
 - Implement GraphQL for dashboards → **reduce over-fetching**
@@ -893,6 +945,7 @@ C4Context
 **Expected Capacity:** 2,000 concurrent users, 5,000 req/sec, 500 tenants
 
 **Phase 3: Scale (9-18 months)**
+
 - Migrate to microservices (11 domains → 11 services) → **independent scaling**
 - Add Kubernetes auto-scaling (HPA) → **elastic capacity**
 - Use managed Kafka (Confluent Cloud) → **99.99% uptime**
@@ -903,12 +956,12 @@ C4Context
 
 ### 8.3 Cost Analysis
 
-| Phase | Infrastructure Cost | Ops Overhead | ROI |
-|-------|-------------------|--------------|-----|
-| **Monolith (Current)** | $500/month | Low (1 DevOps) | High (fast development) |
-| **Optimized Monolith** | $1,500/month | Low (1 DevOps) | **Very High** (10x performance for 3x cost) |
-| **Modernized** | $5,000/month | Medium (2 DevOps) | Medium (better UX, more tenants) |
-| **Microservices** | $15,000/month | High (5 DevOps) | Low (only needed at enterprise scale) |
+| Phase                  | Infrastructure Cost | Ops Overhead      | ROI                                         |
+|------------------------|---------------------|-------------------|---------------------------------------------|
+| **Monolith (Current)** | $500/month          | Low (1 DevOps)    | High (fast development)                     |
+| **Optimized Monolith** | $1,500/month        | Low (1 DevOps)    | **Very High** (10x performance for 3x cost) |
+| **Modernized**         | $5,000/month        | Medium (2 DevOps) | Medium (better UX, more tenants)            |
+| **Microservices**      | $15,000/month       | High (5 DevOps)   | Low (only needed at enterprise scale)       |
 
 **Recommendation:** Stay in **Phase 1-2** until tenant count exceeds 500.
 
@@ -916,18 +969,18 @@ C4Context
 
 ## 9. Technical Debt Inventory (Top 10)
 
-| # | Debt Item | Impact | Effort | Priority |
-|---|-----------|--------|--------|----------|
-| 1 | **Missing database indexes** | Dashboard 25s load time | 1 week | **P0** |
-| 2 | **No caching implementation** | 5x slower than KEKA | 2 weeks | **P0** |
-| 3 | **N+1 query patterns** | 10x database load | 2 weeks | **P0** |
-| 4 | **No parallel query execution** | 10x dashboard latency | 1 week | **P1** |
-| 5 | **Low HikariCP pool size** | 50 user concurrency limit | 1 day | **P1** |
-| 6 | **No API Gateway** | No circuit breakers, centralized auth | 4 weeks | **P2** |
-| 7 | **No GraphQL** | Dashboard over-fetching | 6 weeks | **P2** |
-| 8 | **No read replicas** | Read throughput bottleneck | 2 weeks | **P2** |
-| 9 | **No distributed lock for @Scheduled** | Duplicate job execution in K8s | 1 week | **P2** |
-| 10 | **No CDN for static assets** | Slow frontend load times | 1 week | **P3** |
+| #  | Debt Item                              | Impact                                | Effort  | Priority |
+|----|----------------------------------------|---------------------------------------|---------|----------|
+| 1  | **Missing database indexes**           | Dashboard 25s load time               | 1 week  | **P0**   |
+| 2  | **No caching implementation**          | 5x slower than KEKA                   | 2 weeks | **P0**   |
+| 3  | **N+1 query patterns**                 | 10x database load                     | 2 weeks | **P0**   |
+| 4  | **No parallel query execution**        | 10x dashboard latency                 | 1 week  | **P1**   |
+| 5  | **Low HikariCP pool size**             | 50 user concurrency limit             | 1 day   | **P1**   |
+| 6  | **No API Gateway**                     | No circuit breakers, centralized auth | 4 weeks | **P2**   |
+| 7  | **No GraphQL**                         | Dashboard over-fetching               | 6 weeks | **P2**   |
+| 8  | **No read replicas**                   | Read throughput bottleneck            | 2 weeks | **P2**   |
+| 9  | **No distributed lock for @Scheduled** | Duplicate job execution in K8s        | 1 week  | **P2**   |
+| 10 | **No CDN for static assets**           | Slow frontend load times              | 1 week  | **P3**   |
 
 **Total Estimated Effort:** 20 weeks (5 months) for P0-P2
 
@@ -938,33 +991,47 @@ C4Context
 ### Phase 1: Optimize (Months 1-3) — Target: Match KEKA Performance
 
 **Goals:**
+
 - Dashboard load time < 2 seconds
 - Auth query < 200ms
 - Support 500 concurrent users
 
 **Tasks:**
+
 1. **Week 1-2:** Add database indexes (V68 migration)
-   - `idx_attendance_lookup`, `idx_payslips_lookup`, `idx_leave_balance_lookup`
-   - Run EXPLAIN ANALYZE on all slow queries
+
+- `idx_attendance_lookup`, `idx_payslips_lookup`, `idx_leave_balance_lookup`
+- Run EXPLAIN ANALYZE on all slow queries
+
 2. **Week 3-4:** Implement Redis caching
-   - Add `@Cacheable` annotations to dashboard service
-   - Add cache eviction on data updates
-   - Monitor cache hit ratio (target: 80%)
+
+- Add `@Cacheable` annotations to dashboard service
+- Add cache eviction on data updates
+- Monitor cache hit ratio (target: 80%)
+
 3. **Week 5-6:** Fix N+1 queries
-   - Batch payslip queries (11 queries → 1 query)
-   - Add JOIN FETCH for user authentication
+
+- Batch payslip queries (11 queries → 1 query)
+- Add JOIN FETCH for user authentication
+
 4. **Week 7-8:** Parallelize dashboard queries
-   - Use CompletableFuture for independent queries
-   - Create dashboardExecutor ThreadPoolTaskExecutor
+
+- Use CompletableFuture for independent queries
+- Create dashboardExecutor ThreadPoolTaskExecutor
+
 5. **Week 9-10:** Increase HikariCP pool
-   - Dev: 10 → 50, Prod: 20 → 100
-   - Monitor connection pool usage
+
+- Dev: 10 → 50, Prod: 20 → 100
+- Monitor connection pool usage
+
 6. **Week 11-12:** Load testing + tuning
-   - Simulate 500 concurrent users (JMeter/k6)
-   - Identify remaining bottlenecks
-   - Update Prometheus alerts
+
+- Simulate 500 concurrent users (JMeter/k6)
+- Identify remaining bottlenecks
+- Update Prometheus alerts
 
 **Deliverables:**
+
 - ✅ 10x dashboard performance improvement
 - ✅ 5x concurrent user capacity
 - ✅ 80% cache hit ratio
@@ -973,33 +1040,45 @@ C4Context
 ### Phase 2: Modernize (Months 4-9) — Target: Enterprise-Grade
 
 **Goals:**
+
 - Support 2,000 concurrent users
 - 99.9% uptime SLA
 - Global CDN deployment
 
 **Tasks:**
+
 1. **Months 4-5:** Add API Gateway
-   - Deploy Spring Cloud Gateway
-   - Migrate JWT validation to gateway
-   - Add circuit breakers (Resilience4j)
+
+- Deploy Spring Cloud Gateway
+- Migrate JWT validation to gateway
+- Add circuit breakers (Resilience4j)
+
 2. **Months 5-6:** Add PostgreSQL read replicas
-   - Configure master-slave replication
-   - Route dashboard queries to replicas
-   - Monitor replication lag
+
+- Configure master-slave replication
+- Route dashboard queries to replicas
+- Monitor replication lag
+
 3. **Months 6-7:** Implement GraphQL
-   - Add Spring GraphQL dependency
-   - Create schema for dashboards
-   - Migrate frontend to Apollo Client
+
+- Add Spring GraphQL dependency
+- Create schema for dashboards
+- Migrate frontend to Apollo Client
+
 4. **Months 7-8:** Add CDN (Cloudflare)
-   - Serve static assets from CDN
-   - Add edge caching for public APIs
-   - Configure cache purge webhooks
+
+- Serve static assets from CDN
+- Add edge caching for public APIs
+- Configure cache purge webhooks
+
 5. **Month 9:** Kubernetes auto-scaling
-   - Configure HPA (CPU/memory)
-   - Add pod disruption budgets
-   - Test scale-up/down behavior
+
+- Configure HPA (CPU/memory)
+- Add pod disruption budgets
+- Test scale-up/down behavior
 
 **Deliverables:**
+
 - ✅ 2,000 concurrent users
 - ✅ 99.9% uptime
 - ✅ Sub-100ms global latency
@@ -1007,25 +1086,33 @@ C4Context
 ### Phase 3: Scale (Months 10-18) — Target: 10,000+ Users
 
 **Goals:**
+
 - Support 10,000+ concurrent users
 - Multi-region deployment
 - Independent service scaling
 
 **Tasks:**
+
 1. **Months 10-12:** Migrate to microservices
-   - Extract 11 domains into services
-   - Implement service mesh (Istio)
-   - Add distributed tracing (Jaeger)
+
+- Extract 11 domains into services
+- Implement service mesh (Istio)
+- Add distributed tracing (Jaeger)
+
 2. **Months 13-15:** Database sharding
-   - Shard by tenant_id (10 shards)
-   - Add shard routing logic
-   - Migrate data incrementally
+
+- Shard by tenant_id (10 shards)
+- Add shard routing logic
+- Migrate data incrementally
+
 3. **Months 16-18:** Multi-region deployment
-   - Deploy to 3 regions (US, EU, APAC)
-   - Add geo-routing (Cloudflare)
-   - Implement cross-region replication
+
+- Deploy to 3 regions (US, EU, APAC)
+- Add geo-routing (Cloudflare)
+- Implement cross-region replication
 
 **Deliverables:**
+
 - ✅ 10,000+ concurrent users
 - ✅ 99.99% uptime
 - ✅ Sub-50ms regional latency
@@ -1059,8 +1146,9 @@ C4Context
    **Impact:** 70-80% improvement for repeat requests
 
 3. **Limit Dashboard Data Range**
-   - Change from 11 months to 3 months for payslip queries
-   **Impact:** 60-70% reduction in query time
+
+- Change from 11 months to 3 months for payslip queries
+  **Impact:** 60-70% reduction in query time
 
 ### Short-Term (Next Month)
 
@@ -1085,13 +1173,19 @@ C4Context
 
 ## 12. Conclusion
 
-NU-AURA is a **well-architected HRMS platform** with strong foundations in security, multi-tenancy, and event-driven design. The codebase demonstrates **enterprise-grade engineering practices** with clean domain separation, comprehensive RBAC, and production-ready infrastructure.
+NU-AURA is a **well-architected HRMS platform** with strong foundations in security, multi-tenancy,
+and event-driven design. The codebase demonstrates **enterprise-grade engineering practices** with
+clean domain separation, comprehensive RBAC, and production-ready infrastructure.
 
-However, **critical performance issues** (25-second dashboard, N+1 queries, missing indexes) severely impact user experience and limit scalability. These issues are **entirely fixable** through database optimization, caching implementation, and query refactoring.
+However, **critical performance issues** (25-second dashboard, N+1 queries, missing indexes)
+severely impact user experience and limit scalability. These issues are **entirely fixable** through
+database optimization, caching implementation, and query refactoring.
 
-**Verdict:** NU-AURA can **match or exceed KEKA performance** with 3-6 months of focused optimization work. The architecture is sound; execution needs improvement.
+**Verdict:** NU-AURA can **match or exceed KEKA performance** with 3-6 months of focused
+optimization work. The architecture is sound; execution needs improvement.
 
 **Next Steps:**
+
 1. Implement **Phase 1 roadmap** (database indexes, caching, parallel queries)
 2. Conduct load testing to validate improvements
 3. Monitor Prometheus metrics to track progress
@@ -1102,15 +1196,25 @@ However, **critical performance issues** (25-second dashboard, N+1 queries, miss
 ## Appendix: File References
 
 **Key Architecture Files:**
+
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/issues.md` — Performance analysis
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/MEMORY.md` — Architecture decisions
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/common/config/SecurityConfig.java` — Security configuration
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/build-kit/05_DATABASE_SCHEMA_DESIGN.md` — Schema design
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-001-multi-tenant-architecture.md` — Multi-tenancy ADR
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-002-authentication-strategy.md` — Authentication ADR
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/resources/application.yml` — Application configuration
+-
+
+`/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/common/config/SecurityConfig.java` —
+Security configuration
+
+- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/build-kit/05_DATABASE_SCHEMA_DESIGN.md` — Schema
+  design
+- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-001-multi-tenant-architecture.md` —
+  Multi-tenancy ADR
+- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-002-authentication-strategy.md` —
+  Authentication ADR
+- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/resources/application.yml` —
+  Application configuration
 
 **Metrics Summary:**
+
 - Java files: 1,622
 - Controllers: 130
 - Services: 199

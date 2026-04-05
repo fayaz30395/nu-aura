@@ -1,28 +1,20 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useCallback, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import dynamic from 'next/dynamic';
-import { AppLayout } from '@/components/layout';
-import { useCreateFluenceTemplate } from '@/lib/hooks/queries/useFluence';
-import { notifications } from '@mantine/notifications';
-import { Drawer, LoadingOverlay, TagsInput } from '@mantine/core';
-import { motion } from 'framer-motion';
-import {
-  ArrowLeft,
-  FileText,
-  Save,
-  Send,
-  Tag,
-  Smile,
-  Info,
-} from 'lucide-react';
-import { motion as dsMotion } from '@/lib/design-system';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout';
+import {useCreateFluenceTemplate} from '@/lib/hooks/queries/useFluence';
+import {notifications} from '@mantine/notifications';
+import {Drawer, LoadingOverlay, TagsInput} from '@mantine/core';
+import {motion} from 'framer-motion';
+import {ArrowLeft, FileText, Info, Save, Send, Smile, Tag,} from 'lucide-react';
+import {motion as dsMotion} from '@/lib/design-system';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -32,9 +24,9 @@ const FluenceEditor = dynamic(
     loading: () => (
       <div className="min-h-[400px] animate-pulse">
         <div className="space-y-4 pt-4">
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4" />
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2" />
-          <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6" />
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4"/>
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2"/>
+          <div className="h-4 bg-[var(--bg-secondary)] rounded w-5/6"/>
         </div>
       </div>
     ),
@@ -54,7 +46,7 @@ const createTemplateFormSchema = z.object({
     .or(z.literal('')),
   content: z.record(z.unknown()).default({
     type: 'doc',
-    content: [{ type: 'paragraph' }],
+    content: [{type: 'paragraph'}],
   }),
   tags: z.array(z.string().min(1).max(50)).optional().default([]),
   icon: z.string().optional().or(z.literal('')),
@@ -72,7 +64,7 @@ export default function CreateTemplatePage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
-  const { mutate: createTemplate } = useCreateFluenceTemplate();
+  const {mutate: createTemplate} = useCreateFluenceTemplate();
 
   const {
     control,
@@ -80,7 +72,7 @@ export default function CreateTemplatePage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateTemplateFormInput>({
     resolver: zodResolver(createTemplateFormSchema),
     defaultValues: {
@@ -88,7 +80,7 @@ export default function CreateTemplatePage() {
       description: '',
       content: {
         type: 'doc',
-        content: [{ type: 'paragraph' }],
+        content: [{type: 'paragraph'}],
       },
       tags: [],
       icon: '',
@@ -196,14 +188,15 @@ export default function CreateTemplatePage() {
               className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               aria-label="Go back"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4"/>
             </button>
 
-            <div className="h-5 w-px bg-[var(--border-subtle)]" />
+            <div className="h-5 w-px bg-[var(--border-subtle)]"/>
 
             {/* Template indicator */}
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2.5 py-1 rounded-full">
-              <FileText className="w-3 h-3" />
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2.5 py-1 rounded-full">
+              <FileText className="w-3 h-3"/>
               New Template
             </span>
           </div>
@@ -214,7 +207,7 @@ export default function CreateTemplatePage() {
               onClick={() => setSettingsDrawerOpen(true)}
               className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
-              <Tag className="w-4 h-4" />
+              <Tag className="w-4 h-4"/>
               Settings
             </button>
 
@@ -225,7 +218,7 @@ export default function CreateTemplatePage() {
                 disabled={isSubmitting}
                 className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4"/>
                 {isSubmitting ? 'Saving...' : 'Save Template'}
               </button>
             </PermissionGate>
@@ -258,7 +251,7 @@ export default function CreateTemplatePage() {
           <Controller
             control={control}
             name="content"
-            render={({ field }) => (
+            render={({field}) => (
               <FluenceEditor
                 content={field.value}
                 onChange={field.onChange}
@@ -319,7 +312,7 @@ export default function CreateTemplatePage() {
               {/* Icon picker */}
               <div>
                 <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
-                  <Smile className="w-3 h-3 inline mr-1" />
+                  <Smile className="w-3 h-3 inline mr-1"/>
                   Icon
                 </label>
                 <div className="grid grid-cols-8 gap-1">
@@ -345,13 +338,13 @@ export default function CreateTemplatePage() {
               {/* Tags */}
               <div>
                 <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
-                  <Tag className="w-3 h-3 inline mr-1" />
+                  <Tag className="w-3 h-3 inline mr-1"/>
                   Tags
                 </label>
                 <Controller
                   control={control}
                   name="tags"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <TagsInput
                       {...field}
                       value={field.value ?? []}
@@ -369,7 +362,7 @@ export default function CreateTemplatePage() {
 
               {/* Info */}
               <div className="flex items-start gap-2 p-4 rounded-lg bg-[var(--bg-secondary)]">
-                <Info className="w-4 h-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0" />
+                <Info className="w-4 h-4 text-[var(--text-muted)] mt-0.5 flex-shrink-0"/>
                 <p className="text-caption">
                   Templates are reusable document structures that your team can
                   use to quickly create new wiki pages with consistent
@@ -387,7 +380,7 @@ export default function CreateTemplatePage() {
                   disabled={isSubmitting}
                   className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
                 >
-                  <Save className="w-4 h-4" />
+                  <Save className="w-4 h-4"/>
                   {isSubmitting ? 'Saving...' : 'Save Template'}
                 </button>
               </PermissionGate>
@@ -402,7 +395,7 @@ export default function CreateTemplatePage() {
           </div>
         </Drawer>
 
-        <LoadingOverlay visible={isSubmitting} />
+        <LoadingOverlay visible={isSubmitting}/>
       </motion.div>
     </AppLayout>
   );

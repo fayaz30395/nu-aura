@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
 /**
  * Announcements Page Smoke Tests
@@ -6,20 +6,20 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Announcements Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/announcements');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display announcements page with heading', async ({ page }) => {
+  test('should display announcements page with heading', async ({page}) => {
     await expect(page.locator('h1').first()).toBeVisible();
   });
 
-  test('should not show application error', async ({ page }) => {
+  test('should not show application error', async ({page}) => {
     await expect(page.locator('body')).not.toContainText('Application error');
   });
 
-  test('should display announcements list or empty state', async ({ page }) => {
+  test('should display announcements list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasAnnouncements = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
@@ -28,7 +28,7 @@ test.describe('Announcements Page', () => {
     expect(hasAnnouncements || hasEmpty || true).toBe(true);
   });
 
-  test('should show create announcement button for admin', async ({ page }) => {
+  test('should show create announcement button for admin', async ({page}) => {
     await page.waitForTimeout(500);
 
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add"), button:has-text("Post")').first();
@@ -37,7 +37,7 @@ test.describe('Announcements Page', () => {
     expect(hasCreate || true).toBe(true);
   });
 
-  test('should display search or filter controls', async ({ page }) => {
+  test('should display search or filter controls', async ({page}) => {
     await page.waitForTimeout(500);
 
     const searchInput = page.locator('input[type="search"], input[placeholder*="search" i]').first();

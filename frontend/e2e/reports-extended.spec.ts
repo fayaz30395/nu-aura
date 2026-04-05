@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, navigateTo } from './fixtures/helpers';
-import { testUsers, demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs, navigateTo} from './fixtures/helpers';
+import {demoUsers, testUsers} from './fixtures/testData';
 
 /**
  * Reports Extended + Analytics E2E Tests
@@ -23,7 +23,7 @@ import { testUsers, demoUsers } from './fixtures/testData';
 // ─── Org Health ───────────────────────────────────────────────────────────────
 
 test.describe('Org Health Analytics (/analytics/org-health)', () => {
-  test('admin sees Organization Health page with health score', async ({ page }) => {
+  test('admin sees Organization Health page with health score', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -32,7 +32,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Organization Pulse')).toBeVisible();
   });
 
-  test('page renders Refresh Data and Export Report buttons', async ({ page }) => {
+  test('page renders Refresh Data and Export Report buttons', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -40,7 +40,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('button:has-text("Export Report")')).toBeVisible();
   });
 
-  test('Staff Retention card is visible', async ({ page }) => {
+  test('Staff Retention card is visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -48,7 +48,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Annual Stability Rate')).toBeVisible();
   });
 
-  test('Engagement Intensity card is visible', async ({ page }) => {
+  test('Engagement Intensity card is visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -56,7 +56,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Avg Engagement Score')).toBeVisible();
   });
 
-  test('Diversity & Inclusion section is rendered', async ({ page }) => {
+  test('Diversity & Inclusion section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -64,14 +64,14 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Workforce makeup by gender')).toBeVisible();
   });
 
-  test('Tenure Distribution section is rendered', async ({ page }) => {
+  test('Tenure Distribution section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
     await expect(page.locator('text=Tenure Distribution')).toBeVisible();
   });
 
-  test('Learning Vitality / Course Completion section is rendered', async ({ page }) => {
+  test('Learning Vitality / Course Completion section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -79,7 +79,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Course Completion Rate')).toBeVisible();
   });
 
-  test('Department Vibrancy table is visible', async ({ page }) => {
+  test('Department Vibrancy table is visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -89,7 +89,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     await expect(page.locator('text=Engagement').first()).toBeVisible();
   });
 
-  test('employee without REPORT_VIEW is redirected away from org-health', async ({ page }) => {
+  test('employee without REPORT_VIEW is redirected away from org-health', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/analytics/org-health');
     // Expect redirect — should not stay on /analytics/org-health
@@ -97,7 +97,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
     expect(page.url()).not.toContain('/analytics/org-health');
   });
 
-  test('HR Manager can access org health page', async ({ page }) => {
+  test('HR Manager can access org health page', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/analytics/org-health');
 
@@ -108,7 +108,7 @@ test.describe('Org Health Analytics (/analytics/org-health)', () => {
 // ─── Predictive Analytics ─────────────────────────────────────────────────────
 
 test.describe('Predictive Analytics (/predictive-analytics)', () => {
-  test('admin sees Predictive Analytics page with heading', async ({ page }) => {
+  test('admin sees Predictive Analytics page with heading', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/predictive-analytics');
 
@@ -118,7 +118,7 @@ test.describe('Predictive Analytics (/predictive-analytics)', () => {
     expect(heading?.toLowerCase()).toMatch(/predictive|analytics|insight/i);
   });
 
-  test('key metric cards are rendered', async ({ page }) => {
+  test('key metric cards are rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/predictive-analytics');
 
@@ -129,7 +129,7 @@ test.describe('Predictive Analytics (/predictive-analytics)', () => {
     await expect(body).toBeVisible();
   });
 
-  test('Refresh and Export buttons are present', async ({ page }) => {
+  test('Refresh and Export buttons are present', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/predictive-analytics');
 
@@ -137,7 +137,7 @@ test.describe('Predictive Analytics (/predictive-analytics)', () => {
     await expect(page.locator('button:has-text("Export")')).toBeVisible();
   });
 
-  test('attrition prediction section visible for admin', async ({ page }) => {
+  test('attrition prediction section visible for admin', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/predictive-analytics');
 
@@ -147,7 +147,7 @@ test.describe('Predictive Analytics (/predictive-analytics)', () => {
     expect(pageText).toMatch(/attrition|prediction|risk/i);
   });
 
-  test('HR Manager can access predictive analytics', async ({ page }) => {
+  test('HR Manager can access predictive analytics', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/predictive-analytics');
 
@@ -158,14 +158,14 @@ test.describe('Predictive Analytics (/predictive-analytics)', () => {
 // ─── Reports Hub (/reports) ──────────────────────────────────────────────────
 
 test.describe('Reports Hub (/reports)', () => {
-  test('admin sees Reports page heading', async ({ page }) => {
+  test('admin sees Reports page heading', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
     await expect(page.locator('h1')).toContainText('Reports');
   });
 
-  test('all report cards are displayed', async ({ page }) => {
+  test('all report cards are displayed', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
@@ -183,7 +183,7 @@ test.describe('Reports Hub (/reports)', () => {
     }
   });
 
-  test('clicking Download Report opens modal with format options', async ({ page }) => {
+  test('clicking Download Report opens modal with format options', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
@@ -197,7 +197,7 @@ test.describe('Reports Hub (/reports)', () => {
     await expect(page.locator('text=CSV')).toBeVisible();
   });
 
-  test('download modal can be closed', async ({ page }) => {
+  test('download modal can be closed', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
@@ -209,12 +209,12 @@ test.describe('Reports Hub (/reports)', () => {
     await expect(page.locator('text=Export Format')).not.toBeVisible();
   });
 
-  test('attendance report modal shows date range inputs', async ({ page }) => {
+  test('attendance report modal shows date range inputs', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
     // Find the attendance card and click its download button
-    const attendanceCard = page.locator('[class*="card"], [class*="Card"]').filter({ hasText: 'Attendance Report' }).first();
+    const attendanceCard = page.locator('[class*="card"], [class*="Card"]').filter({hasText: 'Attendance Report'}).first();
     await attendanceCard.locator('button:has-text("Download Report")').click();
 
     // Date range inputs should appear because attendance requiresDateRange=true
@@ -222,14 +222,14 @@ test.describe('Reports Hub (/reports)', () => {
     await expect(page.locator('input[type="date"]').first()).toBeVisible();
   });
 
-  test('report generation tips info card is displayed', async ({ page }) => {
+  test('report generation tips info card is displayed', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports');
 
     await expect(page.locator('text=Report Generation Tips')).toBeVisible();
   });
 
-  test('employee cannot access reports hub — redirected', async ({ page }) => {
+  test('employee cannot access reports hub — redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/reports');
     await page.waitForTimeout(2000);
@@ -237,7 +237,7 @@ test.describe('Reports Hub (/reports)', () => {
     expect(page.url()).not.toMatch(/\/reports$/);
   });
 
-  test('HR Manager can access reports hub', async ({ page }) => {
+  test('HR Manager can access reports hub', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports');
 
@@ -248,14 +248,14 @@ test.describe('Reports Hub (/reports)', () => {
 // ─── Attrition Report (/reports/attrition) ───────────────────────────────────
 
 test.describe('Attrition Report (/reports/attrition)', () => {
-  test('admin sees Attrition Analysis page', async ({ page }) => {
+  test('admin sees Attrition Analysis page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
     await expect(page.locator('h1')).toContainText('Attrition Analysis');
   });
 
-  test('risk summary cards are rendered (Critical, High, Medium, Low)', async ({ page }) => {
+  test('risk summary cards are rendered (Critical, High, Medium, Low)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -266,7 +266,7 @@ test.describe('Attrition Report (/reports/attrition)', () => {
     await expect(page.locator('text=Low Risk')).toBeVisible();
   });
 
-  test('min risk score filter input is present', async ({ page }) => {
+  test('min risk score filter input is present', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -274,7 +274,7 @@ test.describe('Attrition Report (/reports/attrition)', () => {
     await expect(page.locator('input[type="number"]')).toBeVisible();
   });
 
-  test('Refresh button is present and clickable', async ({ page }) => {
+  test('Refresh button is present and clickable', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -284,7 +284,7 @@ test.describe('Attrition Report (/reports/attrition)', () => {
     await page.waitForTimeout(500);
   });
 
-  test('Export CSV button is visible for admin', async ({ page }) => {
+  test('Export CSV button is visible for admin', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -292,7 +292,7 @@ test.describe('Attrition Report (/reports/attrition)', () => {
     await expect(page.locator('button:has-text("Export CSV")')).toBeVisible();
   });
 
-  test('clicking a risk level card filters employees shown', async ({ page }) => {
+  test('clicking a risk level card filters employees shown', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -307,21 +307,21 @@ test.describe('Attrition Report (/reports/attrition)', () => {
     }
   });
 
-  test('subtitle mentions AI-powered predictions', async ({ page }) => {
+  test('subtitle mentions AI-powered predictions', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/attrition');
 
     await expect(page.locator('text=AI-powered attrition risk predictions')).toBeVisible();
   });
 
-  test('HR Manager can view attrition report', async ({ page }) => {
+  test('HR Manager can view attrition report', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports/attrition');
 
     await expect(page.locator('h1')).toContainText('Attrition Analysis');
   });
 
-  test('employee is not shown Export CSV (no analytics.export permission)', async ({ page }) => {
+  test('employee is not shown Export CSV (no analytics.export permission)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/reports/attrition');
 
@@ -334,14 +334,14 @@ test.describe('Attrition Report (/reports/attrition)', () => {
 // ─── Headcount Report (/reports/headcount) ───────────────────────────────────
 
 test.describe('Headcount Report (/reports/headcount)', () => {
-  test('admin sees Headcount Report page', async ({ page }) => {
+  test('admin sees Headcount Report page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
     await expect(page.locator('h1')).toContainText('Headcount Report');
   });
 
-  test('KPI cards (Total, Active, New Hires, Exits) are rendered', async ({ page }) => {
+  test('KPI cards (Total, Active, New Hires, Exits) are rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
@@ -352,7 +352,7 @@ test.describe('Headcount Report (/reports/headcount)', () => {
     await expect(page.locator('text=Exits (Month)')).toBeVisible();
   });
 
-  test('Headcount by Department section is rendered', async ({ page }) => {
+  test('Headcount by Department section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
@@ -360,7 +360,7 @@ test.describe('Headcount Report (/reports/headcount)', () => {
     await expect(page.locator('text=Headcount by Department')).toBeVisible();
   });
 
-  test('12-Month Headcount Trend section is rendered', async ({ page }) => {
+  test('12-Month Headcount Trend section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
@@ -368,28 +368,28 @@ test.describe('Headcount Report (/reports/headcount)', () => {
     await expect(page.locator('text=12-Month Headcount Trend')).toBeVisible();
   });
 
-  test('Refresh button is present', async ({ page }) => {
+  test('Refresh button is present', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
     await expect(page.locator('button:has-text("Refresh")')).toBeVisible();
   });
 
-  test('Export CSV is visible for admin (analytics.export permission)', async ({ page }) => {
+  test('Export CSV is visible for admin (analytics.export permission)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/headcount');
 
     await expect(page.locator('button:has-text("Export CSV")')).toBeVisible();
   });
 
-  test('HR Manager can view headcount report', async ({ page }) => {
+  test('HR Manager can view headcount report', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports/headcount');
 
     await expect(page.locator('h1')).toContainText('Headcount Report');
   });
 
-  test('employee cannot see Export CSV button', async ({ page }) => {
+  test('employee cannot see Export CSV button', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/reports/headcount');
 
@@ -403,14 +403,14 @@ test.describe('Headcount Report (/reports/headcount)', () => {
 // ─── Leave Report (/reports/leave) ───────────────────────────────────────────
 
 test.describe('Leave Report (/reports/leave)', () => {
-  test('admin sees Leave Reports page', async ({ page }) => {
+  test('admin sees Leave Reports page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
     await expect(page.locator('h1')).toContainText('Leave Reports');
   });
 
-  test('date range inputs are visible', async ({ page }) => {
+  test('date range inputs are visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -420,7 +420,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(dateInputs.nth(1)).toBeVisible();
   });
 
-  test('Leave Status filter dropdown is present', async ({ page }) => {
+  test('Leave Status filter dropdown is present', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -429,7 +429,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(page.locator('option:has-text("Approved")')).toBeAttached();
   });
 
-  test('format buttons (EXCEL, PDF, CSV) are visible', async ({ page }) => {
+  test('format buttons (EXCEL, PDF, CSV) are visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -438,7 +438,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(page.locator('text=CSV')).toBeVisible();
   });
 
-  test('Download button shows validation error when dates are missing', async ({ page }) => {
+  test('Download button shows validation error when dates are missing', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -448,7 +448,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(page.locator('text=Please select both start and end dates')).toBeVisible();
   });
 
-  test('CSV format can be selected', async ({ page }) => {
+  test('CSV format can be selected', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -458,7 +458,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(csvButton).toHaveClass(/border-warning-500|border-warning/);
   });
 
-  test('Report Details info card is displayed', async ({ page }) => {
+  test('Report Details info card is displayed', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/leave');
 
@@ -466,7 +466,7 @@ test.describe('Leave Report (/reports/leave)', () => {
     await expect(page.locator('text=employee code, name, department')).toBeVisible();
   });
 
-  test('HR Manager can access leave reports', async ({ page }) => {
+  test('HR Manager can access leave reports', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports/leave');
 
@@ -477,14 +477,14 @@ test.describe('Leave Report (/reports/leave)', () => {
 // ─── Payroll Report (/reports/payroll) ──────────────────────────────────────
 
 test.describe('Payroll Report (/reports/payroll)', () => {
-  test('admin sees Payroll Reports page', async ({ page }) => {
+  test('admin sees Payroll Reports page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
     await expect(page.locator('h1')).toContainText('Payroll Reports');
   });
 
-  test('Payroll Period date range inputs are visible', async ({ page }) => {
+  test('Payroll Period date range inputs are visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
@@ -494,7 +494,7 @@ test.describe('Payroll Report (/reports/payroll)', () => {
     await expect(dateInputs.nth(1)).toBeVisible();
   });
 
-  test('format selector shows EXCEL, PDF, CSV options', async ({ page }) => {
+  test('format selector shows EXCEL, PDF, CSV options', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
@@ -503,7 +503,7 @@ test.describe('Payroll Report (/reports/payroll)', () => {
     await expect(page.locator('text=CSV')).toBeVisible();
   });
 
-  test('Download Payroll Report button triggers validation when dates empty', async ({ page }) => {
+  test('Download Payroll Report button triggers validation when dates empty', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
@@ -511,14 +511,14 @@ test.describe('Payroll Report (/reports/payroll)', () => {
     await expect(page.locator('text=Please select both start and end dates')).toBeVisible();
   });
 
-  test('Report Details info card mentions confidential information', async ({ page }) => {
+  test('Report Details info card mentions confidential information', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
     await expect(page.locator('text=Confidential information - handle with care')).toBeVisible();
   });
 
-  test('employee is redirected from payroll report (RBAC)', async ({ page }) => {
+  test('employee is redirected from payroll report (RBAC)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/reports/payroll');
     await page.waitForTimeout(2000);
@@ -526,14 +526,14 @@ test.describe('Payroll Report (/reports/payroll)', () => {
     expect(page.url()).not.toContain('/reports/payroll');
   });
 
-  test('HR Manager can access payroll report', async ({ page }) => {
+  test('HR Manager can access payroll report', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports/payroll');
 
     await expect(page.locator('h1')).toContainText('Payroll Reports');
   });
 
-  test('PDF format can be selected', async ({ page }) => {
+  test('PDF format can be selected', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/payroll');
 
@@ -546,14 +546,14 @@ test.describe('Payroll Report (/reports/payroll)', () => {
 // ─── Performance Report (/reports/performance) ───────────────────────────────
 
 test.describe('Performance Report (/reports/performance)', () => {
-  test('admin sees Performance Reports page', async ({ page }) => {
+  test('admin sees Performance Reports page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
     await expect(page.locator('h1')).toContainText('Performance Reports');
   });
 
-  test('Review Period date range is optional and visible', async ({ page }) => {
+  test('Review Period date range is optional and visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -561,7 +561,7 @@ test.describe('Performance Report (/reports/performance)', () => {
     await expect(page.locator('text=Leave empty to include all performance reviews')).toBeVisible();
   });
 
-  test('format buttons are displayed', async ({ page }) => {
+  test('format buttons are displayed', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -570,7 +570,7 @@ test.describe('Performance Report (/reports/performance)', () => {
     await expect(page.locator('text=CSV')).toBeVisible();
   });
 
-  test('Download Performance Report button is visible and enabled', async ({ page }) => {
+  test('Download Performance Report button is visible and enabled', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -580,7 +580,7 @@ test.describe('Performance Report (/reports/performance)', () => {
     await expect(downloadBtn).not.toBeDisabled();
   });
 
-  test('Report Details info card is visible', async ({ page }) => {
+  test('Report Details info card is visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -588,14 +588,14 @@ test.describe('Performance Report (/reports/performance)', () => {
     await expect(page.locator('text=reviewer information')).toBeVisible();
   });
 
-  test('HR Manager can access performance report', async ({ page }) => {
+  test('HR Manager can access performance report', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/reports/performance');
 
     await expect(page.locator('h1')).toContainText('Performance Reports');
   });
 
-  test('EXCEL format is selected by default', async ({ page }) => {
+  test('EXCEL format is selected by default', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -604,7 +604,7 @@ test.describe('Performance Report (/reports/performance)', () => {
     await expect(excelBtn).toBeVisible();
   });
 
-  test('selecting a date range pre-fills form fields', async ({ page }) => {
+  test('selecting a date range pre-fills form fields', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/performance');
 
@@ -617,14 +617,14 @@ test.describe('Performance Report (/reports/performance)', () => {
 // ─── Utilization Report (/reports/utilization) ───────────────────────────────
 
 test.describe('Utilization Report (/reports/utilization)', () => {
-  test('admin sees Utilization Dashboard page', async ({ page }) => {
+  test('admin sees Utilization Dashboard page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
     await expect(page.locator('h1')).toContainText('Utilization Dashboard');
   });
 
-  test('summary KPI stat cards are rendered', async ({ page }) => {
+  test('summary KPI stat cards are rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
@@ -635,7 +635,7 @@ test.describe('Utilization Report (/reports/utilization)', () => {
     await expect(page.locator('text=Revenue Generated')).toBeVisible();
   });
 
-  test('tab navigation (Overview, By Employee, By Department, By Project)', async ({ page }) => {
+  test('tab navigation (Overview, By Employee, By Department, By Project)', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
@@ -646,7 +646,7 @@ test.describe('Utilization Report (/reports/utilization)', () => {
     await expect(page.locator('button:has-text("By Project")')).toBeVisible();
   });
 
-  test('clicking By Employee tab shows employee search input', async ({ page }) => {
+  test('clicking By Employee tab shows employee search input', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
@@ -655,7 +655,7 @@ test.describe('Utilization Report (/reports/utilization)', () => {
     await expect(page.locator('input[placeholder*="Search employees"]')).toBeVisible();
   });
 
-  test('date range selector defaults to This Month', async ({ page }) => {
+  test('date range selector defaults to This Month', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
@@ -663,7 +663,7 @@ test.describe('Utilization Report (/reports/utilization)', () => {
     await expect(select).toHaveValue('thisMonth');
   });
 
-  test('switching date range to Last Month changes the select value', async ({ page }) => {
+  test('switching date range to Last Month changes the select value', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
@@ -672,14 +672,14 @@ test.describe('Utilization Report (/reports/utilization)', () => {
     await expect(select).toHaveValue('lastMonth');
   });
 
-  test('Export button is visible for admin', async ({ page }) => {
+  test('Export button is visible for admin', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/reports/utilization');
 
     await expect(page.locator('button:has-text("Export")')).toBeVisible();
   });
 
-  test('employee is redirected from utilization report (RBAC)', async ({ page }) => {
+  test('employee is redirected from utilization report (RBAC)', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/reports/utilization');
     await page.waitForTimeout(2000);
@@ -690,7 +690,7 @@ test.describe('Utilization Report (/reports/utilization)', () => {
 // ─── Employee Dashboard (/dashboards/employee) ───────────────────────────────
 
 test.describe('Employee Dashboard (/dashboards/employee)', () => {
-  test('employee sees their dashboard with welcome message', async ({ page }) => {
+  test('employee sees their dashboard with welcome message', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -699,7 +699,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('h1')).toContainText('Welcome');
   });
 
-  test('attendance quick stat cards are displayed', async ({ page }) => {
+  test('attendance quick stat cards are displayed', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -710,7 +710,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('text=Avg Work Hours')).toBeVisible();
   });
 
-  test('Leave Balance section is rendered', async ({ page }) => {
+  test('Leave Balance section is rendered', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -718,7 +718,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('text=Leave Balance')).toBeVisible();
   });
 
-  test('Upcoming Events section is rendered', async ({ page }) => {
+  test('Upcoming Events section is rendered', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -726,7 +726,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('text=Upcoming Events')).toBeVisible();
   });
 
-  test('Quick Actions panel contains action buttons', async ({ page }) => {
+  test('Quick Actions panel contains action buttons', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -736,7 +736,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('button:has-text("Apply for Leave")')).toBeVisible();
   });
 
-  test('Career Progress section is rendered', async ({ page }) => {
+  test('Career Progress section is rendered', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -744,7 +744,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('text=Career Progress')).toBeVisible();
   });
 
-  test('Mark Attendance quick button is visible', async ({ page }) => {
+  test('Mark Attendance quick button is visible', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -752,7 +752,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('button:has-text("Mark Attendance")')).toBeVisible();
   });
 
-  test('Apply Leave button is visible in header', async ({ page }) => {
+  test('Apply Leave button is visible in header', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await navigateTo(page, '/dashboards/employee');
 
@@ -760,7 +760,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
     await expect(page.locator('button:has-text("Apply Leave")')).toBeVisible();
   });
 
-  test('admin without DASHBOARD_EMPLOYEE permission is redirected', async ({ page }) => {
+  test('admin without DASHBOARD_EMPLOYEE permission is redirected', async ({page}) => {
     // SuperAdmin may or may not have this explicit permission — test redirect if not
     // We test with an employee to ensure they can access it
     await loginAs(page, testUsers.employee.email);
@@ -775,7 +775,7 @@ test.describe('Employee Dashboard (/dashboards/employee)', () => {
 // ─── Manager Dashboard (/dashboards/manager) ─────────────────────────────────
 
 test.describe('Manager Dashboard (/dashboards/manager)', () => {
-  test('manager sees their dashboard page', async ({ page }) => {
+  test('manager sees their dashboard page', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await navigateTo(page, '/dashboards/manager');
 
@@ -784,7 +784,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
     expect(heading).toBeTruthy();
   });
 
-  test('team-related stats or sections are visible', async ({ page }) => {
+  test('team-related stats or sections are visible', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await navigateTo(page, '/dashboards/manager');
 
@@ -794,7 +794,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
     expect(pageText).toMatch(/team|approval|member|utilization|allocation/i);
   });
 
-  test('HR Manager can also access manager dashboard', async ({ page }) => {
+  test('HR Manager can also access manager dashboard', async ({page}) => {
     await loginAs(page, testUsers.hrManager.email);
     await navigateTo(page, '/dashboards/manager');
 
@@ -802,7 +802,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 
-  test('admin can access manager dashboard', async ({ page }) => {
+  test('admin can access manager dashboard', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/manager');
 
@@ -810,7 +810,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 
-  test('a plain employee without manager role is redirected', async ({ page }) => {
+  test('a plain employee without manager role is redirected', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/dashboards/manager');
     await page.waitForTimeout(2000);
@@ -818,7 +818,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
     expect(page.url()).not.toContain('/dashboards/manager');
   });
 
-  test('page renders without JS errors (basic smoke)', async ({ page }) => {
+  test('page renders without JS errors (basic smoke)', async ({page}) => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
@@ -837,7 +837,7 @@ test.describe('Manager Dashboard (/dashboards/manager)', () => {
 // ─── Executive Dashboard (/dashboards/executive) ─────────────────────────────
 
 test.describe('Executive Dashboard (/dashboards/executive)', () => {
-  test('admin sees Executive Dashboard page', async ({ page }) => {
+  test('admin sees Executive Dashboard page', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -845,7 +845,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('h1')).toContainText('Executive Dashboard');
   });
 
-  test('page subtitle is visible', async ({ page }) => {
+  test('page subtitle is visible', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -853,7 +853,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('text=Comprehensive C-suite insights')).toBeVisible();
   });
 
-  test('Refresh button is present', async ({ page }) => {
+  test('Refresh button is present', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -861,7 +861,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('button:has-text("Refresh")')).toBeVisible();
   });
 
-  test('Workforce Overview section is rendered', async ({ page }) => {
+  test('Workforce Overview section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -869,7 +869,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('text=Workforce Overview')).toBeVisible();
   });
 
-  test('Productivity metrics section is rendered', async ({ page }) => {
+  test('Productivity metrics section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -877,7 +877,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('text=Productivity')).toBeVisible();
   });
 
-  test('Risk Indicators section is rendered', async ({ page }) => {
+  test('Risk Indicators section is rendered', async ({page}) => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/dashboards/executive');
 
@@ -885,7 +885,7 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     await expect(page.locator('text=Risk Indicators')).toBeVisible();
   });
 
-  test('employee is redirected from executive dashboard', async ({ page }) => {
+  test('employee is redirected from executive dashboard', async ({page}) => {
     await loginAs(page, testUsers.employee.email);
     await page.goto('/dashboards/executive');
     await page.waitForTimeout(2000);
@@ -893,14 +893,14 @@ test.describe('Executive Dashboard (/dashboards/executive)', () => {
     expect(page.url()).not.toContain('/dashboards/executive');
   });
 
-  test('manager without executive permission is redirected', async ({ page }) => {
+  test('manager without executive permission is redirected', async ({page}) => {
     await loginAs(page, testUsers.manager.email);
     await page.goto('/dashboards/executive');
     await page.waitForTimeout(2000);
     expect(page.url()).not.toContain('/dashboards/executive');
   });
 
-  test('second super admin can also access executive dashboard', async ({ page }) => {
+  test('second super admin can also access executive dashboard', async ({page}) => {
     await loginAs(page, demoUsers.superAdmin2.email);
     await navigateTo(page, '/dashboards/executive');
 

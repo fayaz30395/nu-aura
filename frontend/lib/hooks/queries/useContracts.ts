@@ -1,14 +1,14 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { contractService } from '@/lib/services/hrms/contract.service';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {contractService} from '@/lib/services/hrms/contract.service';
 import type {
-  CreateContractRequest,
-  UpdateContractRequest,
   ContractStatus,
   ContractType,
-  SendForSigningRequest,
+  CreateContractRequest,
   CreateContractTemplateRequest,
+  SendForSigningRequest,
+  UpdateContractRequest,
 } from '@/lib/types/hrms/contract';
 
 export const contractKeys = {
@@ -128,7 +128,7 @@ export function useCreateContract() {
   return useMutation({
     mutationFn: (data: CreateContractRequest) => contractService.createContract(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
       queryClient.setQueryData(contractKeys.detail(data.id), data);
     },
   });
@@ -138,10 +138,10 @@ export function useUpdateContract() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateContractRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateContractRequest }) =>
       contractService.updateContract(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
       queryClient.setQueryData(contractKeys.detail(data.id), data);
     },
   });
@@ -153,7 +153,7 @@ export function useDeleteContract() {
   return useMutation({
     mutationFn: (id: string) => contractService.deleteContract(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
     },
   });
 }
@@ -165,7 +165,7 @@ export function useMarkAsPendingReview() {
     mutationFn: (contractId: string) => contractService.markAsPendingReview(contractId),
     onSuccess: (data) => {
       queryClient.setQueryData(contractKeys.detail(data.id), data);
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
     },
   });
 }
@@ -177,7 +177,7 @@ export function useMarkAsActive() {
     mutationFn: (contractId: string) => contractService.markAsActive(contractId),
     onSuccess: (data) => {
       queryClient.setQueryData(contractKeys.detail(data.id), data);
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
     },
   });
 }
@@ -189,7 +189,7 @@ export function useTerminateContract() {
     mutationFn: (contractId: string) => contractService.terminateContract(contractId),
     onSuccess: (data) => {
       queryClient.setQueryData(contractKeys.detail(data.id), data);
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
     },
   });
 }
@@ -201,7 +201,7 @@ export function useRenewContract() {
     mutationFn: (contractId: string) => contractService.renewContract(contractId),
     onSuccess: (data) => {
       queryClient.setQueryData(contractKeys.detail(data.id), data);
-      queryClient.invalidateQueries({ queryKey: contractKeys.lists() });
+      queryClient.invalidateQueries({queryKey: contractKeys.lists()});
     },
   });
 }
@@ -235,10 +235,10 @@ export function useSendForSigning() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ contractId, data }: { contractId: string; data: SendForSigningRequest }) =>
+    mutationFn: ({contractId, data}: { contractId: string; data: SendForSigningRequest }) =>
       contractService.sendForSigning(contractId, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.signatures(data.contractId) });
+      queryClient.invalidateQueries({queryKey: contractKeys.signatures(data.contractId)});
     },
   });
 }
@@ -248,18 +248,18 @@ export function useRecordSignature() {
 
   return useMutation({
     mutationFn: ({
-      contractId,
-      signerEmail,
-      signatureImageUrl,
-      ipAddress,
-    }: {
+                   contractId,
+                   signerEmail,
+                   signatureImageUrl,
+                   ipAddress,
+                 }: {
       contractId: string;
       signerEmail: string;
       signatureImageUrl: string;
       ipAddress?: string;
     }) => contractService.recordSignature(contractId, signerEmail, signatureImageUrl, ipAddress),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.signatures(data.contractId) });
+      queryClient.invalidateQueries({queryKey: contractKeys.signatures(data.contractId)});
     },
   });
 }
@@ -268,10 +268,10 @@ export function useDeclineSignature() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ contractId, signerEmail }: { contractId: string; signerEmail: string }) =>
+    mutationFn: ({contractId, signerEmail}: { contractId: string; signerEmail: string }) =>
       contractService.declineSignature(contractId, signerEmail),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.signatures(data.contractId) });
+      queryClient.invalidateQueries({queryKey: contractKeys.signatures(data.contractId)});
     },
   });
 }
@@ -325,7 +325,7 @@ export function useCreateTemplate() {
   return useMutation({
     mutationFn: (data: CreateContractTemplateRequest) => contractService.createTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.templates() });
+      queryClient.invalidateQueries({queryKey: contractKeys.templates()});
     },
   });
 }
@@ -334,10 +334,10 @@ export function useUpdateTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateContractTemplateRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateContractTemplateRequest }) =>
       contractService.updateTemplate(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.templates() });
+      queryClient.invalidateQueries({queryKey: contractKeys.templates()});
     },
   });
 }
@@ -348,7 +348,7 @@ export function useDeleteTemplate() {
   return useMutation({
     mutationFn: (id: string) => contractService.deleteTemplate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.templates() });
+      queryClient.invalidateQueries({queryKey: contractKeys.templates()});
     },
   });
 }
@@ -359,7 +359,7 @@ export function useToggleTemplateActive() {
   return useMutation({
     mutationFn: (id: string) => contractService.toggleTemplateActive(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.templates() });
+      queryClient.invalidateQueries({queryKey: contractKeys.templates()});
     },
   });
 }

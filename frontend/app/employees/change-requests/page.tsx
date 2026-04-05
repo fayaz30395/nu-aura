@@ -1,34 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { AppLayout } from '@/components/layout';
-import { employmentChangeRequestService } from '@/lib/services/hrms/employment-change-request.service';
-import {
-  ChangeRequestStatus,
-  ChangeType,
-} from '@/lib/types/hrms/employment-change-request';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  User,
-  ArrowRight,
-} from 'lucide-react';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {AppLayout} from '@/components/layout';
+import {employmentChangeRequestService} from '@/lib/services/hrms/employment-change-request.service';
+import {ChangeRequestStatus, ChangeType,} from '@/lib/types/hrms/employment-change-request';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AlertCircle, ArrowRight, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 
 export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { hasPermission, isReady: permissionsReady } = usePermissions();
+  const {hasPermission, isReady: permissionsReady} = usePermissions();
 
   // DEF-44: Redirect unauthorized users — prevents change request data exposure
   useEffect(() => {
@@ -45,7 +33,7 @@ export default function EmploymentChangeRequestsPage() {
   const [approveConfirm, setApproveConfirm] = useState<string | null>(null);
 
   // React Query hooks
-  const { data: requestsData, isLoading } = useQuery({
+  const {data: requestsData, isLoading} = useQuery({
     queryKey: ['change-requests', filter],
     queryFn: () =>
       filter === 'pending'
@@ -56,16 +44,16 @@ export default function EmploymentChangeRequestsPage() {
   const approveMutation = useMutation({
     mutationFn: (id: string) => employmentChangeRequestService.approveChangeRequest(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['change-requests'] });
+      queryClient.invalidateQueries({queryKey: ['change-requests']});
     },
     onError: () => toast.error('Failed to approve change request'),
   });
 
   const rejectMutation = useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      employmentChangeRequestService.rejectChangeRequest(id, { rejectionReason: reason }),
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
+      employmentChangeRequestService.rejectChangeRequest(id, {rejectionReason: reason}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['change-requests'] });
+      queryClient.invalidateQueries({queryKey: ['change-requests']});
     },
   });
 
@@ -78,7 +66,9 @@ export default function EmploymentChangeRequestsPage() {
       toast.success('Change request approved successfully. Employee details have been updated.');
       setApproveConfirm(null);
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve change request');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to approve change request');
     }
   };
 
@@ -89,12 +79,14 @@ export default function EmploymentChangeRequestsPage() {
     }
 
     try {
-      await rejectMutation.mutateAsync({ id, reason: rejectionReason });
+      await rejectMutation.mutateAsync({id, reason: rejectionReason});
       toast.success('Change request rejected');
       setShowRejectModal(null);
       setRejectionReason('');
     } catch (error: unknown) {
-      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject change request');
+      toast.error((error as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to reject change request');
     }
   };
 
@@ -102,29 +94,33 @@ export default function EmploymentChangeRequestsPage() {
     switch (status) {
       case 'PENDING':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <Clock className="h-3 w-3" />
+          <span
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <Clock className="h-3 w-3"/>
             Pending
           </span>
         );
       case 'APPROVED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <CheckCircle className="h-3 w-3" />
+          <span
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <CheckCircle className="h-3 w-3"/>
             Approved
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-            <XCircle className="h-3 w-3" />
+          <span
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <XCircle className="h-3 w-3"/>
             Rejected
           </span>
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
-            <AlertCircle className="h-3 w-3" />
+          <span
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
+            <AlertCircle className="h-3 w-3"/>
             Cancelled
           </span>
         );
@@ -163,8 +159,9 @@ export default function EmploymentChangeRequestsPage() {
       <div className="flex items-center gap-2 py-2 divider-b last:border-0">
         <span className="text-sm font-medium text-[var(--text-secondary)] w-40">{label}:</span>
         <span className="text-body-muted">{currentValue || 'N/A'}</span>
-        <ArrowRight className="h-4 w-4 text-[var(--text-muted)]" />
-        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{newValue || 'N/A'}</span>
+        <ArrowRight className="h-4 w-4 text-[var(--text-muted)]"/>
+        <span
+          className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{newValue || 'N/A'}</span>
       </div>
     );
   };
@@ -176,8 +173,8 @@ export default function EmploymentChangeRequestsPage() {
         <div className="p-6 max-w-7xl mx-auto space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="skeuo-card p-4 animate-pulse">
-              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/3 mb-2" />
-              <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2" />
+              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/3 mb-2"/>
+              <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2"/>
             </div>
           ))}
         </div>
@@ -236,7 +233,8 @@ export default function EmploymentChangeRequestsPage() {
             <div className="text-body-secondary mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
-            <div className="text-3xl font-bold text-warning-600 dark:text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            <div
+              className="text-3xl font-bold text-warning-600 dark:text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
               {requests.length}
             </div>
           </div>
@@ -248,7 +246,7 @@ export default function EmploymentChangeRequestsPage() {
             <div className="text-center py-12 text-[var(--text-secondary)]">Loading...</div>
           ) : requests.length === 0 ? (
             <div className="skeuo-card p-12 text-center">
-              <User className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+              <User className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>
               <p className="text-[var(--text-secondary)]">
                 {filter === 'pending' ? 'No pending change requests' : 'No change requests found'}
               </p>
@@ -266,8 +264,10 @@ export default function EmploymentChangeRequestsPage() {
                 >
                   <div className="row-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      <div
+                        className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        <span
+                          className="text-sm font-medium text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                           {request.employeeName?.charAt(0) || 'E'}
                         </span>
                       </div>
@@ -284,9 +284,9 @@ export default function EmploymentChangeRequestsPage() {
                       {getChangeTypeBadge(request.changeType)}
                       {getStatusBadge(request.status)}
                       {expandedId === request.id ? (
-                        <ChevronUp className="h-5 w-5 text-[var(--text-muted)]" />
+                        <ChevronUp className="h-5 w-5 text-[var(--text-muted)]"/>
                       ) : (
-                        <ChevronDown className="h-5 w-5 text-[var(--text-muted)]" />
+                        <ChevronDown className="h-5 w-5 text-[var(--text-muted)]"/>
                       )}
                     </div>
                   </div>
@@ -381,10 +381,12 @@ export default function EmploymentChangeRequestsPage() {
                           </div>
                           {request.rejectionReason && (
                             <div>
-                              <span className="text-sm font-medium text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                              <span
+                                className="text-sm font-medium text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                 Rejection Reason:
                               </span>
-                              <p className="text-sm text-danger-700 dark:text-danger-300 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                              <p
+                                className="text-sm text-danger-700 dark:text-danger-300 mt-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                                 {request.rejectionReason}
                               </p>
                             </div>

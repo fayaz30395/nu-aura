@@ -1,9 +1,5 @@
-import { apiClient } from '@/lib/api/client';
-import {
-  Spotlight,
-  CreateSpotlightRequest,
-  UpdateSpotlightRequest,
-} from '@/lib/types/platform/spotlight';
+import {apiClient} from '@/lib/api/client';
+import {CreateSpotlightRequest, Spotlight, UpdateSpotlightRequest,} from '@/lib/types/platform/spotlight';
 
 /**
  * Paged response wrapper for spotlight queries
@@ -34,7 +30,7 @@ class SpotlightService {
    */
   async getAllSpotlights(page: number = 0, size: number = 10): Promise<PagedResponse<Spotlight>> {
     const response = await apiClient.get<PagedResponse<Spotlight>>('/spotlights', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }

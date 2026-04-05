@@ -1,41 +1,34 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { motion, AnimatePresence } from 'framer-motion';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {AnimatePresence, motion} from 'framer-motion';
 import {
-  Search,
-  BookOpen,
-  Pen,
-  FileText,
   ArrowRight,
-  Clock,
-  RefreshCw,
-  Zap,
-  X,
   Bookmark,
   BookmarkCheck,
-  SlidersHorizontal,
-  Globe,
-  Lock,
-  Users,
-  Eye,
+  BookOpen,
   ChevronDown,
   ChevronUp,
+  Clock,
+  Eye,
+  FileText,
+  Globe,
+  Lock,
+  Pen,
+  RefreshCw,
+  Search,
+  SlidersHorizontal,
+  Users,
+  X,
+  Zap,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/Card';
-import {
-  layout,
-  typography,
-  card as dsCard,
-  motion as dsMotion,
-  iconSize,
-  input as dsInput,
-} from '@/lib/design-system';
-import { useFluenceSearch } from '@/lib/hooks/queries/useFluence';
-import type { SavedSearch } from '@/lib/types/platform/fluence';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent} from '@/components/ui/Card';
+import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/design-system';
+import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
+import type {SavedSearch} from '@/lib/types/platform/fluence';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -75,13 +68,17 @@ function persistSavedSearches(searches: SavedSearch[]): void {
 
 // ─── Visibility option config ─────────────────────────────────────────────────
 
-const VISIBILITY_OPTIONS: { value: VisibilityFilter; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { value: undefined, label: 'Any visibility', icon: Globe },
-  { value: 'PUBLIC', label: 'Public', icon: Globe },
-  { value: 'ORGANIZATION', label: 'Organization', icon: Users },
-  { value: 'DEPARTMENT', label: 'Department', icon: Users },
-  { value: 'PRIVATE', label: 'Private', icon: Lock },
-  { value: 'RESTRICTED', label: 'Restricted', icon: Eye },
+const VISIBILITY_OPTIONS: {
+  value: VisibilityFilter;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>
+}[] = [
+  {value: undefined, label: 'Any visibility', icon: Globe},
+  {value: 'PUBLIC', label: 'Public', icon: Globe},
+  {value: 'ORGANIZATION', label: 'Organization', icon: Users},
+  {value: 'DEPARTMENT', label: 'Department', icon: Users},
+  {value: 'PRIVATE', label: 'Private', icon: Lock},
+  {value: 'RESTRICTED', label: 'Restricted', icon: Eye},
 ];
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
@@ -89,7 +86,7 @@ const VISIBILITY_OPTIONS: { value: VisibilityFilter; label: string; icon: React.
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_VIEW,
@@ -131,7 +128,7 @@ export default function SearchPage() {
   }, [searchQuery]);
 
   // ─── React Query ────────────────────────────────────────────────────────────
-  const { data: searchResults, isLoading, isFetching } = useFluenceSearch(
+  const {data: searchResults, isLoading, isFetching} = useFluenceSearch(
     debouncedQuery,
     selectedType,
     0,
@@ -220,8 +217,9 @@ export default function SearchPage() {
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div>
           <h1 className={`${typography.pageTitle} skeuo-emboss flex items-center gap-4`}>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
-              <Search className={`${iconSize.pageHeader} text-white`} />
+            <div
+              className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
+              <Search className={`${iconSize.pageHeader} text-white`}/>
             </div>
             Search NU-Fluence
           </h1>
@@ -233,7 +231,8 @@ export default function SearchPage() {
         {/* ── Search input ────────────────────────────────────────────────────── */}
         <div className="space-y-2">
           <div className="relative">
-            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`} />
+            <Search
+              className={`absolute left-4 top-1/2 -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`}/>
             <input
               ref={inputRef}
               type="text"
@@ -251,7 +250,7 @@ export default function SearchPage() {
                 aria-label="Clear search"
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer transition-colors"
               >
-                <X className={iconSize.cardInline} />
+                <X className={iconSize.cardInline}/>
               </button>
             )}
           </div>
@@ -260,10 +259,10 @@ export default function SearchPage() {
           <AnimatePresence>
             {showSaved && savedSearches.length > 0 && !searchQuery && (
               <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.15 }}
+                initial={{opacity: 0, y: -8}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -8}}
+                transition={{duration: 0.15}}
                 className={`${dsCard.base} p-2 shadow-[var(--shadow-dropdown)]`}
               >
                 <p className={`${typography.microLabel} px-2 pb-2`}>Recent searches</p>
@@ -274,7 +273,7 @@ export default function SearchPage() {
                     className="w-full row-between gap-2 px-2 py-2 rounded-md hover:bg-[var(--bg-secondary)] text-left cursor-pointer group"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <Clock className={`${iconSize.meta} text-[var(--text-muted)] flex-shrink-0`} />
+                      <Clock className={`${iconSize.meta} text-[var(--text-muted)] flex-shrink-0`}/>
                       <span className={`${typography.body} truncate`}>{saved.query}</span>
                       {saved.contentType && (
                         <span className="text-xs px-2 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)]">
@@ -283,11 +282,14 @@ export default function SearchPage() {
                       )}
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); removeSavedSearch(saved.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeSavedSearch(saved.id);
+                      }}
                       aria-label="Remove saved search"
                       className="opacity-0 group-hover:opacity-100 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-opacity"
                     >
-                      <X className={iconSize.meta} />
+                      <X className={iconSize.meta}/>
                     </button>
                   </button>
                 ))}
@@ -303,16 +305,16 @@ export default function SearchPage() {
             {/* Content type pills */}
             {(
               [
-                { type: undefined as ContentType, label: 'All' },
-                { type: 'WIKI' as ContentType, label: 'Wiki Pages' },
-                { type: 'BLOG' as ContentType, label: 'Blog Posts' },
-                { type: 'TEMPLATE' as ContentType, label: 'Templates' },
+                {type: undefined as ContentType, label: 'All'},
+                {type: 'WIKI' as ContentType, label: 'Wiki Pages'},
+                {type: 'BLOG' as ContentType, label: 'Blog Posts'},
+                {type: 'TEMPLATE' as ContentType, label: 'Templates'},
               ] as const
-            ).map(({ type, label }) => (
+            ).map(({type, label}) => (
               <motion.button
                 key={label}
                 onClick={() => setSelectedType(type as ContentType)}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{scale: 0.95}}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                   selectedType === type
                     ? 'bg-[var(--accent-700)] text-white shadow-[var(--shadow-elevated)]'
@@ -324,7 +326,7 @@ export default function SearchPage() {
             ))}
 
             {/* Spacer */}
-            <div className="flex-1" />
+            <div className="flex-1"/>
 
             {/* Advanced filters toggle */}
             <button
@@ -335,14 +337,15 @@ export default function SearchPage() {
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
-              <SlidersHorizontal className={iconSize.button} />
+              <SlidersHorizontal className={iconSize.button}/>
               Filters
               {hasActiveFilters && (
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--accent-700)] text-white text-xs font-bold">
+                <span
+                  className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--accent-700)] text-white text-xs font-bold">
                   {[selectedType, selectedVisibility].filter(Boolean).length}
                 </span>
               )}
-              {filtersOpen ? <ChevronUp className={iconSize.button} /> : <ChevronDown className={iconSize.button} />}
+              {filtersOpen ? <ChevronUp className={iconSize.button}/> : <ChevronDown className={iconSize.button}/>}
             </button>
 
             {/* Save search */}
@@ -357,9 +360,9 @@ export default function SearchPage() {
                 }`}
               >
                 {isCurrentSearchSaved ? (
-                  <BookmarkCheck className={iconSize.button} />
+                  <BookmarkCheck className={iconSize.button}/>
                 ) : (
-                  <Bookmark className={iconSize.button} />
+                  <Bookmark className={iconSize.button}/>
                 )}
                 {isCurrentSearchSaved ? 'Saved' : 'Save'}
               </button>
@@ -370,10 +373,10 @@ export default function SearchPage() {
           <AnimatePresence>
             {filtersOpen && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
+                initial={{opacity: 0, height: 0}}
+                animate={{opacity: 1, height: 'auto'}}
+                exit={{opacity: 0, height: 0}}
+                transition={{duration: 0.2}}
                 className="overflow-hidden"
               >
                 <div className={`${dsCard.base} p-4 space-y-4`}>
@@ -381,7 +384,7 @@ export default function SearchPage() {
                   <div>
                     <label className={dsInput.label}>Visibility</label>
                     <div className="flex flex-wrap gap-2">
-                      {VISIBILITY_OPTIONS.map(({ value, label, icon: Icon }) => (
+                      {VISIBILITY_OPTIONS.map(({value, label, icon: Icon}) => (
                         <button
                           key={label}
                           onClick={() => setSelectedVisibility(value)}
@@ -391,7 +394,7 @@ export default function SearchPage() {
                               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                           }`}
                         >
-                          <Icon className={iconSize.meta} />
+                          <Icon className={iconSize.meta}/>
                           {label}
                         </button>
                       ))}
@@ -403,23 +406,30 @@ export default function SearchPage() {
                     <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-main)]">
                       <p className={typography.caption}>Active filters:</p>
                       {selectedType && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
                           {typeDisplayMap[selectedType.toLowerCase()] || selectedType}
-                          <button onClick={() => setSelectedType(undefined)} className="cursor-pointer hover:opacity-70">
-                            <X className="h-3 w-3" />
+                          <button onClick={() => setSelectedType(undefined)}
+                                  className="cursor-pointer hover:opacity-70">
+                            <X className="h-3 w-3"/>
                           </button>
                         </span>
                       )}
                       {selectedVisibility && visibilityOption && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
                           {visibilityOption.label}
-                          <button onClick={() => setSelectedVisibility(undefined)} className="cursor-pointer hover:opacity-70">
-                            <X className="h-3 w-3" />
+                          <button onClick={() => setSelectedVisibility(undefined)}
+                                  className="cursor-pointer hover:opacity-70">
+                            <X className="h-3 w-3"/>
                           </button>
                         </span>
                       )}
                       <button
-                        onClick={() => { setSelectedType(undefined); setSelectedVisibility(undefined); }}
+                        onClick={() => {
+                          setSelectedType(undefined);
+                          setSelectedVisibility(undefined);
+                        }}
                         className="ml-auto text-caption hover:text-[var(--text-primary)] cursor-pointer"
                       >
                         Clear all
@@ -439,17 +449,17 @@ export default function SearchPage() {
               onClick={() => setShowSaved((v) => !v)}
               className="flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors cursor-pointer"
             >
-              <Clock className={iconSize.button} />
+              <Clock className={iconSize.button}/>
               <span>{savedSearches.length} saved {savedSearches.length === 1 ? 'search' : 'searches'}</span>
-              {showSaved ? <ChevronUp className={iconSize.button} /> : <ChevronDown className={iconSize.button} />}
+              {showSaved ? <ChevronUp className={iconSize.button}/> : <ChevronDown className={iconSize.button}/>}
             </button>
             <AnimatePresence>
               {showSaved && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{opacity: 0, height: 0}}
+                  animate={{opacity: 1, height: 'auto'}}
+                  exit={{opacity: 0, height: 0}}
+                  transition={{duration: 0.2}}
                   className="overflow-hidden mt-2"
                 >
                   <div className="flex flex-wrap gap-2">
@@ -462,7 +472,7 @@ export default function SearchPage() {
                           onClick={() => applySavedSearch(saved)}
                           className="flex items-center gap-1 cursor-pointer"
                         >
-                          <BookmarkCheck className={`${iconSize.meta} text-[var(--accent-600)]`} />
+                          <BookmarkCheck className={`${iconSize.meta} text-[var(--accent-600)]`}/>
                           <span className="text-[var(--text-secondary)]">{saved.query}</span>
                           {saved.contentType && (
                             <span className="text-caption">· {saved.contentType}</span>
@@ -473,7 +483,7 @@ export default function SearchPage() {
                           aria-label="Remove saved search"
                           className="opacity-0 group-hover:opacity-100 ml-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer transition-opacity"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3 w-3"/>
                         </button>
                       </div>
                     ))}
@@ -487,23 +497,23 @@ export default function SearchPage() {
         {/* ── Results section ──────────────────────────────────────────────────── */}
         {isSearching && debouncedQuery.length > 1 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-4">
-            <RefreshCw className={`${iconSize.statCard} text-[var(--text-muted)] animate-spin`} />
+            <RefreshCw className={`${iconSize.statCard} text-[var(--text-muted)] animate-spin`}/>
             <p className={typography.bodySecondary}>Searching...</p>
           </div>
         ) : debouncedQuery.length <= 1 ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            initial={{opacity: 0, scale: 0.95}}
+            animate={{opacity: 1, scale: 1}}
+            transition={{duration: 0.3}}
           >
             <Card className={`${dsCard.base} border-dashed border-2`}>
               <CardContent className="py-16 text-center">
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.3 }}
+                  initial={{opacity: 0, y: 8}}
+                  animate={{opacity: 1, y: 0}}
+                  transition={{delay: 0.1, duration: 0.3}}
                 >
-                  <Zap className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`} />
+                  <Zap className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
                   <h3 className={`${typography.sectionTitle} mb-2`}>Start searching</h3>
                   <p className={typography.bodySecondary}>
                     Type at least 2 characters to search wiki pages, blog posts, and templates
@@ -514,20 +524,23 @@ export default function SearchPage() {
           </motion.div>
         ) : resultCount === 0 ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
+            initial={{opacity: 0, scale: 0.95}}
+            animate={{opacity: 1, scale: 1}}
+            transition={{duration: 0.3}}
           >
             <Card className={`${dsCard.base} border-dashed border-2`}>
               <CardContent className="py-16 text-center">
-                <Search className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`} />
+                <Search className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
                 <h3 className={`${typography.sectionTitle} mb-2`}>No results found</h3>
                 <p className={typography.bodySecondary}>
                   Try different keywords or remove filters
                 </p>
                 {hasActiveFilters && (
                   <button
-                    onClick={() => { setSelectedType(undefined); setSelectedVisibility(undefined); }}
+                    onClick={() => {
+                      setSelectedType(undefined);
+                      setSelectedVisibility(undefined);
+                    }}
                     className="mt-4 text-sm text-[var(--accent-700)] hover:underline cursor-pointer"
                   >
                     Clear filters
@@ -540,21 +553,22 @@ export default function SearchPage() {
           <motion.div className="space-y-4" {...dsMotion.staggerContainer}>
             {/* Result count + search time */}
             <motion.div
-              initial={{ opacity: 0, x: -4 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.25 }}
+              initial={{opacity: 0, x: -4}}
+              animate={{opacity: 1, x: 0}}
+              transition={{duration: 0.25}}
               className="row-between"
             >
               <p className={typography.caption}>
                 Found{' '}
                 <motion.span
                   key={resultCount}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{opacity: 0}}
+                  animate={{opacity: 1}}
                   className="font-semibold text-[var(--text-primary)]"
                 >
                   {resultCount}
-                </motion.span>{' '}
+                </motion.span>
+                {' '}
                 result{resultCount !== 1 ? 's' : ''}
                 {searchResults?.executionTimeMs && (
                   <span className="ml-2">· {searchResults.executionTimeMs}ms</span>
@@ -593,12 +607,16 @@ export default function SearchPage() {
                     tabIndex={0}
                     onClick={handleNavigate}
                     onKeyDown={(e: React.KeyboardEvent) => {
-                      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavigate(); }
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleNavigate();
+                      }
                     }}
                   >
                     <CardContent className="py-4 px-4 flex items-start gap-4">
-                      <div className={`w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center flex-shrink-0`}>
-                        <Icon className={iconSize.cardInline} />
+                      <div
+                        className={`w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center flex-shrink-0`}>
+                        <Icon className={iconSize.cardInline}/>
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -606,7 +624,8 @@ export default function SearchPage() {
                           <h3 className={`${typography.cardTitle} line-clamp-1 flex-1`}>
                             {result.title}
                           </h3>
-                          <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap flex-shrink-0 ${colorClass}`}>
+                          <span
+                            className={`inline-block px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap flex-shrink-0 ${colorClass}`}>
                             {typeLabel}
                           </span>
                         </div>
@@ -624,7 +643,7 @@ export default function SearchPage() {
                         <div className="flex items-center gap-4 text-caption">
                           {result.author && <span>By {result.author}</span>}
                           <span className="flex items-center gap-1">
-                            <Clock className={iconSize.meta} />
+                            <Clock className={iconSize.meta}/>
                             {new Date(result.updatedAt).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'short',
@@ -634,7 +653,8 @@ export default function SearchPage() {
                         </div>
                       </div>
 
-                      <ArrowRight className={`${iconSize.cardInline} text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--accent-700)] transition-colors duration-150`} />
+                      <ArrowRight
+                        className={`${iconSize.cardInline} text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--accent-700)] transition-colors duration-150`}/>
                     </CardContent>
                   </Card>
                 </motion.div>

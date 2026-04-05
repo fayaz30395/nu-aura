@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Payslip } from '@/lib/types/hrms/payroll';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Download, Calendar, DollarSign } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import {Payslip} from '@/lib/types/hrms/payroll';
+import {Card, CardContent} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {Calendar, DollarSign, Download} from 'lucide-react';
+import {formatCurrency} from '@/lib/utils';
 
 interface PayslipCardProps {
   payslip: Payslip;
@@ -15,10 +15,10 @@ interface PayslipCardProps {
 }
 
 export const PayslipCard: React.FC<PayslipCardProps> = ({
-  payslip,
-  onDownload,
-  loading = false,
-}) => {
+                                                          payslip,
+                                                          onDownload,
+                                                          loading = false,
+                                                        }) => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -66,7 +66,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
         <div className="p-6">
           {/* Period */}
           <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400 mb-4">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4"/>
             <span>
               {formatDate(payslip.payrollPeriodStart)} - {formatDate(payslip.payrollPeriodEnd)}
             </span>
@@ -100,7 +100,8 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
             )}
 
             {/* Gross Amount */}
-            <div className="flex justify-between items-center text-sm pt-2 border-t border-surface-200 dark:border-surface-700">
+            <div
+              className="flex justify-between items-center text-sm pt-2 border-t border-surface-200 dark:border-surface-700">
               <span className="text-surface-600 dark:text-surface-400">Gross Amount</span>
               <span className="font-medium text-surface-900 dark:text-surface-50">
                 {formatCurrency(payslip.grossAmount)}
@@ -108,9 +109,10 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
             </div>
 
             {/* Net Amount */}
-            <div className="flex justify-between items-center pt-4 border-t-2 border-surface-300 dark:border-surface-600">
+            <div
+              className="flex justify-between items-center pt-4 border-t-2 border-surface-300 dark:border-surface-600">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-accent-500" />
+                <DollarSign className="h-5 w-5 text-accent-500"/>
                 <span className="font-semibold text-surface-900 dark:text-surface-50">
                   Net Amount
                 </span>
@@ -135,7 +137,7 @@ export const PayslipCard: React.FC<PayslipCardProps> = ({
           <Button
             variant="primary"
             size="md"
-            leftIcon={<Download className="h-4 w-4" />}
+            leftIcon={<Download className="h-4 w-4"/>}
             onClick={onDownload}
             disabled={loading}
             isLoading={loading}

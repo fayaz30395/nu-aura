@@ -1,15 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
+import {PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip,} from 'recharts';
 
 interface SpiderMetric {
   subject: string;
@@ -22,14 +14,14 @@ interface PerformanceSpiderChartProps {
   metrics: SpiderMetric[];
 }
 
-export default function PerformanceSpiderChart({ metrics }: PerformanceSpiderChartProps) {
+export default function PerformanceSpiderChart({metrics}: PerformanceSpiderChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RadarChart data={metrics}>
-        <PolarGrid stroke="var(--chart-grid)" />
-        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fontWeight: 600 }} />
-        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-        <Tooltip />
+        <PolarGrid stroke="var(--chart-grid)"/>
+        <PolarAngleAxis dataKey="subject" tick={{fontSize: 10, fontWeight: 600}}/>
+        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false}/>
+        <Tooltip/>
         <Radar
           name="Self"
           dataKey="self"

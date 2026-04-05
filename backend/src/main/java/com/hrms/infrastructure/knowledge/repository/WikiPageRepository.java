@@ -26,6 +26,13 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
 
     List<WikiPage> findByTenantIdAndParentPageId(UUID tenantId, UUID parentPageId);
 
+    List<WikiPage> findByTenantIdAndSpaceIdAndParentPageIsNull(UUID tenantId, UUID spaceId);
+
+    @Query("SELECT COUNT(wp) FROM WikiPage wp WHERE wp.tenantId = :tenantId AND wp.parentPage.id = :parentPageId")
+    long countByTenantIdAndParentPageId(@Param("tenantId") UUID tenantId, @Param("parentPageId") UUID parentPageId);
+
+    List<WikiPage> findByTenantIdAndSpaceId(UUID tenantId, UUID spaceId);
+
     Page<WikiPage> findByTenantId(UUID tenantId, Pageable pageable);
 
     @Query("SELECT wp FROM WikiPage wp WHERE wp.tenantId = :tenantId AND wp.isPinned = true " +

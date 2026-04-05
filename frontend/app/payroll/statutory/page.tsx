@@ -1,27 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { apiClient } from '@/lib/api/client';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {apiClient} from '@/lib/api/client';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
+  Alert,
+  Badge,
   Box,
   Button,
   Card,
   Divider,
   Grid,
   Group,
+  LoadingOverlay,
   Stack,
+  Table,
   Text,
   Title,
-  Alert,
-  Badge,
-  Table,
-  LoadingOverlay,
 } from '@mantine/core';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -70,10 +70,10 @@ function formatINR(value: number): string {
 }
 
 const STATE_OPTIONS = [
-  { value: 'Karnataka', label: 'Karnataka' },
-  { value: 'Maharashtra', label: 'Maharashtra' },
-  { value: 'Tamil Nadu', label: 'Tamil Nadu' },
-  { value: 'Others', label: 'Others' },
+  {value: 'Karnataka', label: 'Karnataka'},
+  {value: 'Maharashtra', label: 'Maharashtra'},
+  {value: 'Tamil Nadu', label: 'Tamil Nadu'},
+  {value: 'Others', label: 'Others'},
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ const STATE_OPTIONS = [
 export default function StatutoryPage() {
 
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {
@@ -131,8 +131,8 @@ export default function StatutoryPage() {
       const error = err as unknown as { response?: { data?: { message?: string } }; message?: string };
       setError(
         error?.response?.data?.message ||
-          error?.message ||
-          'Failed to calculate statutory deductions. Check your inputs and try again.'
+        error?.message ||
+        'Failed to calculate statutory deductions. Check your inputs and try again.'
       );
     } finally {
       setLoading(false);
@@ -161,7 +161,7 @@ export default function StatutoryPage() {
 
           <Grid gutter="lg">
             {/* Left: Input form */}
-            <Grid.Col span={{ base: 12, md: 5 }}>
+            <Grid.Col span={{base: 12, md: 5}}>
               <Card withBorder shadow="xs" radius="md" p="lg" className="skeuo-card">
                 <Title order={4} mb="md" fw={500} className="skeuo-emboss">
                   Input Parameters
@@ -255,9 +255,9 @@ export default function StatutoryPage() {
             </Grid.Col>
 
             {/* Right: Results */}
-            <Grid.Col span={{ base: 12, md: 7 }}>
+            <Grid.Col span={{base: 12, md: 7}}>
               <Card withBorder shadow="xs" radius="md" p="lg" pos="relative" className="skeuo-card">
-                <LoadingOverlay visible={loading} overlayProps={{ radius: 'md', blur: 2 }} />
+                <LoadingOverlay visible={loading} overlayProps={{radius: 'md', blur: 2}}/>
                 <Title order={4} mb="md" fw={500} className="skeuo-emboss">
                   Deduction Breakdown
                 </Title>
@@ -295,7 +295,7 @@ export default function StatutoryPage() {
                       </Table>
                     </Box>
 
-                    <Divider />
+                    <Divider/>
 
                     {/* ESI Section */}
                     <Box>
@@ -323,7 +323,7 @@ export default function StatutoryPage() {
                       </Table>
                     </Box>
 
-                    <Divider />
+                    <Divider/>
 
                     {/* PT Section */}
                     <Box>
@@ -340,7 +340,7 @@ export default function StatutoryPage() {
                       </Table>
                     </Box>
 
-                    <Divider />
+                    <Divider/>
 
                     {/* TDS Section */}
                     <Box>
@@ -357,10 +357,10 @@ export default function StatutoryPage() {
                       </Table>
                     </Box>
 
-                    <Divider />
+                    <Divider/>
 
                     {/* Summary totals */}
-                    <Box bg="gray.0" p="md" style={{ borderRadius: 8 }}>
+                    <Box bg="gray.0" p="md" style={{borderRadius: 8}}>
                       <Group justify="space-between" mb={8}>
                         <Text size="sm" fw={600}>
                           Total Employee Deductions

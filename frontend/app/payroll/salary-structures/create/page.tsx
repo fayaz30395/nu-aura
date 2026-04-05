@@ -1,21 +1,21 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AppLayout } from '@/components/layout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
-import { useCreateSalaryStructure } from '@/lib/hooks/queries/usePayroll';
-import { Box, Stack, Title, Text, Card, Group, Loader } from '@mantine/core';
-import { ArrowLeft, Banknote, Save } from 'lucide-react';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AppLayout} from '@/components/layout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {useCreateSalaryStructure} from '@/lib/hooks/queries/usePayroll';
+import {Box, Card, Group, Loader, Stack, Text, Title} from '@mantine/core';
+import {ArrowLeft, Banknote, Save} from 'lucide-react';
 
 const createSalaryStructureSchema = z.object({
   employeeId: z.string().min(1, 'Employee ID is required'),
   effectiveDate: z.string().min(1, 'Effective date is required'),
   baseSalary: z
-    .number({ invalid_type_error: 'Base salary must be a number' })
+    .number({invalid_type_error: 'Base salary must be a number'})
     .positive('Base salary must be greater than zero'),
   status: z.enum(['ACTIVE', 'INACTIVE', 'PENDING']).default('PENDING'),
 });
@@ -24,12 +24,12 @@ type CreateSalaryStructureFormData = z.infer<typeof createSalaryStructureSchema>
 
 export default function CreateSalaryStructurePage() {
   const router = useRouter();
-  const { mutate: createStructure, isPending } = useCreateSalaryStructure();
+  const {mutate: createStructure, isPending} = useCreateSalaryStructure();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateSalaryStructureFormData>({
     resolver: zodResolver(createSalaryStructureSchema),
     defaultValues: {
@@ -77,7 +77,7 @@ export default function CreateSalaryStructurePage() {
                     className="inline-flex items-center gap-1.5 text-body-secondary hover:text-[var(--text-primary)] transition-colors"
                     aria-label="Back to salary structures"
                   >
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-4 h-4"/>
                     Back
                   </button>
                 </Group>
@@ -89,7 +89,7 @@ export default function CreateSalaryStructurePage() {
                 </Text>
               </div>
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <Banknote className="h-5 w-5 text-white" />
+                <Banknote className="h-5 w-5 text-white"/>
               </div>
             </Group>
 
@@ -150,7 +150,7 @@ export default function CreateSalaryStructurePage() {
                       min={0}
                       step={1}
                       placeholder="e.g. 50000"
-                      {...register('baseSalary', { valueAsNumber: true })}
+                      {...register('baseSalary', {valueAsNumber: true})}
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.baseSalary && (
@@ -192,9 +192,9 @@ export default function CreateSalaryStructurePage() {
                       className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isPending ? (
-                        <Loader size="xs" color="white" />
+                        <Loader size="xs" color="white"/>
                       ) : (
-                        <Save className="w-4 h-4" />
+                        <Save className="w-4 h-4"/>
                       )}
                       {isPending ? 'Saving…' : 'Create Structure'}
                     </button>

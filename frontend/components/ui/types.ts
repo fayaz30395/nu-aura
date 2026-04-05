@@ -1,7 +1,7 @@
 // Type definitions for UI Components
 
 // Button Types
-export type ButtonVariant = 
+export type ButtonVariant =
   | 'default'
   | 'primary'
   | 'secondary'
@@ -28,7 +28,7 @@ export type BadgeSize = 'sm' | 'md' | 'lg';
 export type InputVariant = 'default' | 'filled';
 
 // StatCard Types
-export type StatCardVariant = 
+export type StatCardVariant =
   | 'default'
   | 'primary'
   | 'success'
@@ -70,7 +70,7 @@ export interface SidebarItemWithChildren extends SidebarItemBase {
   onClick?: never;
 }
 
-export type SidebarItem = 
-  | SidebarItemWithHref 
-  | SidebarItemWithClick 
+export type SidebarItem =
+  | SidebarItemWithHref
+  | SidebarItemWithClick
   | SidebarItemWithChildren;

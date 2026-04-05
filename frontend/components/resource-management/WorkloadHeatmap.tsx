@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import React, {useMemo} from 'react';
+import {cn} from '@/lib/utils';
 import {
-  WorkloadHeatmapRow,
-  WorkloadHeatmapCell,
-  formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
+  formatAllocationPercentage,
+  WorkloadHeatmapCell,
+  WorkloadHeatmapRow,
 } from '@/lib/types/hrms/resource-management';
-import { format, parseISO } from 'date-fns';
-import { User, AlertTriangle } from 'lucide-react';
+import {format, parseISO} from 'date-fns';
+import {AlertTriangle, User} from 'lucide-react';
 
 interface WorkloadHeatmapProps {
   data: WorkloadHeatmapRow[];
@@ -24,11 +24,11 @@ interface WorkloadHeatmapProps {
  * Cell color intensity = allocation percentage
  */
 export function WorkloadHeatmap({
-  data,
-  onEmployeeClick,
-  onCellClick,
-  className,
-}: WorkloadHeatmapProps) {
+                                  data,
+                                  onEmployeeClick,
+                                  onCellClick,
+                                  className,
+                                }: WorkloadHeatmapProps) {
   // Get unique weeks from the first row (all rows should have same weeks)
   const weeks = useMemo(() => {
     if (data.length === 0) return [];
@@ -41,7 +41,8 @@ export function WorkloadHeatmap({
 
   if (data.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
+      <div
+        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
         <p className="text-surface-500 dark:text-surface-400">No workload data available</p>
       </div>
     );
@@ -53,32 +54,33 @@ export function WorkloadHeatmap({
         <table className="min-w-full border-separate border-spacing-0">
           {/* Header */}
           <thead>
-            <tr>
-              <th className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
-                Employee
+          <tr>
+            <th
+              className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
+              Employee
+            </th>
+            {weeks.map((week) => (
+              <th
+                key={week.weekStart}
+                className="px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
+                style={{minWidth: '60px'}}
+              >
+                {week.label}
               </th>
-              {weeks.map((week) => (
-                <th
-                  key={week.weekStart}
-                  className="px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
-                  style={{ minWidth: '60px' }}
-                >
-                  {week.label}
-                </th>
-              ))}
-            </tr>
+            ))}
+          </tr>
           </thead>
 
           {/* Body */}
           <tbody>
-            {data.map((row) => (
-              <HeatmapRow
-                key={row.employeeId}
-                row={row}
-                onEmployeeClick={onEmployeeClick}
-                onCellClick={onCellClick}
-              />
-            ))}
+          {data.map((row) => (
+            <HeatmapRow
+              key={row.employeeId}
+              row={row}
+              onEmployeeClick={onEmployeeClick}
+              onCellClick={onCellClick}
+            />
+          ))}
           </tbody>
         </table>
       </div>
@@ -88,19 +90,19 @@ export function WorkloadHeatmap({
         <div className="flex items-center gap-2 text-xs text-surface-600 dark:text-surface-400">
           <span>Allocation:</span>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-surface-200 dark:bg-surface-700" />
+            <div className="h-4 w-4 rounded bg-surface-200 dark:bg-surface-700"/>
             <span>0%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-warning-300" />
+            <div className="h-4 w-4 rounded bg-warning-300"/>
             <span>50%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-success-500" />
+            <div className="h-4 w-4 rounded bg-success-500"/>
             <span>75-100%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-danger-500" />
+            <div className="h-4 w-4 rounded bg-danger-500"/>
             <span>&gt;100%</span>
           </div>
         </div>
@@ -113,10 +115,10 @@ export function WorkloadHeatmap({
  * Single row in the heatmap
  */
 function HeatmapRow({
-  row,
-  onEmployeeClick,
-  onCellClick,
-}: {
+                      row,
+                      onEmployeeClick,
+                      onCellClick,
+                    }: {
   row: WorkloadHeatmapRow;
   onEmployeeClick?: (employeeId: string) => void;
   onCellClick?: (employeeId: string, weekStart: string) => void;
@@ -137,8 +139,9 @@ function HeatmapRow({
         onClick={() => onEmployeeClick?.(row.employeeId)}
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
-            <User className="h-4 w-4" />
+          <div
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+            <User className="h-4 w-4"/>
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -146,7 +149,7 @@ function HeatmapRow({
                 {row.employeeName}
               </p>
               {hasOverAllocation && (
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-danger-500" />
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-danger-500"/>
               )}
             </div>
             <p className="truncate text-xs text-surface-500 dark:text-surface-400">
@@ -172,9 +175,9 @@ function HeatmapRow({
  * Single cell in the heatmap
  */
 function HeatmapCell({
-  cell,
-  onClick,
-}: {
+                       cell,
+                       onClick,
+                     }: {
   cell: WorkloadHeatmapCell;
   onClick?: () => void;
 }) {
@@ -195,7 +198,7 @@ function HeatmapCell({
           'hover:ring-2 hover:ring-accent-500 hover:ring-offset-1',
           textColor
         )}
-        style={{ backgroundColor }}
+        style={{backgroundColor}}
         title={`${formatAllocationPercentage(cell.allocation)} - ${cell.projectCount} project(s)`}
       >
         <span className="text-xs font-medium">

@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -79,7 +79,7 @@ export const biometricDeviceService = {
   list: async (page = 0, size = 20): Promise<PageResponse<BiometricDevice>> => {
     const response = await apiClient.get<PageResponse<BiometricDevice>>(
       '/biometric/devices',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -122,7 +122,7 @@ export const biometricDeviceService = {
   ): Promise<PageResponse<BiometricPunchLog>> => {
     const response = await apiClient.get<PageResponse<BiometricPunchLog>>(
       `/biometric/devices/${deviceId}/logs`,
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -137,7 +137,7 @@ export const biometricPunchService = {
   ): Promise<PageResponse<BiometricPunchLog>> => {
     const response = await apiClient.get<PageResponse<BiometricPunchLog>>(
       '/biometric/punch/pending',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   },
@@ -164,14 +164,14 @@ export const biometricApiKeyService = {
     keyName: string,
     deviceId?: string
   ): Promise<BiometricApiKey> => {
-    const params: Record<string, string> = { keyName };
+    const params: Record<string, string> = {keyName};
     if (deviceId) {
       params.deviceId = deviceId;
     }
     const response = await apiClient.post<BiometricApiKey>(
       '/biometric/api-keys',
       null,
-      { params }
+      {params}
     );
     return response.data;
   },

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import React, {useMemo} from 'react';
+import {cn} from '@/lib/utils';
 import {
-  EmployeeWorkload,
-  getAllocationStatusColor,
   ALLOCATION_THRESHOLDS,
   AllocationStatus,
+  EmployeeWorkload,
+  getAllocationStatusColor,
 } from '@/lib/types/hrms/resource-management';
 
 interface EmployeeWorkloadCardProps {
@@ -20,12 +20,12 @@ interface EmployeeWorkloadCardProps {
  * Clean, minimal employee workload row/card
  */
 export function EmployeeWorkloadCard({
-  workload,
-  onViewDetails,
-  showProjects = true,
-  className,
-}: EmployeeWorkloadCardProps) {
-  const { activeAllocation, activeAllocations, dynamicStatus } = useMemo(() => {
+                                       workload,
+                                       onViewDetails,
+                                       showProjects = true,
+                                       className,
+                                     }: EmployeeWorkloadCardProps) {
+  const {activeAllocation, activeAllocations, dynamicStatus} = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -48,7 +48,7 @@ export function EmployeeWorkloadCard({
       status = 'UNASSIGNED';
     }
 
-    return { activeAllocation: activeTotal, activeAllocations: active, dynamicStatus: status };
+    return {activeAllocation: activeTotal, activeAllocations: active, dynamicStatus: status};
   }, [workload.allocations]);
 
   const statusColor = getAllocationStatusColor(dynamicStatus);
@@ -83,7 +83,7 @@ export function EmployeeWorkloadCard({
             {workload.employeeName}
           </span>
           {workload.hasPendingApprovals && (
-            <span className="flex h-2 w-2 rounded-full bg-warning-400" title="Pending approval" />
+            <span className="flex h-2 w-2 rounded-full bg-warning-400" title="Pending approval"/>
           )}
         </div>
         <div className="flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
@@ -111,7 +111,7 @@ export function EmployeeWorkloadCard({
                 'absolute left-0 top-0 h-full rounded-full transition-all',
                 isOverAllocated ? 'bg-danger-500' : activeAllocation >= 70 ? 'bg-success-500' : 'bg-warning-400'
               )}
-              style={{ width: `${Math.min(activeAllocation, 100)}%` }}
+              style={{width: `${Math.min(activeAllocation, 100)}%`}}
             />
           </div>
         </div>
@@ -119,7 +119,7 @@ export function EmployeeWorkloadCard({
         {/* Percentage */}
         <span
           className="w-12 text-right text-sm font-semibold tabular-nums"
-          style={{ color: statusColor }}
+          style={{color: statusColor}}
         >
           {Math.round(activeAllocation)}%
         </span>

@@ -9,7 +9,7 @@
  *   import { useAllGoals } from '@/lib/hooks/queries/useGoals';
  */
 
-export { performanceKeys } from './performanceKeys';
+export {performanceKeys} from './performanceKeys';
 export * from './useGoals';
 export * from './useReviewCycles';
 export * from './useReviews';

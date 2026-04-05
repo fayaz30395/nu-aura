@@ -1,34 +1,29 @@
 'use client';
-import { AppLayout } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { notifications } from '@mantine/notifications';
-import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {notifications} from '@mantine/notifications';
+import {useMemo, useState} from 'react';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {apiClient} from '@/lib/api/client';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {
-  Plus,
-  Eye,
-  Clock,
-  CheckCircle2,
   AlertCircle,
-  Search,
-  Filter,
   Calendar,
+  CheckCircle2,
+  Clock,
+  Eye,
   FileText,
+  Filter,
+  Plus,
+  Search,
   TrendingUp,
   Users,
 } from 'lucide-react';
-import type {
-  PIPResponse,
-  CreatePIPRequest,
-  PIPStatus,
-  PIPCheckInRequest,
-} from '@/lib/types/grow/performance';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import type {CreatePIPRequest, PIPCheckInRequest, PIPResponse, PIPStatus,} from '@/lib/types/grow/performance';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -74,10 +69,10 @@ interface PIPFilter {
 type PIPTab = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 
 const STATUS_CONFIG: Record<PIPStatus, { label: string; color: string; bg: string; border: string }> = {
-  ACTIVE: { label: 'Active', color: 'text-accent-700', bg: 'bg-accent-100', border: 'border-accent-200' },
-  COMPLETED: { label: 'Completed', color: 'text-success-700', bg: 'bg-success-100', border: 'border-success-200' },
-  EXTENDED: { label: 'Extended', color: 'text-warning-700', bg: 'bg-warning-100', border: 'border-warning-200' },
-  TERMINATED: { label: 'Terminated', color: 'text-danger-700', bg: 'bg-danger-100', border: 'border-danger-200' },
+  ACTIVE: {label: 'Active', color: 'text-accent-700', bg: 'bg-accent-100', border: 'border-accent-200'},
+  COMPLETED: {label: 'Completed', color: 'text-success-700', bg: 'bg-success-100', border: 'border-success-200'},
+  EXTENDED: {label: 'Extended', color: 'text-warning-700', bg: 'bg-warning-100', border: 'border-warning-200'},
+  TERMINATED: {label: 'Terminated', color: 'text-danger-700', bg: 'bg-danger-100', border: 'border-danger-200'},
 };
 
 const PIP_REASONS = [
@@ -91,9 +86,9 @@ const PIP_REASONS = [
 ];
 
 const DURATION_PRESETS = [
-  { label: '30 Days', days: 30 },
-  { label: '60 Days', days: 60 },
-  { label: '90 Days', days: 90 },
+  {label: '30 Days', days: 30},
+  {label: '60 Days', days: 60},
+  {label: '90 Days', days: 90},
 ];
 
 // ─── API Functions ────────────────────────────────────────────────────────────
@@ -125,7 +120,7 @@ async function closePIP(
   status: 'COMPLETED' | 'EXTENDED' | 'TERMINATED',
   notes?: string
 ): Promise<PIPResponse> {
-  const res = await apiClient.patch<PIPResponse>(`/performance/pip/${pipId}/status`, { status, notes });
+  const res = await apiClient.patch<PIPResponse>(`/performance/pip/${pipId}/status`, {status, notes});
   return res.data;
 }
 
@@ -161,13 +156,13 @@ function formatDate(dateStr: string): string {
 
 // ─── Components ────────────────────────────────────────────────────────────────
 
-function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const {
     register,
     handleSubmit,
     reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<CreatePIPFormData>({
     resolver: zodResolver(createPIPSchema),
     defaultValues: {
@@ -198,13 +193,14 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
     const dateInput = document.querySelector('input[type="date"][value*="' + endDate + '"]') as HTMLInputElement;
     if (dateInput) {
       dateInput.value = newEndDate.toISOString().split('T')[0];
-      dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+      dateInput.dispatchEvent(new Event('change', {bubbles: true}));
     }
   };
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div
+        className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 row-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Performance Improvement Plan</h2>
@@ -363,7 +359,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               variant="primary"
               isLoading={isSubmitting}
               loadingText="Creating..."
-              leftIcon={<Plus size={16} />}
+              leftIcon={<Plus size={16}/>}
             >
               Create PIP
             </Button>
@@ -375,11 +371,11 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 }
 
 function PIPDetailModal({
-  pip,
-  open,
-  onClose,
-  onUpdated,
-}: {
+                          pip,
+                          open,
+                          onClose,
+                          onUpdated,
+                        }: {
   pip: PIPResponse | null;
   open: boolean;
   onClose: () => void;
@@ -389,7 +385,7 @@ function PIPDetailModal({
     register: registerCheckIn,
     handleSubmit: handleCheckInSubmit,
     reset: resetCheckIn,
-    formState: { errors: checkInErrors, isSubmitting: checkInSubmitting },
+    formState: {errors: checkInErrors, isSubmitting: checkInSubmitting},
   } = useForm<CheckInFormData>({
     resolver: zodResolver(checkInSchema),
     defaultValues: {
@@ -401,7 +397,7 @@ function PIPDetailModal({
   const {
     register: registerClose,
     handleSubmit: handleCloseSubmit,
-    formState: { errors: closeErrors, isSubmitting: closeSubmitting },
+    formState: {errors: closeErrors, isSubmitting: closeSubmitting},
   } = useForm<ClosePIPFormData>({
     resolver: zodResolver(closePIPSchema),
     defaultValues: {
@@ -420,7 +416,7 @@ function PIPDetailModal({
       resetCheckIn();
       onUpdated();
     },
-    onError: () => notifications.show({ title: 'Error', message: 'Failed to add check-in', color: 'red' }),
+    onError: () => notifications.show({title: 'Error', message: 'Failed to add check-in', color: 'red'}),
   });
 
   const closeMutation = useMutation({
@@ -437,7 +433,8 @@ function PIPDetailModal({
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div
+        className="bg-[var(--bg-input)] rounded-xl shadow-[var(--shadow-dropdown)] max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 row-between">
           <div>
@@ -492,7 +489,7 @@ function PIPDetailModal({
               <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                 <div
                   className="bg-accent-500 h-2 rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
+                  style={{width: `${progress}%`}}
                 />
               </div>
             </div>
@@ -509,7 +506,8 @@ function PIPDetailModal({
           {pip.goals && (
             <div>
               <p className="text-sm font-medium text-[var(--text-secondary)] mb-1.5">Goals & Objectives</p>
-              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-4 text-body-secondary">
+              <div
+                className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-4 text-body-secondary">
                 {pip.goals}
               </div>
             </div>
@@ -548,7 +546,8 @@ function PIPDetailModal({
             )}
 
             {pip.status === 'ACTIVE' && (
-              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-4 border-t border-[var(--border-main)] pt-4">
+              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))}
+                    className="space-y-4 border-t border-[var(--border-main)] pt-4">
                 <textarea
                   placeholder="Employee progress notes..."
                   rows={2}
@@ -572,7 +571,7 @@ function PIPDetailModal({
                   disabled={checkInSubmitting}
                   variant="primary"
                   className="w-full"
-                  leftIcon={<Clock size={16} />}
+                  leftIcon={<Clock size={16}/>}
                 >
                   Add Check-in
                 </Button>
@@ -582,7 +581,8 @@ function PIPDetailModal({
 
           {/* Status Actions */}
           {pip.status === 'ACTIVE' && (
-            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-[var(--border-main)] pt-4 space-y-4">
+            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))}
+                  className="border-t border-[var(--border-main)] pt-4 space-y-4">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Update Status</p>
               <select
                 {...registerClose('status')}
@@ -609,7 +609,7 @@ function PIPDetailModal({
                 disabled={closeSubmitting}
                 className="w-full px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <CheckCircle2 size={16} />
+                <CheckCircle2 size={16}/>
                 Update Status
               </button>
             </form>
@@ -620,13 +620,14 @@ function PIPDetailModal({
   );
 }
 
-function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
+function PIPCard({pip, onView}: { pip: PIPResponse; onView: () => void }) {
   const daysRemaining = calculateDaysRemaining(pip.endDate);
   const progress = calculateProgress(pip.startDate, pip.endDate);
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+    <div
+      className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
@@ -641,13 +642,13 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
 
       <div className="space-y-2 mb-4 text-body-secondary">
         <div className="flex items-center gap-2">
-          <Calendar size={14} />
+          <Calendar size={14}/>
           <span>
             {formatDate(pip.startDate)} → {formatDate(pip.endDate)}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <Users size={14} />
+          <Users size={14}/>
           <span>Manager: {pip.managerName}</span>
         </div>
       </div>
@@ -659,7 +660,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
             <span className="text-caption">{progress}%</span>
           </div>
           <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
-            <div className="bg-accent-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
+            <div className="bg-accent-500 h-2 rounded-full" style={{width: `${progress}%`}}/>
           </div>
           <p className="text-caption mt-1.5">{daysRemaining} days remaining</p>
         </div>
@@ -669,7 +670,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
         onClick={onView}
         className="w-full px-4 py-2 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/40 transition-colors flex items-center justify-center gap-2 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
-        <Eye size={14} />
+        <Eye size={14}/>
         View Details
       </button>
     </div>
@@ -699,18 +700,18 @@ export default function PIPPage() {
     };
   }, [activeTab, search, filterDepartment]);
 
-  const { data: pips = [], isLoading, error } = useQuery({
+  const {data: pips = [], isLoading, error} = useQuery({
     queryKey: ['pips', filters],
     queryFn: () => fetchPIPs(filters),
   });
 
   const handleCreateSuccess = () => {
     setCreateOpen(false);
-    queryClient.invalidateQueries({ queryKey: ['pips'] });
+    queryClient.invalidateQueries({queryKey: ['pips']});
   };
 
   const handlePIPUpdated = () => {
-    queryClient.invalidateQueries({ queryKey: ['pips'] });
+    queryClient.invalidateQueries({queryKey: ['pips']});
     setSelectedPIP(null);
   };
 
@@ -721,20 +722,21 @@ export default function PIPPage() {
       completed: pips.filter(p => p.status === 'COMPLETED').length,
       avgDuration: pips.length > 0
         ? Math.round(
-            pips.reduce((sum, p) => {
-              const start = new Date(p.startDate);
-              const end = new Date(p.endDate);
-              return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-            }, 0) / pips.length
-          )
+          pips.reduce((sum, p) => {
+            const start = new Date(p.startDate);
+            const end = new Date(p.endDate);
+            return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+          }, 0) / pips.length
+        )
         : 0,
     };
   }, [pips]);
 
   if (error) {
     return (
-      <div className="p-6 bg-danger-50 dark:bg-danger-900/20 rounded-lg border border-danger-200 dark:border-danger-800 flex items-center gap-4">
-        <AlertCircle size={20} className="text-danger-600 dark:text-danger-400" />
+      <div
+        className="p-6 bg-danger-50 dark:bg-danger-900/20 rounded-lg border border-danger-200 dark:border-danger-800 flex items-center gap-4">
+        <AlertCircle size={20} className="text-danger-600 dark:text-danger-400"/>
         <div>
           <p className="font-medium text-danger-900 dark:text-danger-200">Failed to load PIPs</p>
           <p className="text-sm text-danger-700 dark:text-danger-300">Please try again later</p>
@@ -747,131 +749,135 @@ export default function PIPPage() {
     <AppLayout>
       <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
-            <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
-          </div>
-          <PermissionGate permission={Permissions.PIP_CREATE}>
-            <Button
-              onClick={() => setCreateOpen(true)}
-              variant="primary"
-              leftIcon={<Plus size={18} />}
-            >
-              Create PIP
-            </Button>
-          </PermissionGate>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                <TrendingUp className="text-accent-600 dark:text-accent-400" size={20} />
-              </div>
-              <div>
-                <p className="text-body-muted">Active PIPs</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
-              </div>
+          {/* Header */}
+          <div className="row-between">
+            <div>
+              <h1 className="text-2xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
+              <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
             </div>
-          </div>
-          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                <CheckCircle2 className="text-success-600 dark:text-success-400" size={20} />
-              </div>
-              <div>
-                <p className="text-body-muted">Completed</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
-                <Calendar className="text-accent-800 dark:text-accent-600" size={20} />
-              </div>
-              <div>
-                <p className="text-body-muted">Avg Duration</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs & Filters */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            {(['ACTIVE', 'COMPLETED', 'CANCELLED'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === tab
-                    ? 'bg-accent-700 text-white'
-                    : 'bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
-                }`}
+            <PermissionGate permission={Permissions.PIP_CREATE}>
+              <Button
+                onClick={() => setCreateOpen(true)}
+                variant="primary"
+                leftIcon={<Plus size={18}/>}
               >
-                {tab === 'ACTIVE' && 'Active'}
-                {tab === 'COMPLETED' && 'Completed'}
-                {tab === 'CANCELLED' && 'Cancelled'}
-              </button>
-            ))}
+                Create PIP
+              </Button>
+            </PermissionGate>
           </div>
 
-          {/* Search & Filters */}
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
-              <input
-                type="text"
-                placeholder="Search by employee name..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
-              />
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                  <TrendingUp className="text-accent-600 dark:text-accent-400" size={20}/>
+                </div>
+                <div>
+                  <p className="text-body-muted">Active PIPs</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
+                </div>
+              </div>
             </div>
-            <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <Filter size={16} />
-              Filter
-            </button>
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
+                  <CheckCircle2 className="text-success-600 dark:text-success-400" size={20}/>
+                </div>
+                <div>
+                  <p className="text-body-muted">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
+                  <Calendar className="text-accent-800 dark:text-accent-600" size={20}/>
+                </div>
+                <div>
+                  <p className="text-body-muted">Avg Duration</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Tabs & Filters */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              {(['ACTIVE', 'COMPLETED', 'CANCELLED'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeTab === tab
+                      ? 'bg-accent-700 text-white'
+                      : 'bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                  }`}
+                >
+                  {tab === 'ACTIVE' && 'Active'}
+                  {tab === 'COMPLETED' && 'Completed'}
+                  {tab === 'CANCELLED' && 'Cancelled'}
+                </button>
+              ))}
+            </div>
+
+            {/* Search & Filters */}
+            <div className="flex gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16}/>
+                <input
+                  type="text"
+                  placeholder="Search by employee name..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                />
+              </div>
+              <button
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                <Filter size={16}/>
+                Filter
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
+            </div>
+          ) : pips.length === 0 ? (
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
+              <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
+              <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
+              <p className="text-[var(--text-muted)] text-sm mt-1">Create your first PIP to get started</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {pips.map(pip => (
+                <PIPCard
+                  key={pip.id}
+                  pip={pip}
+                  onView={() => setSelectedPIP(pip)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Content */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin" />
-          </div>
-        ) : pips.length === 0 ? (
-          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
-            <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
-            <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
-            <p className="text-[var(--text-muted)] text-sm mt-1">Create your first PIP to get started</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pips.map(pip => (
-              <PIPCard
-                key={pip.id}
-                pip={pip}
-                onView={() => setSelectedPIP(pip)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Modals */}
-      <CreatePIPModal open={createOpen} onClose={() => setCreateOpen(false)} onSuccess={handleCreateSuccess} />
-      <PIPDetailModal
-        pip={selectedPIP}
-        open={!!selectedPIP}
-        onClose={() => setSelectedPIP(null)}
-        onUpdated={handlePIPUpdated}
-      />
+        {/* Modals */}
+        <CreatePIPModal open={createOpen} onClose={() => setCreateOpen(false)} onSuccess={handleCreateSuccess}/>
+        <PIPDetailModal
+          pip={selectedPIP}
+          open={!!selectedPIP}
+          onClose={() => setSelectedPIP(null)}
+          onUpdated={handlePIPUpdated}
+        />
       </div>
     </AppLayout>
   );

@@ -15,7 +15,7 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -64,7 +64,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"]
+      test: [ "CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server=localhost:9092" ]
       interval: 15s
       timeout: 10s
       retries: 5

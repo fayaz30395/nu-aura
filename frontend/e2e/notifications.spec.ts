@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {LoginPage} from './pages/LoginPage';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Notifications E2E Tests
@@ -14,7 +14,7 @@ import { demoUsers } from './fixtures/testData';
  */
 
 test.describe('Notifications — Bell Icon & Dropdown', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -22,20 +22,20 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('notification bell icon is visible in the header', async ({ page }) => {
+  test('notification bell icon is visible in the header', async ({page}) => {
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
     ).first();
     const hasBell = await bellIcon.isVisible().catch(() => false);
 
     // Fallback: look for any bell-like icon in the header
-    const headerBell = page.locator('header button').filter({ has: page.locator('svg') });
+    const headerBell = page.locator('header button').filter({has: page.locator('svg')});
     const headerBellCount = await headerBell.count();
 
     expect(hasBell || headerBellCount > 0).toBe(true);
   });
 
-  test('clicking bell opens notification dropdown', async ({ page }) => {
+  test('clicking bell opens notification dropdown', async ({page}) => {
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
     ).first();
@@ -56,7 +56,7 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
     expect(hasBell || true).toBe(true);
   });
 
-  test('notification dropdown shows items or empty state', async ({ page }) => {
+  test('notification dropdown shows items or empty state', async ({page}) => {
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
     ).first();
@@ -77,7 +77,7 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
     expect(hasBell || true).toBe(true);
   });
 
-  test('notification badge shows unread count', async ({ page }) => {
+  test('notification badge shows unread count', async ({page}) => {
     // Look for a badge/count indicator on the bell
     const badge = page.locator(
       '[class*="badge"], [class*="count"], [data-testid="notification-count"]'
@@ -97,7 +97,7 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
 });
 
 test.describe('Notifications — Leave Approval Workflow', () => {
-  test('employee submits leave and manager receives notification', async ({ page }) => {
+  test('employee submits leave and manager receives notification', async ({page}) => {
     // Step 1: Employee submits a leave request
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
@@ -119,7 +119,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
       const leaveTypeSelect = page.locator('select[name*="type"], [name*="leaveType"]').first();
       const hasTypeSelect = await leaveTypeSelect.isVisible().catch(() => false);
       if (hasTypeSelect) {
-        await leaveTypeSelect.selectOption({ index: 1 });
+        await leaveTypeSelect.selectOption({index: 1});
       }
 
       // Fill dates (7 days from now)
@@ -182,7 +182,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     expect(hasBell || true).toBe(true);
   });
 
-  test('manager clicks notification and navigates to approval page', async ({ page }) => {
+  test('manager clicks notification and navigates to approval page', async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.managerEng.email, demoUsers.managerEng.password);
@@ -232,7 +232,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
     expect(hasBell || true).toBe(true);
   });
 
-  test('manager approves leave and employee gets approval notification', async ({ page }) => {
+  test('manager approves leave and employee gets approval notification', async ({page}) => {
     // Step 1: Manager navigates to team leaves and approves
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
@@ -292,7 +292,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
 });
 
 test.describe('Notifications — Mark as Read', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(demoUsers.superAdmin.email, demoUsers.superAdmin.password);
@@ -300,7 +300,7 @@ test.describe('Notifications — Mark as Read', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('can mark all notifications as read', async ({ page }) => {
+  test('can mark all notifications as read', async ({page}) => {
     const bellIcon = page.locator(
       'button[aria-label*="notification" i], button[aria-label*="bell" i], [data-testid="notification-bell"]'
     ).first();

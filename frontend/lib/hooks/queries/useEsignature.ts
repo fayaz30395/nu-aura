@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { eSignatureService } from '@/lib/services/hire/esignature.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {eSignatureService} from '@/lib/services/hire/esignature.service';
 import type {
   CreateSignatureRequestRequest,
   SignatureApprovalRequest,
@@ -45,7 +45,7 @@ export function useCreateSignatureRequest() {
     mutationFn: (data: CreateSignatureRequestRequest) =>
       eSignatureService.createSignatureRequest(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: esignKeys.all });
+      queryClient.invalidateQueries({queryKey: esignKeys.all});
     },
   });
 }
@@ -55,8 +55,8 @@ export function useSendForSignature() {
   return useMutation({
     mutationFn: (id: string) => eSignatureService.sendForSignature(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: esignKeys.request(id) });
-      queryClient.invalidateQueries({ queryKey: esignKeys.all });
+      queryClient.invalidateQueries({queryKey: esignKeys.request(id)});
+      queryClient.invalidateQueries({queryKey: esignKeys.all});
     },
   });
 }
@@ -64,10 +64,10 @@ export function useSendForSignature() {
 export function useAddSigner() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ requestId, signer }: { requestId: string; signer: SignatureApprovalRequest }) =>
+    mutationFn: ({requestId, signer}: { requestId: string; signer: SignatureApprovalRequest }) =>
       eSignatureService.addSigner(requestId, signer),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: esignKeys.approvals(data.signatureRequestId) });
+      queryClient.invalidateQueries({queryKey: esignKeys.approvals(data.signatureRequestId)});
     },
   });
 }
@@ -75,10 +75,10 @@ export function useAddSigner() {
 export function useCancelSignatureRequest() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+    mutationFn: ({id, reason}: { id: string; reason: string }) =>
       eSignatureService.cancelSignatureRequest(id, reason),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: esignKeys.request(id) });
+    onSuccess: (_, {id}) => {
+      queryClient.invalidateQueries({queryKey: esignKeys.request(id)});
     },
   });
 }

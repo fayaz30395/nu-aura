@@ -1,6 +1,11 @@
-import { apiClient } from '../../api/client';
-import { logger } from '@/lib/utils/logger';
-import { AllocationPage, AllocationSummaryItem, AllocationSummaryPage, ProjectAllocation } from '../../types/hrms/hrms-allocation';
+import {apiClient} from '../../api/client';
+import {logger} from '@/lib/utils/logger';
+import {
+  AllocationPage,
+  AllocationSummaryItem,
+  AllocationSummaryPage,
+  ProjectAllocation
+} from '../../types/hrms/hrms-allocation';
 
 /**
  * Shape returned by GET /resources/allocation-summary (backend ResourceController).
@@ -64,7 +69,7 @@ function mapToAllocationSummaryPage(
     overAllocated: entry.overAllocated,
   }));
 
-  return { content, totalElements, totalPages, size, number: page };
+  return {content, totalElements, totalPages, size, number: page};
 }
 
 export const hrmsProjectAllocationService = {
@@ -93,7 +98,7 @@ export const hrmsProjectAllocationService = {
   async listProjectAllocations(projectId: string, page = 0, size = 20): Promise<AllocationPage> {
     try {
       const response = await apiClient.get<AllocationPage>(`/projects/${projectId}/allocations`, {
-        params: { page, size },
+        params: {page, size},
       });
       return response.data;
     } catch (error) {
@@ -118,7 +123,7 @@ export const hrmsProjectAllocationService = {
     try {
       const response = await apiClient.post<ProjectAllocation>(
         `/projects/${projectId}/allocations/${allocationId}/end`,
-        endDate ? { endDate } : {}
+        endDate ? {endDate} : {}
       );
       return response.data;
     } catch (error) {
@@ -191,7 +196,7 @@ export const hrmsProjectAllocationService = {
         )
         .join('\n');
 
-      return new Blob([header + rows], { type: 'text/csv;charset=utf-8' });
+      return new Blob([header + rows], {type: 'text/csv;charset=utf-8'});
     } catch (error) {
       logger.error('Failed to export allocation summary:', error);
       throw error;

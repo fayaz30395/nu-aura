@@ -1,11 +1,11 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
-  TimeEntry,
   CreateTimeEntryRequest,
+  Page,
+  ProjectTimeSummary,
+  TimeEntry,
   TimeEntryStatus,
   TimeSummary,
-  ProjectTimeSummary,
-  Page,
 } from '../../types/hrms/time-tracking';
 
 class TimeTrackingService {
@@ -32,14 +32,14 @@ class TimeTrackingService {
   // My Entries
   async getMyEntries(page: number = 0, size: number = 20): Promise<Page<TimeEntry>> {
     const response = await apiClient.get<Page<TimeEntry>>('/time-tracking/entries/my', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
 
   async getMyEntriesForRange(startDate: string, endDate: string): Promise<TimeEntry[]> {
     const response = await apiClient.get<TimeEntry[]>('/time-tracking/entries/my/range', {
-      params: { startDate, endDate },
+      params: {startDate, endDate},
     });
     return response.data;
   }
@@ -50,10 +50,10 @@ class TimeTrackingService {
     size: number = 20,
     status?: TimeEntryStatus
   ): Promise<Page<TimeEntry>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
     if (status) params.status = status;
 
-    const response = await apiClient.get<Page<TimeEntry>>('/time-tracking/entries', { params });
+    const response = await apiClient.get<Page<TimeEntry>>('/time-tracking/entries', {params});
     return response.data;
   }
 
@@ -100,7 +100,7 @@ class TimeTrackingService {
 
   async getPendingApprovals(page: number = 0, size: number = 20): Promise<Page<TimeEntry>> {
     const response = await apiClient.get<Page<TimeEntry>>('/time-tracking/entries/pending', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -108,7 +108,7 @@ class TimeTrackingService {
   // Summary
   async getTimeSummary(startDate: string, endDate: string): Promise<TimeSummary> {
     const response = await apiClient.get<TimeSummary>('/time-tracking/summary', {
-      params: { startDate, endDate },
+      params: {startDate, endDate},
     });
     return response.data;
   }

@@ -1,4 +1,4 @@
-import { Client, Message, StompSubscription } from '@stomp/stompjs';
+import {Client, Message, StompSubscription} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 export interface WebSocketNotification {
@@ -55,36 +55,6 @@ class WebSocketService {
   private tenantId: string | null = null;
 
   /**
-   * Calculate exponential backoff delay with jitter.
-   */
-  private calculateBackoffDelay(): number {
-    const exponentialDelay = this.reconnectConfig.initialDelay *
-      Math.pow(this.reconnectConfig.backoffMultiplier, this.reconnectAttempts);
-    const cappedDelay = Math.min(exponentialDelay, this.reconnectConfig.maxDelay);
-    // Add jitter: ±10% to prevent thundering herd
-    const jitter = cappedDelay * 0.1 * (Math.random() * 2 - 1);
-    return Math.max(100, cappedDelay + jitter);
-  }
-
-  /**
-   * Update connection status and notify listeners.
-   */
-  private setStatus(status: WebSocketStatus): void {
-    if (this.status !== status) {
-      this.status = status;
-      this.statusChangeHandlers.forEach(handler => {
-        try {
-          handler(status);
-        } catch (error) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('[WebSocket] Status change handler error:', error);
-          }
-        }
-      });
-    }
-  }
-
-  /**
    * Add a status change listener.
    */
   addStatusChangeListener(handler: (status: WebSocketStatus) => void): () => void {
@@ -107,7 +77,7 @@ class WebSocketService {
 
     this.userId = userId;
     this.tenantId = tenantId;
-    this.credentials = { userId, tenantId, token };
+    this.credentials = {userId, tenantId, token};
     this.setStatus(WebSocketStatus.CONNECTING);
 
     return new Promise((resolve, reject) => {
@@ -118,7 +88,7 @@ class WebSocketService {
 
       this.client = new Client({
         webSocketFactory: () => new SockJS(wsUrl),
-        connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+        connectHeaders: token ? {Authorization: `Bearer ${token}`} : {},
         debug: (str) => {
           if (process.env.NODE_ENV === 'development') {
             console.log('[WebSocket]', str);
@@ -159,6 +129,113 @@ class WebSocketService {
 
       this.client.activate();
     });
+  }
+
+  /**
+   * Add a notification handler.
+   */
+  addHandler(handler: NotificationHandler): () => void {
+    this.handlers.add(handler);
+    return () => this.handlers.delete(handler);
+  }
+
+  /**
+   * Remove a notification handler.
+   */
+  removeHandler(handler: NotificationHandler): void {
+    this.handlers.delete(handler);
+  }
+
+  /**
+   * Send a message to a destination.
+   */
+  send(destination: string, body: unknown): void {
+    if (!this.client?.connected) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[WebSocket] Not connected, cannot send message');
+      }
+      return;
+    }
+
+    this.client.publish({
+      destination,
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * Get current connection status.
+   */
+  getStatus(): WebSocketStatus {
+    return this.status;
+  }
+
+  /**
+   * Disconnect from the WebSocket server.
+   */
+  disconnect(): void {
+    // Clear reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Remove visibility change listener
+    this.removeVisibilityChangeListener();
+
+    // Clean up STOMP client
+    if (this.client) {
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
+      this.subscriptions.clear();
+      this.client.deactivate();
+      this.client = null;
+    }
+
+    this.handlers.clear();
+    this.userId = null;
+    this.tenantId = null;
+    this.credentials = null;
+    this.reconnectAttempts = 0;
+    this.setStatus(WebSocketStatus.DISCONNECTED);
+
+    this.logDebug('Disconnected from WebSocket');
+  }
+
+  /**
+   * Check if connected.
+   */
+  isConnected(): boolean {
+    return this.client?.connected ?? false;
+  }
+
+  /**
+   * Calculate exponential backoff delay with jitter.
+   */
+  private calculateBackoffDelay(): number {
+    const exponentialDelay = this.reconnectConfig.initialDelay *
+      Math.pow(this.reconnectConfig.backoffMultiplier, this.reconnectAttempts);
+    const cappedDelay = Math.min(exponentialDelay, this.reconnectConfig.maxDelay);
+    // Add jitter: ±10% to prevent thundering herd
+    const jitter = cappedDelay * 0.1 * (Math.random() * 2 - 1);
+    return Math.max(100, cappedDelay + jitter);
+  }
+
+  /**
+   * Update connection status and notify listeners.
+   */
+  private setStatus(status: WebSocketStatus): void {
+    if (this.status !== status) {
+      this.status = status;
+      this.statusChangeHandlers.forEach(handler => {
+        try {
+          handler(status);
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[WebSocket] Status change handler error:', error);
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -228,7 +305,7 @@ class WebSocketService {
 
     this.visibilityChangeListener = () => {
       if (!document.hidden && (this.status === WebSocketStatus.DISCONNECTED ||
-          this.status === WebSocketStatus.FAILED)) {
+        this.status === WebSocketStatus.FAILED)) {
         this.logInfo('Tab became visible. Attempting to reconnect.');
         // R2-016 FIX: Do NOT reset reconnectAttempts here. Resetting on every
         // visibility-change event (i.e. every time the user switches tabs) was
@@ -347,83 +424,6 @@ class WebSocketService {
     if (process.env.NODE_ENV === 'development') {
       console.error(`[WebSocket Error] ${message}`, error || '');
     }
-  }
-
-  /**
-   * Add a notification handler.
-   */
-  addHandler(handler: NotificationHandler): () => void {
-    this.handlers.add(handler);
-    return () => this.handlers.delete(handler);
-  }
-
-  /**
-   * Remove a notification handler.
-   */
-  removeHandler(handler: NotificationHandler): void {
-    this.handlers.delete(handler);
-  }
-
-  /**
-   * Send a message to a destination.
-   */
-  send(destination: string, body: unknown): void {
-    if (!this.client?.connected) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[WebSocket] Not connected, cannot send message');
-      }
-      return;
-    }
-
-    this.client.publish({
-      destination,
-      body: JSON.stringify(body),
-    });
-  }
-
-  /**
-   * Get current connection status.
-   */
-  getStatus(): WebSocketStatus {
-    return this.status;
-  }
-
-  /**
-   * Disconnect from the WebSocket server.
-   */
-  disconnect(): void {
-    // Clear reconnect timer
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
-    }
-
-    // Remove visibility change listener
-    this.removeVisibilityChangeListener();
-
-    // Clean up STOMP client
-    if (this.client) {
-      this.subscriptions.forEach((sub) => sub.unsubscribe());
-      this.subscriptions.clear();
-      this.client.deactivate();
-      this.client = null;
-    }
-
-    this.handlers.clear();
-    this.userId = null;
-    this.tenantId = null;
-    this.credentials = null;
-    this.reconnectAttempts = 0;
-    this.setStatus(WebSocketStatus.DISCONNECTED);
-
-    this.logDebug('Disconnected from WebSocket');
-  }
-
-  /**
-   * Check if connected.
-   */
-  isConnected(): boolean {
-    return this.client?.connected ?? false;
   }
 }
 

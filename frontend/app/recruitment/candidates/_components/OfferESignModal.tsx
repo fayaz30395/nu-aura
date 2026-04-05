@@ -1,34 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { notifications } from '@mantine/notifications';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {notifications} from '@mantine/notifications';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {
-  X,
-  FileSignature,
-  Send,
-  CheckCircle,
-  XCircle,
-  Clock,
   AlertCircle,
-  Eye,
-  RefreshCw,
+  CheckCircle,
+  Clock,
   ExternalLink,
+  Eye,
+  FileSignature,
+  RefreshCw,
+  Send,
+  X,
+  XCircle,
 } from 'lucide-react';
 import {
+  useCancelSignatureRequest,
   useCreateSignatureRequest,
   useSendForSignature,
-  useSignatureRequest,
   useSignatureApprovals,
-  useCancelSignatureRequest,
+  useSignatureRequest,
 } from '@/lib/hooks/queries/useEsignature';
-import type { Candidate } from '@/lib/types/hire/recruitment';
-import type { SignatureRequestResponse, SignatureStatus, ApprovalStatus } from '@/lib/types/hire/esignature';
+import type {Candidate} from '@/lib/types/hire/recruitment';
+import type {ApprovalStatus, SignatureStatus} from '@/lib/types/hire/esignature';
 
 // ==================== Zod Schema ====================
 
@@ -43,38 +43,38 @@ type CreateESignFormData = z.infer<typeof createESignSchema>;
 
 // ==================== Status helpers ====================
 
-function SignatureStatusBadge({ status }: { status: SignatureStatus }) {
+function SignatureStatusBadge({status}: { status: SignatureStatus }) {
   const map: Record<SignatureStatus, { label: string; variant: string; Icon: React.ElementType }> = {
-    DRAFT: { label: 'Draft', variant: 'info', Icon: FileSignature },
-    PENDING: { label: 'Pending', variant: 'warning', Icon: Clock },
-    IN_PROGRESS: { label: 'In Progress', variant: 'warning', Icon: Clock },
-    COMPLETED: { label: 'Signed', variant: 'success', Icon: CheckCircle },
-    DECLINED: { label: 'Declined', variant: 'danger', Icon: XCircle },
-    EXPIRED: { label: 'Expired', variant: 'danger', Icon: AlertCircle },
-    CANCELLED: { label: 'Cancelled', variant: 'danger', Icon: XCircle },
+    DRAFT: {label: 'Draft', variant: 'info', Icon: FileSignature},
+    PENDING: {label: 'Pending', variant: 'warning', Icon: Clock},
+    IN_PROGRESS: {label: 'In Progress', variant: 'warning', Icon: Clock},
+    COMPLETED: {label: 'Signed', variant: 'success', Icon: CheckCircle},
+    DECLINED: {label: 'Declined', variant: 'danger', Icon: XCircle},
+    EXPIRED: {label: 'Expired', variant: 'danger', Icon: AlertCircle},
+    CANCELLED: {label: 'Cancelled', variant: 'danger', Icon: XCircle},
   };
-  const { label, variant, Icon } = map[status] ?? { label: status, variant: 'info', Icon: Clock };
+  const {label, variant, Icon} = map[status] ?? {label: status, variant: 'info', Icon: Clock};
   return (
     <Badge
       variant={variant as 'success' | 'danger' | 'warning' | 'info'}
       className="flex items-center gap-1 text-xs"
     >
-      <Icon className="h-3 w-3" />
+      <Icon className="h-3 w-3"/>
       {label}
     </Badge>
   );
 }
 
-function ApprovalStatusBadge({ status }: { status: ApprovalStatus }) {
+function ApprovalStatusBadge({status}: { status: ApprovalStatus }) {
   const map: Record<ApprovalStatus, { label: string; variant: string }> = {
-    PENDING: { label: 'Pending', variant: 'info' },
-    SENT: { label: 'Sent', variant: 'info' },
-    VIEWED: { label: 'Viewed', variant: 'warning' },
-    SIGNED: { label: 'Signed', variant: 'success' },
-    DECLINED: { label: 'Declined', variant: 'danger' },
-    EXPIRED: { label: 'Expired', variant: 'danger' },
+    PENDING: {label: 'Pending', variant: 'info'},
+    SENT: {label: 'Sent', variant: 'info'},
+    VIEWED: {label: 'Viewed', variant: 'warning'},
+    SIGNED: {label: 'Signed', variant: 'success'},
+    DECLINED: {label: 'Declined', variant: 'danger'},
+    EXPIRED: {label: 'Expired', variant: 'danger'},
   };
-  const { label, variant } = map[status] ?? { label: status, variant: 'info' };
+  const {label, variant} = map[status] ?? {label: status, variant: 'info'};
   return (
     <Badge variant={variant as 'success' | 'danger' | 'warning' | 'info'} className="text-xs">
       {label}
@@ -90,13 +90,13 @@ interface StatusTrackerProps {
   isCancelling: boolean;
 }
 
-function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTrackerProps) {
-  const { data: req, isLoading: reqLoading, refetch } = useSignatureRequest(signatureRequestId, true);
-  const { data: approvals = [], isLoading: appLoading } = useSignatureApprovals(signatureRequestId, true);
+function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrackerProps) {
+  const {data: req, isLoading: reqLoading, refetch} = useSignatureRequest(signatureRequestId, true);
+  const {data: approvals = [], isLoading: appLoading} = useSignatureApprovals(signatureRequestId, true);
   const sendMutation = useSendForSignature();
 
   if (reqLoading || appLoading) {
-    return <Skeleton className="h-32 w-full rounded-xl" />;
+    return <Skeleton className="h-32 w-full rounded-xl"/>;
   }
 
   if (!req) return null;
@@ -107,9 +107,9 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
   const handleSend = async () => {
     try {
       await sendMutation.mutateAsync(signatureRequestId);
-      notifications.show({ title: 'Sent', message: 'Offer sent for signature', color: 'green' });
+      notifications.show({title: 'Sent', message: 'Offer sent for signature', color: 'green'});
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to send for signature', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to send for signature', color: 'red'});
     }
   };
 
@@ -119,7 +119,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
       <div className="p-4 bg-[var(--bg-secondary)] rounded-xl space-y-4">
         <div className="row-between">
           <p className="text-sm font-medium text-[var(--text-primary)]">{req.title}</p>
-          <SignatureStatusBadge status={req.status} />
+          <SignatureStatusBadge status={req.status}/>
         </div>
         <div className="grid grid-cols-2 gap-2 text-caption">
           {req.requiredSignatures != null && (
@@ -142,7 +142,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 cursor-pointer"
           >
-            <ExternalLink className="h-3 w-3" />
+            <ExternalLink className="h-3 w-3"/>
             View Document
           </a>
         )}
@@ -183,7 +183,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
                     </p>
                   )}
                 </div>
-                <ApprovalStatusBadge status={approval.status} />
+                <ApprovalStatusBadge status={approval.status}/>
               </div>
             ))}
           </div>
@@ -198,7 +198,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
           onClick={() => refetch()}
           className="flex items-center gap-1.5 text-sm"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
+          <RefreshCw className="h-3.5 w-3.5"/>
           Refresh
         </Button>
         {canSend && (
@@ -208,7 +208,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
             disabled={sendMutation.isPending}
             className="flex items-center gap-1.5 text-sm"
           >
-            <Send className="h-3.5 w-3.5" />
+            <Send className="h-3.5 w-3.5"/>
             {sendMutation.isPending ? 'Sending…' : 'Send for Signature'}
           </Button>
         )}
@@ -220,7 +220,7 @@ function StatusTracker({ signatureRequestId, onCancel, isCancelling }: StatusTra
             disabled={isCancelling}
             className="flex items-center gap-1.5 text-sm text-danger-600 border-danger-300 hover:bg-danger-50"
           >
-            <XCircle className="h-3.5 w-3.5" />
+            <XCircle className="h-3.5 w-3.5"/>
             {isCancelling ? 'Cancelling…' : 'Cancel Request'}
           </Button>
         )}
@@ -240,11 +240,11 @@ interface OfferESignModalProps {
 }
 
 export function OfferESignModal({
-  open,
-  candidate,
-  existingRequestId,
-  onClose,
-}: OfferESignModalProps) {
+                                  open,
+                                  candidate,
+                                  existingRequestId,
+                                  onClose,
+                                }: OfferESignModalProps) {
   const [createdRequestId, setCreatedRequestId] = useState<string | null>(
     existingRequestId ?? null
   );
@@ -255,7 +255,7 @@ export function OfferESignModal({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<CreateESignFormData>({
     resolver: zodResolver(createESignSchema),
     defaultValues: {
@@ -284,7 +284,7 @@ export function OfferESignModal({
         signatureOrder: true,
         expiresAt: expiresAt.toISOString(),
         reminderFrequencyDays: data.reminderFrequencyDays,
-        metadata: JSON.stringify({ candidateId: candidate.id }),
+        metadata: JSON.stringify({candidateId: candidate.id}),
         signers: [
           {
             signerEmail: data.signerEmail,
@@ -313,23 +313,24 @@ export function OfferESignModal({
 
   const handleCancel = async (id: string) => {
     try {
-      await cancelMutation.mutateAsync({ id, reason: 'Cancelled by HR' });
-      notifications.show({ title: 'Cancelled', message: 'Signature request cancelled.', color: 'orange' });
+      await cancelMutation.mutateAsync({id, reason: 'Cancelled by HR'});
+      notifications.show({title: 'Cancelled', message: 'Signature request cancelled.', color: 'orange'});
       setCreatedRequestId(null);
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to cancel request.', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to cancel request.', color: 'red'});
     }
   };
 
   return (
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-      <div className="bg-[var(--bg-card)] rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
+      <div
+        className="bg-[var(--bg-card)] rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-elevated)]">
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                <FileSignature className="h-5 w-5 text-accent-500" />
+                <FileSignature className="h-5 w-5 text-accent-500"/>
                 Offer Letter E-Sign
               </h2>
               <p className="text-body-muted mt-0.5">{candidate.fullName}</p>
@@ -339,7 +340,7 @@ export function OfferESignModal({
               aria-label="Close modal"
               className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5"/>
             </button>
           </div>
 
@@ -356,7 +357,7 @@ export function OfferESignModal({
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Candidate Email *
                 </label>
-                <input type="email" {...register('signerEmail')} className={inputCls} />
+                <input type="email" {...register('signerEmail')} className={inputCls}/>
                 {errors.signerEmail && (
                   <p className="text-xs text-danger-500 mt-1">{errors.signerEmail.message}</p>
                 )}
@@ -365,7 +366,8 @@ export function OfferESignModal({
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Document URL
-                  <span className="text-[var(--text-muted)] ml-1 font-normal">(optional — PDF link to offer letter)</span>
+                  <span
+                    className="text-[var(--text-muted)] ml-1 font-normal">(optional — PDF link to offer letter)</span>
                 </label>
                 <input
                   type="url"
@@ -385,7 +387,7 @@ export function OfferESignModal({
                   </label>
                   <input
                     type="number"
-                    {...register('expiresInDays', { valueAsNumber: true })}
+                    {...register('expiresInDays', {valueAsNumber: true})}
                     min={1}
                     max={90}
                     className={inputCls}
@@ -400,7 +402,7 @@ export function OfferESignModal({
                   </label>
                   <input
                     type="number"
-                    {...register('reminderFrequencyDays', { valueAsNumber: true })}
+                    {...register('reminderFrequencyDays', {valueAsNumber: true})}
                     min={1}
                     max={30}
                     className={inputCls}
@@ -408,8 +410,9 @@ export function OfferESignModal({
                 </div>
               </div>
 
-              <div className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
-                <Eye className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <div
+                className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
+                <Eye className="h-4 w-4 flex-shrink-0 mt-0.5"/>
                 <span>
                   The candidate will receive a secure, tokenized link by email to review and sign
                   the offer letter. You can track signature status here in real time.
@@ -425,7 +428,7 @@ export function OfferESignModal({
                     'Creating…'
                   ) : (
                     <>
-                      <FileSignature className="h-4 w-4 mr-1.5" />
+                      <FileSignature className="h-4 w-4 mr-1.5"/>
                       Create E-Sign Request
                     </>
                   )}

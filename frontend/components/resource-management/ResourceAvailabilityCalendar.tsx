@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import {cn} from '@/lib/utils';
 import {
-  EmployeeAvailability,
-  ResourceAvailabilityDay,
+  AVAILABILITY_COLORS,
   AvailabilityStatus,
+  EmployeeAvailability,
   getAvailabilityStatusColor,
   getAvailabilityStatusLabel,
-  AVAILABILITY_COLORS,
+  ResourceAvailabilityDay,
 } from '@/lib/types/hrms/resource-management';
-import { format, parseISO, isWeekend, isSameDay } from 'date-fns';
-import { User } from 'lucide-react';
+import {format, isSameDay, isWeekend, parseISO} from 'date-fns';
+import {User} from 'lucide-react';
 
 interface ResourceAvailabilityCalendarProps {
   employees: EmployeeAvailability[];
@@ -28,13 +28,13 @@ interface ResourceAvailabilityCalendarProps {
  * Rows = employees, Columns = days
  */
 export function ResourceAvailabilityCalendar({
-  employees,
-  startDate,
-  endDate,
-  onDayClick,
-  onEmployeeClick,
-  className,
-}: ResourceAvailabilityCalendarProps) {
+                                               employees,
+                                               startDate,
+                                               endDate,
+                                               onDayClick,
+                                               onEmployeeClick,
+                                               className,
+                                             }: ResourceAvailabilityCalendarProps) {
   // Generate array of dates between start and end
   const dates = useMemo(() => {
     const result: Date[] = [];
@@ -50,7 +50,8 @@ export function ResourceAvailabilityCalendar({
 
   if (employees.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
+      <div
+        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
         <p className="text-surface-500 dark:text-surface-400">No employees to display</p>
       </div>
     );
@@ -62,54 +63,55 @@ export function ResourceAvailabilityCalendar({
         <table className="min-w-full border-separate border-spacing-0">
           {/* Header with dates */}
           <thead>
-            <tr>
-              <th className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
-                Employee
-              </th>
-              {dates.map((date) => {
-                const isToday = isSameDay(date, new Date());
-                const weekend = isWeekend(date);
-                return (
-                  <th
-                    key={date.toISOString()}
-                    className={cn(
-                      'min-w-[40px] px-1 py-2 text-center text-xs',
-                      weekend
-                        ? 'bg-surface-50 text-surface-400 dark:bg-surface-800/50'
-                        : 'text-surface-600 dark:text-surface-400',
-                      isToday && 'bg-accent-50 dark:bg-accent-900/20'
-                    )}
-                  >
-                    <div className="flex flex-col items-center">
+          <tr>
+            <th
+              className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
+              Employee
+            </th>
+            {dates.map((date) => {
+              const isToday = isSameDay(date, new Date());
+              const weekend = isWeekend(date);
+              return (
+                <th
+                  key={date.toISOString()}
+                  className={cn(
+                    'min-w-[40px] px-1 py-2 text-center text-xs',
+                    weekend
+                      ? 'bg-surface-50 text-surface-400 dark:bg-surface-800/50'
+                      : 'text-surface-600 dark:text-surface-400',
+                    isToday && 'bg-accent-50 dark:bg-accent-900/20'
+                  )}
+                >
+                  <div className="flex flex-col items-center">
                       <span className="text-xs uppercase">
                         {format(date, 'EEE')}
                       </span>
-                      <span
-                        className={cn(
-                          'mt-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
-                          isToday && 'bg-accent-700 text-white'
-                        )}
-                      >
+                    <span
+                      className={cn(
+                        'mt-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
+                        isToday && 'bg-accent-700 text-white'
+                      )}
+                    >
                         {format(date, 'd')}
                       </span>
-                    </div>
-                  </th>
-                );
-              })}
-            </tr>
+                  </div>
+                </th>
+              );
+            })}
+          </tr>
           </thead>
 
           {/* Body with employees */}
           <tbody>
-            {employees.map((employee) => (
-              <EmployeeRow
-                key={employee.employeeId}
-                employee={employee}
-                dates={dates}
-                onDayClick={onDayClick}
-                onEmployeeClick={onEmployeeClick}
-              />
-            ))}
+          {employees.map((employee) => (
+            <EmployeeRow
+              key={employee.employeeId}
+              employee={employee}
+              dates={dates}
+              onDayClick={onDayClick}
+              onEmployeeClick={onEmployeeClick}
+            />
+          ))}
           </tbody>
         </table>
       </div>
@@ -120,7 +122,7 @@ export function ResourceAvailabilityCalendar({
           <div key={status} className="flex items-center gap-2 text-xs">
             <div
               className="h-4 w-4 rounded"
-              style={{ backgroundColor: color }}
+              style={{backgroundColor: color}}
             />
             <span className="text-surface-600 dark:text-surface-400">
               {getAvailabilityStatusLabel(status as AvailabilityStatus)}
@@ -136,11 +138,11 @@ export function ResourceAvailabilityCalendar({
  * Single employee row in the calendar
  */
 function EmployeeRow({
-  employee,
-  dates,
-  onDayClick,
-  onEmployeeClick,
-}: {
+                       employee,
+                       dates,
+                       onDayClick,
+                       onEmployeeClick,
+                     }: {
   employee: EmployeeAvailability;
   dates: Date[];
   onDayClick?: (employeeId: string, date: string) => void;
@@ -177,8 +179,9 @@ function EmployeeRow({
               unoptimized
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
-              <User className="h-4 w-4" />
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+              <User className="h-4 w-4"/>
             </div>
           )}
           <div className="min-w-0">
@@ -216,11 +219,11 @@ function EmployeeRow({
  * Single day cell showing availability status
  */
 function AvailabilityCell({
-  date: _date,
-  availability,
-  isWeekend,
-  onClick,
-}: {
+                            date: _date,
+                            availability,
+                            isWeekend,
+                            onClick,
+                          }: {
   date: string;
   availability?: ResourceAvailabilityDay;
   isWeekend: boolean;
@@ -277,14 +280,14 @@ function AvailabilityCell({
       >
         {/* Show capacity % if partially available */}
         {status === 'PARTIAL' && (
-          <span className="text-xs" style={{ color }}>
+          <span className="text-xs" style={{color}}>
             {Math.round(capacity)}
           </span>
         )}
 
         {/* Show indicator for leave */}
         {(status === 'ON_LEAVE') && (
-          <span style={{ color }}>L</span>
+          <span style={{color}}>L</span>
         )}
 
         {/* Show indicator for holiday */}

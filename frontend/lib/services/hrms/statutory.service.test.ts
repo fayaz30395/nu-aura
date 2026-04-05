@@ -3,7 +3,18 @@
  * Run with: npx vitest run lib/services/statutory.service.test.ts
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {statutoryService} from './statutory.service';
+import {apiClient} from '@/lib/api/client';
+import {
+  EmployeeESIRecord,
+  EmployeePFRecord,
+  ESIConfig,
+  MonthlyStatutoryContribution,
+  PFStatus,
+  ProfessionalTaxSlab,
+  ProvidentFundConfig,
+} from '@/lib/types/hrms/statutory';
 
 vi.mock('@/lib/api/client', () => ({
   apiClient: {
@@ -14,18 +25,6 @@ vi.mock('@/lib/api/client', () => ({
     delete: vi.fn(),
   },
 }));
-
-import { statutoryService } from './statutory.service';
-import { apiClient } from '@/lib/api/client';
-import {
-  ProvidentFundConfig,
-  ESIConfig,
-  ProfessionalTaxSlab,
-  EmployeePFRecord,
-  EmployeeESIRecord,
-  MonthlyStatutoryContribution,
-  PFStatus,
-} from '@/lib/types/hrms/statutory';
 
 const mockedApiClient = apiClient as {
   get: ReturnType<typeof vi.fn>;
@@ -55,7 +54,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockConfig });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockConfig});
 
       const result = await statutoryService.createPFConfig({
         effectiveFrom: '2024-01-01',
@@ -102,7 +101,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockConfigs });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockConfigs});
 
       const result = await statutoryService.getActivePFConfigs();
 
@@ -112,7 +111,7 @@ describe('StatutoryService', () => {
     });
 
     it('should handle empty PF configs', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await statutoryService.getActivePFConfigs();
 
@@ -143,7 +142,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockRecord });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockRecord});
 
       const result = await statutoryService.enrollEmployeePF({
         employeeId: 'emp-1',
@@ -185,7 +184,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockRecord });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockRecord});
 
       const result = await statutoryService.getEmployeePFRecord('emp-1');
 
@@ -217,7 +216,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockConfig });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockConfig});
 
       const result = await statutoryService.createESIConfig({
         effectiveFrom: '2024-01-01',
@@ -262,7 +261,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockConfigs });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockConfigs});
 
       const result = await statutoryService.getActiveESIConfigs();
 
@@ -271,7 +270,7 @@ describe('StatutoryService', () => {
     });
 
     it('should handle empty ESI configs', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await statutoryService.getActiveESIConfigs();
 
@@ -292,7 +291,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockRecord });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockRecord});
 
       const result = await statutoryService.enrollEmployeeESI({
         employeeId: 'emp-1',
@@ -334,7 +333,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockRecord });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockRecord});
 
       const result = await statutoryService.getEmployeeESIRecord('emp-1');
 
@@ -369,7 +368,7 @@ describe('StatutoryService', () => {
         updatedAt: '2024-01-01T00:00:00Z',
       };
 
-      mockedApiClient.post.mockResolvedValueOnce({ data: mockSlab });
+      mockedApiClient.post.mockResolvedValueOnce({data: mockSlab});
 
       const result = await statutoryService.createPTSlab({
         stateCode: 'MH',
@@ -435,7 +434,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockSlabs });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockSlabs});
 
       const result = await statutoryService.getPTSlabsByState('MH');
 
@@ -445,7 +444,7 @@ describe('StatutoryService', () => {
     });
 
     it('should handle empty PT slabs for state', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await statutoryService.getPTSlabsByState('XX');
 
@@ -468,7 +467,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockSlabs });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockSlabs});
 
       const result = await statutoryService.getPTSlabsByState('KA');
 
@@ -514,7 +513,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockContributions });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockContributions});
 
       const result = await statutoryService.getMonthlyContributions(1, 2024);
 
@@ -524,7 +523,7 @@ describe('StatutoryService', () => {
     });
 
     it('should handle empty monthly contributions', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await statutoryService.getMonthlyContributions(2, 2024);
 
@@ -541,7 +540,7 @@ describe('StatutoryService', () => {
     });
 
     it('should construct correct URL with month and year', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       await statutoryService.getMonthlyContributions(12, 2023);
 
@@ -596,7 +595,7 @@ describe('StatutoryService', () => {
         },
       ];
 
-      mockedApiClient.get.mockResolvedValueOnce({ data: mockContributions });
+      mockedApiClient.get.mockResolvedValueOnce({data: mockContributions});
 
       const result = await statutoryService.getEmployeeContributions('emp-1');
 
@@ -606,7 +605,7 @@ describe('StatutoryService', () => {
     });
 
     it('should handle empty employee contributions', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       const result = await statutoryService.getEmployeeContributions('emp-999');
 
@@ -623,7 +622,7 @@ describe('StatutoryService', () => {
     });
 
     it('should construct correct URL with employee ID', async () => {
-      mockedApiClient.get.mockResolvedValueOnce({ data: [] });
+      mockedApiClient.get.mockResolvedValueOnce({data: []});
 
       await statutoryService.getEmployeeContributions('emp-123');
 

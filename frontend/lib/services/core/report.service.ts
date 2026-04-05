@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 
 export interface ReportRequest {
   startDate?: string;
@@ -23,6 +23,33 @@ export type ReportType =
   | 'performance';
 
 class ReportService {
+  async downloadEmployeeReport(request: ReportRequest): Promise<void> {
+    await this.downloadReport('employee-directory', request, 'employee-directory');
+  }
+
+  async downloadAttendanceReport(request: ReportRequest): Promise<void> {
+    if (!request.startDate || !request.endDate) {
+      throw new Error('Start date and end date are required for attendance report');
+    }
+    await this.downloadReport('attendance', request, 'attendance-report');
+  }
+
+  async downloadDepartmentReport(request: ReportRequest): Promise<void> {
+    await this.downloadReport('department-headcount', request, 'department-headcount');
+  }
+
+  async downloadLeaveReport(request: ReportRequest): Promise<void> {
+    await this.downloadReport('leave', request, 'leave-report');
+  }
+
+  async downloadPayrollReport(request: ReportRequest): Promise<void> {
+    await this.downloadReport('payroll', request, 'payroll-report');
+  }
+
+  async downloadPerformanceReport(request: ReportRequest): Promise<void> {
+    await this.downloadReport('performance', request, 'performance-report');
+  }
+
   private async downloadReport(endpoint: string, request: ReportRequest, filename: string): Promise<void> {
     try {
       const response = await apiClient.post<Blob>(
@@ -75,33 +102,6 @@ class ReportService {
       default:
         return 'xlsx';
     }
-  }
-
-  async downloadEmployeeReport(request: ReportRequest): Promise<void> {
-    await this.downloadReport('employee-directory', request, 'employee-directory');
-  }
-
-  async downloadAttendanceReport(request: ReportRequest): Promise<void> {
-    if (!request.startDate || !request.endDate) {
-      throw new Error('Start date and end date are required for attendance report');
-    }
-    await this.downloadReport('attendance', request, 'attendance-report');
-  }
-
-  async downloadDepartmentReport(request: ReportRequest): Promise<void> {
-    await this.downloadReport('department-headcount', request, 'department-headcount');
-  }
-
-  async downloadLeaveReport(request: ReportRequest): Promise<void> {
-    await this.downloadReport('leave', request, 'leave-report');
-  }
-
-  async downloadPayrollReport(request: ReportRequest): Promise<void> {
-    await this.downloadReport('payroll', request, 'payroll-report');
-  }
-
-  async downloadPerformanceReport(request: ReportRequest): Promise<void> {
-    await this.downloadReport('performance', request, 'performance-report');
   }
 }
 

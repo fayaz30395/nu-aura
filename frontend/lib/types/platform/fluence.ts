@@ -407,3 +407,45 @@ export interface SavedSearch {
   visibility?: string;
   createdAt: string;
 }
+
+// ─── Wiki Page Tree Types ─────────────────────────────────────────────────
+
+export interface WikiPageTreeNode {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+  isPinned: boolean;
+  viewCount: number;
+  parentPageId?: string;
+  children: WikiPageTreeNode[];
+}
+
+export interface WikiPageBreadcrumb {
+  id: string;
+  title: string;
+  slug: string;
+}
+
+// ─── Space Member Types ───────────────────────────────────────────────────────
+
+export type SpaceMemberRole = 'ADMIN' | 'EDITOR' | 'VIEWER';
+
+export interface SpaceMember {
+  id: string;
+  spaceId: string;
+  userId: string;
+  userName?: string;
+  role: SpaceMemberRole;
+  addedBy?: string;
+  addedAt?: string;
+}
+
+export interface AddSpaceMemberRequest {
+  userId: string;
+  role: SpaceMemberRole;
+}
+
+export interface UpdateSpaceMemberRoleRequest {
+  role: SpaceMemberRole;
+}

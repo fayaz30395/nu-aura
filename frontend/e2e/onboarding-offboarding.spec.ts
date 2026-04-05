@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { loginAs, switchUser } from './fixtures/helpers';
-import { demoUsers } from './fixtures/testData';
+import {expect, test} from '@playwright/test';
+import {loginAs} from './fixtures/helpers';
+import {demoUsers} from './fixtures/testData';
 
 /**
  * Onboarding & Offboarding E2E Tests
@@ -15,23 +15,23 @@ import { demoUsers } from './fixtures/testData';
 // ─── ONBOARDING ────────────────────────────────────────────────────────────────
 
 test.describe('Onboarding Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/onboarding');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display onboarding page with heading', async ({ page }) => {
+  test('should display onboarding page with heading', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
   });
 
-  test('should display onboarding list or empty state', async ({ page }) => {
+  test('should display onboarding list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasTable = await page
@@ -48,7 +48,7 @@ test.describe('Onboarding Page', () => {
     expect(hasTable || hasEmpty).toBe(true);
   });
 
-  test('should show initiate onboarding button for HR', async ({ page }) => {
+  test('should show initiate onboarding button for HR', async ({page}) => {
     const initiateBtn = page
       .locator(
         'button:has-text("Initiate"), button:has-text("New"), button:has-text("Create"), button:has-text("Add"), button:has-text("Start Onboarding")'
@@ -62,7 +62,7 @@ test.describe('Onboarding Page', () => {
 });
 
 test.describe('Onboarding - HR Admin Initiates', () => {
-  test('should initiate onboarding as HR Admin', async ({ page }) => {
+  test('should initiate onboarding as HR Admin', async ({page}) => {
     // Log in as HR Manager (Jagadeesh)
     await loginAs(page, demoUsers.hrManager.email);
 
@@ -94,7 +94,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
     }
   });
 
-  test('should display onboarding form fields', async ({ page }) => {
+  test('should display onboarding form fields', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding/new');
@@ -121,7 +121,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
     expect(hasNameField || hasEmailField || hasDeptField).toBe(true);
   });
 
-  test('should validate required fields on onboarding form', async ({ page }) => {
+  test('should validate required fields on onboarding form', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding/new');
@@ -145,7 +145,7 @@ test.describe('Onboarding - HR Admin Initiates', () => {
 });
 
 test.describe('Onboarding - Department Head Approval', () => {
-  test('should show pending onboarding approvals for department head', async ({ page }) => {
+  test('should show pending onboarding approvals for department head', async ({page}) => {
     // Log in as Engineering Manager (Sumit)
     await loginAs(page, demoUsers.managerEng.email);
 
@@ -168,7 +168,7 @@ test.describe('Onboarding - Department Head Approval', () => {
     ).not.toBeVisible();
   });
 
-  test('should display approve/reject buttons for pending onboarding', async ({ page }) => {
+  test('should display approve/reject buttons for pending onboarding', async ({page}) => {
     await loginAs(page, demoUsers.managerEng.email);
 
     await page.goto('/onboarding');
@@ -194,7 +194,7 @@ test.describe('Onboarding - Department Head Approval', () => {
 });
 
 test.describe('Onboarding - Checklist & Tasks', () => {
-  test('should display onboarding checklist when viewing an onboarding record', async ({ page }) => {
+  test('should display onboarding checklist when viewing an onboarding record', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding');
@@ -220,7 +220,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
     }
   });
 
-  test('should show onboarding templates', async ({ page }) => {
+  test('should show onboarding templates', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     // Check templates page
@@ -239,7 +239,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
     expect(hasTemplates || hasHeading || true).toBe(true);
   });
 
-  test('should show status indicators for checklist items', async ({ page }) => {
+  test('should show status indicators for checklist items', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/onboarding');
@@ -264,23 +264,23 @@ test.describe('Onboarding - Checklist & Tasks', () => {
 // ─── OFFBOARDING ───────────────────────────────────────────────────────────────
 
 test.describe('Offboarding Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     await page.goto('/offboarding');
     await page.waitForLoadState('networkidle');
   });
 
-  test('should display offboarding page with heading', async ({ page }) => {
+  test('should display offboarding page with heading', async ({page}) => {
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 
-  test('should load without crashing', async ({ page }) => {
+  test('should load without crashing', async ({page}) => {
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
   });
 
-  test('should display offboarding list or empty state', async ({ page }) => {
+  test('should display offboarding list or empty state', async ({page}) => {
     await page.waitForTimeout(1000);
 
     const hasTable = await page
@@ -299,7 +299,7 @@ test.describe('Offboarding Page', () => {
 });
 
 test.describe('Offboarding - HR Initiates', () => {
-  test('should initiate offboarding as HR', async ({ page }) => {
+  test('should initiate offboarding as HR', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding');
@@ -329,7 +329,7 @@ test.describe('Offboarding - HR Initiates', () => {
     }
   });
 
-  test('should show employee selection for offboarding', async ({ page }) => {
+  test('should show employee selection for offboarding', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding');
@@ -362,7 +362,7 @@ test.describe('Offboarding - HR Initiates', () => {
 });
 
 test.describe('Offboarding - Checklist Generation', () => {
-  test('should display offboarding checklist when viewing exit record', async ({ page }) => {
+  test('should display offboarding checklist when viewing exit record', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding');
@@ -388,7 +388,7 @@ test.describe('Offboarding - Checklist Generation', () => {
     }
   });
 
-  test('should show exit process stages', async ({ page }) => {
+  test('should show exit process stages', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding');
@@ -405,7 +405,7 @@ test.describe('Offboarding - Checklist Generation', () => {
     expect(hasStages || true).toBe(true);
   });
 
-  test('should navigate to exit process detail page', async ({ page }) => {
+  test('should navigate to exit process detail page', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding');
@@ -434,7 +434,7 @@ test.describe('Offboarding - Checklist Generation', () => {
 });
 
 test.describe('Offboarding - FnF Settlement Link', () => {
-  test('should navigate to FnF settlement from offboarding', async ({ page }) => {
+  test('should navigate to FnF settlement from offboarding', async ({page}) => {
     await loginAs(page, demoUsers.hrManager.email);
 
     await page.goto('/offboarding/exit/fnf');
@@ -446,12 +446,12 @@ test.describe('Offboarding - FnF Settlement Link', () => {
     ).not.toBeVisible();
 
     const heading = page.getByRole('heading').first();
-    await expect(heading).toBeVisible({ timeout: 10000 });
+    await expect(heading).toBeVisible({timeout: 10000});
   });
 });
 
 test.describe('Onboarding/Offboarding - Visual Elements', () => {
-  test('should render onboarding page with proper layout', async ({ page }) => {
+  test('should render onboarding page with proper layout', async ({page}) => {
     await page.goto('/onboarding');
     await page.waitForLoadState('networkidle');
 
@@ -463,7 +463,7 @@ test.describe('Onboarding/Offboarding - Visual Elements', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should render offboarding page with proper layout', async ({ page }) => {
+  test('should render offboarding page with proper layout', async ({page}) => {
     await page.goto('/offboarding');
     await page.waitForLoadState('networkidle');
 
@@ -475,15 +475,15 @@ test.describe('Onboarding/Offboarding - Visual Elements', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('onboarding page should be responsive', async ({ page }) => {
+  test('onboarding page should be responsive', async ({page}) => {
     await page.goto('/onboarding');
     await page.waitForLoadState('networkidle');
 
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({width: 375, height: 667});
     await page.waitForTimeout(500);
 
     await expect(page.getByRole('heading').first()).toBeVisible();
 
-    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.setViewportSize({width: 1280, height: 720});
   });
 });

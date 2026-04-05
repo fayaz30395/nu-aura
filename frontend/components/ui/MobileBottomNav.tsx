@@ -2,17 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import {
-  Home,
-  Users,
-  Calendar,
-  ClipboardList,
-  User,
-  MoreHorizontal,
-  LucideIcon,
-} from 'lucide-react';
+import {usePathname} from 'next/navigation';
+import {cn} from '@/lib/utils';
+import {Calendar, ClipboardList, Home, LucideIcon, MoreHorizontal, User, Users,} from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -28,18 +20,18 @@ export interface MobileBottomNavProps {
 }
 
 const defaultNavItems: NavItem[] = [
-  { label: 'Home', href: '/dashboard', icon: Home },
-  { label: 'Team', href: '/employees', icon: Users },
-  { label: 'Leave', href: '/leave', icon: Calendar },
-  { label: 'Tasks', href: '/projects', icon: ClipboardList },
-  { label: 'Me', href: '/me/dashboard', icon: User },
+  {label: 'Home', href: '/dashboard', icon: Home},
+  {label: 'Team', href: '/employees', icon: Users},
+  {label: 'Leave', href: '/leave', icon: Calendar},
+  {label: 'Tasks', href: '/projects', icon: ClipboardList},
+  {label: 'Me', href: '/me/dashboard', icon: User},
 ];
 
 export function MobileBottomNav({
-  items = defaultNavItems,
-  className,
-  onMoreClick,
-}: MobileBottomNavProps) {
+                                  items = defaultNavItems,
+                                  className,
+                                  onMoreClick,
+                                }: MobileBottomNavProps) {
   const pathname = usePathname();
 
   // Only show 4 items + More button, or all items if 5 or fewer
@@ -95,7 +87,8 @@ export function MobileBottomNav({
                   strokeWidth={active ? 2.5 : 2}
                 />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-danger-500 rounded-full">
+                  <span
+                    className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-danger-500 rounded-full">
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>
                 )}
@@ -125,7 +118,7 @@ export function MobileBottomNav({
             aria-label="More options"
             aria-haspopup="true"
           >
-            <MoreHorizontal className="h-6 w-6" />
+            <MoreHorizontal className="h-6 w-6"/>
             <span className="text-xs mt-1 font-medium">More</span>
           </button>
         )}

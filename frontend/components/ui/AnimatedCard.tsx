@@ -6,10 +6,10 @@
 
 'use client';
 
-import { motion, HTMLMotionProps } from 'framer-motion';
-import { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
-import { fadeInUpVariants, scaleInVariants } from '@/lib/utils/animations';
+import {HTMLMotionProps, motion} from 'framer-motion';
+import {ReactNode} from 'react';
+import {cn} from '@/lib/utils';
+import {fadeInUpVariants, scaleInVariants} from '@/lib/utils/animations';
 
 interface AnimatedCardProps extends Omit<HTMLMotionProps<'div'>, 'children' | 'ref'> {
   children: ReactNode;
@@ -33,13 +33,13 @@ const animationVariants = {
 };
 
 export function AnimatedCard({
-  children,
-  variant = 'default',
-  animationType = 'fadeInUp',
-  delay = 0,
-  className,
-  ...props
-}: AnimatedCardProps) {
+                               children,
+                               variant = 'default',
+                               animationType = 'fadeInUp',
+                               delay = 0,
+                               className,
+                               ...props
+                             }: AnimatedCardProps) {
   const variants = animationVariants[animationType];
 
   return (
@@ -48,7 +48,7 @@ export function AnimatedCard({
       initial={animationType !== 'none' ? 'hidden' : undefined}
       animate={animationType !== 'none' ? 'visible' : undefined}
       variants={variants}
-      transition={{ delay }}
+      transition={{delay}}
       {...props}
     >
       {children}
@@ -67,18 +67,18 @@ interface AnimatedListProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 }
 
 export function AnimatedList({
-  children,
-  staggerDelay = 0.1,
-  className,
-  ...props
-}: AnimatedListProps) {
+                               children,
+                               staggerDelay = 0.1,
+                               className,
+                               ...props
+                             }: AnimatedListProps) {
   return (
     <motion.div
       className={className}
       initial="hidden"
       animate="visible"
       variants={{
-        hidden: { opacity: 0 },
+        hidden: {opacity: 0},
         visible: {
           opacity: 1,
           transition: {
@@ -104,19 +104,19 @@ interface AnimatedListItemProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 }
 
 export function AnimatedListItem({
-  children,
-  className,
-  ...props
-}: AnimatedListItemProps) {
+                                   children,
+                                   className,
+                                   ...props
+                                 }: AnimatedListItemProps) {
   return (
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 10 },
+        hidden: {opacity: 0, y: 10},
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.3, ease: 'easeOut' },
+          transition: {duration: 0.3, ease: 'easeOut'},
         },
       }}
       {...props}

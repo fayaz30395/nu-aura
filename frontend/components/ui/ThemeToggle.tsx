@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useDarkMode, type ThemeMode } from '@/components/layout/DarkModeProvider';
+import React, {useEffect, useRef, useState} from 'react';
+import {ChevronDown, Monitor, Moon, Sun} from 'lucide-react';
+import {cn} from '@/lib/utils';
+import {type ThemeMode, useDarkMode} from '@/components/layout/DarkModeProvider';
 
 // ── Config ───────────────────────────────────────────────────────────
 
 const THEME_OPTIONS: { value: ThemeMode; label: string; icon: React.ElementType }[] = [
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-  { value: 'system', label: 'System', icon: Monitor },
+  {value: 'light', label: 'Light', icon: Sun},
+  {value: 'dark', label: 'Dark', icon: Moon},
+  {value: 'system', label: 'System', icon: Monitor},
 ];
 
 // ── Component ────────────────────────────────────────────────────────
@@ -21,8 +21,8 @@ interface ThemeToggleProps {
   className?: string;
 }
 
-export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
-  const { theme, resolvedTheme, setTheme } = useDarkMode();
+export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
+  const {theme, resolvedTheme, setTheme} = useDarkMode();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -87,7 +87,7 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
         aria-label={`Theme: ${theme}. Click to cycle.`}
         title={`Current: ${theme}`}
       >
-        <ActiveIcon className="h-5 w-5" />
+        <ActiveIcon className="h-5 w-5"/>
       </button>
     );
   }
@@ -107,7 +107,7 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <ActiveIcon className="h-5 w-5" />
+        <ActiveIcon className="h-5 w-5"/>
         <ChevronDown
           className={cn(
             'h-3.5 w-3.5 transition-transform duration-200',
@@ -132,7 +132,7 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
             boxShadow: 'var(--shadow-dropdown)',
           }}
         >
-          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => {
+          {THEME_OPTIONS.map(({value, label, icon: Icon}) => {
             const isActive = theme === value;
             return (
               <button
@@ -151,7 +151,7 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]',
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4"/>
                 <span>{label}</span>
               </button>
             );

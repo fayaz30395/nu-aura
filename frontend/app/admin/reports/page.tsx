@@ -1,35 +1,34 @@
 'use client';
 
-import { useState } from 'react';
-import { AdminPageContent } from '@/components/layout';
+import {useState} from 'react';
+import {AdminPageContent} from '@/components/layout';
 import {
-  useScheduledReports,
   useActiveScheduledReports,
-  useDownloadEmployeeReport,
   useDownloadAttendanceReport,
+  useDownloadDepartmentReport,
+  useDownloadEmployeeReport,
   useDownloadLeaveReport,
   useDownloadPayrollReport,
-  useDownloadDepartmentReport,
   useDownloadPerformanceReport,
 } from '@/lib/hooks/queries/useReports';
 import {
-  FileText,
-  Users,
-  Clock,
-  Calendar,
   Banknote,
-  Building2,
-  TrendingUp,
-  Download,
-  ChevronRight,
-  RefreshCw,
   BarChart2,
+  Building2,
+  Calendar,
+  ChevronRight,
+  Clock,
+  Download,
+  FileText,
   PieChart,
+  RefreshCw,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { ReportType } from '@/lib/types/core/analytics';
-import { REPORT_TYPE_LABELS } from '@/lib/types/core/analytics';
-import type { ReportRequest } from '@/lib/services/core/report.service';
+import type {ReportType} from '@/lib/types/core/analytics';
+import {REPORT_TYPE_LABELS} from '@/lib/types/core/analytics';
+import type {ReportRequest} from '@/lib/services/core/report.service';
 
 // ─── Report download definitions ─────────────────────────────────────────────
 
@@ -103,21 +102,21 @@ const REPORTS: DownloadReport[] = [
 // ─── Report links ─────────────────────────────────────────────────────────────
 
 const REPORT_LINKS = [
-  { href: '/reports', label: 'All Reports', icon: FileText },
-  { href: '/reports/headcount', label: 'Headcount Analytics', icon: Users },
-  { href: '/reports/attrition', label: 'Attrition Report', icon: TrendingUp },
-  { href: '/reports/leave', label: 'Leave Analytics', icon: Calendar },
-  { href: '/reports/payroll', label: 'Payroll Analytics', icon: Banknote },
-  { href: '/reports/performance', label: 'Performance Analytics', icon: BarChart2 },
-  { href: '/reports/utilization', label: 'Resource Utilization', icon: PieChart },
-  { href: '/reports/scheduled', label: 'Scheduled Reports', icon: RefreshCw },
-  { href: '/reports/builder', label: 'Report Builder', icon: FileText },
+  {href: '/reports', label: 'All Reports', icon: FileText},
+  {href: '/reports/headcount', label: 'Headcount Analytics', icon: Users},
+  {href: '/reports/attrition', label: 'Attrition Report', icon: TrendingUp},
+  {href: '/reports/leave', label: 'Leave Analytics', icon: Calendar},
+  {href: '/reports/payroll', label: 'Payroll Analytics', icon: Banknote},
+  {href: '/reports/performance', label: 'Performance Analytics', icon: BarChart2},
+  {href: '/reports/utilization', label: 'Resource Utilization', icon: PieChart},
+  {href: '/reports/scheduled', label: 'Scheduled Reports', icon: RefreshCw},
+  {href: '/reports/builder', label: 'Report Builder', icon: FileText},
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminReportsPage() {
-  const { data: scheduledReports, isLoading: scheduledLoading } = useActiveScheduledReports();
+  const {data: scheduledReports, isLoading: scheduledLoading} = useActiveScheduledReports();
   const activeScheduled = scheduledReports ?? [];
 
   const downloadEmployee = useDownloadEmployeeReport();
@@ -129,7 +128,7 @@ export default function AdminReportsPage() {
 
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const defaultRequest: ReportRequest = { format: 'EXCEL' };
+  const defaultRequest: ReportRequest = {format: 'EXCEL'};
 
   const downloadMap: Record<string, ReturnType<typeof useDownloadEmployeeReport>> = {
     employee: downloadEmployee,
@@ -143,7 +142,7 @@ export default function AdminReportsPage() {
   function handleDownload(report: DownloadReport) {
     setDownloading(report.hookKey);
     const hook = downloadMap[report.hookKey];
-    hook.mutate(defaultRequest, { onSettled: () => setDownloading(null) });
+    hook.mutate(defaultRequest, {onSettled: () => setDownloading(null)});
   }
 
   function frequencyLabel(freq: string): string {
@@ -175,7 +174,7 @@ export default function AdminReportsPage() {
                   className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)] flex items-start gap-2"
                 >
                   <div className={`shrink-0 rounded-lg p-2 ${report.bg}`}>
-                    <report.icon className={`h-4 w-4 ${report.accent}`} />
+                    <report.icon className={`h-4 w-4 ${report.accent}`}/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[var(--text-primary)]">{report.label}</p>
@@ -188,9 +187,9 @@ export default function AdminReportsPage() {
                     className="shrink-0 p-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-muted)] hover:text-accent-500 hover:border-accent-300 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isDownloading ? (
-                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      <RefreshCw className="h-4 w-4 animate-spin"/>
                     ) : (
-                      <Download className="h-4 w-4" />
+                      <Download className="h-4 w-4"/>
                     )}
                   </button>
                 </div>
@@ -199,7 +198,8 @@ export default function AdminReportsPage() {
           </div>
 
           {/* Scheduled reports */}
-          <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
+          <div
+            className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] overflow-hidden">
             <div className="row-between px-4 py-2 divider-b">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Active Scheduled Reports
@@ -208,21 +208,21 @@ export default function AdminReportsPage() {
                 href="/reports/scheduled"
                 className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                Manage <ChevronRight className="h-3 w-3" />
+                Manage <ChevronRight className="h-3 w-3"/>
               </Link>
             </div>
             {scheduledLoading ? (
               <div className="divide-y divide-[var(--border-subtle)]">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {Array.from({length: 3}).map((_, i) => (
                   <div key={i} className="px-4 py-2 flex items-center gap-2">
-                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse" />
-                    <div className="h-4 w-24 rounded bg-[var(--skeleton-base)] animate-pulse" />
+                    <div className="h-4 flex-1 rounded bg-[var(--skeleton-base)] animate-pulse"/>
+                    <div className="h-4 w-24 rounded bg-[var(--skeleton-base)] animate-pulse"/>
                   </div>
                 ))}
               </div>
             ) : activeScheduled.length === 0 ? (
               <div className="py-10 text-center">
-                <RefreshCw className="h-7 w-7 text-[var(--text-muted)] mx-auto mb-2" />
+                <RefreshCw className="h-7 w-7 text-[var(--text-muted)] mx-auto mb-2"/>
                 <p className="text-body-muted">No scheduled reports configured</p>
                 <Link
                   href="/reports/scheduled"
@@ -235,7 +235,7 @@ export default function AdminReportsPage() {
               <div className="divide-y divide-[var(--border-subtle)]">
                 {activeScheduled.slice(0, 8).map((sr) => (
                   <div key={sr.id} className="flex items-center gap-2 px-4 py-2">
-                    <RefreshCw className="h-4 w-4 text-accent-500 shrink-0" />
+                    <RefreshCw className="h-4 w-4 text-accent-500 shrink-0"/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {sr.scheduleName}
@@ -259,19 +259,20 @@ export default function AdminReportsPage() {
         <div>
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Report Sections</h2>
           <div className="space-y-2">
-            {REPORT_LINKS.map(({ href, label, icon: Icon }) => (
+            {REPORT_LINKS.map(({href, label, icon: Icon}) => (
               <Link
                 key={href}
                 href={href}
                 className="flex items-center gap-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 hover:bg-[var(--surface-hover)] transition-colors shadow-[var(--shadow-card)] cursor-pointer group"
               >
                 <div className="shrink-0 rounded-lg p-2 bg-accent-50 dark:bg-accent-950/20">
-                  <Icon className="h-4 w-4 text-accent-500" />
+                  <Icon className="h-4 w-4 text-accent-500"/>
                 </div>
                 <p className="flex-1 text-sm font-medium text-[var(--text-primary)] truncate">
                   {label}
                 </p>
-                <ChevronRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0" />
+                <ChevronRight
+                  className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0"/>
               </Link>
             ))}
           </div>

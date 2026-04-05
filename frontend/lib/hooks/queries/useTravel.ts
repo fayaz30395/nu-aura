@@ -1,33 +1,30 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  TravelStatus,
-  TravelRequestFilters,
-} from '@/lib/types/hrms/travel';
-import { travelService } from '@/lib/services/hrms/travel.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {TravelRequestFilters, TravelStatus,} from '@/lib/types/hrms/travel';
+import {travelService} from '@/lib/services/hrms/travel.service';
 
 // Query Key Factory
 export const travelKeys = {
   all: ['travel'] as const,
   requests: () => [...travelKeys.all, 'requests'] as const,
   requestsPaginated: (page: number, size: number, filters?: TravelRequestFilters) =>
-    [...travelKeys.requests(), 'paginated', { page, size, ...filters }] as const,
+    [...travelKeys.requests(), 'paginated', {page, size, ...filters}] as const,
   requestById: (id: string) =>
     [...travelKeys.requests(), 'detail', id] as const,
   requestsByStatus: (status: TravelStatus, page: number, size: number) =>
-    [...travelKeys.requests(), 'status', { status, page, size }] as const,
+    [...travelKeys.requests(), 'status', {status, page, size}] as const,
   employeeRequests: (employeeId: string, page: number, size: number) =>
-    [...travelKeys.requests(), 'employee', { employeeId, page, size }] as const,
+    [...travelKeys.requests(), 'employee', {employeeId, page, size}] as const,
   expenses: () => [...travelKeys.all, 'expenses'] as const,
   expenseById: (id: string) =>
     [...travelKeys.expenses(), 'detail', id] as const,
   expensesByRequest: (travelRequestId: string, page: number, size: number) =>
-    [...travelKeys.expenses(), 'request', { travelRequestId, page, size }] as const,
+    [...travelKeys.expenses(), 'request', {travelRequestId, page, size}] as const,
   employeeExpenses: (employeeId: string, page: number, size: number) =>
-    [...travelKeys.expenses(), 'employee', { employeeId, page, size }] as const,
+    [...travelKeys.expenses(), 'employee', {employeeId, page, size}] as const,
   travelSummary: (employeeId: string, year?: number) =>
-    [...travelKeys.all, 'summary', { employeeId, year }] as const,
+    [...travelKeys.all, 'summary', {employeeId, year}] as const,
   expenseSummary: (travelRequestId: string) =>
     [...travelKeys.all, 'expenseSummary', travelRequestId] as const,
 };
@@ -170,7 +167,7 @@ export function useCreateTravelRequest() {
     mutationFn: (data: Parameters<typeof travelService.createTravelRequest>[0]) =>
       travelService.createTravelRequest(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
     },
   });
 }
@@ -182,14 +179,14 @@ export function useUpdateTravelRequest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      data,
-    }: {
+                   id,
+                   data,
+                 }: {
       id: string;
       data: Parameters<typeof travelService.updateTravelRequest>[1];
     }) => travelService.updateTravelRequest(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -205,7 +202,7 @@ export function useSubmitTravelRequest() {
   return useMutation({
     mutationFn: (id: string) => travelService.submitTravelRequest(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -220,16 +217,16 @@ export function useApproveTravelRequest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      approverId,
-      comments,
-    }: {
+                   id,
+                   approverId,
+                   comments,
+                 }: {
       id: string;
       approverId: string;
       comments?: string;
     }) => travelService.approveTravelRequest(id, approverId, comments),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -244,16 +241,16 @@ export function useRejectTravelRequest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      approverId,
-      reason,
-    }: {
+                   id,
+                   approverId,
+                   reason,
+                 }: {
       id: string;
       approverId: string;
       reason: string;
     }) => travelService.rejectTravelRequest(id, approverId, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -268,14 +265,14 @@ export function useCancelTravelRequest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      reason,
-    }: {
+                   id,
+                   reason,
+                 }: {
       id: string;
       reason: string;
     }) => travelService.cancelTravelRequest(id, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -291,7 +288,7 @@ export function useCompleteTravelRequest() {
   return useMutation({
     mutationFn: (id: string) => travelService.completeTravelRequest(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.requestById(data.id),
       });
@@ -307,7 +304,7 @@ export function useDeleteTravelRequest() {
   return useMutation({
     mutationFn: (id: string) => travelService.deleteTravelRequest(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.requests() });
+      queryClient.invalidateQueries({queryKey: travelKeys.requests()});
     },
   });
 }
@@ -323,7 +320,7 @@ export function useCreateTravelExpense() {
     mutationFn: (data: Parameters<typeof travelService.createTravelExpense>[0]) =>
       travelService.createTravelExpense(data),
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
+      queryClient.invalidateQueries({queryKey: travelKeys.expenses()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.expenses(),
       });
@@ -338,14 +335,14 @@ export function useUpdateTravelExpense() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      data,
-    }: {
+                   id,
+                   data,
+                 }: {
       id: string;
       data: Parameters<typeof travelService.updateTravelExpense>[1];
     }) => travelService.updateTravelExpense(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
+      queryClient.invalidateQueries({queryKey: travelKeys.expenses()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.expenseById(data.id),
       });
@@ -360,11 +357,11 @@ export function useApproveTravelExpense() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      approverId,
-      approvedAmount,
-      comments,
-    }: {
+                   id,
+                   approverId,
+                   approvedAmount,
+                   comments,
+                 }: {
       id: string;
       approverId: string;
       approvedAmount?: number;
@@ -372,7 +369,7 @@ export function useApproveTravelExpense() {
     }) =>
       travelService.approveTravelExpense(id, approverId, approvedAmount, comments),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
+      queryClient.invalidateQueries({queryKey: travelKeys.expenses()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.expenseById(data.id),
       });
@@ -387,16 +384,16 @@ export function useRejectTravelExpense() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      id,
-      approverId,
-      reason,
-    }: {
+                   id,
+                   approverId,
+                   reason,
+                 }: {
       id: string;
       approverId: string;
       reason: string;
     }) => travelService.rejectTravelExpense(id, approverId, reason),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
+      queryClient.invalidateQueries({queryKey: travelKeys.expenses()});
       queryClient.invalidateQueries({
         queryKey: travelKeys.expenseById(data.id),
       });
@@ -412,7 +409,7 @@ export function useDeleteTravelExpense() {
   return useMutation({
     mutationFn: (id: string) => travelService.deleteTravelExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
+      queryClient.invalidateQueries({queryKey: travelKeys.expenses()});
     },
   });
 }

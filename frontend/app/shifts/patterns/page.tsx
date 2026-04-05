@@ -1,32 +1,25 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useCallback, useMemo, useState} from 'react';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
-  useShiftPatterns,
   useActiveShiftDefinitions,
   useCreatePattern,
-  useUpdatePattern,
   useDeletePattern,
+  useShiftPatterns,
+  useUpdatePattern,
 } from '@/lib/hooks/queries/useShifts';
-import { ShiftPattern, ShiftPatternRequest, ShiftDefinition } from '@/lib/types/hrms/shift';
-import { NuAuraLoader } from '@/components/ui/Loading';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  X,
-  ChevronLeft,
-  RotateCcw,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {ShiftDefinition, ShiftPattern, ShiftPatternRequest} from '@/lib/types/hrms/shift';
+import {NuAuraLoader} from '@/components/ui/Loading';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ChevronLeft, Edit2, Plus, RotateCcw, Trash2, X,} from 'lucide-react';
+import {useRouter} from 'next/navigation';
 
 const patternSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -40,16 +33,16 @@ const patternSchema = z.object({
 type PatternFormData = z.infer<typeof patternSchema>;
 
 const ROTATION_TYPES = [
-  { value: 'FIXED', label: 'Fixed' },
-  { value: 'WEEKLY_ROTATING', label: 'Weekly Rotating' },
-  { value: 'BIWEEKLY_ROTATING', label: 'Bi-weekly Rotating' },
-  { value: 'CUSTOM', label: 'Custom' },
+  {value: 'FIXED', label: 'Fixed'},
+  {value: 'WEEKLY_ROTATING', label: 'Weekly Rotating'},
+  {value: 'BIWEEKLY_ROTATING', label: 'Bi-weekly Rotating'},
+  {value: 'CUSTOM', label: 'Custom'},
 ];
 
 function PatternPreview({
-  patternJson,
-  shifts,
-}: {
+                          patternJson,
+                          shifts,
+                        }: {
   patternJson: string;
   shifts: ShiftDefinition[];
 }) {
@@ -74,9 +67,9 @@ function PatternPreview({
       const idx = i % entries.length;
       const entry = entries[idx];
       if (entry === 'OFF') {
-        days.push({ day: i + 1, shift: null, isOff: true });
+        days.push({day: i + 1, shift: null, isOff: true});
       } else {
-        days.push({ day: i + 1, shift: shiftMap.get(entry) ?? null, isOff: false });
+        days.push({day: i + 1, shift: shiftMap.get(entry) ?? null, isOff: false});
       }
     }
     return days;
@@ -121,8 +114,8 @@ export default function ShiftPatternsPage() {
   const [patternSlots, setPatternSlots] = useState<string[]>([]);
   const [_previewPattern, _setPreviewPattern] = useState<ShiftPattern | null>(null);
 
-  const { data, isLoading } = useShiftPatterns(page, 20);
-  const { data: activeShifts = [] } = useActiveShiftDefinitions();
+  const {data, isLoading} = useShiftPatterns(page, 20);
+  const {data: activeShifts = []} = useActiveShiftDefinitions();
   const createMutation = useCreatePattern();
   const updateMutation = useUpdatePattern();
   const deleteMutation = useDeletePattern();
@@ -140,7 +133,7 @@ export default function ShiftPatternsPage() {
   const openCreate = useCallback(() => {
     setEditingPattern(null);
     setPatternSlots(Array(7).fill('OFF'));
-    form.reset({ name: '', rotationType: 'WEEKLY_ROTATING', cycleDays: 7, isActive: true });
+    form.reset({name: '', rotationType: 'WEEKLY_ROTATING', cycleDays: 7, isActive: true});
     setShowForm(true);
   }, [form]);
 
@@ -188,11 +181,11 @@ export default function ShiftPatternsPage() {
       } as ShiftPatternRequest;
       if (editingPattern) {
         updateMutation.mutate(
-          { id: editingPattern.id, data: payload },
-          { onSuccess: () => setShowForm(false) }
+          {id: editingPattern.id, data: payload},
+          {onSuccess: () => setShowForm(false)}
         );
       } else {
-        createMutation.mutate(payload, { onSuccess: () => setShowForm(false) });
+        createMutation.mutate(payload, {onSuccess: () => setShowForm(false)});
       }
     },
     [editingPattern, patternSlots, createMutation, updateMutation]
@@ -212,7 +205,7 @@ export default function ShiftPatternsPage() {
                 onClick={() => router.push('/shifts')}
                 className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
               >
-                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
+                <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Patterns</h1>
@@ -226,7 +219,7 @@ export default function ShiftPatternsPage() {
                 onClick={openCreate}
                 className="flex items-center gap-2 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4"/>
                 Add Pattern
               </button>
             </PermissionGate>
@@ -234,10 +227,10 @@ export default function ShiftPatternsPage() {
 
           {/* Pattern List */}
           {isLoading ? (
-            <NuAuraLoader />
+            <NuAuraLoader/>
           ) : patterns.length === 0 ? (
             <EmptyState
-              icon={<RotateCcw className="w-12 h-12 text-surface-400" />}
+              icon={<RotateCcw className="w-12 h-12 text-surface-400"/>}
               title="No Patterns Defined"
               description="Create rotation patterns to auto-generate shift schedules."
             />
@@ -246,8 +239,8 @@ export default function ShiftPatternsPage() {
               {patterns.map((pattern) => (
                 <motion.div
                   key={pattern.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{opacity: 0, y: 10}}
+                  animate={{opacity: 1, y: 0}}
                   className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
                 >
                   <div className="flex items-start justify-between mb-4">
@@ -276,7 +269,7 @@ export default function ShiftPatternsPage() {
                     <p className="text-xs font-medium text-surface-500 dark:text-surface-400 mb-2">
                       4-Week Preview
                     </p>
-                    <PatternPreview patternJson={pattern.pattern} shifts={activeShifts} />
+                    <PatternPreview patternJson={pattern.pattern} shifts={activeShifts}/>
                   </div>
 
                   <PermissionGate permission={Permissions.SHIFT_MANAGE}>
@@ -285,7 +278,7 @@ export default function ShiftPatternsPage() {
                         onClick={() => openEdit(pattern)}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors"
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
+                        <Edit2 className="w-3.5 h-3.5"/>
                         Edit
                       </button>
                       <button
@@ -294,7 +287,7 @@ export default function ShiftPatternsPage() {
                         }}
                         className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg transition-colors"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5"/>
                         Delete
                       </button>
                     </div>
@@ -308,18 +301,18 @@ export default function ShiftPatternsPage() {
           <AnimatePresence>
             {showForm && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                 onClick={(e) => {
                   if (e.target === e.currentTarget) setShowForm(false);
                 }}
               >
                 <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
+                  initial={{scale: 0.95, opacity: 0}}
+                  animate={{scale: 1, opacity: 1}}
+                  exit={{scale: 0.95, opacity: 0}}
                   className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-dropdown)] w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 >
                   <div className="row-between p-6 border-b border-surface-200 dark:border-surface-700">
@@ -330,7 +323,7 @@ export default function ShiftPatternsPage() {
                       onClick={() => setShowForm(false)}
                       className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
                     >
-                      <X className="w-5 h-5 text-surface-500" />
+                      <X className="w-5 h-5 text-surface-500"/>
                     </button>
                   </div>
 

@@ -1,16 +1,16 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { paymentService } from '@/lib/services/core/payment.service';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {paymentService} from '@/lib/services/core/payment.service';
 import type {
   CreatePaymentTransactionRequest,
-  UpdatePaymentTransactionRequest,
-  SavePaymentConfigRequest,
-  TestConnectionRequest,
-  ProcessRefundRequest,
   PaymentProvider,
   PaymentStatus,
   PaymentType,
+  ProcessRefundRequest,
+  SavePaymentConfigRequest,
+  TestConnectionRequest,
+  UpdatePaymentTransactionRequest,
 } from '@/lib/types/core/payment';
 
 export const paymentKeys = {
@@ -100,7 +100,7 @@ export function useInitiatePayment() {
   return useMutation({
     mutationFn: (data: CreatePaymentTransactionRequest) => paymentService.initiatePayment(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+      queryClient.invalidateQueries({queryKey: paymentKeys.lists()});
       queryClient.setQueryData(paymentKeys.detail(data.id), data);
     },
   });
@@ -110,10 +110,10 @@ export function useUpdatePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdatePaymentTransactionRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdatePaymentTransactionRequest }) =>
       paymentService.updatePayment(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+      queryClient.invalidateQueries({queryKey: paymentKeys.lists()});
       queryClient.setQueryData(paymentKeys.detail(data.id), data);
     },
   });
@@ -154,8 +154,8 @@ export function useProcessRefund() {
   return useMutation({
     mutationFn: (data: ProcessRefundRequest) => paymentService.processRefund(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: paymentKeys.refundList() });
-      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+      queryClient.invalidateQueries({queryKey: paymentKeys.refundList()});
+      queryClient.invalidateQueries({queryKey: paymentKeys.lists()});
     },
   });
 }
@@ -185,7 +185,7 @@ export function useSavePaymentConfig() {
   return useMutation({
     mutationFn: (data: SavePaymentConfigRequest) => paymentService.saveConfig(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: paymentKeys.configAll() });
+      queryClient.invalidateQueries({queryKey: paymentKeys.configAll()});
       queryClient.setQueryData(paymentKeys.configByProvider(data.provider), data);
     },
   });
@@ -201,10 +201,10 @@ export function useToggleConfigActive() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ provider, isActive }: { provider: PaymentProvider; isActive: boolean }) =>
+    mutationFn: ({provider, isActive}: { provider: PaymentProvider; isActive: boolean }) =>
       paymentService.toggleConfigActive(provider, isActive),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: paymentKeys.configAll() });
+      queryClient.invalidateQueries({queryKey: paymentKeys.configAll()});
       queryClient.setQueryData(paymentKeys.configByProvider(data.provider), data);
     },
   });

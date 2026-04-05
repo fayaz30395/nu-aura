@@ -1,16 +1,20 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { announcementService, CreateAnnouncementRequest, Announcement } from '@/lib/services/platform/announcement.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {
+  Announcement,
+  announcementService,
+  CreateAnnouncementRequest
+} from '@/lib/services/platform/announcement.service';
 
 // Query keys for cache management
 export const announcementKeys = {
   all: ['announcements'] as const,
   lists: () => [...announcementKeys.all, 'list'] as const,
   list: (page: number, size: number) =>
-    [...announcementKeys.lists(), { page, size }] as const,
+    [...announcementKeys.lists(), {page, size}] as const,
   active: (employeeId: string, page: number, size: number) =>
-    [...announcementKeys.all, 'active', { employeeId, page, size }] as const,
+    [...announcementKeys.all, 'active', {employeeId, page, size}] as const,
   pinned: () => [...announcementKeys.all, 'pinned'] as const,
   details: () => [...announcementKeys.all, 'detail'] as const,
   detail: (id: string) => [...announcementKeys.details(), id] as const,
@@ -62,8 +66,8 @@ export function useCreateAnnouncement() {
     mutationFn: (data: CreateAnnouncementRequest) => announcementService.createAnnouncement(data),
     onSuccess: () => {
       // Invalidate all announcement lists
-      queryClient.invalidateQueries({ queryKey: announcementKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: announcementKeys.pinned() });
+      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
 }
@@ -73,11 +77,11 @@ export function useUpdateAnnouncement() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateAnnouncementRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: CreateAnnouncementRequest }) =>
       announcementService.updateAnnouncement(id, data),
-    onMutate: async ({ id, data }) => {
+    onMutate: async ({id, data}) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: announcementKeys.detail(id) });
+      await queryClient.cancelQueries({queryKey: announcementKeys.detail(id)});
 
       // Snapshot the previous value
       const previousAnnouncement = queryClient.getQueryData<Announcement>(announcementKeys.detail(id));
@@ -90,19 +94,19 @@ export function useUpdateAnnouncement() {
         });
       }
 
-      return { previousAnnouncement };
+      return {previousAnnouncement};
     },
-    onError: (_err, { id }, context) => {
+    onError: (_err, {id}, context) => {
       // Rollback on error
       if (context?.previousAnnouncement) {
         queryClient.setQueryData(announcementKeys.detail(id), context.previousAnnouncement);
       }
     },
-    onSettled: (_, _error, { id }) => {
+    onSettled: (_, _error, {id}) => {
       // Always refetch after mutation settles
-      queryClient.invalidateQueries({ queryKey: announcementKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: announcementKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: announcementKeys.pinned() });
+      queryClient.invalidateQueries({queryKey: announcementKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
 }
@@ -114,8 +118,8 @@ export function useDeleteAnnouncement() {
   return useMutation({
     mutationFn: (id: string) => announcementService.deleteAnnouncement(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: announcementKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: announcementKeys.pinned() });
+      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
 }
@@ -125,12 +129,12 @@ export function useMarkAnnouncementRead() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ announcementId, employeeId }: { announcementId: string; employeeId: string }) =>
+    mutationFn: ({announcementId, employeeId}: { announcementId: string; employeeId: string }) =>
       announcementService.markAsRead(announcementId, employeeId),
     onSuccess: () => {
       // Invalidate all announcement queries to refresh read status
-      queryClient.invalidateQueries({ queryKey: announcementKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: announcementKeys.pinned() });
+      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
 }

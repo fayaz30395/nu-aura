@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useToast } from '@/components/notifications';
+import { getErrorMessage } from '@/lib/utils/error-handler';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
@@ -69,7 +70,7 @@ export default function MyDashboardPage() {
     await queryClient.invalidateQueries({ queryKey: ['selfServiceDashboard'] });
   }, [queryClient]);
 
-  const handleCheckIn = async () => {
+  const handleCheckIn = useCallback(async () => {
     if (!user?.employeeId) return;
 
     try {
@@ -79,7 +80,6 @@ export default function MyDashboardPage() {
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(true);
-      // Set check-in time from response or use current time
       if (response.checkInTime) {
         setCheckInTime(parseISO(response.checkInTime));
       } else {
@@ -88,15 +88,13 @@ export default function MyDashboardPage() {
       refreshDashboard();
     } catch (error: unknown) {
       log.error('Check-in failed:', error);
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
-        || 'Check-in failed. Please try again.';
-      toast.error('Attendance', message);
+      toast.error('Attendance', getErrorMessage(error, 'Check-in failed. Please try again.'));
     } finally {
       setCheckingIn(false);
     }
-  };
+  }, [user?.employeeId, refreshDashboard, toast]);
 
-  const handleCheckOut = async () => {
+  const handleCheckOut = useCallback(async () => {
     if (!user?.employeeId) return;
 
     try {
@@ -112,13 +110,11 @@ export default function MyDashboardPage() {
       refreshDashboard();
     } catch (error: unknown) {
       log.error('Check-out failed:', error);
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
-        || 'Check-out failed. Please try again.';
-      toast.error('Attendance', message);
+      toast.error('Attendance', getErrorMessage(error, 'Check-out failed. Please try again.'));
     } finally {
       setCheckingIn(false);
     }
-  };
+  }, [user?.employeeId, refreshDashboard, toast]);
 
   if (!hasHydrated || isLoading) {
     return (

@@ -1,33 +1,36 @@
 'use client';
 
 import React from 'react';
-import { Badge, Card, CardContent } from '@/components/ui';
-import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms/hrms-project';
-import { formatCurrency } from '@/lib/utils';
+import {Badge, Card, CardContent} from '@/components/ui';
+import {HrmsProject, ProjectStatus, ProjectType} from '@/lib/types/hrms/hrms-project';
+import {formatCurrency} from '@/lib/utils';
 
 interface OverviewTabProps {
   project: HrmsProject;
 }
 
-const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
-  DRAFT: { label: 'Draft', variant: 'secondary' },
-  PLANNED: { label: 'Planned', variant: 'secondary' },
-  IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
-  ON_HOLD: { label: 'On Hold', variant: 'warning' },
-  COMPLETED: { label: 'Completed', variant: 'success' },
-  CANCELLED: { label: 'Cancelled', variant: 'danger' },
+const STATUS_BADGE: Record<ProjectStatus, {
+  label: string;
+  variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary'
+}> = {
+  DRAFT: {label: 'Draft', variant: 'secondary'},
+  PLANNED: {label: 'Planned', variant: 'secondary'},
+  IN_PROGRESS: {label: 'In Progress', variant: 'primary'},
+  ON_HOLD: {label: 'On Hold', variant: 'warning'},
+  COMPLETED: {label: 'Completed', variant: 'success'},
+  CANCELLED: {label: 'Cancelled', variant: 'danger'},
 };
 
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
-  CLIENT: { label: 'Client', variant: 'primary' },
-  INTERNAL: { label: 'Internal', variant: 'outline' },
+  CLIENT: {label: 'Client', variant: 'primary'},
+  INTERNAL: {label: 'Internal', variant: 'outline'},
 };
 
 const formatDate = (value?: string | null) => {
   if (!value) return '—';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
 };
 
 
@@ -35,17 +38,17 @@ const getStatusBadge = (status?: ProjectStatus | null) => {
   if (status && STATUS_BADGE[status]) {
     return STATUS_BADGE[status];
   }
-  return { label: status ?? 'Unknown', variant: 'secondary' as const };
+  return {label: status ?? 'Unknown', variant: 'secondary' as const};
 };
 
 const getTypeBadge = (type?: ProjectType | null) => {
   if (type && TYPE_BADGE[type]) {
     return TYPE_BADGE[type];
   }
-  return { label: type ?? 'Unknown', variant: 'outline' as const };
+  return {label: type ?? 'Unknown', variant: 'outline' as const};
 };
 
-export function OverviewTab({ project }: OverviewTabProps) {
+export function OverviewTab({project}: OverviewTabProps) {
   if (!project) return null;
 
   const statusBadge = getStatusBadge(project.status);

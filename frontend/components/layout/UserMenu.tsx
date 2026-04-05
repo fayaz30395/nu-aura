@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {ChevronDown, LogOut, Settings, User} from 'lucide-react';
+import {cn} from '@/lib/utils';
 
 // ─── Props ────────────────────────────────────────────────────────────
 export interface UserMenuProps {
@@ -24,16 +24,16 @@ export interface UserMenuProps {
  * click-outside listener centrally alongside the notification dropdown.
  */
 export const UserMenu = React.memo(function UserMenu({
-  isOpen,
-  onToggle,
-  onClose,
-  userName,
-  userAvatar,
-  userRole,
-  onProfile,
-  onSettings,
-  onLogout,
-}: UserMenuProps) {
+                                                       isOpen,
+                                                       onToggle,
+                                                       onClose,
+                                                       userName,
+                                                       userAvatar,
+                                                       userRole,
+                                                       onProfile,
+                                                       onSettings,
+                                                       onLogout,
+                                                     }: UserMenuProps) {
   const initials = userName
     .split(' ')
     .map((n) => n[0])
@@ -59,7 +59,8 @@ export const UserMenu = React.memo(function UserMenu({
             className="h-9 w-9 rounded-xl object-cover ring-2 ring-[var(--border-main)]"
           />
         ) : (
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-accent-200 dark:ring-accent-800">
+          <div
+            className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-accent-200 dark:ring-accent-800">
             {initials}
           </div>
         )}
@@ -81,7 +82,8 @@ export const UserMenu = React.memo(function UserMenu({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl glass-midnight animate-fade-in-down overflow-hidden">
+        <div
+          className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl glass-midnight animate-fade-in-down overflow-hidden">
           {/* User Info Header */}
           <div className="p-4 border-b border-[var(--dropdown-divider)] bg-[var(--bg-card-hover)]">
             <p className="text-sm font-semibold text-[var(--dropdown-text)]">{userName}</p>
@@ -91,21 +93,27 @@ export const UserMenu = React.memo(function UserMenu({
           {/* Menu Items */}
           <div className="p-2">
             <button
-              onClick={() => { onClose(); onProfile?.(); }}
+              onClick={() => {
+                onClose();
+                onProfile?.();
+              }}
               className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
-                <User className="h-4 w-4 text-[var(--text-muted)]" />
+                <User className="h-4 w-4 text-[var(--text-muted)]"/>
               </div>
               <span>View Profile</span>
             </button>
 
             <button
-              onClick={() => { onClose(); onSettings?.(); }}
+              onClick={() => {
+                onClose();
+                onSettings?.();
+              }}
               className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
-                <Settings className="h-4 w-4 text-[var(--text-muted)]" />
+                <Settings className="h-4 w-4 text-[var(--text-muted)]"/>
               </div>
               <span>Settings</span>
             </button>
@@ -113,11 +121,14 @@ export const UserMenu = React.memo(function UserMenu({
 
           <div className="border-t border-[var(--dropdown-divider)] p-2">
             <button
-              onClick={() => { onClose(); onLogout?.(); }}
+              onClick={() => {
+                onClose();
+                onLogout?.();
+              }}
               className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-50 dark:bg-danger-950/30">
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4"/>
               </div>
               <span>Sign out</span>
             </button>

@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/client';
-import { SettlementStatus, PaymentMode } from '@/lib/types/hrms/exit';
+import {apiClient} from '@/lib/api/client';
+import {PaymentMode, SettlementStatus} from '@/lib/types/hrms/exit';
 
 // ─── Types for FnFController (auto-calculate endpoint) ───────────────────────
 
@@ -102,7 +102,7 @@ export const fnfService = {
    */
   getAll: async (page = 0, size = 20): Promise<FnFCalculationPage> => {
     const res = await apiClient.get<FnFCalculationPage>(`${BASE}/fnf`, {
-      params: { page, size },
+      params: {page, size},
     });
     return res.data;
   },

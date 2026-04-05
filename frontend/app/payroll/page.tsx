@@ -1,21 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout';
-import { motion } from 'framer-motion';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { SkeletonCard } from '@/components/ui/Skeleton';
-import {
-  Banknote,
-  FileText,
-  Layers,
-  ChevronRight,
-  Settings,
-  TrendingUp,
-  Package,
-  Scale,
-} from 'lucide-react';
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {motion} from 'framer-motion';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {SkeletonCard} from '@/components/ui/Skeleton';
+import {Banknote, ChevronRight, FileText, Layers, Package, Scale, Settings, TrendingUp,} from 'lucide-react';
 
 const SUB_PAGES = [
   {
@@ -76,7 +67,7 @@ const SUB_PAGES = [
 
 export default function PayrollPage() {
   const router = useRouter();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   useEffect(() => {
     if (!permReady) return;
@@ -93,14 +84,14 @@ export default function PayrollPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header skeleton */}
             <div className="mb-8">
-              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4" />
-              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3" />
+              <div className="h-10 bg-[var(--skeleton-base)] rounded-lg w-1/3 mb-4"/>
+              <div className="h-5 bg-[var(--skeleton-base)] rounded-lg w-2/3"/>
             </div>
 
             {/* Navigation cards skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonCard key={i} />
+              {Array.from({length: 4}).map((_, i) => (
+                <SkeletonCard key={i}/>
               ))}
             </div>
           </div>
@@ -117,16 +108,16 @@ export default function PayrollPage() {
     <AppLayout activeMenuItem="payroll">
       <motion.div
         className="p-6"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        initial={{opacity: 0, y: 12}}
+        animate={{opacity: 1, y: 0}}
+        transition={{duration: 0.25, ease: 'easeOut'}}
       >
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-2">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <TrendingUp className="h-6 w-6 text-white" />
+                <TrendingUp className="h-6 w-6 text-white"/>
               </div>
               <h1 className="text-2xl font-bold skeuo-emboss">Payroll Management</h1>
             </div>
@@ -137,7 +128,7 @@ export default function PayrollPage() {
 
           {/* Navigation Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SUB_PAGES.map(({ href, label, description, icon: Icon, gradient, hoverBorder, hoverText }) => (
+            {SUB_PAGES.map(({href, label, description, icon: Icon, gradient, hoverBorder, hoverText}) => (
               <button
                 key={href}
                 onClick={() => router.push(href)}
@@ -145,10 +136,12 @@ export default function PayrollPage() {
                 className={`group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-dropdown)] ${hoverBorder} transition-all duration-200 text-left skeuo-card cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
               >
                 <div className="row-between mb-4">
-                  <div className={`p-2.5 rounded-lg bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
-                    <Icon className="h-5 w-5 text-white" />
+                  <div
+                    className={`p-2.5 rounded-lg bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
+                    <Icon className="h-5 w-5 text-white"/>
                   </div>
-                  <ChevronRight className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`} />
+                  <ChevronRight
+                    className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`}/>
                 </div>
                 <h3 className="text-base font-semibold text-[var(--text-primary)] mb-0.5 skeuo-emboss">{label}</h3>
                 <p className="text-xs text-[var(--text-secondary)]">{description}</p>
