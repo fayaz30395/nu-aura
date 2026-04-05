@@ -7,6 +7,7 @@ import com.hrms.common.security.TenantFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -52,12 +53,12 @@ public class SecurityConfig {
     private String allowedOriginsStr;
 
     public SecurityConfig(Environment environment,
-                          JwtAuthenticationFilter jwtAuthenticationFilter,
-                          TenantFilter tenantFilter,
+                          @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
+                          @Lazy TenantFilter tenantFilter,
                           RateLimitingFilter rateLimitingFilter,
-                          UserDetailsService userDetailsService,
-                          RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
-                          SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
+                          @Lazy UserDetailsService userDetailsService,
+                          @Lazy RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
+                          @Lazy SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
         this.environment = environment;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.tenantFilter = tenantFilter;
