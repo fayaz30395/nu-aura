@@ -2,6 +2,7 @@ package com.hrms.infrastructure.websocket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -16,8 +17,13 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
  *
  * <p>Uses the existing {@link RedisConnectionFactory} auto-configured by
  * Spring Boot from application.yml redis settings.</p>
+ *
+ * <p>Excluded on the {@code render} profile — Render free tier has no Redis,
+ * and single-instance deployments don't need cross-pod relay. WebSocket delivery
+ * falls back to local {@link org.springframework.messaging.simp.SimpMessagingTemplate}.</p>
  */
 @Configuration
+@Profile("!render")
 public class WebSocketRedisConfig {
 
     @Bean
