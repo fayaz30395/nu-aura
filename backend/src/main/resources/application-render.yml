@@ -61,6 +61,13 @@ spring:
           use_jdbc_metadata_defaults: false
 
   data:
+    jpa:
+      repositories:
+        # LAZY bootstrap: JPA repositories are initialized only on first use,
+        # not during context refresh. Prevents LocalContainerEntityManagerFactoryBean
+        # from triggering at startup, which blocked the app for 3+ min while
+        # Neon (serverless DB) woke from sleep.
+        bootstrap-mode: lazy
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
       port: ${SPRING_REDIS_PORT:6379}
