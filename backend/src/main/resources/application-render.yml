@@ -32,6 +32,12 @@ spring:
       connection-timeout: 30000
       idle-timeout: 300000
       max-lifetime: 600000
+      # initialization-fail-timeout=0: HikariCP creates the pool without blocking on
+      # an initial connection. The default (1ms) calls checkFailFast() which tries to
+      # open a JDBC connection at pool creation time — blocking for 5-7 min while Neon
+      # wakes from its serverless sleep. With 0, the pool starts empty and the first
+      # real query establishes connections lazily (after Tomcat has already bound).
+      initialization-fail-timeout: 0
 
   jpa:
     hibernate:
@@ -47,6 +53,12 @@ spring:
         # "Unable to determine Dialect without JDBC metadata" if the Neon DB
         # connection is slow or times out during bean initialization.
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Prevent JdbcEnvironmentInitiator from opening a JDBC connection during
+        # LocalContainerEntityManagerFactoryBean.afterPropertiesSet() to read DB
+        # metadata (sequences, type defaults, etc.). With dialect explicitly set
+        # above, Hibernate can determine all defaults without a live connection.
+        temp:
+          use_jdbc_metadata_defaults: false
 
   data:
     redis:
