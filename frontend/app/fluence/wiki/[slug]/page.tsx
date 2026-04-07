@@ -59,6 +59,7 @@ import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/de
 import { TableOfContents } from '@/components/fluence/TableOfContents';
 import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
 import { WatchButton } from '@/components/fluence/WatchButton';
+import { InlineCommentsPanel } from '@/components/fluence/InlineComments';
 import type { FluenceComment } from '@/lib/types/platform/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
@@ -434,6 +435,7 @@ export default function WikiPageDetailPage() {
   const [linkCopied, setLinkCopied] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [inlineCommentsOpen, setInlineCommentsOpen] = useState(false);
   const commentInputRef = useRef<MentionInputHandle>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
 
@@ -902,7 +904,7 @@ export default function WikiPageDetailPage() {
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
             className="lg:col-span-2"
           >
-            <div ref={contentContainerRef} className={`${card.base} ${card.paddingLarge}`}>
+            <div ref={contentContainerRef} data-page-content className={`${card.base} ${card.paddingLarge}`}>
               <ContentViewer content={page.content} />
             </div>
           </motion.div>
@@ -1288,6 +1290,15 @@ export default function WikiPageDetailPage() {
           )}
         </div>
       </Modal>
+
+      {/* Inline Comments Panel */}
+      {page && (
+        <InlineCommentsPanel
+          pageId={pageId}
+          isOpen={inlineCommentsOpen}
+          onToggle={() => setInlineCommentsOpen(!inlineCommentsOpen)}
+        />
+      )}
     </AppLayout>
   );
 }

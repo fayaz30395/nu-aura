@@ -241,3 +241,118 @@ export interface CreateOfferRequest {
   offerExpiryDate?: string;
   notes?: string;
 }
+
+// ─── Agency Types ──────────────────────────────────────────────────────────
+
+export type AgencyStatus = 'ACTIVE' | 'INACTIVE' | 'BLACKLISTED' | 'PENDING_APPROVAL';
+export type AgencyFeeType = 'FIXED' | 'PERCENTAGE' | 'RETAINER';
+export type AgencySubmissionStatus = 'SUBMITTED' | 'SCREENING' | 'SHORTLISTED' | 'INTERVIEW' | 'HIRED' | 'REJECTED' | 'WITHDRAWN';
+export type AgencyInvoiceStatus = 'NOT_APPLICABLE' | 'PENDING' | 'INVOICED' | 'PAID';
+
+export interface RecruitmentAgency {
+  id: string;
+  tenantId: string;
+  name: string;
+  contactPerson?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  feeType?: AgencyFeeType;
+  feeAmount?: number;
+  contractStartDate?: string;
+  contractEndDate?: string;
+  status: AgencyStatus;
+  specializations?: string;
+  notes?: string;
+  rating?: number;
+  createdAt: string;
+  updatedAt?: string;
+  createdBy?: string;
+  lastModifiedBy?: string;
+}
+
+export interface CreateAgencyRequest {
+  name: string;
+  contactPerson?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  feeType?: AgencyFeeType;
+  feeAmount?: number;
+  contractStartDate?: string;
+  contractEndDate?: string;
+  status?: AgencyStatus;
+  specializations?: string;
+  notes?: string;
+  rating?: number;
+}
+
+export interface UpdateAgencyRequest {
+  name?: string;
+  contactPerson?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  feeType?: AgencyFeeType;
+  feeAmount?: number;
+  contractStartDate?: string;
+  contractEndDate?: string;
+  status?: AgencyStatus;
+  specializations?: string;
+  notes?: string;
+  rating?: number;
+}
+
+export interface AgencySubmission {
+  id: string;
+  tenantId: string;
+  agencyId: string;
+  agencyName?: string;
+  candidateId: string;
+  candidateName?: string;
+  jobOpeningId: string;
+  jobTitle?: string;
+  submittedAt: string;
+  feeAgreed?: number;
+  feeCurrency: string;
+  status: AgencySubmissionStatus;
+  invoiceStatus: AgencyInvoiceStatus;
+  invoiceAmount?: number;
+  invoiceDate?: string;
+  hiredAt?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateSubmissionRequest {
+  candidateId: string;
+  jobOpeningId: string;
+  feeAgreed?: number;
+  feeCurrency?: string;
+  notes?: string;
+}
+
+export interface UpdateSubmissionStatusRequest {
+  status: AgencySubmissionStatus;
+  invoiceStatus?: AgencyInvoiceStatus;
+  invoiceAmount?: number;
+  invoiceDate?: string;
+  hiredAt?: string;
+  notes?: string;
+}
+
+export interface AgencyPerformance {
+  agencyId: string;
+  agencyName: string;
+  totalSubmissions: number;
+  hiredCount: number;
+  rejectedCount: number;
+  activeSubmissions: number;
+  hireRate: number;
+  totalFeesPaid: number;
+  rating?: number;
+}

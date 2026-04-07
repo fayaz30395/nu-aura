@@ -85,7 +85,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     iconName: 'UserPlus',
     permissionPrefixes: [
       'recruitment', 'candidate', 'onboarding', 'exit',
-      'preboarding', 'referral',
+      'preboarding', 'referral', 'agency',
     ],
     routePrefixes: [
       '/recruitment', '/onboarding', '/preboarding',
