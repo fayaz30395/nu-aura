@@ -449,3 +449,37 @@ export interface AddSpaceMemberRequest {
 export interface UpdateSpaceMemberRoleRequest {
   role: SpaceMemberRole;
 }
+
+// ─── Inline Comment Types ────────────────────────────────────────────────
+
+export type InlineCommentStatus = 'OPEN' | 'RESOLVED' | 'DELETED';
+
+export interface WikiInlineComment {
+  id: string;
+  pageId: string;
+  parentCommentId?: string;
+  anchorSelector?: string;
+  anchorText?: string;
+  anchorOffset?: number;
+  content: string;
+  status: InlineCommentStatus;
+  resolvedAt?: string;
+  resolvedBy?: string;
+  authorId: string;
+  authorName?: string;
+  authorAvatarUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  replies?: WikiInlineComment[];
+}
+
+export interface CreateInlineCommentRequest {
+  anchorSelector?: string;
+  anchorText?: string;
+  anchorOffset?: number;
+  content: string;
+}
+
+export interface ReplyToInlineCommentRequest {
+  content: string;
+}

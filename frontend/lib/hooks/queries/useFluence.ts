@@ -23,6 +23,8 @@ import {
   WikiPageTreeNode,
   WikiPageBreadcrumb,
   SpaceMemberRole,
+  CreateInlineCommentRequest,
+  ReplyToInlineCommentRequest,
 } from '@/lib/types/platform/fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
@@ -99,6 +101,11 @@ export const fluenceKeys = {
   // Edit locks
   editLock: (contentType: string, contentId: string) =>
     [...fluenceKeys.all, 'edit-lock', contentType, contentId] as const,
+  // Inline comments
+  inlineComments: (pageId: string) =>
+    [...fluenceKeys.all, 'inline-comments', pageId] as const,
+  openInlineComments: (pageId: string) =>
+    [...fluenceKeys.all, 'inline-comments', pageId, 'open'] as const,
 };
 
 // ─── Wiki Page Queries ──────────────────────────────────────────────────────
@@ -1024,6 +1031,95 @@ export function useRemoveSpaceMemberMutation() {
     }) => fluenceService.removeSpaceMember(spaceId, userId),
     onSuccess: (_data, { spaceId }) => {
       queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    },
+  });
+}
+
+// ─── Inline Comment Queries & Mutations ─────────────────────────────────────
+
+export function useInlineComments(pageId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.inlineComments(pageId),
+    queryFn: () => fluenceService.getInlineComments(pageId),
+    enabled: enabled && !!pageId,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useOpenInlineComments(pageId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.openInlineComments(pageId),
+    queryFn: () => fluenceService.getOpenInlineComments(pageId),
+    enabled: enabled && !!pageId,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useCreateInlineComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      pageId,
+      data,
+    }: {
+      pageId: string;
+      data: CreateInlineCommentRequest;
+    }) => fluenceService.createInlineComment(pageId, data),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
+    },
+  });
+}
+
+export function useReplyToInlineComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      commentId,
+      pageId,
+      data,
+    }: {
+      commentId: string;
+      pageId: string;
+      data: ReplyToInlineCommentRequest;
+    }) => fluenceService.replyToInlineComment(commentId, data),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
+    },
+  });
+}
+
+export function useResolveInlineComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      commentId,
+      pageId,
+    }: {
+      commentId: string;
+      pageId: string;
+    }) => fluenceService.resolveInlineComment(commentId),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
+    },
+  });
+}
+
+export function useDeleteInlineComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      commentId,
+      pageId,
+    }: {
+      commentId: string;
+      pageId: string;
+    }) => fluenceService.deleteInlineComment(commentId),
+    onSuccess: (_data, { pageId }) => {
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
+      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
     },
   });
 }

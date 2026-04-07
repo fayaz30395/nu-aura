@@ -549,6 +549,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.fileStack,
               requiredPermission: Permissions.RECRUITMENT_MANAGE
             },
+            {
+              id: 'agencies',
+              label: 'Agencies',
+              href: '/recruitment/agencies',
+              icon: sm.briefcase,
+              requiredPermission: Permissions.AGENCY_VIEW
+            },
           ],
         },
         {

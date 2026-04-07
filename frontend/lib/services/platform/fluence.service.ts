@@ -32,6 +32,9 @@ import {
   WatchStatus,
   SpaceMember,
   SpaceMemberRole,
+  WikiInlineComment,
+  CreateInlineCommentRequest,
+  ReplyToInlineCommentRequest,
 } from '../../types/platform/fluence';
 
 class FluenceService {
@@ -645,6 +648,58 @@ class FluenceService {
   async removeSpaceMember(spaceId: string, userId: string): Promise<void> {
     await apiClient.delete(
       `/knowledge/wiki/spaces/${spaceId}/members/${userId}`
+    );
+  }
+
+  // ─── Inline Comments ──────────────────────────────────────────────────────
+
+  async getInlineComments(pageId: string): Promise<WikiInlineComment[]> {
+    const response = await apiClient.get<WikiInlineComment[]>(
+      `/knowledge/wiki/pages/${pageId}/inline-comments`
+    );
+    return response.data;
+  }
+
+  async getOpenInlineComments(pageId: string): Promise<WikiInlineComment[]> {
+    const response = await apiClient.get<WikiInlineComment[]>(
+      `/knowledge/wiki/pages/${pageId}/inline-comments/open`
+    );
+    return response.data;
+  }
+
+  async createInlineComment(
+    pageId: string,
+    data: CreateInlineCommentRequest
+  ): Promise<WikiInlineComment> {
+    const response = await apiClient.post<WikiInlineComment>(
+      `/knowledge/wiki/pages/${pageId}/inline-comments`,
+      data
+    );
+    return response.data;
+  }
+
+  async replyToInlineComment(
+    commentId: string,
+    data: ReplyToInlineCommentRequest
+  ): Promise<WikiInlineComment> {
+    const response = await apiClient.post<WikiInlineComment>(
+      `/knowledge/wiki/inline-comments/${commentId}/reply`,
+      data
+    );
+    return response.data;
+  }
+
+  async resolveInlineComment(commentId: string): Promise<WikiInlineComment> {
+    const response = await apiClient.post<WikiInlineComment>(
+      `/knowledge/wiki/inline-comments/${commentId}/resolve`,
+      {}
+    );
+    return response.data;
+  }
+
+  async deleteInlineComment(commentId: string): Promise<void> {
+    await apiClient.delete(
+      `/knowledge/wiki/inline-comments/${commentId}`
     );
   }
 }
