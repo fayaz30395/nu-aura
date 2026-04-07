@@ -1,12 +1,12 @@
 # NU-AURA Backend — Deep Architecture Reference
 
-> Last updated: 2026-03-19 | Auto-maintained by SHDS
+> Last updated: 2026-04-07 | Auto-maintained by SHDS
 
 ## Overview
 
 Modular monolith built with Spring Boot 3.4.1 on Java 17. Clean layered architecture: `api/` →
-`application/` → `domain/` → `infrastructure/`. 71 modules, 139 controllers, 188 services, 304
-entities, 254 repositories.
+`application/` → `domain/` → `infrastructure/`. 170 controllers, 206 services, 360
+entities. Flyway migrations V0–V119.
 
 ---
 
