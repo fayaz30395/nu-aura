@@ -32,12 +32,10 @@ import {
   MapPin,
   Star,
   DollarSign,
-  Calendar,
   FileText,
   TrendingUp,
   CheckCircle,
   XCircle,
-  Clock,
 } from 'lucide-react';
 
 const containerVariants = {

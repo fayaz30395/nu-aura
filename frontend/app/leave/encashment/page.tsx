@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -26,7 +25,7 @@ export default function LeaveEncashmentPage() {
   const router = useRouter();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { hasPermission, isReady: permReady } = usePermissions();
+  const { hasPermission: _hasPermission, isReady: permReady } = usePermissions();
   const { user } = useAuth();
 
   const {
@@ -105,7 +104,7 @@ export default function LeaveEncashmentPage() {
           </div>
 
           {isLoading ? (
-            <div className="skeuo-card p-6 animate-pulse space-y-3">
+            <div className="skeuo-card p-6 animate-pulse space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-4 bg-[var(--skeleton-base)] rounded" />
               ))}

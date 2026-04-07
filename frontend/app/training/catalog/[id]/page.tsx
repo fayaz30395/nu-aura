@@ -320,7 +320,7 @@ function ModuleItem({
   const totalCount = contents.length;
   const moduleProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-  const activeContent = contents.find((c) => c.id === activeContentId) ?? null;
+  const _activeContent = contents.find((c) => c.id === activeContentId) ?? null;
 
   return (
     <div className="border border-[var(--border-main)] rounded-lg overflow-hidden">

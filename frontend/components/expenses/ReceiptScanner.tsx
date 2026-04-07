@@ -54,18 +54,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
     return null;
   }, []);
 
-  const handleFileSelected = useCallback((file: File) => {
-    const error = validateFile(file);
-    if (error) {
-      setValidationError(error);
-      return;
-    }
-    setValidationError(null);
-    setSelectedFile(file);
-    startScan(file);
-  }, [validateFile]);
-
-  const startScan = (file: File) => {
+  const startScan = useCallback((file: File) => {
     setStage('scanning');
     scanMutation.mutate(file, {
       onSuccess: (result: OcrResult) => {
@@ -80,7 +69,18 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
         setStage('error');
       },
     });
-  };
+  }, [scanMutation]);
+
+  const handleFileSelected = useCallback((file: File) => {
+    const error = validateFile(file);
+    if (error) {
+      setValidationError(error);
+      return;
+    }
+    setValidationError(null);
+    setSelectedFile(file);
+    startScan(file);
+  }, [validateFile, startScan]);
 
   const handleReScan = () => {
     setStage('upload');

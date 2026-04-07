@@ -141,7 +141,7 @@ export default function DepartmentsPage() {
   if (!permReady) {
     return (
       <AdminPageContent>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="skeuo-card p-4 animate-pulse">
               <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/4 mb-2" />

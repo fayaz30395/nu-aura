@@ -40,7 +40,7 @@ export function AuthGuard({
 }: AuthGuardProps): ReactNode {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, hasHydrated, restoreSession } = useAuth();
+  const { user, isAuthenticated, hasHydrated, restoreSession } = useAuth();
   const {
     hasPermission,
     hasAnyPermission,
@@ -84,10 +84,12 @@ export function AuthGuard({
       return;
     }
 
-    // Not authenticated — try restoring session from httpOnly cookie first.
-    // This prevents redirect loops when Zustand state is cleared but cookies
-    // are still valid (e.g. after a page refresh).
-    if (!isAuthenticated) {
+    // Not authenticated OR authenticated but user object is missing (Zustand only
+    // persists isAuthenticated, not the full user) — try restoring session from
+    // httpOnly cookie first. This prevents redirect loops when Zustand state is
+    // cleared but cookies are still valid (e.g. after a page refresh), and also
+    // prevents permission checks from failing when user/roles haven't loaded yet.
+    if (!isAuthenticated || (isAuthenticated && !user)) {
       if (!restoreAttemptedRef.current && !isRestoringSession) {
         restoreAttemptedRef.current = true;
         setIsRestoringSession(true);
@@ -170,8 +172,9 @@ export function AuthGuard({
     // Intentional omissions: checkAuthorization is a stable hoisted function; router is stable
     // from useRouter; restoreSession is a stable Zustand action; isRestoringSession is omitted
     // to avoid an infinite loop (this effect sets it indirectly via restoreSession().then()).
+    // `user` is included so the effect re-runs after restoreSession populates the user object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, isAuthenticated, hasHydrated, isReady, isSuperAdmin]);
+  }, [pathname, isAuthenticated, hasHydrated, isReady, isSuperAdmin, user]);
 
   function checkAuthorization(config: RouteConfig): boolean {
     // Auth only check

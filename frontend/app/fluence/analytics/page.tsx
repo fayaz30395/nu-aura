@@ -52,7 +52,7 @@ export default function FluenceAnalyticsPage() {
   const metrics = useMemo(() => {
     const wikiPages = wikiData?.content || [];
     const blogPosts = blogData?.content || [];
-    const templates = templatesData?.content || [];
+    const _templates = templatesData?.content || [];
 
     const totalViews =
       wikiPages.reduce((sum, p) => sum + (p.viewCount || 0), 0) +
@@ -71,7 +71,7 @@ export default function FluenceAnalyticsPage() {
     const activeContent = publishedWiki + publishedBlogs;
 
     return {totalViews, totalLikes, totalComments, activeContent};
-  }, [wikiData, blogData]);
+  }, [wikiData, blogData, templatesData?.content]);
 
   // Activity trend data (group by day, last 30 days)
   const activityTrendData = useMemo(() => {
@@ -511,7 +511,7 @@ interface KpiCardProps {
 }
 
 function KpiCard({icon: IconComponent, label, value, color}: KpiCardProps) {
-  const colorMap = {
+  const _colorMap = {
     primary: 'from-accent-600 to-accent-700',
     secondary: 'from-info-600 to-info-700',
     warning: 'from-warning-600 to-warning-700',
