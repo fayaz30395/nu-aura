@@ -95,7 +95,8 @@ export default function MyProfilePage() {
   });
 
   // React Query hooks — use /employees/me (no ID needed)
-  const {data: employee, isLoading} = useMyEmployee(!!user);
+  const {data: employee, isLoading, fetchStatus} = useMyEmployee(!!user);
+  const isActuallyLoading = isLoading && fetchStatus === 'fetching';
 
   const updateMutation = useUpdateMyProfile();
 
@@ -171,7 +172,7 @@ export default function MyProfilePage() {
     }
   };
 
-  if (isLoading) {
+  if (isActuallyLoading) {
     return (
       <AppLayout activeMenuItem="profile">
         <div className="flex items-center justify-center min-h-[400px]">

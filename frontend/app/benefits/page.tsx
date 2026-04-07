@@ -42,6 +42,10 @@ import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('BenefitsPage');
 
+function formatINR(amount: number): string {
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+}
+
 const enrollmentFormSchema = z.object({
   coverageLevel: z.string().min(1, 'Coverage level required'),
   effectiveDate: z.string().min(1, 'Effective date required'),
@@ -449,7 +453,7 @@ export default function BenefitsPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
                   <p
-                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">${stats.monthlyPremium.toLocaleString()}</p>
+                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatINR(stats.monthlyPremium)}</p>
                 </div>
               </div>
             </CardContent>
@@ -476,7 +480,7 @@ export default function BenefitsPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Coverage</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
-                    ${stats.totalCoverage.toLocaleString()}
+                    {formatINR(stats.totalCoverage)}
                   </p>
                 </div>
               </div>
@@ -491,7 +495,7 @@ export default function BenefitsPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Flex Credits</p>
                   <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
-                    ${stats.flexCredits.toLocaleString()}
+                    {formatINR(stats.flexCredits)}
                   </p>
                 </div>
               </div>
@@ -565,7 +569,7 @@ export default function BenefitsPage() {
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4"/>
-                                ${benefit.monthlyPremium}/mo
+                                {formatINR(benefit.monthlyPremium)}/mo
                               </span>
                               {benefit.enrollment && (
                                 <span className="flex items-center gap-1">
@@ -610,7 +614,7 @@ export default function BenefitsPage() {
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4"/>
-                                ${benefit.monthlyPremium}/mo
+                                {formatINR(benefit.monthlyPremium)}/mo
                               </span>
                               <span className="flex items-center gap-1">
                                 <Building className="h-4 w-4"/>
@@ -693,11 +697,11 @@ export default function BenefitsPage() {
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Monthly Premium:</span>
-                            <p className="font-medium">${enrollment.employeeContribution}</p>
+                            <p className="font-medium">{formatINR(enrollment.employeeContribution)}</p>
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Coverage:</span>
-                            <p className="font-medium">${enrollment.currentCoverage.toLocaleString()}</p>
+                            <p className="font-medium">{formatINR(enrollment.currentCoverage)}</p>
                           </div>
                         </div>
                         {enrollment.dependentCount > 0 && (
@@ -771,12 +775,12 @@ export default function BenefitsPage() {
                           </div>
                           <div>
                             <span className="text-[var(--text-secondary)]">Claim Amount:</span>
-                            <p className="font-medium">${claim.claimAmount.toLocaleString()}</p>
+                            <p className="font-medium">{formatINR(claim.claimAmount)}</p>
                           </div>
                           {claim.approvedAmount !== undefined && (
                             <div>
                               <span className="text-[var(--text-secondary)]">Approved Amount:</span>
-                              <p className="font-medium text-success-600">${claim.approvedAmount.toLocaleString()}</p>
+                              <p className="font-medium text-success-600">{formatINR(claim.approvedAmount)}</p>
                             </div>
                           )}
                         </div>
@@ -788,7 +792,7 @@ export default function BenefitsPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
-                          ${claim.claimAmount.toFixed(2)}
+                          {formatINR(claim.claimAmount)}
                         </div>
                       </div>
                     </div>
@@ -849,13 +853,13 @@ export default function BenefitsPage() {
                   <div className="p-4 skeuo-card rounded-lg">
                     <p className="text-body-muted skeuo-deboss">Monthly Premium</p>
                     <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
-                      ${selectedBenefit.monthlyPremium.toLocaleString()}
+                      {formatINR(selectedBenefit.monthlyPremium)}
                     </p>
                   </div>
                   <div className="p-4 skeuo-card rounded-lg">
                     <p className="text-body-muted skeuo-deboss">Coverage Amount</p>
                     <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
-                      ${selectedBenefit.coverage.toLocaleString()}
+                      {formatINR(selectedBenefit.coverage)}
                     </p>
                   </div>
                 </div>
@@ -996,7 +1000,7 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Claim Amount ($)
+                    Claim Amount (INR)
                   </label>
                   <input
                     type="number"
