@@ -10,7 +10,7 @@ import {
   Calendar,
   CheckCircle,
   CreditCard,
-  DollarSign,
+  IndianRupee,
   FileText,
   Gift,
   Heart,
@@ -109,7 +109,7 @@ const getBenefitIcon = (type: string) => {
       return <Building className="h-6 w-6"/>;
     case 'FSA':
     case 'HSA':
-      return <DollarSign className="h-6 w-6"/>;
+      return <IndianRupee className="h-6 w-6"/>;
     case 'VISION':
       return <Users className="h-6 w-6"/>;
     default:
@@ -448,7 +448,7 @@ export default function BenefitsPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <DollarSign className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  <IndianRupee className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
@@ -568,7 +568,7 @@ export default function BenefitsPage() {
                             </p>
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4"/>
+                                <IndianRupee className="h-4 w-4"/>
                                 {formatINR(benefit.monthlyPremium)}/mo
                               </span>
                               {benefit.enrollment && (
@@ -613,7 +613,7 @@ export default function BenefitsPage() {
                             </p>
                             <div className="flex items-center gap-4 mt-4 text-body-muted">
                               <span className="flex items-center gap-1">
-                                <DollarSign className="h-4 w-4"/>
+                                <IndianRupee className="h-4 w-4"/>
                                 {formatINR(benefit.monthlyPremium)}/mo
                               </span>
                               <span className="flex items-center gap-1">
@@ -810,7 +810,7 @@ export default function BenefitsPage() {
               <div className="text-white">
                 <h3 className="text-base font-semibold">Open Enrollment Period</h3>
                 <p className="mt-1 opacity-90">
-                  November 1 - November 30, 2025. Review and update your benefits selections.
+                  March 1 - March 31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and update your benefits selections.
                 </p>
               </div>
               <Button variant="secondary" onClick={() => setActiveTab('plans')}>
@@ -907,7 +907,7 @@ export default function BenefitsPage() {
                           {...registerEnrollment('useFlexCredits')}
                         />
                         <label htmlFor="useFlexCredits" className="text-body-secondary">
-                          Use flex credits (${stats.flexCredits} available)
+                          Use flex credits ({formatINR(stats.flexCredits)} available)
                         </label>
                       </div>
                     )}

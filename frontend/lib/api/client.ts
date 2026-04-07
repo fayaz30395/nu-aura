@@ -9,6 +9,8 @@ const API_URL = apiConfig.baseUrl;
  *
  * refreshPromise: holds the in-flight refresh request so concurrent 401s
  * share a single refresh attempt instead of racing (SEC-F06).
+ * This is also shared with useAuth.restoreSession() to prevent the AuthGuard
+ * from racing with the 401 interceptor (P0-SESSION-FIX).
  *
  * isRedirecting: prevents multiple concurrent hard-redirects to /auth/login.
  * Auto-resets after REDIRECT_DEBOUNCE_MS to prevent permanent lockout if
@@ -18,6 +20,31 @@ let refreshPromise: Promise<boolean> | null = null;
 let isRedirecting = false;
 let redirectResetTimer: ReturnType<typeof setTimeout> | null = null;
 const REDIRECT_DEBOUNCE_MS = 5000;
+
+/**
+ * P0-SESSION-FIX: Shared refresh mutex accessible by both the Axios interceptor
+ * and useAuth.restoreSession(). Prevents concurrent refresh calls that would
+ * revoke each other's refresh tokens, causing session identity degradation.
+ */
+export function getSharedRefreshPromise(): Promise<boolean> | null {
+  return refreshPromise;
+}
+
+export function setSharedRefreshPromise(promise: Promise<boolean> | null): void {
+  refreshPromise = promise;
+}
+
+/**
+ * P0-SESSION-FIX: Callback to update the Zustand auth store after a silent
+ * token refresh in the 401 interceptor. Without this, the interceptor refreshes
+ * the httpOnly cookie but leaves the Zustand store with stale/null user data,
+ * causing the UI to show "User / Employee" instead of the real identity.
+ */
+let onSessionRefreshed: (() => Promise<void>) | null = null;
+
+export function setOnSessionRefreshed(callback: (() => Promise<void>) | null): void {
+  onSessionRefreshed = callback;
+}
 
 /**
  * API Client with secure cookie-based authentication.
@@ -86,6 +113,9 @@ class ApiClient {
             // refreshPromise is assigned in the same expression that checks it,
             // preventing a race where multiple 401 handlers in the same microtask
             // batch could each see null before any assignment occurs (BUG-001).
+            // P0-SESSION-FIX: This same mutex is shared with useAuth.restoreSession()
+            // via getSharedRefreshPromise()/setSharedRefreshPromise() so they never
+            // issue concurrent refresh calls that revoke each other's tokens.
             const promise = refreshPromise ?? (refreshPromise = this.client.post('/auth/refresh', null)
               .then((res) => res.status === 200)
               .catch(() => false)
@@ -94,6 +124,15 @@ class ApiClient {
             const refreshed = await promise;
 
             if (refreshed) {
+              // P0-SESSION-FIX: After a silent 401 refresh, update the Zustand auth
+              // store so the UI reflects the correct user identity. Without this,
+              // the cookie has new tokens but the store shows stale "User / Employee".
+              if (onSessionRefreshed) {
+                onSessionRefreshed().catch(() => {
+                  // Best-effort — the retry will still work even if store update fails
+                  logger.warn('[ApiClient] Failed to update auth store after silent refresh');
+                });
+              }
               return this.client(originalRequest);
             }
 

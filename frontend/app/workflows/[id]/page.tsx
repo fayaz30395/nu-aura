@@ -185,9 +185,9 @@ export default function WorkflowDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
-  const canManage = isReady && hasPermission(Permissions.WORKFLOW_MANAGE);
-  const canView = isReady && (hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
+  const {hasPermission, isAdmin, isReady} = usePermissions();
+  const canManage = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_MANAGE));
+  const canView = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
 
   const workflowId = params.id as string;
   const isNew = workflowId === 'new';

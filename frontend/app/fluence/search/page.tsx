@@ -184,7 +184,20 @@ export default function SearchPage() {
     inputRef.current?.focus();
   }, []);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isReady) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <p className="text-[var(--text-muted)] font-medium">Loading search...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasAccess) return null;
 
   const iconMap: Record<string, typeof BookOpen> = {
     wiki: BookOpen,

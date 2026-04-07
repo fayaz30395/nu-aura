@@ -310,19 +310,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // DEF-29: Decode JWT and check expiry — expired tokens must not pass middleware
+  // DEF-29: Decode JWT and check expiry
   const { role, roles, isExpired } = decodeJwt(accessToken);
 
+  // P0-SESSION-FIX: Check if a valid refresh token cookie exists alongside
+  // the expired access token. If so, let the page load — the client-side
+  // AuthGuard/restoreSession will use the refresh token to get new credentials.
+  // Previously, middleware redirected to /auth/login immediately on access token
+  // expiry, which prevented the refresh flow from ever running and caused session
+  // loss during cross-sub-app navigation.
+  const hasRefreshToken = !!request.cookies.get('refresh_token')?.value;
+
   if (isExpired) {
-    // Expired token on an authenticated route → redirect to login
-    // For non-authenticated routes, let through — AuthGuard / API client will handle refresh
-    if (isAuthenticatedRoute(pathname)) {
-      const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('returnUrl', pathname);
-      return NextResponse.redirect(loginUrl);
+    if (hasRefreshToken) {
+      // Refresh token exists — let the page load so client-side refresh can work.
+      // AuthGuard will call restoreSession() which uses the httpOnly refresh cookie.
+      const response = NextResponse.next();
+      return addSecurityHeaders(response);
     }
-    // Unknown routes with expired token also redirect (deny-by-default, DEF-27)
-    if (!isPublicRoute(pathname)) {
+
+    // No refresh token — truly expired session, redirect to login
+    if (isAuthenticatedRoute(pathname) || !isPublicRoute(pathname)) {
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('returnUrl', pathname);
       return NextResponse.redirect(loginUrl);

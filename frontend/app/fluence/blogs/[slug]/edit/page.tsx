@@ -59,7 +59,7 @@ export default function EditBlogPost() {
   const [sharedEmployeeIds, setSharedEmployeeIds] = useState<string[]>([]);
   const [editorIds, setEditorIds] = useState<string[]>([]);
 
-  const categories = categoriesData || [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
   const searchedEmployees = editorSearchData?.content || [];
 
   const {

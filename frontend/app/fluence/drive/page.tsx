@@ -1,9 +1,7 @@
 'use client';
 
 import React, {useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {File, FileImage, FileSpreadsheet, FileText, HardDrive, Search, Upload,} from 'lucide-react';
-import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
@@ -41,9 +39,7 @@ function categorizeFile(contentType: string): FileCategory {
 }
 
 function FluenceDriveContent() {
-  const router = useRouter();
-  const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission} = usePermissions();
+  const {hasPermission, isReady} = usePermissions();
   const canManageDrive = hasPermission(Permissions.DOCUMENT_UPLOAD) || hasPermission(Permissions.DOCUMENT_DELETE);
   const [activeCategory, setActiveCategory] = useState<FileCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,21 +96,17 @@ function FluenceDriveContent() {
     return counts;
   }, [attachments]);
 
-  if (!hasHydrated) {
+  if (!isReady) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
-          <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
+      <AppLayout>
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     );
-  }
-
-  if (!isAuthenticated) {
-    router.push('/auth/login');
-    return null;
   }
 
   const categories: { id: FileCategory; label: string; icon: React.ElementType }[] = [

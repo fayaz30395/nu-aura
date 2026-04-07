@@ -151,7 +151,7 @@ type StatusFilter = 'PENDING' | 'ALL';
 const PAGE_SIZE = 20;
 
 export default function ApprovalInboxPage() {
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isAdmin, isReady} = usePermissions();
   const {onApprovalTaskAssigned, offApprovalTaskAssigned} = useWebSocket();
   const queryClient = useQueryClient();
 
@@ -235,7 +235,8 @@ export default function ApprovalInboxPage() {
 
   const canViewInbox =
     isReady &&
-    (hasPermission(Permissions.WORKFLOW_VIEW) ||
+    (isAdmin ||
+      hasPermission(Permissions.WORKFLOW_VIEW) ||
       hasPermission(Permissions.WORKFLOW_EXECUTE));
 
   // Listen for new approval task assignments via WebSocket
