@@ -33,11 +33,14 @@ export default function LoansPage() {
   const [size] = useState(10);
 
   // Fetch loans using React Query
-  const {data: loansResponse, isLoading: loading, error: queryError} = useEmployeeLoans(
+  const {data: loansResponse, isLoading: isLoadingLoans, error: queryError, fetchStatus} = useEmployeeLoans(
     page,
     size,
     isAuthenticated && hasHydrated
   );
+
+  // Only show loading when actively fetching (not between retry attempts)
+  const loading = isLoadingLoans && fetchStatus === 'fetching';
 
   // Extract loans from the paginated response
   // loansResponse should be a Page<EmployeeLoan> with a 'content' array

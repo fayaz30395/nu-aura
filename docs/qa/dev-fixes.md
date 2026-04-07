@@ -1,5 +1,42 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 5 — DEV Agent Monitoring (2026-04-08)
+
+### Check 1: QA findings reviewed — 2 fixes applied
+
+### BUG-004: /loans page stuck on loading spinner indefinitely
+- **File:** `frontend/app/loans/page.tsx`
+- **Root cause:** Same pattern as BUG-001 (/leave). The `loading` variable used React Query's `isLoading` directly, which stays `true` between retry attempts when the backend API fails or times out. This caused an infinite spinner with no way to show the error state.
+- **Fix:** Added `fetchStatus` from `useEmployeeLoans()` hook. Loading is now only `true` when `isLoading && fetchStatus === 'fetching'` — when retries pause, `fetchStatus` becomes `'idle'`, allowing the error state to render instead of the spinner.
+- **Verified:** tsc passes (zero errors)
+
+### BUG-005: /fluence/wall renders empty content (no loading state)
+- **File:** `frontend/app/fluence/wall/page.tsx`
+- **Root cause:** When permissions were not yet ready (`!isReady`), the page returned `null` — rendering a completely empty main content area. The QA tester correctly flagged this as a FAIL since no content was visible at all.
+- **Fix:** Split the guard into two: `!isReady` now renders a proper loading state inside `AppLayout` (with an activity icon and "Loading Activity Wall..." message), while `!hasAccess` still returns null (redirect handles it). This ensures the page always shows meaningful content while permissions load.
+- **Verified:** tsc passes (zero errors)
+
+### Check 2: clean
+### Check 3: clean
+### Check 4: clean
+### Check 5: clean
+### Check 6: clean
+### Check 7: clean
+### Check 8: clean
+### Check 9: clean
+### Check 10: clean
+### Check 11: clean
+### Check 12: clean (FINAL CHECK — monitoring loop complete 12/12)
+
+### Triage of remaining QA FAIL/BUG items (not code bugs):
+- **/overtime redirects to /leave:** Session instability (P0). The overtime page's permission gate (`hasAnyPermission(OVERTIME_VIEW, OVERTIME_REQUEST, ATTENDANCE_MARK)`) returns false when session drops, triggering `router.replace('/me/dashboard')` which cascades. Code is correct; needs stable session.
+- **/shifts, /travel Access Denied:** Same AuthGuard session issue as BUG-002/003 (already fixed in Session 4). Needs re-test with stable session.
+- **/training, /surveys, /recognition Access Denied:** Explicitly flagged as "session dropped" in QA report. Re-test needed.
+- **/recruitment/agencies "Failed to Load":** Backend API returning error (`agenciesQuery.isError`). Frontend error handling is correct (`PageErrorFallback`). Backend endpoint needs investigation.
+- **/fluence/blogs stuck on "Preparing workspace":** AuthGuard loading state caused by session drop. Blog page code is correct. Re-test needed.
+
+---
+
 ## Session 4 — Chrome QA Bug Fixes (22:58)
 
 ### BUG-001: /leave page stuck on loading spinner indefinitely
