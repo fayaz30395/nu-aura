@@ -20,7 +20,7 @@
 | NU-HRMS | KEKA replacement — HR core (employees, leave, attendance, payroll) | **Highest — active build** |
 | NU-Hire | Internal recruitment & onboarding | High |
 | NU-Grow | Performance reviews, training, engagement | Medium |
-| NU-Fluence | Internal knowledge management & collaboration | Phase 2 |
+| NU-Fluence | Internal knowledge management & collaboration | High — active build |
 
 **NU-AURA is NOT:** a SaaS product, a project management tool, a chat platform, a finance/accounting system, or a mobile app.
 
@@ -31,12 +31,12 @@
 ```
 nu-aura/
 ├── frontend/                    # Next.js 14 App Router
-│   ├── app/                     # Route pages (200+ routes)
-│   ├── components/              # UI components (ui/, platform/, layout/)
+│   ├── app/                     # Route pages (261 routes)
+│   ├── components/              # UI components (151 files — ui/, platform/, layout/, fluence/)
 │   ├── lib/
 │   │   ├── api/                 # Axios client — DO NOT create new instances
-│   │   ├── hooks/               # React hooks (190 files)
-│   │   ├── services/            # API service functions (92 files)
+│   │   ├── hooks/               # React hooks (118 files)
+│   │   ├── services/            # API service functions (224 files)
 │   │   ├── config/              # apps.ts (route-to-app mapping)
 │   │   └── stores/              # Zustand stores (auth, UI)
 │   ├── middleware.ts            # Edge middleware (OWASP headers, auth)
@@ -134,7 +134,7 @@ When an audit tool recommends larger sizes, evaluate against this desktop densit
 - **Every User Is an Employee**: Roles are additive. MY SPACE sidebar items never have `requiredPermission`
 - **Approval Flows**: Generic engine — `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`
 - **Payroll**: SpEL formula engine, DAG evaluation order, DB transaction wrapped
-- **Flyway**: V0–V117 active. Next = V118. Legacy Liquibase in `db/changelog/` — DO NOT USE
+- **Flyway**: V0–V119 active. Next = V120. Legacy Liquibase in `db/changelog/` — DO NOT USE
 - **Kafka**: 6 topics (`nu-aura.approvals/notifications/audit/employee-lifecycle/fluence-content/payroll-processing`) + 6 DLT topics
 - **Security**: Rate limiting (Bucket4j + Redis), OWASP headers (Next.js middleware + Spring Security), CSRF double-submit cookie
 - **Platform**: Bundle app with 4 sub-apps via waffle grid switcher. Routes mapped in `frontend/lib/config/apps.ts`. Sidebar is app-aware
@@ -145,12 +145,12 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ```
 
 ### Sub-Apps
-| App | Scope | Status (as of 2026-04-05) |
+| App | Scope | Status (as of 2026-04-07) |
 |-----|-------|--------------------------|
 | NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~96% — Production-ready |
-| NU-Hire | Jobs, candidates, pipeline, scorecards, onboarding, offboarding, e-signature, career page, diversity tracking | ~95% — Production-ready |
+| NU-Hire | Jobs, candidates, pipeline, scorecards, agencies (CRUD + submissions + performance), onboarding, offboarding, e-signature, career page, diversity tracking | ~97% — Production-ready |
 | NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~94% — Production-ready |
-| NU-Fluence | Wiki (nested pages, tree view, export), blogs, templates, Drive, analytics, space permissions + members | ~80% — Backend complete, frontend ~75% |
+| NU-Fluence | Wiki (nested pages, tree view, export, inline comments), blogs, templates, Drive, search, analytics, wall (trending + activity), space permissions + members, macros, AI chat | ~93% — Backend complete, frontend ~90% |
 
 ---
 
