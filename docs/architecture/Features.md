@@ -1,16 +1,16 @@
 # NU-AURA Platform — Feature Inventory & Completion Status
 
-> Last updated: 2026-03-19 | Auto-maintained by SHDS
+> Last updated: 2026-04-07 | Auto-maintained by SHDS
 
-## Overall Completion: ~90%
+## Overall Completion: ~95%
 
 | Sub-App        | Completion | Backend | Frontend |
 |----------------|------------|---------|----------|
-| **NU-HRMS**    | 93%        | ~95%    | ~91%     |
-| **NU-Hire**    | 92%        | ~94%    | ~90%     |
-| **NU-Grow**    | 91%        | ~93%    | ~89%     |
-| **NU-Fluence** | 85%        | ~88%    | ~82%     |
-| **Platform**   | 95%        | ~96%    | ~94%     |
+| **NU-HRMS**    | 96%        | ~97%    | ~95%     |
+| **NU-Hire**    | 97%        | ~98%    | ~96%     |
+| **NU-Grow**    | 94%        | ~95%    | ~93%     |
+| **NU-Fluence** | 93%        | ~96%    | ~90%     |
+| **Platform**   | 96%        | ~97%    | ~95%     |
 
 ---
 
@@ -27,7 +27,7 @@
 | **Payroll**             | 95%     | 91%      | 93%     | SpEL engine, statutory, bulk processing    |
 | **Attendance**          | 94%     | 90%      | 92%     | Mobile, shift swap, comp-off, auto-reg     |
 | **Analytics/Reports**   | 94%     | 90%      | 92%     | Scheduled reports, org health              |
-| **Recruitment ATS**     | 94%     | 90%      | 92%     | Kanban, AI parsing, job boards             |
+| **Recruitment ATS**     | 98%     | 96%      | 97%     | Kanban, AI parsing, job boards, agencies, scorecards |
 | **Resource Allocation** | 93%     | 91%      | 92%     | Workload, capacity, conflicts              |
 | **FnF/Offboarding**     | 93%     | 91%      | 92%     | Exit interview, clearance, settlement      |
 | **Projects**            | 93%     | 91%      | 92%     | Tasks, Gantt, calendar, resource conflicts |
@@ -38,10 +38,9 @@
 | **Settings**            | 92%     | 88%      | 90%     | System config, security settings           |
 | **Onboarding**          | 91%     | 89%      | 90%     | Templates, tasks, preboarding portal       |
 | **Training/LMS**        | 90%     | 86%      | 88%     | Courses, quizzes, certificates, paths      |
-| **Fluence/Knowledge**   | 88%     | 82%      | 85%     | Wiki, blogs, templates, AI chat            |
-| **Documents**           | 88%     | 82%      | 85%     | Upload, workflow, e-signature              |
-| **Benefits**            | 85%     | 75%      | 80%     | Plans, enrollment, claims, flex allocation |
-| **NU-Fluence (full)**   | -       | -        | Phase 2 | Drive integration pending                  |
+| **Fluence/Knowledge**   | 96%     | 90%      | 93%     | Wiki, blogs, templates, inline comments, Drive, AI chat, macros |
+| **Documents**           | 90%     | 86%      | 88%     | Upload, workflow, e-signature              |
+| **Benefits**            | 88%     | 80%      | 84%     | Plans, enrollment, claims, flex allocation |
 
 ---
 
@@ -122,6 +121,9 @@
 - [x] AI resume parsing (Groq LLM)
 - [x] Employee referral program
 - [x] Public careers page
+- [x] Structured interview scorecards (templates + criteria)
+- [x] EEOC/Diversity tracking (optional self-reported)
+- [x] Agency portal (CRUD, submissions, fee tracking, performance metrics)
 - [ ] Video interview integration (not yet)
 
 #### Onboarding
@@ -174,14 +176,23 @@
 #### Knowledge Management
 
 - [x] Wiki spaces with rich text pages (TipTap)
+- [x] Nested page hierarchy (tree view, breadcrumbs, move pages)
+- [x] Inline comments (anchor-based, threaded, resolve/delete)
+- [x] Per-space permissions (ADMIN/EDITOR/VIEWER membership)
+- [x] PDF/Word export (OpenPDF + Apache POI)
+- [x] Content macros (ToC, callout, code block, expand/collapse)
 - [x] Blog posts with categories
-- [x] Document templates
-- [x] Full-text knowledge search
+- [x] Document templates with instantiation
+- [x] Full-text knowledge search (multi-type, saved searches)
 - [x] AI chat widget (Groq LLM)
-- [x] Content access control
-- [ ] Drive integration (Phase 2)
-- [ ] Real-time collaborative editing (Phase 2)
-- [ ] Version history (partial)
+- [x] Content access control (visibility + department sharing)
+- [x] Drive (file upload, categorization, search)
+- [x] Activity wall (trending content, recent activity feed)
+- [x] Analytics dashboard (KPIs, trends, top content)
+- [x] Favorites, view tracking, watch/subscribe
+- [x] Edit locking (distributed, 5min TTL)
+- [x] Version history with restore
+- [ ] Real-time collaborative editing (not started)
 
 ### Platform Features
 
@@ -209,8 +220,10 @@
 
 | Feature                               | Priority | Sub-App  |
 |---------------------------------------|----------|----------|
-| NU-Fluence Drive integration          | High     | Fluence  |
 | Real-time collaborative editing       | Medium   | Fluence  |
+| Inline comment notifications/mentions | Medium   | Fluence  |
+| Agency self-service portal            | Low      | Hire     |
+| Advanced Drive (folders, sharing)     | Medium   | Fluence  |
 | Video interview integration           | Medium   | Hire     |
 | Biometric attendance integration      | Low      | HRMS     |
 | Bank file generation (payroll)        | Medium   | HRMS     |

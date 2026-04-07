@@ -1,16 +1,16 @@
 # NU-AURA Frontend — Deep Architecture Reference
 
-> Last updated: 2026-03-19 | Auto-maintained by SHDS
+> Last updated: 2026-04-07 | Auto-maintained by SHDS
 
 ## Overview
 
-Next.js 14 App Router application with TypeScript strict mode. 196 pages across 4 sub-apps, 129
-components, 94 API services, 85+ hooks. Production-hardened with OWASP security headers,
+Next.js 14 App Router application with TypeScript strict mode. 261 pages across 4 sub-apps, 151
+components, 224 API services, 118 hooks. Production-hardened with OWASP security headers,
 cookie-based auth, and comprehensive E2E testing.
 
 ---
 
-## Page Inventory (196 Pages)
+## Page Inventory (261 Pages)
 
 ### NU-HRMS (Core HR)
 
@@ -59,6 +59,10 @@ cookie-based auth, and comprehensive E2E testing.
 | `/preboarding/portal/[token]` | Public preboarding portal  |
 | `/careers`                    | Public careers page        |
 | `/offer-portal`               | Offer acceptance portal    |
+| `/recruitment/agencies`       | Agency list (CRUD, stats)  |
+| `/recruitment/agencies/[id]`  | Agency detail + submissions|
+| `/recruitment/career-page`    | Career page CMS            |
+| `/recruitment/candidates/[id]`| Candidate detail           |
 
 ### NU-Grow (Performance & Learning)
 
@@ -79,17 +83,25 @@ cookie-based auth, and comprehensive E2E testing.
 
 ### NU-Fluence (Knowledge)
 
-| Route                       | Purpose           |
-|-----------------------------|-------------------|
-| `/fluence/wiki`             | Wiki spaces       |
-| `/fluence/wiki/[slug]`      | Wiki page view    |
-| `/fluence/wiki/[slug]/edit` | Wiki page editor  |
-| `/fluence/blogs`            | Blog listing      |
-| `/fluence/templates/[id]`   | Template viewer   |
-| `/fluence/drive`            | Drive integration |
-| `/fluence/search`           | Knowledge search  |
-| `/fluence/wall`             | Social wall       |
-| `/fluence/dashboard`        | Fluence dashboard |
+| Route                       | Purpose                                    |
+|-----------------------------|--------------------------------------------|
+| `/fluence/wiki`             | Wiki spaces + page listing with tree view  |
+| `/fluence/wiki/new`         | Create new wiki page                       |
+| `/fluence/wiki/[slug]`      | Wiki page view (inline comments, export)   |
+| `/fluence/wiki/[slug]/edit` | Wiki page editor (TipTap)                  |
+| `/fluence/blogs`            | Blog listing with categories               |
+| `/fluence/blogs/new`        | Create blog post                           |
+| `/fluence/blogs/[slug]`     | Blog post view                             |
+| `/fluence/blogs/[slug]/edit`| Edit blog post                             |
+| `/fluence/templates`        | Template listing                           |
+| `/fluence/templates/new`    | Create template                            |
+| `/fluence/templates/[id]`   | Template viewer + instantiate              |
+| `/fluence/drive`            | File storage (upload, categorize, search)  |
+| `/fluence/search`           | Full-text search (saved searches, filters) |
+| `/fluence/my-content`       | User's own wiki pages + blog posts         |
+| `/fluence/wall`             | Activity wall (trending + recent activity) |
+| `/fluence/dashboard`        | Fluence overview dashboard                 |
+| `/fluence/analytics`        | Content analytics (KPIs, trends, charts)   |
 
 ### Platform
 

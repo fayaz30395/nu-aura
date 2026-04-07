@@ -1,20 +1,21 @@
 # NU-AURA Architecture Scorecard vs KEKA HRMS
 
-**Date:** 2026-03-22
+**Date:** 2026-04-07 (updated from 2026-03-22)
 **Analyst:** Backend Specialist Agent
-**Overall Grade:** 7.2/10
+**Overall Grade:** 7.7/10
 
 ---
 
 ## Executive Summary
 
-NU-AURA is a **production-ready HRMS platform** with strong architectural foundations but critical
-performance gaps. The platform demonstrates enterprise-grade security, comprehensive RBAC, and
-event-driven design. However, **25-second dashboard load times** and missing database indexes
-severely impact user experience.
+NU-AURA is a **production-ready HRMS platform** with strong architectural foundations. The platform
+demonstrates enterprise-grade security, comprehensive RBAC, event-driven design, and a full
+Redis caching layer (20+ named caches, tiered TTLs, distributed rate limiting).
+Four sub-apps (HRMS, Hire, Grow, Fluence) are all at 93%+ completion with 261 frontend routes,
+170 controllers, 360 entities, and Flyway V0–V119 migrations.
 
-**Verdict:** NU-AURA can **match or exceed KEKA** with 3-6 months of optimization work focused on
-database indexing, caching implementation, and query refactoring.
+**Verdict:** NU-AURA can **match or exceed KEKA** — core HR modules are production-ready. Remaining
+work is optimization and Phase 2 features (collaborative editing, mobile app).
 
 ---
 
