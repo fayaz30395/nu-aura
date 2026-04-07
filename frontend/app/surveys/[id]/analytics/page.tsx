@@ -37,12 +37,12 @@ const PIE_COLORS = [
   chartColors.muted,
 ];
 
-const isRatingType = (questionType: string): boolean =>
+const _isRatingType = (questionType: string): boolean =>
   questionType === QuestionType.RATING ||
   questionType === QuestionType.NPS ||
   questionType === QuestionType.SCALE;
 
-const isChoiceType = (questionType: string): boolean =>
+const _isChoiceType = (questionType: string): boolean =>
   questionType === QuestionType.SINGLE_CHOICE ||
   questionType === QuestionType.MULTIPLE_CHOICE;
 

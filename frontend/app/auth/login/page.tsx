@@ -682,7 +682,7 @@ function LoginPage() {
                 {showEmailForm && (
                   <form
                     onSubmit={handleSubmit(handleEmailLogin)}
-                    className="mt-3 space-y-3"
+                    className="mt-3 space-y-4"
                     style={{ animation: 'fadeSlideUp 0.2s ease-out' }}
                   >
                     <div>

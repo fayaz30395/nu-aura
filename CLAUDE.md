@@ -147,10 +147,10 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ### Sub-Apps
 | App | Scope | Status (as of 2026-04-07) |
 |-----|-------|--------------------------|
-| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~96% — Production-ready |
+| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~98% — 261 pages, 170 controllers, zero stubs |
 | NU-Hire | Jobs, candidates, pipeline, scorecards, agencies (CRUD + submissions + performance), onboarding, offboarding, e-signature, career page, diversity tracking | ~97% — Production-ready |
-| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~94% — Production-ready |
-| NU-Fluence | Wiki (nested pages, tree view, export, inline comments), blogs, templates, Drive, search, analytics, wall (trending + activity), space permissions + members, macros, AI chat | ~93% — Backend complete, frontend ~90% |
+| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~92% — All modules implemented |
+| NU-Fluence | Wiki (nested pages, tree view, export, inline comments), blogs, templates, Drive, search, analytics, wall (trending + activity), space permissions + members, macros, AI chat | ~90% — 18 routes, 30+ components, 5,138 LOC pages |
 
 ---
 

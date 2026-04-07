@@ -3,9 +3,19 @@
 import {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState,} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {AtSign, Search} from 'lucide-react';
-import {MOCK_USERS, type MockUser} from '@/lib/data/mock-fluence';
+import {employeeService} from '@/lib/services/hrms/employee.service';
+import type {Employee} from '@/lib/types/hrms/employee';
 
 // ─── Types ──────────────────────────────────────────────────────
+
+interface MentionUser {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  department: string;
+  role: string;
+}
 
 interface MentionInputProps {
   value: string;
@@ -30,20 +40,44 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
     const [mentionQuery, setMentionQuery] = useState('');
     const [mentionStartIndex, setMentionStartIndex] = useState(-1);
     const [selectedIdx, setSelectedIdx] = useState(0);
+    const [filteredUsers, setFilteredUsers] = useState<MentionUser[]>([]);
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
     useImperativeHandle(ref, () => ({
       focus: () => textareaRef.current?.focus(),
     }));
 
-    // Filter users based on mention query
-    const filteredUsers = mentionQuery.length === 0
-      ? MOCK_USERS.slice(0, 6)
-      : MOCK_USERS.filter(
-        (u) =>
-          u.fullName.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-          u.email.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-          u.department.toLowerCase().includes(mentionQuery.toLowerCase())
-      ).slice(0, 6);
+    // Fetch users from API with debounce
+    useEffect(() => {
+      if (!mentionActive) {
+        setFilteredUsers([]);
+        return;
+      }
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+
+      debounceRef.current = setTimeout(async () => {
+        try {
+          const query = mentionQuery || '';
+          const result = await employeeService.searchEmployees(query, 0, 6);
+          const users: MentionUser[] = (result.content || []).map((emp: Employee) => ({
+            id: emp.id,
+            fullName: emp.fullName,
+            email: emp.workEmail,
+            avatarUrl: emp.profilePhotoUrl,
+            department: emp.departmentName || '',
+            role: emp.designation || '',
+          }));
+          setFilteredUsers(users);
+        } catch {
+          setFilteredUsers([]);
+        }
+      }, mentionQuery.length === 0 ? 0 : 200);
+
+      return () => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+      };
+    }, [mentionActive, mentionQuery]);
 
     // Auto-resize textarea
     const autoResize = useCallback(() => {
@@ -90,7 +124,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
 
     // Insert mention
     const insertMention = useCallback(
-      (user: MockUser) => {
+      (user: MentionUser) => {
         const before = value.slice(0, mentionStartIndex);
         const cursorPos = textareaRef.current?.selectionStart || value.length;
         const after = value.slice(cursorPos);

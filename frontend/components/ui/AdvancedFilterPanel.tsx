@@ -138,7 +138,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
   const selectedField = fields.find((f) => f.key === condition.field);
   const fieldType = selectedField?.type ?? 'text';
   const operators = OPERATORS[fieldType] ?? OPERATORS.text;
-  const operatorObj = operators.find((op) => op.value === condition.operator);
+  const _operatorObj = operators.find((op) => op.value === condition.operator);
 
   const handleFieldChange = (newField: string) => {
     const field = fields.find((f) => f.key === newField);
@@ -713,7 +713,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           </div>
 
           {/* Filter Rows */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {conditions.map((condition) => (
               <FilterRow
                 key={condition.id}

@@ -122,7 +122,7 @@ export default function FnFManagementPage() {
   });
 
   // Derive stats from current page data
-  const draftCount = allRows.filter((r) => r.status === SettlementStatus.DRAFT).length;
+  const _draftCount = allRows.filter((r) => r.status === SettlementStatus.DRAFT).length;
   const pendingCount = allRows.filter((r) => r.status === SettlementStatus.PENDING_APPROVAL).length;
   const paidCount = allRows.filter((r) => r.status === SettlementStatus.PAID).length;
   const totalNetPayable = allRows.reduce((sum, r) => sum + (r.netPayable ?? 0), 0);

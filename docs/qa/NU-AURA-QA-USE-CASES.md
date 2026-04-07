@@ -6857,7 +6857,661 @@ Execute use cases in the following priority order for regression testing:
 
 ---
 
-*Total Use Cases: 318*
-*Last Updated: 2026-04-02*
+## P2 — NU-Fluence Module Tests (Knowledge Management / Confluence Replacement)
+
+> **Added 2026-04-07** — NU-Fluence frontend is now ~90% complete. Backend is 100%.
+> These use cases cover the wiki, blogs, templates, search, drive, wall, analytics, AI chat, and inline comments.
+
+### UC-FLUENCE-001 — Wiki Space CRUD
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** HR_MANAGER+ (space management), EMPLOYEE (view only)
+- **URL:** http://localhost:3000/fluence/wiki
+- **API Endpoint:** POST/PUT/DELETE /api/v1/knowledge/spaces
+- **Permissions Required:** KNOWLEDGE:MANAGE (create/edit/delete), KNOWLEDGE:VIEW (read)
+- **Preconditions:** User logged in with appropriate role
+- **Test Steps:**
+  1. Navigate to `/fluence/wiki`
+  2. Click "+" button in Spaces sidebar to create a new space
+  3. Fill: name, description, icon, color, visibility (PUBLIC/ORGANIZATION/DEPARTMENT/PRIVATE)
+  4. Click save — verify space appears in sidebar
+  5. Hover space → click edit icon → update name → save
+  6. Hover space → click delete icon → confirm deletion with optional page migration
+- **Expected Result:** Space created, updated, and deleted. Pages migrated if target space selected.
+- **RBAC Checks:**
+  - EMPLOYEE: cannot see create/edit/delete buttons on spaces
+  - TEAM_LEAD+: can create spaces
+  - Space visibility controls who can see it (PRIVATE = creator only)
+- **Negative Test:** EMPLOYEE navigates directly — create/edit buttons hidden
+
+---
+
+### UC-FLUENCE-002 — Wiki Page Create, Edit, and Publish
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/wiki/new → /fluence/wiki/[slug]/edit
+- **API Endpoint:** POST /api/v1/knowledge/wiki-pages, PUT /api/v1/knowledge/wiki-pages/{id}
+- **Permissions Required:** KNOWLEDGE:WIKI_CREATE, KNOWLEDGE:WIKI_UPDATE
+- **Preconditions:** At least one space exists
+- **Test Steps:**
+  1. Navigate to `/fluence/wiki` → click "New Page"
+  2. Select target space from dropdown
+  3. Enter title, use Tiptap editor to add content:
+     - Headings (H1, H2, H3)
+     - Bold, italic, bullet/numbered lists
+     - Code blocks, blockquotes
+     - Tables
+     - Image upload
+  4. Set visibility (PUBLIC/ORGANIZATION/DEPARTMENT/PRIVATE)
+  5. Select parent page (for nesting)
+  6. Click Save → verify redirect to page view
+  7. Navigate to `/fluence/wiki/[slug]/edit` → modify content → save
+- **Expected Result:** Page created with rich content, saved to backend, viewable at slug URL
+- **Verification:** Page appears in wiki list, search returns it, parent-child hierarchy visible
+
+---
+
+### UC-FLUENCE-003 — Wiki Page View with Engagement
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/wiki/[slug]
+- **API Endpoint:** GET /api/v1/knowledge/wiki-pages/{id}
+- **Permissions Required:** KNOWLEDGE:WIKI_READ
+- **Test Steps:**
+  1. Navigate to wiki page
+  2. Verify: title, content rendered via Tiptap ContentViewer, breadcrumbs, table of contents
+  3. Click like button → verify count increments
+  4. Click favorite/star button → verify page bookmarked
+  5. Click watch button → verify subscribed to changes
+  6. View count increments (check via analytics)
+  7. Click "Export" dropdown → download as PDF
+  8. Click "Export" dropdown → download as DOCX
+- **Expected Result:** Full page render with engagement actions, export produces valid files
+- **Verification:** Like/favorite state persists on reload, view count visible in analytics
+
+---
+
+### UC-FLUENCE-004 — Wiki Page Comments (Bottom Thread)
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/wiki/[slug] (comments section)
+- **API Endpoint:** POST /api/v1/knowledge/comments, DELETE /api/v1/knowledge/comments/{id}
+- **Permissions Required:** KNOWLEDGE:VIEW (read), KNOWLEDGE:CREATE (comment)
+- **Test Steps:**
+  1. Scroll to comments section on wiki page
+  2. Type comment using MentionInput (test @mention autocomplete with real employees)
+  3. Submit → verify comment appears
+  4. Reply to comment → verify threaded reply
+  5. Delete own comment → verify removed
+  6. As another user: verify cannot delete others' comments (unless MANAGE permission)
+- **Expected Result:** Comments created, threaded, @mentions resolve to real employees
+- **RBAC Checks:**
+  - Any user can comment
+  - Only comment author or KNOWLEDGE:MANAGE can delete
+
+---
+
+### UC-FLUENCE-005 — Wiki Inline Comments
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/wiki/[slug]
+- **API Endpoint:** POST /api/v1/knowledge/wiki-pages/{id}/inline-comments
+- **Permissions Required:** KNOWLEDGE:CREATE
+- **Test Steps:**
+  1. View a wiki page
+  2. Select a text range in the content
+  3. Inline comment popover appears → type comment → submit
+  4. Verify inline comment marker appears in the content
+  5. Click marker → see comment thread
+  6. Reply to inline comment
+  7. Resolve inline comment → verify marker removed/dimmed
+  8. Delete inline comment
+- **Expected Result:** Character-range comments attached to specific text, resolvable
+- **Verification:** Inline comment count updates, markers visible on page reload
+
+---
+
+### UC-FLUENCE-006 — Wiki Page Versioning and History
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** KNOWLEDGE:WIKI_UPDATE
+- **URL:** http://localhost:3000/fluence/wiki/[slug] → History panel
+- **API Endpoint:** GET /api/v1/knowledge/wiki-pages/{id}/revisions
+- **Test Steps:**
+  1. Edit a wiki page, save changes (creates version 2)
+  2. Edit again, save (creates version 3)
+  3. Open version history panel
+  4. Verify: version list shows v1, v2, v3 with author and timestamp
+  5. Click "Restore" on v1 → confirm → verify page content reverts
+  6. Verify new version v4 created (restore is non-destructive)
+- **Expected Result:** Full version history, restore creates new version with old content
+
+---
+
+### UC-FLUENCE-007 — Space Permissions and Members
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Space admin / HR_MANAGER+
+- **URL:** http://localhost:3000/fluence/wiki → Space permissions drawer
+- **API Endpoint:** POST /api/v1/knowledge/spaces/{id}/members
+- **Permissions Required:** KNOWLEDGE:SPACE_MANAGE
+- **Test Steps:**
+  1. Click permissions icon on a space
+  2. SpacePermissionsDrawer opens
+  3. Add member: search employee → assign role (VIEWER/EDITOR/ADMIN)
+  4. Update member role: change VIEWER to EDITOR
+  5. Remove member
+  6. Set space visibility to RESTRICTED → only members can access
+  7. As non-member: verify space and its pages are inaccessible
+- **Expected Result:** Granular space-level access control, non-members blocked
+- **RBAC Checks:**
+  - EMPLOYEE: cannot open permissions drawer
+  - Space ADMIN: can manage members
+  - SUPER_ADMIN: bypasses all space restrictions
+
+---
+
+### UC-FLUENCE-008 — Blog Post Lifecycle
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** KNOWLEDGE:BLOG_CREATE (create), KNOWLEDGE:BLOG_PUBLISH (publish)
+- **URL:** http://localhost:3000/fluence/blogs
+- **API Endpoint:** POST/PUT /api/v1/knowledge/blog-posts
+- **Test Steps:**
+  1. Navigate to `/fluence/blogs` → click "New Post"
+  2. Enter: title, content (Tiptap editor), cover image, category, tags
+  3. Save as draft → verify appears with DRAFT status
+  4. Edit → click Publish → verify status changes to PUBLISHED
+  5. View published blog → verify rendered correctly
+  6. Like blog post → verify count
+  7. Comment on blog → verify threaded
+  8. Navigate to `/fluence/blogs` → filter by category → verify filtering
+- **Expected Result:** Full blog lifecycle: draft → publish → engage
+- **RBAC Checks:**
+  - EMPLOYEE: can create blog (knowledge sharing encouraged)
+  - KNOWLEDGE:BLOG_PUBLISH: required to publish (not just save draft)
+  - KNOWLEDGE:BLOG_DELETE: required to delete published posts
+
+---
+
+### UC-FLUENCE-009 — Document Templates
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** KNOWLEDGE:TEMPLATE_CREATE
+- **URL:** http://localhost:3000/fluence/templates
+- **API Endpoint:** POST /api/v1/knowledge/templates
+- **Test Steps:**
+  1. Navigate to `/fluence/templates` → click "Create Template"
+  2. Enter: name, description, icon, category, content (Tiptap)
+  3. Save template
+  4. Navigate to template detail → click "Use Template"
+  5. Verify: new wiki page created with template content pre-filled
+  6. Edit the instantiated page → save as separate page
+- **Expected Result:** Template created, instantiation creates new page with pre-filled content
+- **Verification:** Template usage count increments
+
+---
+
+### UC-FLUENCE-010 — Full-Text Search
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/search
+- **API Endpoint:** POST /api/v1/knowledge/search
+- **Permissions Required:** KNOWLEDGE:VIEW
+- **Test Steps:**
+  1. Navigate to `/fluence/search`
+  2. Enter search query → verify results from wiki pages, blogs, templates
+  3. Filter by content type (WIKI, BLOG, TEMPLATE)
+  4. Filter by date range
+  5. Verify search highlights matching text
+  6. Click result → navigates to correct page
+  7. Save search → verify appears in saved searches
+- **Expected Result:** Cross-content search with filtering, results link to source pages
+- **Preconditions:** Elasticsearch running, content indexed
+
+---
+
+### UC-FLUENCE-011 — Drive (File Management)
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/drive
+- **API Endpoint:** POST /api/v1/knowledge/attachments
+- **Test Steps:**
+  1. Navigate to `/fluence/drive`
+  2. Upload file via drag-drop or file picker
+  3. Verify: file appears in list with name, size, upload date
+  4. Download file → verify content matches
+  5. Delete file → verify removed
+  6. Attach file to wiki page during edit
+- **Expected Result:** File upload, download, deletion, and attachment to pages
+- **Preconditions:** Google Drive API configured (or local storage fallback)
+
+---
+
+### UC-FLUENCE-012 — Activity Wall with Trending
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/wall
+- **API Endpoint:** POST /api/v1/wall/posts, GET /api/v1/knowledge/activities
+- **Test Steps:**
+  1. Navigate to `/fluence/wall`
+  2. Use PostComposer to create a post
+  3. Verify: post appears in activity feed
+  4. Trending sidebar shows most viewed/liked wiki pages and blogs
+  5. Activity cards show recent edits, comments, page creates
+- **Expected Result:** Social wall with activity stream and content trending
+- **RBAC Checks:**
+  - All users can post and view
+  - WALL:MANAGE required to delete others' posts
+  - WALL:PIN required to pin posts
+
+---
+
+### UC-FLUENCE-013 — Analytics Dashboard
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** KNOWLEDGE:MANAGE / HR_ADMIN+
+- **URL:** http://localhost:3000/fluence/analytics
+- **API Endpoint:** GET /api/v1/knowledge/activities, content engagement endpoints
+- **Permissions Required:** KNOWLEDGE:MANAGE or ANALYTICS:VIEW
+- **Test Steps:**
+  1. Navigate to `/fluence/analytics`
+  2. Verify: stat cards (total pages, total blogs, total templates, total views)
+  3. Line chart: content creation trend over time
+  4. Pie chart: content distribution by type
+  5. Top contributors list
+  6. Most viewed pages list
+- **Expected Result:** Dashboard renders with real data from wiki/blog/template queries
+- **RBAC Checks:**
+  - EMPLOYEE: page redirects to dashboard (no access)
+  - HR_ADMIN+: full analytics visible
+
+---
+
+### UC-FLUENCE-014 — AI Chat (Knowledge Assistant)
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** Chat widget on any Fluence page
+- **API Endpoint:** POST /api/v1/knowledge/chat (SSE streaming)
+- **Test Steps:**
+  1. Open FluenceChatWidget on any wiki page
+  2. Type a question about content in the knowledge base
+  3. Verify: streaming response appears (SSE)
+  4. Verify: response references relevant wiki pages (RAG context)
+  5. Multi-turn conversation: ask follow-up → maintains context
+  6. Close and reopen → conversation history preserved
+- **Expected Result:** AI chat with streaming, RAG-based context from knowledge base
+- **Preconditions:** Claude API key configured in backend
+
+---
+
+### UC-FLUENCE-015 — Macros in Editor
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** Any user with KNOWLEDGE:WIKI_CREATE
+- **URL:** http://localhost:3000/fluence/wiki/new or /edit
+- **Test Steps:**
+  1. Open Tiptap editor on new/edit page
+  2. Type `/` to open slash menu
+  3. Insert Callout Panel macro (info/warning/error types)
+  4. Insert Code Block macro → verify syntax highlighting
+  5. Insert Expand/Collapse macro → verify toggle works
+  6. Insert Table of Contents macro → verify auto-generates from headings
+  7. Save page → verify macros render correctly in view mode
+- **Expected Result:** Dynamic content blocks insert and render via MacroRenderer
+- **Verification:** Macros persist on save/reload, render in both edit and view mode
+
+---
+
+### UC-FLUENCE-016 — My Content Dashboard
+
+- **Priority:** P3
+- **Sub-App:** NU-Fluence
+- **Persona:** Any authenticated user
+- **URL:** http://localhost:3000/fluence/my-content
+- **Test Steps:**
+  1. Navigate to `/fluence/my-content`
+  2. Verify: tabs for My Wiki Pages, My Blogs, My Drafts, My Favorites
+  3. Each tab shows only current user's content
+  4. Favorites tab shows pages/blogs user has starred
+  5. Click item → navigates to page
+- **Expected Result:** Personal content dashboard scoped to current user
+
+---
+
+### UC-FLUENCE-017 — Edit Lock (Concurrent Edit Prevention)
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Any user with edit access
+- **URL:** http://localhost:3000/fluence/wiki/[slug]/edit
+- **API Endpoint:** POST /api/v1/knowledge/edit-locks/{pageId}/acquire
+- **Test Steps:**
+  1. User A opens page for editing → lock acquired
+  2. User B tries to edit same page → EditLockWarning shown
+  3. Warning shows who is editing and when lock expires (5min TTL)
+  4. User A saves and closes → lock released
+  5. User B can now edit
+  6. If User A abandons (no save), lock auto-expires after 5 minutes
+- **Expected Result:** Distributed edit lock prevents simultaneous editing conflicts
+- **Preconditions:** Redis running for distributed lock
+
+---
+
+## NU-Hire — Agency Management
+
+> **Added 2026-04-07** — Agency CRUD, submissions, and performance tracking (V118 migration).
+
+### UC-AGENCY-001 — Agency CRUD
+
+- **Priority:** P2
+- **Sub-App:** NU-Hire
+- **Persona:** HR_ADMIN+ (full CRUD), HR_MANAGER (view only)
+- **URL:** http://localhost:3000/recruitment/agencies
+- **API Endpoint:** POST/PUT/DELETE /api/v1/recruitment/agencies
+- **Permissions Required:** AGENCY:CREATE, AGENCY:UPDATE, AGENCY:DELETE
+- **Test Steps:**
+  1. Navigate to `/recruitment/agencies`
+  2. Click "Add Agency" → fill: name, contact person, email, phone, fee type (percentage/fixed), fee amount, specializations, status
+  3. Save → verify agency in list with correct details
+  4. Click agency → view detail page at `/recruitment/agencies/[id]`
+  5. Edit agency details → save
+  6. Deactivate agency → verify status change
+  7. Delete agency → verify removed
+- **Expected Result:** Full agency lifecycle management
+- **RBAC Checks:**
+  - EMPLOYEE: no access to agencies page
+  - HR_MANAGER: can view but not create/delete
+  - HR_ADMIN: full CRUD
+
+---
+
+### UC-AGENCY-002 — Agency Candidate Submission
+
+- **Priority:** P2
+- **Sub-App:** NU-Hire
+- **Persona:** HR_ADMIN+
+- **URL:** http://localhost:3000/recruitment/agencies/[id]
+- **API Endpoint:** POST /api/v1/recruitment/agencies/{id}/submissions
+- **Test Steps:**
+  1. Open agency detail page
+  2. View "Submissions" tab → list of candidates submitted by this agency
+  3. Link a candidate from pipeline to this agency
+  4. Track submission date, status, fee
+  5. View conversion metrics (submitted → hired ratio)
+- **Expected Result:** Agency submissions tracked, linked to recruitment pipeline
+
+---
+
+### UC-AGENCY-003 — Agency Performance Tracking
+
+- **Priority:** P3
+- **Sub-App:** NU-Hire
+- **Persona:** HR_ADMIN+
+- **URL:** http://localhost:3000/recruitment/agencies/[id]
+- **API Endpoint:** GET /api/v1/recruitment/agencies/{id}/performance
+- **Test Steps:**
+  1. Open agency detail page → "Performance" tab
+  2. Verify metrics: total submissions, hires, conversion rate, average time-to-hire
+  3. Verify fee summary: total fees paid, average fee per hire
+  4. Compare agencies: navigate to agencies list → sort by conversion rate
+- **Expected Result:** Data-driven agency evaluation
+
+---
+
+## NU-Hire — Interview Scorecards (Expanded)
+
+> **Added 2026-04-07** — Scorecard templates and interview evaluation (V116 migration).
+
+### UC-SCORE-001 — Scorecard Template CRUD
+
+- **Priority:** P2
+- **Sub-App:** NU-Hire
+- **Persona:** HR_ADMIN+, RECRUITMENT:MANAGE
+- **URL:** http://localhost:3000/recruitment/interviews (scorecard section)
+- **API Endpoint:** POST /api/v1/recruitment/scorecard-templates
+- **Test Steps:**
+  1. Navigate to recruitment settings → scorecard templates
+  2. Create template: name, criteria list (technical skills, communication, cultural fit, etc.), rating scale (1-5)
+  3. Assign template to job opening
+  4. Edit template → add/remove criteria
+  5. Delete unused template
+- **Expected Result:** Reusable scorecard templates for structured interviews
+
+---
+
+### UC-SCORE-002 — Interview Scorecard Submission
+
+- **Priority:** P2
+- **Sub-App:** NU-Hire
+- **Persona:** CANDIDATE:EVALUATE (interviewer)
+- **URL:** Interview detail page
+- **API Endpoint:** POST /api/v1/recruitment/interviews/{id}/scorecard
+- **Test Steps:**
+  1. As interviewer: open assigned interview
+  2. Fill scorecard: rate each criterion (1-5), add comments per criterion
+  3. Add overall recommendation (Strong Hire / Hire / No Hire / Strong No Hire)
+  4. Submit scorecard
+  5. As HR Admin: view aggregated scorecard across all interviewers for candidate
+  6. Verify average scores calculated correctly
+- **Expected Result:** Structured interview feedback with aggregated scoring
+
+---
+
+## NU-Hire — Diversity Tracking
+
+### UC-DIVERSITY-001 — Diversity Metrics Dashboard
+
+- **Priority:** P3
+- **Sub-App:** NU-Hire
+- **Persona:** HR_ADMIN+
+- **URL:** http://localhost:3000/recruitment (analytics section)
+- **API Endpoint:** GET /api/v1/recruitment/analytics/diversity
+- **Test Steps:**
+  1. Navigate to recruitment analytics
+  2. View diversity metrics: gender distribution, department distribution across pipeline stages
+  3. Track drop-off rates by demographic at each pipeline stage
+  4. Verify data is anonymized/aggregated (no individual identification)
+- **Expected Result:** Pipeline diversity analytics for bias-free hiring
+- **RBAC Checks:** Only HR_ADMIN+ can view diversity data
+
+---
+
+## Data Migration — KEKA Import
+
+### UC-KEKA-001 — KEKA Employee Data Import
+
+- **Priority:** P1
+- **Sub-App:** Platform / Admin
+- **Persona:** SUPER_ADMIN, HR_ADMIN
+- **URL:** http://localhost:3000/admin/import-keka
+- **API Endpoint:** POST /api/v1/admin/import/keka
+- **Permissions Required:** MIGRATION:IMPORT
+- **Test Steps:**
+  1. Navigate to `/admin/import-keka`
+  2. Upload KEKA employee export file (CSV/Excel)
+  3. Field mapping screen: map KEKA columns → NU-AURA fields
+  4. Preview: verify 10-row sample looks correct
+  5. Run import → monitor progress bar
+  6. Verify: employee count matches, no duplicates
+  7. Spot-check 5 employees: name, department, designation, joining date correct
+- **Expected Result:** KEKA data imported with correct field mapping, no data loss
+- **RBAC Checks:**
+  - Only SUPER_ADMIN and HR_ADMIN with MIGRATION:IMPORT can access
+  - EMPLOYEE: page redirects away
+
+---
+
+### UC-KEKA-002 — KEKA Leave Balance Import
+
+- **Priority:** P1
+- **Sub-App:** Platform / Admin
+- **Persona:** SUPER_ADMIN, HR_ADMIN
+- **Test Steps:**
+  1. After employee import, import leave balances
+  2. Map KEKA leave types → NU-AURA leave types
+  3. Verify: each employee's CL, SL, EL balance matches KEKA
+  4. Verify: leave history imported (last 12 months)
+- **Expected Result:** Leave balances match KEKA exactly
+
+---
+
+### UC-KEKA-003 — KEKA Payroll History Import
+
+- **Priority:** P2
+- **Sub-App:** Platform / Admin
+- **Persona:** SUPER_ADMIN
+- **Test Steps:**
+  1. Import payroll history from KEKA
+  2. Verify: last 6 months of payslips available per employee
+  3. Compare one payslip against KEKA original → verify amounts match
+- **Expected Result:** Historical payslips accessible in NU-AURA
+
+---
+
+## RBAC — Fluence-Specific Permission Tests
+
+### UC-RBAC-021 — Employee Can Read Public Wiki but Cannot Delete
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** EMPLOYEE vs HR_ADMIN
+- **Test Steps:**
+  1. As EMPLOYEE: navigate to public wiki page → verify can read
+  2. Verify: no delete button visible
+  3. Verify: can add comments, like, favorite
+  4. As HR_ADMIN: same page → delete button visible and functional
+- **Expected Result:** Read + engage for all, delete restricted to MANAGE permission
+
+---
+
+### UC-RBAC-022 — Space Visibility Isolation
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** Multiple roles
+- **Test Steps:**
+  1. Create PRIVATE space as User A
+  2. As User B: verify space NOT visible in sidebar
+  3. As User B: navigate directly to space URL → 403 or redirect
+  4. As SUPER_ADMIN: verify space IS visible (bypass)
+  5. Create DEPARTMENT space → verify only department members see it
+  6. Create ORGANIZATION space → verify all employees see it
+- **Expected Result:** Space visibility strictly enforced by level
+
+---
+
+### UC-RBAC-023 — Fluence Analytics Restricted to Admins
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** EMPLOYEE vs HR_ADMIN
+- **Test Steps:**
+  1. As EMPLOYEE: navigate to `/fluence/analytics` → redirected to dashboard
+  2. As HR_ADMIN: navigate to `/fluence/analytics` → dashboard loads with charts
+  3. Verify: analytics sidebar link hidden for EMPLOYEE
+- **Expected Result:** Analytics accessible only to admin roles
+
+---
+
+### UC-RBAC-024 — Blog Publishing Requires Publish Permission
+
+- **Priority:** P2
+- **Sub-App:** NU-Fluence
+- **Persona:** EMPLOYEE (create only) vs HR_MANAGER (publish)
+- **Test Steps:**
+  1. As EMPLOYEE: create blog post → can only save as DRAFT
+  2. Verify: "Publish" button not visible or disabled
+  3. As HR_MANAGER: open same post → "Publish" button available
+  4. Publish → verify status changes to PUBLISHED
+- **Expected Result:** Draft→Publish requires elevated permission
+
+---
+
+### UC-RBAC-025 — Agency Management Restricted to HR Admin
+
+- **Priority:** P2
+- **Sub-App:** NU-Hire
+- **Persona:** EMPLOYEE, TEAM_LEAD, HR_MANAGER, HR_ADMIN
+- **Test Steps:**
+  1. As EMPLOYEE: navigate to `/recruitment/agencies` → blocked
+  2. As TEAM_LEAD: navigate → blocked
+  3. As HR_MANAGER: navigate → can view list, cannot create/delete
+  4. As HR_ADMIN: full CRUD functional
+- **Expected Result:** Agencies restricted by role hierarchy
+
+---
+
+## Appendix D: Updated Module Coverage Summary
+
+| Module | UC Count (Original) | UC Count (Added) | Total |
+|--------|--------------------:|------------------:|------:|
+| Auth & Security | 19 | 0 | 19 |
+| Employee | 18 | 0 | 18 |
+| Attendance | 11 | 0 | 11 |
+| Leave | 15 | 0 | 15 |
+| Payroll | 16 | 0 | 16 |
+| Statutory | 10 | 0 | 10 |
+| Benefits | 8 | 0 | 8 |
+| Assets | 8 | 0 | 8 |
+| Expenses | 10 | 0 | 10 |
+| Loans | 6 | 0 | 6 |
+| Travel | 6 | 0 | 6 |
+| Contracts | 6 | 0 | 6 |
+| Letters | 7 | 0 | 7 |
+| Documents | 5 | 0 | 5 |
+| Departments | 6 | 0 | 6 |
+| Helpdesk | 7 | 0 | 7 |
+| Timesheets | 6 | 0 | 6 |
+| Resources | 7 | 0 | 7 |
+| Reports | 10 | 0 | 10 |
+| Admin & Settings | 19 | 0 | 19 |
+| Notifications | 6 | 0 | 6 |
+| Announcements | 4 | 0 | 4 |
+| Calendar | 5 | 0 | 5 |
+| Probation | 5 | 0 | 5 |
+| My Space | 8 | 0 | 8 |
+| Dashboard | 8 | 0 | 8 |
+| F&F Settlement | 5 | 0 | 5 |
+| App Switcher | 1 | 0 | 1 |
+| Smoke | 1 | 0 | 1 |
+| NU-Hire | 18 | 0 | 18 |
+| NU-Grow | 22 | 0 | 22 |
+| Performance Baselines | 8 | 0 | 8 |
+| RBAC (original) | 20 | 5 | 25 |
+| **NU-Fluence** | **0** | **17** | **17** |
+| **Agencies** | **0** | **3** | **3** |
+| **Scorecards** | **0** | **2** | **2** |
+| **Diversity** | **0** | **1** | **1** |
+| **KEKA Import** | **0** | **3** | **3** |
+| **Total** | **318** | **31** | **349** |
+
+---
+
+*Total Use Cases: 349*
+*Last Updated: 2026-04-07*
 *Priority Legend: P0=Blocking, P1=Critical, P2=Important, P3=Nice-to-have*
 

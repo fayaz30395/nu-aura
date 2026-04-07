@@ -19,9 +19,6 @@ import {
   CreateCommentRequest,
   UpdateCommentRequest,
   FavoriteContentType,
-  WatchStatus,
-  WikiPageTreeNode,
-  WikiPageBreadcrumb,
   SpaceMemberRole,
   CreateInlineCommentRequest,
   ReplyToInlineCommentRequest,
@@ -1075,15 +1072,11 @@ export function useCreateInlineComment() {
 export function useReplyToInlineComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      commentId,
-      pageId,
-      data,
-    }: {
+    mutationFn: (vars: {
       commentId: string;
       pageId: string;
       data: ReplyToInlineCommentRequest;
-    }) => fluenceService.replyToInlineComment(commentId, data),
+    }) => fluenceService.replyToInlineComment(vars.commentId, vars.data),
     onSuccess: (_data, { pageId }) => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
     },
@@ -1093,13 +1086,10 @@ export function useReplyToInlineComment() {
 export function useResolveInlineComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      commentId,
-      pageId,
-    }: {
+    mutationFn: (vars: {
       commentId: string;
       pageId: string;
-    }) => fluenceService.resolveInlineComment(commentId),
+    }) => fluenceService.resolveInlineComment(vars.commentId),
     onSuccess: (_data, { pageId }) => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
       queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
@@ -1110,13 +1100,10 @@ export function useResolveInlineComment() {
 export function useDeleteInlineComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      commentId,
-      pageId,
-    }: {
+    mutationFn: (vars: {
       commentId: string;
       pageId: string;
-    }) => fluenceService.deleteInlineComment(commentId),
+    }) => fluenceService.deleteInlineComment(vars.commentId),
     onSuccess: (_data, { pageId }) => {
       queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
       queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });

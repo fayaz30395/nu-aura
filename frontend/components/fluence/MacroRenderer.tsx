@@ -152,7 +152,10 @@ export function MacroRenderer({
   className = '',
   renderDefault,
 }: MacroRendererProps) {
-  const documentContent = (content.content as TiptapNode[]) ?? [];
+  const documentContent = useMemo(
+    () => (content.content as TiptapNode[]) ?? [],
+    [content.content],
+  );
 
   const context: MacroRenderContext = useMemo(
     () => ({ documentContent }),

@@ -117,7 +117,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
   // Handle drag end
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
 
     // If dropped outside the list
     if (!destination) {
@@ -171,7 +171,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="dashboard-widgets" direction="vertical">
-        {(provided, snapshot) => (
+        {(provided, _snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
@@ -298,7 +298,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
           </CardHeader>
 
           <CardContent className="pt-4">
-            <div className="space-y-3">
+            <div className="space-y-4">
               {widgets.map(widget => (
                 <div
                   key={widget.id}

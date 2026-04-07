@@ -392,44 +392,6 @@ function AddCompetencyModal({
   );
 }
 
-// ─── Category Summary Bar ─────────────────────────────────────────────────────
-
-function CategorySummaryBar({competencies}: { competencies: ReviewCompetency[] }) {
-  const byCategory = useMemo(() => {
-    const map: Record<string, { count: number; avgRating: number }> = {};
-    for (const c of competencies) {
-      if (!map[c.category]) map[c.category] = {count: 0, avgRating: 0};
-      map[c.category].count++;
-      map[c.category].avgRating += c.rating;
-    }
-    for (const k of Object.keys(map)) {
-      map[k].avgRating = map[k].avgRating / map[k].count;
-    }
-    return map;
-  }, [competencies]);
-
-  if (Object.keys(byCategory).length === 0) return null;
-
-  return (
-    <div className="flex flex-wrap gap-4">
-      {Object.entries(byCategory).map(([category, stats]) => (
-        <div
-          key={category}
-          className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold ${
-            CATEGORY_COLORS[category as CompetencyCategory] ?? 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-          }`}
-        >
-          <span>{category}</span>
-          <span className="opacity-75">·</span>
-          <span>{stats.count}</span>
-          <span className="opacity-75">·</span>
-          <span>{stats.avgRating.toFixed(1)} ★</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CompetencyFrameworkPage() {
@@ -442,7 +404,7 @@ export default function CompetencyFrameworkPage() {
   const [addModalReviewId, setAddModalReviewId] = useState<string | null>(null);
 
   const cycles = cyclesQuery.data?.content ?? [];
-  const allReviews = allReviewsQuery.data?.content ?? [];
+  const allReviews = useMemo(() => allReviewsQuery.data?.content ?? [], [allReviewsQuery.data?.content]);
 
   // Filter reviews by selected cycle
   const cycleReviews = useMemo(() => {

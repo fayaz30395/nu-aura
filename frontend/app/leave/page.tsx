@@ -51,28 +51,37 @@ export default function LeavePage() {
     data: balancesData = [],
     isLoading: isBalancesLoading,
     error: balancesError,
+    fetchStatus: balancesFetchStatus,
   } = useEmployeeBalancesForYear(employeeId, year, !!employeeId);
-  const {data: leaveTypesData = [], isLoading: isTypesLoading} = useActiveLeaveTypes();
+  const {data: leaveTypesData = [], isLoading: isTypesLoading, error: typesError, fetchStatus: typesFetchStatus} = useActiveLeaveTypes(!!employeeId);
   const {
     data: requestsData,
     isLoading: isRequestsLoading,
     error: requestsError,
+    fetchStatus: requestsFetchStatus,
   } = useEmployeeLeaveRequests(employeeId, 0, 5, !!employeeId);
 
   const balances = balancesData;
   const leaveTypes = leaveTypesData;
   const recentRequests = requestsData?.content || [];
-  // Derive error first so we can short-circuit the loading state when an error exists
+  // Derive error first so we can short-circuit the loading state when an error exists.
+  // Check all three queries for errors — typesError was previously ignored, which meant
+  // a failing leave-types endpoint kept the page in loading state through all retries.
   const error =
     balancesError instanceof Error
       ? balancesError.message
       : requestsError instanceof Error
         ? requestsError.message
-        : !employeeId
-          ? 'Employee ID not found'
-          : null;
-  // Only show loading when there is NO error — prevents infinite spinner during retries
-  const loading = !error && (isBalancesLoading || isTypesLoading || isRequestsLoading);
+        : typesError instanceof Error
+          ? typesError.message
+          : !employeeId
+            ? 'Employee ID not found'
+            : null;
+  // Only show loading when there is NO error and at least one query is actively fetching.
+  // Checking fetchStatus !== 'idle' prevents infinite spinner when queries are disabled
+  // or paused between retries.
+  const isAnyFetching = balancesFetchStatus === 'fetching' || typesFetchStatus === 'fetching' || requestsFetchStatus === 'fetching';
+  const loading = !error && (isBalancesLoading || isTypesLoading || isRequestsLoading) && isAnyFetching;
 
   const getStatusConfig = (status: string) => {
     switch (status) {

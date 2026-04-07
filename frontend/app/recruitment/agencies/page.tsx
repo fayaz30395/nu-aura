@@ -26,13 +26,11 @@ import {
   UpdateAgencyRequest,
 } from '@/lib/types/hire/recruitment';
 import {
-  Briefcase,
   Plus,
   Search,
   Star,
   Phone,
   Mail,
-  Globe,
   Edit2,
   Trash2,
   X,
