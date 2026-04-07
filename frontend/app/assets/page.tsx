@@ -551,12 +551,12 @@ export default function AssetManagementPage() {
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                           <span className="text-body-secondary">
-                            {asset.category.replace('_', ' ')}
+                            {asset.category?.replace('_', ' ') ?? '-'}
                           </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-center">
                           <span className={getStatusColor(asset.status)}>
-                            {asset.status.replace('_', ' ')}
+                            {asset.status?.replace('_', ' ') ?? '-'}
                           </span>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
@@ -910,11 +910,11 @@ export default function AssetManagementPage() {
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
                   <span className={getStatusColor(selectedAsset.status)}>
-                    {selectedAsset.status.replace('_', ' ')}
+                    {selectedAsset.status?.replace('_', ' ') ?? '-'}
                   </span>
                   <span
                     className={`px-4 py-1 text-sm font-medium rounded-full ${getCategoryColor(selectedAsset.category)}`}>
-                    {selectedAsset.category.replace('_', ' ')}
+                    {selectedAsset.category?.replace('_', ' ') ?? '-'}
                   </span>
                 </div>
 

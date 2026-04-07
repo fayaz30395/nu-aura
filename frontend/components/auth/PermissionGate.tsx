@@ -69,12 +69,18 @@ export function PermissionGate({
     hasRole,
     hasAnyRole,
     hasAllRoles,
+    isAdmin,
     isReady,
   } = usePermissions();
 
   // Show nothing or loading state while auth is hydrating
   if (!isReady) {
     return showWhileLoading ? children : null;
+  }
+
+  // SuperAdmin / TenantAdmin bypasses ALL permission and role gates
+  if (isAdmin) {
+    return children;
   }
 
   let hasAccess = true;

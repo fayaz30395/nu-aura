@@ -696,26 +696,29 @@ export function usePermissions(): UsePermissionsReturn {
     [hasPermission, isSystemAdmin, isAdmin]
   );
 
-  // Role check functions
+  // Role check functions — SuperAdmin/TenantAdmin bypass all role gates (mirrors permission bypass)
   const hasRole = useCallback(
     (role: string): boolean => {
+      if (isAdmin) return true;
       return roles.includes(role);
     },
-    [roles]
+    [roles, isAdmin]
   );
 
   const hasAnyRole = useCallback(
     (...roleList: string[]): boolean => {
+      if (isAdmin) return true;
       return roleList.some((r) => roles.includes(r));
     },
-    [roles]
+    [roles, isAdmin]
   );
 
   const hasAllRoles = useCallback(
     (...roleList: string[]): boolean => {
+      if (isAdmin) return true;
       return roleList.every((r) => roles.includes(r));
     },
-    [roles]
+    [roles, isAdmin]
   );
 
   // Convenience checks — isAdmin already computed above (used by hasPermission bypass)

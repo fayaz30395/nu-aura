@@ -32,7 +32,7 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
 import type {DashboardWidget} from '@/components/ui/DashboardGrid';
@@ -529,36 +529,22 @@ export default function DashboardPage() {
     );
   }
 
-  if (error || !analytics) {
-    return (
-      <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="max-w-md">
-            <CardHeader>
-              <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
-                <AlertCircle className="h-6 w-6"/>
-                <CardTitle>Error Loading Dashboard</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-[var(--text-secondary)] mb-4">
-                {error ? `${error}. This may be a temporary service issue.` : 'Unable to load analytics data'}
-              </p>
-              <div className="flex gap-2">
-                <Button variant="primary" onClick={() => refetchAnalytics()} className="flex-1">Retry</Button>
-                <Button variant="outline" onClick={() => window.location.reload()} className="flex-1">Refresh
-                  Page</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </AppLayout>
-    );
-  }
+  // Graceful degradation: if analytics fails, show dashboard with fallback data
+  const analyticsUnavailable = Boolean(error) || !analytics;
+  const safeAnalytics = analytics ?? {
+    viewType: 'EMPLOYEE' as const,
+    viewLabel: 'Dashboard',
+    teamSize: 0,
+    attendance: { present: 0, absent: 0, onLeave: 0, onTime: 0, late: 0, attendancePercentage: 0, trend: [] },
+    leave: { pending: 0, approved: 0, rejected: 0, utilizationPercentage: 0, trend: [], distribution: [] },
+    payroll: null,
+    headcount: { total: 0, newJoinees: 0, exits: 0, growthPercentage: 0, trend: [], departmentDistribution: [] },
+    upcomingEvents: { birthdays: [], anniversaries: [], holidays: [] },
+  };
 
-  const viewBadgeClass = analytics.viewType === 'ADMIN'
+  const viewBadgeClass = safeAnalytics.viewType === 'ADMIN'
     ? 'status-info'
-    : analytics.viewType === 'MANAGER'
+    : safeAnalytics.viewType === 'MANAGER'
       ? 'status-warning'
       : 'status-success';
 
@@ -573,26 +559,26 @@ export default function DashboardPage() {
     component: (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <PremiumMetricCard
-          title={analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
-          value={analytics.headcount.total.toString()}
-          change={analytics.viewType === 'ADMIN' && analytics.headcount.growthPercentage !== 0
-            ? `${Math.abs(analytics.headcount.growthPercentage)}%`
-            : analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
-          isPositive={analytics.headcount.growthPercentage >= 0}
+          title={safeAnalytics.viewType === 'ADMIN' ? 'Total Employees' : safeAnalytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
+          value={safeAnalytics.headcount.total.toString()}
+          change={safeAnalytics.viewType === 'ADMIN' && safeAnalytics.headcount.growthPercentage !== 0
+            ? `${Math.abs(safeAnalytics.headcount.growthPercentage)}%`
+            : safeAnalytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
+          isPositive={safeAnalytics.headcount.growthPercentage >= 0}
           icon={<Users className="h-6 w-6"/>}
           delay={0}
         />
         <PremiumMetricCard
           title="Present Today"
-          value={analytics.attendance.present.toString()}
-          change={`${analytics.attendance.attendancePercentage}% attendance`}
+          value={safeAnalytics.attendance.present.toString()}
+          change={`${safeAnalytics.attendance.attendancePercentage}% attendance`}
           isPositive={true}
           icon={<UserCheck className="h-6 w-6"/>}
           delay={0.1}
         />
         <PremiumMetricCard
           title="On Leave"
-          value={analytics.attendance.onLeave.toString()}
+          value={safeAnalytics.attendance.onLeave.toString()}
           change="Approved today"
           isPositive={false}
           icon={<Calendar className="h-6 w-6"/>}
@@ -600,7 +586,7 @@ export default function DashboardPage() {
         />
         <PremiumMetricCard
           title="Pending Approvals"
-          value={analytics.leave.pending.toString()}
+          value={safeAnalytics.leave.pending.toString()}
           change="Awaiting action"
           isPositive={false}
           icon={<Bell className="h-6 w-6"/>}
@@ -656,10 +642,10 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            {label: 'On Time', value: analytics.attendance.onTime, icon: UserCheck, tone: 'status-success'},
-            {label: 'Late', value: analytics.attendance.late, icon: Clock, tone: 'status-warning'},
-            {label: 'On Leave', value: analytics.attendance.onLeave, icon: Coffee, tone: 'status-info'},
-            {label: 'Absent', value: analytics.attendance.absent, icon: UserX, tone: 'status-danger'},
+            {label: 'On Time', value: safeAnalytics.attendance.onTime, icon: UserCheck, tone: 'status-success'},
+            {label: 'Late', value: safeAnalytics.attendance.late, icon: Clock, tone: 'status-warning'},
+            {label: 'On Leave', value: safeAnalytics.attendance.onLeave, icon: Coffee, tone: 'status-info'},
+            {label: 'Absent', value: safeAnalytics.attendance.absent, icon: UserX, tone: 'status-danger'},
           ].map((item) => (
             <div key={item.label}
                  className="text-center p-4 sm:p-6 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
@@ -676,15 +662,15 @@ export default function DashboardPage() {
   });
 
   // Widget 4: Department Distribution (conditional)
-  if (analytics.headcount.departmentDistribution && analytics.headcount.departmentDistribution.length > 0) {
+  if (safeAnalytics.headcount.departmentDistribution && safeAnalytics.headcount.departmentDistribution.length > 0) {
     dashboardWidgets.push({
       id: 'department-distribution',
-      title: analytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution',
+      title: safeAnalytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution',
       defaultVisible: true,
       component: (
         <div className="space-y-4">
-          {analytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
-            const percentage = analytics.headcount.total > 0 ? Math.round((dept.count / analytics.headcount.total) * 100) : 0;
+          {safeAnalytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
+            const percentage = safeAnalytics.headcount.total > 0 ? Math.round((dept.count / safeAnalytics.headcount.total) * 100) : 0;
             const colors = [
               'var(--accent-primary)',
               'var(--chart-secondary)',
@@ -713,7 +699,7 @@ export default function DashboardPage() {
   }
 
   // Widget 5: Payroll Summary (admin only)
-  if (analytics.viewType === 'ADMIN' && analytics.payroll) {
+  if (safeAnalytics.viewType === 'ADMIN' && safeAnalytics.payroll) {
     dashboardWidgets.push({
       id: 'payroll-summary',
       title: 'Payroll Summary',
@@ -725,19 +711,19 @@ export default function DashboardPage() {
               className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--accent-primary-subtle)] border border-[var(--border-subtle)]">
               <Briefcase className="h-6 w-6 text-[var(--accent-primary)]"/>
             </div>
-            <p className="text-stat-large mt-4">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
+            <p className="text-stat-large mt-4">{formatCurrency(safeAnalytics.payroll.currentMonth.total)}</p>
             <p className="text-body-secondary mt-1">Current Month</p>
           </div>
           <div className="border-t border-[var(--border-main)] pt-4 mt-4">
             <div className="row-between mb-4">
               <span className="text-body-secondary">Processed</span>
               <span
-                className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
+                className="text-sm font-medium text-[var(--text-primary)]">{safeAnalytics.payroll.currentMonth.processed}</span>
             </div>
             <div className="row-between">
               <span className="text-body-secondary">Pending</span>
               <span
-                className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
+                className="text-sm font-medium text-[var(--text-primary)]">{safeAnalytics.headcount.total - safeAnalytics.payroll.currentMonth.processed}</span>
             </div>
           </div>
         </div>
@@ -752,7 +738,7 @@ export default function DashboardPage() {
     defaultVisible: true,
     component: (
       <div className="space-y-4">
-        {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
+        {safeAnalytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
           <div key={idx}
                className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center status-warning flex-shrink-0">
@@ -767,7 +753,7 @@ export default function DashboardPage() {
             </div>
           </div>
         ))}
-        {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
+        {safeAnalytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
           <div key={idx}
                className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center status-info flex-shrink-0">
@@ -782,7 +768,7 @@ export default function DashboardPage() {
             </div>
           </div>
         ))}
-        {(!analytics.upcomingEvents?.birthdays?.length && !analytics.upcomingEvents?.holidays?.length) && (
+        {(!safeAnalytics.upcomingEvents?.birthdays?.length && !safeAnalytics.upcomingEvents?.holidays?.length) && (
           <p className="text-body-muted text-center py-4">No upcoming events</p>
         )}
       </div>
@@ -888,10 +874,10 @@ export default function DashboardPage() {
   });
 
   // Widget 8: New Joiners (conditional)
-  if (analytics.viewType !== 'EMPLOYEE') {
+  if (safeAnalytics.viewType !== 'EMPLOYEE') {
     dashboardWidgets.push({
       id: 'new-joiners',
-      title: analytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members',
+      title: safeAnalytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members',
       defaultVisible: true,
       component: (
         <div>
@@ -900,10 +886,10 @@ export default function DashboardPage() {
               className="w-16 h-16 rounded-lg bg-[var(--bg-card-hover)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto">
               <Users className="h-8 w-8 text-[var(--accent-primary)]"/>
             </div>
-            <p className="text-stat-large mt-4">{analytics.headcount.newJoinees}</p>
+            <p className="text-stat-large mt-4">{safeAnalytics.headcount.newJoinees}</p>
             <p className="text-body-secondary mt-1">This Month</p>
           </div>
-          {analytics.viewType === 'ADMIN' && (
+          {safeAnalytics.viewType === 'ADMIN' && (
             <div className="space-y-2 mt-4">
               <Button variant="outline" className="w-full" onClick={() => router.push('/employees?filter=new')}>
                 View All Joiners
@@ -931,6 +917,18 @@ export default function DashboardPage() {
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
       <div className="space-y-8">
+        {/* Inline analytics error banner — dashboard still usable */}
+        {analyticsUnavailable && (
+          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
+            <p className="text-sm text-[var(--text-secondary)] flex-1">
+              {error ? `Analytics temporarily unavailable: ${error}` : 'Analytics data could not be loaded.'}
+              {' '}Some metrics may show default values.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => refetchAnalytics()}>Retry</Button>
+          </div>
+        )}
+
         {/* Header with greeting and time */}
         <Card className="overflow-hidden skeuo-card">
           <CardContent className="p-6 sm:p-8">
@@ -940,13 +938,13 @@ export default function DashboardPage() {
                   <h1 className="text-page-title skeuo-emboss">
                     Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
                   </h1>
-                  <span className={`badge-status ${viewBadgeClass}`}>{analytics.viewLabel}</span>
+                  <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>
                 </div>
                 <p className="text-body-secondary">
                   {currentTime?.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) ?? ''}
-                  {analytics.viewType !== 'EMPLOYEE' && (
+                  {safeAnalytics.viewType !== 'EMPLOYEE' && (
                     <span
-                      className="ml-2 text-caption">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
+                      className="ml-2 text-caption">• {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
                   )}
                 </p>
               </div>
@@ -958,11 +956,11 @@ export default function DashboardPage() {
                   </p>
                   <p className="text-caption">Current time</p>
                 </div>
-                {analytics.viewType !== 'EMPLOYEE' && (
+                {safeAnalytics.viewType !== 'EMPLOYEE' && (
                   <div
                     className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
                     <p className="text-caption">Team size</p>
-                    <p className="text-stat-medium">{analytics.teamSize}</p>
+                    <p className="text-stat-medium">{safeAnalytics.teamSize}</p>
                   </div>
                 )}
               </div>

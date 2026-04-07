@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { apiClient } from '../api/client';
+import { apiClient, getSharedRefreshPromise, setSharedRefreshPromise, setOnSessionRefreshed } from '../api/client';
 import { authApi } from '../api/auth';
 import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth';
 import { clearGoogleToken } from '../utils/googleToken';
@@ -153,34 +153,88 @@ export const useAuth = create<AuthState>()(
       restoreSession: async () => {
         try {
           set({ isLoading: true });
-          const response = await authApi.refresh();
 
-          apiClient.setTenantId(response.tenantId);
-          apiClient.resetRedirectFlag();
-
-          // CRIT-001: Require roles in auth response — no JWT fallback decode
-          if (!response.roles?.length) {
-            throw new Error('Session restore failed: missing roles in response.');
+          // P0-SESSION-FIX: Check if the Axios 401 interceptor already has an
+          // in-flight refresh. If so, wait for it instead of issuing a second
+          // refresh call. Two concurrent refreshes revoke each other's tokens,
+          // causing the session to degrade from "Fayaz M / SUPER ADMIN" to
+          // "User / Employee" within 30-90 seconds.
+          const existingRefresh = getSharedRefreshPromise();
+          if (existingRefresh) {
+            const refreshed = await existingRefresh;
+            if (refreshed) {
+              // The interceptor already refreshed cookies. Fetch profile from /auth/me
+              // to populate the Zustand store with the correct identity.
+              try {
+                const meResponse = await apiClient.get<{
+                  userId: string; employeeId: string; tenantId: string;
+                  email: string; fullName: string; roles: string[];
+                  permissions: string[]; profilePictureUrl: string;
+                }>('/auth/me');
+                const me = meResponse.data;
+                apiClient.setTenantId(me.tenantId);
+                apiClient.resetRedirectFlag();
+                const roles = convertRolesToObjects(me.roles || [], me.permissions || []);
+                const user: User = {
+                  id: me.userId, employeeId: me.employeeId, tenantId: me.tenantId,
+                  email: me.email,
+                  firstName: me.fullName.split(' ')[0] || '',
+                  lastName: me.fullName.split(' ').slice(1).join(' ') || '',
+                  fullName: me.fullName, status: 'ACTIVE', roles,
+                  profilePictureUrl: me.profilePictureUrl,
+                };
+                set({ user, isAuthenticated: true, isLoading: false });
+                return true;
+              } catch {
+                set({ isLoading: false });
+                return false;
+              }
+            }
+            set({ isLoading: false });
+            return false;
           }
-          const roleStrings = response.roles;
-          const permissionStrings = response.permissions || [];
-          const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
-          const user: User = {
-            id: response.userId,
-            employeeId: response.employeeId,
-            tenantId: response.tenantId,
-            email: response.email,
-            firstName: response.fullName.split(' ')[0] || '',
-            lastName: response.fullName.split(' ').slice(1).join(' ') || '',
-            fullName: response.fullName,
-            status: 'ACTIVE',
-            roles: roles,
-            profilePictureUrl: response.profilePictureUrl,
-          };
+          // No in-flight refresh — issue our own, registering it in the shared mutex
+          // so the 401 interceptor won't issue a concurrent one.
+          const refreshPromise = authApi.refresh()
+            .then((response) => {
+              apiClient.setTenantId(response.tenantId);
+              apiClient.resetRedirectFlag();
 
-          set({ user, isAuthenticated: true, isLoading: false });
-          return true;
+              // CRIT-001: Require roles in auth response — no JWT fallback decode
+              if (!response.roles?.length) {
+                throw new Error('Session restore failed: missing roles in response.');
+              }
+              const roleStrings = response.roles;
+              const permissionStrings = response.permissions || [];
+              const roles = convertRolesToObjects(roleStrings, permissionStrings);
+
+              const user: User = {
+                id: response.userId,
+                employeeId: response.employeeId,
+                tenantId: response.tenantId,
+                email: response.email,
+                firstName: response.fullName.split(' ')[0] || '',
+                lastName: response.fullName.split(' ').slice(1).join(' ') || '',
+                fullName: response.fullName,
+                status: 'ACTIVE',
+                roles: roles,
+                profilePictureUrl: response.profilePictureUrl,
+              };
+
+              set({ user, isAuthenticated: true, isLoading: false });
+              return true;
+            })
+            .catch(() => {
+              set({ isLoading: false });
+              return false;
+            })
+            .finally(() => {
+              setSharedRefreshPromise(null);
+            });
+
+          setSharedRefreshPromise(refreshPromise);
+          return await refreshPromise;
         } catch {
           set({ isLoading: false });
           return false;
@@ -201,3 +255,17 @@ export const useAuth = create<AuthState>()(
     }
   )
 );
+
+/**
+ * P0-SESSION-FIX: Register the callback that the Axios 401 interceptor calls
+ * after a silent token refresh. This keeps the Zustand auth store in sync with
+ * the new httpOnly cookie, preventing the UI from showing stale identity
+ * ("User / Employee") after a background token refresh.
+ */
+setOnSessionRefreshed(async () => {
+  const state = useAuth.getState();
+  // Only restore if we're supposed to be authenticated but lost the user object
+  if (state.isAuthenticated && !state.user) {
+    await state.restoreSession();
+  }
+});

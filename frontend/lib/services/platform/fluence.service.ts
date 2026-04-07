@@ -240,7 +240,7 @@ class FluenceService {
   // ─── Blog Categories ────────────────────────────────────────────────────────
 
   async listBlogCategories(): Promise<BlogCategory[]> {
-    const response = await apiClient.get<BlogCategory[]>('/knowledge/blogs/categories');
+    const response = await apiClient.get<BlogCategory[]>('/knowledge/blogs/categories/ordered');
     return response.data;
   }
 

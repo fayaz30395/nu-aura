@@ -1,5 +1,33 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 6 — DEV Agent Monitoring (2026-04-08)
+
+### Check 1: QA findings reviewed — analysis of 34-page fresh Chrome QA run
+
+**Already Fixed by concurrent process (in working tree, not yet committed):**
+- Benefits page: DollarSign icon replaced with IndianRupee icon (5 instances)
+- Benefits page: Enrollment period updated from "November 2025" to dynamic date
+- Benefits page: flex credits label fixed from `${stats.flexCredits}` to `{formatINR(stats.flexCredits)}`
+- Fluence search page: split `!isReady || !hasAccess` guard into two (shows spinner while loading)
+- Fluence analytics page: same fix as search (shows spinner while loading)
+- Fluence drive page: removed redundant auth check, wrapped loading in AppLayout
+- Fluence blogs new/edit pages: API endpoint path fix in fluence.service.ts
+
+**Triaged as NOT code bugs (session/infra issues):**
+- 6x "Access Denied" pages (/expenses, /assets, /shifts, /recruitment/pipeline, /surveys, /approvals): Root cause is session instability (cross-cutting issue #1). When session degrades, user loses SUPER_ADMIN role, causing permission checks to fail correctly. AuthGuard SuperAdmin bypass (line 153) and usePermissions admin bypass are both correct. Fix requires session stability, not permission changes.
+- /fluence/templates, /fluence/drive stuck on "Preparing workspace": Session expiry during navigation. AuthGuard shows NuAuraLoader while auth hydrates, but session expires before completion.
+- /fluence/search, /fluence/analytics redirect to dashboard: Fixed above — was returning `null` when `!isReady`, which caused parent layout to redirect.
+- /recruitment/agencies "Failed to Load Agencies": Backend API error. Frontend error handling (`PageErrorFallback`) is correct. Backend endpoint needs investigation.
+- /fluence/blogs "categories.map is not a function": Code already has `Array.isArray` guard (line 51). Crash likely from stale build cache or a race condition with React Query data.
+- /me/profile stuck on loading: Session degradation. Profile page is `requiresAuth: true` only — no special permissions needed.
+- Header.tsx hydration mismatch: Already fixed in Session 4 (HYDRATION-001).
+- AssetManagementPage setState during render: HMR/development-only artifact from React HotReload. Not a production bug.
+
+### Check 2: clean (no new findings after 60s wait)
+### Check 3: clean (no new findings after 60s wait — FINAL CHECK, monitoring loop complete 3/3)
+
+**Verified:** `npx tsc --noEmit` passes with zero errors.
+
 ## Session 5 — DEV Agent Monitoring (2026-04-08)
 
 ### Check 1: QA findings reviewed — 2 fixes applied

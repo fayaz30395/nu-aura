@@ -147,9 +147,9 @@ const PAGE_SIZE = 20;
 
 export default function WorkflowListPage() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
-  const canManage = isReady && hasPermission(Permissions.WORKFLOW_MANAGE);
-  const canView = isReady && (hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
+  const {hasPermission, isAdmin, isReady} = usePermissions();
+  const canManage = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_MANAGE));
+  const canView = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
 
   // Filters
   const [search, setSearch] = useState('');
