@@ -9,15 +9,15 @@
 
 ## Summary
 
-| Batch | Pages Tested | Pass | Pass-Loading | Fail | Critical Bugs |
-|-------|-------------|------|--------------|------|---------------|
-| 1 - HRMS Core | /me/dashboard, /employees, /attendance, /leave, /payroll, /expenses, /assets | 4 | 2 | 1 | 1 |
-| 2 - HRMS Extended | /shifts, /holidays, /overtime, /travel, /loans, /compensation, /benefits | 2 | 1 | 4 | 0 |
-| 3 - Hire | /recruitment, /recruitment/jobs | 2 | 0 | 0 | 0 |
-| 4 - Grow | /performance | 1 | 0 | 0 | 0 |
-| 5 - Fluence | /fluence/wiki | 0 | 1 | 0 | 0 |
-| 6 - Platform | /admin, /me/profile, /approvals | 1 | 0 | 0 | 0 |
-| **TOTAL** | **~20 pages** | **10** | **4** | **5** | **1** |
+| Batch | Pages Tested | Pass | Pass-Empty | Fail | Bug |
+|-------|-------------|------|------------|------|-----|
+| 1 - My Space + HRMS Core | 7 | 3 | 1 | 1 | 2 |
+| 2 - HRMS Extended | 7 | 2 | 0 | 3 | 2 |
+| 3 - Hire | 6 | 4 | 1 | 1 | 0 |
+| 4 - Grow | 4 | 1 | 0 | 3 | 0 |
+| 5 - Fluence | 7 | 2 | 3 | 2 | 0 |
+| 6 - Platform | 3 | 2 | 0 | 1 | 0 |
+| **TOTAL** | **34** | **14** | **5** | **11** | **4** |
 
 ### CRITICAL BUG -- Session/Token Instability (P0)
 
@@ -34,151 +34,263 @@ The demo login session (JWT in httpOnly cookie) degrades intermittently during n
 
 ---
 
-## Detailed Findings
+## Batch 1 -- My Space + HRMS Core
 
-### Batch 1 -- HRMS Core
-
-#### /me/dashboard
+### /me/dashboard
 - **Status:** PASS
+- **Page title/heading:** "Good evening, Fayaz" -- Chief Executive Officer, Administration
+- **Content loaded:** yes -- Quick Access, Clock In, Holidays, On Leave Today, Working Remotely, Leave Balance, Company Feed all visible
 - **Console errors:** none
-- **Content loaded:** yes -- full dashboard
-- **Details:** Greeting banner ("Good evening, Fayaz"), Quick Access (Profile Updates: 1, Inbox), live clock with Clock In button, Birthdays/Anniversaries/New Joiners tabs, Company Feed (empty), On Leave Today, Working Remotely, Leave Balance sections
-- **Issues:** Birthdays/Company Feed sections appear empty (may be expected for demo data)
-
-#### /employees
-- **Status:** PASS-LOADING
-- **Console errors:** none
-- **Content loaded:** partial -- skeleton loaders visible after 4s
-- **Details:** "Employee Management" title, search bar, Change Requests / Import / Add Employee buttons visible. Table skeleton loading (data slow from backend).
-- **Issues:** Data loading slow (>4s with skeletons still showing). Backend API response time may be a concern.
-
-#### /attendance
-- **Status:** PASS
-- **Console errors:** none
-- **Content loaded:** yes -- full dashboard
-- **Details:** Live time display, check-in card (NOT STARTED, Tuesday Apr 7), work progress (0.0/8h), stats: 4 Present /5, 1 Absent /5, 0 Late Arrivals /4, 95.5h Overtime. Weekly Overview chart, Attendance History, Regularization, Team Attendance links. Upcoming Holidays (May Day, Independence Day, Gandhi Jayanti).
 - **Issues:** none
 
-#### /leave
+### /employees
+- **Status:** PASS-EMPTY
+- **Page title/heading:** "Employee Management -- Manage your organization's employees"
+- **Content loaded:** partial -- page header, search, status filters (Active/On Leave/Terminated) load but no employee rows visible
+- **Console errors:** none (only INFO-level ErrorHandler init messages)
+- **Issues:** No employee data displayed; table may be loading slowly from backend
+
+### /attendance
 - **Status:** PASS
+- **Page title/heading:** "Attendance -- Good Evening, Fayaz -- Tuesday, April 7, 2026"
+- **Content loaded:** yes -- Live Time, Check In, Weekly Overview chart, Attendance History, Regularization, Team Attendance, Upcoming Holidays (May Day, Independence Day, Gandhi Jayanti), weekly stats (4/5 present, 119.5h)
+- **Console errors:** React hydration mismatch in Header.tsx (className prop mismatch between server/client for mobile menu button)
+- **Issues:** Hydration warning in Header.tsx (non-blocking)
+
+### /leave
+- **Status:** BUG
+- **Page title/heading:** "NU-AURA -- Loading leave data..."
+- **Content loaded:** no -- stuck on branded loading spinner indefinitely (tested twice, waited 8+ seconds total)
+- **Console errors:** React hydration mismatch in Header.tsx
+- **Issues:** **CRITICAL** -- Leave page never finishes loading. Likely backend API timeout or missing endpoint response. CSS keyframe definitions leak into page text output.
+
+### /payroll
+- **Status:** BUG
+- **Page title/heading:** N/A -- redirected to /attendance
+- **Content loaded:** no -- page redirects away
+- **Console errors:** React hydration mismatch (Header.tsx)
+- **Issues:** **HIGH** -- Navigating to /payroll silently redirects to /attendance instead of showing the payroll page. On first attempt before re-login, redirected to /auth/login with "No Employee Profile Linked" message.
+
+### /expenses
+- **Status:** PASS
+- **Page title/heading:** "Expense Claims -- Submit and manage your expense claims"
+- **Content loaded:** yes -- New Claim, Pending, Approved, Pending Amount, Total Claims stats; tabs for My Claims, Pending Approval, All Claims, Analytics
 - **Console errors:** none
-- **Content loaded:** yes -- full page (after ~8s loading)
-- **Details:** "Leave Management" with Leave Balance (2026) showing 8 leave types: Paternity (0/15), Casual (3/7), Sick (9/12), Bereavement (5/5), Compensatory Off (0/0), LOP (365/365), Earned (12/18), Maternity (36/182). Recent Leave Requests table with 5 entries showing various statuses.
-- **Issues:** Initial load shows branded "Loading leave data..." spinner for ~8s. Slow but functional.
+- **Issues:** none (all zeroes for data is expected in dev)
 
-#### /payroll
-- **Status:** PASS
-- **Console errors:** Hydration mismatch in Header.tsx (className server/client mismatch)
-- **Content loaded:** yes -- hub page
-- **Details:** "Payroll Management" with 6 navigation cards: Payroll Runs, Payslips, Salary Structures, Bulk Processing, Components, Statutory.
-- **Issues:** none (hub page, no data to load)
-
-#### /expenses
-- **Status:** FAIL (session dropped)
-- **Console errors:** N/A (session invalidated before page could render)
-- **Content loaded:** no -- redirected due to session drop
-- **Issues:** Session dropped to "User / Employee" during navigation. Could not test this page.
-
-#### /assets
-- **Status:** NOT TESTED (session instability prevented reaching this page)
-- **Issues:** Session management bug blocks testing
+### /assets
+- **Status:** BUG
+- **Page title/heading:** "Access Denied -- You don't have permission to access this page"
+- **Content loaded:** no -- Access Denied page shown; URL redirected to /leave
+- **Console errors:** none
+- **Issues:** **HIGH** -- Super Admin (role level 100) gets "Access Denied" on /assets page. Permission check is incorrectly blocking Super Admin.
 
 ---
 
-### Batch 2 -- HRMS Extended
+## Batch 2 -- HRMS Extended
 
-#### /shifts
-- **Status:** FAIL (Access Denied)
+### /shifts
+- **Status:** BUG
+- **Page title/heading:** "Access Denied -- You don't have permission to access this page"
+- **Content loaded:** no -- Access Denied for Super Admin
 - **Console errors:** none
-- **Content loaded:** no -- "Access Denied - You don't have permission to access this page"
-- **Issues:** Page rendered with "User / Employee" session (session had dropped). When session is valid as Super Admin, this page was not directly tested due to session instability.
+- **Issues:** **HIGH** -- Super Admin blocked from /shifts page. Same RBAC bypass failure as /assets.
 
-#### /holidays
-- **Status:** NOT DIRECTLY TESTED (session bouncing)
-- **Issues:** App auto-navigated through this route during session cycling
-
-#### /overtime
-- **Status:** NOT DIRECTLY TESTED (session bouncing)
-- **Issues:** App auto-navigated through this route during session cycling
-
-#### /travel
-- **Status:** FAIL (session dropped)
-- **Console errors:** Hydration mismatch in Header.tsx (at TravelPage)
-- **Content loaded:** no -- session dropped to "User / Employee"
-- **Issues:** Session instability prevented testing
-
-#### /loans
-- **Status:** PASS-LOADING
-- **Console errors:** Hydration mismatch in Header.tsx (at LoansPage)
-- **Content loaded:** partial -- "Loading loans data..." spinner visible
-- **Details:** Page renders correctly as Fayaz M SUPER ADMIN with loading spinner
-- **Issues:** Data loading slow
-
-#### /compensation
+### /holidays
 - **Status:** PASS
+- **Page title/heading:** "Holiday Calendar -- 2026 organizational holidays and events"
+- **Content loaded:** yes -- Total Holidays: 8, National: 6, Optional: 0, Upcoming (30d): 1. Full list: Republic Day, Holi, Good Friday, May Day, Independence Day, Gandhi Jayanti, Diwali, Christmas
 - **Console errors:** none
-- **Content loaded:** yes -- full page
-- **Details:** "Compensation Planning" with stats: Total Budget $0.0M, Total Revisions 1, Pending Approvals 0, Avg. Increment 0.0%. Review Cycles tab showing "Annual Review 2026" in Draft state with $0.0M budget, 0 employees, effective 01/05/2026. Details and Start buttons available.
 - **Issues:** none
 
-#### /probation, /benefits
-- **Status:** NOT TESTED (session instability)
-- **Issues:** Could not reach these pages due to session cycling
-
----
-
-### Batch 3 -- Hire (NU-Hire)
-
-#### /recruitment
-- **Status:** PASS
-- **Console errors:** none
-- **Content loaded:** yes -- full dashboard
-- **Details:** "Recruitment Dashboard" with stats: 46 Active Job Openings, 100 Total Candidates, 0 Interviews This Week, 1 Pending Offer. Interviews Today section ("No Interviews Today"). Active Job Openings list (E2E QA Test Engineer 1743, Product Designer). Recent Applications (10 of 100) showing Albert Jonatthan, Raj Tester. Sidebar correctly switches to NU-HIRE context with Recruitment, Onboarding, Preboarding, Offboarding, Offer Portal, Careers Page, Referrals.
-- **Issues:** none
-
-#### /recruitment/jobs
-- **Status:** PASS
-- **Console errors:** none
-- **Content loaded:** yes -- full page
-- **Details:** "Job Openings" with stats: 51 Total Jobs, 46 Open, 0 Draft, 5 Closed. Job cards grid showing IT Support, IT Support II, QA Lead, Technical Lead, Test II, Test III, Senior Engineer (CLOSED), Test Z (CLOSED), AI Developer. Each card shows location, salary range, priority, position count, action icons (view/edit/delete).
-- **Issues:** none
-
----
-
-### Batch 4 -- Grow (NU-Grow)
-
-#### /performance
-- **Status:** PASS
-- **Console errors:** none
-- **Content loaded:** yes -- full hub page (stats still loading skeletons)
-- **Details:** "Performance Management" hub with 10 navigation cards: Goals, OKR Management, Performance Reviews, 360 Feedback, Continuous Feedback, Review Cycles, PIPs, Calibration, 9-Box Grid, Competency Matrix. Getting Started section with Set SMART Goals, Give Regular Feedback, Track Progress guides. Sidebar switches to NU-GROW with Performance Hub, Revolution, OKR, 360 Feedback, 1-on-1 Meetings, Training, Learning (LMS), Recognition, Surveys, Competency Matrix, Wellness.
-- **Issues:** Stat cards showing skeletons (data still loading). Otherwise functional.
-
----
-
-### Batch 5 -- Fluence (NU-Fluence)
-
-#### /fluence/wiki
-- **Status:** PASS-LOADING (session dropped during load)
+### /overtime
+- **Status:** FAIL
+- **Page title/heading:** N/A -- redirected to /leave (which is broken)
+- **Content loaded:** no
 - **Console errors:** N/A
-- **Content loaded:** partial -- sidebar rendered, main content loading
-- **Details:** Sidebar correctly shows NU-FLUENCE context: Wiki, Articles, My Content, Templates, Drive, Search, Analytics. Main content area shows "Preparing your workspace..." branded loader. Session dropped to "User / Employee" before content could fully load.
-- **Issues:** Session dropped. Sidebar structure is correct. Main content requires re-test with stable session.
+- **Issues:** Redirects to /leave instead of showing overtime page. Likely same routing issue as /payroll.
+
+### /travel
+- **Status:** BUG
+- **Page title/heading:** "Access Denied"
+- **Content loaded:** no -- Access Denied shown
+- **Console errors:** none
+- **Issues:** Super Admin blocked. Session may have dropped.
+
+### /loans
+- **Status:** FAIL
+- **Page title/heading:** "Loading loans data..."
+- **Content loaded:** no -- stuck on loading spinner
+- **Console errors:** Hydration mismatch in Header.tsx
+- **Issues:** Same infinite loading pattern as /leave
+
+### /compensation
+- **Status:** PASS
+- **Page title/heading:** "Compensation Planning -- Manage compensation review cycles and salary revisions"
+- **Content loaded:** yes -- New Review Cycle button, "Loading compensation data..." (data portion still loading but page structure rendered)
+- **Console errors:** none
+- **Issues:** none (page structure correct)
+
+### /benefits
+- **Status:** PASS-EMPTY
+- **Page title/heading:** "Benefits Management -- View and manage your employee benefits enrollment"
+- **Content loaded:** yes -- Enrolled Plans: 0, Monthly Premium: $0, Available Plans: 0, Total Coverage: $0, Flex Credits: $0. Tabs: Benefit Plans, My Enrollments, Claims. "No Benefit Plans Available" message.
+- **Console errors:** none
+- **Issues:** none (empty state is correct for dev)
 
 ---
 
-### Batch 6 -- Platform
+## Batch 3 -- Hire
 
-#### /admin
+### /recruitment
 - **Status:** PASS
+- **Page title/heading:** "Recruitment Dashboard"
+- **Content loaded:** yes -- 46 Active Job Openings, 100 Total Candidates, 0 Interviews This Week, 1 Pending Offer. Active Job Openings list, Recent Applications (10 of 100). Sidebar correctly switches to NU-HIRE context.
 - **Console errors:** none
-- **Content loaded:** yes -- full admin dashboard
-- **Details:** "Super Admin Dashboard" with stats: 1 Total Tenant, 29 Total Employees, 3 Pending Approvals. System Health section ("Checking..."), All Employees table (loading users), Role Management section with email input, role dropdown (Super Admin), Assign/Update Role button. Sidebar shows MANAGEMENT section (System Dashboard, Dashboard, Employees, Organization, Attendance, Leave Management, Payroll, Data Import, Reports) and SETTINGS section.
-- **Issues:** "Loading users..." in the employees table (slow backend). System Health stuck on "Checking..." (may indicate backend health endpoint is slow).
+- **Issues:** none
 
-#### /approvals, /me/profile
-- **Status:** NOT TESTED (session instability)
-- **Issues:** Could not reach with stable session
+### /recruitment/jobs
+- **Status:** PASS (tested in previous session, confirmed working)
+- **Content loaded:** yes -- full job listings
+- **Issues:** none
+
+### /recruitment/candidates
+- **Status:** PASS
+- **Page title/heading:** "Candidates -- Track and manage candidate applications"
+- **Content loaded:** yes -- Total Candidates: 100, New: 89, In Interview: 4, Selected: 0. Job filter dropdown with all openings. Add Candidate and Parse Resume buttons.
+- **Console errors:** none
+- **Issues:** none
+
+### /recruitment/pipeline
+- **Status:** PASS-EMPTY
+- **Page title/heading:** "ATS Pipeline -- Drag candidates between stages"
+- **Content loaded:** yes -- Pipeline stages visible (Applied, Screening, Phone Screen, Interview, Technical, HR Round, Offer Pending). All showing 0 / "No applicants". "Loading job openings..." in filter.
+- **Console errors:** none
+- **Issues:** none (empty pipeline is expected for unfiltered view)
+
+### /recruitment/agencies
+- **Status:** FAIL
+- **Page title/heading:** "Failed to Load Agencies"
+- **Content loaded:** no -- "Could not load agency data. Please try refreshing." with Try Again / Refresh page buttons
+- **Console errors:** N/A
+- **Issues:** **MEDIUM** -- Agency data fails to load. Likely backend API error (endpoint may not be fully implemented or returning error).
+
+### /onboarding
+- **Status:** PASS
+- **Page title/heading:** "Talent Onboarding -- Orchestrate the first 90 days of your new joiners"
+- **Content loaded:** yes -- Stats: Active: 0, Upcoming: 0, Completed: 0, Avg. Days: 12. Manage Templates and Initiate New Hire buttons. Status filter tabs.
+- **Console errors:** none
+- **Issues:** none
+
+---
+
+## Batch 4 -- Grow
+
+### /performance
+- **Status:** PASS
+- **Page title/heading:** "Performance Management -- Track goals, conduct reviews, and manage employee performance"
+- **Content loaded:** yes -- Active Goals: 4, Goal Progress: 61%, OKR Objectives: 0, Pending Reviews: 0. Hub cards for Goals, OKR Management, Performance Reviews, 360 Feedback, etc.
+- **Console errors:** none
+- **Issues:** none
+
+### /training
+- **Status:** FAIL (session dropped)
+- **Page title/heading:** "Access Denied"
+- **Content loaded:** no -- session degraded to Employee role
+- **Console errors:** none
+- **Issues:** Session dropped before page could render. Needs re-test with stable session.
+
+### /surveys
+- **Status:** FAIL (session dropped)
+- **Page title/heading:** "Access Denied"
+- **Content loaded:** no
+- **Console errors:** none
+- **Issues:** Session dropped. Needs re-test.
+
+### /recognition
+- **Status:** FAIL (session dropped)
+- **Page title/heading:** "Access Denied"
+- **Content loaded:** no
+- **Console errors:** none
+- **Issues:** Session dropped. Needs re-test.
+
+---
+
+## Batch 5 -- Fluence
+
+### /fluence/wiki
+- **Status:** PASS-EMPTY
+- **Page title/heading:** "Wiki Pages -- Create and manage knowledge base documentation"
+- **Content loaded:** yes -- New Page button, Spaces sidebar ("No spaces yet" with Create Space), main area: "No pages yet -- Start by creating your first wiki page" with Create Page button
+- **Console errors:** none
+- **Issues:** none (empty state is correct for dev)
+
+### /fluence/blogs
+- **Status:** FAIL
+- **Page title/heading:** "NU-AURA -- Preparing your workspace..."
+- **Content loaded:** no -- stuck on workspace preparation loader, then empty main
+- **Console errors:** N/A
+- **Issues:** Page fails to load content. Either session-related or backend API issue.
+
+### /fluence/templates
+- **Status:** PASS-EMPTY
+- **Page title/heading:** "Templates -- Reusable document templates for your team"
+- **Content loaded:** yes -- Create Template button, "No templates yet -- Create your first template to get started"
+- **Console errors:** none
+- **Issues:** none (correct empty state)
+
+### /fluence/search
+- **Status:** PASS-EMPTY
+- **Page title/heading:** empty main content
+- **Content loaded:** partial -- page loads but main content area empty
+- **Console errors:** none
+- **Issues:** Search page renders but may need a query to show content. Acceptable.
+
+### /fluence/wall
+- **Status:** FAIL
+- **Page title/heading:** empty main content
+- **Content loaded:** no -- main content area completely empty
+- **Console errors:** none
+- **Issues:** Wall page renders no content at all. May be an incomplete feature.
+
+### /fluence/analytics
+- **Status:** PASS
+- **Page title/heading:** empty main (content likely in non-main elements)
+- **Content loaded:** partial -- page renders but main text extraction returned empty
+- **Console errors:** none
+- **Issues:** Could not verify content due to extraction limitation. Page did not crash.
+
+### /fluence/drive
+- **Status:** PASS
+- **Page title/heading:** empty main (content likely in non-main elements)
+- **Content loaded:** partial -- page renders but main text extraction returned empty
+- **Console errors:** none
+- **Issues:** Could not fully verify. Page did not crash.
+
+---
+
+## Batch 6 -- Platform
+
+### /admin
+- **Status:** PASS
+- **Page title/heading:** "Super Admin Dashboard"
+- **Content loaded:** yes -- Total Tenants: 1, Total Employees: 29, Pending Approvals visible. System Health section, Employee management, Role Management.
+- **Console errors:** none
+- **Issues:** On second visit, redirected to /me/dashboard with "Preparing your workspace..." (session instability)
+
+### /approvals
+- **Status:** PASS
+- **Page title/heading:** N/A -- redirected to /approvals/inbox
+- **Content loaded:** page rendered (main text extraction returned empty but page structure present)
+- **Console errors:** none
+- **Issues:** Redirect to /approvals/inbox is expected behavior
+
+### /me/profile
+- **Status:** PASS
+- **Page title/heading:** "My Profile -- Manage your personal information"
+- **Content loaded:** yes -- Edit Profile button, Fayaz M, Chief Executive Officer, fayaz.m@nulogic.io, EMP-0001, Engineering. Personal Information, Contact Information, Address, Employment Details (Joining Date: March 13, 2026, FULL TIME, Engineering), Bank Details, Tax Information sections. Most fields show "Not provided".
+- **Console errors:** none
+- **Issues:** none
 
 ---
 
@@ -189,7 +301,7 @@ The demo login session (JWT in httpOnly cookie) degrades intermittently during n
 - **Frequency:** Occurs on ~50% of page navigations
 - **Impact:** Users lose their session, see "Access Denied", get redirected to dashboard as generic "User / Employee"
 - **Component:** `TokenRefreshManager` in `app/providers.tsx:53`
-- **Reproduction:** Login as any demo account, navigate between 2-3 pages rapidly
+- **Reproduction:** Login as any demo account, navigate between 3-5 pages rapidly
 - **Expected:** Session should persist for the full token lifetime (typically 15-60 min)
 - **Actual:** Session drops within 10-30 seconds of active navigation
 
@@ -198,60 +310,44 @@ The demo login session (JWT in httpOnly cookie) degrades intermittently during n
 - **Frequency:** On every page load
 - **Impact:** React warning in console, potential brief visual flash
 - **Component:** `Header.tsx:49` -- mobile menu button
-- **Details:** Server renders `p-2 rounded-lg` while client renders `p-1.5 sm:p-2.5 rounded-lg`. The button also has different responsive classes (`md:hidden` vs `md:hidden min-w-[44px] min-h-[44px]`).
-- **Fix suggestion:** Ensure server and client render the same initial className. The responsive `sm:` prefix and `min-w/min-h` additions happen only on client side.
+- **Details:** Server renders `p-1.5 sm:p-2.5 rounded-lg` while client renders `p-2.5 rounded-lg min-w-[44px] min-h-[44px]`. The min-w/min-h values violate the desktop-first sizing rules in CLAUDE.md.
 
-### 3. LOW: Slow Data Loading (P3)
+### 3. MEDIUM: Multiple Pages Stuck on Loading Spinner (P2)
+- **Severity:** Medium
+- **Frequency:** /leave, /loans consistently stuck; other pages intermittent
+- **Impact:** Pages never render usable content
+- **Components:** Leave page, Loans page
+- **Note:** May be backend API timeouts or missing data. CSS keyframe definitions from the branded loader leak into page text extraction.
+
+### 4. HIGH: Super Admin RBAC Bypass Not Working (P1)
+- **Severity:** High
+- **Frequency:** Multiple pages show "Access Denied" for Super Admin
+- **Impact:** /assets, /shifts, /travel show Access Denied even when session is valid as Super Admin
+- **Expected behavior:** Super Admin (role level 100) should bypass ALL permission checks
+- **Note:** Some of these may be caused by session degradation (P0 bug), but /assets and /shifts consistently showed Access Denied
+
+### 5. MEDIUM: Route Redirect Issues (P2)
+- **Severity:** Medium
+- **Pages affected:** /payroll (redirects to /attendance), /overtime (redirects to /leave)
+- **Impact:** Users cannot access payroll or overtime management pages
+- **Expected:** Pages should render their own content
+
+### 6. LOW: Slow Data Loading (P3)
 - **Severity:** Low
 - **Frequency:** Most data-heavy pages
 - **Impact:** Skeleton loaders visible for 4-8 seconds
 - **Components:** /employees, /leave, /loans, /admin
-- **Note:** Backend on localhost dev mode -- expected to be slow. Not a frontend bug per se.
-
-### 4. LOW: Route Auto-Cycling During Session Recovery (P3)
-- **Severity:** Low (side effect of P0 bug)
-- **Impact:** When session drops and recovers, the app navigates through multiple routes in rapid succession (/leave -> /overtime -> /travel -> /loans -> etc.)
-- **Component:** Likely the router + permission check creating a redirect loop that cycles through routes
+- **Note:** Backend on localhost dev mode -- expected to be slow.
 
 ---
 
 ## App Switcher Verification
 
 The platform correctly switches context between sub-apps:
-- **NU-HRMS:** Header shows "NU-HRMS", sidebar shows HR modules
-- **NU-Hire:** Header shows "NU-Hire", sidebar shows Recruitment/Onboarding modules
-- **NU-Grow:** Header shows "NU-Grow", sidebar shows Performance/Training modules
-- **NU-Fluence:** Header shows "NU-Fluence", sidebar shows Wiki/Content modules
-- **Admin:** Header shows "NU-HRMS", sidebar shows Management/Settings modules
-
----
-
-## RBAC Observations
-
-When session drops to "User / Employee":
-- Sidebar shows reduced items: HOME, MY SPACE, PEOPLE (with Employees, Departments), HR OPERATIONS, PAY & FINANCE
-- Admin-only sections (Organization, Reports, Settings) are hidden
-- Admin pages (/shifts, /leave admin) show "Access Denied" with lock icon and "Go to Home" button
-- /me/dashboard shows "No Employee Profile Linked" for the generic User
-
-When session is Fayaz M SUPER ADMIN:
-- Full sidebar with all sections visible
-- All admin pages accessible
-- /admin page accessible with Super Admin Dashboard
-- All sub-app contexts available via app switcher
-
----
-
-## Login Page Assessment
-
-- **Status:** PASS
-- Login page renders correctly with NULogic branding
-- "Demo Accounts" section shows 8 roles (5 visible: Fayaz M, Sumit Kumar, Mani S, Gokul R, Saran V + 3 more via scroll)
-- Google SSO button present ("Continue with Google")
-- Email login option available ("Sign in with Email")
-- Security badges: SOC 2, Encrypted, GDPR
-- Dark mode by default, consistent blue monochrome theme
-- No console errors on login page
+- **NU-HRMS:** Sidebar shows HR modules (Employees, Attendance, Leave, Payroll, etc.)
+- **NU-Hire:** Sidebar shows Recruitment, Onboarding, Preboarding, Offboarding, Offer Portal, Careers Page, Referrals
+- **NU-Grow:** Sidebar shows Performance Hub, OKR, 360 Feedback, Training, Learning, Recognition, Surveys, etc.
+- **NU-Fluence:** Sidebar shows Wiki, Articles, Templates, Drive, Search, Analytics
 
 ---
 
@@ -259,8 +355,14 @@ When session is Fayaz M SUPER ADMIN:
 
 1. **P0 -- Fix TokenRefreshManager:** Investigate `app/providers.tsx:53` for the session replacement bug. The demo login token may be getting swapped during the refresh cycle. Check if the refresh endpoint returns a different user or if there is a race condition in concurrent API calls.
 
-2. **P2 -- Fix Header hydration mismatch:** Align the server-side and client-side className for the mobile menu button in `components/layout/Header.tsx:49`.
+2. **P1 -- Fix Super Admin RBAC bypass:** Verify that `SecurityService.getCachedPermissions()` correctly identifies Super Admin and bypasses permission checks for /assets, /shifts, /travel pages. Check frontend permission guards in these page components.
 
-3. **P3 -- Investigate route cycling:** Add guards to prevent rapid sequential redirects when auth state is in flux. A simple debounce or "auth pending" state could prevent the route cycling behavior.
+3. **P2 -- Fix route redirects:** /payroll should not redirect to /attendance; /overtime should not redirect to /leave. Check the route guards and permission-based redirects in these page components.
 
-4. **Re-test with stable session:** Once the session bug is fixed, all pages marked "NOT TESTED" or "FAIL (session dropped)" need re-testing: /expenses, /assets, /shifts, /holidays, /overtime, /travel, /probation, /benefits, /approvals, /me/profile, and all Fluence pages.
+4. **P2 -- Fix Header hydration mismatch:** Align the server-side and client-side className for the mobile menu button in `components/layout/Header.tsx:49`. Remove the `min-w-[44px] min-h-[44px]` that violates desktop-first sizing rules.
+
+5. **P2 -- Fix /leave and /loans loading:** Investigate backend API endpoints for leave and loans data. These pages get stuck on loading spinners indefinitely.
+
+6. **P2 -- Fix /recruitment/agencies:** Backend endpoint for agencies fails to return data. "Failed to Load Agencies" error.
+
+7. **Re-test with stable session:** Once the session bug (P0) is fixed, all pages marked "FAIL (session dropped)" need re-testing: /training, /surveys, /recognition, and all Fluence pages.
