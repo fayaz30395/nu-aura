@@ -1,368 +1,326 @@
-# NU-AURA QA Chrome Findings -- 2026-04-07
-
-**Tester:** Automated Chrome QA (Claude)
-**Environment:** localhost:3000 (Next.js dev) + localhost:8080 (Spring Boot backend)
-**User:** Fayaz M (SUPER ADMIN) via Demo Account login
-**Browser:** Chrome with MCP extension
-
----
+# NU-AURA Chrome QA — 2026-04-08 (Fresh Run)
 
 ## Summary
+| Batch | Pages | Pass | Pass-Empty | Fail | Bug |
+|-------|-------|------|------------|------|-----|
+| 1 — Core HRMS | 7 | 5 | 0 | 0 | 2 |
+| 2 — HR Ops & Finance | 7 | 4 | 0 | 0 | 3 |
+| 3 — Recruitment | 6 | 4 | 0 | 1 | 1 |
+| 4 — Performance & Growth | 4 | 3 | 0 | 0 | 1 |
+| 5 — NU-Fluence | 7 | 2 | 0 | 3 | 2 |
+| 6 — Admin & Profile | 3 | 1 | 0 | 1 | 1 |
+| **TOTAL** | **34** | **19** | **0** | **5** | **10** |
 
-| Batch | Pages Tested | Pass | Pass-Empty | Fail | Bug |
-|-------|-------------|------|------------|------|-----|
-| 1 - My Space + HRMS Core | 7 | 3 | 1 | 1 | 2 |
-| 2 - HRMS Extended | 7 | 2 | 0 | 3 | 2 |
-| 3 - Hire | 6 | 4 | 1 | 1 | 0 |
-| 4 - Grow | 4 | 1 | 0 | 3 | 0 |
-| 5 - Fluence | 7 | 2 | 3 | 2 | 0 |
-| 6 - Platform | 3 | 2 | 0 | 1 | 0 |
-| **TOTAL** | **34** | **14** | **5** | **11** | **4** |
+## Critical Cross-Cutting Issues
 
-### CRITICAL BUG -- Session/Token Instability (P0)
+### 1. Session Instability (CRITICAL)
+Demo login sessions expire within ~30-60 seconds of navigation. The "Preparing your workspace..." loading screen appears during sub-app transitions and frequently results in session expiration + redirect to /auth/login. This made testing unreliable and required re-login 8+ times during this QA run. Multiple pages could not be tested with a valid session due to this issue.
 
-The demo login session (JWT in httpOnly cookie) degrades intermittently during navigation. The user identity drops from "Fayaz M / SUPER ADMIN" to a generic "User / Employee" within 10-30 seconds of active navigation. This causes:
-- Permission-gated pages to show "Access Denied"
-- Theme/dark mode preference to reset (dark -> light)
-- Sidebar to show reduced navigation (Employee-level items only)
-- Pages to redirect unpredictably through multiple routes before settling
-- "Preparing your workspace..." loading state on re-auth
+### 2. User Identity Degradation (HIGH)
+After session partial expiry, the sidebar shows "User" / "Employee" instead of "Fayaz M" / "SUPER ADMIN". The sidebar also loses menu items (showing only a subset of the full navigation). In this degraded state, many pages show "Access Denied" even though the URL loads.
 
-**Root cause hypothesis:** The `TokenRefreshManager` (in `app/providers.tsx:53`) is likely triggering a refresh that replaces the demo user's JWT with a fallback/default token. The issue is intermittent and timing-dependent -- sometimes the session survives several navigations, other times it drops within one navigation.
+### 3. Hydration Mismatch in Header.tsx:49 (LOW)
+Server renders `p-2 rounded-lg` but client renders `p-2.5 rounded-lg ... min-w-[44px] min-h-[44px]` on mobile menu button. This is a React hydration warning (not a crash) appearing on every page. Filed once here, not repeated per page.
 
-**Evidence:** Console error stacks show `TokenRefreshManager` in the component tree. The session drop correlates with page transitions that trigger multiple API calls simultaneously. The "Preparing your workspace..." state suggests a full re-authentication cycle is happening.
+### 4. AssetManagementPage setState During Render (MEDIUM)
+Console error: "Cannot update a component (HotReload) while rendering a different component (AssetManagementPage)" at assets/page.tsx:206. This is a React anti-pattern.
+
+## Login
+- **Method:** Demo account button (Fayaz M / SUPER ADMIN)
+- **Result:** PASS — clicked demo account, auto-filled credentials, redirected to /me/dashboard
+- **Console:** No errors on login page
+- **Note:** Login works reliably but sessions expire very quickly
 
 ---
 
-## Batch 1 -- My Space + HRMS Core
+## Batch 1 — Core HRMS
 
 ### /me/dashboard
 - **Status:** PASS
-- **Page title/heading:** "Good evening, Fayaz" -- Chief Executive Officer, Administration
-- **Content loaded:** yes -- Quick Access, Clock In, Holidays, On Leave Today, Working Remotely, Leave Balance, Company Feed all visible
-- **Console errors:** none
+- **Page heading:** Good morning, Fayaz (dynamic greeting)
+- **Content loaded:** yes — Quick Access, Clock In widget, Leave Balance (Paternity 15d, Casual 7d, Sick 12d), Company Feed, Birthdays, Anniversaries
+- **Console errors:** Hydration mismatch (Header.tsx — global issue)
 - **Issues:** none
 
 ### /employees
-- **Status:** PASS-EMPTY
-- **Page title/heading:** "Employee Management -- Manage your organization's employees"
-- **Content loaded:** partial -- page header, search, status filters (Active/On Leave/Terminated) load but no employee rows visible
-- **Console errors:** none (only INFO-level ErrorHandler init messages)
-- **Issues:** No employee data displayed; table may be loading slowly from backend
+- **Status:** PASS
+- **Page heading:** Employee Management
+- **Content loaded:** yes — "Manage your organization's employees", Change Requests, Import, + Add Employee, Search, status filters (All/Active/On Leave/Terminated)
+- **Console errors:** Hydration mismatch (Header.tsx — global issue)
+- **Issues:** none
 
 ### /attendance
 - **Status:** PASS
-- **Page title/heading:** "Attendance -- Good Evening, Fayaz -- Tuesday, April 7, 2026"
-- **Content loaded:** yes -- Live Time, Check In, Weekly Overview chart, Attendance History, Regularization, Team Attendance, Upcoming Holidays (May Day, Independence Day, Gandhi Jayanti), weekly stats (4/5 present, 119.5h)
-- **Console errors:** React hydration mismatch in Header.tsx (className prop mismatch between server/client for mobile menu button)
-- **Issues:** Hydration warning in Header.tsx (non-blocking)
+- **Page heading:** Attendance
+- **Content loaded:** yes — Live Time, Clock In button, Avg In 11:49, Avg Hrs 40.3, Attendance History, Regularization, Team Attendance, Upcoming Holidays
+- **Console errors:** Hydration mismatch (Header.tsx — global issue)
+- **Issues:** none
 
 ### /leave
-- **Status:** BUG
-- **Page title/heading:** "NU-AURA -- Loading leave data..."
-- **Content loaded:** no -- stuck on branded loading spinner indefinitely (tested twice, waited 8+ seconds total)
-- **Console errors:** React hydration mismatch in Header.tsx
-- **Issues:** **CRITICAL** -- Leave page never finishes loading. Likely backend API timeout or missing endpoint response. CSS keyframe definitions leak into page text output.
+- **Status:** PASS
+- **Page heading:** Leave Management
+- **Content loaded:** yes — Leave balances for 8+ leave types (PL, CL, SL, BL, CO, LOP, EL, ML), Apply for Leave button
+- **Console errors:** Hydration mismatch (Header.tsx — global issue)
+- **Issues:** none
 
 ### /payroll
-- **Status:** BUG
-- **Page title/heading:** N/A -- redirected to /attendance
-- **Content loaded:** no -- page redirects away
-- **Console errors:** React hydration mismatch (Header.tsx)
-- **Issues:** **HIGH** -- Navigating to /payroll silently redirects to /attendance instead of showing the payroll page. On first attempt before re-login, redirected to /auth/login with "No Employee Profile Linked" message.
+- **Status:** PASS
+- **Page heading:** Payroll Management
+- **Content loaded:** yes — Payroll Runs, Payslips, Salary Structures, Bulk Processing, Components sections
+- **Console errors:** none (beyond global issue)
+- **Issues:** none
 
 ### /expenses
-- **Status:** PASS
-- **Page title/heading:** "Expense Claims -- Submit and manage your expense claims"
-- **Content loaded:** yes -- New Claim, Pending, Approved, Pending Amount, Total Claims stats; tabs for My Claims, Pending Approval, All Claims, Analytics
+- **Status:** BUG
+- **Page heading:** Access Denied
+- **Content loaded:** no — "You don't have permission to access this page" with lock icon
 - **Console errors:** none
-- **Issues:** none (all zeroes for data is expected in dev)
+- **Issues:** SUPER ADMIN (Fayaz M) gets Access Denied. SuperAdmin should bypass all permission checks per RBAC rules.
 
 ### /assets
 - **Status:** BUG
-- **Page title/heading:** "Access Denied -- You don't have permission to access this page"
-- **Content loaded:** no -- Access Denied page shown; URL redirected to /leave
-- **Console errors:** none
-- **Issues:** **HIGH** -- Super Admin (role level 100) gets "Access Denied" on /assets page. Permission check is incorrectly blocking Super Admin.
+- **Page heading:** Access Denied
+- **Content loaded:** no — "You don't have permission to access this page" with lock icon
+- **Console errors:** setState during render in AssetManagementPage
+- **Issues:** SUPER ADMIN (Fayaz M) gets Access Denied. SuperAdmin should bypass all permission checks per RBAC rules.
 
 ---
 
-## Batch 2 -- HRMS Extended
+## Batch 2 — HR Ops & Finance
 
 ### /shifts
 - **Status:** BUG
-- **Page title/heading:** "Access Denied -- You don't have permission to access this page"
-- **Content loaded:** no -- Access Denied for Super Admin
+- **Page heading:** Access Denied
+- **Content loaded:** no — "You don't have permission to access this page" with lock icon
 - **Console errors:** none
-- **Issues:** **HIGH** -- Super Admin blocked from /shifts page. Same RBAC bypass failure as /assets.
+- **Issues:** SUPER ADMIN gets Access Denied. SuperAdmin should bypass all permission checks.
 
 ### /holidays
 - **Status:** PASS
-- **Page title/heading:** "Holiday Calendar -- 2026 organizational holidays and events"
-- **Content loaded:** yes -- Total Holidays: 8, National: 6, Optional: 0, Upcoming (30d): 1. Full list: Republic Day, Holi, Good Friday, May Day, Independence Day, Gandhi Jayanti, Diwali, Christmas
+- **Page heading:** Holiday Calendar
+- **Content loaded:** yes — Holiday list with dates (Christmas Dec 25, etc.), NATIONAL category labels
 - **Console errors:** none
 - **Issues:** none
 
 ### /overtime
-- **Status:** FAIL
-- **Page title/heading:** N/A -- redirected to /leave (which is broken)
-- **Content loaded:** no
-- **Console errors:** N/A
-- **Issues:** Redirects to /leave instead of showing overtime page. Likely same routing issue as /payroll.
+- **Status:** PASS
+- **Page heading:** Overtime Management
+- **Content loaded:** yes — "Track and manage overtime hours and approvals", Request Overtime button, My Overtime / Team Overtime / All Records tabs, loading records
+- **Console errors:** none
+- **Issues:** none
 
 ### /travel
-- **Status:** BUG
-- **Page title/heading:** "Access Denied"
-- **Content loaded:** no -- Access Denied shown
+- **Status:** PASS
+- **Page heading:** Travel Management
+- **Content loaded:** yes — New Travel Request button, 2 travel requests visible (TR-1774991951309 DRAFT, Business, Bengaluru to Mumbai), status filters (Draft, Submitted, Approved, etc.)
 - **Console errors:** none
-- **Issues:** Super Admin blocked. Session may have dropped.
+- **Issues:** none
 
 ### /loans
-- **Status:** FAIL
-- **Page title/heading:** "Loading loans data..."
-- **Content loaded:** no -- stuck on loading spinner
-- **Console errors:** Hydration mismatch in Header.tsx
-- **Issues:** Same infinite loading pattern as /leave
+- **Status:** PASS
+- **Page heading:** Employee Loans
+- **Content loaded:** yes — Active Loans 0, Outstanding Balance 0, Total Repaid 0, Apply for Loan button, My Loans tab
+- **Console errors:** none
+- **Issues:** none
 
 ### /compensation
 - **Status:** PASS
-- **Page title/heading:** "Compensation Planning -- Manage compensation review cycles and salary revisions"
-- **Content loaded:** yes -- New Review Cycle button, "Loading compensation data..." (data portion still loading but page structure rendered)
+- **Page heading:** Compensation Planning
+- **Content loaded:** partial — "Manage compensation review cycles and salary revisions", New Review Cycle button, "Loading compensation data..."
 - **Console errors:** none
-- **Issues:** none (page structure correct)
+- **Issues:** Data still loading but page structure renders correctly
 
 ### /benefits
-- **Status:** PASS-EMPTY
-- **Page title/heading:** "Benefits Management -- View and manage your employee benefits enrollment"
-- **Content loaded:** yes -- Enrolled Plans: 0, Monthly Premium: $0, Available Plans: 0, Total Coverage: $0, Flex Credits: $0. Tabs: Benefit Plans, My Enrollments, Claims. "No Benefit Plans Available" message.
+- **Status:** BUG
+- **Page heading:** Benefits Management
+- **Content loaded:** yes — Enrolled Plans 0, Monthly Premium $0, Available Plans 0, Benefit Plans / My Enrollments / Claims tabs
 - **Console errors:** none
-- **Issues:** none (empty state is correct for dev)
+- **Issues:** Shows dollar amounts ($0) instead of INR for an Indian company. Open Enrollment Period shows "November 1 - November 30, 2025" which is in the past (current date is April 2026).
 
 ---
 
-## Batch 3 -- Hire
+## Batch 3 — Recruitment
 
 ### /recruitment
 - **Status:** PASS
-- **Page title/heading:** "Recruitment Dashboard"
-- **Content loaded:** yes -- 46 Active Job Openings, 100 Total Candidates, 0 Interviews This Week, 1 Pending Offer. Active Job Openings list, Recent Applications (10 of 100). Sidebar correctly switches to NU-HIRE context.
+- **Page heading:** Recruitment Dashboard
+- **Content loaded:** yes — Active Job Openings 46, Total Candidates 100, Interviews This Week 0, Pending Offers 1, active job listing cards
 - **Console errors:** none
 - **Issues:** none
 
 ### /recruitment/jobs
-- **Status:** PASS (tested in previous session, confirmed working)
-- **Content loaded:** yes -- full job listings
+- **Status:** PASS
+- **Page heading:** Job Openings
+- **Content loaded:** yes — Total Jobs 51, Open 46, Draft 0, Closed 5, job cards with salary ranges and status filters
+- **Console errors:** none
 - **Issues:** none
 
 ### /recruitment/candidates
 - **Status:** PASS
-- **Page title/heading:** "Candidates -- Track and manage candidate applications"
-- **Content loaded:** yes -- Total Candidates: 100, New: 89, In Interview: 4, Selected: 0. Job filter dropdown with all openings. Add Candidate and Parse Resume buttons.
+- **Page heading:** Candidates
+- **Content loaded:** yes — Total Candidates 100, New 89, In Interview 4, Selected 0, Add Candidate / Parse Resume buttons
 - **Console errors:** none
 - **Issues:** none
 
 ### /recruitment/pipeline
-- **Status:** PASS-EMPTY
-- **Page title/heading:** "ATS Pipeline -- Drag candidates between stages"
-- **Content loaded:** yes -- Pipeline stages visible (Applied, Screening, Phone Screen, Interview, Technical, HR Round, Offer Pending). All showing 0 / "No applicants". "Loading job openings..." in filter.
+- **Status:** BUG
+- **Page heading:** Access Denied
+- **Content loaded:** no — "You don't have permission to access this page"
 - **Console errors:** none
-- **Issues:** none (empty pipeline is expected for unfiltered view)
+- **Issues:** SUPER ADMIN gets Access Denied. SuperAdmin should bypass all permission checks.
 
 ### /recruitment/agencies
 - **Status:** FAIL
-- **Page title/heading:** "Failed to Load Agencies"
-- **Content loaded:** no -- "Could not load agency data. Please try refreshing." with Try Again / Refresh page buttons
-- **Console errors:** N/A
-- **Issues:** **MEDIUM** -- Agency data fails to load. Likely backend API error (endpoint may not be fully implemented or returning error).
+- **Page heading:** Failed to Load Agencies
+- **Content loaded:** no — "Could not load agency data. Please try refreshing." with Try again / Refresh page buttons
+- **Console errors:** none visible
+- **Issues:** API call to load agencies fails. Data loading error.
 
 ### /onboarding
 - **Status:** PASS
-- **Page title/heading:** "Talent Onboarding -- Orchestrate the first 90 days of your new joiners"
-- **Content loaded:** yes -- Stats: Active: 0, Upcoming: 0, Completed: 0, Avg. Days: 12. Manage Templates and Initiate New Hire buttons. Status filter tabs.
+- **Page heading:** Talent Onboarding
+- **Content loaded:** yes — "Orchestrate the first 90 days", Active 0, Upcoming 0, Completed 0, Avg Days 12, status filters
 - **Console errors:** none
 - **Issues:** none
 
 ---
 
-## Batch 4 -- Grow
+## Batch 4 — Performance & Growth
 
 ### /performance
 - **Status:** PASS
-- **Page title/heading:** "Performance Management -- Track goals, conduct reviews, and manage employee performance"
-- **Content loaded:** yes -- Active Goals: 4, Goal Progress: 61%, OKR Objectives: 0, Pending Reviews: 0. Hub cards for Goals, OKR Management, Performance Reviews, 360 Feedback, etc.
+- **Page heading:** Performance Management
+- **Content loaded:** yes — Goals, OKR Management, Performance Reviews, 360 Feedback, Continuous Feedback sections
 - **Console errors:** none
 - **Issues:** none
 
 ### /training
-- **Status:** FAIL (session dropped)
-- **Page title/heading:** "Access Denied"
-- **Content loaded:** no -- session degraded to Employee role
+- **Status:** PASS
+- **Page heading:** Training Programs
+- **Content loaded:** yes — My Enrollments 0, In Progress 0, Completed 0, Available Programs 0, My Trainings / Course Catalog / Manage Programs / Growth Roadmap tabs
 - **Console errors:** none
-- **Issues:** Session dropped before page could render. Needs re-test with stable session.
+- **Issues:** none
 
 ### /surveys
-- **Status:** FAIL (session dropped)
-- **Page title/heading:** "Access Denied"
-- **Content loaded:** no
+- **Status:** BUG
+- **Page heading:** Access Denied
+- **Content loaded:** no — "You don't have permission to access this page"
 - **Console errors:** none
-- **Issues:** Session dropped. Needs re-test.
+- **Issues:** SUPER ADMIN gets Access Denied. SuperAdmin should bypass all permission checks.
 
 ### /recognition
-- **Status:** FAIL (session dropped)
-- **Page title/heading:** "Access Denied"
-- **Content loaded:** no
-- **Console errors:** none
-- **Issues:** Session dropped. Needs re-test.
-
----
-
-## Batch 5 -- Fluence
-
-### /fluence/wiki
-- **Status:** PASS-EMPTY
-- **Page title/heading:** "Wiki Pages -- Create and manage knowledge base documentation"
-- **Content loaded:** yes -- New Page button, Spaces sidebar ("No spaces yet" with Create Space), main area: "No pages yet -- Start by creating your first wiki page" with Create Page button
-- **Console errors:** none
-- **Issues:** none (empty state is correct for dev)
-
-### /fluence/blogs
-- **Status:** FAIL
-- **Page title/heading:** "NU-AURA -- Preparing your workspace..."
-- **Content loaded:** no -- stuck on workspace preparation loader, then empty main
-- **Console errors:** N/A
-- **Issues:** Page fails to load content. Either session-related or backend API issue.
-
-### /fluence/templates
-- **Status:** PASS-EMPTY
-- **Page title/heading:** "Templates -- Reusable document templates for your team"
-- **Content loaded:** yes -- Create Template button, "No templates yet -- Create your first template to get started"
-- **Console errors:** none
-- **Issues:** none (correct empty state)
-
-### /fluence/search
-- **Status:** PASS-EMPTY
-- **Page title/heading:** empty main content
-- **Content loaded:** partial -- page loads but main content area empty
-- **Console errors:** none
-- **Issues:** Search page renders but may need a query to show content. Acceptable.
-
-### /fluence/wall
-- **Status:** FAIL
-- **Page title/heading:** empty main content
-- **Content loaded:** no -- main content area completely empty
-- **Console errors:** none
-- **Issues:** Wall page renders no content at all. May be an incomplete feature.
-
-### /fluence/analytics
 - **Status:** PASS
-- **Page title/heading:** empty main (content likely in non-main elements)
-- **Content loaded:** partial -- page renders but main text extraction returned empty
-- **Console errors:** none
-- **Issues:** Could not verify content due to extraction limitation. Page did not crash.
-
-### /fluence/drive
-- **Status:** PASS
-- **Page title/heading:** empty main (content likely in non-main elements)
-- **Content loaded:** partial -- page renders but main text extraction returned empty
-- **Console errors:** none
-- **Issues:** Could not fully verify. Page did not crash.
-
----
-
-## Batch 6 -- Platform
-
-### /admin
-- **Status:** PASS
-- **Page title/heading:** "Super Admin Dashboard"
-- **Content loaded:** yes -- Total Tenants: 1, Total Employees: 29, Pending Approvals visible. System Health section, Employee management, Role Management.
-- **Console errors:** none
-- **Issues:** On second visit, redirected to /me/dashboard with "Preparing your workspace..." (session instability)
-
-### /approvals
-- **Status:** PASS
-- **Page title/heading:** N/A -- redirected to /approvals/inbox
-- **Content loaded:** page rendered (main text extraction returned empty but page structure present)
-- **Console errors:** none
-- **Issues:** Redirect to /approvals/inbox is expected behavior
-
-### /me/profile
-- **Status:** PASS
-- **Page title/heading:** "My Profile -- Manage your personal information"
-- **Content loaded:** yes -- Edit Profile button, Fayaz M, Chief Executive Officer, fayaz.m@nulogic.io, EMP-0001, Engineering. Personal Information, Contact Information, Address, Employment Details (Joining Date: March 13, 2026, FULL TIME, Engineering), Bank Details, Tax Information sections. Most fields show "Not provided".
+- **Page heading:** Employee Recognition
+- **Content loaded:** yes — My Points 0, Received 0, Given 0, Total Activity 5, Public Feed with recognition entries ("Outstanding Engineering Leadership in Q1!")
 - **Console errors:** none
 - **Issues:** none
 
 ---
 
-## Cross-Cutting Issues
+## Batch 5 — NU-Fluence
 
-### 1. CRITICAL: Session/Token Instability (P0)
-- **Severity:** Critical / P0
-- **Frequency:** Occurs on ~50% of page navigations
-- **Impact:** Users lose their session, see "Access Denied", get redirected to dashboard as generic "User / Employee"
-- **Component:** `TokenRefreshManager` in `app/providers.tsx:53`
-- **Reproduction:** Login as any demo account, navigate between 3-5 pages rapidly
-- **Expected:** Session should persist for the full token lifetime (typically 15-60 min)
-- **Actual:** Session drops within 10-30 seconds of active navigation
+### /fluence/wiki
+- **Status:** PASS
+- **Page heading:** Wiki Pages
+- **Content loaded:** yes — "Create and manage knowledge base documentation", New Page button, Spaces sidebar, empty state "No pages yet"
+- **Console errors:** none
+- **Issues:** Shows "User" / "Employee" instead of "Fayaz M" / "SUPER ADMIN" in sidebar (identity degradation)
 
-### 2. MEDIUM: Hydration Mismatch in Header.tsx (P2)
-- **Severity:** Medium
-- **Frequency:** On every page load
-- **Impact:** React warning in console, potential brief visual flash
-- **Component:** `Header.tsx:49` -- mobile menu button
-- **Details:** Server renders `p-1.5 sm:p-2.5 rounded-lg` while client renders `p-2.5 rounded-lg min-w-[44px] min-h-[44px]`. The min-w/min-h values violate the desktop-first sizing rules in CLAUDE.md.
+### /fluence/blogs
+- **Status:** BUG
+- **Page heading:** App Error
+- **Content loaded:** no — JavaScript crash: "categories.map is not a function"
+- **Console errors:** Runtime error
+- **Issues:** Page crashes with TypeError. The `categories` variable is not an array when `.map()` is called on it. Likely an API response returning null/undefined instead of an array.
 
-### 3. MEDIUM: Multiple Pages Stuck on Loading Spinner (P2)
-- **Severity:** Medium
-- **Frequency:** /leave, /loans consistently stuck; other pages intermittent
-- **Impact:** Pages never render usable content
-- **Components:** Leave page, Loans page
-- **Note:** May be backend API timeouts or missing data. CSS keyframe definitions from the branded loader leak into page text extraction.
+### /fluence/templates
+- **Status:** FAIL
+- **Page heading:** NU-AURA (loading)
+- **Content loaded:** no — Stuck on "Preparing your workspace..." indefinitely, then session expires
+- **Console errors:** none visible
+- **Issues:** Page never finishes loading. Infinite loading state before session expiry.
 
-### 4. HIGH: Super Admin RBAC Bypass Not Working (P1)
-- **Severity:** High
-- **Frequency:** Multiple pages show "Access Denied" for Super Admin
-- **Impact:** /assets, /shifts, /travel show Access Denied even when session is valid as Super Admin
-- **Expected behavior:** Super Admin (role level 100) should bypass ALL permission checks
-- **Note:** Some of these may be caused by session degradation (P0 bug), but /assets and /shifts consistently showed Access Denied
+### /fluence/search
+- **Status:** FAIL
+- **Page heading:** (none — redirects)
+- **Content loaded:** no — Redirects to /me/dashboard or /auth/login
+- **Console errors:** none visible
+- **Issues:** Page fails to load, redirects away. Possibly missing route or broken auth check.
 
-### 5. MEDIUM: Route Redirect Issues (P2)
-- **Severity:** Medium
-- **Pages affected:** /payroll (redirects to /attendance), /overtime (redirects to /leave)
-- **Impact:** Users cannot access payroll or overtime management pages
-- **Expected:** Pages should render their own content
+### /fluence/wall
+- **Status:** PASS
+- **Page heading:** Activity Wall
+- **Content loaded:** yes — "See what is happening across your knowledge base", Post/Poll/Praise tabs, Organization/Department/Team filters, Trending Content, Recent Activity sections (both empty)
+- **Console errors:** none
+- **Issues:** none
 
-### 6. LOW: Slow Data Loading (P3)
-- **Severity:** Low
-- **Frequency:** Most data-heavy pages
-- **Impact:** Skeleton loaders visible for 4-8 seconds
-- **Components:** /employees, /leave, /loans, /admin
-- **Note:** Backend on localhost dev mode -- expected to be slow.
+### /fluence/analytics
+- **Status:** FAIL
+- **Page heading:** (none — redirects)
+- **Content loaded:** no — Redirects to /me/dashboard
+- **Console errors:** none visible
+- **Issues:** Page fails to load, redirects to dashboard. Possibly missing route or broken auth.
 
----
-
-## App Switcher Verification
-
-The platform correctly switches context between sub-apps:
-- **NU-HRMS:** Sidebar shows HR modules (Employees, Attendance, Leave, Payroll, etc.)
-- **NU-Hire:** Sidebar shows Recruitment, Onboarding, Preboarding, Offboarding, Offer Portal, Careers Page, Referrals
-- **NU-Grow:** Sidebar shows Performance Hub, OKR, 360 Feedback, Training, Learning, Recognition, Surveys, etc.
-- **NU-Fluence:** Sidebar shows Wiki, Articles, Templates, Drive, Search, Analytics
+### /fluence/drive
+- **Status:** BUG
+- **Page heading:** NU-AURA (loading)
+- **Content loaded:** no — Stuck on "Preparing your workspace..." with degraded user identity ("User" / "Employee"), eventually session expires
+- **Console errors:** none visible
+- **Issues:** Page never finishes loading. Shows "Home" and "Drive" in sidebar but content area never renders.
 
 ---
 
-## Recommendations
+## Batch 6 — Admin & Profile
 
-1. **P0 -- Fix TokenRefreshManager:** Investigate `app/providers.tsx:53` for the session replacement bug. The demo login token may be getting swapped during the refresh cycle. Check if the refresh endpoint returns a different user or if there is a race condition in concurrent API calls.
+### /admin
+- **Status:** PASS
+- **Page heading:** Super Admin Dashboard
+- **Content loaded:** yes — System Health (Checking...), All Employees table (Loading users...), Role Management section
+- **Console errors:** none
+- **Issues:** Data sections show loading state but page structure is correct
 
-2. **P1 -- Fix Super Admin RBAC bypass:** Verify that `SecurityService.getCachedPermissions()` correctly identifies Super Admin and bypasses permission checks for /assets, /shifts, /travel pages. Check frontend permission guards in these page components.
+### /approvals
+- **Status:** BUG
+- **Page heading:** Access denied
+- **Content loaded:** no — Redirects to /approvals/inbox, shows "You do not have permission to view the approval inbox"
+- **Console errors:** none
+- **Issues:** SUPER ADMIN gets Access Denied on approval inbox. Also sidebar shows reduced menu items and "User" / "Employee" identity (session degradation).
 
-3. **P2 -- Fix route redirects:** /payroll should not redirect to /attendance; /overtime should not redirect to /leave. Check the route guards and permission-based redirects in these page components.
+### /me/profile
+- **Status:** FAIL
+- **Page heading:** Profile Not Found / Preparing your workspace...
+- **Content loaded:** no — Stuck on "Preparing your workspace..." indefinitely, then shows "Profile Not Found" if session degrades
+- **Console errors:** none visible
+- **Issues:** Profile page never loads properly. With fresh session shows infinite loading, with degraded session shows "Profile Not Found".
 
-4. **P2 -- Fix Header hydration mismatch:** Align the server-side and client-side className for the mobile menu button in `components/layout/Header.tsx:49`. Remove the `min-w-[44px] min-h-[44px]` that violates desktop-first sizing rules.
+---
 
-5. **P2 -- Fix /leave and /loans loading:** Investigate backend API endpoints for leave and loans data. These pages get stuck on loading spinners indefinitely.
+## Bug Summary (Priority Order)
 
-6. **P2 -- Fix /recruitment/agencies:** Backend endpoint for agencies fails to return data. "Failed to Load Agencies" error.
+### CRITICAL
+1. **Session instability** — Demo login sessions expire within ~30-60 seconds, causing "Preparing your workspace..." infinite loading and redirects to /auth/login. Affected nearly every page transition.
+2. **User identity degradation** — After partial session expiry, user shows as "User" / "Employee" instead of actual name/role, causing cascading Access Denied errors.
 
-7. **Re-test with stable session:** Once the session bug (P0) is fixed, all pages marked "FAIL (session dropped)" need re-testing: /training, /surveys, /recognition, and all Fluence pages.
+### HIGH — SuperAdmin Access Denied (RBAC Bypass Broken)
+3. **/expenses** — Access Denied for SUPER ADMIN
+4. **/assets** — Access Denied for SUPER ADMIN
+5. **/shifts** — Access Denied for SUPER ADMIN
+6. **/recruitment/pipeline** — Access Denied for SUPER ADMIN
+7. **/surveys** — Access Denied for SUPER ADMIN
+8. **/approvals** — Access Denied for SUPER ADMIN
+
+### HIGH — Page Crashes / Data Failures
+9. **/fluence/blogs** — App crash: "categories.map is not a function" (TypeError)
+10. **/recruitment/agencies** — "Failed to Load Agencies" — API data loading error
+
+### MEDIUM — Pages That Never Load
+11. **/me/profile** — Stuck on "Preparing your workspace..." indefinitely
+12. **/fluence/templates** — Stuck on "Preparing your workspace..." indefinitely
+13. **/fluence/drive** — Stuck on "Preparing your workspace..." indefinitely
+14. **/fluence/search** — Redirects to dashboard (route possibly missing)
+15. **/fluence/analytics** — Redirects to dashboard (route possibly missing)
+
+### LOW
+16. **/benefits** — Shows dollar amounts ($0) instead of INR; enrollment period (Nov 2025) is in the past
+17. **Header.tsx:49 hydration mismatch** — Server/client className mismatch on mobile menu button (all pages)
+18. **AssetManagementPage** — setState during render (React anti-pattern)

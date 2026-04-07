@@ -48,7 +48,7 @@ export default function BlogsPage() {
   const {data: categoriesData, isLoading: categoriesLoading} = useBlogCategories();
 
   const posts = (postsData?.content || []) as BlogPost[];
-  const categories = (categoriesData || []) as Category[];
+  const categories = (Array.isArray(categoriesData) ? categoriesData : []) as Category[];
 
   const featuredPost = posts[0];
   const regularPosts = posts.slice(1);

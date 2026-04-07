@@ -138,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
         {/* Right Side - Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
-          <button className="hidden sm:flex p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" aria-label="Help">
+          <button className="hidden sm:flex p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded" aria-label="Help">
             <HelpCircle className="h-5 w-5" />
           </button>
 
@@ -150,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150"
+              className="notification-btn relative p-2 rounded-lg text-[var(--header-text-muted)] hover:text-[var(--header-text)] hover:bg-[var(--header-hover-bg)] transition-colors duration-150"
               aria-label="Notifications"
               aria-expanded={isNotificationsOpen}
               aria-haspopup="true"
