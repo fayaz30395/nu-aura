@@ -190,7 +190,20 @@ export default function WallPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isReady) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <IconActivity size={32} className="animate-pulse text-accent-500" />
+            <p className="text-[var(--text-secondary)]">Loading Activity Wall...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasAccess) return null;
 
   return (
     <AppLayout>
