@@ -190,7 +190,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           .map((child) => filterItem(child))
           .filter((child): child is SidebarItem => child !== null);
 
-        if (visibleChildren.length === 0 && !item.href) {
+        if (visibleChildren.length === 0) {
           return null;
         }
 

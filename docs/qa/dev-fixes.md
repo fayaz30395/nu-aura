@@ -1,5 +1,42 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 26 — Frontend RBAC Sidebar + Admin Redirect Fixes (2026-04-08)
+
+### BUG-SIDEBAR-SECTIONS (P2): Sidebar shows section headers to unauthorized roles
+- **File**: `frontend/components/layout/AppLayout.tsx`
+- **Root cause**: `filterSidebarItems` kept parent menu items (e.g. Attendance, Leave Management) when all children were filtered out, as long as the parent had an `href`. The condition `visibleChildren.length === 0 && !item.href` meant parents with href survived, keeping the section non-empty and its header visible.
+- **Fix**: Changed condition to `visibleChildren.length === 0` — parent items with children are always hidden when no children are permitted, regardless of whether the parent has an href.
+- **Verified**: TypeScript compiles cleanly.
+
+### BUG-ADMIN-BLANK (P2): HR Manager gets blank page at /admin instead of redirect
+- **File**: `frontend/app/admin/page.tsx`
+- **Root cause**: The admin page used `router.push('/')` for non-admin redirect and `return null` while redirect was in-flight, causing a blank page. HR Manager (not SUPER_ADMIN/TENANT_ADMIN) hit `return null` and saw nothing.
+- **Fix**: (1) Changed redirect target from `/` to `/me/dashboard` using `router.replace()`. (2) Split the guard: `!authChecked` still returns null (brief hydration window), but `!isAdmin` now shows a "Redirecting to dashboard..." message instead of a blank page.
+- **Verified**: TypeScript compiles cleanly.
+
+## Session 25 — RBAC Backend Bug Fixes (2026-04-08)
+
+### BUG-CONTRACT-SCOPE (P0-Security): Employee can view ALL contracts — data leak
+- **File**: `backend/src/main/java/com/hrms/application/contract/service/ContractService.java`
+- **Root cause**: `getAllContracts()` returned all tenant contracts regardless of caller role. Employees with `CONTRACT:VIEW` could see every employee's contracts.
+- **Fix**: Added role-based scoping in `getAllContracts()`. If the caller is HR Manager or above (`SecurityContext.isHRManager()`), all tenant contracts are returned. Otherwise, contracts are filtered to the current employee's own ID via `findByTenantIdAndEmployeeId()`. Falls back to empty page if no employee ID on context.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-OFFBOARD-PERM (P1): EXIT:VIEW vs OFFBOARDING:VIEW permission name mismatch
+- **Files**: `backend/src/main/java/com/hrms/api/exit/controller/OffboardingController.java`, `backend/src/main/java/com/hrms/api/exit/FnFController.java`
+- **Root cause**: Controllers used `Permission.EXIT_VIEW`, `Permission.EXIT_MANAGE`, `Permission.EXIT_INITIATE`, and `Permission.EXIT_APPROVE`, but roles in the DB have `OFFBOARDING:VIEW` and `OFFBOARDING:MANAGE` assigned. This mismatch meant HR Admin and HR Manager could never access offboarding/FnF endpoints.
+- **Fix**: Replaced all `EXIT_VIEW` with `OFFBOARDING_VIEW`, all `EXIT_MANAGE`/`EXIT_INITIATE`/`EXIT_APPROVE` with `OFFBOARDING_MANAGE` in both controllers (9 annotations total).
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-WALL-PERM (P1): WALL:VIEW permission missing from roles
+- **File**: `backend/src/main/resources/db/migration/V127__add_wall_view_permission_to_roles.sql`
+- **Root cause**: `WALL:VIEW` permission existed in the permissions table (seeded V66/V96) but was not assigned to HR Admin, HR Manager, Team Lead, or Employee roles, blocking wall access.
+- **Fix**: Created Flyway migration V127 that inserts `WALL:VIEW` into `role_permissions` for all four roles with appropriate scopes (ALL for HR roles, TEAM for Team Lead, SELF for Employee). Uses `NOT EXISTS` for idempotency.
+- **Migration**: V127__add_wall_view_permission_to_roles.sql
+- **Verified**: mvn compile passes
+
 ## Session 24 — P0/P1 Backend Bug Fixes from Use Case QA (2026-04-08)
 
 ### BUG-001 (P0-Security): Refresh token not invalidated on logout
