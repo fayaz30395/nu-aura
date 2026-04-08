@@ -58,13 +58,13 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating onboarding process for employee {} in tenant {}", request.getEmployeeId(), tenantId);
 
-        // Verify employee exists
-        employeeRepository.findById(request.getEmployeeId())
+        // Verify employee exists (tenant-scoped to work with RLS)
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-        // Verify buddy exists if provided
+        // Verify buddy exists if provided (tenant-scoped to work with RLS)
         if (request.getAssignedBuddyId() != null) {
-            employeeRepository.findById(request.getAssignedBuddyId())
+            employeeRepository.findByIdAndTenantId(request.getAssignedBuddyId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Buddy employee not found"));
         }
 
@@ -378,13 +378,14 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     }
 
     private OnboardingProcessResponse mapToResponse(OnboardingProcess process) {
-        String employeeName = employeeRepository.findById(process.getEmployeeId())
+        UUID tenantId = process.getTenantId();
+        String employeeName = employeeRepository.findByIdAndTenantId(process.getEmployeeId(), tenantId)
                 .map(Employee::getFullName)
                 .orElse(null);
 
         String buddyName = null;
         if (process.getAssignedBuddyId() != null) {
-            buddyName = employeeRepository.findById(process.getAssignedBuddyId())
+            buddyName = employeeRepository.findByIdAndTenantId(process.getAssignedBuddyId(), tenantId)
                     .map(Employee::getFullName)
                     .orElse(null);
         }

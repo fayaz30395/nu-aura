@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -596,6 +597,47 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Not Found",
                 "Referenced entity not found or has been deleted", path);
         errorResponse.setErrorCode("ENTITY_NOT_FOUND");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * BUG-P1-008/009 FIX: Handle HttpMessageNotReadableException (invalid JSON, unknown enum values).
+     * Without this handler, invalid enum values like "PERSONAL" instead of "PERSONAL_LOAN" or
+     * "DOMESTIC" instead of "CLIENT_VISIT" fall through to the generic Exception handler
+     * and return HTTP 500 instead of the correct 400.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        // Extract a user-friendly message from the root cause
+        String message = "Malformed JSON request";
+        Throwable cause = ex.getCause();
+        if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException ife) {
+            Class<?> targetType = ife.getTargetType();
+            if (targetType != null && targetType.isEnum()) {
+                Object[] enumConstants = targetType.getEnumConstants();
+                String allowedValues = java.util.Arrays.stream(enumConstants)
+                        .map(Object::toString)
+                        .collect(java.util.stream.Collectors.joining(", "));
+                message = String.format("Invalid value '%s'. Allowed values: [%s]",
+                        ife.getValue(), allowedValues);
+            } else {
+                message = String.format("Invalid value '%s' for field", ife.getValue());
+            }
+        } else if (cause instanceof com.fasterxml.jackson.core.JsonParseException) {
+            message = "Malformed JSON: " + ((com.fasterxml.jackson.core.JsonParseException) cause).getOriginalMessage();
+        }
+
+        logError("validation", "message_not_readable", ex, status, path);
+        recordErrorMetric("validation", "message_not_readable", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Bad Request", message, path);
+        errorResponse.setErrorCode("INVALID_REQUEST_BODY");
 
         return jsonResponse(status, errorResponse);
     }

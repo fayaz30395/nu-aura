@@ -78,6 +78,8 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
                path.startsWith("/api/v1/auth/google") ||
                path.startsWith("/api/v1/auth/refresh") ||
                path.startsWith("/api/v1/auth/mfa-login") ||
+               path.startsWith("/api/v1/auth/forgot-password") ||
+               path.startsWith("/api/v1/auth/reset-password") ||
                path.startsWith("/api/v1/public/") ||
                path.startsWith("/api/public/") ||
                path.startsWith("/actuator/") ||

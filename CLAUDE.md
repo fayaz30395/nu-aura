@@ -134,7 +134,7 @@ When an audit tool recommends larger sizes, evaluate against this desktop densit
 - **Every User Is an Employee**: Roles are additive. MY SPACE sidebar items never have `requiredPermission`
 - **Approval Flows**: Generic engine — `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`
 - **Payroll**: SpEL formula engine, DAG evaluation order, DB transaction wrapped
-- **Flyway**: V0–V119 active. Next = V120. Legacy Liquibase in `db/changelog/` — DO NOT USE
+- **Flyway**: V0–V128 active. Next = V129. Legacy Liquibase in `db/changelog/` — DO NOT USE
 - **Kafka**: 6 topics (`nu-aura.approvals/notifications/audit/employee-lifecycle/fluence-content/payroll-processing`) + 6 DLT topics
 - **Security**: Rate limiting (Bucket4j + Redis), OWASP headers (Next.js middleware + Spring Security), CSRF double-submit cookie
 - **Platform**: Bundle app with 4 sub-apps via waffle grid switcher. Routes mapped in `frontend/lib/config/apps.ts`. Sidebar is app-aware
@@ -145,12 +145,12 @@ Super Admin (100) → Tenant Admin (90) → HR Admin (85) → HR Manager (80) �
 ```
 
 ### Sub-Apps
-| App | Scope | Status (as of 2026-04-07) |
+| App | Scope | Status (as of 2026-04-08) |
 |-----|-------|--------------------------|
-| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~98% — 261 pages, 170 controllers, zero stubs |
-| NU-Hire | Jobs, candidates, pipeline, scorecards, agencies (CRUD + submissions + performance), onboarding, offboarding, e-signature, career page, diversity tracking | ~97% — Production-ready |
-| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~92% — All modules implemented |
-| NU-Fluence | Wiki (nested pages, tree view, export, inline comments), blogs, templates, Drive, search, analytics, wall (trending + activity), space permissions + members, macros, AI chat | ~90% — 18 routes, 30+ components, 5,138 LOC pages |
+| NU-HRMS | Employees, attendance, leave, payroll, benefits, assets, F&F settlement | ~98% — 261 pages, 170+ controllers, zero stubs |
+| NU-Hire | Jobs, candidates, pipeline, scorecards (new REST API), agencies (CRUD + submissions + performance), onboarding (RLS fixed), offboarding (OFFBOARDING perms fixed), e-signature, career page, diversity tracking | ~97% — Production-ready |
+| NU-Grow | Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness, competency | ~93% — V128 fixes deleted_at for 20 tables |
+| NU-Fluence | Wiki (nested pages, tree view, export, inline comments), blogs, templates, Drive, search, analytics, wall (WALL:VIEW added to roles), space permissions + members, macros, AI chat | ~90% — 18 routes, 30+ components, 5,138 LOC pages |
 
 ---
 
