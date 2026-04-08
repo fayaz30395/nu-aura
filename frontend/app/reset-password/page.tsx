@@ -340,7 +340,15 @@ export default function ResetPasswordPage() {
       fallback={
         <div
           className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950">
-          <div className="animate-pulse text-[var(--text-muted)]">Loading...</div>
+          <div className="w-full max-w-md p-8 space-y-6">
+            <div className="skeleton-aura h-10 w-48 rounded mx-auto" />
+            <div className="skeleton-aura h-4 w-64 rounded mx-auto" />
+            <div className="space-y-4">
+              <div className="skeleton-aura h-10 w-full rounded" />
+              <div className="skeleton-aura h-10 w-full rounded" />
+              <div className="skeleton-aura h-10 w-full rounded-lg" />
+            </div>
+          </div>
         </div>
       }
     >

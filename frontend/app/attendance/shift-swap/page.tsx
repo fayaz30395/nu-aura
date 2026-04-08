@@ -14,6 +14,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {TablePagination} from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
@@ -255,7 +256,7 @@ export default function ShiftSwapPage() {
         <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
+              <div className="p-4"><SkeletonTable rows={5} columns={5} /></div>
             ) : getDisplayData().length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
                 <ArrowLeftRight className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>

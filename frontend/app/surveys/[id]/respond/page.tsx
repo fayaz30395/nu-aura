@@ -338,7 +338,7 @@ export default function SurveyRespondPage() {
             </Button>
             <div>
               <h1 className={typography.pageTitle}>
-                {surveyLoading ? 'Loading...' : survey?.title}
+                {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded" /> : survey?.title}
               </h1>
               {survey?.description && (
                 <p className={typography.bodySecondary}>{survey.description}</p>

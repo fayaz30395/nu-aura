@@ -194,11 +194,15 @@ export default function TaxOverviewPage() {
             </Table.Thead>
             <Table.Tbody>
               {isLoading ? (
-                <Table.Tr>
-                  <Table.Td colSpan={4} align="center">
-                    <Text c="dimmed">Loading...</Text>
-                  </Table.Td>
-                </Table.Tr>
+                <>
+                  {Array.from({length: 3}).map((_, i) => (
+                    <Table.Tr key={i}>
+                      {Array.from({length: 4}).map((_, j) => (
+                        <Table.Td key={j}><div className="skeleton-aura h-4 rounded w-full" /></Table.Td>
+                      ))}
+                    </Table.Tr>
+                  ))}
+                </>
               ) : recentDeclarations.length === 0 ? (
                 <Table.Tr>
                   <Table.Td colSpan={4} align="center">

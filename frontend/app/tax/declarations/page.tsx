@@ -205,11 +205,15 @@ export default function TaxDeclarationsPage() {
             </Table.Thead>
             <Table.Tbody>
               {isLoading ? (
-                <Table.Tr>
-                  <Table.Td colSpan={6} align="center">
-                    Loading...
-                  </Table.Td>
-                </Table.Tr>
+                <>
+                  {Array.from({length: 4}).map((_, i) => (
+                    <Table.Tr key={i}>
+                      {Array.from({length: 6}).map((_, j) => (
+                        <Table.Td key={j}><div className="skeleton-aura h-4 rounded w-full" /></Table.Td>
+                      ))}
+                    </Table.Tr>
+                  ))}
+                </>
               ) : rows.length > 0 ? (
                 rows
               ) : (

@@ -11,6 +11,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AlertCircle, ArrowRight, CheckCircle, ChevronDown, ChevronUp, Clock, User, XCircle,} from 'lucide-react';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 
 export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
@@ -243,7 +244,7 @@ export default function EmploymentChangeRequestsPage() {
         {/* Requests List */}
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center py-12 text-[var(--text-secondary)]">Loading...</div>
+            <SkeletonTable rows={5} columns={4} />
           ) : requests.length === 0 ? (
             <div className="skeuo-card p-12 text-center">
               <User className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4"/>

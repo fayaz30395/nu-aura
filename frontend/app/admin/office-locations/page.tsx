@@ -10,6 +10,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {
   useCreateOfficeLocation,
   useDeleteOfficeLocation,
@@ -335,7 +336,7 @@ export default function OfficeLocationsPage() {
         )}
 
         {loading ? (
-          <div className="text-center py-8">Loading...</div>
+          <div className="py-4"><SkeletonTable rows={5} columns={4} /></div>
         ) : (
           <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">

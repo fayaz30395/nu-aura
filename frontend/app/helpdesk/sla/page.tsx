@@ -8,6 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -437,7 +438,7 @@ export default function HelpdeskSLAPage() {
         )}
 
         {loading ? (
-          <div className="text-center py-8">Loading...</div>
+          <SkeletonTable rows={5} columns={4} />
         ) : (
           <>
             {/* Dashboard Tab */}

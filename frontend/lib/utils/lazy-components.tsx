@@ -23,8 +23,16 @@ const DefaultLoadingFallback = () => (
  * Chart loading skeleton
  */
 export const ChartLoadingFallback = () => (
-  <div className="h-[300px] w-full animate-pulse bg-surface-100 rounded-lg flex items-center justify-center">
-    <span className="text-surface-400">Loading chart...</span>
+  <div className="h-[300px] w-full card-aura p-6" aria-hidden="true">
+    <div className="row-between mb-6">
+      <div className="skeleton-aura h-5 w-32 rounded"/>
+      <div className="skeleton-aura h-8 w-24 rounded-lg"/>
+    </div>
+    <div className="flex items-end gap-2 h-[calc(100%-4rem)]">
+      {[65, 45, 80, 55, 70, 40, 75].map((h, i) => (
+        <div key={i} className="skeleton-aura flex-1 rounded-t" style={{height: `${h}%`}}/>
+      ))}
+    </div>
   </div>
 );
 
