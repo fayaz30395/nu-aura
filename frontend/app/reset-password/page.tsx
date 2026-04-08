@@ -63,7 +63,7 @@ function ResetPasswordForm() {
               className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white"/>
             </div>
-            <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
@@ -106,7 +106,7 @@ function ResetPasswordForm() {
               className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
               <Building2 className="w-8 h-8 text-white"/>
             </div>
-            <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
@@ -167,7 +167,7 @@ function ResetPasswordForm() {
             className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
             <Building2 className="w-8 h-8 text-white"/>
           </div>
-          <h1 className="text-2xl font-bold skeuo-emboss">NU-AURA</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           <p className="mt-2 text-body-secondary">
             Create your new password
           </p>

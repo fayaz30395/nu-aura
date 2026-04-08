@@ -4,7 +4,7 @@ import {useMemo, useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useEmployeeSchedule} from '@/lib/hooks/queries/useShifts';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {ArrowLeftRight, ChevronLeft, ChevronRight, Clock, Moon, Sun,} from 'lucide-react';
 import {motion} from 'framer-motion';
@@ -136,7 +136,7 @@ export default function MySchedulePage() {
             </div>
 
             {isLoading ? (
-              <NuAuraLoader/>
+              <SkeletonTable rows={5} columns={7} />
             ) : (
               <>
                 {/* Day headers */}

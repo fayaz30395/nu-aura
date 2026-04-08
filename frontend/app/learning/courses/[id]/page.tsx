@@ -164,7 +164,7 @@ export default function CourseDetailPage() {
               Mandatory
             </span>
             )}
-            <h1 className="text-2xl font-bold skeuo-emboss mb-2">{course.title}</h1>
+            <h1 className="text-xl font-bold skeuo-emboss mb-2">{course.title}</h1>
             {course.shortDescription && (
               <p className="text-accent-100 text-base mb-4">{course.shortDescription}</p>
             )}

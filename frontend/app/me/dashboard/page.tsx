@@ -7,7 +7,7 @@ import { getErrorMessage } from '@/lib/utils/error-handler';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
-import { Loading } from '@/components/ui';
+import { SkeletonDashboard } from '@/components/ui/Skeleton';
 // Dashboard widget components
 import { WelcomeBanner, QuickAccessWidget } from '@/components/dashboard/WelcomeBanner';
 import { TimeClockWidget } from '@/components/dashboard/TimeClockWidget';
@@ -119,8 +119,8 @@ export default function MyDashboardPage() {
   if (!hasHydrated || isLoading) {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loading />
+        <div className="p-6">
+          <SkeletonDashboard />
         </div>
       </AppLayout>
     );

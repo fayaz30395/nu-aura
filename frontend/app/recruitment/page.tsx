@@ -312,7 +312,7 @@ export default function RecruitmentDashboard() {
           <div className="h-16 w-16 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
             <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400" />
           </div>
-          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
             Welcome to Recruitment
           </h2>
           <p className="text-[var(--text-muted)] max-w-md mb-8">
@@ -353,7 +353,7 @@ export default function RecruitmentDashboard() {
         {/* Page Header */}
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Recruitment Dashboard
             </h1>
             <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2 skeuo-deboss">

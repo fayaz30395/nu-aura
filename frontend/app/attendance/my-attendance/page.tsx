@@ -21,7 +21,7 @@ import {AppLayout} from '@/components/layout';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {Skeleton} from '@/components/ui/Loading';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {getDateOffsetString, getLocalDateString, getMonthEndString, getMonthStartString} from '@/lib/utils/dateUtils';
 import {useAttendanceByDateRange, useHolidaysByYear, useMyTimeEntries} from '@/lib/hooks/queries/useAttendance';

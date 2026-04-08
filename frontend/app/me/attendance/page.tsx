@@ -325,7 +325,7 @@ export default function MyAttendancePage() {
     <AppLayout activeMenuItem="my-attendance">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold skeuo-emboss">My Attendance</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">My Attendance</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track your attendance and working hours</p>
         </div>
 
@@ -412,7 +412,7 @@ export default function MyAttendancePage() {
               <div className="row-between">
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Present Days</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.present}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{monthStats.present}</p>
                 </div>
                 <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-success-600"/>
@@ -426,7 +426,7 @@ export default function MyAttendancePage() {
               <div className="row-between">
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Absent Days</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.absent}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{monthStats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-danger-600"/>
@@ -440,7 +440,7 @@ export default function MyAttendancePage() {
               <div className="row-between">
                 <div>
                   <p className="text-body-secondary skeuo-deboss">On Leave</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{monthStats.leave}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{monthStats.leave}</p>
                 </div>
                 <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
                   <Coffee className="h-6 w-6 text-accent-600"/>
@@ -454,7 +454,7 @@ export default function MyAttendancePage() {
               <div className="row-between">
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Avg. Hours/Day</p>
-                  <p className="text-2xl font-bold skeuo-emboss">
+                  <p className="text-xl font-bold skeuo-emboss">
                     {monthStats.avgHours.toFixed(1)}
                   </p>
                 </div>

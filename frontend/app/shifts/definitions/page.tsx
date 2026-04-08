@@ -11,7 +11,7 @@ import {
   useUpdateShiftDefinition,
 } from '@/lib/hooks/queries/useShifts';
 import {ShiftDefinition, ShiftDefinitionRequest} from '@/lib/types/hrms/shift';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -217,7 +217,11 @@ export default function ShiftDefinitionsPage() {
 
           {/* Shift List */}
           {isLoading ? (
-            <NuAuraLoader/>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({length: 6}).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
           ) : shifts.length === 0 ? (
             <EmptyState
               icon={<Clock className="w-12 h-12 text-surface-400"/>}

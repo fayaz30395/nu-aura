@@ -135,7 +135,7 @@ export default function JobBoardsPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Board Management</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Post jobs to Naukri, Indeed, LinkedIn and track
               applications</p>
           </div>
@@ -170,7 +170,7 @@ export default function JobBoardsPage() {
             <Card key={stat.label}>
               <CardContent className="pt-4">
                 <p className="text-body-muted">{stat.label}</p>
-                <p className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
+                <p className={`text-xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
               </CardContent>
             </Card>
           ))}

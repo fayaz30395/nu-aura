@@ -162,7 +162,7 @@ export default function TimeTrackingPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Time Tracking
             </h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -172,7 +172,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
             >
               <Plus className="h-5 w-5"/>
               Log Time

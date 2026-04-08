@@ -235,7 +235,7 @@ export default function MyProfilePage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">My Profile</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">My Profile</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
               Manage your personal information
             </p>

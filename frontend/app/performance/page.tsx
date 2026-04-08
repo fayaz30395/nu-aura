@@ -163,7 +163,7 @@ const StatCard = ({
     <div className="flex items-start justify-between">
       <div>
         <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
-        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
+        <p className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
         {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
@@ -259,7 +259,7 @@ export default function PerformancePage() {
     <AppLayout activeMenuItem="performance">
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance Management</h1>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance Management</h1>
         <p className="text-body-muted mt-1 skeuo-deboss">
           Track goals, conduct reviews, and manage employee performance
         </p>

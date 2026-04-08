@@ -142,7 +142,7 @@ export default function LeaveApprovalsPage() {
           </button>
         </div>
 
-        <h1 className="text-2xl font-bold skeuo-emboss">Leave Approvals</h1>
+        <h1 className="text-xl font-bold skeuo-emboss">Leave Approvals</h1>
 
         {/* Error State */}
         {error && (

@@ -477,7 +477,7 @@ export default function CareerPageCMS() {
               key={key}
               type="button"
               onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-2 px-6 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 activeTab === key
                   ? 'bg-accent-600 text-white'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'

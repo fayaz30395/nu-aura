@@ -218,7 +218,7 @@ export default function GoalsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Goals</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Goals</h1>
           <PermissionGate permission={Permissions.GOAL_CREATE}>
             <button
               onClick={() => {
@@ -366,7 +366,7 @@ export default function GoalsPage() {
           <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
             <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6">
+                <h2 className="text-xl font-bold mb-6">
                   {selectedGoal ? 'Edit Goal' : 'Create Goal'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>

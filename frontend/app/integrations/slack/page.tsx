@@ -172,7 +172,7 @@ export default function SlackIntegrationPage() {
               <Zap className="h-6 w-6 text-white"/>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Slack Integration
               </h1>
               <p className="text-body-muted">

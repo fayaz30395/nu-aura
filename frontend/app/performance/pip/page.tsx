@@ -752,7 +752,7 @@ export default function PIPPage() {
           {/* Header */}
           <div className="row-between">
             <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
+              <h1 className="text-xl font-bold skeuo-emboss">Performance Improvement Plans</h1>
               <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
             </div>
             <PermissionGate permission={Permissions.PIP_CREATE}>
@@ -776,7 +776,7 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Active PIPs</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
                 </div>
               </div>
             </div>
@@ -788,7 +788,7 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
             </div>
@@ -800,7 +800,7 @@ export default function PIPPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Avg Duration</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.avgDuration} days</p>
                 </div>
               </div>
             </div>

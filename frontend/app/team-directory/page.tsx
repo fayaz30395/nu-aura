@@ -219,7 +219,7 @@ export default function TeamDirectoryPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
+            <h1 className="text-2xl md:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Team Directory</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Browse and connect with team members</p>
           </div>
           <div

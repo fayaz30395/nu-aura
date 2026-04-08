@@ -164,7 +164,7 @@ export default function EmployeeDashboardPage() {
             <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">My Dashboard</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">My Dashboard</h1>
             <p className="text-[var(--text-muted)] mt-1">Employee overview</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -189,7 +189,7 @@ export default function EmployeeDashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Welcome, {data.employeeName}!
             </h1>
             <p className="text-[var(--text-muted)] mt-1">
@@ -423,7 +423,7 @@ export default function EmployeeDashboardPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
                     <Target className="h-8 w-8 text-accent-700 dark:text-accent-400 mx-auto"/>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
+                    <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
                     <p className="text-caption mt-1">
@@ -432,7 +432,7 @@ export default function EmployeeDashboardPage() {
                   </div>
                   <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
                     <Award className="h-8 w-8 text-success-600 dark:text-success-400 mx-auto"/>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
+                    <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.recentReviews.length}
                     </p>
                     <p className="text-caption mt-1">
@@ -441,7 +441,7 @@ export default function EmployeeDashboardPage() {
                   </div>
                   <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
                     <GraduationCap className="h-8 w-8 text-accent-600 dark:text-accent-400 mx-auto"/>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
+                    <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.completedTrainings}
                     </p>
                     <p className="text-caption mt-1">
@@ -450,7 +450,7 @@ export default function EmployeeDashboardPage() {
                   </div>
                   <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
                     <Briefcase className="h-8 w-8 text-warning-600 dark:text-warning-400 mx-auto"/>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">
+                    <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.upcomingTrainings}
                     </p>
                     <p className="text-caption mt-1">

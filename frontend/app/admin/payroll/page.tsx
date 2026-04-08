@@ -139,7 +139,7 @@ export default function AdminPayrollPage() {
     <AdminPageContent className="p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+        <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
           Payroll Administration
         </h1>
         <p className="mt-1 text-body-secondary">

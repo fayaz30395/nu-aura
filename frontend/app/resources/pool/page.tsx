@@ -151,7 +151,7 @@ export default function ResourcePoolPage() {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Resource Pool</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Resource Pool</h1>
             <p className="text-body-muted mt-0.5">
               All employees with current project allocation status
             </p>
@@ -224,7 +224,7 @@ export default function ResourcePoolPage() {
                     : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                 }`}
               >
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stat.value}</p>
                 <div className="flex items-center gap-1.5 mt-1">
                   <span className={`inline-block w-2 h-2 rounded-full ${stat.color.split(' ')[0]}`}/>
                   <p className="text-caption">{stat.label}</p>

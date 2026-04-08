@@ -697,7 +697,7 @@ export default function SsoSettingsPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin"/>

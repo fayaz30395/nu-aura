@@ -107,12 +107,12 @@ export default function CandidateDetailPage() {
             <div className="flex items-center gap-6">
               <div
                 className="flex-shrink-0 h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
-                <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
+                <span className="text-xl font-bold text-accent-700 dark:text-accent-300">
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                   {candidate.fullName}
                 </h1>
                 <p className="text-[var(--text-muted)] font-mono text-sm mt-1">{candidate.candidateCode}</p>

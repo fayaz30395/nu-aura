@@ -281,7 +281,7 @@ export default function TravelRequestDetailsPage() {
             </button>
             <div>
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                   {travelRequest.requestNumber}
                 </h1>
                 <span

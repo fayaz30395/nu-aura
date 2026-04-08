@@ -252,7 +252,7 @@ export default function CompensationPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Compensation Planning
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -302,7 +302,7 @@ export default function CompensationPage() {
                     </div>
                     <div>
                       <p className="text-body-secondary">Total Budget</p>
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         ${(stats.totalBudget / 1000000).toFixed(1)}M
                       </p>
                       <p className="text-caption">
@@ -321,7 +321,7 @@ export default function CompensationPage() {
                     </div>
                     <div>
                       <p className="text-body-secondary">Total Revisions</p>
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {stats.totalRevisions}
                       </p>
                       <p className="text-caption">
@@ -340,7 +340,7 @@ export default function CompensationPage() {
                     </div>
                     <div>
                       <p className="text-body-secondary">Pending Approvals</p>
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {stats.pendingApprovals}
                       </p>
                       <p className="text-caption">
@@ -359,7 +359,7 @@ export default function CompensationPage() {
                     </div>
                     <div>
                       <p className="text-body-secondary">Avg. Increment</p>
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {stats.avgIncrement}%
                       </p>
                       <p className="text-caption">
@@ -434,11 +434,11 @@ export default function CompensationPage() {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
-                        <p className="text-2xl font-bold text-white">{activeCycle.revisionsDrafted}</p>
+                        <p className="text-xl font-bold text-white">{activeCycle.revisionsDrafted}</p>
                         <p className="text-xs text-white/80">Drafted</p>
                       </div>
                       <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
-                        <p className="text-2xl font-bold text-white">{activeCycle.revisionsApproved}</p>
+                        <p className="text-xl font-bold text-white">{activeCycle.revisionsApproved}</p>
                         <p className="text-xs text-white/80">Approved</p>
                       </div>
                       <Button variant="secondary" onClick={() => handleViewCycle(activeCycle)}>
@@ -804,20 +804,20 @@ export default function CompensationPage() {
                   </h4>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.minIncrementPercentage || 0}%
                       </p>
                       <p className="text-body-muted">Minimum</p>
                     </div>
                     <div className="text-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
                       <p
-                        className="text-2xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className="text-xl font-bold text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
                       <p className="text-body-muted">Target Avg</p>
                     </div>
                     <div className="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.maxIncrementPercentage || 0}%
                       </p>
                       <p className="text-body-muted">Maximum</p>
@@ -831,28 +831,28 @@ export default function CompensationPage() {
                   </h4>
                   <div className="grid grid-cols-4 gap-4">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-[var(--text-primary)]">
+                      <p className="text-xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.totalEmployees}
                       </p>
                       <p className="text-body-muted">Total</p>
                     </div>
                     <div className="text-center">
                       <p
-                        className="text-2xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className="text-xl font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsDrafted}
                       </p>
                       <p className="text-body-muted">Drafted</p>
                     </div>
                     <div className="text-center">
                       <p
-                        className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApproved}
                       </p>
                       <p className="text-body-muted">Approved</p>
                     </div>
                     <div className="text-center">
                       <p
-                        className="text-2xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className="text-xl font-bold text-accent-800 dark:text-accent-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                         {selectedCycle.revisionsApplied}
                       </p>
                       <p className="text-body-muted">Applied</p>
@@ -908,14 +908,14 @@ export default function CompensationPage() {
                 <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div>
                     <p className="text-body-muted mb-1">Current Salary</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">
                       ${selectedRevision.previousSalary.toLocaleString()}
                     </p>
                   </div>
                   <div>
                     <p className="text-body-muted mb-1">Proposed Salary</p>
                     <p
-                      className="text-2xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className="text-xl font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       ${selectedRevision.newSalary.toLocaleString()}
                     </p>
                   </div>

@@ -143,7 +143,7 @@ export default function LoanDetailPage() {
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
               </h1>
               <span
@@ -170,7 +170,7 @@ export default function LoanDetailPage() {
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
               </span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {loanService.formatCurrency(loan.totalAmount || loan.principalAmount)}
             </p>
           </div>
@@ -182,7 +182,7 @@ export default function LoanDetailPage() {
               </div>
               <span className="text-body-muted">Amount Repaid</span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {loanService.formatCurrency(loan.paidAmount || 0)}
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function LoanDetailPage() {
                 Outstanding Amount
               </span>
             </div>
-            <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               {loanService.formatCurrency(loan.outstandingAmount || 0)}
             </p>
           </div>

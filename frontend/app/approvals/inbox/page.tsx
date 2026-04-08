@@ -358,7 +358,7 @@ export default function ApprovalInboxPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Approval Inbox
             </h1>
             <p className="mt-1 text-body-muted">
@@ -895,7 +895,7 @@ function SummaryCard({
         {icon}
       </div>
       <div>
-        <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+        <p className="text-xl font-bold text-[var(--text-primary)]">{value}</p>
         <p className={`text-xs font-medium ${textColor}`}>{label}</p>
       </div>
     </div>

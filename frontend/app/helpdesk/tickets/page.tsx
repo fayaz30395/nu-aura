@@ -195,7 +195,7 @@ export default function TicketListPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Support Tickets
             </h1>
             <p className="text-body-muted mt-1">

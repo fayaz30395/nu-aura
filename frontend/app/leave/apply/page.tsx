@@ -118,7 +118,7 @@ export default function ApplyLeavePage() {
           </button>
         </div>
 
-        <h1 className="text-2xl font-bold skeuo-emboss">Apply for Leave</h1>
+        <h1 className="text-xl font-bold skeuo-emboss">Apply for Leave</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -218,7 +218,7 @@ export default function ApplyLeavePage() {
             {/* Total Days */}
             <div className="md:col-span-2 bg-accent-50 dark:bg-accent-950/30 p-4 rounded-lg">
               <div className="text-body-secondary">Total Days Requested:</div>
-              <div className="text-2xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
+              <div className="text-xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
             </div>
 
             {/* Reason */}

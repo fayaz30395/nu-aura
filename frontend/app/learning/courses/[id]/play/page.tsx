@@ -571,7 +571,7 @@ export default function CoursePlayerPage() {
                   <Award className="h-12 w-12 text-success-600"/>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
               <p className="text-[var(--text-muted)] text-sm mb-6">
                 You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
                 {enrollment?.certificateId && ' Your certificate has been issued.'}

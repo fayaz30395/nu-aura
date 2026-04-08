@@ -6,7 +6,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useAddEvaluation,
@@ -200,7 +200,15 @@ export default function ProbationPage() {
     [setValue]
   );
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated) {
+    return (
+      <AppLayout>
+        <div className="p-6 space-y-4">
+          <SkeletonTable rows={5} columns={5} />
+        </div>
+      </AppLayout>
+    );
+  }
   if (!isAuthenticated) {
     router.push('/auth/login');
     return null;
@@ -421,7 +429,7 @@ export default function ProbationPage() {
       >
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
             Probation Management
           </h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -519,7 +527,7 @@ export default function ProbationPage() {
         {activeTab === 'active' && (
           <div>
             {isActiveLoading ? (
-              <NuAuraLoader message="Loading active probations..."/>
+              <SkeletonTable rows={5} columns={5} />
             ) : !activeData || activeData.content.length === 0 ? (
               <EmptyState
                 title="No active probations"
@@ -539,7 +547,7 @@ export default function ProbationPage() {
         {activeTab === 'upcoming' && (
           <div>
             {isUpcomingLoading ? (
-              <NuAuraLoader message="Loading upcoming reviews..."/>
+              <SkeletonTable rows={5} columns={4} />
             ) : endingSoon.length === 0 ? (
               <EmptyState
                 title="No upcoming reviews"
@@ -561,7 +569,7 @@ export default function ProbationPage() {
         {activeTab === 'history' && (
           <div>
             {isHistoryLoading ? (
-              <NuAuraLoader message="Loading history..."/>
+              <SkeletonTable rows={5} columns={5} />
             ) : !historyData || historyData.content.length === 0 ? (
               <EmptyState
                 title="No completed probations"

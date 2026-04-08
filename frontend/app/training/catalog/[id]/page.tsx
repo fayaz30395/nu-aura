@@ -560,7 +560,7 @@ export default function CourseDetailPage() {
                   )}
                 </div>
 
-                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                   {course.title}
                 </h1>
 

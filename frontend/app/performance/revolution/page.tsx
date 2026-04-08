@@ -41,7 +41,7 @@ export default function PerformanceRevolutionPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1
-                className="text-2xl font-bold skeuo-emboss bg-clip-text text-transparent bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400">
+                className="text-xl font-bold skeuo-emboss bg-clip-text text-transparent bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400">
                 Performance Revolution
               </h1>
               <p className="text-[var(--text-secondary)] mt-1">Advanced OKR visualization and 360° performance

@@ -165,7 +165,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form */}
             <div>
-              <h2 className="text-2xl font-bold skeuo-emboss">
+              <h2 className="text-xl font-bold skeuo-emboss">
                 Send us a message
               </h2>
               <p className="text-[var(--text-secondary)] mb-8">

@@ -12,7 +12,7 @@ import {
   useUpdatePattern,
 } from '@/lib/hooks/queries/useShifts';
 import {ShiftDefinition, ShiftPattern, ShiftPatternRequest} from '@/lib/types/hrms/shift';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -227,7 +227,11 @@ export default function ShiftPatternsPage() {
 
           {/* Pattern List */}
           {isLoading ? (
-            <NuAuraLoader/>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({length: 4}).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
           ) : patterns.length === 0 ? (
             <EmptyState
               icon={<RotateCcw className="w-12 h-12 text-surface-400"/>}

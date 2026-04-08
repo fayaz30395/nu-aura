@@ -253,7 +253,7 @@ export default function TeamDirectory() {
         >
           <div className="row-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
                 <Users className="w-7 h-7 text-accent-700 dark:text-accent-400"/>
                 Team Directory
               </h1>
@@ -766,7 +766,7 @@ export default function TeamDirectory() {
                       <div
                         className={`w-full h-full rounded-full ${getRandomColor(
                           selectedEmployee.fullName
-                        )} flex items-center justify-center text-white text-2xl font-bold`}
+                        )} flex items-center justify-center text-white text-xl font-bold`}
                       >
                         {getInitials(selectedEmployee.fullName)}
                       </div>
@@ -777,7 +777,7 @@ export default function TeamDirectory() {
                 {/* Modal Content */}
                 <div className="pt-16 pb-6 px-6">
                   <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                    <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {selectedEmployee.fullName}
                     </h2>
                     <p className="text-[var(--text-muted)]">

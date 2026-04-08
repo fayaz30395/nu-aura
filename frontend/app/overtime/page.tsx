@@ -6,7 +6,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useAllOvertimeRecords,
@@ -355,7 +355,7 @@ export default function OvertimePage() {
   return (
     <AppLayout activeMenuItem="overtime">
       <motion.div
-        className="space-y-6"
+        className="space-y-4"
         initial={{opacity: 0, y: 8}}
         animate={{opacity: 1, y: 0}}
         transition={{duration: 0.25, ease: 'easeOut'}}
@@ -363,7 +363,7 @@ export default function OvertimePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Overtime Management
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -372,7 +372,7 @@ export default function OvertimePage() {
           </div>
           <button
             onClick={() => setActiveTab('request')}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button"
           >
             <Plus className="h-5 w-5"/>
             Request Overtime
@@ -412,7 +412,7 @@ export default function OvertimePage() {
                     </div>
                     <div>
                       <p className="text-body-secondary">{stat.label}</p>
-                      <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                      <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                         {stat.value}
                       </p>
                     </div>
@@ -425,7 +425,7 @@ export default function OvertimePage() {
 
         {/* Tabs */}
         <div className="border-b border-[var(--border-main)]">
-          <nav className="flex gap-6 -mb-px">
+          <nav className="flex gap-4 -mb-px">
             {tabs.map((tab) => {
               const tabButton = (
                 <button
@@ -456,7 +456,7 @@ export default function OvertimePage() {
         {activeTab === 'my-overtime' && (
           <div>
             {isMyLoading ? (
-              <NuAuraLoader message="Loading your overtime records..."/>
+              <SkeletonTable rows={5} columns={5} />
             ) : !myRecords || myRecords.content.length === 0 ? (
               <EmptyState
                 title="No overtime records"
@@ -489,9 +489,9 @@ export default function OvertimePage() {
             ) : (
               <form
                 onSubmit={handleSubmit(onSubmitOvertime)}
-                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 space-y-6 skeuo-card"
+                className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 space-y-4 skeuo-card"
               >
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] skeuo-emboss">
                   Request Overtime
                 </h2>
 
@@ -604,7 +604,7 @@ export default function OvertimePage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || createOvertime.isPending}
-                    className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                   >
                     {createOvertime.isPending ? 'Submitting...' : 'Submit Request'}
                   </button>
@@ -625,7 +625,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
             <div>
               {isPendingLoading ? (
-                <NuAuraLoader message="Loading pending approvals..."/>
+                <SkeletonTable rows={5} columns={5} />
               ) : !pendingRecords || pendingRecords.content.length === 0 ? (
                 <EmptyState
                   title="No pending approvals"
@@ -647,7 +647,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_VIEW_ALL}>
             <div>
               {isAllLoading ? (
-                <NuAuraLoader message="Loading all records..."/>
+                <SkeletonTable rows={5} columns={5} />
               ) : !allRecords || allRecords.content.length === 0 ? (
                 <EmptyState
                   title="No overtime records"

@@ -130,7 +130,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500"/>
+            <AlertCircle className="h-8 w-8 text-danger-500"/>
             <p className="text-[var(--text-secondary)]">{error}</p>
           </div>
         </div>
@@ -140,11 +140,11 @@ export default function LoansPage() {
 
   return (
     <AppLayout activeMenuItem="loans">
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Employee Loans
             </h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -232,7 +232,7 @@ export default function LoansPage() {
         {/* Loans List */}
         <div className="skeuo-card overflow-hidden">
           <div className="row-between px-4 py-4 border-b border-[var(--border-main)]">
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">
               My Loans
             </h2>
           </div>

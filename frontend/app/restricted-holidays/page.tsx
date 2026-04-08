@@ -6,7 +6,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonCard, SkeletonForm, SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {motion} from 'framer-motion';
 import {Controller, useForm} from 'react-hook-form';
@@ -373,7 +373,7 @@ interface BrowseTabProps {
 }
 
 function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, summary}: BrowseTabProps) {
-  if (isLoading) return <NuAuraLoader/>;
+  if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({length: 6}).map((_, i) => <SkeletonCard key={i} />)}</div>;
   if (holidays.length === 0) {
     return (
       <EmptyState
@@ -481,7 +481,7 @@ interface MySelectionsTabProps {
 }
 
 function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySelectionsTabProps) {
-  if (isLoading) return <NuAuraLoader/>;
+  if (isLoading) return <SkeletonTable rows={4} columns={4} />;
   if (selections.length === 0) {
     return (
       <EmptyState
@@ -570,7 +570,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  if (isLoading) return <NuAuraLoader/>;
+  if (isLoading) return <SkeletonTable rows={4} columns={5} />;
   if (selections.length === 0) {
     return (
       <EmptyState
@@ -683,7 +683,7 @@ interface ManageTabProps {
 }
 
 function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProps) {
-  if (isLoading) return <NuAuraLoader/>;
+  if (isLoading) return <SkeletonTable rows={5} columns={4} />;
 
   return (
     <div className="space-y-4">
@@ -807,7 +807,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
     },
   });
 
-  if (isLoading) return <NuAuraLoader/>;
+  if (isLoading) return <SkeletonForm fields={4} />;
 
   const onSubmit = (values: PolicyFormValues) => {
     onSave({

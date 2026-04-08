@@ -228,7 +228,7 @@ function StatCard({
         <div>
           <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
           <p
-            className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
+            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">
             {value}
           </p>
           {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
@@ -1424,7 +1424,7 @@ export default function OneOnOnePage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-6 py-2.5 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="px-4 py-2 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {createMutation.isPending ? 'Scheduling...' : 'Schedule Meeting'}
                 </button>
@@ -1434,7 +1434,7 @@ export default function OneOnOnePage() {
                     scheduleForm.reset();
                     setView('list');
                   }}
-                  className="px-6 py-2.5 text-sm font-medium border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="px-4 py-2 text-sm font-medium border border-[var(--border-main)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -1456,7 +1456,7 @@ export default function OneOnOnePage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
             <h1
-              className="text-2xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
+              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">
               1-on-1 Meetings
             </h1>
             <p className="text-body-muted mt-1 skeuo-deboss">

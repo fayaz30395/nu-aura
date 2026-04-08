@@ -211,7 +211,7 @@ export default function WallPage() {
         <div className="flex items-center gap-4 mb-6">
           <IconActivity size={28} className="text-[var(--text-primary)]" />
           <div>
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Activity Wall
             </h2>
             <p className="text-body-muted">

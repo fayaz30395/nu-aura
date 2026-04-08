@@ -140,7 +140,7 @@ export default function StatutoryPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout activeMenuItem="payroll-statutory">
       <Box p="lg">
         <Stack gap="lg">
           {/* Page header */}

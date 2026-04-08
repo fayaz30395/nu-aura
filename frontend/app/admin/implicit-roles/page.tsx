@@ -271,7 +271,7 @@ export default function ImplicitRolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold skeuo-emboss">Implicit Roles</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Implicit Roles</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage rules that automatically assign roles to users based on their organizational context
           </p>

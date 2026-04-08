@@ -201,7 +201,7 @@ export default function EmploymentChangeRequestsPage() {
         </div>
 
         <div className="row-between mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">
+          <h1 className="text-xl font-bold skeuo-emboss">
             Employment Change Requests
           </h1>
           <div className="flex gap-2">

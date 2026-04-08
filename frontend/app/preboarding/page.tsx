@@ -160,7 +160,7 @@ export default function PreboardingPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Pre-boarding Portal</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Pre-boarding Portal</h1>
             <p className="text-body-muted mt-1">Manage new hire paperwork before joining</p>
           </div>
           <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
@@ -201,7 +201,7 @@ export default function PreboardingPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Total Candidates</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
               </div>
             </CardContent>
           </Card>
@@ -214,7 +214,7 @@ export default function PreboardingPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Invited</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.invited}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.invited}</p>
               </div>
             </CardContent>
           </Card>
@@ -226,7 +226,7 @@ export default function PreboardingPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">In Progress</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
               </div>
             </CardContent>
           </Card>
@@ -239,7 +239,7 @@ export default function PreboardingPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Completed</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
               </div>
             </CardContent>
           </Card>

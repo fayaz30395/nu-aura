@@ -101,7 +101,7 @@ export default function LinkedInPostsPage() {
           >
             <div className="row-between">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   <Linkedin className="w-8 h-8 text-accent-600"/>
                   LinkedIn Posts
                 </h1>

@@ -248,7 +248,7 @@ export default function PerformanceReviewsPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Performance Reviews</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Performance Reviews</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -392,7 +392,7 @@ export default function PerformanceReviewsPage() {
             <div
               className="skeuo-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)]">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6 skeuo-emboss text-[var(--text-primary)]">
+                <h2 className="text-xl font-bold mb-6 skeuo-emboss text-[var(--text-primary)]">
                   {selectedReview ? 'Edit Review' : 'Create Review'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>

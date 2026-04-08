@@ -197,7 +197,7 @@ export default function OfficeLocationsPage() {
         />
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Office Locations & Geofencing</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Office Locations & Geofencing</h1>
           <button
             onClick={() => {
               reset();

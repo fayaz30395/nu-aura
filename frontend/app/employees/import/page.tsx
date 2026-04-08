@@ -185,7 +185,7 @@ export default function EmployeeImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Employees
             </button>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Bulk Import Employees
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">
@@ -419,7 +419,7 @@ export default function EmployeeImportPage() {
                     <div className="flex items-center">
                       <Users className="w-8 h-8 text-accent-700 dark:text-accent-400 mr-4"/>
                       <div>
-                        <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           {preview.totalRows}
                         </p>
                         <p className="text-body-muted">
@@ -432,7 +432,7 @@ export default function EmployeeImportPage() {
                     <div className="flex items-center">
                       <CheckCircle className="w-8 h-8 text-success-500 mr-4"/>
                       <div>
-                        <p className="text-2xl font-bold text-success-700 dark:text-success-400">
+                        <p className="text-xl font-bold text-success-700 dark:text-success-400">
                           {preview.validRows}
                         </p>
                         <p className="text-sm text-success-600 dark:text-success-500">
@@ -445,7 +445,7 @@ export default function EmployeeImportPage() {
                     <div className="flex items-center">
                       <XCircle className="w-8 h-8 text-danger-500 mr-4"/>
                       <div>
-                        <p className="text-2xl font-bold text-danger-700 dark:text-danger-400">
+                        <p className="text-xl font-bold text-danger-700 dark:text-danger-400">
                           {preview.invalidRows}
                         </p>
                         <p className="text-sm text-danger-600 dark:text-danger-500">
@@ -616,7 +616,7 @@ export default function EmployeeImportPage() {
                 ) : (
                   <XCircle className="w-16 h-16 text-danger-500 mx-auto mb-4"/>
                 )}
-                <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Import {result.status === 'COMPLETED' ? 'Completed' : result.status === 'PARTIAL_SUCCESS' ? 'Partially Completed' : 'Failed'}
                 </h2>
                 <span

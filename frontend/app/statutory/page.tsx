@@ -10,7 +10,7 @@ import {
   Container,
   Grid,
   Group,
-  Loader,
+
   Select,
   Table,
   Tabs,
@@ -135,7 +135,7 @@ export default function StatutoryPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout activeMenuItem="statutory">
       <Container size="xl" py="lg">
         <Title order={2} mb="sm" className="skeuo-emboss">Statutory Compliance</Title>
         <Text c="dimmed" mb="lg">Manage Provident Fund, ESI, and Professional Tax configurations.</Text>
@@ -329,10 +329,15 @@ export default function StatutoryPage() {
               )}
 
               {reportLoading && (
-                <Group justify="center" py="xl">
-                  <Loader size="sm"/>
-                  <Text c="dimmed" size="sm">Loading contributions...</Text>
-                </Group>
+                <div className="py-4 space-y-3" aria-hidden="true">
+                  {Array.from({length: 4}).map((_, i) => (
+                    <div key={i} className="flex gap-4">
+                      {Array.from({length: 5}).map((_, j) => (
+                        <div key={j} className="skeleton-aura h-4 rounded flex-1" />
+                      ))}
+                    </div>
+                  ))}
+                </div>
               )}
 
               {!reportLoading && reportFetched && contributions.length === 0 && (

@@ -275,7 +275,7 @@ export default function JobOpeningsPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Job Openings</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage job openings and recruitment
               positions</p>
           </div>
@@ -311,7 +311,7 @@ export default function JobOpeningsPage() {
                   </div>
                   <div>
                     <p className="text-body-muted">Total Jobs</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                   </div>
                 </div>
               </CardContent>
@@ -330,7 +330,7 @@ export default function JobOpeningsPage() {
                   </div>
                   <div>
                     <p className="text-body-muted">Open</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.open}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{stats.open}</p>
                   </div>
                 </div>
               </CardContent>
@@ -349,7 +349,7 @@ export default function JobOpeningsPage() {
                   </div>
                   <div>
                     <p className="text-body-muted">Draft</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                   </div>
                 </div>
               </CardContent>
@@ -368,7 +368,7 @@ export default function JobOpeningsPage() {
                   </div>
                   <div>
                     <p className="text-body-muted">Closed</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
                   </div>
                 </div>
               </CardContent>
@@ -550,7 +550,7 @@ export default function JobOpeningsPage() {
               className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
                   </h2>
                   <button onClick={() => {
@@ -858,7 +858,7 @@ export default function JobOpeningsPage() {
               className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                     <Sparkles className="h-6 w-6 text-accent-700"/>
                     Generated Job Description
                   </h2>

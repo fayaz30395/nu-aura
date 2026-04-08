@@ -127,7 +127,7 @@ export default function AvailabilityCalendarPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Team Availability
             </h1>
             <p className="mt-1 text-body-muted">
@@ -320,7 +320,7 @@ function SummaryCard({
           <Icon className="h-5 w-5"/>
         </div>
         <div>
-          <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
+          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{value}</p>
           <p className="text-caption">{label}</p>
         </div>
       </CardContent>

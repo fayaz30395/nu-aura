@@ -10,6 +10,7 @@ import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance'
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {AppLayout} from '@/components/layout';
 import {
   useCreateHoliday,
   useDeleteHoliday,
@@ -211,6 +212,7 @@ export default function HolidaysPage() {
   const isPast = (dateStr: string) => new Date(dateStr) < today;
 
   return (
+    <AppLayout activeMenuItem="holidays">
     <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -653,5 +655,6 @@ export default function HolidaysPage() {
         </div>
       )}
     </div>
+    </AppLayout>
   );
 }

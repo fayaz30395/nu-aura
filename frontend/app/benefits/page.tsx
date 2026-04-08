@@ -414,7 +414,7 @@ export default function BenefitsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Benefits Management
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -439,7 +439,7 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Enrolled Plans</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalEnrolled}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalEnrolled}</p>
                 </div>
               </div>
             </CardContent>
@@ -453,7 +453,7 @@ export default function BenefitsPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
                   <p
-                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatINR(stats.monthlyPremium)}</p>
+                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatINR(stats.monthlyPremium)}</p>
                 </div>
               </div>
             </CardContent>
@@ -466,7 +466,7 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Available Plans</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.availablePlans}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.availablePlans}</p>
                 </div>
               </div>
             </CardContent>
@@ -479,7 +479,7 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Coverage</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                     {formatINR(stats.totalCoverage)}
                   </p>
                 </div>
@@ -494,7 +494,7 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Flex Credits</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                     {formatINR(stats.flexCredits)}
                   </p>
                 </div>
@@ -791,7 +791,7 @@ export default function BenefitsPage() {
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <div className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           {formatINR(claim.claimAmount)}
                         </div>
                       </div>
@@ -852,13 +852,13 @@ export default function BenefitsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 skeuo-card rounded-lg">
                     <p className="text-body-muted skeuo-deboss">Monthly Premium</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       {formatINR(selectedBenefit.monthlyPremium)}
                     </p>
                   </div>
                   <div className="p-4 skeuo-card rounded-lg">
                     <p className="text-body-muted skeuo-deboss">Coverage Amount</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       {formatINR(selectedBenefit.coverage)}
                     </p>
                   </div>

@@ -219,7 +219,7 @@ export default function HolidayCalendarManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Holiday Calendar Management</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Holiday Calendar Management</h1>
             <p className="mt-1 text-body-secondary skeuo-deboss">
               Manage organizational holidays and events
             </p>
@@ -270,23 +270,23 @@ export default function HolidayCalendarManagementPage() {
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="skeuo-card p-4">
             <div className="text-body-secondary">Total Holidays</div>
-            <div className="text-2xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
+            <div className="text-xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
           </div>
           <div className="skeuo-card p-4">
             <div className="text-body-secondary">National</div>
-            <div className="text-2xl font-bold text-danger-600">
+            <div className="text-xl font-bold text-danger-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
           <div className="skeuo-card p-4">
             <div className="text-body-secondary">Optional</div>
-            <div className="text-2xl font-bold text-warning-600">
+            <div className="text-xl font-bold text-warning-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
           <div className="skeuo-card p-4">
             <div className="text-body-secondary">Restricted</div>
-            <div className="text-2xl font-bold text-warning-600">
+            <div className="text-xl font-bold text-warning-600">
               {holidays.filter((h) => h.isRestricted).length}
             </div>
           </div>
@@ -324,7 +324,7 @@ export default function HolidayCalendarManagementPage() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-4">
                             <div className="text-center min-w-16">
-                              <div className="text-2xl font-bold text-[var(--text-primary)]">
+                              <div className="text-xl font-bold text-[var(--text-primary)]">
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
                               <div className="text-caption uppercase">
@@ -407,7 +407,7 @@ export default function HolidayCalendarManagementPage() {
             <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     {editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
                   </h2>
                   <button

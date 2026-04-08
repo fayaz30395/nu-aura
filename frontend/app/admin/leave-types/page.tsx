@@ -257,7 +257,7 @@ export default function LeaveTypesManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Leave Types Management</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Leave Types Management</h1>
             <p className="mt-1 text-body-secondary skeuo-deboss">
               Configure and manage leave types for your organization
             </p>
@@ -431,7 +431,7 @@ export default function LeaveTypesManagementPage() {
             <div className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     {editingLeaveType ? 'Edit Leave Type' : 'Add New Leave Type'}
                   </h2>
                   <button

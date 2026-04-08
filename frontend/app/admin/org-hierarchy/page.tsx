@@ -310,7 +310,7 @@ export default function OrgHierarchyPage() {
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold skeuo-emboss flex items-center space-x-4">
+          <h1 className="text-xl font-bold skeuo-emboss flex items-center space-x-4">
             <svg
               className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               fill="currentColor" viewBox="0 0 20 20">

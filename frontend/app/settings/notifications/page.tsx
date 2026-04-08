@@ -134,7 +134,7 @@ export default function NotificationSettingsPage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground skeuo-emboss">Notification Settings</h1>
+          <h1 className="text-xl font-bold text-foreground skeuo-emboss">Notification Settings</h1>
           <p className="text-muted-foreground mt-1 skeuo-deboss">
             Choose how and when you want to be notified
           </p>

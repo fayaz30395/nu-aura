@@ -185,7 +185,7 @@ export default function WellnessPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Employee Wellness
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -232,7 +232,7 @@ export default function WellnessPage() {
                 </div>
                 <div>
                   <p className="text-sm text-success-700 dark:text-success-300">Total Points</p>
-                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">{stats.totalPoints}</p>
+                  <p className="text-xl font-bold text-success-900 dark:text-success-100">{stats.totalPoints}</p>
                 </div>
               </div>
             </CardContent>
@@ -245,7 +245,7 @@ export default function WellnessPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Current Streak</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.currentStreak} days</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.currentStreak} days</p>
                 </div>
               </div>
             </CardContent>
@@ -258,7 +258,7 @@ export default function WellnessPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Level</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.level}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.level}</p>
                 </div>
               </div>
             </CardContent>
@@ -271,7 +271,7 @@ export default function WellnessPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Active Challenges</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.activeChallenges}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.activeChallenges}</p>
                 </div>
               </div>
             </CardContent>

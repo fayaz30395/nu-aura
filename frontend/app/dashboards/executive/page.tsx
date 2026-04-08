@@ -180,7 +180,7 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="row-between">
             <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">Executive Dashboard</h1>
+              <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="row-between">
             <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">Executive Dashboard</h1>
+              <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
@@ -227,7 +227,7 @@ export default function ExecutiveDashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Executive Dashboard</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Executive Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Comprehensive C-suite insights and analytics
             </p>
@@ -507,7 +507,7 @@ export default function ExecutiveDashboardPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
                   <DollarSign className="h-5 w-5 text-accent-500"/>
                 </div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}
                 </p>
                 {data.financialSummary.payrollCostChangePercent != null && (
@@ -532,7 +532,7 @@ export default function ExecutiveDashboardPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)]">YTD Payroll</p>
                   <Calendar className="h-5 w-5 text-success-500"/>
                 </div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.yearToDatePayrollCost || 0)}
                 </p>
                 <p className="text-caption mt-2">
@@ -547,7 +547,7 @@ export default function ExecutiveDashboardPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)]">Cost/Employee</p>
                   <Users className="h-5 w-5 text-warning-500"/>
                 </div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.avgCostPerEmployee || 0)}
                 </p>
                 <p className="text-caption mt-2">
@@ -562,7 +562,7 @@ export default function ExecutiveDashboardPage() {
                   <p className="text-sm font-medium text-[var(--text-muted)]">Revenue/Employee</p>
                   <TrendingUp className="h-5 w-5 text-accent-500"/>
                 </div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.revenuePerEmployee || 0)}
                 </p>
                 <p className="text-caption mt-2">

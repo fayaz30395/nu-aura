@@ -672,7 +672,7 @@ export default function WikiPageDetailPage() {
           <div className={card.paddingLarge}>
             <div className="flex items-start justify-between gap-6 mb-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
+                <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4 leading-tight">
                   {page.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-6 mb-6">

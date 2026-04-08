@@ -12,7 +12,7 @@ import {Button} from '@/components/ui/Button';
 import {Department, DepartmentRequest, DepartmentType} from '@/lib/types/hrms/employee';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {SkeletonTable} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
@@ -252,7 +252,7 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Departments</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Departments</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
               Manage your organization&apos;s departments and structure
             </p>
@@ -277,7 +277,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Departments</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{departments.length}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{departments.length}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -292,7 +292,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Active Departments</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{activeDepartments}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{activeDepartments}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">Total Employees</p>
-                  <p className="text-2xl font-bold skeuo-emboss">{totalEmployees}</p>
+                  <p className="text-xl font-bold skeuo-emboss">{totalEmployees}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">

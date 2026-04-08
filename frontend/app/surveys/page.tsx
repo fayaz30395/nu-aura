@@ -225,7 +225,7 @@ export default function SurveysPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Employee Surveys
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -250,7 +250,7 @@ export default function SurveysPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Surveys</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -263,7 +263,7 @@ export default function SurveysPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Active</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
@@ -276,7 +276,7 @@ export default function SurveysPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Drafts</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.draft}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
@@ -289,7 +289,7 @@ export default function SurveysPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -302,7 +302,7 @@ export default function SurveysPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Responses</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalResponses}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalResponses}</p>
                 </div>
               </div>
             </CardContent>

@@ -227,7 +227,7 @@ export default function AllocationSummaryPage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Allocation Summary
             </h1>
             <p className="text-body-muted">

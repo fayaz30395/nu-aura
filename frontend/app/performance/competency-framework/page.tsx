@@ -448,7 +448,7 @@ export default function CompetencyFrameworkPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">Competency Framework</h1>
+                <h1 className="text-xl font-bold skeuo-emboss">Competency Framework</h1>
                 <p className="text-[var(--text-muted)] mt-1 text-sm">
                   Manage competency ratings for employees within a review cycle
                 </p>

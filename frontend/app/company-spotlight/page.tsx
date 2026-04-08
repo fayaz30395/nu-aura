@@ -143,7 +143,7 @@ export default function CompanySpotlightPage() {
           >
             <div className="row-between">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   <Lightbulb className="w-8 h-8 text-warning-500"/>
                   Company Spotlight
                 </h1>

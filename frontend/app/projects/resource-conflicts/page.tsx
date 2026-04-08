@@ -75,7 +75,7 @@ export default function ResourceConflictsPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Resource Conflicts</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Resource Conflicts</h1>
             <p className="text-[var(--text-muted)] mt-1">Detect and resolve over-allocated employees across projects</p>
           </div>
           <Button onClick={() => scanMutation.mutate()} disabled={scanMutation.isPending}>

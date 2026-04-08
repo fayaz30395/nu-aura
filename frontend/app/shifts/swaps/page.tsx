@@ -14,7 +14,7 @@ import {
   useRejectSwapRequest,
 } from '@/lib/hooks/queries/useShifts';
 import {ShiftSwapRequest, SwapStatus} from '@/lib/types/hrms/shift';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonListItem} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {motion} from 'framer-motion';
 import {ArrowLeftRight, Check, ChevronLeft, Inbox, Send, Shield, X,} from 'lucide-react';
@@ -199,7 +199,11 @@ export default function ShiftSwapsPage() {
 
         {/* Content */}
         {isLoading ? (
-          <NuAuraLoader/>
+          <div className="space-y-2">
+            {Array.from({length: 5}).map((_, i) => (
+              <SkeletonListItem key={i} />
+            ))}
+          </div>
         ) : (
           <>
             {activeTab === 'sent' && (

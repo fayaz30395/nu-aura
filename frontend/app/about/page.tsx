@@ -112,7 +112,7 @@ export default function AboutPage() {
                   <Target className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">
                     Our Mission
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
@@ -129,7 +129,7 @@ export default function AboutPage() {
                   <Zap className="h-6 w-6 text-info-600 dark:text-info-400"/>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">
                     Our Vision
                   </h3>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
@@ -147,7 +147,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Our Core Values
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -186,7 +186,7 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Our Journey
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">

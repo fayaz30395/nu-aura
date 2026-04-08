@@ -178,7 +178,7 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Analytics Dashboard
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -322,7 +322,7 @@ export default function AnalyticsPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">
+                    <p className="text-xl font-bold text-[var(--text-primary)] mt-1">
                       {formatCurrency(analytics.payroll.currentMonth.total)}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
