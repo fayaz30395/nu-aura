@@ -308,7 +308,7 @@ export default function LoansPage() {
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg justify-center ${statusConfig.bg} ${statusConfig.text}`}
                           >
                             <StatusIcon className="h-3.5 w-3.5"/>
-                            {loan.status.replace('_', ' ')}
+                            {loan.status ? loan.status.replace('_', ' ') : '-'}
                           </span>
                       </td>
                       <td className="px-6 py-4 text-right">

@@ -45,20 +45,20 @@ export function ViewProgramModal({
                 <span className="text-[var(--text-muted)]">Status:</span>
                 <p>
                   <Badge variant={toBadgeVariant(program.status)}>
-                    {program.status.replace('_', ' ')}
+                    {program.status ? program.status.replace('_', ' ') : '-'}
                   </Badge>
                 </p>
               </div>
               <div>
                 <span className="text-[var(--text-muted)]">Category:</span>
                 <p className="font-medium text-[var(--text-primary)]">
-                  {program.category.replace('_', ' ')}
+                  {program.category ? program.category.replace('_', ' ') : '-'}
                 </p>
               </div>
               <div>
                 <span className="text-[var(--text-muted)]">Delivery Mode:</span>
                 <p className="font-medium text-[var(--text-primary)]">
-                  {program.deliveryMode.replace('_', ' ')}
+                  {program.deliveryMode ? program.deliveryMode.replace('_', ' ') : '-'}
                 </p>
               </div>
             </div>
@@ -107,7 +107,7 @@ export function ViewProgramModal({
                               : 'default'
                         }
                       >
-                        {enrollment.status.replace('_', ' ')}
+                        {enrollment.status ? enrollment.status.replace('_', ' ') : '-'}
                       </Badge>
                     </div>
                   ))}

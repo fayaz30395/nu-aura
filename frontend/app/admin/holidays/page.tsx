@@ -339,7 +339,7 @@ export default function HolidayCalendarManagementPage() {
                               <div className="flex flex-wrap gap-2 mt-2">
                                 <span
                                   className={`px-2 py-1 text-xs font-semibold rounded ${getHolidayTypeColor(holiday.holidayType)}`}>
-                                  {holiday.holidayType.replace('_', ' ')}
+                                  {holiday.holidayType ? holiday.holidayType.replace('_', ' ') : '-'}
                                 </span>
                                 {holiday.isOptional && (
                                   <span

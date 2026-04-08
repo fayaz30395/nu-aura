@@ -624,7 +624,7 @@ export default function EmployeeImportPage() {
                     result.status
                   )}`}
                 >
-                {result.status.replace('_', ' ')}
+                {result.status ? result.status.replace('_', ' ') : '-'}
               </span>
               </div>
 

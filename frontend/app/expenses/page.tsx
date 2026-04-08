@@ -899,7 +899,7 @@ export default function ExpenseClaims() {
                         <div className="text-xl font-bold text-[var(--text-primary)]">
                           {formatCurrency(claim.amount, claim.currency)}
                         </div>
-                        <div className="text-body-secondary">{claim.category.replace('_', ' ')}</div>
+                        <div className="text-body-secondary">{claim.category ? claim.category.replace('_', ' ') : '-'}</div>
                       </div>
                     </div>
 

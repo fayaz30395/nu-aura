@@ -386,7 +386,7 @@ export default function EmployeeDashboardPage() {
                           <span
                             className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(record.status)}`}
                           >
-                            {record.status.replace('_', ' ')}
+                            {record.status ? record.status.replace('_', ' ') : '-'}
                           </span>
                         </div>
                       </div>
@@ -483,7 +483,7 @@ export default function EmployeeDashboardPage() {
                                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                             }`}
                           >
-                            {goal.status.replace('_', ' ')}
+                            {goal.status ? goal.status.replace('_', ' ') : '-'}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">

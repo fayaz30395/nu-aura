@@ -335,7 +335,7 @@ export default function SurveyDetailPage() {
                           <p className={typography.body}>{question.questionText}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="badge-status status-info text-xs">
-                              {question.questionType.replace('_', ' ')}
+                              {question.questionType ? question.questionType.replace('_', ' ') : '-'}
                             </span>
                             {question.isRequired && (
                               <span className="badge-status status-warning text-xs">

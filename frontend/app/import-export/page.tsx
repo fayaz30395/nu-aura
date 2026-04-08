@@ -121,7 +121,7 @@ function StatusBadge({status}: { status: string }) {
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>
       <Icon className="h-3.5 w-3.5"/>
-      {status.replace('_', ' ')}
+      {status ? status.replace('_', ' ') : '-'}
     </span>
   );
 }

@@ -123,7 +123,7 @@ export default function HelpdeskPage() {
                       Ticket #{esc.ticketId.slice(0, 8)}
                     </span>
                     <span className="ml-2 text-caption">
-                      {esc.escalationLevel} — {esc.escalationReason.replace(/_/g, ' ')}
+                      {esc.escalationLevel} — {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
                     </span>
                   </div>
                   <span className="text-caption">

@@ -417,7 +417,7 @@ export default function OKRPage() {
                               objective.status
                             )}`}
                           >
-                          {objective.status.replace('_', ' ')}
+                          {objective.status ? objective.status.replace('_', ' ') : '-'}
                         </span>
                         </div>
                       </div>

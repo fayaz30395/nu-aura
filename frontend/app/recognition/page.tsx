@@ -425,7 +425,7 @@ export default function RecognitionPage() {
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <span className="badge-status status-info whitespace-nowrap">
-                                {recognition.type.replace('_', ' ')}
+                                {recognition.type ? recognition.type.replace('_', ' ') : '-'}
                               </span>
                               {recognition.pointsAwarded > 0 && (
                                 <span className="badge-status status-warning flex items-center gap-1 whitespace-nowrap">

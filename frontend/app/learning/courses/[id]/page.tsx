@@ -228,7 +228,7 @@ export default function CourseDetailPage() {
                   </div>
                   <p className="text-caption">
                     Status: <span
-                    className="font-medium capitalize text-[var(--text-primary)]">{enrollment?.status?.toLowerCase().replace('_', ' ')}</span>
+                    className="font-medium capitalize text-[var(--text-primary)]">{enrollment?.status ? enrollment.status.toLowerCase().replace('_', ' ') : '-'}</span>
                     {enrollment?.completedAt && ` · Completed ${new Date(enrollment.completedAt).toLocaleDateString()}`}
                   </p>
                 </div>

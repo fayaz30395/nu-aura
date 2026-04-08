@@ -906,7 +906,7 @@ export default function OneOnOnePage() {
                                   <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
                                   <span
                                     className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${getActionStatusColor(item.status)}`}>
-                                    {item.status.replace('_', ' ')}
+                                    {item.status ? item.status.replace('_', ' ') : '-'}
                                   </span>
                                   {item.isOverdue && (
                                     <span

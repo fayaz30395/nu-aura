@@ -143,11 +143,11 @@ export function CourseCatalogTab({
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}
                       >
-                        {program.category.replace('_', ' ')}
+                        {program.category ? program.category.replace('_', ' ') : '-'}
                       </span>
                       <span
                         className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)]">
-                        {program.deliveryMode.replace('_', ' ')}
+                        {program.deliveryMode ? program.deliveryMode.replace('_', ' ') : '-'}
                       </span>
                       {program.isMandatory && (
                         <span

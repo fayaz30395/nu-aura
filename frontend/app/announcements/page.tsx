@@ -347,42 +347,46 @@ export default function AnnouncementsPage() {
             transition={{delay: 0.2}}
             className="skeuo-card p-4 mb-6"
           >
-            <div className="flex flex-wrap gap-4">
-              <div className="flex-1 min-w-[200px] relative">
+            <div className="space-y-4">
+              {/* Line 1: Search */}
+              <div className="relative">
                 <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-4 h-4"/>
                 <input
                   type="text"
                   placeholder="Search announcements..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input-aura pl-10"
+                  className="input-aura pl-10 w-full"
                 />
               </div>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="input-aura"
-              >
-                <option value="">All Categories</option>
-                {Object.keys(categoryIcons).map((cat) => (
-                  <option key={cat} value={cat}>
-                    {getCategoryLabel(cat as AnnouncementCategory)}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="input-aura"
-              >
-                <option value="">All Priorities</option>
-                {Object.entries(priorityLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+              {/* Line 2: Filters */}
+              <div className="flex gap-4">
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="input-aura flex-1 cursor-pointer"
+                >
+                  <option value="">All Categories</option>
+                  {Object.keys(categoryIcons).map((cat) => (
+                    <option key={cat} value={cat}>
+                      {getCategoryLabel(cat as AnnouncementCategory)}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                  className="input-aura flex-1 cursor-pointer"
+                >
+                  <option value="">All Priorities</option>
+                  {Object.entries(priorityLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </motion.div>
 
