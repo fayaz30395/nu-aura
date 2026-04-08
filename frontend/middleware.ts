@@ -235,8 +235,14 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
 
   // Content Security Policy - restrictive but allows necessary resources including Google OAuth
-  const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1')
-    .replace(/\/api\/v1.*$/, '');
+  // Extract origin from API URL for CSP connect-src
+  let apiOrigin: string;
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1');
+    apiOrigin = url.origin;
+  } catch {
+    apiOrigin = 'http://localhost:8080';
+  }
 
   response.headers.set(
     'Content-Security-Policy',
@@ -246,7 +252,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
         : "script-src 'self' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com`,
+      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
       "frame-src 'self' https://docs.google.com https://accounts.google.com",
