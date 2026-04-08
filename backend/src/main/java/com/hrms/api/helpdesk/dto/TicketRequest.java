@@ -18,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TicketRequest {
 
-    @NotNull(message = "Employee ID is required")
     private UUID employeeId;
 
     private UUID categoryId;

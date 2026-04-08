@@ -1,6 +1,7 @@
 package com.hrms.application.helpdesk.service;
 
 import com.hrms.api.helpdesk.dto.*;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.helpdesk.*;
@@ -35,6 +36,17 @@ public class HelpdeskService {
     @Transactional
     public TicketResponse createTicket(TicketRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // BUG-P1-010 FIX: Auto-resolve employeeId from SecurityContext when not provided
+        UUID employeeId = request.getEmployeeId();
+        if (employeeId == null) {
+            employeeId = SecurityContext.getCurrentEmployeeId();
+            if (employeeId == null) {
+                throw new IllegalArgumentException("Employee ID is required");
+            }
+            request.setEmployeeId(employeeId);
+        }
+
         log.info("Creating ticket for employee {} in tenant {}", request.getEmployeeId(), tenantId);
 
         // Verify employee exists within tenant (use exists check to avoid loading encrypted fields)
