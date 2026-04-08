@@ -11,9 +11,13 @@ class DashboardService {
    * Get Executive Dashboard Data
    * Fetches comprehensive C-suite metrics, financial data, strategic insights, and workforce summary
    */
-  async getExecutiveDashboard(): Promise<ExecutiveDashboardData> {
-    const response = await apiClient.get<ExecutiveDashboardData>('/dashboards/executive');
-    return response.data;
+  async getExecutiveDashboard(): Promise<ExecutiveDashboardData | null> {
+    try {
+      const response = await apiClient.get<ExecutiveDashboardData>('/dashboards/executive');
+      return response.data;
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -33,9 +37,13 @@ class DashboardService {
    * Get Employee Dashboard Data
    * Fetches employee-specific dashboard data including attendance, leaves, career progress, and events
    */
-  async getEmployeeDashboard(): Promise<EmployeeDashboardData> {
-    const response = await apiClient.get<EmployeeDashboardData>('/dashboards/employee');
-    return response.data;
+  async getEmployeeDashboard(): Promise<EmployeeDashboardData | null> {
+    try {
+      const response = await apiClient.get<EmployeeDashboardData>('/dashboards/employee');
+      return response.data;
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -50,9 +58,13 @@ class DashboardService {
    * Get Manager Dashboard Data
    * Fetches team-specific insights including attendance, leave, performance, and action items
    */
-  async getManagerDashboard(): Promise<ManagerDashboardResponse> {
-    const response = await apiClient.get<ManagerDashboardResponse>('/dashboards/manager');
-    return response.data;
+  async getManagerDashboard(): Promise<ManagerDashboardResponse | null> {
+    try {
+      const response = await apiClient.get<ManagerDashboardResponse>('/dashboards/manager');
+      return response.data;
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -68,9 +80,13 @@ class DashboardService {
    * Get Team Projects & Allocations for the current manager
    * Shows what each direct report is working on with allocation percentages
    */
-  async getManagerTeamProjects(): Promise<ManagerTeamProjectsResponse> {
-    const response = await apiClient.get<ManagerTeamProjectsResponse>('/dashboards/manager/team-projects');
-    return response.data;
+  async getManagerTeamProjects(): Promise<ManagerTeamProjectsResponse | null> {
+    try {
+      const response = await apiClient.get<ManagerTeamProjectsResponse>('/dashboards/manager/team-projects');
+      return response.data;
+    } catch {
+      return null;
+    }
   }
 }
 

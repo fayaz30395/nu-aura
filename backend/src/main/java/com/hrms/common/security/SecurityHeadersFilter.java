@@ -20,7 +20,7 @@ import java.io.IOException;
  *   <li><strong>X-Frame-Options</strong>: Prevents clickjacking attacks</li>
  *   <li><strong>X-XSS-Protection</strong>: Disabled in favor of Content-Security-Policy (modern approach)</li>
  *   <li><strong>Strict-Transport-Security</strong>: Enforces HTTPS (HSTS)</li>
- *   <li><strong>Content-Security-Policy</strong>: Restricts content sources</li>
+ *   <li><strong>Content-Security-Policy</strong>: Set by SecurityConfig (not this filter)</li>
  *   <li><strong>Referrer-Policy</strong>: Controls referrer information sharing</li>
  *   <li><strong>Permissions-Policy</strong>: Controls browser features and permissions</li>
  *   <li><strong>Cache-Control</strong>: Prevents caching of sensitive data</li>
@@ -65,18 +65,7 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
                         "max-age=" + hstsMaxAge + "; includeSubDomains; preload");
             }
 
-            // Content Security Policy - restrict content sources
-            // Adjust these values based on your frontend requirements
-            response.setHeader("Content-Security-Policy",
-                    "default-src 'self'; " +
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-                            "style-src 'self' 'unsafe-inline'; " +
-                            "img-src 'self' data: https:; " +
-                            "font-src 'self' data:; " +
-                            "connect-src 'self'; " +
-                            "frame-ancestors 'none'; " +
-                            "base-uri 'self'; " +
-                            "form-action 'self'");
+            // CSP is set by SecurityConfig — do not duplicate here
 
             // Control referrer information - prevents sending referrer to cross-origin sites
             response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");

@@ -1,5 +1,6 @@
 package com.hrms.domain.employee;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
@@ -130,15 +131,18 @@ public class Employee extends TenantAware {
     @Column(nullable = false, length = 20)
     private EmployeeStatus status;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 100)
     private String bankAccountNumber;
 
     @Column(length = 50)
     private String bankName;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 50)
     private String bankIfscCode;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 50)
     private String taxId;
 

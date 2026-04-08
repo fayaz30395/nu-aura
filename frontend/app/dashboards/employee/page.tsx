@@ -35,7 +35,7 @@ const EmployeeAttendanceChart = dynamic(
 export default function EmployeeDashboardPage() {
   const router = useRouter();
   const {hasPermission, isReady: permReady} = usePermissions();
-  const {data, isLoading: loading, error} = useEmployeeDashboard();
+  const {data, isLoading: loading, error, refetch} = useEmployeeDashboard();
 
   // A3: Permission gate — redirect if user lacks DASHBOARD:EMPLOYEE
   React.useEffect(() => {
@@ -155,23 +155,29 @@ export default function EmployeeDashboardPage() {
   if (error || !data) {
     return (
       <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="max-w-md">
-            <CardHeader>
-              <div className="flex items-center gap-4 text-danger-600">
-                <AlertCircle className="h-6 w-6"/>
-                <CardTitle>Error Loading Dashboard</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-[var(--text-secondary)] mb-4">
-                {error instanceof Error ? error.message : 'Unable to load dashboard data'}
-              </p>
-              <Button variant="primary" onClick={() => window.location.reload()} className="w-full">
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
+            <p className="text-sm text-[var(--text-secondary)] flex-1">
+              Dashboard data is temporarily unavailable. Some metrics may not be displayed.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">My Dashboard</h1>
+            <p className="text-[var(--text-muted)] mt-1">Employee overview</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {['Present Days', 'Leaves Taken', 'Leaves Available', 'Avg Work Hours'].map((label) => (
+              <Card key={label}>
+                <CardContent className="p-6">
+                  <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
+                  <p className="text-caption mt-1">No data</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </AppLayout>
     );

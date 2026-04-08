@@ -1,5 +1,6 @@
 package com.hrms.domain.webhook;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Where;
@@ -57,6 +58,7 @@ public class Webhook extends TenantAware {
      * Secret key for HMAC signature verification.
      * Stored encrypted in database.
      */
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 256)
     private String secret;
 

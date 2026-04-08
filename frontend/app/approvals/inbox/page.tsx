@@ -233,11 +233,13 @@ export default function ApprovalInboxPage() {
   const rejectMutation = useRejectExecution();
   const returnMutation = useReturnForModification();
 
+  // SuperAdmin / TenantAdmin bypasses all permission checks (mirrors backend SecurityConfig).
+  // hasPermission already checks isAdmin internally, but we keep the explicit isAdmin check
+  // for clarity and to ensure the loading guard below never shows "Access denied" for admins.
   const canViewInbox =
-    isReady &&
-    (isAdmin ||
-      hasPermission(Permissions.WORKFLOW_VIEW) ||
-      hasPermission(Permissions.WORKFLOW_EXECUTE));
+    isAdmin ||
+    hasPermission(Permissions.WORKFLOW_VIEW) ||
+    hasPermission(Permissions.WORKFLOW_EXECUTE);
 
   // Listen for new approval task assignments via WebSocket
   useEffect(() => {
@@ -317,6 +319,18 @@ export default function ApprovalInboxPage() {
     setPage(0);
     setSelectedId(null);
   }, []);
+
+  // Show a loading spinner while auth is hydrating to avoid flashing "Access denied"
+  // before the user's roles have been restored from the session.
+  if (!isReady) {
+    return (
+      <AppLayout activeMenuItem="approvals">
+        <div className="flex h-full items-center justify-center p-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   if (!canViewInbox) {
     return (

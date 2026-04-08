@@ -32,6 +32,7 @@ import {
   useUpdateContentProgress,
 } from '@/lib/hooks/queries/useLearning';
 import type {CourseModule, ModuleContent} from '@/lib/services/grow/lms.service';
+import {sanitizeHtml} from '@/lib/utils/sanitize';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -186,7 +187,7 @@ function TextContent({content, onComplete}: { content: string; onComplete: () =>
     <div className="space-y-4">
       <div
         className="prose prose-sm max-w-none p-4 bg-[var(--bg-muted)] rounded-lg text-[var(--text-primary)] border border-[var(--border-main)]"
-        dangerouslySetInnerHTML={{__html: content}}
+        dangerouslySetInnerHTML={{__html: sanitizeHtml(content)}}
       />
       {!read && (
         <Button

@@ -1,5 +1,6 @@
 package com.hrms.domain.benefits;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Where;
@@ -95,7 +96,9 @@ public class BenefitClaim extends TenantAware {
     // Payment details
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
+    @Convert(converter = EncryptedStringConverter.class)
     private String bankAccountNumber;
+    @Convert(converter = EncryptedStringConverter.class)
     private String ifscCode;
     private String upiId;
     private LocalDate paymentDate;

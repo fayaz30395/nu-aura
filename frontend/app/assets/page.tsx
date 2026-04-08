@@ -216,8 +216,8 @@ export default function AssetManagementPage() {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (a) =>
-          a.assetName.toLowerCase().includes(query) ||
-          a.assetCode.toLowerCase().includes(query) ||
+          a.assetName?.toLowerCase().includes(query) ||
+          a.assetCode?.toLowerCase().includes(query) ||
           a.brand?.toLowerCase().includes(query) ||
           a.model?.toLowerCase().includes(query)
       );

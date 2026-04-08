@@ -333,6 +333,9 @@ public class SamlConfigurationService {
     }
 
     private boolean testMetadataUrl(String metadataUrl) {
+        // SSRF protection: validate URL before making any outbound request
+        com.hrms.common.validation.SsrfProtectionUtils.validateUrlSafety(metadataUrl);
+
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(metadataUrl))

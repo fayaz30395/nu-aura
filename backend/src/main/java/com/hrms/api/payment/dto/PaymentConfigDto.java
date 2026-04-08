@@ -1,5 +1,6 @@
 package com.hrms.api.payment.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hrms.domain.payment.PaymentConfig;
 import lombok.*;
 
@@ -20,7 +21,9 @@ public class PaymentConfigDto {
     private String configKey;
 
     // Request only - API key in plaintext (must be sent over HTTPS)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String apiKey;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String webhookSecret;
 
     public static PaymentConfigDto fromEntity(PaymentConfig entity) {

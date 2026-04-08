@@ -73,8 +73,8 @@ export function AuthGuard({
       redirectTimeoutRef.current = null;
     }
 
-    // Wait for auth to hydrate
-    if (!hasHydrated || !isReady) {
+    // Wait for Zustand to rehydrate from sessionStorage
+    if (!hasHydrated) {
       return;
     }
 
@@ -89,6 +89,10 @@ export function AuthGuard({
     // httpOnly cookie first. This prevents redirect loops when Zustand state is
     // cleared but cookies are still valid (e.g. after a page refresh), and also
     // prevents permission checks from failing when user/roles haven't loaded yet.
+    // NOTE: This check must happen BEFORE the isReady guard below, because isReady
+    // is false when isAuthenticated=true but user=null (see usePermissions), which
+    // would deadlock — isReady waits for user, but restoreSession (which sets user)
+    // would never be called.
     if (!isAuthenticated || (isAuthenticated && !user)) {
       if (!restoreAttemptedRef.current && !isRestoringSession) {
         restoreAttemptedRef.current = true;
@@ -139,6 +143,14 @@ export function AuthGuard({
 
     // Reset restore flag on successful auth (for future navigations)
     restoreAttemptedRef.current = false;
+
+    // Wait for permissions to be ready before running authorization checks.
+    // At this point we know the user object is loaded (the !user branch above
+    // would have returned), so isReady should be true. This guard is a safety
+    // net for the brief window between user being set and permissions being derived.
+    if (!isReady) {
+      return;
+    }
 
     // Find route config
     const routeConfig = findRouteConfig(pathname);

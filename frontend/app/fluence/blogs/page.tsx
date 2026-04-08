@@ -48,7 +48,14 @@ export default function BlogsPage() {
   const {data: categoriesData, isLoading: categoriesLoading} = useBlogCategories();
 
   const posts = (postsData?.content || []) as BlogPost[];
-  const categories = (Array.isArray(categoriesData) ? categoriesData : []) as Category[];
+  // Defensive: API may return a plain array OR a paginated { content: [...] } wrapper
+  const categories = (
+    Array.isArray(categoriesData)
+      ? categoriesData
+      : Array.isArray((categoriesData as Record<string, unknown>)?.content)
+        ? (categoriesData as Record<string, unknown>).content as Category[]
+        : []
+  ) as Category[];
 
   const featuredPost = posts[0];
   const regularPosts = posts.slice(1);

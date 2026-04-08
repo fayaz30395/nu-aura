@@ -256,8 +256,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // Fallback to Authorization header for backward compatibility and API clients
+        // DEPRECATED: This path will be removed once all M2M clients migrate to httpOnly cookies
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            log.warn("JWT authentication via Authorization header detected from IP: {} for path: {}. This method is deprecated — use httpOnly cookies.", request.getRemoteAddr(), request.getRequestURI());
             return bearerToken.substring(7);
         }
 

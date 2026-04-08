@@ -246,7 +246,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
         : "script-src 'self' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com https:`,
+      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com`,
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
       "frame-src 'self' https://docs.google.com https://accounts.google.com",

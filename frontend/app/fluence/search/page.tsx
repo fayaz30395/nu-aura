@@ -29,6 +29,7 @@ import {Card, CardContent} from '@/components/ui/Card';
 import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/design-system';
 import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
 import type {SavedSearch} from '@/lib/types/platform/fluence';
+import {sanitizeHtml} from '@/lib/utils/sanitize';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -648,7 +649,7 @@ export default function SearchPage() {
                           <p
                             className={`${typography.bodySecondary} line-clamp-2 mb-2`}
                             dangerouslySetInnerHTML={{
-                              __html: result.highlightedContent || result.excerpt || '',
+                              __html: sanitizeHtml(result.highlightedContent || result.excerpt || ''),
                             }}
                           />
                         )}

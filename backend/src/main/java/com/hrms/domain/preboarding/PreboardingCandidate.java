@@ -1,5 +1,6 @@
 package com.hrms.domain.preboarding;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -101,16 +102,19 @@ public class PreboardingCandidate {
     private String emergencyContactName;
 
     // Bank details
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 100)
     private String bankAccountNumber;
 
     @Column(length = 100)
     private String bankName;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 50)
     private String bankIfscCode;
 
     // Tax info
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 50)
     private String taxId;
 
