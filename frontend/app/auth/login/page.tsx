@@ -723,6 +723,14 @@ function LoginPage() {
                       {emailErrors.password && (
                         <p className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
                       )}
+                      <div className="flex justify-end mt-1">
+                        <Link
+                          href="/auth/forgot-password"
+                          className="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                        >
+                          Forgot Password?
+                        </Link>
+                      </div>
                     </div>
 
                     <button

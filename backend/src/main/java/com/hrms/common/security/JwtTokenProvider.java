@@ -259,9 +259,17 @@ public class JwtTokenProvider {
                 return false;
             }
 
-            // Check blacklist
+            // Check blacklist (individual token revocation)
             String jti = claims.getId();
             if (jti != null && tokenBlacklistService.isBlacklisted(jti)) {
+                return false;
+            }
+
+            // Check if all user tokens were revoked (e.g., after logout or password change)
+            String userId = claims.get("userId", String.class);
+            Date issuedAt = claims.getIssuedAt();
+            if (userId != null && issuedAt != null &&
+                    tokenBlacklistService.isTokenRevokedByTimestamp(userId, issuedAt)) {
                 return false;
             }
 

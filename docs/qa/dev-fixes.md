@@ -1,5 +1,92 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 24 — P0/P1 Backend Bug Fixes from Use Case QA (2026-04-08)
+
+### BUG-001 (P0-Security): Refresh token not invalidated on logout
+- **Files**: `backend/src/main/java/com/hrms/common/security/JwtTokenProvider.java`, `backend/src/main/java/com/hrms/application/auth/service/AuthService.java`
+- **Root cause**: Two issues:
+  1. `validateRefreshToken()` checked the JTI blacklist but did NOT check `isTokenRevokedByTimestamp()`. The `validateToken()` method for access tokens did check this, but refresh token validation was missing the timestamp-based revocation check. So when `logout()` called `revokeAllUserTokens()` or `revokeAllTokensBefore()`, refresh tokens from other sessions would still pass validation.
+  2. `AuthService.logout()` only revoked the specific access token passed to it. It did not revoke all tokens for the user. A refresh token from a prior session (different tab/user) could still be used to re-authenticate.
+- **Fix**:
+  1. Added `isTokenRevokedByTimestamp()` check to `validateRefreshToken()` matching the same check in `validateToken()`.
+  2. Enhanced `logout()` to extract the userId from the token and call `revokeAllUserTokens()` to invalidate ALL sessions for the user.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-EXP-001 (P1-Blocker): POST /api/v1/expenses returns 405 Method Not Allowed
+- **File**: `backend/src/main/java/com/hrms/api/expense/controller/ExpenseClaimController.java`
+- **Root cause**: The controller only had `@PostMapping("/employees/{employeeId}")` for creating expense claims. There was no `@PostMapping` mapped to the root `/api/v1/expenses` path. The frontend was POSTing to `/api/v1/expenses` which only had GET mapped, resulting in 405.
+- **Fix**: Added a convenience `@PostMapping` endpoint at the root path that resolves the current employee from SecurityContext and delegates to `expenseClaimService.createExpenseClaim()`.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-HELP-001 (P1): POST /api/v1/helpdesk/tickets returns 500
+- **File**: `backend/src/main/java/com/hrms/application/helpdesk/service/HelpdeskService.java`
+- **Root cause**: `mapToTicketResponse()` used `employeeRepository.findById()` to resolve employee names. This loads the full Employee entity including `@Convert(converter = EncryptedStringConverter.class)` fields (taxId, bankAccountNumber, bankIfscCode). If decryption fails, Hibernate marks the transaction as rollback-only, causing 500. Same root cause as Session 17/19 EncryptedStringConverter issue.
+- **Fix**:
+  1. Replaced all `employeeRepository.findById().map(Employee::getFullName)` calls with `employeeRepository.findFullNameById()` JPQL projection query (already exists in repository).
+  2. Replaced `findByIdAndTenantId()` employee existence checks with `existsByIdAndTenantId()` to avoid loading encrypted fields entirely.
+  3. Added `safeGetEmployeeName()` helper with try-catch for defense-in-depth.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-004 (P0): GET /api/v1/leave-requests/status/PENDING returns 503
+- **Status**: NEEDS-REVIEW (BE)
+- **Analysis**: The leave controller and service code are correct. The 503 is not produced by any code path in the leave module. QA also noted "WebSocket connections (SockJS) are also failing with 503 on /ws/* endpoints" during the same test, indicating the backend was in a degraded state (likely Neon DB cold start or connection pool exhaustion). POST /api/v1/leave-requests worked (201) in the same session, confirming the endpoint is functional when the backend is healthy. Recommend re-testing after backend restart.
+
+### BUG-EMP-002 (P1): PUT /api/v1/employees/{id} returns 500
+- **Status**: Already fixed in Session 19 (EncryptedStringConverter resilience)
+- **Analysis**: Employee update loads the full Employee entity including encrypted fields. The EncryptedStringConverter fix from Session 19 makes decryption resilient, preventing the transaction rollback-only 500. Requires backend restart to take effect.
+
+### BUG-ATT-002 (P1): POST /api/v1/attendance/regularization returns 500
+- **Status**: Already fixed in Session 19 (EncryptedStringConverter resilience)
+- **Analysis**: The regularization code creates/updates attendance records and is itself correct. The 500 is caused by EncryptedStringConverter failures when loading related Employee entities during the transaction. The Session 19 fix resolves this.
+
+### BUG-EMP-005 (P1): GET /api/v1/organization/org-chart returns 404
+- **Status**: NOT A BACKEND BUG — Frontend path mismatch
+- **Analysis**: The backend endpoint exists at `GET /api/v1/organization/chart` (OrganizationController line 50). The frontend /org-chart page is calling `/api/v1/organization/org-chart` which does not exist. The frontend service needs to be updated to use the correct path.
+
+### BUG-LEAVE-003 (P1): POST /api/v1/leave/encashment returns 404
+- **Status**: NOT A BACKEND BUG — Frontend path mismatch
+- **Analysis**: The backend encashment endpoint exists at `POST /api/v1/leave-balances/encash` (LeaveBalanceController line 47). The frontend is calling `/api/v1/leave/encashment` which does not exist. The frontend service needs to be updated to use the correct path.
+
+### BUG-REPORT-001 (P1): GET /api/v1/reports/* returns 404
+- **Status**: NOT A BACKEND BUG — Frontend API method mismatch
+- **Analysis**: The report endpoints exist but use POST (not GET): `POST /api/v1/reports/department-headcount`, `POST /api/v1/reports/employee-directory`, etc. (ReportController). Reports are generated by POSTing a ReportRequest body with format, dateRange, etc. The frontend is sending GET requests to paths that don't match.
+
+RESTART-NEEDED: All fixes require backend restart — JwtTokenProvider refresh validation, AuthService logout enhancement, ExpenseClaimController new endpoint, HelpdeskService projection queries.
+
+---
+
+## Session 23 — P0 Frontend Fixes from Use Case QA (2026-04-08)
+
+### BUG-017 (Chrome QA Phase 1): /employees/directory — Maximum update depth exceeded, infinite re-render loop (FRONTEND)
+- **File**: `frontend/app/employees/directory/page.tsx`
+- **Root cause**: `useQuery` had an inline default value `{content: [], totalPages: 0, totalElements: 0}` creating a new object reference on every render when data was undefined. A `useEffect` depending on this object called `setEmployees()`/`setTotalPages()`/`setTotalElements()`, triggering re-render, creating new default, triggering effect again -- infinite loop (75+ errors logged).
+- **Fix**: (1) Extracted default to module-level constant `EMPTY_SEARCH_RESULT` for stable reference. (2) Destructured useEffect deps to individual fields (`searchContent`, `searchTotalPages`, `searchTotalElements`) instead of whole object.
+- **Verified**: tsc passes with zero errors.
+
+### BUG-015 (Chrome QA Phase 1): FeedService.fetchLinkedInPosts — Cannot read properties of undefined (reading 'map') (FRONTEND)
+- **File**: `frontend/lib/services/core/feed.service.ts`
+- **Root cause**: `fetchLinkedInPosts()` called `data.content.map(...)` directly without checking if `data` or `data.content` is defined/an array. When the LinkedIn API returns unexpected data shape (non-paginated or undefined), `.map()` crashes. This was missed in Session 22 which fixed the other 6 fetch methods but not this one.
+- **Fix**: Added `Array.isArray` guard with `.content` fallback, matching the pattern used by the other fixed methods (`fetchBirthdays`, `fetchAnniversaries`, etc.).
+- **Verified**: tsc passes with zero errors.
+
+### BUG-002 (UC-AUTH-006, P0-UX): Missing "Forgot Password" link on login page (FRONTEND)
+- **File**: `frontend/app/auth/login/page.tsx`
+- **Root cause**: The login form had email and password fields with a Sign In button but no link to the existing `/auth/forgot-password` page. The forgot-password page and backend endpoint both exist, but users had no way to discover or navigate to the password reset flow from the login screen.
+- **Fix**: Added a "Forgot Password?" link between the password field and the Sign In button, using `next/link` (already imported). Styled with `text-xs text-accent-600` and right-aligned per compact desktop-first density standards. Includes `focus-visible:ring` for accessibility.
+- **Verified**: tsc passes with zero errors.
+
+### BUG-003 (UC-PAY-001, P0-Blocker): /payroll/salary-structures page crashes with TypeError "Cannot read properties of undefined (reading 'toLocaleString')" (FRONTEND)
+- **File**: `frontend/app/payroll/salary-structures/page.tsx`
+- **Root cause**: When salary structure data is returned from the API, fields like `baseSalary` and `totalCTC` could be non-numeric values (e.g., string or unexpected type) where `?? 0` doesn't help because the value is truthy but not a number. Calling `.toLocaleString()` on a non-number type crashes. Additionally, `effectiveDate` was passed directly to `new Date()` without null guard, and the `structures` array wasn't filtered for null entries.
+- **Fix**: (1) Wrapped `baseSalary` and `totalCTC` in `Number()` to ensure numeric type before calling `toLocaleString()`. (2) Added null guard on `effectiveDate` with `'—'` fallback. (3) Added `.filter(Boolean)` on structures array to strip null entries. (4) Added `'—'` fallback on `employeeName`/`employeeId`.
+- **Also fixed**: `frontend/app/payroll/components/page.tsx` line 312 — same unguarded `c.defaultValue.toLocaleString()` wrapped with `Number(c.defaultValue ?? 0)`.
+- **Verified**: tsc passes with zero errors.
+
+---
+
 ## Session 22 — Frontend Array.isArray Guards + Error State Fixes (2026-04-08)
 
 ### BUG-013 (QA Phase 1 Session 3): /performance/pip — pips.filter is not a function
@@ -737,3 +824,12 @@ The running server (PID 28419) must be stopped and restarted with the new JAR to
 ```bash
 cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend && ./start-backend.sh
 ```
+
+## Session 25 — Orchestrator Direct Fixes (2026-04-08)
+
+### BUG-018: GET /api/v1/training/programs returns 500 (BACKEND)
+- **File**: `backend/src/main/resources/db/migration/V125__add_training_programs_is_deleted.sql`, `V126__training_programs_is_deleted_retry.sql`
+- **Root cause**: `TrainingProgram` entity has `@Where(clause = "is_deleted = false")` but the `training_programs` table lacked `is_deleted` column. Hibernate generated SQL referencing non-existent column.
+- **Fix**: Created Flyway migrations V125+V126 to add `is_deleted BOOLEAN NOT NULL DEFAULT FALSE` to `training_programs`. V125 was lost in a race condition (two backend processes starting simultaneously), V126 ensured it was applied.
+- **Migration**: V125 + V126
+- **Verified**: GET /api/v1/training/programs returns 200 with 3 programs

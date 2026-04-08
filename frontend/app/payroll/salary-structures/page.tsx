@@ -116,15 +116,15 @@ export default function SalaryStructuresPage() {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {structures.map((structure) => (
+                    {structures.filter(Boolean).map((structure) => (
                       <Table.Tr key={structure.id} className="cursor-pointer">
-                        <Table.Td>{structure.employeeName || structure.employeeId}</Table.Td>
-                        <Table.Td>{new Date(structure.effectiveDate).toLocaleDateString()}</Table.Td>
-                        <Table.Td>{(structure.baseSalary ?? 0).toLocaleString('en-IN', {
+                        <Table.Td>{structure.employeeName || structure.employeeId || '—'}</Table.Td>
+                        <Table.Td>{structure.effectiveDate ? new Date(structure.effectiveDate).toLocaleDateString() : '—'}</Table.Td>
+                        <Table.Td>{Number(structure.baseSalary ?? 0).toLocaleString('en-IN', {
                           style: 'currency',
                           currency: 'INR'
                         })}</Table.Td>
-                        <Table.Td>{(structure.totalCTC ?? 0).toLocaleString('en-IN', {
+                        <Table.Td>{Number(structure.totalCTC ?? 0).toLocaleString('en-IN', {
                           style: 'currency',
                           currency: 'INR'
                         })}</Table.Td>

@@ -431,10 +431,23 @@ public class AuthService {
      * @param token The JWT access token to revoke
      */
     public void logout(String token) {
-        // Revoke the token by adding it to the blacklist
+        // Revoke the specific token by adding it to the blacklist
         if (token != null && !token.isBlank()) {
             tokenProvider.revokeToken(token);
-            log.info("Token revoked on logout");
+
+            // BUG-001 FIX: Also revoke ALL tokens for this user (both access and refresh)
+            // so that any other sessions / tabs with different refresh tokens are invalidated.
+            // Without this, a refresh token from a prior session can re-authenticate the user.
+            try {
+                UUID userId = tokenProvider.getUserIdFromToken(token);
+                if (userId != null) {
+                    tokenProvider.revokeAllUserTokens(userId.toString());
+                    log.info("All tokens revoked for user {} on logout", userId);
+                }
+            } catch (Exception e) {
+                // Token may already be expired/invalid — the individual revoke above is enough
+                log.debug("Could not extract userId for bulk revocation on logout: {}", e.getMessage());
+            }
         }
         SecurityContextHolder.clearContext();
     }

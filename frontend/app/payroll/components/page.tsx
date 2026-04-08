@@ -309,7 +309,7 @@ function ComponentsTable({
                     {c.formula}
                   </code>
                 ) : c.defaultValue != null ? (
-                  <span className="text-sm">₹{c.defaultValue.toLocaleString()}</span>
+                  <span className="text-sm">₹{Number(c.defaultValue ?? 0).toLocaleString()}</span>
                 ) : (
                   <span className="text-caption">—</span>
                 )}
