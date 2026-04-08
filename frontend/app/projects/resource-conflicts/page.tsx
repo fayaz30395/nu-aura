@@ -8,6 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
 
@@ -119,7 +120,7 @@ export default function ResourceConflictsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
+              <div className="p-4"><SkeletonTable rows={4} columns={5} /></div>
             ) : (openConflicts?.length ?? 0) === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
                 <CheckCircle className="w-10 h-10 mx-auto mb-2 text-success-400"/>

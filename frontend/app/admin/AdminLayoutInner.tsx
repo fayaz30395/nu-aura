@@ -3,6 +3,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {Sidebar, SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED, SidebarItem} from '@/components/ui/Sidebar';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
 import {Header} from '@/components/layout/Header';
 import {DarkModeProvider} from '@/components/layout/DarkModeProvider';
 import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
@@ -362,12 +363,8 @@ export default function AdminLayoutInner({
           {/* Scrollable content area */}
           <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
             {!isReady ? (
-              <div className="flex h-full items-center justify-center">
-                <div className="space-y-4 text-center">
-                  <div
-                    className="h-12 w-12 rounded-full border-4 border-[var(--border-subtle)] border-t-accent-700 animate-spin mx-auto"/>
-                  <p className="text-[var(--text-secondary)]">Loading...</p>
-                </div>
+              <div className="p-6">
+                <SkeletonDashboard />
               </div>
             ) : !hasAdminAccess ? (
               <div className="flex h-full items-center justify-center">

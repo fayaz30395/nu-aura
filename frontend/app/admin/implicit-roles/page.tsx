@@ -16,6 +16,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
 import {ConfirmDialog} from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {
   useAffectedUsers,
   useBulkActivateRules,
@@ -246,8 +247,8 @@ export default function ImplicitRolesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-[var(--text-secondary)]">Loading...</div>
+      <div className="p-4 md:p-6 lg:p-8">
+        <SkeletonTable rows={6} columns={4} />
       </div>
     );
   }
@@ -745,7 +746,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
           </button>
         </div>
 
-        {usersQuery.isLoading && <p className="text-[var(--text-muted)]">Loading...</p>}
+        {usersQuery.isLoading && <SkeletonTable rows={3} columns={3} />}
 
         {usersQuery.data && (
           <div className="skeuo-card overflow-x-auto">

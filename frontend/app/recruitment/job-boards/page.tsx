@@ -9,6 +9,7 @@ import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -194,7 +195,9 @@ export default function JobBoardsPage() {
 
         {/* Postings grid */}
         {isLoading ? (
-          <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({length: 6}).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
         ) : postings.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-[var(--text-muted)]">

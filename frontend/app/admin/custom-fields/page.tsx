@@ -18,6 +18,7 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {
   useActivateCustomFieldDefinition,
   useCreateCustomFieldDefinition,
@@ -238,11 +239,9 @@ export default function CustomFieldsPage() {
 
   if (isLoading) {
     return (
-      <>
-        <div className="flex items-center justify-center p-8">
-          <div className="text-[var(--text-secondary)]">Loading...</div>
-        </div>
-      </>
+      <div className="p-4 md:p-6 lg:p-8">
+        <SkeletonTable rows={6} columns={5} />
+      </div>
     );
   }
 

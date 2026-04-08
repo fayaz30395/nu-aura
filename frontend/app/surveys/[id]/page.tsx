@@ -178,7 +178,7 @@ export default function SurveyDetailPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className={typography.pageTitle}>
-                  {surveyLoading ? 'Loading...' : survey?.title}
+                  {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded" /> : survey?.title}
                 </h1>
                 {survey && (
                   <Badge variant={toBadgeVariant(survey.status)}>{survey.status}</Badge>
