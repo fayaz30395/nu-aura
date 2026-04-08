@@ -121,9 +121,9 @@ export default function MyLeavesPage() {
   const [encashDays, setEncashDays] = useState<number>(0);
   const [encashReason, setEncashReason] = useState('');
 
-  const leaveRequests = leaveRequestsData?.content ?? [];
-  const leaveTypes = leaveTypesData;
-  const leaveBalances = balancesData;
+  const leaveRequests = Array.isArray(leaveRequestsData?.content) ? leaveRequestsData.content : (Array.isArray(leaveRequestsData) ? leaveRequestsData : []);
+  const leaveTypes = Array.isArray(leaveTypesData) ? leaveTypesData : [];
+  const leaveBalances = Array.isArray(balancesData) ? balancesData : [];
   const isLoading = !leaveRequestsData && !isLeaveRequestsError;
 
   useEffect(() => {

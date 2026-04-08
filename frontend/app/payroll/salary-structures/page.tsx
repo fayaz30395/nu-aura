@@ -12,7 +12,8 @@ export default function SalaryStructuresPage() {
   const router = useRouter();
   const {data, isLoading, isError} = useSalaryStructures(0, 20);
 
-  const structures = data?.content || [];
+  const rawContent = data?.content;
+  const structures = Array.isArray(rawContent) ? rawContent : [];
   const hasStructures = structures.length > 0;
 
   return (
@@ -119,11 +120,11 @@ export default function SalaryStructuresPage() {
                       <Table.Tr key={structure.id} className="cursor-pointer">
                         <Table.Td>{structure.employeeName || structure.employeeId}</Table.Td>
                         <Table.Td>{new Date(structure.effectiveDate).toLocaleDateString()}</Table.Td>
-                        <Table.Td>{structure.baseSalary.toLocaleString('en-IN', {
+                        <Table.Td>{(structure.baseSalary ?? 0).toLocaleString('en-IN', {
                           style: 'currency',
                           currency: 'INR'
                         })}</Table.Td>
-                        <Table.Td>{structure.totalCTC.toLocaleString('en-IN', {
+                        <Table.Td>{(structure.totalCTC ?? 0).toLocaleString('en-IN', {
                           style: 'currency',
                           currency: 'INR'
                         })}</Table.Td>

@@ -110,7 +110,8 @@ class FeedService {
         ? await announcementService.getActiveAnnouncements(employeeId, page, size)
         : await announcementService.getAllAnnouncements(page, size);
 
-      return data.content.map((a: Announcement): FeedItem => ({
+      const announcements = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);
+      return announcements.map((a: Announcement): FeedItem => ({
         id: `announcement-${a.id}`,
         type: 'ANNOUNCEMENT',
         timestamp: a.publishedAt || a.createdAt,
@@ -132,7 +133,8 @@ class FeedService {
 
   private async fetchBirthdays(): Promise<FeedItem[]> {
     try {
-      const birthdays = await homeService.getUpcomingBirthdays(14);
+      const birthdaysRaw = await homeService.getUpcomingBirthdays(14);
+      const birthdays = Array.isArray(birthdaysRaw) ? birthdaysRaw : (Array.isArray((birthdaysRaw as Record<string, unknown>)?.content) ? (birthdaysRaw as Record<string, unknown>).content as BirthdayResponse[] : []);
       return birthdays.map((b: BirthdayResponse): FeedItem => ({
         id: `birthday-${b.employeeId}`,
         type: 'BIRTHDAY',
@@ -154,7 +156,8 @@ class FeedService {
 
   private async fetchAnniversaries(): Promise<FeedItem[]> {
     try {
-      const anniversaries = await homeService.getUpcomingAnniversaries(14);
+      const anniversariesRaw = await homeService.getUpcomingAnniversaries(14);
+      const anniversaries = Array.isArray(anniversariesRaw) ? anniversariesRaw : (Array.isArray((anniversariesRaw as Record<string, unknown>)?.content) ? (anniversariesRaw as Record<string, unknown>).content as WorkAnniversaryResponse[] : []);
       return anniversaries.map((a: WorkAnniversaryResponse): FeedItem => ({
         id: `anniversary-${a.employeeId}`,
         type: 'WORK_ANNIVERSARY',
@@ -178,7 +181,8 @@ class FeedService {
 
   private async fetchNewJoiners(): Promise<FeedItem[]> {
     try {
-      const joiners = await homeService.getNewJoinees(30);
+      const joinersRaw = await homeService.getNewJoinees(30);
+      const joiners = Array.isArray(joinersRaw) ? joinersRaw : (Array.isArray((joinersRaw as Record<string, unknown>)?.content) ? (joinersRaw as Record<string, unknown>).content as NewJoineeResponse[] : []);
       return joiners.map((j: NewJoineeResponse): FeedItem => ({
         id: `newjoiner-${j.employeeId}`,
         type: 'NEW_JOINER',
@@ -202,7 +206,8 @@ class FeedService {
   private async fetchRecognitions(): Promise<FeedItem[]> {
     try {
       const data = await recognitionService.getPublicFeed(0, 10);
-      return data.content.map((r: Recognition): FeedItem => ({
+      const recognitionsList = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);
+      return recognitionsList.map((r: Recognition): FeedItem => ({
         id: `recognition-${r.id}`,
         type: 'RECOGNITION',
         timestamp: r.recognizedAt || r.createdAt,
@@ -227,7 +232,8 @@ class FeedService {
   private async fetchWallPosts(page = 0, size = 20): Promise<FeedItem[]> {
     try {
       const data = await wallService.getPosts(page, size);
-      return data.content.map((post: WallPostResponse): FeedItem => ({
+      const posts = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);
+      return posts.map((post: WallPostResponse): FeedItem => ({
         id: `wallpost-${post.id}`,
         type: 'WALL_POST',
         timestamp: post.createdAt,

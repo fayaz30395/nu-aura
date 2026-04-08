@@ -101,8 +101,11 @@ async function fetchPIPs(filters?: PIPFilter): Promise<PIPResponse[]> {
   if (filters?.dateTo) params.append('dateTo', filters.dateTo);
   if (filters?.search) params.append('search', filters.search);
 
-  const res = await apiClient.get<PIPResponse[]>(`/performance/pip?${params}`);
-  return res.data;
+  const res = await apiClient.get(`/performance/pip?${params}`);
+  const data = res.data;
+  if (Array.isArray(data)) return data as PIPResponse[];
+  if (data && Array.isArray((data as Record<string, unknown>).content)) return (data as Record<string, unknown>).content as PIPResponse[];
+  return [];
 }
 
 async function createPIP(data: CreatePIPRequest): Promise<PIPResponse> {

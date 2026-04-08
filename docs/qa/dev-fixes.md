@@ -1,5 +1,50 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 22 — Frontend Array.isArray Guards + Error State Fixes (2026-04-08)
+
+### BUG-013 (QA Phase 1 Session 3): /performance/pip — pips.filter is not a function
+- **File:** `frontend/app/performance/pip/page.tsx`
+- **Root cause:** `fetchPIPs()` returned `res.data` directly, which could be a paginated object `{content: [...]}` instead of a flat array when the backend returns paginated responses. The `= []` default only triggers when data is undefined, not when it's a non-array object.
+- **Fix:** Made `fetchPIPs()` resilient: checks if `res.data` is an array, falls back to `res.data.content` if paginated, returns `[]` otherwise. The existing `Array.isArray(pips)` guard at line 719 was already present but this defense-in-depth at the fetch level prevents the crash earlier.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-010 (QA Session 2): /me/leaves — blank main content area
+- **File:** `frontend/app/me/leaves/page.tsx`
+- **Root cause:** `balancesData`, `leaveTypesData`, and `leaveRequestsData.content` were used with `= []` defaults or `?? []` which don't guard against non-array API responses (paginated objects). If any returned a non-array truthy value, `.map()` or `.filter()` would crash silently in the error boundary, rendering blank content.
+- **Fix:** Added `Array.isArray()` guards for `leaveRequests`, `leaveTypes`, and `leaveBalances` with fallback to `.content` for paginated responses.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-006 (QA Session 2): /recognition — hardened Array.isArray guards
+- **File:** `frontend/app/recognition/page.tsx`
+- **Root cause:** `recognitions` used `activeQuery.data?.content || []` and `leaderboard` used `leaderboardQuery.data || []`. The `|| []` pattern fails when API returns non-array truthy data.
+- **Fix:** Added `Array.isArray()` guards for both `recognitions` (with `.content` fallback) and `leaderboard`.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-008 (QA Phase 1): /helpdesk/tickets — misleading empty state on API 500
+- **File:** `frontend/app/helpdesk/tickets/page.tsx`
+- **Root cause:** `useTickets` query did not destructure `isError`. When API returned 500, `ticketsPage` stayed undefined, `filteredTickets` became `[]`, and the UI showed "No tickets yet" instead of an error message.
+- **Fix:** Added `isError` destructuring from `useTickets`. Added error state rendering with `AlertTriangle` icon and "Failed to load tickets" message before the empty state check. Added `AlertTriangle` to lucide-react imports.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-013 (QA Phase 2 Session 3): FeedService .map() crashes — birthdays/anniversaries/newJoiners
+- **File:** `frontend/lib/services/core/feed.service.ts`
+- **Root cause:** `fetchBirthdays()`, `fetchAnniversaries()`, `fetchNewJoiners()`, `fetchAnnouncements()`, `fetchRecognitions()`, and `fetchWallPosts()` all called `.map()` directly on API response data without checking if it was an array. When backend returns paginated objects (`{content: [...]}`) instead of flat arrays, `.map()` crashes with "X.map is not a function".
+- **Fix:** Added `Array.isArray()` guards with `.content` fallback for all 6 fetch methods. Each now safely extracts the array from either a flat array response or a paginated object response before calling `.map()`.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-011 (QA Phase 2 Session 3): /payroll renders blank for unauthorized users
+- **File:** `frontend/app/payroll/page.tsx`
+- **Root cause:** When user lacks `PAYROLL_VIEW` permission, the page returned `null` at line 104 while the `useEffect` redirect was still async. This caused a blank page (no content rendered) before the redirect completed.
+- **Fix:** Replaced `return null` with a proper "Access Denied" message inside `AppLayout` that shows while the redirect is processing. Uses existing `Banknote` icon.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### Already-fixed pages confirmed (no changes needed):
+- `/admin/office-locations` — Already has `Array.isArray(locationsRaw)` guard (line 76). QA crash was from pre-fix version.
+- `/contracts/templates` — Already has `isError` handling (line 94). No change needed.
+- `/performance/pip` — Already has `Array.isArray(pips)` guard (line 719). Fetch function hardened as additional defense.
+
+---
+
 ## Session 21 — BUG-003 Expense 500 + BUG-004 Asset 500 (BACKEND) (2026-04-08)
 
 ### BUG-003 (P1): GET /api/v1/expenses returns 500, GET /api/v1/expenses/pending-approvals returns 500

@@ -101,7 +101,17 @@ export default function PayrollPage() {
   }
 
   if (!hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+          <Banknote className="h-12 w-12 text-[var(--text-muted)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Access Denied</h2>
+          <p className="text-[var(--text-muted)] max-w-md">
+            You don&apos;t have permission to access the Payroll module. Redirecting...
+          </p>
+        </div>
+      </AppLayout>
+    );
   }
 
   return (
