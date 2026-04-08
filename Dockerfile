@@ -1,6 +1,6 @@
 # Multi-stage build for HRMS Backend
 # Stage 1: Build
-FROM maven:3.9-eclipse-temurin-17-alpine AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 
 WORKDIR /app
 
@@ -39,7 +39,7 @@ COPY backend/src backend/src
 RUN mvn clean package -Dmaven.test.skip=true -B -f backend/pom.xml -Dmaven.repo.local=/root/.m2/repository
 
 # Stage 2: Runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
@@ -61,7 +61,7 @@ EXPOSE 8080
 # Metaspace raised to 192m: Spring Boot 3 + Hibernate 6 + SAML + 274 lazy JPA repos loads
 # ~150-180MB of class metadata on first request wave. Previous 128m caused OOM:Metaspace.
 # Heap reduced from 192m to 160m to compensate — acceptable for single-instance demo load.
-# TieredStopAtLevel=1 disables server JIT — reduces startup memory and time.
+# TieredStopAtLevel=1 disables C2 JIT — reduces startup memory and time on Java 21.
 ENV JAVA_OPTS="-XX:+UseContainerSupport -Xms64m -Xmx160m -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=48m -Xss512k -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
