@@ -716,21 +716,22 @@ export default function PIPPage() {
   };
 
   // Stats
+  const pipList = Array.isArray(pips) ? pips : [];
   const stats = useMemo(() => {
     return {
-      active: pips.filter(p => p.status === 'ACTIVE').length,
-      completed: pips.filter(p => p.status === 'COMPLETED').length,
-      avgDuration: pips.length > 0
+      active: pipList.filter(p => p.status === 'ACTIVE').length,
+      completed: pipList.filter(p => p.status === 'COMPLETED').length,
+      avgDuration: pipList.length > 0
         ? Math.round(
-          pips.reduce((sum, p) => {
+          pipList.reduce((sum, p) => {
             const start = new Date(p.startDate);
             const end = new Date(p.endDate);
             return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-          }, 0) / pips.length
+          }, 0) / pipList.length
         )
         : 0,
     };
-  }, [pips]);
+  }, [pipList]);
 
   if (error) {
     return (
@@ -851,7 +852,7 @@ export default function PIPPage() {
             <div className="flex items-center justify-center py-20">
               <div className="w-8 h-8 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
             </div>
-          ) : pips.length === 0 ? (
+          ) : pipList.length === 0 ? (
             <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
               <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
               <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
@@ -859,7 +860,7 @@ export default function PIPPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {pips.map(pip => (
+              {pipList.map(pip => (
                 <PIPCard
                   key={pip.id}
                   pip={pip}
