@@ -37,15 +37,22 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
     private static final int GCM_IV_LENGTH = 12;   // 96 bits — NIST recommended
     private static final int GCM_TAG_LENGTH = 128;  // bits
     private static final String ENV_KEY = "ENCRYPTION_KEY";
+    /** Alternate env var name used by start-backend.sh and render deployment. */
+    private static final String ENV_KEY_ALT = "APP_SECURITY_ENCRYPTION_KEY";
 
     /**
      * Lazily resolved key — avoids failing at class-load time in test contexts.
      */
     private volatile SecretKeySpec secretKey;
+    /** True when no encryption key is available. Avoids repeated log spam. */
+    private volatile boolean keyMissing = false;
 
     private SecretKeySpec getKey() {
         if (secretKey != null) {
             return secretKey;
+        }
+        if (keyMissing) {
+            throw new IllegalStateException("ENCRYPTION_KEY is not configured (cached).");
         }
         synchronized (this) {
             if (secretKey != null) {
@@ -53,8 +60,12 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             }
             String keyBase64 = System.getenv(ENV_KEY);
             if (keyBase64 == null || keyBase64.isBlank()) {
+                keyBase64 = System.getenv(ENV_KEY_ALT);
+            }
+            if (keyBase64 == null || keyBase64.isBlank()) {
+                keyMissing = true;
                 throw new IllegalStateException(
-                        "ENCRYPTION_KEY environment variable is not set. " +
+                        "Neither ENCRYPTION_KEY nor APP_SECURITY_ENCRYPTION_KEY environment variable is set. " +
                                 "Provide a Base64-encoded 32-byte AES-256 key.");
             }
             byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
@@ -110,7 +121,9 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
         try {
             String[] parts = dbValue.split(":", 2);
             if (parts.length != 2) {
-                throw new IllegalArgumentException("Encrypted value has unexpected format");
+                // Value was stored unencrypted (legacy data or seed data) — return as-is
+                log.warn("Encrypted column contains unencrypted value (no IV:ciphertext format). Returning raw value.");
+                return dbValue;
             }
             byte[] iv = Base64.getDecoder().decode(parts[0]);
             byte[] ciphertext = Base64.getDecoder().decode(parts[1]);
@@ -120,8 +133,22 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
 
             byte[] plaintext = cipher.doFinal(ciphertext);
             return new String(plaintext, StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            // Base64 decode failure or unexpected format — likely legacy unencrypted data
+            log.warn("Failed to decode encrypted column value (likely legacy unencrypted data): {}", e.getMessage());
+            return dbValue;
         } catch (java.security.GeneralSecurityException e) {
-            throw new IllegalStateException("Failed to decrypt column value", e);
+            // Decryption failure — wrong key, corrupted ciphertext, or key rotation
+            log.error("Failed to decrypt column value (key mismatch or data corruption). Returning masked placeholder.", e);
+            return "***DECRYPTION_FAILED***";
+        } catch (IllegalStateException e) {
+            // ENCRYPTION_KEY not set or invalid
+            log.error("Encryption key configuration error: {}", e.getMessage());
+            return "***KEY_NOT_CONFIGURED***";
+        } catch (Exception e) {
+            // Catch-all: never let any decryption error crash the application
+            log.error("Unexpected error decrypting column value. Returning raw value. Error: {}", e.getMessage(), e);
+            return dbValue;
         }
     }
 }

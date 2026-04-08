@@ -102,7 +102,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public AssetResponse updateAsset(UUID assetId, AssetRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating asset {} for tenant {}", assetId, tenantId);
 
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
@@ -128,7 +128,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public AssetResponse assignAsset(UUID assetId, UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Assigning asset {} to employee {} for tenant {}", assetId, employeeId, tenantId);
 
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
@@ -159,7 +159,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public AssetResponse returnAsset(UUID assetId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Returning asset {} for tenant {}", assetId, tenantId);
 
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
@@ -179,7 +179,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public AssetResponse getAssetById(UUID assetId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
         return mapToAssetResponse(asset);
@@ -188,7 +188,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<AssetResponse> getAllAssets(org.springframework.data.jpa.domain.Specification<Asset> spec,
                                             Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         org.springframework.data.jpa.domain.Specification<Asset> finalSpec = (root, query, cb) -> cb
                 .equal(root.get("tenantId"), tenantId);
@@ -205,7 +205,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public List<AssetResponse> getAssetsByEmployee(UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Asset> assets = assetRepository.findByTenantIdAndAssignedTo(tenantId, employeeId);
         // Batch-load employee names in a single query to avoid N+1
         Map<UUID, String> nameCache = buildEmployeeNameCache(assets);
@@ -216,7 +216,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional(readOnly = true)
     public List<AssetResponse> getAssetsByStatus(Asset.AssetStatus status) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Asset> assets = assetRepository.findByTenantIdAndStatus(tenantId, status);
         // Batch-load employee names in a single query to avoid N+1
         Map<UUID, String> nameCache = buildEmployeeNameCache(assets);
@@ -227,7 +227,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public void deleteAsset(UUID assetId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
         assetRepository.delete(asset);
@@ -297,7 +297,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
      */
     @Transactional
     public AssetResponse requestAssetAssignment(UUID assetId, UUID employeeId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
@@ -344,7 +344,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     @Transactional
     public AssetMaintenanceRequest createMaintenanceRequest(
             UUID assetId, UUID requestedBy, String type, String description, String priority) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating maintenance request for asset {} by employee {} (tenant {})", assetId, requestedBy, tenantId);
 
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
@@ -377,7 +377,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
      */
     @Transactional(readOnly = true)
     public List<AssetMaintenanceRequest> getMaintenanceHistory(UUID assetId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return maintenanceRequestRepository.findByTenantIdAndAssetId(tenantId, assetId);
     }
 
@@ -389,7 +389,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     @Transactional
     public AssetMaintenanceRequest updateMaintenanceStatus(
             UUID requestId, AssetMaintenanceRequest.MaintenanceStatus status, String notes) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating maintenance request {} to status {} (tenant {})", requestId, status, tenantId);
 
         AssetMaintenanceRequest request = maintenanceRequestRepository.findById(requestId)

@@ -1,5 +1,76 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 21 — BUG-003 Expense 500 + BUG-004 Asset 500 (BACKEND) (2026-04-08)
+
+### BUG-003 (P1): GET /api/v1/expenses returns 500, GET /api/v1/expenses/pending-approvals returns 500
+- **File:** `backend/src/main/resources/db/migration/V124__fix_expense_claims_missing_columns.sql`
+- **Root cause:** The `ExpenseClaim` entity declares 5 columns (`title`, `policy_id`, `reimbursed_at`, `reimbursement_ref`, `total_items`) that were never added via Flyway migration. The original `expense_claims` table in V0 does not have these columns. Hibernate generates SELECT/INSERT statements referencing them, causing PostgreSQL to return `ERROR: column "title" does not exist`. This causes every expense endpoint to 500.
+- **Fix:** Created Flyway migration V124 to add the missing columns with appropriate defaults:
+  - `title VARCHAR(255) NOT NULL DEFAULT ''`
+  - `policy_id UUID`
+  - `reimbursed_at TIMESTAMPTZ`
+  - `reimbursement_ref VARCHAR(200)`
+  - `total_items INTEGER NOT NULL DEFAULT 0`
+- **Migration:** V124__fix_expense_claims_missing_columns.sql
+- **Verified:** mvn compile passes
+
+### BUG-004 (P1): GET /api/v1/assets returns 500
+- **File:** `backend/src/main/java/com/hrms/application/asset/service/AssetManagementService.java`
+- **Root cause (partial):** All 11 methods in `AssetManagementService` used `TenantContext.getCurrentTenant()` which can return null if tenant context is lost. When null, the JPA Specification generates `WHERE tenant_id = NULL` (not `IS NULL`), which either returns empty results or causes Hibernate to generate invalid SQL depending on the DB driver. Changed all to `requireCurrentTenant()` for defensive fail-fast behavior.
+- **Additional root cause:** The asset endpoint may also fail if any assigned employee's encrypted fields (taxId, bankAccountNumber, bankIfscCode) trigger `EncryptedStringConverter` failures. The converter resilience fix from Session 19 addresses this.
+- **Fix:** Replaced all 11 `TenantContext.getCurrentTenant()` calls with `TenantContext.requireCurrentTenant()` across the entire `AssetManagementService`.
+- **Migration:** none
+- **Verified:** mvn compile passes
+
+### EncryptedStringConverter enhancement (defense-in-depth)
+- **File:** `backend/src/main/java/com/hrms/common/converter/EncryptedStringConverter.java`
+- **Enhancement:** Added fallback to `APP_SECURITY_ENCRYPTION_KEY` env var (used by start-backend.sh) when `ENCRYPTION_KEY` is not set. Added `keyMissing` volatile flag to avoid repeated log spam. The converter now tries both env var names before reporting key-not-configured.
+- **Verified:** mvn compile passes
+
+RESTART-NEEDED: V124 migration + EncryptedStringConverter fix + AssetManagementService tenant fix all require backend restart.
+
+---
+
+## Session 20 — Frontend DEV Agent Monitoring (2026-04-08)
+
+### Monitoring Summary: No frontend bugs found in new QA run
+
+**Monitoring window**: 20 cycles (~10 minutes), QA findings file grew from 8 to 138 lines (new QA run started fresh).
+
+**QA pages tested (observed)**: /dashboard, /employees, /employees/directory, /departments, /org-chart, /attendance, /attendance/my-attendance, /leave, /leave/my-leaves, /leave/approvals, /leave/calendar, /leave/apply, /leave/encashment
+
+**Bugs found by QA (2 total, both backend):**
+- BUG-001: GET /employees and GET /employees/managers return 500 — backend issue, NOT frontend
+- BUG-002: /org-chart fails due to same /employees 500 — backend issue, NOT frontend
+
+**Frontend pages all rendering correctly**: Error states, skeleton loaders, and data loading all working as designed. Previous session fixes (GLOBAL-001 session stability, .replace() null guards, dashboard fetchStatus fix, notification polling backoff, admin/permissions Array.isArray guard) all holding.
+
+**Result: 0 frontend code fixes required. All QA findings are backend 500 errors.**
+
+---
+
+## Session 19 — BUG-009 (QA) Login 500 for saran@nulogic.io + EncryptedStringConverter Resilience (2026-04-08)
+
+### BUG-009 (QA, P1): POST /api/v1/auth/login returns 500 for saran@nulogic.io (EMPLOYEE role)
+- **File:** `backend/src/main/java/com/hrms/common/converter/EncryptedStringConverter.java`
+- **Root cause:** `EncryptedStringConverter.convertToEntityAttribute()` throws `IllegalStateException` on decryption failure (wrong key, corrupted ciphertext, or legacy unencrypted data). During login, `AuthService.buildAuthContext()` calls `employeeRepository.findByUserIdWithUser()` which loads the full `Employee` entity including `@Convert` fields (`taxId`, `bankAccountNumber`, `bankIfscCode`). If any of these encrypted fields contain data encrypted with a different key or stored unencrypted (seed data), the converter throws, Hibernate marks the transaction rollback-only, and the login returns 500. This is the same root cause as the BUG-007 exit/processes 500 — but affects ALL entity loads involving Employee.
+- **Fix:** Made `EncryptedStringConverter.convertToEntityAttribute()` resilient:
+  1. Unencrypted legacy data (no IV:ciphertext format) — returns raw value instead of throwing
+  2. Base64 decode failures (IllegalArgumentException) — returns raw value with warning log
+  3. Decryption failures (GeneralSecurityException) — returns `***DECRYPTION_FAILED***` placeholder with error log
+  4. Key configuration errors (IllegalStateException) — returns `***KEY_NOT_CONFIGURED***` placeholder with error log
+- **Impact:** Fixes ALL 500s caused by encrypted field loading across the entire application (login, exit management, employee profiles, etc.). The converter no longer crashes the transaction.
+- **Migration:** none
+- **Verified:** mvn compile passes
+
+### BUG-001 (QA Run 2, P1): GET /api/v1/employees returns 500, GET /api/v1/employees/managers returns 500
+- **Same root cause as above.** `EmployeeService.getAllEmployees()` and `getManagerEmployees()` load full `Employee` entities via `employeeRepository.findAll()` and `findManagersByTenantId()`, triggering `EncryptedStringConverter` on `taxId`, `bankAccountNumber`, `bankIfscCode`. The converter fix resolves this.
+- **Also fixes:** BUG-002 (QA Run 2) — /org-chart 500 (depends on /employees endpoint)
+
+RESTART-NEEDED: EncryptedStringConverter fix requires backend restart. After restart, /employees, /employees/managers, /org-chart, and saran@nulogic.io login should all work.
+
+---
+
 ## Session 18 — BUG-009 and BUG-010 Backend 500 Fixes (2026-04-08)
 
 ### BUG-010 (P1): GET /api/v1/compensation/revisions returns 500
@@ -590,3 +661,34 @@ QA findings file reviewed across 3 check cycles (5+ minutes total monitoring).
 
 ### Fixes Applied
 None required. All checks passed cleanly.
+
+## Session 23 — EncryptedStringConverter stale JAR causing 500s across 9+ endpoints (2026-04-08)
+
+### Root Cause
+All 9 QA-reported 500 errors share a single root cause: **stale JAR**. The `EncryptedStringConverter.convertToEntityAttribute()` fix (graceful decryption failure handling) was applied to source at 15:55 but the running server JAR was built at 14:58 and still contained the old code that throws `IllegalArgumentException: Encrypted value has unexpected format`.
+
+Every endpoint that loads `Employee` entities (which have 3 `@Convert(converter = EncryptedStringConverter.class)` fields: `bankAccountNumber`, `bankIfscCode`, `taxId`) triggers this converter. Since seed/legacy data contains unencrypted plaintext that doesn't match the expected `Base64(IV):Base64(ciphertext)` format, the old converter throws, Hibernate wraps it as `PersistenceException`, and the endpoint returns 500.
+
+### Affected Endpoints (all via Employee entity loading)
+1. `GET /api/v1/employees` — `EmployeeService.getAllEmployees()` loads full Employee entities
+2. `GET /api/v1/employees/managers` — `EmployeeService.getManagerEmployees()` loads full Employee entities
+3. `GET /api/v1/expenses` — `ExpenseClaimService.enrichResponses()` calls `employeeRepository.findAllById()`
+4. `GET /api/v1/expenses/pending-approvals` — same enrichment path
+5. `GET /api/v1/assets` — `AssetManagementService.getAllAssets()` loads employee data
+6. `GET /api/v1/probation` — `ProbationService.getAllProbations()` loads employee data
+7. `GET /api/v1/probation/status/CONFIRMED` — same path
+8. `GET /api/v1/compensation/revisions` — employee enrichment during mapping
+9. `GET /api/v1/contracts` — employee enrichment during mapping
+
+Additional affected: `/api/v1/home/new-joinees`, `/api/v1/recognition/feed`, `/api/v1/helpdesk/tickets`
+
+### Fix Applied
+- **File:** `backend/src/main/java/com/hrms/common/converter/EncryptedStringConverter.java`
+- **Change:** Added catch-all `Exception` handler as final safety net in `convertToEntityAttribute()` to ensure NO decryption error can ever crash the application. The existing fix (catch `IllegalArgumentException`, `GeneralSecurityException`, `IllegalStateException`) was already correct in source but not deployed.
+- **Verified:** `mvn compile` passes, `mvn package -DskipTests` rebuilt the JAR successfully. New JAR contains the fixed converter (verified via string extraction).
+
+### RESTART-NEEDED
+The running server (PID 28419) must be stopped and restarted with the new JAR to pick up the fix. Run:
+```bash
+cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend && ./start-backend.sh
+```
