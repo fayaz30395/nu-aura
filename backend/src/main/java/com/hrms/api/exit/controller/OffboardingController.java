@@ -37,7 +37,7 @@ public class OffboardingController {
      * Create a new offboarding process (exit process).
      */
     @PostMapping
-    @RequiresPermission(Permission.EXIT_INITIATE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Initiate an offboarding process")
     public ResponseEntity<ExitProcessResponse> createOffboarding(@Valid @RequestBody ExitProcessRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitProcess(request));
@@ -47,7 +47,7 @@ public class OffboardingController {
      * Get all offboarding processes.
      */
     @GetMapping
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get all offboarding processes")
     public ResponseEntity<Page<ExitProcessResponse>> getAllOffboardings(Pageable pageable) {
         return ResponseEntity.ok(exitService.getAllExitProcesses(pageable));
@@ -57,7 +57,7 @@ public class OffboardingController {
      * Get offboarding process by ID.
      */
     @GetMapping("/{id}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get offboarding process by ID")
     public ResponseEntity<ExitProcessResponse> getOffboardingById(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.getExitProcessById(id));
@@ -67,7 +67,7 @@ public class OffboardingController {
      * Get offboarding process by employee ID.
      */
     @GetMapping("/employee/{employeeId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get offboarding process by employee ID")
     public ResponseEntity<ExitProcessResponse> getOffboardingByEmployee(@PathVariable UUID employeeId) {
         return ResponseEntity.ok(exitService.getExitProcessByEmployee(employeeId));
@@ -77,7 +77,7 @@ public class OffboardingController {
      * Update offboarding process.
      */
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Update an offboarding process")
     public ResponseEntity<ExitProcessResponse> updateOffboarding(
             @PathVariable UUID id,
@@ -89,7 +89,7 @@ public class OffboardingController {
      * Update offboarding status.
      */
     @PatchMapping("/{id}/status")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Update offboarding process status")
     public ResponseEntity<ExitProcessResponse> updateOffboardingStatus(
             @PathVariable UUID id,
@@ -101,7 +101,7 @@ public class OffboardingController {
      * Get offboarding processes by status.
      */
     @GetMapping("/status/{status}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get offboarding processes by status")
     public ResponseEntity<Page<ExitProcessResponse>> getOffboardingsByStatus(
             @PathVariable ExitProcess.ExitStatus status,
@@ -117,7 +117,7 @@ public class OffboardingController {
      * Delete offboarding process.
      */
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Delete an offboarding process")
     public ResponseEntity<Void> deleteOffboarding(@PathVariable UUID id) {
         exitService.deleteExitProcess(id);

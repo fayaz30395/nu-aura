@@ -36,13 +36,13 @@ public class FnFController {
     // ---- FnF Settlement endpoints (authenticated) ----
 
     @GetMapping("/{exitProcessId}/fnf")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<FnFCalculationResponse> getOrCalculate(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(fnfService.getOrCalculate(exitProcessId));
     }
 
     @PutMapping("/{exitProcessId}/fnf/adjustments")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<FnFCalculationResponse> adjust(
             @PathVariable UUID exitProcessId,
             @Valid @RequestBody FnFAdjustmentRequest request) {
@@ -50,13 +50,13 @@ public class FnFController {
     }
 
     @PostMapping("/{exitProcessId}/fnf/approve")
-    @RequiresPermission(Permission.EXIT_APPROVE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<FnFCalculationResponse> approve(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(fnfService.approve(exitProcessId));
     }
 
     @GetMapping("/fnf")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<Page<FnFCalculationResponse>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -67,7 +67,7 @@ public class FnFController {
     // ---- Generate public token for exit interview ----
 
     @PostMapping("/interviews/{interviewId}/generate-token")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<String> generatePublicToken(@PathVariable UUID interviewId) {
         String token = publicInterviewService.generatePublicToken(interviewId);
         return ResponseEntity.ok(token);

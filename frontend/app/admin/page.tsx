@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (authChecked && !isAdmin) {
-      router.push('/');
+      router.replace('/me/dashboard');
     }
   }, [authChecked, isAdmin, router]);
 
@@ -124,8 +124,15 @@ export default function AdminDashboardPage() {
   const canPrevious = page > 0;
   const canNext = usersPage ? page < usersPage.totalPages - 1 : false;
 
-  // Show nothing while auth store hydrates or if non-admin (redirect in-flight)
-  if (!authChecked || !isAdmin) return null;
+  // Show nothing while auth store hydrates; redirect is in-flight for non-admin users
+  if (!authChecked) return null;
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-[var(--text-muted)]">Redirecting to dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <AdminPageContent className="p-4 md:p-6 lg:p-8">

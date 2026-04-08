@@ -146,13 +146,29 @@ public class ContractService {
     }
 
     /**
-     * Get all contracts for tenant
+     * Get all contracts for tenant.
+     * Employees with only CONTRACT:VIEW see their own contracts;
+     * HR Admin / HR Manager / SuperAdmin see all tenant contracts.
      */
     @Transactional(readOnly = true)
     public Page<ContractListDto> getAllContracts(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findByTenantId(tenantId, pageable)
-                .map(this::toListDto);
+
+        // If the caller is HR-level or above, return all contracts for the tenant.
+        // Otherwise, scope to the current employee's own contracts only.
+        if (SecurityContext.isHRManager()) {
+            return contractRepository.findByTenantId(tenantId, pageable)
+                    .map(this::toListDto);
+        }
+
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId != null) {
+            return contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
+                    .map(this::toListDto);
+        }
+
+        // Fallback: no employee ID on context — return empty page
+        return Page.empty(pageable);
     }
 
     /**
