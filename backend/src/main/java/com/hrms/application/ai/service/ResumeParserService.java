@@ -50,6 +50,9 @@ public class ResumeParserService {
     public ResumeParseResponse parseResumeFromUrl(String resumeUrl) {
         log.info("Parsing resume from URL: {}", resumeUrl);
         try {
+            // SSRF protection: validate URL before making any outbound request
+            com.hrms.common.validation.SsrfProtectionUtils.validateUrlSafety(resumeUrl);
+
             java.net.URI uri = java.net.URI.create(resumeUrl);
             String scheme = uri.getScheme();
             if (!"https".equalsIgnoreCase(scheme) && !"http".equalsIgnoreCase(scheme)) {

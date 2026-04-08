@@ -7,9 +7,13 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.platform.service.HrmsPermissionInitializer;
 import com.hrms.application.user.service.ImplicitRoleService;
+import com.hrms.common.config.PasswordPolicyConfig;
 import com.hrms.common.exception.AuthenticationException;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
+import com.hrms.domain.user.PasswordHistory;
+import com.hrms.domain.user.PasswordHistoryRepository;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.UserPrincipal;
 import com.hrms.domain.employee.Employee;
@@ -68,6 +72,8 @@ public class AuthService {
     private final MetricsService metricsService;
     private final PasswordPolicyService passwordPolicyService;
     private final AccountLockoutService accountLockoutService;
+    private final PasswordHistoryRepository passwordHistoryRepository;
+    private final PasswordPolicyConfig passwordPolicyConfig;
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
     @Value("${app.google.client-id:}")
@@ -98,7 +104,9 @@ public class AuthService {
                        ImplicitRoleService implicitRoleService,
                        MetricsService metricsService,
                        PasswordPolicyService passwordPolicyService,
-                       AccountLockoutService accountLockoutService) {
+                       AccountLockoutService accountLockoutService,
+                       PasswordHistoryRepository passwordHistoryRepository,
+                       PasswordPolicyConfig passwordPolicyConfig) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -110,6 +118,8 @@ public class AuthService {
         this.metricsService = metricsService;
         this.passwordPolicyService = passwordPolicyService;
         this.accountLockoutService = accountLockoutService;
+        this.passwordHistoryRepository = passwordHistoryRepository;
+        this.passwordPolicyConfig = passwordPolicyConfig;
     }
 
     @Transactional(readOnly = true)
@@ -171,6 +181,15 @@ public class AuthService {
 
             User user = userRepository.findByEmailAndTenantId(request.getEmail(), tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
+
+            // Check password expiry (90-day policy)
+            if (user.getPasswordChangedAt() != null && passwordPolicyConfig.getMaxAgeDays() > 0) {
+                long daysSinceChange = java.time.temporal.ChronoUnit.DAYS.between(
+                        user.getPasswordChangedAt().toLocalDate(), LocalDate.now());
+                if (daysSinceChange > passwordPolicyConfig.getMaxAgeDays()) {
+                    throw new BusinessException("Your password has expired. Please reset your password.");
+                }
+            }
 
             user.recordSuccessfulLogin();
             userRepository.save(user);
@@ -356,6 +375,29 @@ public class AuthService {
                 throw new AuthenticationException("Google access token does not contain email");
             }
 
+            // Verify token audience matches our client ID to prevent token substitution attacks
+            HttpRequest tokenInfoRequest = HttpRequest.newBuilder()
+                    .uri(URI.create("https://oauth2.googleapis.com/tokeninfo?access_token=" + accessToken))
+                    .GET()
+                    .build();
+            try {
+                HttpResponse<String> tokenInfoResponse = client.send(tokenInfoRequest, HttpResponse.BodyHandlers.ofString());
+                if (tokenInfoResponse.statusCode() == 200) {
+                    JsonNode tokenInfoJson = mapper.readTree(tokenInfoResponse.body());
+                    String tokenAudience = tokenInfoJson.has("aud") ? tokenInfoJson.get("aud").asText() : null;
+                    if (!googleClientId.equals(tokenAudience)) {
+                        log.warn("Google access token audience mismatch: expected={}", googleClientId);
+                        throw new AuthenticationException("Invalid Google token audience");
+                    }
+                } else {
+                    log.warn("Failed to verify Google access token audience: tokeninfo returned {}", tokenInfoResponse.statusCode());
+                    throw new AuthenticationException("Unable to verify Google token");
+                }
+            } catch (IOException | InterruptedException e) {
+                log.warn("Failed to verify Google access token audience");
+                throw new AuthenticationException("Unable to verify Google token");
+            }
+
             return userInfo;
         } catch (IOException | InterruptedException e) {
             log.error("Error calling Google userinfo API", e);
@@ -363,6 +405,7 @@ public class AuthService {
         }
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse refresh(String refreshToken) {
         if (tokenProvider.validateRefreshToken(refreshToken)) {
             String email = tokenProvider.getUsernameFromToken(refreshToken);
@@ -424,11 +467,28 @@ public class AuthService {
             throw new ValidationException("New password must be different from current password");
         }
 
+        // Check password history — prevent reuse of last N passwords
+        int historyCount = passwordPolicyConfig.getHistoryCount();
+        if (historyCount > 0) {
+            List<PasswordHistory> history = passwordHistoryRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+            for (int i = 0; i < Math.min(historyCount, history.size()); i++) {
+                if (passwordEncoder.matches(request.getNewPassword(), history.get(i).getPasswordHash())) {
+                    throw new BusinessException("New password cannot be the same as your last " + historyCount + " passwords");
+                }
+            }
+        }
+
+        // Capture old hash before overwriting
+        String oldPasswordHash = user.getPasswordHash();
+
         // Hash and update new password
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordChangedAt(LocalDateTime.now());
 
         userRepository.save(user);
+
+        // Save old password to history
+        passwordHistoryRepository.save(new PasswordHistory(user.getId(), user.getTenantId(), oldPasswordHash));
 
         // Revoke all existing tokens for this user (force re-login on all devices)
         tokenProvider.revokeAllUserTokens(userId.toString());
@@ -620,7 +680,7 @@ public class AuthService {
 
             // If user authenticates via Google SSO, don't send a reset email
             if (user.getAuthProvider() == com.hrms.domain.user.AuthProvider.GOOGLE) {
-                log.info("Password reset requested for Google SSO user: {} — redirecting to Google", email);
+                log.info("Password reset requested for SSO user -- redirecting to identity provider");
                 return "GOOGLE";
             }
 
@@ -630,7 +690,7 @@ public class AuthService {
             user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
             userRepository.save(user);
 
-            log.info("Password reset requested for user: {}", email);
+            log.info("Password reset requested for user ID: {}", user.getId());
 
             // Send password reset email
             String userName = user.getFullName() != null ? user.getFullName() : email;
@@ -638,7 +698,7 @@ public class AuthService {
             return "LOCAL";
         } else {
             // Log but don't reveal that user doesn't exist (security best practice)
-            log.info("Password reset requested for non-existent email: {}", email);
+            log.debug("Password reset requested for non-existent account");
             return "LOCAL";
         }
     }
@@ -670,6 +730,20 @@ public class AuthService {
                 user.getFullName()
         );
 
+        // Check password history — prevent reuse of last N passwords
+        int historyCount = passwordPolicyConfig.getHistoryCount();
+        if (historyCount > 0) {
+            List<PasswordHistory> history = passwordHistoryRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+            for (int i = 0; i < Math.min(historyCount, history.size()); i++) {
+                if (passwordEncoder.matches(request.getNewPassword(), history.get(i).getPasswordHash())) {
+                    throw new BusinessException("New password cannot be the same as your last " + historyCount + " passwords");
+                }
+            }
+        }
+
+        // Capture old hash before overwriting
+        String oldPasswordHash = user.getPasswordHash();
+
         // Update password and clear reset token
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordChangedAt(LocalDateTime.now());
@@ -677,7 +751,10 @@ public class AuthService {
         user.setPasswordResetTokenExpiry(null);
         userRepository.save(user);
 
-        log.info("Password reset successful for user: {}", user.getEmail());
+        // Save old password to history
+        passwordHistoryRepository.save(new PasswordHistory(user.getId(), user.getTenantId(), oldPasswordHash));
+
+        log.info("Password reset successful for user ID: {}", user.getId());
 
         // Send confirmation email
         String userName = user.getFullName() != null ? user.getFullName() : user.getEmail();

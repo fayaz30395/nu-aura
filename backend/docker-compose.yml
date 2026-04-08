@@ -16,7 +16,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=hrms_pass
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
-      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-that-is-at-least-256-bits-long-for-hs512}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET must be set}
       - GOOGLE_DRIVE_CREDENTIALS_PATH=/etc/secrets/google-drive/credentials.json
       - GOOGLE_DRIVE_ROOT_FOLDER_ID=${GOOGLE_DRIVE_ROOT_FOLDER_ID}
     depends_on:

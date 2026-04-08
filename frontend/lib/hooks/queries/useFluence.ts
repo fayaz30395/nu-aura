@@ -246,6 +246,7 @@ export function useBlogCategories(enabled: boolean = true) {
     queryFn: () => fluenceService.listBlogCategories(),
     enabled,
     staleTime: 10 * 60 * 1000, // 10 minutes, categories change less frequently
+    retry: 1, // Limit retries to prevent perceived infinite loading on errors
   });
 }
 
@@ -271,6 +272,7 @@ export function useFluenceTemplates(
     queryFn: () => fluenceService.listTemplates(page, size, categoryId),
     enabled,
     staleTime: 2 * 60 * 1000,
+    retry: 1, // Limit retries to prevent perceived infinite loading on errors
   });
 }
 

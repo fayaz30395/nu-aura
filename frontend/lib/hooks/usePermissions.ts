@@ -606,7 +606,16 @@ interface UsePermissionsReturn {
  * if (hasAnyRole(Roles.HR_ADMIN, Roles.HR_MANAGER)) { ... }
  */
 export function usePermissions(): UsePermissionsReturn {
-  const {user, hasHydrated} = useAuth();
+  const {user, hasHydrated, isAuthenticated} = useAuth();
+
+  // BUG-011/014/020: isReady must account for session restoration.
+  // Zustand only persists `isAuthenticated` (not the user object), so after a page
+  // refresh `hasHydrated=true` but `user=null` until restoreSession() completes.
+  // If we report isReady=true in that window, permission checks run with empty roles
+  // and SuperAdmin gets "Access Denied". Fix: when the user claims to be authenticated
+  // but the user object hasn't loaded yet, keep isReady=false so that PermissionGate,
+  // AuthGuard, and page-level checks show a loading state instead of denying access.
+  const isReady = hasHydrated && (!isAuthenticated || !!user);
 
   // Extract all permission codes from user's roles
   // Normalizes app-prefixed permissions (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")
@@ -763,7 +772,7 @@ export function usePermissions(): UsePermissionsReturn {
     isAdmin,
     isHR,
     isManager,
-    isReady: hasHydrated,
+    isReady,
   };
 }
 

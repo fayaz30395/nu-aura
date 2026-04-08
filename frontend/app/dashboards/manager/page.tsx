@@ -156,19 +156,28 @@ export default function ManagerDashboardPage() {
   if (error || !dashboardData) {
     return (
       <AppLayout activeMenuItem="dashboard">
-        <div className="p-6">
-          <div
-            className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl p-6 flex items-center gap-4">
-            <AlertCircle
-              className="h-8 w-8 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-            <div>
-              <h3
-                className="text-xl font-semibold text-danger-900 dark:text-danger-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                Error Loading Dashboard
-              </h3>
-              <p
-                className="text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : String(error)}</p>
-            </div>
+        <div className="space-y-6 p-6">
+          <div>
+            <h1 className="text-2xl font-bold skeuo-emboss">Team Dashboard</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Manager overview</p>
+          </div>
+          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
+            <p className="text-sm text-[var(--text-secondary)] flex-1">
+              Team dashboard data is temporarily unavailable. Some metrics may not be displayed.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {['Team Size', 'Present Today', 'On Leave', 'Pending Actions'].map((label) => (
+              <Card key={label}>
+                <CardContent className="p-6">
+                  <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
+                  <p className="text-caption mt-1">No data</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </AppLayout>

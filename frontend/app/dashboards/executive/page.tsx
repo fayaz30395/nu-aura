@@ -193,21 +193,29 @@ export default function ExecutiveDashboardPage() {
   if (error || !data) {
     return (
       <AppLayout activeMenuItem="executive-dashboard">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="max-w-md">
-            <CardHeader>
-              <div className="flex items-center gap-4 text-danger-600">
-                <AlertCircle className="h-6 w-6"/>
-                <CardTitle>Error Loading Dashboard</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-[var(--text-secondary)] mb-4">{error?.message || 'Unable to load dashboard data'}</p>
-              <Button variant="primary" onClick={() => refetch()} className="w-full">
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <div className="row-between">
+            <div>
+              <h1 className="text-2xl font-bold skeuo-emboss">Executive Dashboard</h1>
+              <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+            <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
+            <p className="text-sm text-[var(--text-secondary)] flex-1">
+              Executive dashboard data is temporarily unavailable. Some metrics may not be displayed.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {['Total Headcount', 'Revenue Per Employee', 'Attrition Rate', 'Engagement Score'].map((label) => (
+              <Card key={label} className="p-6">
+                <p className="text-sm font-medium text-[var(--text-muted)]">{label}</p>
+                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">--</p>
+                <p className="text-caption mt-1">No data</p>
+              </Card>
+            ))}
+          </div>
         </div>
       </AppLayout>
     );

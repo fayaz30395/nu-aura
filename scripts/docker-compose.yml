@@ -78,8 +78,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -102,16 +102,16 @@ services:
         condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:-jdbc:postgresql://ep-green-flower-anmsqzxh.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require}
-      SPRING_DATASOURCE_USERNAME: ${NEON_DB_USERNAME:-neondb_owner}
-      SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:-npg_p3Nnmrd9PvhB}
+      SPRING_DATASOURCE_URL: ${NEON_JDBC_URL:?NEON_JDBC_URL must be set}
+      SPRING_DATASOURCE_USERNAME: ${NEON_DB_USERNAME:?NEON_DB_USERNAME must be set}
+      SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:?NEON_DB_PASSWORD must be set}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-change-in-production-minimum-32-chars}
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:?MINIO_ROOT_USER must be set}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
       APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:-local-dev-enc-key-change-in-prod-32b}
       FRONTEND_URL: http://localhost:3000
     networks:

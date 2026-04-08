@@ -25,7 +25,7 @@ export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {data: templatesData, isLoading} = useFluenceTemplates(0, 20);
+  const {data: templatesData, isLoading, isError} = useFluenceTemplates(0, 20);
 
   const templates: Template[] = useMemo(
     () => templatesData?.content || [],
@@ -100,7 +100,7 @@ export default function TemplatesPage() {
         </div>
 
         {/* Templates Grid */}
-        {isLoading ? (
+        {isLoading && !isError ? (
           <div className={layout.grid3}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Card
@@ -111,6 +111,24 @@ export default function TemplatesPage() {
               </Card>
             ))}
           </div>
+        ) : isError ? (
+          <motion.div
+            initial={{opacity: 0, scale: 0.95}}
+            animate={{opacity: 1, scale: 1}}
+            transition={{duration: 0.3, ease: 'easeOut'}}
+          >
+            <Card className={`${dsCard.base} border-dashed border-2`}>
+              <CardContent className="py-16 text-center">
+                <FileText className={`${iconSize.statCard} mx-auto mb-4 text-[var(--text-muted)]`}/>
+                <h3 className={`${typography.sectionTitle} mb-2`}>
+                  Unable to load templates
+                </h3>
+                <p className={`${typography.bodySecondary} mb-6`}>
+                  There was an error fetching templates. Please try again later.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : templates.length === 0 ? (
           <motion.div
             initial={{opacity: 0, scale: 0.95}}

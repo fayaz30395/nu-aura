@@ -1,10 +1,11 @@
 # NU-AURA Chrome QA Findings
 
-**Date**: 2026-04-08 (Run 2)
-**Tester**: Claude QA Agent
+**Date**: 2026-04-08 (Run 4)
+**Tester**: Claude QA Agent (Opus 4.6)
 **Browser**: Chrome (localhost:3000)
 **Role**: Super Admin (Fayaz M) unless noted
-**Backend**: Spring Boot :8080 | Frontend: Next.js :3000
+**Backend**: Spring Boot :8080 (dev profile, UP) | Frontend: Next.js :3000 (running)
+**Method**: Client-side navigation (sidebar links) to preserve Zustand session state. Full-page navigation via address bar triggers GLOBAL-001 every time.
 
 ---
 
@@ -12,108 +13,152 @@
 
 | Batch | Pages | PASS | PASS-EMPTY | FAIL | BUG |
 |-------|-------|------|------------|------|-----|
-| 1 -- Core HRMS | 10 | 6 | 1 | 2 | 1 |
-| 2 -- HR Config & Policies | 10 | 6 | 0 | 1 | 3 |
+| 1 -- Core HRMS | 10 | 8 | 1 | 0 | 1 |
+| 2 -- HR Config & Policies | 10 | 7 | 0 | 0 | 3 |
 | 3 -- Recruitment | 5 | 3 | 0 | 1 | 1 |
-| 4 -- Performance & Growth | 6 | 3 | 0 | 1 | 2 |
+| 4 -- Performance & Growth | 6 | 4 | 0 | 0 | 2 |
 | 5 -- NU-Fluence | 7 | 2 | 0 | 3 | 2 |
-| 6 -- Admin & Profile | 3 | 1 | 0 | 1 | 1 |
-| **TOTAL** | **41** | **21** | **1** | **9** | **10** |
+| 6 -- Admin & Profile | 4 | 2 | 0 | 1 | 1 |
+| **TOTAL** | **42** | **26** | **1** | **5** | **10** |
 
-**Session was re-established 3 times** during this run due to the critical session instability bug.
+**Session was re-established 6 times** during Run 4. GLOBAL-001 triggers on EVERY full-page navigation.
+**Backend is operational** (dev profile, Redis UP, PostgreSQL UP with high latency ~500-700ms).
+
+### Run 4 vs Run 3 Key Changes
+| Item | Run 3 | Run 4 |
+|------|-------|-------|
+| /dashboard | FAIL (error state) | **PASS** (loads fully with client-side nav) |
+| Session loss trigger | ~30-90 seconds | Instant on every full-page navigation |
+| Backend /auth/refresh | 500 (intermittent) | **500 consistently** (root cause identified) |
+| Backend health | Partially down | UP (dev profile, all components healthy) |
+| Root cause | "POST /auth/refresh 500" | **Confirmed: /auth/refresh 500 + Zustand hydration gap** |
 
 ---
 
 ## Critical Cross-Cutting Issues
 
-### GLOBAL-001: Session Instability (CRITICAL -- P0)
-Demo login sessions degrade within 30-90 seconds of navigation. The user identity drops from "Fayaz M / SUPER ADMIN" to "User / Employee", causing:
-- Sidebar navigation to lose menu items
-- Pages to show "Access Denied" (false RBAC failures)
-- Pages to show "No Employee Profile Linked"
-- Redirects to /auth/login during page transitions
-- "Preparing your workspace..." infinite loading states
+### GLOBAL-001: Session Instability on Page Navigation (CRITICAL -- P0)
 
-**Root cause**: Likely the demo account login does not properly set JWT httpOnly cookie, or the token refresh mechanism (`TokenRefreshManager` in providers.tsx) is failing silently. The session degrades rather than cleanly expiring. Cross-sub-app navigation (e.g., from NU-Grow /performance to NU-Fluence /fluence/blogs) is a particularly reliable trigger for session loss.
+**Symptom**: Every full-page navigation (browser address bar, F5 refresh, or `window.location.href` redirect) causes the user identity to drop from "Fayaz M / SUPER ADMIN" to "User / Employee". The header shows fallback defaults (`userName || 'User'` and `userRole || 'Employee'` from AppLayout.tsx line 322-324). "Preparing your workspace..." loading screen appears indefinitely.
 
-**Impact**: Makes QA testing unreliable. Some "Access Denied" results below may be false positives caused by this session bug rather than actual RBAC issues.
+**Root Cause (Run 4 deep investigation)**:
+
+The session failure is a **two-part bug** involving the frontend Zustand store design and a backend refresh endpoint failure:
+
+**Part 1: Zustand Store Design (Frontend)**
+- `useAuth.ts` uses `zustand/middleware/persist` with `sessionStorage`
+- `partialize` on line 249 ONLY persists `isAuthenticated: boolean` -- the `user` object is NOT persisted
+- Comment on line 247: "HIGH-3: Only persist auth flag -- no PII (user object) in sessionStorage"
+- On every full-page navigation, React remounts, Zustand rehydrates with `isAuthenticated: true` but `user: null`
+- `AuthGuard.tsx` line 92 detects `isAuthenticated && !user` and calls `restoreSession()`
+
+**Part 2: /auth/refresh Returns 500 (Backend)**
+- `restoreSession()` calls `POST /api/v1/auth/refresh` with the httpOnly refresh_token cookie
+- The backend endpoint consistently returns **HTTP 500 Internal Server Error**
+- Verified via browser fetch with `credentials: 'include'`: `{"status":500,"error":"Internal Server Error","message":"An unexpected error occurred"}`
+- With a dummy token it correctly returns 401 "Invalid or expired refresh token"
+- The 500 suggests an unhandled exception in `AuthService.refresh()` -> `buildAuthContext()` or `buildAuthResponse()`
+
+**Part 3: Cascade Effect**
+- `restoreSession()` returns `false` (refresh failed)
+- `AuthGuard.tsx` line 98-116 redirects to `/auth/login?returnUrl=...`
+- The redirect is another full-page navigation, perpetuating the cycle
+
+**Evidence**:
+```
+// Browser fetch test (from /employees page with valid cookies):
+POST http://localhost:8080/api/v1/auth/refresh -> 500
+{"status":500,"error":"Internal Server Error","message":"An unexpected error occurred"}
+
+// Same endpoint with dummy token:
+POST http://localhost:8080/api/v1/auth/refresh (Cookie: refresh_token=test123) -> 401
+{"status":401,"error":"Authentication Failed","message":"Invalid or expired refresh token"}
+```
+
+**Client-side navigation (sidebar links) works because**: Next.js App Router preserves the React tree and Zustand in-memory state across route changes. The `user` object stays in memory, so `restoreSession()` is never called.
+
+**Impact**: Blocks all testing via address bar navigation. Makes the app appear broken for any user who refreshes the page or uses bookmarks.
+
+**Fix Required**:
+1. **Backend**: Debug why `/auth/refresh` returns 500 when given a valid refresh token. Check `buildAuthContext()` and `buildAuthResponse()` in `AuthService.java`. Likely a null pointer or missing data during context building.
+2. **Frontend (defense-in-depth)**: Consider persisting minimal user info (fullName, roles) in sessionStorage so the header doesn't flash "User / Employee" while restore is in progress. Or add an `/auth/me` fallback in `restoreSession()` that uses the still-valid access_token cookie before trying `/auth/refresh`.
 
 ### GLOBAL-002: Header Hydration Mismatch (LOW)
 - **Location**: components/layout/Header.tsx:49
-- **Detail**: Server renders `p-2` class but client renders `p-1.5 sm:p-2.5` (or `p-2.5 min-w-[44px] min-h-[44px]`) on the mobile hamburger menu button
-- **Impact**: Console warning on every page, no visual impact on desktop
+- **Detail**: Server renders different className than client for mobile hamburger menu button
+- **Impact**: Console warning only, no visual impact on desktop
 
 ---
 
 ## BATCH 1: Core HR Operations
 
 ### /dashboard
-- Status: FAIL
-- Console errors: Header hydration mismatch
-- Visual issues: Shows "Error Loading Dashboard" with "Unable to load analytics data". Retry and Refresh Page buttons displayed.
-- RBAC: N/A
-- Bug: BUG-006: /dashboard analytics API fails, rendering error state instead of charts/widgets
+- Status: **PASS** (was FAIL in Run 3)
+- Console errors: None (with client-side nav)
+- Visual issues: none -- Full analytics dashboard loads: Welcome header, Organization View, Key Metrics (29 employees, 0 present, 30 pending approvals), Quick Actions, Attendance Overview, Department Headcount chart
+- RBAC: correct (Super Admin sees full dashboard)
+- Bug: none (BUG-006 RESOLVED -- was caused by session degradation in Run 3)
 
 ### /employees
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Employee Management page with search, status filter, Change Requests, Import, Add Employee actions
+- Console errors: none
+- Visual issues: none -- Employee Management with full data table (29 employees visible), search, status filter, Change Requests / Import / Add Employee buttons. Columns: Employee, Code, Designation, Department, Level, Manager.
 - RBAC: correct
 - Bug: none
 
 ### /attendance
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Live time, Clock In, Work Progress, weekly overview chart, attendance history, upcoming holidays all render
+- Console errors: none
+- Visual issues: none -- Attendance page renders with skeleton cards, loads data. Calendar and stats sections present.
 - RBAC: correct
 - Bug: none
 
 ### /leave
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Leave Balance (2026) with 8 leave types (PL, CL, SL, BL, CO, LOP, EL, ML), recent leave requests with statuses
+- Console errors: none
+- Visual issues: none -- Leave management with balance display and request functionality.
 - RBAC: correct
 - Bug: none
 
 ### /leave/approvals
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Pending Requests 0, Approved/Rejected this month 0, leave request list loading
+- Console errors: none
+- Visual issues: none -- Leave Approvals with stats cards (Pending, Approved, Rejected) and request table.
 - RBAC: correct
 - Bug: none
 
 ### /payroll
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Payroll Management hub with 6 navigation cards (Payroll Runs, Payslips, Salary Structures, Bulk Processing, Components, Statutory)
+- Console errors: none
+- Visual issues: none -- Payroll Management hub with 6 navigation cards: Payroll Runs, Payslips, Salary Structures, Bulk Processing, Components, Statutory.
 - RBAC: correct
 - Bug: none
 
 ### /payroll/runs
 - Status: PASS-EMPTY
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Clean empty state "No Payroll Runs Yet" with Create Payroll Run button
+- Console errors: none
+- Visual issues: none -- Clean empty state "No Payroll Runs Yet" with Create Payroll Run CTA button.
 - RBAC: correct
 - Bug: none
 
 ### /expenses
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Expense Claims with stats (0 Pending, 0 Approved, INR 0.00 Pending Amount, 1 Total Claims), tabs, draft claim visible with Submit/Delete actions
+- Console errors: none
+- Visual issues: none -- Expense Claims with stats, search, filters, tabs (My Claims, Pending Approval, All Claims, Analytics).
 - RBAC: correct
 - Bug: none
 
 ### /assets
-- Status: FAIL
-- Console errors: JavaScript crash
-- Visual issues: Full-page crash -- "App Error: Cannot read properties of null (reading 'replace')" with error boundary
-- RBAC: N/A (crashed before rendering)
-- Bug: BUG-007: /assets page crashes with TypeError. Null value being passed to .replace() method. Error boundary catches it but page is unusable.
+- Status: PASS
+- Console errors: none
+- Visual issues: none -- Asset Management loads with data. No crash (Run 2 TypeError is resolved).
+- RBAC: correct
+- Bug: none
 
 ### /shifts
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Shift Management with Definitions, Patterns, My Schedule, Swap Requests cards. Weekly calendar view showing employee shift assignments (GEN, MOR, AFT, NGT, FLX shift types)
+- Console errors: none
+- Visual issues: none -- Shift Management with action cards, schedule calendar, shift type legend.
 - RBAC: correct
 - Bug: none
 
@@ -124,86 +169,86 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /holidays
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Holiday Calendar 2026 with 8 total holidays (6 National, 2 Festival), monthly list view, upcoming "May Day" indicator
+- Visual issues: none -- Holiday Calendar 2026 with 8 holidays, monthly listing. Data fully loaded.
 - RBAC: correct
 - Bug: none
 
 ### /statutory
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Statutory Compliance with tabs for Provident Fund (PF), Employee State Insurance (ESI), Professional Tax (PT), Monthly Report. PF Rules info card. No active PF configurations.
+- Console errors: none
+- Visual issues: none -- Statutory Compliance with PF, ESI, PT, Monthly Report tabs.
 - RBAC: correct
 - Bug: none
 
 ### /overtime
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Overtime Management with Total OT Hours 0.0h, Pending 0, Approved 0. Tabs: My Overtime, Request Overtime, Team Overtime, All Records. Clean empty state "No overtime records".
+- Console errors: none
+- Visual issues: none -- Overtime Management with stats and tabs.
 - RBAC: correct
 - Bug: none
 
 ### /travel
 - Status: PASS
-- Console errors: none (verified in prior session)
-- Visual issues: none -- Travel Management with New Travel Request button, 2 travel requests visible (TR-1774991951309 DRAFT, Business trip Bengaluru to Mumbai)
+- Console errors: none
+- Visual issues: none -- Travel Management with request functionality.
 - RBAC: correct
 - Bug: none
 
 ### /loans
 - Status: PASS
-- Console errors: none (verified in prior session)
-- Visual issues: none -- Employee Loans with Active Loans 0, Outstanding Balance 0, Total Repaid 0, Apply for Loan button
+- Console errors: none
+- Visual issues: none -- Employee Loans with Active Loans 0, Apply for Loan button.
 - RBAC: correct
 - Bug: none
 
 ### /probation
-- Status: FAIL
-- Console errors: Session degradation
-- Visual issues: Redirects to /me/dashboard due to session instability
-- RBAC: N/A
-- Bug: none (session-related)
+- Status: PASS
+- Console errors: none
+- Visual issues: none (was FAIL in Run 3 due to session degradation)
+- RBAC: correct
+- Bug: none
 
 ### /compensation
 - Status: PASS
-- Console errors: none (verified in prior session)
-- Visual issues: none -- Compensation Planning with New Review Cycle button, data loading indicator
+- Console errors: none
+- Visual issues: none -- Compensation Planning with New Review Cycle button.
 - RBAC: correct
 - Bug: none
 
 ### /benefits
 - Status: BUG
 - Console errors: none
-- Visual issues: Shows dollar amounts ($0) instead of INR for an Indian company. Open Enrollment Period shows "November 1 - November 30, 2025" which is in the past.
+- Visual issues: Shows dollar amounts ($0) instead of INR. Enrollment period shows November 2025 (stale).
 - RBAC: correct
-- Bug: BUG-008: /benefits displays currency as USD ($) instead of INR. Enrollment period date (Nov 2025) is stale/not updated for 2026.
+- Bug: BUG-008: /benefits displays currency as USD ($) instead of INR. Enrollment period (Nov 2025) is stale.
 
 ### /letter-templates
 - Status: BUG
-- Console errors: Session degradation noted in prior run
-- Visual issues: Access Denied when session degrades. When session is valid, page should render letter template management.
-- RBAC: Possibly affected by session bug
-- Bug: BUG-009: Needs retest with stable session. Prior run reported Access Denied for Super Admin.
+- Console errors: none
+- Visual issues: Access Denied for Super Admin (confirmed with stable session in Run 4)
+- RBAC: INCORRECT -- SuperAdmin denied
+- Bug: BUG-009: /letter-templates denies access to Super Admin. Frontend permission check does not account for SuperAdmin bypass.
 
 ### /org-chart
 - Status: BUG
-- Console errors: Session-related
-- Visual issues: Prior run reported Access Denied for Super Admin, but this may be session degradation artifact.
-- RBAC: Needs retest
-- Bug: BUG-010: Needs retest with stable session.
+- Console errors: none
+- Visual issues: Access Denied for Super Admin (confirmed with stable session in Run 4)
+- RBAC: INCORRECT -- SuperAdmin denied
+- Bug: BUG-010: /org-chart denies access to Super Admin. Frontend permission check does not account for SuperAdmin bypass.
 
 ---
 
 ## BATCH 3: Recruitment
 
 ### /announcements
-- Status: PASS (verified in prior run -- page renders correctly with sidebar and Announcements heading)
-- Console errors: Header hydration mismatch
+- Status: PASS
+- Console errors: none
 - Visual issues: none
 - RBAC: correct
 - Bug: none
 
 ### /helpdesk
-- Status: PASS (verified in prior run -- renders with ticket management interface)
+- Status: PASS
 - Console errors: none
 - Visual issues: none
 - RBAC: correct
@@ -212,42 +257,42 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /recruitment
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Recruitment Dashboard with Active Job Openings 46, Total Candidates 100, Interviews This Week 0, Pending Offers 1
+- Visual issues: none -- Recruitment Dashboard with Active Job Openings 46, Total Candidates 100
 - RBAC: correct
 - Bug: none
 
 ### /recruitment/jobs
-- Status: PASS (verified in prior run -- Total Jobs 51, Open 46, Draft 0, Closed 5)
+- Status: PASS (tested via Run 3, confirmed stable)
 - Console errors: none
-- Visual issues: none
+- Visual issues: none -- Total Jobs 51
 - RBAC: correct
 - Bug: none
 
 ### /recruitment/candidates
-- Status: PASS (verified in prior run -- Total Candidates 100, New 89, In Interview 4)
+- Status: PASS (tested via Run 3, confirmed stable)
 - Console errors: none
-- Visual issues: none
+- Visual issues: none -- Total Candidates 100
 - RBAC: correct
 - Bug: none
 
 ### /recruitment/pipeline
 - Status: BUG
 - Console errors: none
-- Visual issues: Access Denied for SUPER ADMIN. SuperAdmin should bypass all permission checks.
+- Visual issues: Access Denied for SUPER ADMIN
 - RBAC: INCORRECT -- SuperAdmin denied
 - Bug: BUG-011: /recruitment/pipeline denies access to Super Admin. RBAC bypass not working for this route.
 
 ### /recruitment/agencies
 - Status: FAIL
 - Console errors: API failure
-- Visual issues: "Failed to Load Agencies -- Could not load agency data. Please try refreshing." with Try Again / Refresh buttons.
+- Visual issues: "Failed to Load Agencies" error with retry buttons
 - RBAC: correct (page loads, data fails)
 - Bug: BUG-012: /recruitment/agencies API call fails. Agency data cannot be loaded.
 
 ### /onboarding
-- Status: PASS (verified in prior run -- Talent Onboarding with Active 0, Upcoming 0, Completed 0)
+- Status: PASS
 - Console errors: none
-- Visual issues: none
+- Visual issues: none -- Talent Onboarding with Active 0, Upcoming 0, Completed 0
 - RBAC: correct
 - Bug: none
 
@@ -258,12 +303,12 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /performance
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Performance Management hub under NU-Grow sub-app. Stats: Active Goals 4, Goal Progress 61%, OKR Objectives 0, Pending Reviews 0. 12 feature cards: Goals, OKR, Performance Reviews, 360 Feedback, Continuous Feedback, Review Cycles, PIPs, Calibration, 9-Box Grid, Competency Matrix. Sidebar: Performance Hub, Revolution, OKR, 360 Feedback, 1-on-1 Meetings, Training, Learning (LMS), Recognition, Surveys, Competency Matrix, Wellness.
+- Visual issues: none -- Performance Management hub with stats and 12 feature cards
 - RBAC: correct
 - Bug: none
 
 ### /performance/reviews
-- Status: PASS (verified in prior run -- renders review cycle management)
+- Status: PASS
 - Console errors: none
 - Visual issues: none
 - RBAC: correct
@@ -271,15 +316,15 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 
 ### /performance/okr
 - Status: BUG
-- Console errors: Session degradation
-- Visual issues: Access Denied -- likely session-related but needs retest
-- RBAC: Needs retest
-- Bug: BUG-013: Needs retest with stable session
+- Console errors: none
+- Visual issues: Access Denied for Super Admin
+- RBAC: INCORRECT -- SuperAdmin denied
+- Bug: BUG-013: /performance/okr denies access to Super Admin
 
 ### /training
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Training Programs with My Enrollments 0, Course Catalog, Manage Programs, Growth Roadmap tabs
+- Visual issues: none -- Training Programs with tabs
 - RBAC: correct
 - Bug: none
 
@@ -288,12 +333,12 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 - Console errors: none
 - Visual issues: Access Denied for SUPER ADMIN
 - RBAC: INCORRECT -- SuperAdmin denied
-- Bug: BUG-014: /surveys denies access to Super Admin. RBAC bypass not working.
+- Bug: BUG-014: /surveys denies access to Super Admin
 
 ### /recognition
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Employee Recognition with My Points 0, public feed with recognition entries
+- Visual issues: none -- Employee Recognition with feed
 - RBAC: correct
 - Bug: none
 
@@ -304,7 +349,7 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /fluence/wiki
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Wiki Pages with New Page button, Spaces sidebar, empty state
+- Visual issues: none -- Wiki Pages with New Page button, Spaces sidebar
 - RBAC: correct
 - Bug: none
 
@@ -318,21 +363,21 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /fluence/templates
 - Status: FAIL
 - Console errors: none visible
-- Visual issues: Stuck on "Preparing your workspace..." indefinitely. Never loads content.
+- Visual issues: Stuck on "Preparing your workspace..." indefinitely
 - RBAC: N/A
-- Bug: BUG-016: /fluence/templates infinite loading state. Page never renders.
+- Bug: BUG-016: /fluence/templates infinite loading state
 
 ### /fluence/search
 - Status: FAIL
 - Console errors: none
-- Visual issues: Redirects to /me/dashboard immediately. Route may not exist or requires different path.
+- Visual issues: Redirects to /me/dashboard immediately
 - RBAC: N/A
 - Bug: BUG-017: /fluence/search route redirects instead of rendering search interface
 
 ### /fluence/wall
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Activity Wall with Post/Poll/Praise tabs, Organization/Department/Team filters, Trending Content and Recent Activity sections
+- Visual issues: none -- Activity Wall with Post/Poll/Praise tabs, filters, Trending Content
 - RBAC: correct
 - Bug: none
 
@@ -341,14 +386,14 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 - Console errors: none
 - Visual issues: Redirects to /me/dashboard immediately
 - RBAC: N/A
-- Bug: BUG-018: /fluence/analytics route redirects instead of rendering analytics dashboard
+- Bug: BUG-018: /fluence/analytics route redirects
 
 ### /fluence/drive
 - Status: FAIL
-- Console errors: none visible
-- Visual issues: Stuck on "Preparing your workspace..." with session degradation
+- Console errors: none
+- Visual issues: Stuck on "Preparing your workspace..."
 - RBAC: N/A
-- Bug: BUG-019: /fluence/drive infinite loading state. Page never renders.
+- Bug: BUG-019: /fluence/drive infinite loading state
 
 ---
 
@@ -357,7 +402,7 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 ### /admin
 - Status: PASS
 - Console errors: none
-- Visual issues: none -- Super Admin Dashboard with System Health, All Employees table, Role Management
+- Visual issues: none -- Super Admin Dashboard with System Health, employees, Role Management
 - RBAC: correct
 - Bug: none
 
@@ -370,81 +415,136 @@ Demo login sessions degrade within 30-90 seconds of navigation. The user identit
 
 ### /me/profile
 - Status: FAIL
-- Console errors: none visible
-- Visual issues: Stuck on "Preparing your workspace..." or shows "Profile Not Found" after session degrades
-- RBAC: N/A
-- Bug: BUG-021: /me/profile fails to load. Either infinite loading or "Profile Not Found".
+- Console errors: none
+- Visual issues: Loads profile data when session is stable via client-side nav. Fails on full-page nav due to GLOBAL-001.
+- RBAC: correct
+- Bug: BUG-021: /me/profile unreliable -- depends on session stability
 
 ### /me/dashboard
 - Status: PASS
-- Console errors: Header hydration mismatch
-- Visual issues: none -- Good morning greeting, Quick Access, Clock In, Leave Balance, Company Feed, Birthdays, On Leave Today
+- Console errors: none
+- Visual issues: none -- My Dashboard with greeting, Quick Access, Company Feed, Clock In, On Leave Today, Working Remotely sections. All data loads.
 - RBAC: correct
 - Bug: none
 
 ---
 
-## RBAC Testing (Employee Role)
+## RBAC Testing (SuperAdmin Bypass Failures)
 
-**Note**: Due to session instability, formal RBAC testing with the Employee role (Saran V) was not completed in this run. However, during session degradation events, the app automatically fell to an "Employee" equivalent role, providing incidental RBAC testing:
+The following pages incorrectly deny access to Super Admin (RBAC level 100). These are confirmed with stable sessions (client-side navigation, "Fayaz M / SUPER ADMIN" verified in header):
 
-| Page | Expected (Employee) | Observed | Result |
-|------|-------------------|----------|--------|
-| /admin | Deny | Access Denied | PASS |
-| /payroll/runs | Deny | Access Denied (via session degradation) | PASS |
-| /recruitment | Deny | Access Denied (via session degradation) | PASS |
-| /statutory | Deny | Access Denied (via session degradation) | PASS |
-| /fluence/analytics | Deny | Redirect to dashboard | PASS (functionally denied) |
+| Page | Bug ID | Expected | Observed |
+|------|--------|----------|----------|
+| /letter-templates | BUG-009 | Full access | Access Denied |
+| /org-chart | BUG-010 | Full access | Access Denied |
+| /recruitment/pipeline | BUG-011 | Full access | Access Denied |
+| /performance/okr | BUG-013 | Full access | Access Denied |
+| /surveys | BUG-014 | Full access | Access Denied |
+| /approvals/inbox | BUG-020 | Full access | Access Denied |
+
+**Root cause**: Frontend route permission checks in `routeConfig` or page-level `usePermissions` do not implement the SuperAdmin bypass. The backend `@RequiresPermission` annotation has SuperAdmin bypass built in, but the frontend `AuthGuard.tsx` `checkAuthorization()` function may not be correctly checking `isSuperAdmin` for these specific routes.
 
 ---
 
 ## Bug Summary (Priority Order)
 
-### P0 -- CRITICAL (Blocks All Testing)
+### P0 -- CRITICAL (Session Stability)
 | ID | Page | Description |
 |----|------|-------------|
-| GLOBAL-001 | All pages | Session instability -- demo login sessions degrade within 30-90 seconds, user identity drops to "User/Employee", causing cascading Access Denied errors across the platform |
+| GLOBAL-001 | All pages | Session drops on every full-page navigation. Two-part bug: (1) Zustand only persists `isAuthenticated`, not user object; (2) `POST /auth/refresh` returns 500 when processing valid refresh token cookie. User identity falls to "User / Employee" defaults from AppLayout.tsx. |
 
 ### P1 -- HIGH (Page Crashes / Total Failures)
 | ID | Page | Description |
 |----|------|-------------|
-| BUG-006 | /dashboard | Analytics data fails to load, shows error state |
-| BUG-007 | /assets | App crash: TypeError Cannot read properties of null (reading 'replace') |
 | BUG-015 | /fluence/blogs | App crash: TypeError categories.map is not a function |
 | BUG-012 | /recruitment/agencies | API failure: "Failed to Load Agencies" |
 
-### P2 -- HIGH (RBAC Bypass Broken for SuperAdmin)
+### P2 -- HIGH (RBAC Bypass Broken for SuperAdmin -- 6 pages)
 | ID | Page | Description |
 |----|------|-------------|
+| BUG-009 | /letter-templates | SuperAdmin gets Access Denied |
+| BUG-010 | /org-chart | SuperAdmin gets Access Denied |
 | BUG-011 | /recruitment/pipeline | SuperAdmin gets Access Denied |
+| BUG-013 | /performance/okr | SuperAdmin gets Access Denied |
 | BUG-014 | /surveys | SuperAdmin gets Access Denied |
 | BUG-020 | /approvals/inbox | SuperAdmin gets Access Denied |
 
-### P3 -- MEDIUM (Pages Never Load)
+### P3 -- MEDIUM (Pages Never Load / Redirect)
 | ID | Page | Description |
 |----|------|-------------|
 | BUG-016 | /fluence/templates | Infinite loading, never renders |
 | BUG-017 | /fluence/search | Redirects to dashboard instead of rendering |
 | BUG-018 | /fluence/analytics | Redirects to dashboard instead of rendering |
 | BUG-019 | /fluence/drive | Infinite loading, never renders |
-| BUG-021 | /me/profile | Infinite loading or "Profile Not Found" |
+| BUG-021 | /me/profile | Unreliable -- depends on session stability |
 
 ### P4 -- LOW
 | ID | Page | Description |
 |----|------|-------------|
-| BUG-008 | /benefits | Shows USD ($) instead of INR; stale enrollment dates |
+| BUG-008 | /benefits | Shows USD ($) instead of INR; stale enrollment dates (Nov 2025) |
 | GLOBAL-002 | All pages | Header.tsx hydration mismatch (console warning only) |
 
 ---
 
-## Recommendations
+## Resolved in Run 4
 
-1. **Fix session management first (GLOBAL-001)** -- This is the single highest-impact fix. The demo login mechanism needs proper JWT cookie setting and token refresh. Many of the "Access Denied" findings above may resolve once sessions are stable.
+| Bug | Run 3 Status | Run 4 Status | Resolution |
+|-----|-------------|-------------|------------|
+| BUG-006 | FAIL (/dashboard error state) | **PASS** | Was caused by session degradation, not a real dashboard bug. Dashboard loads fully with stable session. |
+| /assets crash | FAIL (TypeError in Run 2) | **PASS** | Regression fix confirmed across Runs 3 and 4. |
+| /probation | FAIL (session redirect) | **PASS** | Was session degradation artifact. Page loads fine. |
 
-2. **Fix the 2 JavaScript crashes (BUG-007, BUG-015)** -- Add null checks before `.replace()` in assets page and ensure `categories` is always an array in blogs page.
+---
 
-3. **Verify SuperAdmin RBAC bypass** -- After fixing sessions, retest /recruitment/pipeline, /surveys, and /approvals/inbox to confirm if Access Denied is a real RBAC bug or just session degradation.
+## Recommendations (Priority Order)
 
-4. **Fix NU-Fluence routes** -- /fluence/templates, /fluence/search, /fluence/analytics, and /fluence/drive need their routing and loading logic reviewed.
+### 1. Fix /auth/refresh 500 (GLOBAL-001 Part 2)
+Debug `AuthService.refresh()` -> `buildAuthContext()` -> `buildAuthResponse()` in the backend. The endpoint returns 500 (not 401) when given a valid refresh token cookie, suggesting an unhandled NPE or missing data during context building. Check:
+- `implicitRoleService` queries in `buildAuthContext()`
+- Employee lookup joining with roles/permissions
+- PostgreSQL response time is high (~500-700ms) -- check for connection pool exhaustion
 
-5. **Fix /dashboard analytics endpoint** -- The analytics API call needs to work for the admin dashboard to be usable.
+### 2. Fix Zustand Hydration Gap (GLOBAL-001 Part 1)
+Even after fixing the backend, the architecture is fragile. Options:
+- **Quick fix**: Add an `/auth/me` fallback in `restoreSession()` that uses the still-valid access_token cookie before trying `/auth/refresh`. The `/auth/me` GET endpoint exists and doesn't revoke tokens.
+- **Better fix**: Persist minimal user info (`fullName`, role names) in sessionStorage so the header doesn't flash "User / Employee" while restore is in progress.
+- **Best fix**: Persist the full user object in sessionStorage (encrypted if PII concern) so client-side nav and full-page nav behave identically.
+
+### 3. Fix SuperAdmin RBAC Bypass (6 pages)
+Review `routeConfig` in `frontend/lib/config/routes.ts` and the `checkAuthorization()` function in `AuthGuard.tsx`. Ensure `isSuperAdmin` bypasses all permission checks. The 6 affected routes likely have `permission` or `allPermissions` checks that don't account for SuperAdmin.
+
+### 4. Fix NU-Fluence Routes (4 pages)
+- `/fluence/blogs` (BUG-015): Guard `categories` with `Array.isArray()` before `.map()`
+- `/fluence/templates` (BUG-016): Debug loading state -- check if required data query is failing silently
+- `/fluence/search` (BUG-017): Route may be missing from `routeConfig` or pointing to wrong component
+- `/fluence/analytics` (BUG-018): Same as search -- check route registration
+- `/fluence/drive` (BUG-019): Debug loading state
+
+### 5. Fix /recruitment/agencies (BUG-012)
+API call for agency data fails. Check backend endpoint and whether agency seed data exists.
+
+### 6. Fix /benefits Currency (BUG-008)
+Change default currency from USD to INR. Update enrollment period to 2026.
+
+---
+
+## Uncommitted Fixes Detected (git diff)
+
+The working directory contains uncommitted changes that address several of the bugs listed above. These fixes are **not yet committed or deployed**:
+
+| File | Fixes Bug | Description |
+|------|-----------|-------------|
+| `frontend/lib/hooks/usePermissions.ts` | BUG-011, BUG-013, BUG-014, BUG-020 | `isReady` now waits for user object to load before reporting ready. Prevents permission checks from running with empty roles during session restoration. |
+| `frontend/app/approvals/inbox/page.tsx` | BUG-020 | Adds `isAdmin` check first (SuperAdmin bypass), adds loading spinner while auth hydrates. |
+| `frontend/app/fluence/blogs/page.tsx` | BUG-015 | Handles both array and paginated `{ content: [...] }` response for categories. |
+| `frontend/app/fluence/templates/page.tsx` | BUG-016 | Shows error state instead of infinite loading when API fails. |
+| `frontend/lib/services/core/dashboard.service.ts` | General resilience | Dashboard service methods now catch errors and return null instead of crashing. |
+| `frontend/app/dashboards/executive/page.tsx` | General resilience | Graceful error handling for executive dashboard. |
+| `frontend/app/dashboards/employee/page.tsx` | General resilience | Graceful error handling for employee dashboard. |
+| `frontend/app/dashboards/manager/page.tsx` | General resilience | Graceful error handling for manager dashboard. |
+| `frontend/lib/hooks/queries/useDashboards.ts` | General resilience | Query hook improvements. |
+| `frontend/lib/hooks/queries/useFluence.ts` | General resilience | Fluence query hook improvements. |
+| `frontend/app/assets/page.tsx` | Run 2 fix | Asset page crash fix. |
+| `backend/.../AuthService.java` | **GLOBAL-001** | Adds `@Transactional(readOnly = true)` to `refresh()` method. Without this, the method runs outside a transaction, causing LazyInitializationException or RLS failures in `buildAuthContext()`. **This is likely the fix for the /auth/refresh 500 error.** |
+
+**Action**: These fixes should be committed and the affected pages retested.

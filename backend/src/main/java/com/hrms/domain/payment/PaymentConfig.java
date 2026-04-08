@@ -1,5 +1,6 @@
 package com.hrms.domain.payment;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Where;
@@ -28,6 +29,7 @@ public class PaymentConfig extends TenantAware {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String apiKeyEncrypted;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(columnDefinition = "TEXT")
     private String webhookSecret;
 

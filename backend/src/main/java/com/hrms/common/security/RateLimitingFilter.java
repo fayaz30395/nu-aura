@@ -1,11 +1,13 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.CookieConfig;
 import com.hrms.common.config.DistributedRateLimiter;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -286,7 +288,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      * bucket across access-token rotations (SEC-B01 fix).
      */
     private String resolveClientId(HttpServletRequest request) {
-        // Prefer authenticated user — extract userId from JWT subject claim
+        // 1. Prefer authenticated user — extract userId from JWT in Authorization header
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String userId = extractSubjectFromJwt(authHeader.substring(7));
@@ -297,7 +299,25 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return "ip:" + getClientIp(request);
         }
 
-        // API key (only first 8 chars — sufficient for identification, avoids leaking full key)
+        // 2. Fallback: extract userId from httpOnly access_token cookie (primary auth mechanism)
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+                    try {
+                        String userId = extractSubjectFromJwt(cookie.getValue());
+                        if (userId != null) {
+                            return "user:" + userId;
+                        }
+                    } catch (Exception e) {
+                        log.debug("Failed to extract userId from access_token cookie for rate limiting", e);
+                        // Fall through to API key / IP-based identification
+                    }
+                    break;
+                }
+            }
+        }
+
+        // 3. API key (only first 8 chars — sufficient for identification, avoids leaking full key)
         String apiKey = request.getHeader("X-API-Key");
         if (apiKey != null && !apiKey.isEmpty()) {
             return "apikey:" + apiKey.substring(0, Math.min(apiKey.length(), 8));

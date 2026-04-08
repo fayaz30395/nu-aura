@@ -1,6 +1,8 @@
 package com.hrms.api.employee;
 
 import com.hrms.application.employee.service.SkillService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.employee.EmployeeSkill;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,6 +41,7 @@ public class EmployeeSkillController {
     private final SkillService skillService;
 
     @GetMapping("/{employeeId}/skills")
+    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     @Operation(summary = "Get skills for an employee",
             description = "Returns all skills for the specified employee within the caller's tenant")
     @ApiResponse(responseCode = "200", description = "Skills retrieved successfully")
@@ -50,6 +53,7 @@ public class EmployeeSkillController {
     }
 
     @PostMapping("/{employeeId}/skills")
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Add or update a skill for an employee",
             description = "Creates a new skill or updates an existing one (matched by skillName)")
     @ApiResponses(value = {
@@ -71,6 +75,7 @@ public class EmployeeSkillController {
     }
 
     @PutMapping("/skills/{skillId}/verify")
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Verify an employee skill",
             description = "Marks a skill as verified by the current user (typically a manager)")
     @ApiResponses(value = {
@@ -86,6 +91,7 @@ public class EmployeeSkillController {
     }
 
     @DeleteMapping("/skills/{skillId}")
+    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Remove an employee skill",
             description = "Deletes a skill record from the employee's profile")
     @ApiResponses(value = {

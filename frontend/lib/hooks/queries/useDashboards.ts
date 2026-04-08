@@ -29,10 +29,13 @@ export const dashboardKeys = {
  * Fetches comprehensive C-suite metrics, financial data, strategic insights, and workforce summary
  */
 export function useExecutiveDashboard(enabled: boolean = true) {
-  return useQuery<ExecutiveDashboardData>({
+  return useQuery<ExecutiveDashboardData | null>({
     queryKey: dashboardKeys.executive(),
     queryFn: async () => dashboardService.getExecutiveDashboard(),
     enabled,
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -57,10 +60,13 @@ export function useExecutiveDashboardByDateRange(
  * Fetches employee-specific dashboard data including attendance, leaves, career progress, and events
  */
 export function useEmployeeDashboard(enabled: boolean = true) {
-  return useQuery<EmployeeDashboardData>({
+  return useQuery<EmployeeDashboardData | null>({
     queryKey: dashboardKeys.employee(),
     queryFn: async () => dashboardService.getEmployeeDashboard(),
     enabled,
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 
@@ -80,10 +86,13 @@ export function useEmployeeDashboardById(employeeId: string, enabled: boolean = 
  * Fetches team-specific insights including attendance, leave, performance, and action items
  */
 export function useManagerDashboard(enabled: boolean = true) {
-  return useQuery<ManagerDashboardResponse>({
+  return useQuery<ManagerDashboardResponse | null>({
     queryKey: dashboardKeys.manager(),
     queryFn: async () => dashboardService.getManagerDashboard(),
     enabled,
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }
 

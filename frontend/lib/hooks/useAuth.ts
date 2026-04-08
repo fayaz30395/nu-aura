@@ -8,6 +8,38 @@ import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth
 import { clearGoogleToken } from '../utils/googleToken';
 import { getQueryClient } from '../queryClient';
 
+/**
+ * P0-SESSION: Persist user to a SEPARATE sessionStorage key ('nu-aura-user').
+ * We can't rely on the Zustand persist middleware's partialize config because:
+ * 1. HMR doesn't re-create the store singleton — old partialize stays in memory
+ * 2. Even if fixed, every Zustand set() call overwrites sessionStorage with
+ *    partialize output, erasing any user data we inject directly
+ *
+ * On page load, the onRehydrateStorage callback reads this key and merges the
+ * user back into the Zustand state, making it immediately available.
+ */
+const USER_STORAGE_KEY = 'nu-aura-user';
+
+function persistUserToStorage(user: User): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+  } catch { /* ignore */ }
+}
+
+function readUserFromStorage(): User | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = sessionStorage.getItem(USER_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function clearUserFromStorage(): void {
+  if (typeof window === 'undefined') return;
+  try { sessionStorage.removeItem(USER_STORAGE_KEY); } catch { /* ignore */ }
+}
+
 // Convert string roles to Role objects
 function convertRolesToObjects(roleStrings: string[], permissionStrings: string[]): Role[] {
   return roleStrings.map((roleCode) => ({
@@ -86,6 +118,7 @@ export const useAuth = create<AuthState>()(
           };
 
           set({ user, isAuthenticated: true, isLoading: false });
+          persistUserToStorage(user);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -123,6 +156,7 @@ export const useAuth = create<AuthState>()(
           };
 
           set({ user, isAuthenticated: true, isLoading: false });
+          persistUserToStorage(user);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -130,6 +164,7 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
+        clearUserFromStorage();
         // Bug #5 FIX: deauthenticate FIRST so no new queries fire after this point,
         // then cancel in-flight queries before clearing cache. Previously, auth state
         // was cleared last — background intervals (notifications, workflow) fired 401s
@@ -154,48 +189,25 @@ export const useAuth = create<AuthState>()(
         try {
           set({ isLoading: true });
 
-          // P0-SESSION-FIX: Check if the Axios 401 interceptor already has an
-          // in-flight refresh. If so, wait for it instead of issuing a second
-          // refresh call. Two concurrent refreshes revoke each other's tokens,
-          // causing the session to degrade from "Fayaz M / SUPER ADMIN" to
-          // "User / Employee" within 30-90 seconds.
+          // P0-SESSION-FIX v2: Always issue our own refresh call that returns the
+          // full AuthResponse (with user data). Previously we shared the 401
+          // interceptor's refresh promise, but that only returns a boolean, requiring
+          // a separate /auth/me call that was fragile and caused race conditions.
+          //
+          // To prevent concurrent refresh calls (which revoke each other's tokens),
+          // we wait for any in-flight 401 interceptor refresh to finish FIRST, then
+          // issue our own. The interceptor's refresh sets new cookies, so ours will
+          // use the fresh refresh_token.
           const existingRefresh = getSharedRefreshPromise();
           if (existingRefresh) {
-            const refreshed = await existingRefresh;
-            if (refreshed) {
-              // The interceptor already refreshed cookies. Fetch profile from /auth/me
-              // to populate the Zustand store with the correct identity.
-              try {
-                const meResponse = await apiClient.get<{
-                  userId: string; employeeId: string; tenantId: string;
-                  email: string; fullName: string; roles: string[];
-                  permissions: string[]; profilePictureUrl: string;
-                }>('/auth/me');
-                const me = meResponse.data;
-                apiClient.setTenantId(me.tenantId);
-                apiClient.resetRedirectFlag();
-                const roles = convertRolesToObjects(me.roles || [], me.permissions || []);
-                const user: User = {
-                  id: me.userId, employeeId: me.employeeId, tenantId: me.tenantId,
-                  email: me.email,
-                  firstName: me.fullName.split(' ')[0] || '',
-                  lastName: me.fullName.split(' ').slice(1).join(' ') || '',
-                  fullName: me.fullName, status: 'ACTIVE', roles,
-                  profilePictureUrl: me.profilePictureUrl,
-                };
-                set({ user, isAuthenticated: true, isLoading: false });
-                return true;
-              } catch {
-                set({ isLoading: false });
-                return false;
-              }
-            }
-            set({ isLoading: false });
-            return false;
+            await existingRefresh;
+            // Interceptor finished — cookies are now fresh. Fall through to
+            // issue our own refresh below, which will use the new cookie and
+            // return the full user identity.
           }
 
-          // No in-flight refresh — issue our own, registering it in the shared mutex
-          // so the 401 interceptor won't issue a concurrent one.
+          // Issue our own refresh, registering it in the shared mutex so the
+          // 401 interceptor won't issue a concurrent one.
           const refreshPromise = authApi.refresh()
             .then((response) => {
               apiClient.setTenantId(response.tenantId);
@@ -223,6 +235,7 @@ export const useAuth = create<AuthState>()(
               };
 
               set({ user, isAuthenticated: true, isLoading: false });
+              persistUserToStorage(user);
               return true;
             })
             .catch(() => {
@@ -244,12 +257,26 @@ export const useAuth = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
-      // HIGH-3: Only persist auth flag — no PII (user object) in sessionStorage.
-      // Full user state is restored via restoreSession() on page load.
+      // Persist both auth flag AND user object in sessionStorage. This eliminates
+      // the fragile restoreSession() dance on page loads — the user object is
+      // immediately available after Zustand hydrates, preventing the deadlock where
+      // isReady=false blocks restoreSession from ever being called, and the race
+      // condition where 401 interceptor and restoreSession compete for token refresh.
+      // The user object (name, email, roles) is non-sensitive — the same data is
+      // already in the JWT cookie and sent over the wire on every API call.
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
+        user: state.user,
       }),
       onRehydrateStorage: () => (state) => {
+        // P0-SESSION: Restore user from the separate storage key if the
+        // Zustand persist didn't include it (old partialize still in runtime).
+        if (state && state.isAuthenticated && !state.user) {
+          const savedUser = readUserFromStorage();
+          if (savedUser) {
+            state.setUser(savedUser);
+          }
+        }
         state?.setHasHydrated(true);
       },
     }

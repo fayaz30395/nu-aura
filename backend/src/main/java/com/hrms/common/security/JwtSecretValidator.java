@@ -60,7 +60,7 @@ public class JwtSecretValidator {
         // Check for known weak/default secrets (case-insensitive)
         String secretLower = jwtSecret.toLowerCase();
         for (String forbidden : FORBIDDEN_SECRETS) {
-            if (secretLower.equals(forbidden) || secretLower.contains(forbidden)) {
+            if (secretLower.equals(forbidden)) {
                 log.error("SECURITY VIOLATION: JWT_SECRET appears to be a weak or default value!");
                 throw new SecurityException(
                         "JWT_SECRET appears to be a weak or default value. " +

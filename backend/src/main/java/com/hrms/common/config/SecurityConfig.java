@@ -1,5 +1,6 @@
 package com.hrms.common.config;
 
+import com.hrms.common.security.CsrfDoubleSubmitFilter;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.RateLimitingFilter;
 import com.hrms.common.security.SamlAuthenticationSuccessHandler;
@@ -37,15 +38,18 @@ import java.util.List;
 public class SecurityConfig {
 
     /**
-     * BUG-013 FIX: CSRF disabled for stateless JWT-based authentication.
-     * JWT tokens in httpOnly cookies provide sufficient CSRF protection.
-     * CSRF token enforcement was causing 403 errors on all POST/PUT/DELETE requests.
+     * BUG-013 FIX: Spring's built-in CSRF is disabled because we use a custom
+     * double-submit cookie filter (CsrfDoubleSubmitFilter) for defense-in-depth.
+     * The custom filter sets a non-httpOnly XSRF-TOKEN cookie and validates
+     * the X-XSRF-TOKEN header on state-changing requests, while skipping
+     * auth/public/webhook endpoints that cannot supply the token.
      */
 
     private final Environment environment;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TenantFilter tenantFilter;
     private final RateLimitingFilter rateLimitingFilter;
+    private final CsrfDoubleSubmitFilter csrfDoubleSubmitFilter;
     private final UserDetailsService userDetailsService;
     private final RelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
     private final SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler;
@@ -56,6 +60,7 @@ public class SecurityConfig {
                           @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
                           @Lazy TenantFilter tenantFilter,
                           RateLimitingFilter rateLimitingFilter,
+                          CsrfDoubleSubmitFilter csrfDoubleSubmitFilter,
                           @Lazy UserDetailsService userDetailsService,
                           @Lazy RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
                           @Lazy SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
@@ -63,6 +68,7 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.tenantFilter = tenantFilter;
         this.rateLimitingFilter = rateLimitingFilter;
+        this.csrfDoubleSubmitFilter = csrfDoubleSubmitFilter;
         this.userDetailsService = userDetailsService;
         this.relyingPartyRegistrationRepository = relyingPartyRegistrationRepository;
         this.samlAuthenticationSuccessHandler = samlAuthenticationSuccessHandler;
@@ -96,6 +102,13 @@ public class SecurityConfig {
     @Bean
     public FilterRegistrationBean<JwtAuthenticationFilter> disableJwtFilterAutoRegistration(JwtAuthenticationFilter filter) {
         FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<CsrfDoubleSubmitFilter> disableCsrfDoubleSubmitFilterAutoRegistration(CsrfDoubleSubmitFilter filter) {
+        FilterRegistrationBean<CsrfDoubleSubmitFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }
@@ -206,19 +219,16 @@ public class SecurityConfig {
                 .saml2Login(saml2 -> saml2
                         .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository)
                         .successHandler(samlAuthenticationSuccessHandler))
-                // Filter order: RateLimiting -> Tenant -> JWT -> (UsernamePasswordAuth)
+                // Filter order: RateLimiting -> Tenant -> JWT -> CSRF -> (UsernamePasswordAuth)
                 // All positioned relative to standard UsernamePasswordAuthenticationFilter.
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(csrfDoubleSubmitFilter, JwtAuthenticationFilter.class);
 
-        // BUG-013 FIX: CSRF disabled for stateless JWT-based authentication.
-        // This is a stateless REST API that uses JWT tokens in httpOnly cookies.
-        // JWT authentication does not require CSRF protection because:
-        // 1. JWT tokens are only accessible to the same origin (httpOnly cookie)
-        // 2. Cross-origin requests cannot read httpOnly cookies
-        // 3. All state-changing requests (POST/PUT/DELETE) require JWT authentication
-        // Enabling CSRF caused 403 errors on all non-GET requests without a CSRF token.
+        // Spring's built-in CSRF is disabled — we use CsrfDoubleSubmitFilter instead.
+        // The custom filter provides defense-in-depth on top of JWT httpOnly cookies
+        // with SameSite=Strict, and correctly skips auth/public/webhook endpoints.
         http.csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
@@ -231,7 +241,7 @@ public class SecurityConfig {
         // SECURITY FIX (P1.2): Removed wildcard port pattern "http://localhost:*"
         // which allowed ANY localhost port. Use explicit origins only.
         // Configure additional origins via app.cors.allowed-origins property.
-        configuration.setAllowedOriginPatterns(allowedOrigins);
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         // Enumerate required headers explicitly rather than using "*".
         // Wildcards bypass security review and could allow future abuse if an
