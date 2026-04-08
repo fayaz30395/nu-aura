@@ -23,6 +23,7 @@ import {
 } from '@/lib/hooks/queries/useHelpdesk';
 import type {TicketPriority, TicketResponse, TicketStatus} from '@/lib/services/hrms/helpdesk.service';
 import {
+  AlertTriangle,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -94,7 +95,7 @@ export default function TicketListPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Queries
-  const {data: ticketsPage, isLoading} = useTickets(page, pageSize);
+  const {data: ticketsPage, isLoading, isError: isTicketsError} = useTickets(page, pageSize);
   const {data: categories = []} = useActiveCategories();
   const createMutation = useCreateTicket();
   const statusMutation = useUpdateTicketStatus();
@@ -292,6 +293,16 @@ export default function TicketListPage() {
                 </div>
               ))}
             </div>
+          </Card>
+        ) : isTicketsError ? (
+          <Card className="p-12 text-center">
+            <AlertTriangle className="h-12 w-12 text-danger-400 mx-auto mb-4"/>
+            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+              Failed to load tickets
+            </h3>
+            <p className="text-body-muted mb-4">
+              Something went wrong while loading tickets. Please try again.
+            </p>
           </Card>
         ) : filteredTickets.length === 0 ? (
           <Card className="p-12 text-center">

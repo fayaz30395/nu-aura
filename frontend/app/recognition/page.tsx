@@ -204,10 +204,12 @@ export default function RecognitionPage() {
   };
 
   const activeQuery = getActiveQuery();
-  const recognitions = activeQuery.data?.content || [];
+  const rawContent = activeQuery.data?.content;
+  const recognitions = Array.isArray(rawContent) ? rawContent : (Array.isArray(activeQuery.data) ? activeQuery.data : []);
   const isLoading = activeQuery.isLoading;
   const isError = activeQuery.isError;
-  const leaderboard = leaderboardQuery.data || [];
+  const rawLeaderboard = leaderboardQuery.data;
+  const leaderboard = Array.isArray(rawLeaderboard) ? rawLeaderboard : [];
   const myPoints = myPointsQuery.data || null;
 
   const handleGiveRecognition = () => {

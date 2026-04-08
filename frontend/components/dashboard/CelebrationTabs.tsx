@@ -37,13 +37,17 @@ export function CelebrationTabs() {
   const [isExpanded, setIsExpanded] = useState(true);
 
   // Use React Query hooks — 14 days for birthdays and anniversaries, 30 for new joiners
-  const {data: birthdays = [], isLoading: birthdaysLoading, isError: birthdaysError} = useUpcomingBirthdays(14);
+  const {data: birthdaysRaw = [], isLoading: birthdaysLoading, isError: birthdaysError} = useUpcomingBirthdays(14);
   const {
-    data: anniversaries = [],
+    data: anniversariesRaw = [],
     isLoading: anniversariesLoading,
     isError: anniversariesError
   } = useUpcomingAnniversaries(14);
-  const {data: newJoiners = [], isLoading: newJoinersLoading, isError: newJoinersError} = useNewJoinees(30);
+  const {data: newJoinersRaw = [], isLoading: newJoinersLoading, isError: newJoinersError} = useNewJoinees(30);
+
+  const birthdays = Array.isArray(birthdaysRaw) ? birthdaysRaw : [];
+  const anniversaries = Array.isArray(anniversariesRaw) ? anniversariesRaw : [];
+  const newJoiners = Array.isArray(newJoinersRaw) ? newJoinersRaw : [];
 
   const isLoading = birthdaysLoading || anniversariesLoading || newJoinersLoading;
   const hasError = birthdaysError || anniversariesError || newJoinersError;
