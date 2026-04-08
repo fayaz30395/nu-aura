@@ -744,7 +744,7 @@ export default function ManagerDashboardPage() {
                                   variant="outline"
                                   className={`text-2xs font-bold uppercase tracking-tighter border ${statusBadgeStyles[project.projectStatus] || statusBadgeStyles.DRAFT}`}
                                 >
-                                  {project.projectStatus.replace(/_/g, ' ')}
+                                  {project.projectStatus?.replace(/_/g, ' ') ?? '-'}
                                 </Badge>
                               </div>
 

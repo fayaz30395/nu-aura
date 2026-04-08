@@ -49,7 +49,7 @@ export function ViewCandidateModal({
                 <p className="text-[var(--text-muted)]">{candidate.candidateCode}</p>
                 <div className="flex gap-2 mt-2">
                   <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-                    {candidate.status.replace(/_/g, ' ')}
+                    {candidate.status?.replace(/_/g, ' ') ?? '-'}
                   </span>
                   {candidate.currentStage && (
                     <span

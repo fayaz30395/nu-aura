@@ -574,7 +574,7 @@ export default function MyAttendancePage() {
                         <span
                           className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
                           {getStatusIcon(selectedAttendance.status)}
-                          {selectedAttendance.status.replace(/_/g, ' ')}
+                          {selectedAttendance.status?.replace(/_/g, ' ') ?? '-'}
                         </span>
                       </div>
 

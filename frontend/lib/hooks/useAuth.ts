@@ -42,16 +42,16 @@ function clearUserFromStorage(): void {
 
 // Convert string roles to Role objects
 function convertRolesToObjects(roleStrings: string[], permissionStrings: string[]): Role[] {
-  return roleStrings.map((roleCode) => ({
+  return roleStrings.filter(Boolean).map((roleCode) => ({
     id: roleCode,
     code: roleCode,
-    name: roleCode.replace(/_/g, ' '),
-    permissions: permissionStrings.map((permCode) => ({
+    name: roleCode?.replace(/_/g, ' ') ?? roleCode,
+    permissions: permissionStrings.filter(Boolean).map((permCode) => ({
       id: permCode,
       code: permCode,
       name: permCode,
-      resource: permCode.split(':')[1] || '',
-      action: permCode.split(':')[2] || '',
+      resource: permCode?.split(':')[1] || '',
+      action: permCode?.split(':')[2] || '',
     })),
   }));
 }

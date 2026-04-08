@@ -27,7 +27,7 @@ export default function HelpdeskPage() {
   const {data: slasResponse} = useSlaConfigs(0, 100);
 
   const activeSlaCount = useMemo(
-    () => (slasResponse?.content ?? []).filter((s) => s.isActive).length,
+    () => (slasResponse?.content ?? []).filter((s) => s?.isActive).length,
     [slasResponse],
   );
 
@@ -113,17 +113,17 @@ export default function HelpdeskPage() {
               </h3>
             </div>
             <div className="space-y-2">
-              {escalations.slice(0, 5).map((esc) => (
+              {escalations.filter(Boolean).slice(0, 5).map((esc) => (
                 <div
                   key={esc.id}
                   className="row-between bg-[var(--bg-surface)] rounded-lg px-4 py-2"
                 >
                   <div>
                     <span className="text-sm font-medium text-[var(--text-primary)]">
-                      Ticket #{esc.ticketId.slice(0, 8)}
+                      Ticket #{esc.ticketId?.slice(0, 8) ?? '—'}
                     </span>
                     <span className="ml-2 text-caption">
-                      {esc.escalationLevel} — {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
+                      {esc.escalationLevel ?? '-'} — {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
                     </span>
                   </div>
                   <span className="text-caption">

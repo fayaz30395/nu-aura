@@ -4,6 +4,20 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notificationsApi} from '@/lib/api/notifications';
 import type {Notification, NotificationPreferences, PagedNotificationResponse} from '@/lib/types/core/notifications';
 
+/**
+ * Returns a refetchInterval function with exponential backoff on errors.
+ * Normal: polls at `baseMs`. After each consecutive failure, doubles the interval
+ * up to `maxMs`. Stops polling entirely after `maxFailures` consecutive failures.
+ */
+function pollingWithBackoff(baseMs: number, maxMs: number = 120_000, maxFailures: number = 10) {
+  return (query: { state: { error: unknown; dataUpdateCount: number; errorUpdateCount: number } }) => {
+    const failures = query.state.errorUpdateCount;
+    if (failures >= maxFailures) return false; // stop polling
+    if (!query.state.error) return baseMs;     // healthy — normal interval
+    return Math.min(baseMs * Math.pow(2, failures), maxMs); // backoff
+  };
+}
+
 // Query keys for cache management
 export const notificationKeys = {
   all: ['notifications'] as const,
@@ -26,7 +40,7 @@ export function useNotificationInbox(_limit: number = 10, enabled: boolean = tru
     queryFn: () => notificationsApi.getUnreadNotifications(),
     enabled,
     staleTime: 15 * 1000, // 15 seconds — notifications should feel fresh
-    refetchInterval: 30 * 1000, // Poll every 30 seconds
+    refetchInterval: pollingWithBackoff(30_000), // 30s base, backoff on failures
   });
 }
 
@@ -40,7 +54,7 @@ export function useUnreadNotificationCount(enabled: boolean = true) {
     queryFn: () => notificationsApi.getUnreadCount(),
     enabled,
     staleTime: 15 * 1000,
-    refetchInterval: 30 * 1000,
+    refetchInterval: pollingWithBackoff(30_000), // 30s base, backoff on failures
   });
 }
 

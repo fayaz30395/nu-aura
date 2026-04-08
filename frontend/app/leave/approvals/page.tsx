@@ -38,7 +38,7 @@ export default function LeaveApprovalsPage() {
       router.replace('/me/dashboard');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
-  const {data: pendingData} = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const {data: pendingData, isError: isPendingError, fetchStatus: pendingFetchStatus} = useLeaveRequestsByStatus('PENDING', 0, 50);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
   const {data: employeeData} = useEmployees(0, 500);
   const approveLeaveRequest = useApproveLeaveRequest();
@@ -183,7 +183,20 @@ export default function LeaveApprovalsPage() {
 
         {/* Requests Table */}
         <div className="card-aura overflow-hidden">
-          {!pendingData ? (
+          {isPendingError ? (
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <AlertCircle className="w-8 h-8 text-danger-500"/>
+                <span className="text-[var(--text-secondary)]">Failed to load leave requests. The server may be unreachable.</span>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="skeuo-button px-4 py-2 text-sm cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          ) : !pendingData && pendingFetchStatus === 'fetching' ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div

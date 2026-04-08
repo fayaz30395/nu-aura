@@ -1218,7 +1218,7 @@ export default function LettersPage() {
                     <option value="">Select a candidate</option>
                     {eligibleCandidates.map((candidate) => (
                       <option key={candidate.id} value={candidate.id}>
-                        {candidate.fullName} - {candidate.jobTitle || 'N/A'} ({candidate.status.replace(/_/g, ' ')})
+                        {candidate.fullName} - {candidate.jobTitle || 'N/A'} ({candidate.status?.replace(/_/g, ' ') ?? '-'})
                       </option>
                     ))}
                   </select>

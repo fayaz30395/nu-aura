@@ -126,7 +126,7 @@ public class ProbationPeriod extends TenantAware {
     }
 
     public boolean isOverdue() {
-        return status == ProbationStatus.ACTIVE && LocalDate.now().isAfter(endDate);
+        return status == ProbationStatus.ACTIVE && endDate != null && LocalDate.now().isAfter(endDate);
     }
 
     public boolean isEvaluationDue() {
@@ -136,7 +136,7 @@ public class ProbationPeriod extends TenantAware {
     }
 
     public long getDaysRemaining() {
-        if (status != ProbationStatus.ACTIVE && status != ProbationStatus.EXTENDED) {
+        if (endDate == null || (status != ProbationStatus.ACTIVE && status != ProbationStatus.EXTENDED)) {
             return 0;
         }
         return java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), endDate);

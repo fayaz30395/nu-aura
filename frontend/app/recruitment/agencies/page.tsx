@@ -556,7 +556,7 @@ export default function AgenciesPage() {
                               {agency.name}
                             </h3>
                             <Badge variant={getStatusVariant(agency.status)} size="sm">
-                              {agency.status.replace(/_/g, ' ')}
+                              {agency.status?.replace(/_/g, ' ') ?? '-'}
                             </Badge>
                           </div>
                           <RatingStars rating={agency.rating} />

@@ -118,7 +118,7 @@ export default function CandidateDetailPage() {
                 <p className="text-[var(--text-muted)] font-mono text-sm mt-1">{candidate.candidateCode}</p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-                    {candidate.status.replace(/_/g, ' ')}
+                    {candidate.status?.replace(/_/g, ' ') ?? '-'}
                   </span>
                   {candidate.currentStage && (
                     <span

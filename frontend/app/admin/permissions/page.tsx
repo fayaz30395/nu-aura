@@ -119,7 +119,12 @@ export default function PermissionsPage() {
     permissionCount: r.permissions.length
   }));
   const permissions = permissionsQuery.data || [];
-  const users = usersQuery.data || [];
+  const usersRaw = usersQuery.data;
+  const users: User[] = Array.isArray(usersRaw)
+    ? usersRaw
+    : Array.isArray((usersRaw as { content?: User[] })?.content)
+      ? (usersRaw as { content: User[] }).content
+      : [];
   const isLoading = rolesQuery.isLoading || permissionsQuery.isLoading || usersQuery.isLoading;
 
   const [expandedRoles, setExpandedRoles] = useState<Set<string>>(new Set());
@@ -165,8 +170,8 @@ export default function PermissionsPage() {
   }));
 
   const filteredUsers = users.filter(u =>
-    u.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchQuery.toLowerCase())
+    (u.fullName ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (u.email ?? '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Group permissions by resource for the modal

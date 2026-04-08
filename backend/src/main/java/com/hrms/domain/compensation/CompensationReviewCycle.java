@@ -93,8 +93,8 @@ public class CompensationReviewCycle extends TenantAware {
     @Column(name = "min_performance_rating")
     private Double minPerformanceRating;
 
-    @Column(name = "created_by")
-    private UUID createdBy;
+    // NOTE: createdBy is inherited from BaseEntity — do NOT redeclare here.
+    // The inherited @CreatedBy field is auto-populated by JPA auditing.
 
     @Column(name = "approved_by")
     private UUID approvedBy;

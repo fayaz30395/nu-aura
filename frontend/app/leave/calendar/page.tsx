@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
+import {AlertCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -45,7 +46,9 @@ export default function LeaveCalendarPage() {
   const {data: leaveTypes = []} = useActiveLeaveTypes();
 
   const leaves = (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [];
-  const loading = !employeeRequestsQuery.data && !approvedRequestsQuery.data;
+  const isAnyError = employeeRequestsQuery.isError || approvedRequestsQuery.isError;
+  const isAnyFetching = employeeRequestsQuery.fetchStatus === 'fetching' || approvedRequestsQuery.fetchStatus === 'fetching';
+  const loading = !isAnyError && isAnyFetching && !employeeRequestsQuery.data && !approvedRequestsQuery.data;
 
   // Switch to team view if user has no employeeId
   useEffect(() => {
@@ -217,7 +220,20 @@ export default function LeaveCalendarPage() {
 
         {/* Calendar Grid */}
         <div className="skeuo-card bg-[var(--bg-card)] rounded-lg overflow-hidden">
-          {loading ? (
+          {isAnyError ? (
+            <div className="text-center py-12">
+              <div className="flex flex-col items-center gap-4">
+                <AlertCircle className="w-8 h-8 text-danger-500"/>
+                <span className="text-[var(--text-secondary)]">Failed to load leave data. The server may be unreachable.</span>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="skeuo-button px-4 py-2 text-sm cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          ) : loading ? (
             <div className="text-center py-12 text-[var(--text-primary)]">Loading calendar...</div>
           ) : (
             <div className="p-4">
