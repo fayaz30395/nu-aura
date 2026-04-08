@@ -349,7 +349,7 @@ export default function TicketDetailPage() {
                       <div className="flex items-center gap-2">
                         <Badge variant="warning" size="sm">{esc.escalationLevel}</Badge>
                         <span className="text-xs text-[var(--text-secondary)]">
-                          {esc.escalationReason.replace(/_/g, ' ')}
+                          {esc.escalationReason ? esc.escalationReason.replace(/_/g, ' ') : '-'}
                         </span>
                       </div>
                       <span className="text-caption">

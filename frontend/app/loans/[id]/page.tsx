@@ -150,7 +150,7 @@ export default function LoanDetailPage() {
                 className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
               >
                 <StatusIcon className="h-4 w-4"/>
-                {loan.status.replace('_', ' ')}
+                {loan.status ? loan.status.replace('_', ' ') : '-'}
               </span>
             </div>
             <p className="text-[var(--text-muted)] mt-1">

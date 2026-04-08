@@ -351,7 +351,7 @@ export default function HolidaysPage() {
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
-              {type.replace('_', ' ')} ({count})
+              {type ? type.replace('_', ' ') : '-'} ({count})
             </button>
           );
         })}
@@ -417,7 +417,7 @@ export default function HolidaysPage() {
                           <div className="flex flex-wrap gap-2 mt-2">
                             <span
                               className={`px-2 py-0.5 text-xs font-medium rounded ${HOLIDAY_TYPE_COLORS[holiday.holidayType]}`}>
-                              {holiday.holidayType.replace('_', ' ')}
+                              {holiday.holidayType ? holiday.holidayType.replace('_', ' ') : '-'}
                             </span>
                             {holiday.isOptional && (
                               <span

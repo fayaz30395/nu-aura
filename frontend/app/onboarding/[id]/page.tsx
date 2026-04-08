@@ -191,7 +191,7 @@ export default function OnboardingDetailPage() {
                                     </span>
                     <Badge variant={process.status === 'COMPLETED' ? 'success' : 'warning'}
                            className="rounded-full px-4">
-                      {process.status.replace('_', ' ')}
+                      {process.status ? process.status.replace('_', ' ') : '-'}
                     </Badge>
                   </div>
                 </div>

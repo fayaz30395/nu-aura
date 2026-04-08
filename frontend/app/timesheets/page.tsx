@@ -396,7 +396,7 @@ export default function TimesheetsPage() {
               {currentWeekTimesheet ? (
                 <div className="flex items-center gap-2">
                   <Badge className={getStatusColor(currentWeekTimesheet.status)}>
-                    {currentWeekTimesheet.status.replace('_', ' ')}
+                    {currentWeekTimesheet.status ? currentWeekTimesheet.status.replace('_', ' ') : '-'}
                   </Badge>
                   <Button size="sm" onClick={() => handleViewTimesheet(currentWeekTimesheet)}>
                     <Eye className="h-4 w-4 mr-2"/>
@@ -583,7 +583,7 @@ export default function TimesheetsPage() {
                           )}
                         </div>
                         <Badge className={getStatusColor(timesheet.status)}>
-                          {timesheet.status.replace('_', ' ')}
+                          {timesheet.status ? timesheet.status.replace('_', ' ') : '-'}
                         </Badge>
                         <Button size="sm" variant="outline" onClick={() => handleViewTimesheet(timesheet)}>
                           <Eye className="h-4 w-4"/>
@@ -659,7 +659,7 @@ export default function TimesheetsPage() {
               <div className="space-y-6">
                 <div className="row-between">
                   <Badge className={getStatusColor(selectedTimesheet.status)}>
-                    {selectedTimesheet.status.replace('_', ' ')}
+                    {selectedTimesheet.status ? selectedTimesheet.status.replace('_', ' ') : '-'}
                   </Badge>
                   <div className="text-right">
                     <p className="text-xl font-bold text-[var(--text-primary)]">

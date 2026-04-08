@@ -407,7 +407,7 @@ export default function EmployeesPage() {
                     </td>
                     <td className="whitespace-nowrap text-center">
                       <span className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
-                        {employee.status.replace('_', ' ')}
+                        {employee.status ? employee.status.replace('_', ' ') : '-'}
                       </span>
                     </td>
                     <td className="whitespace-nowrap text-right">

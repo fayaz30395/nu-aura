@@ -1,5 +1,31 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 10 — DEV Agent Monitoring (2026-04-08)
+
+### TS-001: Missing NuAuraLoader import in restricted-holidays page
+- **File:** `frontend/app/restricted-holidays/page.tsx`
+- **Root cause:** `NuAuraLoader` component was used at lines 686 and 810 (ManageTab and PolicyTab loading states) but never imported. The component exists in `@/components/ui/Loading` and is exported from `@/components/ui/index.ts`.
+- **Fix:** Added `import {NuAuraLoader} from '@/components/ui/Loading';` to the imports.
+- **Verified:** tsc passes (zero errors)
+
+### BUG-002 (QA): /assets page crash — defensive null guard added
+- **File:** `frontend/app/assets/page.tsx`
+- **Root cause:** QA reported `TypeError: Cannot read properties of null (reading 'replace')` crashing the entire page. All `.replace()` calls in the file use optional chaining (`?.replace`), so the crash likely occurs when the backend returns `null` entries in the `content` array (e.g., `[{...}, null, {...}]`), causing `asset.category?.replace` to fail because `asset` itself is `null`.
+- **Fix:** Added `.filter(Boolean)` to the assets content array to strip any null entries before rendering: `(assetsQuery.data?.content || []).filter(Boolean)`.
+- **Verified:** tsc passes (zero errors)
+
+### BUG-001 (QA): Header.tsx hydration mismatch — ALREADY FIXED
+- Already fixed in Session 4 (HYDRATION-001). Current code uses consistent `p-2` on the mobile menu button. QA agent may be seeing a stale cached version.
+
+### BUG-003 (QA): /probation blank page — cascade from BUG-002
+- Not a standalone code bug. QA confirmed this is caused by React tree corruption after the /assets crash during client-side navigation. Hard refresh resolves it. Fixing BUG-002 should prevent this cascade.
+
+### Monitoring loop: QA findings checked 30+ times across resumed session
+- QA agent tested 17 pages total: 14 PASS, 1 PASS-EMPTY, 2 FAIL (BUG-002 /assets, BUG-003 /probation)
+- File grew from 14 to 161 lines during monitoring window
+
+---
+
 ## Session 9 — GLOBAL-001 Session Instability Fix (2026-04-08)
 
 ### GLOBAL-001: P0 Session Instability — ROOT CAUSE IDENTIFIED AND FIXED

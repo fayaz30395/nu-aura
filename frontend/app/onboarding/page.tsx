@@ -287,7 +287,7 @@ export default function OnboardingPage() {
                             variant={getStatusVariant(process.status)}
                             className="rounded-xl px-4 py-1.5 font-black tracking-widest uppercase text-xs"
                           >
-                            {process.status.replace('_', ' ')}
+                            {process.status ? process.status.replace('_', ' ') : '-'}
                           </Badge>
 
                           <div

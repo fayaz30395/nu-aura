@@ -140,7 +140,7 @@ export default function TaxDeclarationsPage() {
     <Table.Tr key={declaration.id}>
       <Table.Td>{declaration.financialYear}</Table.Td>
       <Table.Td>{declaration.employeeName}</Table.Td>
-      <Table.Td>{declaration.taxRegime.replace('_', ' ')}</Table.Td>
+      <Table.Td>{declaration.taxRegime ? declaration.taxRegime.replace('_', ' ') : '-'}</Table.Td>
       <Table.Td>
         {new Intl.NumberFormat('en-IN', {style: 'currency', currency: 'INR'}).format(declaration.taxableIncome)}
       </Table.Td>

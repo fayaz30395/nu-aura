@@ -218,7 +218,7 @@ export default function TaxOverviewPage() {
                   >
                     <Table.Td>{decl.financialYear}</Table.Td>
                     <Table.Td>{decl.employeeName}</Table.Td>
-                    <Table.Td>{decl.taxRegime.replace('_', ' ')}</Table.Td>
+                    <Table.Td>{decl.taxRegime ? decl.taxRegime.replace('_', ' ') : '-'}</Table.Td>
                     <Table.Td>
                       <Badge color={statusColor(decl.status)} className="badge-status">
                         {decl.status}

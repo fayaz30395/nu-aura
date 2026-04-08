@@ -118,149 +118,142 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       {/* Actions */}
       <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-end gap-1">
+          {/* Primary: View */}
           <button
             onClick={() => onView(candidate)}
             aria-label={`View ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
             title="View"
           >
             <Eye className="h-4 w-4"/>
           </button>
 
-          {/* AI: Match Score */}
-          <button
-            onClick={() => onCalculateMatch(candidate)}
-            disabled={aiLoadingState === `match-${candidate.id}`}
-            aria-label={`Calculate match score for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-            title="Calculate Match Score"
-          >
-            {aiLoadingState === `match-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin"/>
-            ) : (
-              <Brain className="h-4 w-4"/>
-            )}
-          </button>
-          {matchScore && (
-            <div
-              className={`px-2 py-1 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
-              {Math.round(matchScore.overallScore)}%
-            </div>
-          )}
-
-          {/* AI: Screening Summary */}
-          <button
-            onClick={() => onScreeningSummary(candidate)}
-            disabled={aiLoadingState === `screening-${candidate.id}`}
-            aria-label={`Screening summary for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-            title="Screening Summary"
-          >
-            {aiLoadingState === `screening-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin"/>
-            ) : (
-              <FileText className="h-4 w-4"/>
-            )}
-          </button>
-
-          {/* AI: Feedback Synthesis */}
-          <button
-            onClick={() => onSynthesizeFeedback(candidate)}
-            disabled={aiLoadingState === `feedback-${candidate.id}`}
-            aria-label={`Synthesize feedback for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors disabled:opacity-50 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-            title="Synthesize Feedback"
-          >
-            {aiLoadingState === `feedback-${candidate.id}` ? (
-              <Loader2 className="h-4 w-4 animate-spin"/>
-            ) : (
-              <MessageSquare className="h-4 w-4"/>
-            )}
-          </button>
-
-          {/* Interview Scorecards */}
-          <button
-            onClick={() => onViewScorecard(candidate)}
-            aria-label={`View scorecards for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-            title="Interview Scorecards"
-          >
-            <TrendingUp className="h-4 w-4"/>
-          </button>
-
-          {/* Schedule Interview */}
-          <button
-            onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-            aria-label={`Schedule interview for ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-            title="Schedule Interview"
-          >
-            <Calendar className="h-4 w-4"/>
-          </button>
-
-          {/* Offer (only when SELECTED) */}
-          {candidate.status === 'SELECTED' && (
-            <button
-              onClick={() => onOffer(candidate)}
-              aria-label={`Generate offer for ${candidate.fullName}`}
-              className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-              title="Generate Offer Letter"
-            >
-              <Send className="h-4 w-4"/>
-            </button>
-          )}
-
-          {/* Accept/Decline + E-Sign (only when OFFER_EXTENDED) */}
-          {candidate.status === 'OFFER_EXTENDED' && (
-            <>
-              <button
-                onClick={() => onESign(candidate)}
-                aria-label={`Send offer letter for e-signature to ${candidate.fullName}`}
-                className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-                title="Send for E-Sign"
-              >
-                <FileSignature className="h-4 w-4"/>
-              </button>
-              <button
-                onClick={() => onAccept(candidate)}
-                aria-label={`Accept offer for ${candidate.fullName}`}
-                className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-                title="Accept Offer"
-              >
-                <CheckCircle className="h-4 w-4"/>
-              </button>
-              <button
-                onClick={() => onDecline(candidate)}
-                aria-label={`Decline offer for ${candidate.fullName}`}
-                className="p-2 text-[var(--text-muted)] hover:text-danger-600 dark:hover:text-danger-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
-                title="Decline Offer"
-              >
-                <XCircle className="h-4 w-4"/>
-              </button>
-            </>
-          )}
-
-          {/* Edit */}
+          {/* Primary: Edit */}
           <button
             onClick={() => onEdit(candidate)}
             aria-label={`Edit ${candidate.fullName}`}
-            className="p-2 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
             title="Edit"
           >
             <Edit2 className="h-4 w-4"/>
           </button>
 
-          {/* Delete */}
-          <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
+          {/* Match score badge (inline, no button needed) */}
+          {matchScore && (
+            <div
+              className={`px-2 py-0.5 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
+              {Math.round(matchScore.overallScore)}%
+            </div>
+          )}
+
+          {/* More actions dropdown */}
+          <div className="relative group">
             <button
-              onClick={() => onDelete(candidate)}
-              aria-label={`Delete ${candidate.fullName}`}
-              className="p-2 text-[var(--text-muted)] hover:text-danger-600 dark:hover:text-danger-400 transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
-              title="Delete"
+              aria-label={`More actions for ${candidate.fullName}`}
+              className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
             >
-              <Trash2 className="h-4 w-4"/>
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+              </svg>
             </button>
-          </PermissionGate>
+            <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+              {/* AI Actions */}
+              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI Actions</div>
+              <button
+                onClick={() => onCalculateMatch(candidate)}
+                disabled={aiLoadingState === `match-${candidate.id}`}
+                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Brain className="h-3.5 w-3.5"/>}
+                Match Score
+              </button>
+              <button
+                onClick={() => onScreeningSummary(candidate)}
+                disabled={aiLoadingState === `screening-${candidate.id}`}
+                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <FileText className="h-3.5 w-3.5"/>}
+                Screening Summary
+              </button>
+              <button
+                onClick={() => onSynthesizeFeedback(candidate)}
+                disabled={aiLoadingState === `feedback-${candidate.id}`}
+                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <MessageSquare className="h-3.5 w-3.5"/>}
+                Synthesize Feedback
+              </button>
+
+              {/* Interview */}
+              <div className="border-t border-[var(--border-subtle)] my-1"/>
+              <button
+                onClick={() => onViewScorecard(candidate)}
+                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+              >
+                <TrendingUp className="h-3.5 w-3.5"/>
+                Interview Scorecards
+              </button>
+              <button
+                onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
+                className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+              >
+                <Calendar className="h-3.5 w-3.5"/>
+                Schedule Interview
+              </button>
+
+              {/* Offer actions (conditional) */}
+              {candidate.status === 'SELECTED' && (
+                <>
+                  <div className="border-t border-[var(--border-subtle)] my-1"/>
+                  <button
+                    onClick={() => onOffer(candidate)}
+                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                  >
+                    <Send className="h-3.5 w-3.5"/>
+                    Generate Offer
+                  </button>
+                </>
+              )}
+              {candidate.status === 'OFFER_EXTENDED' && (
+                <>
+                  <div className="border-t border-[var(--border-subtle)] my-1"/>
+                  <button
+                    onClick={() => onESign(candidate)}
+                    className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                  >
+                    <FileSignature className="h-3.5 w-3.5"/>
+                    Send for E-Sign
+                  </button>
+                  <button
+                    onClick={() => onAccept(candidate)}
+                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                  >
+                    <CheckCircle className="h-3.5 w-3.5"/>
+                    Accept Offer
+                  </button>
+                  <button
+                    onClick={() => onDecline(candidate)}
+                    className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                  >
+                    <XCircle className="h-3.5 w-3.5"/>
+                    Decline Offer
+                  </button>
+                </>
+              )}
+
+              {/* Destructive */}
+              <PermissionGate permission={Permissions.CANDIDATE_EVALUATE}>
+                <div className="border-t border-[var(--border-subtle)] my-1"/>
+                <button
+                  onClick={() => onDelete(candidate)}
+                  className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/20 flex items-center gap-2 cursor-pointer rounded-b-lg"
+                >
+                  <Trash2 className="h-3.5 w-3.5"/>
+                  Delete
+                </button>
+              </PermissionGate>
+            </div>
+          </div>
         </div>
       </td>
     </tr>

@@ -246,7 +246,7 @@ export default function ManagerDashboardPage() {
                 : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
               }`}>
               <Activity className="h-4 w-4"/>
-              <span className="font-bold">Health: {teamOverview.teamHealthStatus.replace('_', ' ')}</span>
+              <span className="font-bold">Health: {teamOverview.teamHealthStatus ? teamOverview.teamHealthStatus.replace('_', ' ') : '-'}</span>
             </div>
           </div>
         </motion.div>

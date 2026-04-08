@@ -88,7 +88,7 @@ function ProfilePopover({employee, directReportsCount}: ProfilePopoverProps) {
       animate={{opacity: 1, y: 0, scale: 1}}
       exit={{opacity: 0, y: -8, scale: 0.96}}
       transition={{duration: 0.15}}
-      className="absolute top-full left-1/2 -transurface-x-1/2 mt-2 z-50 w-72 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4"
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-72 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] p-4"
       onClick={e => e.stopPropagation()}
     >
       {/* Header */}
@@ -187,7 +187,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
           style.bg,
           style.border,
           isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-900 shadow-[var(--shadow-dropdown)] scale-105',
-          !isHighlighted && 'hover:shadow-[var(--shadow-elevated)] hover:-transurface-y-0.5',
+          !isHighlighted && 'hover:shadow-[var(--shadow-elevated)] hover:-translate-y-0.5',
         )}
         onClick={togglePopover}
         role="button"
@@ -247,7 +247,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="absolute -bottom-3 left-1/2 -transurface-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-card)] flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-card)] flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
@@ -272,7 +272,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
       {hasChildren && expanded && (
         <div className="relative mt-8">
           {/* Vertical connector from parent */}
-          <div className="absolute left-1/2 -top-5 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2"/>
+          <div className="absolute left-1/2 -top-5 w-px h-5 bg-surface-300 dark:bg-surface-600 -translate-x-1/2"/>
 
           {/* Horizontal connector spanning children */}
           {children.length > 1 && (
@@ -287,7 +287,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
               <div key={child.employee.id} className="relative flex flex-col items-center">
                 {/* Vertical connector to child */}
                 <div
-                  className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -transurface-x-1/2"/>
+                  className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -translate-x-1/2"/>
                 <div className="pt-6">
                   <OrgNode
                     node={child}

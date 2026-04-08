@@ -49,7 +49,7 @@ export function OrgChartFilters({
     <div className="flex flex-wrap items-center gap-4">
       {/* Search */}
       <div className="relative flex-1 min-w-[200px] max-w-sm">
-        <Search className="absolute left-3 top-1/2 -transurface-y-1/2 h-4 w-4 text-[var(--text-tertiary)]"/>
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]"/>
         <input
           type="text"
           placeholder="Search by name, designation, or code..."
@@ -60,7 +60,7 @@ export function OrgChartFilters({
         {searchQuery && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute right-2 top-1/2 -transurface-y-1/2 h-5 w-5 rounded-full bg-surface-200 dark:bg-surface-700 flex items-center justify-center text-[var(--text-secondary)] hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-surface-200 dark:bg-surface-700 flex items-center justify-center text-[var(--text-secondary)] hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors"
             aria-label="Clear search"
           >
             <span className="text-xs leading-none">&times;</span>
