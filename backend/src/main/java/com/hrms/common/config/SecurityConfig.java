@@ -224,7 +224,7 @@ public class SecurityConfig {
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(csrfDoubleSubmitFilter, JwtAuthenticationFilter.class);
+                .addFilterAfter(csrfDoubleSubmitFilter, UsernamePasswordAuthenticationFilter.class);
 
         // Spring's built-in CSRF is disabled — we use CsrfDoubleSubmitFilter instead.
         // The custom filter provides defense-in-depth on top of JWT httpOnly cookies

@@ -228,7 +228,7 @@ function DemoLoginPanel({
                     {account.name}
                   </span>
                   <span className="text-2xs px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
-                    {account.role.replace(/_/g, ' ')}
+                    {account.role?.replace(/_/g, ' ') ?? '-'}
                   </span>
                 </div>
                 <div className="text-caption truncate">
@@ -368,7 +368,7 @@ function LoginPage() {
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-        || 'Demo login failed. Is the backend running?';
+        || 'Service temporarily unavailable. Please try again in a moment.';
       setError(message);
     } finally {
       setIsDemoLoading(false);

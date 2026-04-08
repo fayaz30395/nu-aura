@@ -21,6 +21,19 @@ import java.util.UUID;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSpecificationExecutor<Employee> {
 
+    /**
+     * Lightweight name-only lookup by employee ID.
+     *
+     * <p>Returns CONCAT(firstName, ' ', lastName) directly via JPQL, bypassing
+     * full entity hydration. This avoids triggering {@code EncryptedStringConverter}
+     * on columns like {@code taxId}, which would fail if the encryption key is
+     * unavailable or the stored ciphertext is corrupted — and the resulting
+     * exception marks the enclosing transaction as rollback-only, causing 500s
+     * even when the caller catches the error.</p>
+     */
+    @Query("SELECT CONCAT(e.firstName, ' ', COALESCE(e.lastName, '')) FROM Employee e WHERE e.id = :id")
+    Optional<String> findFullNameById(@Param("id") UUID id);
+
     Optional<Employee> findByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
     @EntityGraph(attributePaths = {"user"})

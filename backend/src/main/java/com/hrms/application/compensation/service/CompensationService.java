@@ -98,7 +98,7 @@ public class CompensationService {
 
     @Transactional(readOnly = true)
     public Page<CompensationCycleResponse> getAllCycles(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return cycleRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
                 .map(this::enrichCycleResponse);
     }
@@ -192,7 +192,7 @@ public class CompensationService {
 
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getAllRevisions(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return revisionRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
                 .map(this::enrichRevisionResponse);
     }

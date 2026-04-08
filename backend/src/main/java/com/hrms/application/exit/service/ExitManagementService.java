@@ -306,24 +306,33 @@ public class ExitManagementService {
 
     // ==================== Mapper Methods ====================
 
+    /**
+     * Resolves an employee's full name by ID using a lightweight JPQL projection.
+     *
+     * <p>Uses {@code findFullNameById} instead of {@code findById} to avoid loading
+     * the full Employee entity. Full entity hydration triggers
+     * {@code EncryptedStringConverter} on the {@code taxId} column, which fails if
+     * the stored ciphertext is corrupted or the encryption key differs. That failure
+     * marks the enclosing {@code @Transactional} as rollback-only, causing an
+     * {@code UnexpectedRollbackException} (500) even when the caller catches the
+     * decryption error.</p>
+     */
+    private String safeGetEmployeeName(UUID employeeId) {
+        if (employeeId == null) {
+            return null;
+        }
+        try {
+            return employeeRepository.findFullNameById(employeeId).orElse(null);
+        } catch (Exception e) {
+            log.warn("Could not resolve employee name for id={}: {}", employeeId, e.getMessage());
+            return null;
+        }
+    }
+
     private ExitProcessResponse mapToExitProcessResponse(ExitProcess exitProcess) {
-        String employeeName = employeeRepository.findById(exitProcess.getEmployeeId())
-                .map(Employee::getFullName)
-                .orElse(null);
-
-        String managerName = null;
-        if (exitProcess.getManagerId() != null) {
-            managerName = employeeRepository.findById(exitProcess.getManagerId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
-
-        String hrSpocName = null;
-        if (exitProcess.getHrSpocId() != null) {
-            hrSpocName = employeeRepository.findById(exitProcess.getHrSpocId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
+        String employeeName = safeGetEmployeeName(exitProcess.getEmployeeId());
+        String managerName = safeGetEmployeeName(exitProcess.getManagerId());
+        String hrSpocName = safeGetEmployeeName(exitProcess.getHrSpocId());
 
         return ExitProcessResponse.builder()
                 .id(exitProcess.getId())
@@ -358,13 +367,10 @@ public class ExitManagementService {
 
     private ExitClearanceResponse mapToExitClearanceResponse(ExitClearance clearance) {
         String employeeName = exitProcessRepository.findById(clearance.getExitProcessId())
-                .flatMap(ep -> employeeRepository.findById(ep.getEmployeeId()))
-                .map(Employee::getFullName)
+                .map(ep -> safeGetEmployeeName(ep.getEmployeeId()))
                 .orElse(null);
 
-        String approverName = employeeRepository.findById(clearance.getApproverId())
-                .map(Employee::getFullName)
-                .orElse(null);
+        String approverName = safeGetEmployeeName(clearance.getApproverId());
 
         return ExitClearanceResponse.builder()
                 .id(clearance.getId())
@@ -797,12 +803,9 @@ public class ExitManagementService {
     // ==================== Additional Mapper Methods ====================
 
     private FullAndFinalSettlementResponse mapToSettlementResponse(FullAndFinalSettlement settlement) {
-        String employeeName = employeeRepository.findById(settlement.getEmployeeId())
-                .map(Employee::getFullName).orElse(null);
-        String preparedByName = settlement.getPreparedBy() != null ?
-                employeeRepository.findById(settlement.getPreparedBy()).map(Employee::getFullName).orElse(null) : null;
-        String approvedByName = settlement.getApprovedBy() != null ?
-                employeeRepository.findById(settlement.getApprovedBy()).map(Employee::getFullName).orElse(null) : null;
+        String employeeName = safeGetEmployeeName(settlement.getEmployeeId());
+        String preparedByName = safeGetEmployeeName(settlement.getPreparedBy());
+        String approvedByName = safeGetEmployeeName(settlement.getApprovedBy());
 
         return FullAndFinalSettlementResponse.builder()
                 .id(settlement.getId())
@@ -845,10 +848,8 @@ public class ExitManagementService {
     }
 
     private ExitInterviewResponse mapToExitInterviewResponse(ExitInterview interview) {
-        String employeeName = employeeRepository.findById(interview.getEmployeeId())
-                .map(Employee::getFullName).orElse(null);
-        String interviewerName = interview.getInterviewerId() != null ?
-                employeeRepository.findById(interview.getInterviewerId()).map(Employee::getFullName).orElse(null) : null;
+        String employeeName = safeGetEmployeeName(interview.getEmployeeId());
+        String interviewerName = safeGetEmployeeName(interview.getInterviewerId());
 
         return ExitInterviewResponse.builder()
                 .id(interview.getId())
@@ -888,14 +889,10 @@ public class ExitManagementService {
     }
 
     private AssetRecoveryResponse mapToAssetRecoveryResponse(AssetRecovery asset) {
-        String employeeName = employeeRepository.findById(asset.getEmployeeId())
-                .map(Employee::getFullName).orElse(null);
-        String recoveredByName = asset.getRecoveredBy() != null ?
-                employeeRepository.findById(asset.getRecoveredBy()).map(Employee::getFullName).orElse(null) : null;
-        String verifiedByName = asset.getVerifiedBy() != null ?
-                employeeRepository.findById(asset.getVerifiedBy()).map(Employee::getFullName).orElse(null) : null;
-        String waivedByName = asset.getWaivedBy() != null ?
-                employeeRepository.findById(asset.getWaivedBy()).map(Employee::getFullName).orElse(null) : null;
+        String employeeName = safeGetEmployeeName(asset.getEmployeeId());
+        String recoveredByName = safeGetEmployeeName(asset.getRecoveredBy());
+        String verifiedByName = safeGetEmployeeName(asset.getVerifiedBy());
+        String waivedByName = safeGetEmployeeName(asset.getWaivedBy());
 
         return AssetRecoveryResponse.builder()
                 .id(asset.getId())

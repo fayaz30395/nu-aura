@@ -106,7 +106,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       {/* Status */}
       <td className="px-6 py-4 text-center">
         <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-          {candidate.status.replace(/_/g, ' ')}
+          {candidate.status?.replace(/_/g, ' ') ?? '-'}
         </span>
       </td>
 

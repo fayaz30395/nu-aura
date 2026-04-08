@@ -144,7 +144,7 @@ export default function AgencyDetailPage() {
                     {agency.name}
                   </h1>
                   <Badge variant={getStatusVariant(agency.status)} size="sm">
-                    {agency.status.replace(/_/g, ' ')}
+                    {agency.status?.replace(/_/g, ' ') ?? '-'}
                   </Badge>
                 </div>
                 {agency.specializations && (
@@ -366,7 +366,7 @@ export default function AgencyDetailPage() {
                             </td>
                             <td className="px-4 py-2">
                               <Badge variant={getInvoiceVariant(sub.invoiceStatus)} size="sm">
-                                {sub.invoiceStatus.replace(/_/g, ' ')}
+                                {sub.invoiceStatus?.replace(/_/g, ' ') ?? '-'}
                               </Badge>
                             </td>
                             <td className="px-4 py-2 text-[var(--text-secondary)]">

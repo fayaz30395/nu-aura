@@ -344,7 +344,7 @@ export default function TicketDetailPage() {
                   </h3>
                 </div>
                 <div className="space-y-2">
-                  {escalations.map((esc) => (
+                  {escalations.filter(Boolean).map((esc) => (
                     <div key={esc.id} className="row-between bg-[var(--bg-surface)] rounded-lg px-4 py-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="warning" size="sm">{esc.escalationLevel}</Badge>

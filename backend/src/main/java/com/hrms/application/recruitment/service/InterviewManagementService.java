@@ -172,7 +172,13 @@ public class InterviewManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         String permission = determineViewPermission();
         Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
-        Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Interview> tenantSpec = (root, query, cb) -> {
+            // BUG-006 FIX: Prevent duplicate rows when scope predicates produce joins
+            if (query != null && Long.class != query.getResultType()) {
+                query.distinct(true);
+            }
+            return cb.equal(root.get("tenantId"), tenantId);
+        };
         return interviewRepository.findAll(
                         Specification.where(tenantSpec).and(scopeSpec), pageable)
                 .map(this::mapToInterviewResponse);
@@ -200,7 +206,13 @@ public class InterviewManagementService {
         validateCandidateAccess(candidate, permission);
 
         Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
-        Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Interview> tenantSpec = (root, query, cb) -> {
+            // BUG-006 FIX: Prevent duplicate rows when scope predicates produce joins
+            if (query != null && Long.class != query.getResultType()) {
+                query.distinct(true);
+            }
+            return cb.equal(root.get("tenantId"), tenantId);
+        };
         Specification<Interview> candidateSpec = (root, query, cb) -> cb.equal(root.get("candidateId"), candidateId);
 
         return interviewRepository.findAll(

@@ -101,14 +101,14 @@ public class ProbationService {
 
     @Transactional(readOnly = true)
     public Page<ProbationPeriodResponse> getAllProbations(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return probationPeriodRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
                 .map(this::enrichResponse);
     }
 
     @Transactional(readOnly = true)
     public Page<ProbationPeriodResponse> getProbationsByStatus(ProbationStatus status, Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         return probationPeriodRepository.findByTenantIdAndStatusOrderByEndDateAsc(tenantId, status, pageable)
                 .map(this::enrichResponse);
     }

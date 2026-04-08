@@ -289,7 +289,7 @@ export default function ShiftSwapPage() {
                     <td className="px-4 py-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-xs font-medium badge-status ${statusColors[req.status]}`}>
-                          {req.status.replace(/_/g, ' ')}
+                          {req.status?.replace(/_/g, ' ') ?? '-'}
                         </span>
                     </td>
                     <td className="px-4 py-4">

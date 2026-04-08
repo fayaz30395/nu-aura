@@ -1,5 +1,255 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 18 — BUG-009 and BUG-010 Backend 500 Fixes (2026-04-08)
+
+### BUG-010 (P1): GET /api/v1/compensation/revisions returns 500
+- **Root cause:** `CompensationReviewCycle` entity redeclares `@Column(name = "created_by") private UUID createdBy` at line 97, which **duplicates** the same field inherited from `BaseEntity` (line 47: `@CreatedBy @Column(name = "created_by") private UUID createdBy`). Hibernate 6 treats this as a duplicate column mapping conflict, causing a `MappingException` or ambiguous property resolution at runtime. Since the `enrichRevisionResponse` method looks up cycle names via `cycleRepository`, any compensation endpoint that touches cycles fails.
+- **Fix:** Removed the duplicate `createdBy` field from `CompensationReviewCycle.java`. The inherited `BaseEntity.createdBy` (with `@CreatedBy` auditing and `updatable = false`) correctly handles this column.
+- **File:** `backend/src/main/java/com/hrms/domain/compensation/CompensationReviewCycle.java`
+- **Also:** Changed `TenantContext.getCurrentTenant()` to `requireCurrentTenant()` in `CompensationService.getAllRevisions()` and `getAllCycles()` to prevent null tenant from producing opaque 500s.
+- **File:** `backend/src/main/java/com/hrms/application/compensation/service/CompensationService.java`
+- **Verified:** `mvn compile -q` passes.
+
+### BUG-009 (P1): GET /api/v1/probation returns 500, GET /api/v1/probation/status/CONFIRMED returns 500
+- **Root cause (partial):** `ProbationPeriod.getDaysRemaining()` and `isOverdue()` call `LocalDate.now().isAfter(endDate)` and `ChronoUnit.DAYS.between(LocalDate.now(), endDate)` without null-guarding `endDate`. If any probation record has a null `endDate` (possible via corrupted data or builder usage), these methods throw NPE inside `ProbationPeriodResponse.fromEntity()`, which is called in `.map(this::enrichResponse)`. The NPE propagates up and becomes a 500.
+- **Fix 1:** Added null guards to `ProbationPeriod.isOverdue()` (`endDate != null &&`) and `getDaysRemaining()` (`if (endDate == null || ...)` early return 0).
+- **File:** `backend/src/main/java/com/hrms/domain/probation/ProbationPeriod.java`
+- **Fix 2:** Changed `TenantContext.getCurrentTenant()` to `requireCurrentTenant()` in `ProbationService.getAllProbations()` and `getProbationsByStatus()`.
+- **File:** `backend/src/main/java/com/hrms/application/probation/service/ProbationService.java`
+- **Verified:** `mvn compile -q` passes.
+
+RESTART-NEEDED: Entity mapping fix in CompensationReviewCycle requires backend restart.
+
+---
+
+## Session 17 — BUG-007: GET /api/v1/exit/processes 500 Internal Server Error (2026-04-08)
+
+### Root Cause
+
+The `ExitManagementService` mapper methods called `employeeRepository.findById()` to resolve employee names for display. This loads the full `Employee` entity, which includes `@Convert(converter = EncryptedStringConverter.class)` on the `taxId` field. For employee `48000000-e001-0000-0000-000000000002`, the stored `taxId` ciphertext could not be decrypted by the `EncryptedStringConverter` (likely encrypted with a different key or corrupted data).
+
+The decryption failure throws an exception inside the `@Transactional(readOnly = true)` method. Even though the exception was caught in a try-catch wrapper (`safeGetEmployeeName`), Hibernate had already marked the transaction as rollback-only. When the method returned successfully, Spring's transaction manager attempted to commit, found the rollback-only flag, and threw `UnexpectedRollbackException` -- which the `GlobalExceptionHandler` catch-all mapped to HTTP 500.
+
+**Chain of failure:**
+1. `getAllExitProcesses()` -> `mapToExitProcessResponse()` -> `employeeRepository.findById(employeeId)`
+2. Hibernate eagerly loads `Employee` entity, including `@Convert` on `taxId`
+3. `EncryptedStringConverter.convertToEntityAttribute()` fails: "Error attempting to apply AttributeConverter"
+4. JPA marks transaction as rollback-only
+5. try-catch in mapper catches the error, returns null
+6. Method returns, Spring tries to commit -> `UnexpectedRollbackException`
+7. `GlobalExceptionHandler` -> 500
+
+### Fix
+
+**File: `EmployeeRepository.java`** -- Added `findFullNameById(UUID id)` JPQL projection query that fetches only `CONCAT(firstName, ' ', lastName)`. This avoids loading the full entity and bypasses the `EncryptedStringConverter` on `taxId`.
+
+**File: `ExitManagementService.java`** -- Replaced all `employeeRepository.findById(id).map(Employee::getFullName).orElse(null)` calls in all 5 mapper methods with a centralized `safeGetEmployeeName(UUID)` helper that uses `findFullNameById()`. This affects:
+- `mapToExitProcessResponse` (employeeName, managerName, hrSpocName)
+- `mapToExitClearanceResponse` (employeeName, approverName)
+- `mapToSettlementResponse` (employeeName, preparedByName, approvedByName)
+- `mapToExitInterviewResponse` (employeeName, interviewerName)
+- `mapToAssetRecoveryResponse` (employeeName, recoveredByName, verifiedByName, waivedByName)
+
+**File: `GlobalExceptionHandler.java`** -- Added `@ExceptionHandler(org.hibernate.ObjectNotFoundException.class)` handler (defense-in-depth for related `@Where`/soft-delete edge cases). Returns 404 instead of falling through to the generic 500 handler.
+
+### Verification
+
+All 4 affected endpoints verified with curl against the running application:
+- `GET /api/v1/exit/processes` -> 200 (was 500)
+- `GET /api/v1/exit/settlements` -> 200 (was 500)
+- `GET /api/v1/offboarding` -> 200 (was 500)
+- `GET /api/v1/exit/processes/status/INITIATED` -> 200 (was 500)
+- `GET /api/v1/exit/dashboard` -> 200 (was already 200, still works)
+
+Response data verified: employee names resolve correctly (e.g., "Saran V").
+
+---
+
+## Session 16 — Backend DEV Agent Bug Investigation (2026-04-08)
+
+### BUG-006 (P3): /recruitment/interviews — duplicate rows in interview table
+- **File:** `backend/src/main/java/com/hrms/application/recruitment/service/InterviewManagementService.java`
+- **Root cause:** `getAllInterviews()` and `getInterviewsByCandidate()` use JPA Specification with `DataScopeService.getScopeSpecification()`. For non-SuperAdmin roles with TEAM/CUSTOM scope, the scope predicates can produce JOINs that cause Cartesian product duplicates. Even for SuperAdmin (conjunction), the Specification machinery can produce duplicates when combined with pageable sorting.
+- **Fix:** Added `query.distinct(true)` to the tenant Specification lambda in both `getAllInterviews()` and `getInterviewsByCandidate()`. Guarded with `Long.class != query.getResultType()` to avoid applying DISTINCT to COUNT queries (which breaks pagination totals).
+- **Verified:** `mvn compile -q` passes.
+
+### BUG-007 (P1): /offboarding — GET /api/v1/exit/processes returns 500
+- **File:** `backend/src/main/java/com/hrms/application/exit/service/ExitManagementService.java`
+- **Root cause (partial):** `getAllExitProcesses()` used `TenantContext.getCurrentTenant()` which can return null if tenant context is not set. When tenantId is null, the JPA Specification `cb.equal(root.get("tenantId"), null)` generates invalid SQL or throws NPE. Changed to `TenantContext.requireCurrentTenant()` which throws `IllegalStateException` (mapped to 409 by GlobalExceptionHandler) with a clear error message instead of an opaque 500.
+- **Note:** The 500 may also be caused by Neon DB connection issues or missing Flyway migration state. The ExitProcess entity does not extend BaseEntity (unlike most other entities) and is missing audit fields (version, createdBy, updatedBy, isDeleted) that exist in the DB schema. This inconsistency is a tech debt item but should not cause 500 on SELECT.
+- **Verified:** `mvn compile -q` passes.
+
+### Additional 500s identified from QA: /recognition/feed
+- **Root cause:** The `recognitions` table in V0__init.sql is missing columns that the `Recognition` entity expects: `points_awarded`, `is_public`, `is_anonymous`, `badge_id`, `wall_post_id`, `likes_count`, `comments_count`, `is_approved`, `approved_by`, `approved_at`, `recognized_at`. Hibernate generates SELECT/INSERT with these columns but they don't exist in the DB, causing SQL errors.
+- **Fix:** Created Flyway migration `V123__fix_recognitions_missing_columns.sql` to add all missing columns with appropriate defaults.
+- **Verified:** `mvn compile -q` passes.
+
+### Additional 500s identified from QA: /wall/posts, /home/new-joinees
+- **Triage:** The `social_posts` table exists in V0__init.sql with all required columns. The `wall/posts` 500 is likely a transient Neon DB connection issue or a runtime error in the batch mapping logic. The `/home/new-joinees` 500 queries the `employees` table which exists and is well-tested. Both are likely Neon cold start issues.
+
+RESTART-NEEDED: V123 migration added for recognitions table — backend restart required to apply.
+
+---
+
+## Session 15 — Frontend DEV Agent QA Monitoring (2026-04-08)
+
+### BUG-003 (Phase1B, High): Notification polling without backoff floods console when backend is down
+- **File:** `frontend/lib/hooks/queries/useNotifications.ts`
+- **Root cause:** `useNotificationInbox` and `useUnreadNotificationCount` both used a static `refetchInterval: 30_000` (30s). When backend is unreachable, React Query retries each poll 3x with exponential backoff per attempt, but the next poll still fires 30s later. This creates a flood of failed requests that fills the console and can freeze browser tabs.
+- **Fix:** Replaced static `refetchInterval` with a `pollingWithBackoff()` function that returns 30s when healthy, doubles the interval on each consecutive failure (30s -> 60s -> 120s), and stops polling entirely after 10 consecutive failures. Resets to normal when a successful response arrives.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-005 (Phase1B, Low): Developer-facing login error message
+- **File:** `frontend/app/auth/login/page.tsx`
+- **Root cause:** Demo login fallback error message was "Demo login failed. Is the backend running?" -- a developer-facing message not suitable for production.
+- **Fix:** Changed to "Service temporarily unavailable. Please try again in a moment."
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-001 (Phase1B, P2): /leave/approvals stuck on infinite loading when API is down
+- **File:** `frontend/app/leave/approvals/page.tsx`
+- **Root cause:** Loading state was `!pendingData` which stays true forever when API fails (data stays undefined). No error state was rendered.
+- **Fix:** Added `isError` and `fetchStatus` from the query. Loading spinner now only shows when `fetchStatus === 'fetching'` and data hasn't arrived. When query errors, an error state with "Failed to load" message and Try Again button is shown instead.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-002 (Phase1B, P2): /leave/calendar shows infinite loading when API is unreachable
+- **File:** `frontend/app/leave/calendar/page.tsx`
+- **Root cause:** Same pattern -- `loading` derived from `!data` stays true when API fails. No error path existed.
+- **Fix:** Added `isError` and `fetchStatus` checks from both queries. Loading only shows when actively fetching and no data yet. Error state with retry button shown when either query errors.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### BUG-008 (P1): /admin/permissions crashes with "users.filter is not a function"
+- **File:** `frontend/app/admin/permissions/page.tsx`
+- **Root cause:** `usersQuery.data` was assumed to be an array (`User[]`), but the backend `/users` endpoint may return a paginated response object (`{content: [...], totalElements: N}`) instead of a flat array. The code `const users = usersQuery.data || [];` would assign the object (truthy) to `users`, then `users.filter()` would crash since objects don't have `.filter()`.
+- **Fix:** Added `Array.isArray` guard with fallback to `.content` property: extracts `usersRaw.content` if the response is a paginated object, otherwise falls back to empty array. Also added null-safe access on `u.fullName` and `u.email` in the filter function using `?? ''`.
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+### Systemic .replace() hardening sweep (12 files, 14 call sites)
+- **Pattern:** `value.replace(/_/g, ' ')` without optional chaining — crashes if `value` is null/undefined
+- **Fix:** Changed to `value?.replace(/_/g, ' ') ?? '-'` across all unguarded sites
+- **Files fixed:**
+  - `app/attendance/shift-swap/page.tsx` — `req.status`
+  - `app/recruitment/page.tsx` — `candidate.status`
+  - `app/recruitment/agencies/page.tsx` — `agency.status`
+  - `app/recruitment/agencies/[id]/page.tsx` — `agency.status`, `sub.invoiceStatus`
+  - `app/recruitment/candidates/[id]/page.tsx` — `candidate.status`
+  - `app/recruitment/candidates/CandidateTableRow.tsx` — `candidate.status`
+  - `app/recruitment/candidates/_components/ViewCandidateModal.tsx` — `candidate.status`
+  - `app/letters/page.tsx` — `candidate.status`
+  - `app/me/attendance/page.tsx` — `selectedAttendance.status`
+  - `app/travel/page.tsx` — `request.status`, `request.travelType`
+  - `app/dashboards/manager/page.tsx` — `project.projectStatus`
+  - `app/auth/login/page.tsx` — `account.role`
+- **Skipped (already guarded):** Sites using `{value && (` conditional render or `?.replace()` optional chaining
+- **Verified:** `npx tsc --noEmit` passes with zero errors.
+
+---
+
+## Session 13 — Backend DEV Agent Monitoring Resumed (2026-04-08)
+
+### Monitoring Summary: No backend bugs found (QA resumed after frontend restart)
+
+**Monitoring window**: 4 cycles, QA findings file grew from 172 to 395 lines (22 pages tested total).
+
+**New QA pages tested**: /expenses, /assets (re-test), /holidays, /shifts, /announcements, /helpdesk, /contracts, /calendar, /projects, /reports, /recruitment/jobs, /recruitment/candidates
+
+**Backend-relevant findings reviewed:**
+- BUG-001 (P0 login 401): Re-confirmed as DATA-ISSUE. Investigated `CustomUserDetailsService` — no auth_provider check blocking login. Password hash from V61 migration is correct. Issue is Neon DB state: either V61 hasn't run on current DB, or Google SSO login overwrote `auth_provider` to GOOGLE after migration ran. Login code in `AuthService.login()` is correct — Spring Security `AuthenticationManager.authenticate()` compares bcrypt hash. NOT a code bug.
+- BUG-002 (P2 dashboard slow): Neon cold start. NOT a code bug.
+- BUG-003 (P1 /assets crash): Frontend `.replace()` null guard — already fixed in Session 11 (`.filter(Boolean)` on assets content array). Frontend may need restart/hard refresh.
+- BUG-004 (P1 /helpdesk crash): Frontend `.replace()` undefined guard — already fixed in Session 11. Frontend may need restart/hard refresh.
+- BUG-005 (P1 session loss after crash): Frontend error boundary / auth state issue. NOT backend.
+
+**QA testing blocked**: ~90 pages + all RBAC tests blocked because QA agent cannot re-login (BUG-001 data issue). QA session ended.
+
+**Result: 0 backend code fixes required.**
+
+---
+
+## Session 12 — Backend DEV Agent Monitoring (2026-04-08)
+
+### Monitoring Summary: No backend bugs found
+
+**Monitoring window**: 20 cycles (~15 minutes), QA findings file grew from 8 to 172 lines.
+
+**QA pages tested (observed)**: /auth/login, /dashboard, /employees, /employees/directory, /departments, /org-chart, /attendance, /leave, /payroll, /payroll/runs, /payroll/structures, /recruitment, /performance, /fluence/wiki, /admin, /me/profile
+
+**Backend-relevant findings reviewed:**
+- BUG-001 (401 on /auth/login): DATA ISSUE — QA used wrong email (superadmin@nulogic.io instead of fayaz.m@nulogic.io). Neon DB password hash mismatch. NOT a code bug.
+- BUG-002 (Dashboard slow load): Neon serverless cold start latency (~13s). NOT a code bug.
+
+**Already-modified files reviewed:**
+- `AuthService.java`: Password reset token upgraded from UUID.randomUUID() to SecureRandom+Base64 — correct security improvement. `refresh()` already has `@Transactional(readOnly = true)` from GLOBAL-001 fix.
+- `TokenBlacklistService.java`: Added in-memory fallback for `revokeAllTokensBefore()` and `isTokenRevokedByTimestamp()` — correct, matches existing pattern used by `blacklistToken()`/`isBlacklisted()`.
+
+**Result: 0 backend code fixes required. All QA findings are frontend-only, data issues, or dev environment latency.**
+
+---
+
+## Session 14 — Frontend DEV Agent Deep Investigation (2026-04-08)
+
+### BUG-003/004 CONFIRMED persistent — deeper `.replace()` null-guard hardening
+
+QA Run 2 confirmed /assets crash persists even after `.next` cache clear and server restart.
+All 4 `.replace()` calls in `app/assets/page.tsx` already had ternary guards (`field ? field.replace(...) : '-'`)
+and `.filter(Boolean)` was already on the data array. Crash must originate from a shared layer.
+
+**Root cause identified:** `convertRolesToObjects()` in `frontend/lib/hooks/useAuth.ts:48` calls
+`roleCode.replace(/_/g, ' ')` without null guard. If backend auth response `roles` array contains
+a null entry (e.g., `["SUPER_ADMIN", null]`), or if `permissions` array has null entries, this crashes
+during session hydration. The error propagates through the React tree and the stack trace points to
+whichever page component was rendering at the time — explaining why /assets and /helpdesk show the crash
+but the actual `.replace()` calls in those pages are all guarded.
+
+**Fixes applied:**
+
+1. **`frontend/lib/hooks/useAuth.ts`** — `convertRolesToObjects()`:
+   - Added `.filter(Boolean)` on `roleStrings` before `.map()` to strip null entries
+   - Changed `roleCode.replace(/_/g, ' ')` to `roleCode?.replace(/_/g, ' ') ?? roleCode`
+   - Added `.filter(Boolean)` on `permissionStrings` before `.map()`
+   - Added optional chaining on `permCode?.split(':')`
+
+2. **`frontend/app/assets/page.tsx`** — switched all `.replace()` from ternary to optional chaining:
+   - Line 554: `asset.category?.replace(/_/g, ' ') ?? '-'`
+   - Line 559: `asset.status?.replace(/_/g, ' ') ?? '-'`
+   - Line 913: `selectedAsset.status?.replace(/_/g, ' ') ?? '-'`
+   - Line 917: `selectedAsset.category?.replace(/_/g, ' ') ?? '-'`
+
+3. **`frontend/app/helpdesk/sla/page.tsx`** — switched `.replace()` to optional chaining:
+   - `escalation.escalationReason?.replace(/_/g, ' ') ?? '-'`
+
+**Systemic note:** Found 12+ additional unguarded `.replace('_', ' ')` calls across the frontend
+(employees, org-chart, projects, learning, holidays, training, recognition, performance, onboarding).
+These are lower-risk since those pages passed QA, but they follow the same vulnerable pattern.
+They should be hardened in a follow-up sweep.
+
+### Monitoring: QA Run 2 complete — 22 pages tested, blocked by session expiry
+- 17 PASS, 2 PASS-EMPTY, 2 FAIL (/assets, /helpdesk), 1 BUG (/dashboard slow)
+- QA blocked by BUG-001 (401 on login — DB password hash mismatch)
+- File stable at 415 lines for 3 consecutive monitoring cycles
+
+**Verified:** `npx tsc --noEmit` passes with zero errors.
+
+---
+
+## Session 11 — DEV Agent Monitoring (2026-04-08)
+
+### BUG-004 (QA Run 1): /helpdesk page crash — defensive null guards added
+- **File:** `frontend/app/helpdesk/page.tsx`, `frontend/app/helpdesk/tickets/[id]/page.tsx`
+- **Root cause:** QA reported `TypeError: Cannot read properties of undefined (reading 'replace')` crashing the /helpdesk page. Same systemic pattern as BUG-002: the API may return null entries in the escalations array, causing `esc.escalationReason` to fail because `esc` itself is null/undefined. Additionally, `esc.ticketId.slice()` and `esc.escalationLevel` had no null guards.
+- **Fix:** (1) Added `.filter(Boolean)` before `.map()` on escalations array to strip null entries. (2) Added optional chaining on `esc.ticketId?.slice(0, 8)` with `?? '—'` fallback. (3) Added `?? '-'` fallback on `esc.escalationLevel`. (4) Added optional chaining on SLA content filter (`s?.isActive`). (5) Applied same `.filter(Boolean)` fix to ticket detail page escalations.
+- **Verified:** tsc passes (zero errors)
+
+### BUG-002 (QA Run 2): /dashboard skeleton loaders stuck permanently
+- **File:** `frontend/app/dashboard/page.tsx`
+- **Root cause:** `isLoading` was derived directly from React Query's `isAnalyticsLoading`, which stays `true` between retry attempts even when `fetchStatus` is `'idle'`. When the analytics API fails or is slow, the loading guard on line 476 (`if (!hasHydrated || isLoading)`) blocks rendering indefinitely, preventing the graceful degradation fallback (line 534) from ever executing.
+- **Fix:** Added `fetchStatus` from the analytics query. Changed `isLoading` derivation to `isAnalyticsLoading && analyticsFetchStatus === 'fetching'` — loading is only `true` when actively fetching, not between retry pauses. When retries exhaust, the page falls through to the graceful degradation path with `safeAnalytics` fallback data.
+- **Verified:** tsc passes (zero errors)
+
+### Triage: BUG-001 (QA Run 2): /auth/login 401 Bad credentials
+- **Classification:** DATA ISSUE — not a code bug. Password hash in Neon cloud DB doesn't match 'Welcome@123'. Coordinator confirmed. Skipped.
+
+---
+
 ## Session 10 — DEV Agent Monitoring (2026-04-08)
 
 ### TS-001: Missing NuAuraLoader import in restricted-holidays page

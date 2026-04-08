@@ -598,7 +598,7 @@ export default function RecruitmentDashboard() {
                           </p>
                         </div>
                         <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
-                          {candidate.status.replace(/_/g, ' ')}
+                          {candidate.status?.replace(/_/g, ' ') ?? '-'}
                         </Badge>
                       </div>
                     </motion.div>

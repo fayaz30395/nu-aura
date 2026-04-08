@@ -574,6 +574,32 @@ public class GlobalExceptionHandler {
         return jsonResponse(status, errorResponse);
     }
 
+    /**
+     * BUG-007 FIX: Handle Hibernate ObjectNotFoundException.
+     *
+     * <p>Thrown when an eagerly-loaded {@code @OneToOne} or {@code @ManyToOne}
+     * association references a row that is excluded by {@code @Where(clause = "is_deleted = false")}.
+     * Hibernate cannot satisfy the non-nullable join and throws this instead of
+     * returning {@code null}. Without this handler it falls through to the generic
+     * {@code Exception} handler and returns 500.</p>
+     */
+    @ExceptionHandler(org.hibernate.ObjectNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleObjectNotFoundException(
+            org.hibernate.ObjectNotFoundException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        logError("data", "object_not_found", ex, status, path);
+        recordErrorMetric("data", "object_not_found", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Found",
+                "Referenced entity not found or has been deleted", path);
+        errorResponse.setErrorCode("ENTITY_NOT_FOUND");
+
+        return jsonResponse(status, errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {

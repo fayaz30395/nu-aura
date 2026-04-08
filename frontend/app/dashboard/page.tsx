@@ -141,6 +141,7 @@ export default function DashboardPage() {
   const {
     data: analyticsData,
     isLoading: isAnalyticsLoading,
+    fetchStatus: analyticsFetchStatus,
     error: analyticsError,
     refetch: refetchAnalytics
   } = useDashboardAnalytics();
@@ -154,7 +155,7 @@ export default function DashboardPage() {
   const timeEntries = timeEntriesData;
   const activeOnboardingCount = onboardingData.length;
   const analytics = analyticsData;
-  const isLoading = isAnalyticsLoading;
+  const isLoading = isAnalyticsLoading && analyticsFetchStatus === 'fetching';
   const error = analyticsError instanceof Error ? analyticsError.message : null;
 
   const loadGoogleNotifications = async () => {
