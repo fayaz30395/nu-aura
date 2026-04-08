@@ -36,10 +36,28 @@ public class ExpenseClaimController {
 
     @PostMapping("/employees/{employeeId}")
     @RequiresPermission(Permission.EXPENSE_CREATE)
-    public ResponseEntity<ExpenseClaimResponse> createExpenseClaim(
+    public ResponseEntity<ExpenseClaimResponse> createExpenseClaimForEmployee(
             @PathVariable("employeeId") @NotNull UUID employeeId,
             @Valid @RequestBody ExpenseClaimRequest request) {
         log.info("Creating expense claim for employee: {}", employeeId);
+        ExpenseClaimResponse response = expenseClaimService.createExpenseClaim(employeeId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * BUG-EXP-001 FIX: Convenience POST endpoint for creating expense claims.
+     * Resolves the current employee from SecurityContext so the frontend can
+     * POST directly to /api/v1/expenses without knowing the employeeId.
+     */
+    @PostMapping
+    @RequiresPermission(Permission.EXPENSE_CREATE)
+    public ResponseEntity<ExpenseClaimResponse> createExpenseClaim(
+            @Valid @RequestBody ExpenseClaimRequest request) {
+        UUID employeeId = com.hrms.common.security.SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("Creating expense claim for current employee: {}", employeeId);
         ExpenseClaimResponse response = expenseClaimService.createExpenseClaim(employeeId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

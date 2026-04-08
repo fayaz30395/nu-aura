@@ -121,6 +121,8 @@ const statusOptions = [
   },
 ];
 
+const EMPTY_SEARCH_RESULT = {content: [] as Employee[], totalPages: 0, totalElements: 0};
+
 export default function TeamDirectory() {
   const router = useRouter();
   useAuth();
@@ -173,7 +175,7 @@ export default function TeamDirectory() {
   }, [deptData]);
 
   // React Query - search employees with filters
-  const {data: employeeSearchResponse = {content: [], totalPages: 0, totalElements: 0}, isPending} = useQuery({
+  const {data: employeeSearchResponse = EMPTY_SEARCH_RESULT, isPending} = useQuery({
     queryKey: ['employees', 'directory', filters],
     queryFn: async () => {
       const response = await apiClient.post<{
@@ -192,11 +194,14 @@ export default function TeamDirectory() {
   });
 
   // Update local state from React Query data
+  const searchContent = employeeSearchResponse.content;
+  const searchTotalPages = employeeSearchResponse.totalPages;
+  const searchTotalElements = employeeSearchResponse.totalElements;
   React.useEffect(() => {
-    setEmployees(employeeSearchResponse.content);
-    setTotalPages(employeeSearchResponse.totalPages);
-    setTotalElements(employeeSearchResponse.totalElements);
-  }, [employeeSearchResponse]);
+    setEmployees(searchContent);
+    setTotalPages(searchTotalPages);
+    setTotalElements(searchTotalElements);
+  }, [searchContent, searchTotalPages, searchTotalElements]);
 
   const handleSearch = useCallback(() => {
     setFilters((prev) => ({...prev, page: 0}));

@@ -279,7 +279,8 @@ class FeedService {
   private async fetchLinkedInPosts(page = 0, size = 10): Promise<FeedItem[]> {
     try {
       const data = await linkedinService.getActiveLinkedInPosts(page, size);
-      return data.content.map((post: LinkedInPost): FeedItem => ({
+      const posts = Array.isArray(data) ? data : (Array.isArray(data?.content) ? data.content : []);
+      return posts.map((post: LinkedInPost): FeedItem => ({
         id: `linkedin-${post.id}`,
         type: 'LINKEDIN_POST',
         timestamp: post.postedAt,

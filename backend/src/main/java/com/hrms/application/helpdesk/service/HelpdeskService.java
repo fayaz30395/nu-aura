@@ -37,9 +37,10 @@ public class HelpdeskService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating ticket for employee {} in tenant {}", request.getEmployeeId(), tenantId);
 
-        // Verify employee exists within tenant
-        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        // Verify employee exists within tenant (use exists check to avoid loading encrypted fields)
+        if (!employeeRepository.existsByIdAndTenantId(request.getEmployeeId(), tenantId)) {
+            throw new IllegalArgumentException("Employee not found");
+        }
 
         Ticket ticket = new Ticket();
         ticket.setId(UUID.randomUUID());
@@ -139,9 +140,10 @@ public class HelpdeskService {
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
 
-        // Verify assignee exists within tenant
-        employeeRepository.findByIdAndTenantId(assigneeId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Assignee not found"));
+        // Verify assignee exists within tenant (use exists check to avoid loading encrypted fields)
+        if (!employeeRepository.existsByIdAndTenantId(assigneeId, tenantId)) {
+            throw new IllegalArgumentException("Assignee not found");
+        }
 
         ticket.setAssignedTo(assigneeId);
         ticket.setAssignedAt(LocalDateTime.now());
@@ -232,9 +234,10 @@ public class HelpdeskService {
         ticketRepository.findByIdAndTenantId(request.getTicketId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
 
-        // Verify commenter exists within tenant
-        employeeRepository.findByIdAndTenantId(request.getCommenterId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Commenter not found"));
+        // Verify commenter exists within tenant (use exists check to avoid loading encrypted fields)
+        if (!employeeRepository.existsByIdAndTenantId(request.getCommenterId(), tenantId)) {
+            throw new IllegalArgumentException("Commenter not found");
+        }
 
         TicketComment comment = new TicketComment();
         comment.setId(UUID.randomUUID());
@@ -361,16 +364,18 @@ public class HelpdeskService {
         return "TKT-" + timestamp + "-" + randomPart;
     }
 
+    /**
+     * BUG-HELP-001 FIX: Use projection query (findFullNameById) instead of loading
+     * the full Employee entity. Loading the full entity triggers EncryptedStringConverter
+     * on taxId/bankAccountNumber fields, which can throw and mark the transaction as
+     * rollback-only, causing HTTP 500 on ticket creation and listing.
+     */
     private TicketResponse mapToTicketResponse(Ticket ticket) {
-        String employeeName = employeeRepository.findById(ticket.getEmployeeId())
-                .map(Employee::getFullName)
-                .orElse(null);
+        String employeeName = safeGetEmployeeName(ticket.getEmployeeId());
 
         String assignedToName = null;
         if (ticket.getAssignedTo() != null) {
-            assignedToName = employeeRepository.findById(ticket.getAssignedTo())
-                    .map(Employee::getFullName)
-                    .orElse(null);
+            assignedToName = safeGetEmployeeName(ticket.getAssignedTo());
         }
 
         String categoryName = null;
@@ -411,9 +416,7 @@ public class HelpdeskService {
                 .map(Ticket::getTicketNumber)
                 .orElse(null);
 
-        String commenterName = employeeRepository.findById(comment.getCommenterId())
-                .map(Employee::getFullName)
-                .orElse(null);
+        String commenterName = safeGetEmployeeName(comment.getCommenterId());
 
         return TicketCommentResponse.builder()
                 .id(comment.getId())
@@ -430,12 +433,24 @@ public class HelpdeskService {
                 .build();
     }
 
+    /**
+     * Safely get employee full name using projection query to avoid loading
+     * encrypted fields that may cause transaction rollback.
+     */
+    private String safeGetEmployeeName(UUID employeeId) {
+        if (employeeId == null) return null;
+        try {
+            return employeeRepository.findFullNameById(employeeId).orElse(null);
+        } catch (Exception e) {
+            log.warn("Failed to resolve employee name for {}: {}", employeeId, e.getMessage());
+            return null;
+        }
+    }
+
     private TicketCategoryResponse mapToTicketCategoryResponse(TicketCategory category) {
         String defaultAssigneeName = null;
         if (category.getDefaultAssigneeId() != null) {
-            defaultAssigneeName = employeeRepository.findById(category.getDefaultAssigneeId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
+            defaultAssigneeName = safeGetEmployeeName(category.getDefaultAssigneeId());
         }
 
         return TicketCategoryResponse.builder()
