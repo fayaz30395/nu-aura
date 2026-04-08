@@ -72,7 +72,8 @@ export default function OfficeLocationsPage() {
   const [locationToDelete, setLocationToDelete] = React.useState<OfficeLocation | null>(null);
 
   // React Query hooks
-  const {data: locations = [], isLoading} = useOfficeLocations();
+  const {data: locationsRaw = [], isLoading} = useOfficeLocations();
+  const locations = Array.isArray(locationsRaw) ? locationsRaw : [];
   const createMutation = useCreateOfficeLocation();
   const updateMutation = useUpdateOfficeLocation();
   const deleteMutation = useDeleteOfficeLocation();
