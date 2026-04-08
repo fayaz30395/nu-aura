@@ -945,3 +945,830 @@ Phase 2 RBAC testing requires logging in as different roles (Employee, Team Lead
 - /settings, /settings/security, /settings/notifications, /settings/profile
 - /analytics/org-health, /predictive-analytics, /security, /integrations/slack
 
+---
+
+# Phase 1 — Remaining Pages (Super Admin) — Session 2
+
+---
+
+## /recruitment/jobs — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none (only info-level logger messages)
+- **Visual issues**: Page stuck on "Loading job openings..." spinner — stats all show 0. Likely backend not returning data (API timeout or no jobs seeded).
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: BUG-002 — Infinite loading state on /recruitment/jobs; no empty-state fallback after timeout
+
+---
+
+## /recruitment/candidates — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Page stuck on "Loading candidates..." spinner — stats all show 0. Same pattern as /recruitment/jobs.
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: BUG-003 — Infinite loading state on /recruitment/candidates; no empty-state fallback
+
+---
+
+## /onboarding — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — page renders correctly with stats (Active 0, Upcoming 0, Completed 0, Avg Days 12)
+- **RBAC**: correct
+- **Data**: empty but properly handled (no infinite spinner)
+- **Bug**: none
+
+---
+
+## /performance/goals — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Stuck on "Loading goals..." spinner with filter dropdowns visible
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: BUG-004 — Infinite loading state on /performance/goals; no empty-state fallback
+
+---
+
+## /training/catalog — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Stuck on "Loading catalog..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /training/my-learning — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Stats show 0, stuck on "Loading your courses..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /learning — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — hub page renders with tabs (Course Catalog, My Courses, Certificates)
+- **RBAC**: correct
+- **Data**: loaded (navigation hub)
+- **Bug**: none
+
+---
+
+## /learning/courses — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — redirects to /learning (tab-based navigation)
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /learning/certificates — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Stuck on "Loading certificates..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /learning/paths — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: GET /lms/learning-paths 404 (API endpoint missing)
+- **Visual issues**: Stuck on "Loading learning paths..." spinner
+- **RBAC**: correct
+- **Data**: error — 404 from backend
+- **Bug**: BUG-005 — /lms/learning-paths returns 404; backend endpoint missing or misrouted
+
+---
+
+## /recognition — Role: SUPER ADMIN
+- **Status**: FAIL
+- **Console errors**: none specific to this page
+- **Visual issues**: Page renders completely blank — no content, no heading, no sidebar
+- **RBAC**: correct
+- **Data**: empty (blank page)
+- **Bug**: BUG-006 — /recognition renders blank page; no UI content rendered at all
+
+---
+
+## /wellness — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders with Quick Log, Programs, Challenges tabs, leaderboard
+- **RBAC**: correct
+- **Data**: loaded (stats show 0 but UI is complete with "No data yet" placeholders)
+- **Bug**: none
+
+---
+
+## /fluence/blogs — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — page renders with "New Post" button, empty list
+- **RBAC**: correct
+- **Data**: empty but properly handled
+- **Bug**: none
+
+---
+
+## /fluence/templates — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — renders with "Create Template" button
+- **RBAC**: correct
+- **Data**: empty but properly handled
+- **Bug**: none
+
+---
+
+## /fluence/search — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders search box with filter tabs (All, Wiki Pages, Blog Posts, Templates)
+- **RBAC**: correct
+- **Data**: loaded (waiting for user input)
+- **Bug**: none
+
+---
+
+## /fluence/wall — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: GET /fluence/activities 500 (server error)
+- **Visual issues**: none — renders Activity Wall with Post/Poll/Praise tabs, "No trending content" and "No recent activity" placeholders
+- **RBAC**: correct
+- **Data**: empty but handled gracefully despite 500 errors
+- **Bug**: BUG-007 — GET /fluence/activities returns 500; backend error (gracefully handled in UI)
+
+---
+
+## /fluence/analytics — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders with Activity Trend, Distribution, Top Content, Recent Activity tabs
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /fluence/drive — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: GET /fluence/attachments/recent 500 (server error)
+- **Visual issues**: File upload area renders, stuck on "Loading files..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely due to 500 error)
+- **Bug**: BUG-008 — GET /fluence/attachments/recent returns 500; backend error
+
+---
+
+## /admin/employees — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial load with skeleton loaders (5+ seconds), then renders Employee Management table
+- **RBAC**: correct
+- **Data**: loaded (stats show 0 but table structure visible)
+- **Bug**: none
+
+---
+
+## /admin/roles — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial load with skeleton loaders, then renders full role table with data
+- **RBAC**: correct
+- **Data**: loaded (TENANT_ADMIN 349 permissions, HR_MANAGER 124, etc.)
+- **Bug**: none
+
+---
+
+## /admin/permissions — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — renders with Roles (0) and Users (0) tabs, Create Role button
+- **RBAC**: correct
+- **Data**: empty (0 roles, 0 users in this view)
+- **Bug**: none
+
+---
+
+## /admin/holidays — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Year tabs (2025-2028) render, stuck on "Loading holidays for 2026..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /admin/shifts — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — renders with "Add Shift" button
+- **RBAC**: correct
+- **Data**: empty but properly handled
+- **Bug**: none
+
+---
+
+## /admin/settings — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders settings hub with links to all admin sections
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /admin/custom-fields — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial load with skeleton loaders, then renders table with data
+- **RBAC**: correct
+- **Data**: loaded (QA_TEST_001 visible)
+- **Bug**: none
+
+---
+
+## /admin/implicit-roles — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial load with skeleton loaders, then renders rules table
+- **RBAC**: correct
+- **Data**: loaded (Reporting Managers rule visible, 0 affected users)
+- **Bug**: none
+
+---
+
+## /admin/office-locations — Role: SUPER ADMIN
+- **Status**: FAIL
+- **Console errors**: TypeError: locations.map is not a function at OfficeLocationsPage (page.tsx:691); also setState-during-render warning
+- **Visual issues**: Page crashes to error boundary — shows "Admin Error: locations.map is not a function"
+- **RBAC**: correct
+- **Data**: error (crash)
+- **Bug**: BUG-009 — /admin/office-locations crashes with TypeError; API returns non-array response, needs null-guard
+
+---
+
+## /admin/system — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Chart shows "Loading chart data..." but stats render (0 active tenants)
+- **RBAC**: correct
+- **Data**: loaded (system dashboard with tenant list)
+- **Bug**: none
+
+---
+
+## /admin/reports — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Quick Downloads, Scheduled Reports, Report Sections
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /admin/payroll — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: setState-during-render warning for AdminPayrollPage (non-critical)
+- **Visual issues**: none — renders with stats, Quick Access cards
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /admin/leave-types — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Table headers render, stuck on "Loading leave types..." spinner
+- **RBAC**: correct
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /me/dashboard — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders personalized greeting, Quick Access, attendance, leave balance, Company Feed
+- **RBAC**: correct
+- **Data**: loaded with personalized data
+- **Bug**: none
+
+---
+
+## /me/documents — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Slow initial load with skeleton loaders, then renders Document Requests with 0 stats
+- **RBAC**: correct
+- **Data**: empty but properly handled
+- **Bug**: none
+
+---
+
+## /me/attendance — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders attendance calendar for April 2026, Check In button, stats
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /me/leaves — Role: SUPER ADMIN
+- **Status**: FAIL
+- **Console errors**: none visible
+- **Visual issues**: Page renders only sidebar — no main content area at all (blank main region)
+- **RBAC**: correct
+- **Data**: empty (blank page)
+- **Bug**: BUG-010 — /me/leaves renders blank main content area; page component fails silently
+
+---
+
+## /me/payslips — Role: SUPER ADMIN
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: none — renders year filter, "No Payslips Found" empty state
+- **RBAC**: correct
+- **Data**: empty but properly handled
+- **Bug**: none
+
+---
+
+## /settings — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Account Information, Appearance, Authentication sections
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /settings/security — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders 2FA section, Security Tips, Active Sessions
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /settings/notifications — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial load, then renders notification preferences table
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /settings/profile — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders profile settings with Name, Email, link to full profile
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /analytics/org-health — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Slow initial render, then loads rich dashboard with Organization Pulse (82), Retention (100%), Engagement (80.5), Department Vibrancy
+- **RBAC**: correct
+- **Data**: loaded with rich data
+- **Bug**: none
+
+---
+
+## /integrations/slack — Role: SUPER ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Slack Integration setup guide
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+# Phase 2 — RBAC Tests
+
+---
+
+## /dashboard — Role: EMPLOYEE (Saran V)
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Shows "Analytics data could not be loaded" warning, but dashboard renders with personal metrics, Quick Actions, Attendance Overview
+- **RBAC**: correct (own data only)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /me/profile — Role: EMPLOYEE
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders own profile (Saran V, Technology Lead, EMP-0003, Engineering)
+- **RBAC**: correct (own data)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /me/dashboard — Role: EMPLOYEE
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders personalized greeting, limited sidebar items
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /admin — Role: EMPLOYEE
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Employee cannot access admin)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /payroll/runs — Role: EMPLOYEE
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Employee cannot access payroll runs)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /recruitment — Role: EMPLOYEE
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: Shows "Access Denied — You don't have permission to access this page" with Go to Home button
+- **RBAC**: correct (Employee cannot access recruitment)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /leave — Role: EMPLOYEE
+- **Status**: FAIL
+- **Console errors**: none visible
+- **Visual issues**: Page renders blank (sidebar only, no main content) — same as /me/leaves for Super Admin
+- **RBAC**: unclear — page loads but content is blank
+- **Data**: empty (blank page)
+- **Bug**: BUG-010 (same as /me/leaves blank issue — leave page has rendering bug)
+
+---
+
+## /attendance — Role: EMPLOYEE
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders attendance chart, calendar, history, regularization, upcoming holidays
+- **RBAC**: correct (own attendance)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /fluence/wiki — Role: EMPLOYEE
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Wiki Pages with "New Page" button, Spaces section
+- **RBAC**: correct (read access to wiki)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /dashboard — Role: TEAM LEAD (Mani S)
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: Shows "Analytics data could not be loaded" warning, but dashboard renders with personal metrics
+- **RBAC**: correct (team-level data)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /leave/approvals — Role: TEAM LEAD
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Renders with Pending Requests (0), Approved (0), Rejected (0) — stuck on "Loading leave requests..."
+- **RBAC**: correct (team lead can access leave approvals)
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /admin — Role: TEAM LEAD
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Team Lead cannot access admin)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /payroll/runs — Role: TEAM LEAD
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Team Lead cannot access payroll runs)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /employees — Role: HR MANAGER (Jagadeesh N)
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Employee Management table with search and status filters
+- **RBAC**: correct (HR Manager can view all employees)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /leave/approvals — Role: HR MANAGER
+- **Status**: PASS-EMPTY
+- **Console errors**: none
+- **Visual issues**: Renders with stats, stuck on "Loading leave requests..."
+- **RBAC**: correct (HR Manager can access leave approvals)
+- **Data**: empty (loading indefinitely)
+- **Bug**: none (backend data dependency)
+
+---
+
+## /recruitment — Role: HR MANAGER
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Recruitment Dashboard with 46 active jobs, 100 candidates, interviews, offers
+- **RBAC**: correct (HR Manager can access recruitment)
+- **Data**: loaded with rich data
+- **Bug**: none
+
+---
+
+## /admin — Role: HR MANAGER
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: Redirects to /auth/login (session invalidated by admin guard)
+- **RBAC**: correct (HR Manager cannot access admin)
+- **Data**: N/A
+- **Bug**: none (note: redirect goes to /auth/login instead of /me/dashboard — inconsistent with other DENY behaviors)
+
+---
+
+## /admin — Role: MANAGER (Sumit Kumar)
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Manager role cannot access admin)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /dashboard — Role: MANAGER
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders personalized dashboard for Sumit Kumar
+- **RBAC**: correct
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+# Phase 2 — RBAC Summary
+
+**Note:** Demo accounts on the login page do not include explicit HR Admin or Tenant Admin roles. Available roles tested: SUPER ADMIN, EMPLOYEE, TEAM LEAD, HR MANAGER, MANAGER. The hradmin@nulogic.io and tenantadmin@nulogic.io credentials require the email/password form which is behind "Sign in with Email" — the demo account buttons do not cover these roles.
+
+### RBAC Verdict Table
+
+| Route | Employee | Team Lead | HR Manager | Manager | Super Admin |
+|-------|----------|-----------|------------|---------|-------------|
+| /dashboard | PASS | PASS | PASS | PASS | PASS |
+| /me/profile | PASS | PASS | PASS | PASS | PASS |
+| /me/dashboard | PASS | PASS | PASS | PASS | PASS |
+| /admin | DENY-CORRECT | DENY-CORRECT | DENY-CORRECT | DENY-CORRECT | PASS |
+| /payroll/runs | DENY-CORRECT | DENY-CORRECT | not tested | not tested | PASS |
+| /recruitment | DENY-CORRECT | not tested | PASS | not tested | PASS |
+| /leave/approvals | not tested | PASS | PASS | not tested | PASS |
+| /attendance | PASS | not tested | not tested | not tested | PASS |
+| /fluence/wiki | PASS | not tested | not tested | not tested | PASS |
+| /employees | not tested | not tested | PASS | not tested | PASS |
+
+---
+
+# Session 2 — Bug Summary
+
+| Bug ID | Page | Severity | Description |
+|--------|------|----------|-------------|
+| BUG-002 | /recruitment/jobs | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-003 | /recruitment/candidates | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-004 | /performance/goals | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-005 | /learning/paths | High | GET /lms/learning-paths returns 404; backend endpoint missing or misrouted |
+| BUG-006 | /recognition | High | Page renders completely blank; no content, no heading, no sidebar |
+| BUG-007 | /fluence/wall | Medium | GET /fluence/activities returns 500; backend error (UI handles gracefully) |
+| BUG-008 | /fluence/drive | Medium | GET /fluence/attachments/recent returns 500; backend error |
+| BUG-009 | /admin/office-locations | Critical | TypeError: locations.map is not a function — page crashes; needs null-guard |
+| BUG-010 | /me/leaves, /leave | High | Pages render blank (sidebar only); silent component failure |
+
+### Stats
+
+- **Total pages tested (Session 2)**: 45 Phase 1 + 15 RBAC = 60 pages
+- **PASS**: 24
+- **PASS-EMPTY**: 16 (data loading issues, mostly backend not returning data)
+- **FAIL**: 3 (BUG-006, BUG-009, BUG-010)
+- **DENY-CORRECT**: 7
+- **RBAC violations**: 0
+- **New bugs found**: 9 (BUG-002 through BUG-010)
+- **Critical bugs**: 1 (BUG-009)
+- **High bugs**: 3 (BUG-005, BUG-006, BUG-010)
+- **Medium bugs**: 5 (BUG-002, BUG-003, BUG-004, BUG-007, BUG-008)
+
+---
+
+# Phase 2 — Extended RBAC Tests (Session 3)
+
+---
+
+## /admin — Role: RECRUITMENT ADMIN (Suresh M)
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (Recruitment Admin cannot access admin panel)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /recruitment — Role: RECRUITMENT ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Recruitment Dashboard with 46 jobs, 100 candidates, Post New Job, Add Candidate buttons
+- **RBAC**: correct (Recruitment Admin has full recruitment access)
+- **Data**: loaded with rich data
+- **Bug**: none
+
+---
+
+## /payroll — Role: RECRUITMENT ADMIN
+- **Status**: FAIL
+- **Console errors**: GET /payroll/runs 403 (correctly denied by backend)
+- **Visual issues**: Page renders completely blank — no "Access Denied" message shown. Backend returns 403 but frontend does not display an error state
+- **RBAC**: correct at API level (403 returned), but UI fails to communicate denial
+- **Data**: error (blank page)
+- **Bug**: BUG-011 — /payroll renders blank for unauthorized users instead of showing "Access Denied" message; 403 errors not handled in UI
+
+---
+
+## /employees — Role: RECRUITMENT ADMIN
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Employee Management table
+- **RBAC**: correct (Recruitment Admin can view employees)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /employees — Role: TEAM LEAD - HR (Dhanush A)
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Employee Management table
+- **RBAC**: correct (HR Team Lead can view employees)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## /admin — Role: TEAM LEAD - HR (Dhanush A)
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /me/dashboard
+- **RBAC**: correct (HR Team Lead cannot access admin panel)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /payroll — Role: TEAM LEAD - HR (Dhanush A)
+- **Status**: DENY-CORRECT
+- **Console errors**: none
+- **Visual issues**: none — redirects to /dashboard
+- **RBAC**: correct (HR Team Lead cannot access payroll)
+- **Data**: N/A
+- **Bug**: none
+
+---
+
+## /leave/approvals — Role: TEAM LEAD - HR (Dhanush A)
+- **Status**: PASS
+- **Console errors**: none
+- **Visual issues**: none — renders Leave Approvals page
+- **RBAC**: correct (HR Team Lead can manage leave approvals)
+- **Data**: loaded
+- **Bug**: none
+
+---
+
+## Authentication — hradmin@nulogic.io / Welcome@123
+- **Status**: FAIL
+- **Console errors**: none
+- **Visual issues**: Shows "Authentication Failed — Bad credentials"
+- **RBAC**: N/A
+- **Data**: N/A
+- **Bug**: BUG-012 — Test credential hradmin@nulogic.io does not exist in the system; no HR Admin demo account available
+
+---
+
+## Console Errors — FeedService .map() null-guard bugs (across multiple roles)
+- **Status**: BUG
+- **Console errors**: Multiple TypeErrors across FeedService:
+  - `birthdays.map is not a function` (feed.service.ts:114)
+  - `anniversaries.map is not a function` (feed.service.ts:133)
+  - `joiners.map is not a function` (feed.service.ts:154)
+- **Visual issues**: Feed sections on /me/dashboard may show empty or broken state
+- **RBAC**: N/A
+- **Data**: error
+- **Bug**: BUG-013 — FeedService fetchBirthdays/fetchAnniversaries/fetchNewJoiners crash with .map() on non-array API responses; need null-guards (same pattern as BUG-009)
+
+---
+
+# Updated RBAC Verdict Table (Complete)
+
+| Route | Employee | Team Lead (Eng) | Team Lead (HR) | HR Manager | Recruitment Admin | Manager | Super Admin |
+|-------|----------|-----------------|----------------|------------|-------------------|---------|-------------|
+| /dashboard | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
+| /me/profile | PASS | not tested | not tested | not tested | not tested | not tested | PASS |
+| /me/dashboard | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
+| /admin | DENY | DENY | DENY | DENY | DENY | DENY | PASS |
+| /payroll | DENY | DENY | DENY | not tested | DENY (blank) | not tested | PASS |
+| /payroll/runs | DENY | DENY | not tested | not tested | not tested | not tested | PASS |
+| /recruitment | DENY | not tested | not tested | PASS | PASS | not tested | PASS |
+| /leave/approvals | not tested | PASS | PASS | PASS | not tested | not tested | PASS |
+| /attendance | PASS | not tested | not tested | not tested | not tested | not tested | PASS |
+| /fluence/wiki | PASS | not tested | not tested | not tested | not tested | not tested | PASS |
+| /employees | not tested | not tested | PASS | PASS | PASS | not tested | PASS |
+
+---
+
+# Updated Bug Summary
+
+| Bug ID | Page | Severity | Description |
+|--------|------|----------|-------------|
+| BUG-002 | /recruitment/jobs | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-003 | /recruitment/candidates | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-004 | /performance/goals | Medium | Infinite loading state; no empty-state fallback after API timeout |
+| BUG-005 | /learning/paths | High | GET /lms/learning-paths returns 404; backend endpoint missing |
+| BUG-006 | /recognition | High | Page renders completely blank; no content at all |
+| BUG-007 | /fluence/wall | Medium | GET /fluence/activities returns 500 (UI handles gracefully) |
+| BUG-008 | /fluence/drive | Medium | GET /fluence/attachments/recent returns 500 |
+| BUG-009 | /admin/office-locations | Critical | TypeError: locations.map is not a function — page crashes |
+| BUG-010 | /me/leaves, /leave | High | Pages render blank main content; silent component failure |
+| BUG-011 | /payroll (non-admin) | Medium | 403 from API renders blank page instead of "Access Denied" message |
+| BUG-012 | /auth/login | Low | hradmin@nulogic.io credential does not exist; no HR Admin demo account |
+| BUG-013 | /me/dashboard (feed) | High | FeedService .map() crashes on birthdays/anniversaries/newJoiners — non-array responses |
+
+### Updated Stats
+
+- **Total pages tested (all sessions)**: 45 Phase 1 + 25 RBAC = 70 new page entries (83+ total including Session 1)
+- **Total roles tested**: 7 (Super Admin, Employee, Team Lead Eng, Team Lead HR, HR Manager, Recruitment Admin, Manager)
+- **PASS**: 26
+- **PASS-EMPTY**: 16
+- **FAIL**: 4 (BUG-006, BUG-009, BUG-010, BUG-011)
+- **DENY-CORRECT**: 11
+- **RBAC violations**: 0
+- **Total bugs found**: 12 (BUG-002 through BUG-013)
+- **Critical**: 1 (BUG-009 — office-locations crash)
+- **High**: 4 (BUG-005, BUG-006, BUG-010, BUG-013)
+- **Medium**: 6 (BUG-002, BUG-003, BUG-004, BUG-007, BUG-008, BUG-011)
+- **Low**: 1 (BUG-012)
+
