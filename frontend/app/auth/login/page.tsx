@@ -588,7 +588,7 @@ function LoginPage() {
 
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
+              <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
                 Welcome to <span className="bg-clip-text text-transparent font-extrabold" style={{ backgroundImage: 'var(--nu-gradient-brand)' }}>NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
@@ -599,7 +599,7 @@ function LoginPage() {
             {/* Card */}
             <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8" style={{ boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)' }}>
               <div className="text-center mb-7">
-                <h3 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
+                <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
                   Sign In
                 </h3>
                 <p className="text-[var(--text-secondary)] text-sm">

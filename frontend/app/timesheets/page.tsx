@@ -308,7 +308,7 @@ export default function TimesheetsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Timesheets
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -339,7 +339,7 @@ export default function TimesheetsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Hours</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalHours.toFixed(1)}h</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.totalHours.toFixed(1)}h</p>
                 </div>
               </div>
             </CardContent>
@@ -352,7 +352,7 @@ export default function TimesheetsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
@@ -365,7 +365,7 @@ export default function TimesheetsPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Approved</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.approved}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.approved}</p>
                 </div>
               </div>
             </CardContent>
@@ -662,7 +662,7 @@ export default function TimesheetsPage() {
                     {selectedTimesheet.status.replace('_', ' ')}
                   </Badge>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-[var(--text-primary)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">
                       {selectedTimesheet.totalHours}h
                     </p>
                     <p className="text-body-muted">Total Hours</p>

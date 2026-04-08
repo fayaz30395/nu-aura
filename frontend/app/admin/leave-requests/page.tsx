@@ -147,7 +147,7 @@ export default function AdminLeaveRequestsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Leave Request Management</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Leave Request Management</h1>
           <p className="mt-2 text-[var(--text-secondary)]">Review and process employee leave requests</p>
         </div>
 

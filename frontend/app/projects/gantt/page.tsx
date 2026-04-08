@@ -220,7 +220,7 @@ export default function GanttChartPage() {
               <Calendar className="h-6 w-6 text-white"/>
             </div>
             <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">
+              <h1 className="text-xl font-bold skeuo-emboss">
                 Gantt Chart
               </h1>
               <p className="text-[var(--text-secondary)] mt-1">
@@ -249,7 +249,7 @@ export default function GanttChartPage() {
               </div>
               <div>
                 <p className="text-body-muted">Total Tasks</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-xl font-bold">{stats.total}</p>
               </div>
             </CardContent>
           </Card>
@@ -260,7 +260,7 @@ export default function GanttChartPage() {
               </div>
               <div>
                 <p className="text-body-muted">Completed</p>
-                <p className="text-2xl font-bold">{stats.completed}</p>
+                <p className="text-xl font-bold">{stats.completed}</p>
               </div>
             </CardContent>
           </Card>
@@ -271,7 +271,7 @@ export default function GanttChartPage() {
               </div>
               <div>
                 <p className="text-body-muted">Delayed</p>
-                <p className="text-2xl font-bold">{stats.delayed}</p>
+                <p className="text-xl font-bold">{stats.delayed}</p>
               </div>
             </CardContent>
           </Card>
@@ -282,7 +282,7 @@ export default function GanttChartPage() {
               </div>
               <div>
                 <p className="text-body-muted">At Risk</p>
-                <p className="text-2xl font-bold">{stats.atRisk}</p>
+                <p className="text-xl font-bold">{stats.atRisk}</p>
               </div>
             </CardContent>
           </Card>
@@ -293,7 +293,7 @@ export default function GanttChartPage() {
               </div>
               <div>
                 <p className="text-body-muted">Avg Progress</p>
-                <p className="text-2xl font-bold">{stats.avgProgress}%</p>
+                <p className="text-xl font-bold">{stats.avgProgress}%</p>
               </div>
             </CardContent>
           </Card>

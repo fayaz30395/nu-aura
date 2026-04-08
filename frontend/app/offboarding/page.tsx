@@ -359,7 +359,7 @@ export default function OffboardingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Exit Management
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -396,7 +396,7 @@ export default function OffboardingPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Exits</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -409,7 +409,7 @@ export default function OffboardingPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Initiated</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.initiated}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.initiated}</p>
                 </div>
               </div>
             </CardContent>
@@ -422,7 +422,7 @@ export default function OffboardingPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">In Progress</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.inProgress}</p>
                 </div>
               </div>
             </CardContent>
@@ -435,7 +435,7 @@ export default function OffboardingPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Clearance Pending</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.clearancePending}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.clearancePending}</p>
                 </div>
               </div>
             </CardContent>
@@ -448,7 +448,7 @@ export default function OffboardingPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>

@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
-import { SkeletonTable } from '@/components/ui/Loading';
+import { SkeletonTable } from '@/components/ui/Skeleton';
 import { PermissionGate } from '@/components/auth/PermissionGate';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { createLogger } from '@/lib/utils/logger';
@@ -260,7 +260,7 @@ export default function EmployeesPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
+            <h1 className="text-xl sm:text-xl font-bold tracking-tight text-[var(--text-primary)] skeuo-emboss">Employee Management</h1>
             <p className="text-xs sm:text-sm text-body-secondary mt-1 skeuo-deboss">Manage your organization&apos;s employees</p>
           </div>
           <div className="flex items-center gap-2">

@@ -139,7 +139,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Leave Calendar</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Leave Calendar</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('my')}
@@ -168,7 +168,7 @@ export default function LeaveCalendarPage() {
         <div className="skeuo-card bg-[var(--bg-card)] rounded-lg p-6 mb-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">
                 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
               </h2>
               <button

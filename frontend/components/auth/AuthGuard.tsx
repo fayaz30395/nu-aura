@@ -9,7 +9,7 @@ import {
   isPublicRoute,
   RouteConfig,
 } from '@/lib/config/routes';
-import { NuAuraLoader } from '@/components/ui/Loading';
+import { SkeletonDashboard } from '@/components/ui/Skeleton';
 import { logger } from '@/lib/utils/logger';
 
 interface AuthGuardProps {
@@ -58,8 +58,8 @@ export function AuthGuard({
   // Note: Middleware handles the primary 401 → login redirect via cookie inspection
   const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
-  // Always start as null (matches SSR render → NuAuraLoader) to prevent hydration mismatch.
-  // Both server and client render NuAuraLoader initially; the useEffect below sets the
+  // Always start as null (matches SSR render → skeleton loader) to prevent hydration mismatch.
+  // Both server and client render skeleton loader initially; the useEffect below sets the
   // correct authorization state after React has hydrated, avoiding any SSR mismatch.
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
@@ -246,7 +246,11 @@ export function AuthGuard({
       return loadingComponent;
     }
 
-    return <NuAuraLoader message="Preparing your workspace..." />;
+    return (
+      <div className="p-6">
+        <SkeletonDashboard />
+      </div>
+    );
   }
 
   // Access denied

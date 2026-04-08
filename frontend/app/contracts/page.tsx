@@ -66,7 +66,7 @@ export default function ContractsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Contracts</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Contracts</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Manage employment, vendor, and other
               contracts</p>
           </div>
@@ -86,7 +86,7 @@ export default function ContractsPage() {
           {stats.map((stat, idx) => (
             <div key={idx} className={`${stat.color} rounded-xl p-4`}>
               <div className={`${stat.textColor} text-xs font-medium mb-1`}>{stat.label}</div>
-              <div className={`${stat.textColor} text-2xl font-bold`}>{stat.value}</div>
+              <div className={`${stat.textColor} text-xl font-bold`}>{stat.value}</div>
             </div>
           ))}
         </div>

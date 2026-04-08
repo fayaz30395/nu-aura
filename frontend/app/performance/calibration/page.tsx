@@ -334,7 +334,7 @@ export default function CalibrationPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   Calibration & Distribution
                 </h1>
                 <p className="text-[var(--text-muted)] mt-1">
@@ -435,7 +435,7 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Total Employees</p>
-                          <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                             {filteredAndSorted.length}
                           </p>
                         </div>
@@ -450,7 +450,7 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Rated</p>
-                          <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                             {totalRated} ({Math.round((totalRated / Math.max(1, filteredAndSorted.length)) * 100)}%)
                           </p>
                         </div>
@@ -465,7 +465,7 @@ export default function CalibrationPage() {
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Avg Rating</p>
-                          <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                          <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                             {totalRated > 0
                               ? (
                                 Object.entries(ratingCounts).reduce(

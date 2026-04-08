@@ -13,12 +13,12 @@ import {
   Card,
   CardContent,
   EmptyState,
-  Loading,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
 } from '@/components/ui';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {useCreateDocumentRequest, useDocumentTypes, useMyDocumentRequests,} from '@/lib/hooks/queries';
@@ -189,8 +189,8 @@ export default function MyDocumentsPage() {
           {label: 'Documents', href: '/me/documents'},
         ]}
       >
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loading/>
+        <div className="p-6">
+          <SkeletonTable rows={5} columns={4} />
         </div>
       </AppLayout>
     );
@@ -234,7 +234,7 @@ export default function MyDocumentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Document Requests
             </h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -255,7 +255,7 @@ export default function MyDocumentsPage() {
                 <Clock className="h-5 w-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'PENDING').length}
                 </p>
                 <p className="text-body-muted">Pending</p>
@@ -268,7 +268,7 @@ export default function MyDocumentsPage() {
                 <AlertCircle className="h-5 w-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'IN_PROGRESS').length}
                 </p>
                 <p className="text-body-muted">In Progress</p>
@@ -281,7 +281,7 @@ export default function MyDocumentsPage() {
                 <CheckCircle className="h-5 w-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'GENERATED' || r.status === 'DELIVERED').length}
                 </p>
                 <p className="text-body-muted">Ready</p>
@@ -294,7 +294,7 @@ export default function MyDocumentsPage() {
                 <FileText className="h-5 w-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">
+                <p className="text-xl font-bold text-[var(--text-primary)]">
                   {requests.length}
                 </p>
                 <p className="text-body-muted">Total</p>

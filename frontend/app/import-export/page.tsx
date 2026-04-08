@@ -4,7 +4,7 @@ import {DragEvent, useCallback, useMemo, useRef, useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {AdminGate, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useDownloadEmployeeTemplate,
@@ -714,7 +714,7 @@ function ExportSection() {
       <button type="button"
               onClick={handleExport}
               disabled={exportMutation.isPending}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         {exportMutation.isPending ? (
           <RefreshCw className="h-4 w-4 animate-spin"/>
@@ -1083,7 +1083,7 @@ function HistorySection() {
   const {data: historyPage, isLoading} = useKekaImportHistory(page, 20);
 
   if (isLoading) {
-    return <NuAuraLoader message="Loading import history..."/>;
+    return <SkeletonTable rows={5} columns={4} />;
   }
 
   if (!historyPage || historyPage.content.length === 0) {

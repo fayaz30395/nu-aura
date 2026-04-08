@@ -33,7 +33,7 @@ import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useCreateEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
 import {useAllDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useAssignRolesToUser, useRoles} from '@/lib/hooks/queries/useRoles';
@@ -497,7 +497,7 @@ export default function AdminEmployeesPage() {
           </CardHeader>
           <CardContent>
             {employeesLoading ? (
-              <NuAuraLoader message="Loading employees..."/>
+              <SkeletonTable rows={8} columns={5} />
             ) : employeesError ? (
               <div className="flex flex-col items-center gap-4 py-12">
                 <div

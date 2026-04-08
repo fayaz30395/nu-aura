@@ -203,7 +203,7 @@ export default function PaymentConfigPage() {
         <div className="flex items-center gap-4 mb-6">
           <Settings className="w-8 h-8 text-accent-700"/>
           <div>
-            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Payment Configuration
             </h1>
             <p className="text-[var(--text-secondary)] mt-1">

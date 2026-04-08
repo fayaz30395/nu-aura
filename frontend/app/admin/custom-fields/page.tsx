@@ -249,7 +249,7 @@ export default function CustomFieldsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold skeuo-emboss">Custom Fields</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Custom Fields</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Define custom fields to extend entity data with your own attributes
           </p>

@@ -427,7 +427,7 @@ export default function ProjectCalendarPage() {
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Project Calendar
               </h1>
               <p className="text-[var(--text-secondary)]">

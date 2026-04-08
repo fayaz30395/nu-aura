@@ -625,7 +625,7 @@ function CandidatesPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Candidates</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Candidates</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">

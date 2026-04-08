@@ -6,7 +6,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {
   useActivePolicies,
@@ -223,7 +223,7 @@ export default function ReferralsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Referral Portal
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -232,7 +232,7 @@ export default function ReferralsPage() {
           </div>
           <button
             onClick={() => setActiveTab('submit')}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <Plus className="h-5 w-5"/>
             Submit Referral
@@ -278,7 +278,7 @@ export default function ReferralsPage() {
                   </div>
                   <div>
                     <p className="text-body-secondary">{stat.label}</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                       {stat.value}
                     </p>
                   </div>
@@ -331,7 +331,7 @@ export default function ReferralsPage() {
         {activeTab === 'my-referrals' && (
           <div>
             {isMyLoading ? (
-              <NuAuraLoader message="Loading your referrals..."/>
+              <SkeletonTable rows={5} columns={4} />
             ) : myReferrals.length === 0 ? (
               <EmptyState
                 title="No referrals yet"
@@ -578,7 +578,11 @@ export default function ReferralsPage() {
         {activeTab === 'policies' && (
           <div>
             {isPoliciesLoading ? (
-              <NuAuraLoader message="Loading policies..."/>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({length: 4}).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
             ) : policies.length === 0 ? (
               <EmptyState
                 title="No active policies"
@@ -659,7 +663,7 @@ export default function ReferralsPage() {
           <PermissionGate permission={Permissions.REFERRAL_MANAGE}>
             <div>
               {isAllLoading ? (
-                <NuAuraLoader message="Loading all referrals..."/>
+                <SkeletonTable rows={8} columns={5} />
               ) : !allReferralsData || allReferralsData.content.length === 0 ? (
                 <EmptyState
                   title="No referrals found"

@@ -409,7 +409,7 @@ export default function ExpenseClaims() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1
-              className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              className="text-xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <DollarSign className="w-7 h-7 sm:w-8 sm:h-8"/>
               Expense Claims
             </h1>
@@ -417,7 +417,7 @@ export default function ExpenseClaims() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-6 py-2.5 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
+            className="px-4 sm:px-4 py-2 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
           >
             <Plus className="w-5 h-5"/>
             New Claim
@@ -432,7 +432,7 @@ export default function ExpenseClaims() {
                 <AlertCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.pendingCount}</p>
                 <p className="text-body-muted">Pending</p>
               </div>
             </div>
@@ -443,7 +443,7 @@ export default function ExpenseClaims() {
                 <CheckCircle className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.approvedCount}</p>
                 <p className="text-body-muted">Approved</p>
               </div>
             </div>
@@ -455,7 +455,7 @@ export default function ExpenseClaims() {
               </div>
               <div>
                 <p
-                  className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
+                  className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{formatCurrency(statistics.totalPendingAmount)}</p>
                 <p className="text-body-muted">Pending Amount</p>
               </div>
             </div>
@@ -466,7 +466,7 @@ export default function ExpenseClaims() {
                 <FileText className="w-5 h-5"/>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{statistics.totalClaims}</p>
                 <p className="text-body-muted">Total Claims</p>
               </div>
             </div>
@@ -896,7 +896,7 @@ export default function ExpenseClaims() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-[var(--text-primary)]">
+                        <div className="text-xl font-bold text-[var(--text-primary)]">
                           {formatCurrency(claim.amount, claim.currency)}
                         </div>
                         <div className="text-body-secondary">{claim.category.replace('_', ' ')}</div>

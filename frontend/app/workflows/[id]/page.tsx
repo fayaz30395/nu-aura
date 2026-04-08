@@ -392,7 +392,7 @@ export default function WorkflowDetailPage() {
               <ArrowLeft className="h-4 w-4"/>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 {isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
               </h1>
               {!isNew && !isEditing && workflow?.description && (

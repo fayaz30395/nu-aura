@@ -433,7 +433,7 @@ export default function PayrollComponentsPage() {
           {/* Header */}
           <div className="row-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 Payroll Components
               </h1>
               <p className="mt-1 text-body-secondary">

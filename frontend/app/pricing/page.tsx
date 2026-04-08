@@ -271,7 +271,7 @@ export default function PricingPage() {
                           )}
                         </>
                       ) : (
-                        <div className="text-2xl font-bold skeuo-emboss">
+                        <div className="text-xl font-bold skeuo-emboss">
                           Custom
                         </div>
                       )}
@@ -341,7 +341,7 @@ export default function PricingPage() {
                   <div className="flex items-baseline gap-1">
                     {typeof addon.price === 'number' ? (
                       <>
-                        <span className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                        <span className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           ${addon.price}
                         </span>
                         <span className="text-body-muted">/user/month</span>

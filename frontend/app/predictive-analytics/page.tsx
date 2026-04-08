@@ -220,7 +220,7 @@ function AttritionRiskCards({summary}: { summary: PredictiveAnalyticsDashboard['
           <CardContent className="p-4">
             <div className="row-between mb-2">
               <div className={`p-2 rounded-lg ${card.bg}`}>{card.icon}</div>
-              <span className={`text-2xl font-bold ${card.color}`}>{card.count}</span>
+              <span className={`text-xl font-bold ${card.color}`}>{card.count}</span>
             </div>
             <p className="text-body-secondary">{card.label}</p>
           </CardContent>
@@ -257,15 +257,15 @@ function SkillGapsSection({summary}: { summary: PredictiveAnalyticsDashboard['sk
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-4 rounded-lg bg-danger-50 dark:bg-danger-950/20">
-                <p className="text-2xl font-bold text-danger-600">{summary.criticalGaps}</p>
+                <p className="text-xl font-bold text-danger-600">{summary.criticalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Critical Gaps</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-warning-50 dark:bg-warning-950/20">
-                <p className="text-2xl font-bold text-warning-600">{summary.highPriorityGaps}</p>
+                <p className="text-xl font-bold text-warning-600">{summary.highPriorityGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">High Priority</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-accent-50 dark:bg-accent-950/20">
-                <p className="text-2xl font-bold text-accent-600">{summary.totalGaps}</p>
+                <p className="text-xl font-bold text-accent-600">{summary.totalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Total Gaps</p>
               </div>
             </div>
@@ -642,7 +642,7 @@ export default function PredictiveAnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Predictive Analytics
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">

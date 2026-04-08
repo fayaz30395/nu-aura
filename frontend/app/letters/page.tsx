@@ -445,7 +445,7 @@ export default function LettersPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Letter Generation
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -493,7 +493,7 @@ export default function LettersPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Letters</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -506,7 +506,7 @@ export default function LettersPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Drafts</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
@@ -519,7 +519,7 @@ export default function LettersPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pendingApproval}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.pendingApproval}</p>
                 </div>
               </div>
             </CardContent>
@@ -532,7 +532,7 @@ export default function LettersPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary">Issued</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.issued}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.issued}</p>
                 </div>
               </div>
             </CardContent>

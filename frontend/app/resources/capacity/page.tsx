@@ -226,7 +226,7 @@ export default function CapacityTimelinePage() {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Capacity Timeline</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Capacity Timeline</h1>
             <p className="text-body-muted mt-0.5">
               Current allocation per employee across active projects
             </p>
@@ -280,17 +280,17 @@ export default function CapacityTimelinePage() {
         {!isLoading && sorted.length > 0 && (
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{sorted.length}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{sorted.length}</p>
               <p className="text-caption mt-0.5">Employees shown</p>
             </div>
             <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl px-4 py-4">
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgAlloc}%</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgAlloc}%</p>
               <p className="text-caption mt-0.5">Avg allocation</p>
             </div>
             <div
               className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
               <p
-                className={`text-2xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
+                className={`text-xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
                 {overAllocated}
               </p>
               <p

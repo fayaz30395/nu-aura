@@ -251,7 +251,7 @@ export default function AnnouncementsPage() {
           >
             <div className="row-between">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   <Megaphone className="w-8 h-8 text-accent-700"/>
                   Announcements
                 </h1>

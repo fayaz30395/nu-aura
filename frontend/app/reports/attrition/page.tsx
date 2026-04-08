@@ -104,7 +104,7 @@ export default function AttritionReportPage() {
         {/* Header */}
         <div className="row-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Attrition Analysis</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Attrition Analysis</h1>
             <p className="text-body-muted mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">

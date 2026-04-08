@@ -29,7 +29,7 @@ export function TrainingStatsCards({stats}: TrainingStatsCardsProps) {
             </div>
             <div>
               <p className="text-body-secondary skeuo-deboss">My Enrollments</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myEnrolled}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myEnrolled}</p>
             </div>
           </div>
         </CardContent>
@@ -42,7 +42,7 @@ export function TrainingStatsCards({stats}: TrainingStatsCardsProps) {
             </div>
             <div>
               <p className="text-body-secondary skeuo-deboss">In Progress</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myInProgress}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myInProgress}</p>
             </div>
           </div>
         </CardContent>
@@ -55,7 +55,7 @@ export function TrainingStatsCards({stats}: TrainingStatsCardsProps) {
             </div>
             <div>
               <p className="text-body-secondary skeuo-deboss">Completed</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myCompleted}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.myCompleted}</p>
             </div>
           </div>
         </CardContent>
@@ -68,7 +68,7 @@ export function TrainingStatsCards({stats}: TrainingStatsCardsProps) {
             </div>
             <div>
               <p className="text-body-secondary skeuo-deboss">Available Programs</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
             </div>
           </div>
         </CardContent>

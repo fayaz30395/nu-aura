@@ -1,7 +1,11 @@
 'use client';
 
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
 
 export default function Loading() {
-  return <NuAuraLoader/>;
+  return (
+    <div className="p-6">
+      <SkeletonDashboard />
+    </div>
+  );
 }

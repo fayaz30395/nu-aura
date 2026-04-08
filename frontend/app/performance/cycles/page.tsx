@@ -257,7 +257,7 @@ export default function ReviewCyclesPage() {
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">Review Cycles</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Review Cycles</h1>
           <PermissionGate permission={Permissions.REVIEW_CREATE}>
             <button
               onClick={() => {
@@ -424,7 +424,7 @@ export default function ReviewCyclesPage() {
             <div
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6">
+                <h2 className="text-xl font-bold mb-6">
                   {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>

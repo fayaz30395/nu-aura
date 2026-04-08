@@ -260,7 +260,7 @@ export default function QuizPage() {
             <div className="skeuo-card overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white p-8">
-                <h1 className="text-2xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
+                <h1 className="text-xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
                 {quiz.description && (
                   <p className="text-accent-100">{quiz.description}</p>
                 )}
@@ -270,7 +270,7 @@ export default function QuizPage() {
               <div className="p-8 space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
-                    <div className="text-2xl font-bold text-accent-700">{quiz.totalQuestions}</div>
+                    <div className="text-xl font-bold text-accent-700">{quiz.totalQuestions}</div>
                     <div className="text-body-secondary">Total Questions</div>
                   </div>
                   {quiz.timeLimit && (
@@ -285,7 +285,7 @@ export default function QuizPage() {
                     </div>
                   )}
                   <div className="bg-success-50 rounded-lg p-4 border border-success-200">
-                    <div className="text-2xl font-bold text-success-700">{quiz.passingScore}%</div>
+                    <div className="text-xl font-bold text-success-700">{quiz.passingScore}%</div>
                     <div className="text-body-secondary">Passing Score</div>
                   </div>
                 </div>
@@ -589,20 +589,20 @@ export default function QuizPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                   <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
                     <div className="text-body-secondary">Total Questions</div>
-                    <div className="text-2xl font-bold text-accent-700">{quiz.totalQuestions}</div>
+                    <div className="text-xl font-bold text-accent-700">{quiz.totalQuestions}</div>
                   </div>
                   <div className="bg-success-50 rounded-lg p-4 border border-success-200">
                     <div className="text-body-secondary">Correct</div>
-                    <div className="text-2xl font-bold text-success-700">{result.correctAnswers || 0}</div>
+                    <div className="text-xl font-bold text-success-700">{result.correctAnswers || 0}</div>
                   </div>
                   <div className="bg-danger-50 rounded-lg p-4 border border-danger-200">
                     <div className="text-body-secondary">Incorrect</div>
                     <div
-                      className="text-2xl font-bold text-danger-700">{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
+                      className="text-xl font-bold text-danger-700">{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
                   </div>
                   <div className="bg-warning-50 rounded-lg p-4 border border-warning-200">
                     <div className="text-body-secondary">Time Taken</div>
-                    <div className="text-2xl font-bold text-warning-700">{result.timeTaken || '-'}</div>
+                    <div className="text-xl font-bold text-warning-700">{result.timeTaken || '-'}</div>
                   </div>
                 </div>
 

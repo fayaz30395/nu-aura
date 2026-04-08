@@ -620,7 +620,7 @@ function InterviewsPage() {
         {/* Header */}
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Interviews</h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">Schedule and manage candidate interviews</p>
           </div>
           <Button onClick={() => {
@@ -643,7 +643,7 @@ function InterviewsPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Total</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -656,7 +656,7 @@ function InterviewsPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Scheduled</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.scheduled}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.scheduled}</p>
                 </div>
               </div>
             </CardContent>
@@ -669,7 +669,7 @@ function InterviewsPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Completed</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -682,7 +682,7 @@ function InterviewsPage() {
                 </div>
                 <div>
                   <p className="text-body-muted">Pending Decision</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
@@ -881,7 +881,7 @@ function InterviewsPage() {
               className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
                   <button onClick={() => {
@@ -1147,7 +1147,7 @@ function InterviewsPage() {
               className="bg-[var(--bg-card)] rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
                   <button onClick={() => {
                     setShowFeedbackModal(false);
                     setSelectedInterview(null);
@@ -1271,7 +1271,7 @@ function InterviewsPage() {
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-accent-500"/>
-                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
+                    <h2 className="text-xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
                   <button onClick={() => {
                     setShowQuestionsModal(false);

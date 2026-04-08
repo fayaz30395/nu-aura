@@ -172,7 +172,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold skeuo-emboss">Settings</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Settings</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage your account settings and preferences
           </p>

@@ -7,7 +7,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useActiveShiftDefinitions, useTeamSchedule} from '@/lib/hooks/queries/useShifts';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {ScheduleEntry} from '@/lib/types/hrms/shift';
 import {ArrowLeftRight, Calendar, CalendarDays, ChevronLeft, ChevronRight, List, Settings, Users,} from 'lucide-react';
@@ -192,7 +192,7 @@ export default function ShiftDashboardPage() {
 
           {/* Schedule Grid */}
           {isLoading ? (
-            <NuAuraLoader/>
+            <SkeletonTable rows={6} columns={6} />
           ) : scheduleByEmployee.length === 0 ? (
             <EmptyState
               icon={<Users className="w-12 h-12 text-surface-400"/>}

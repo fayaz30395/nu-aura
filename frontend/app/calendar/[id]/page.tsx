@@ -160,7 +160,7 @@ export default function EventDetailPage() {
                   event.eventType
                 )}`}
               />
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+              <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                 {event.title}
               </h1>
               <span

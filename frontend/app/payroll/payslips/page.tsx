@@ -112,7 +112,7 @@ export default function PayslipsPage() {
           <div className="mb-8">
             <div className="row-between">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   Payslips
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">

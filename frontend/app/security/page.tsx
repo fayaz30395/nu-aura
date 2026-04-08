@@ -232,7 +232,7 @@ export default function SecurityPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-4">
               Comprehensive security architecture
             </h2>
             <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">

@@ -108,7 +108,7 @@ export default function ResourcesPage() {
         <div className="space-y-6 p-6">
           {/* Header */}
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Resource Management
             </h1>
             <p className="mt-1 text-body-muted skeuo-deboss">
@@ -186,7 +186,7 @@ export default function ResourcesPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Resource Management
             </h1>
             <p className="mt-1 text-body-muted skeuo-deboss">
@@ -403,7 +403,7 @@ function QuickStatCard({
           <Icon className="h-5 w-5"/>
         </div>
         <div>
-          <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+          <p className="text-xl font-bold text-[var(--text-primary)]">{value}</p>
           <p className="text-caption">{label}</p>
         </div>
       </CardContent>

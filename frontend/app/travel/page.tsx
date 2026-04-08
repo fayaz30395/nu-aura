@@ -157,11 +157,11 @@ export default function TravelPage() {
 
   return (
     <AppLayout activeMenuItem="travel">
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Travel Management
             </h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -171,7 +171,7 @@ export default function TravelPage() {
           <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/travel/new')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus className="h-5 w-5"/>
               New Travel Request
@@ -180,7 +180,7 @@ export default function TravelPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
+        <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
@@ -193,7 +193,7 @@ export default function TravelPage() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function TravelPage() {
                   setStatusFilter(e.target.value as TravelStatus | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -230,7 +230,7 @@ export default function TravelPage() {
                   setTypeFilter(e.target.value as TravelType | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="BUSINESS">Business</option>

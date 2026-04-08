@@ -85,7 +85,7 @@ export default function LearningPage() {
   return (
     <AppLayout activeMenuItem="learning">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold skeuo-emboss">Learning Management</h1>
+        <h1 className="text-xl font-bold skeuo-emboss">Learning Management</h1>
 
         {/* Dashboard Cards */}
         {dashboardLoading ? (
@@ -269,7 +269,7 @@ export default function LearningPage() {
                         </div>
                         <div className="text-right">
                           <div
-                            className="text-2xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%
+                            className="text-xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%
                           </div>
                           <div className="text-body-secondary">Progress</div>
                         </div>

@@ -224,7 +224,7 @@ export default function ShiftSwapPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Shift Swap</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Shift Swap</h1>
             <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">Request shift swaps, give-aways, and pick-ups</p>
           </div>
           <Button onClick={() => setShowModal(true)}>

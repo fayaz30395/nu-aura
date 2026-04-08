@@ -69,7 +69,7 @@ export default function LeaveCarryForwardPage() {
           <div className="flex items-center gap-2 mb-8">
             <CalendarDays className="h-7 w-7 text-accent-600" />
             <div>
-              <h1 className="text-2xl font-bold skeuo-emboss">Leave Carry-Forward</h1>
+              <h1 className="text-xl font-bold skeuo-emboss">Leave Carry-Forward</h1>
               <p className="text-[var(--text-secondary)] text-sm mt-1 skeuo-deboss">
                 Move unused leave balances from one year to the next
               </p>

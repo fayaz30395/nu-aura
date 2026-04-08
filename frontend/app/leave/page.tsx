@@ -13,7 +13,7 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {motion} from 'framer-motion';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {NuAuraLoader} from '@/components/ui/Loading';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
 import {
   AlertCircle,
   Baby,
@@ -142,7 +142,7 @@ export default function LeavePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="leave">
-        <NuAuraLoader message="Loading leave data..."/>
+        <SkeletonDashboard />
       </AppLayout>
     );
   }
@@ -195,7 +195,7 @@ export default function LeavePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Leave Management
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -205,7 +205,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <Plus
                 className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
@@ -247,7 +247,7 @@ export default function LeavePage() {
                   </h3>
 
                   <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-2xl font-bold skeuo-emboss">
+                    <span className="text-xl font-bold skeuo-emboss">
                       {balance.available.toFixed(1)}
                     </span>
                     <span className="text-body-muted">

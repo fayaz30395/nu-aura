@@ -57,7 +57,7 @@ export default function PerformanceReportsPage() {
           className="row-between"
         >
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Performance Reports</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Performance Reports</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Generate performance review reports with ratings and goal achievements
             </p>

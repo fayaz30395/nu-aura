@@ -94,7 +94,7 @@ export default function OrganizationHealthPage() {
             initial={{opacity: 0, x: -20}}
             animate={{opacity: 1, x: 0}}
           >
-            <h1 className="text-2xl font-bold skeuo-emboss">Organization Health</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Organization Health</h1>
             <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
           </motion.div>
           <div className="flex items-center gap-4">
@@ -261,11 +261,11 @@ export default function OrganizationHealthPage() {
                 <div className="grid grid-cols-2 gap-4 pt-4">
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <div className="text-caption mb-1">Total Hours</div>
-                    <div className="text-2xl font-bold">{training.totalTrainingHours}</div>
+                    <div className="text-xl font-bold">{training.totalTrainingHours}</div>
                   </div>
                   <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                     <div className="text-caption mb-1">Active Learners</div>
-                    <div className="text-2xl font-bold">{training.activeLearners}</div>
+                    <div className="text-xl font-bold">{training.activeLearners}</div>
                   </div>
                 </div>
 

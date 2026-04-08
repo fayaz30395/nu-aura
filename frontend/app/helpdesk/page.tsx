@@ -74,7 +74,7 @@ export default function HelpdeskPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Helpdesk</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Helpdesk</h1>
           <p className="text-body-muted mt-1 skeuo-deboss">Manage SLA policies, escalations, and support metrics</p>
         </div>
 
@@ -214,19 +214,19 @@ export default function HelpdeskPage() {
             <h3 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-success-600">{dashboard.slaMetCount}</p>
+                <p className="text-xl font-bold text-success-600">{dashboard.slaMetCount}</p>
                 <p className="text-caption">SLAs Met</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-danger-600">{dashboard.slaBreachedCount}</p>
+                <p className="text-xl font-bold text-danger-600">{dashboard.slaBreachedCount}</p>
                 <p className="text-caption">SLAs Breached</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-accent-600">{dashboard.firstContactResolutions}</p>
+                <p className="text-xl font-bold text-accent-600">{dashboard.firstContactResolutions}</p>
                 <p className="text-caption">First Contact Resolutions</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-accent-800">{activeSlaCount}</p>
+                <p className="text-xl font-bold text-accent-800">{activeSlaCount}</p>
                 <p className="text-caption">Active SLA Policies</p>
               </div>
             </div>

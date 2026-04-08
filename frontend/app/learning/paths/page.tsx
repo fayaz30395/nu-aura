@@ -135,7 +135,7 @@ export default function LearningPathsPage() {
                 className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
           <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and
             competencies</p>
         </div>

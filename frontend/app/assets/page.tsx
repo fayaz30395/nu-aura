@@ -209,7 +209,7 @@ export default function AssetManagementPage() {
 
   // Apply client-side filtering to assets
   const filteredAssets = React.useMemo(() => {
-    let result = assetsQuery.data?.content || [];
+    let result = (assetsQuery.data?.content || []).filter(Boolean);
 
     // Client-side filtering
     if (searchQuery.trim()) {
@@ -369,7 +369,7 @@ export default function AssetManagementPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Asset Management
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -409,7 +409,7 @@ export default function AssetManagementPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Assets</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -422,7 +422,7 @@ export default function AssetManagementPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Available</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.available}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.available}</p>
                 </div>
               </div>
             </CardContent>
@@ -435,7 +435,7 @@ export default function AssetManagementPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Assigned</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.assigned}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.assigned}</p>
                 </div>
               </div>
             </CardContent>
@@ -448,7 +448,7 @@ export default function AssetManagementPage() {
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">In Maintenance</p>
-                  <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.maintenance}</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.maintenance}</p>
                 </div>
               </div>
             </CardContent>

@@ -232,7 +232,7 @@ export default function ShiftsManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold skeuo-emboss">
               <Clock className="h-8 w-8 text-accent-700"/>
               Shift Management
             </h1>
@@ -396,7 +396,7 @@ export default function ShiftsManagementPage() {
               className="skeuo-card max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     {editingShift ? 'Edit Shift' : 'Add New Shift'}
                   </h2>
                   <button

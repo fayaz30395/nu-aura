@@ -248,7 +248,7 @@ export default function RecognitionPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Employee Recognition
             </h1>
             <p className="text-[var(--text-secondary)] skeuo-deboss">
@@ -275,7 +275,7 @@ export default function RecognitionPage() {
                 <div>
                   <p className="text-sm text-warning-700 dark:text-warning-300 skeuo-deboss">My Points</p>
                   <p
-                    className="text-2xl font-bold text-warning-900 dark:text-warning-100 skeuo-emboss">{stats.myPoints}</p>
+                    className="text-xl font-bold text-warning-900 dark:text-warning-100 skeuo-emboss">{stats.myPoints}</p>
                 </div>
               </div>
             </CardContent>
@@ -289,7 +289,7 @@ export default function RecognitionPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Received</p>
                   <p
-                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
+                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsReceived}</p>
                 </div>
               </div>
             </CardContent>
@@ -303,7 +303,7 @@ export default function RecognitionPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Given</p>
                   <p
-                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
+                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.recognitionsGiven}</p>
                 </div>
               </div>
             </CardContent>
@@ -317,7 +317,7 @@ export default function RecognitionPage() {
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Activity</p>
                   <p
-                    className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
+                    className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.totalRecognitions}</p>
                 </div>
               </div>
             </CardContent>

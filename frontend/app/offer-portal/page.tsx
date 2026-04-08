@@ -198,7 +198,7 @@ function OfferPortalPage() {
             className="w-20 h-20 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-accent-700 dark:text-accent-400"/>
           </div>
-          <h1 className="text-2xl font-bold skeuo-emboss mb-2">
+          <h1 className="text-xl font-bold skeuo-emboss mb-2">
             Your Offer Letter
           </h1>
           <p className="text-[var(--text-secondary)]">
@@ -263,7 +263,7 @@ function OfferPortalPage() {
             <div className="flex items-center gap-4 mb-6">
               <div
                 className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
+                <span className="text-xl font-bold text-accent-700 dark:text-accent-300">
                   {firstInitial}{lastInitial}
                 </span>
               </div>

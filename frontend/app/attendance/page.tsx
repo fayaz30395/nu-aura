@@ -328,7 +328,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckIn}
                         isLoading={checkInPending}
-                        className="h-14 px-8 text-base font-semibold bg-[var(--bg-card)] text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
+                        className="h-10 px-6 text-sm font-semibold bg-[var(--bg-card)] text-accent-700 hover:bg-[var(--bg-surface)] border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2"/>
                         Check In
@@ -339,7 +339,7 @@ const AttendanceClockWidget = memo(function AttendanceClockWidget({
                       <Button
                         onClick={onCheckOutRequest}
                         isLoading={checkOutPending}
-                        className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-danger-500 to-accent-600 text-white hover:from-danger-600 hover:to-accent-700 border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
+                        className="h-10 px-6 text-sm font-semibold bg-gradient-to-r from-danger-500 to-accent-600 text-white hover:from-danger-600 hover:to-accent-700 border-0 shadow-[var(--shadow-dropdown)] hover:shadow-[var(--shadow-dropdown)] hover:scale-105 transition-all rounded-xl"
                       >
                         <LogOut className="h-5 w-5 mr-2"/>
                         Check Out

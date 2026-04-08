@@ -129,7 +129,7 @@ export default function NewLoanPage() {
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Apply for Loan</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Apply for Loan</h1>
             <p className="text-[var(--text-muted)] mt-1">
               Fill in the details for your loan application
             </p>

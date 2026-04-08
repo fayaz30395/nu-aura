@@ -21,7 +21,7 @@ import {Filter, Plus, Search, ToggleLeft} from 'lucide-react';
 import {useFeatureFlags, useSetFeatureFlag, useToggleFeatureFlag} from '@/lib/hooks/queries/useFeatureFlags';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {SkeletonCard} from '@/components/ui/Loading';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import type {FeatureFlag} from '@/lib/types/core/feature-flag';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];

@@ -96,7 +96,7 @@ export default function SecuritySettingsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Security Settings</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Security Settings</h1>
           <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
             Manage your account security and authentication
           </p>

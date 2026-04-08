@@ -59,7 +59,7 @@ export const CandidateStats = memo(function CandidateStats({
               </div>
               <div>
                 <p className="text-body-muted skeuo-deboss">{card.label}</p>
-                <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{card.value}</p>
+                <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{card.value}</p>
               </div>
             </div>
           </CardContent>

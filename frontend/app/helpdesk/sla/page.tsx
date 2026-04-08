@@ -207,7 +207,7 @@ export default function HelpdeskSLAPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">SLA Management</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">SLA Management</h1>
           {activeTab === 'slas' && (
             <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
               <button
@@ -466,20 +466,20 @@ export default function HelpdeskSLAPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">SLA Met</div>
-                      <div className="text-2xl font-bold text-success-600">{dashboardData.slaMetCount}</div>
+                      <div className="text-xl font-bold text-success-600">{dashboardData.slaMetCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">SLA Breached</div>
-                      <div className="text-2xl font-bold text-danger-600">{dashboardData.slaBreachedCount}</div>
+                      <div className="text-xl font-bold text-danger-600">{dashboardData.slaBreachedCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">First Contact Resolutions</div>
                       <div
-                        className="text-2xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
+                        className="text-xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">Customer Satisfaction</div>
-                      <div className="text-2xl font-bold text-accent-800">
+                      <div className="text-xl font-bold text-accent-800">
                         {dashboardData.averageCSAT ? `${dashboardData.averageCSAT.toFixed(1)}/5` : 'N/A'}
                       </div>
                     </div>

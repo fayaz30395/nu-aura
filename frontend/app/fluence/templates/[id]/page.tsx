@@ -148,7 +148,7 @@ export default function TemplateDetailPage() {
               <ArrowLeft className="w-4 h-4"/>
               Back to Templates
             </button>
-            <h1 className="text-2xl font-bold skeuo-emboss flex items-center gap-4 mb-2">
+            <h1 className="text-xl font-bold skeuo-emboss flex items-center gap-4 mb-2">
               {template.icon && <span className="text-2xl">{template.icon}</span>}
               {template.name}
             </h1>

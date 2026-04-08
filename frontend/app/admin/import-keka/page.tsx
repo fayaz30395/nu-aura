@@ -342,7 +342,7 @@ export default function KekaImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Admin
             </button>
-            <h1 className="text-2xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold skeuo-emboss">
               KEKA Data Import
             </h1>
             <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -627,7 +627,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Rows
                   </p>
-                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-100">
+                  <p className="text-xl font-bold text-accent-900 dark:text-accent-100">
                     {preview.totalRows}
                   </p>
                 </div>
@@ -636,7 +636,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Valid
                   </p>
-                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">
+                  <p className="text-xl font-bold text-success-900 dark:text-success-100">
                     {preview.validRows}
                   </p>
                 </div>
@@ -645,7 +645,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Warnings
                   </p>
-                  <p className="text-2xl font-bold text-warning-900 dark:text-warning-100">
+                  <p className="text-xl font-bold text-warning-900 dark:text-warning-100">
                     {preview.warnings.length}
                   </p>
                 </div>
@@ -654,7 +654,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-danger-600 dark:text-danger-300 font-medium">
                     Errors
                   </p>
-                  <p className="text-2xl font-bold text-danger-900 dark:text-danger-100">
+                  <p className="text-xl font-bold text-danger-900 dark:text-danger-100">
                     {preview.errorRows}
                   </p>
                 </div>
@@ -891,7 +891,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
                     Total Processed
                   </p>
-                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-100">
+                  <p className="text-xl font-bold text-accent-900 dark:text-accent-100">
                     {result.totalProcessed}
                   </p>
                 </div>
@@ -900,7 +900,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-success-600 dark:text-success-300 font-medium">
                     Created
                   </p>
-                  <p className="text-2xl font-bold text-success-900 dark:text-success-100">
+                  <p className="text-xl font-bold text-success-900 dark:text-success-100">
                     {result.created}
                   </p>
                 </div>
@@ -909,7 +909,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-accent-800 dark:text-accent-500 font-medium">
                     Updated
                   </p>
-                  <p className="text-2xl font-bold text-accent-900 dark:text-accent-300">
+                  <p className="text-xl font-bold text-accent-900 dark:text-accent-300">
                     {result.updated}
                   </p>
                 </div>
@@ -918,7 +918,7 @@ export default function KekaImportPage() {
                   <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
                     Skipped
                   </p>
-                  <p className="text-2xl font-bold text-warning-900 dark:text-warning-100">
+                  <p className="text-xl font-bold text-warning-900 dark:text-warning-100">
                     {result.skipped}
                   </p>
                 </div>

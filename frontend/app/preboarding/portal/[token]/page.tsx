@@ -205,7 +205,7 @@ export default function PreboardingPortalPage() {
           <div className="w-16 h-16 rounded-lg bg-accent-500 flex items-center justify-center mx-auto mb-4">
             <Building2 className="h-8 w-8 text-white"/>
           </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Welcome, {data.firstName}!</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Welcome, {data.firstName}!</h1>
           <p className="text-[var(--text-muted)] mt-1">Complete your pre-boarding checklist before joining
             on {new Date(data.expectedJoiningDate).toLocaleDateString()}</p>
         </div>

@@ -158,7 +158,7 @@ export default function ManagerDashboardPage() {
       <AppLayout activeMenuItem="dashboard">
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Team Dashboard</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Team Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manager overview</p>
           </div>
           <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">

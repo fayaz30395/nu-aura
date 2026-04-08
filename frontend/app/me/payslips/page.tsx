@@ -165,7 +165,7 @@ export default function MyPayslipsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">
+            <h1 className="text-xl font-bold skeuo-emboss">
               {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">
@@ -371,7 +371,7 @@ export default function MyPayslipsPage() {
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="space-y-1">
                           <p className="text-body-secondary">Net Salary</p>
-                          <p className="text-2xl font-bold text-success-600 dark:text-success-400">
+                          <p className="text-xl font-bold text-success-600 dark:text-success-400">
                             {formatCurrency(payslip.netAmount)}
                           </p>
                         </div>

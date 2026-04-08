@@ -118,7 +118,7 @@ export default function MyLeavesPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold skeuo-emboss">My Leaves</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">My Leaves</h1>
           <button
             onClick={() => router.push('/leave/apply')}
             className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"

@@ -376,7 +376,7 @@ export default function NineBoxPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold skeuo-emboss">
+                <h1 className="text-xl font-bold skeuo-emboss">
                   9-Box Talent Grid
                 </h1>
                 <p className="text-[var(--text-muted)] mt-1">
@@ -446,7 +446,7 @@ export default function NineBoxPage() {
                   </div>
                   <div>
                     <p className="text-caption">Total Plotted</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{points.length}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{points.length}</p>
                   </div>
                 </div>
               </div>
@@ -459,7 +459,7 @@ export default function NineBoxPage() {
                   </div>
                   <div>
                     <p className="text-caption">Stars</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.stars}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.stars}</p>
                   </div>
                 </div>
               </div>
@@ -472,7 +472,7 @@ export default function NineBoxPage() {
                   </div>
                   <div>
                     <p className="text-caption">High Performers</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPerformers}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPerformers}</p>
                   </div>
                 </div>
               </div>
@@ -485,7 +485,7 @@ export default function NineBoxPage() {
                   </div>
                   <div>
                     <p className="text-caption">High Potential</p>
-                    <p className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPotential}</p>
+                    <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{stats.highPotential}</p>
                   </div>
                 </div>
               </div>

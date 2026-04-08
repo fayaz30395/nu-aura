@@ -84,7 +84,7 @@ export default function CreateContractPage() {
                   className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
             <ArrowLeft className="w-5 h-5"/>
           </button>
-          <h1 className="text-2xl font-bold skeuo-emboss">Create Contract</h1>
+          <h1 className="text-xl font-bold skeuo-emboss">Create Contract</h1>
         </div>
 
         <Card>

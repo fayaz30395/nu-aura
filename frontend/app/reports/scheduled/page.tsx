@@ -255,7 +255,7 @@ export default function ScheduledReportsPage() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold skeuo-emboss">Scheduled Reports</h1>
+            <h1 className="text-xl font-bold skeuo-emboss">Scheduled Reports</h1>
             <p className="text-[var(--text-secondary)] mt-1">
               Configure automated report delivery to your team
             </p>
@@ -438,7 +438,7 @@ export default function ScheduledReportsPage() {
             <div
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6">
+                <h2 className="text-xl font-bold mb-6">
                   {selectedReport ? 'Edit Scheduled Report' : 'Create Scheduled Report'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>

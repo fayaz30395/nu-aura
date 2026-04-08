@@ -150,7 +150,7 @@ export default function PaymentsPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1
-              className="text-2xl sm:text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
+              className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2 skeuo-emboss">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8"/>
               Payment Gateway
             </h1>
@@ -169,7 +169,7 @@ export default function PaymentsPage() {
                   <CreditCard className="w-5 h-5"/>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {statsData.totalTransactions}
                   </p>
                   <p className="text-body-muted">Total Transactions</p>
@@ -183,7 +183,7 @@ export default function PaymentsPage() {
                   <CheckCircle className="w-5 h-5"/>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {statsData.completedTransactions}
                   </p>
                   <p className="text-body-muted">Completed</p>
@@ -197,7 +197,7 @@ export default function PaymentsPage() {
                   <Clock className="w-5 h-5"/>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {statsData.processingTransactions}
                   </p>
                   <p className="text-body-muted">Processing</p>
@@ -211,7 +211,7 @@ export default function PaymentsPage() {
                   <XCircle className="w-5 h-5"/>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[var(--text-primary)]">
+                  <p className="text-xl font-bold text-[var(--text-primary)]">
                     {statsData.failedTransactions}
                   </p>
                   <p className="text-body-muted">Failed</p>
@@ -465,7 +465,7 @@ export default function PaymentsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-[var(--text-primary)]">
+                      <div className="text-xl font-bold text-[var(--text-primary)]">
                         {payment.currency} {payment.amount.toFixed(2)}
                       </div>
                       <div className="text-body-secondary">

@@ -91,7 +91,7 @@ export default function HeadcountReportPage() {
         {/* Header */}
         <div className="row-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">Headcount Report</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Headcount Report</h1>
             <p className="text-body-muted mt-1">Organization headcount by department, type, and trend</p>
           </div>
           <div className="flex items-center gap-2">

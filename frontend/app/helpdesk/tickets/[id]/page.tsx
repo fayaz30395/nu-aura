@@ -281,7 +281,7 @@ export default function TicketDetailPage() {
               </Badge>
               <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
             </div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] skeuo-emboss">{ticket.subject}</h1>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{ticket.subject}</h1>
           </div>
 
           {/* Actions */}

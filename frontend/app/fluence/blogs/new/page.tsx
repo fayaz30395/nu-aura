@@ -139,7 +139,7 @@ export default function CreateBlogPost() {
               >
                 <ArrowLeft className="w-5 h-5"/>
               </button>
-              <h1 className="text-2xl font-bold skeuo-emboss">
+              <h1 className="text-xl font-bold skeuo-emboss">
                 Create Blog Post
               </h1>
             </div>
