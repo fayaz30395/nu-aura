@@ -1392,3 +1392,798 @@ Roles: RECRUITMENT_ADMIN, REPORTING_MANAGER
 - **P2 bugs found**: 7 (500 error, path resolution, over-restriction)
 - **P3 bugs found**: 4 (param mismatches, missing docs)
 
+
+
+---
+
+# QA API Testing — Phase 3: P1-P3 Use Case Testing
+**Date**: 2026-04-10 05:06
+**Tester**: Claude QA Agent (curl-based)
+**Server**: http://localhost:8080
+**Auth**: Super Admin (fayaz.m@nulogic.io)
+
+## Summary
+
+| Metric | Count |
+|--------|-------|
+| **Total API Endpoints Tested** | 93 |
+| PASS (200/201) | 81 |
+| FAIL (500) | 2 |
+| NOT-FOUND (404) | 7 |
+| BAD-REQUEST (400) | 2 |
+| METHOD-NOT-ALLOWED (405) | 1 |
+| **RBAC Tests** | 25 |
+| RBAC PASS | 20 |
+| RBAC FAIL (unexpected) | 5 |
+
+**Pass Rate**: 81/93 = 87%
+
+## API Endpoint Results — Super Admin
+
+## API ENDPOINT — /api/v1/employees?page=0&size=5
+- **Label**: Employees List
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"d202c1fd-e5a5-434f-9430-8a6e7cbd15e7","userId":"88ef8ebc-d720-4063-8760-9a64844ad
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/employees/d202c1fd-e5a5-434f-9430-8a6e7cbd15e7
+- **Label**: Employee Detail
+- **HTTP Status**: 200
+- **Response**: {"id":"d202c1fd-e5a5-434f-9430-8a6e7cbd15e7","userId":"88ef8ebc-d720-4063-8760-9a64844ada7f","employ
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/departments
+- **Label**: Departments
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"48000000-de00-0000-0000-000000000002","code":"HR","name":"Human Resources","descr
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/organization/chart
+- **Label**: Org Chart
+- **HTTP Status**: 200
+- **Response**: []
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/organization/units
+- **Label**: Org Units
+- **HTTP Status**: 200
+- **Response**: []
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/attendance/today
+- **Label**: Attendance Today
+- **HTTP Status**: 200
+- **Response**: {"id":"19a72080-3a65-4b82-841e-6b1d4084da7e","employeeId":"550e8400-e29b-41d4-a716-446655440040","sh
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/attendance/my-attendance?startDate=2026-04-01&endDate=2026-04-10
+- **Label**: My Attendance
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"820e89ca-635d-4024-a49a-1863eb112431","employeeId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/leave-requests?page=0&size=5
+- **Label**: Leave Requests
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"d003cdf7-c717-460a-87d6-c51dbd7957a1","employeeId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/leave-balances/employee/d202c1fd-e5a5-434f-9430-8a6e7cbd15e7
+- **Label**: Leave Balances
+- **HTTP Status**: 200
+- **Response**: []
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/leave-types
+- **Label**: Leave Types
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"0961e1bb-6754-4481-b9cb-013818a431d2","leaveCode":"EL","leaveName":"Earned Leave"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/payroll/runs?page=0&size=5
+- **Label**: Payroll Runs
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"4f09a99d-0160-4cff-bfc7-6f86b85e3559","createdAt":"2026-04-09T01:53:38.154887","u
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/payroll/components
+- **Label**: Payroll Components
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/payroll/statutory/preview
+- **Label**: Payroll Statutory Preview
+- **HTTP Status**: 400
+- **Response**: {"timestamp":"2026-04-10T04:56:45.82137","status":400,"error":"Missing Parameter","message":"Require
+- **Status**: BAD-REQUEST
+
+## API ENDPOINT — /api/v1/expenses?page=0&size=5
+- **Label**: Expense Claims
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"9230d664-a1b8-48fe-8c9f-48b9c4e44f4a","employeeId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/expenses/policies
+- **Label**: Expense Policies
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/expenses/categories
+- **Label**: Expense Categories
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"c174fb01-dd9e-47a6-8c04-5704a108a745","name":"Equipment","description":"Hardware,
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/assets?page=0&size=5
+- **Label**: Assets
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"17c938c7-f0a9-437d-ac6d-15bc4cd5dee1","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/shifts?page=0&size=5
+- **Label**: Shifts
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"390d5d48-c81b-4487-983d-65c5d35f6e25","shiftCode":"AFT","shiftName":"Afternoon (2
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/shift-swaps?page=0&size=5
+- **Label**: Shift Swaps
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"3c4ed9a0-ae17-4bf3-8013-e316b2772988","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/overtime?page=0&size=5
+- **Label**: Overtime
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":false,"sorted":true,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/calendar/events/my/range?startTime=2026-01-01T00:00:00&endTime=2026-12-31T23:59:59
+- **Label**: Calendar Events
+- **HTTP Status**: 200
+- **Response**: [{"id":"b72882be-b311-4906-8a1c-ba046556b8fd","tenantId":"660e8400-e29b-41d4-a716-446655440001","emp
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/time-tracking/entries
+- **Label**: Time Tracking Entries
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"4872020d-9a17-4612-9fab-cc0b5f49f54c","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/time-tracking/entries/my
+- **Label**: Time Tracking My
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"4872020d-9a17-4612-9fab-cc0b5f49f54c","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/helpdesk/tickets?page=0&size=5
+- **Label**: Helpdesk Tickets
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"a5127a24-b98f-47a6-a0cf-5006491c0e54","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/helpdesk/sla
+- **Label**: Helpdesk SLA
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"5233242d-2556-4d5d-94e6-3850f2377db9","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/admin/feature-flags
+- **Label**: Feature Flags
+- **HTTP Status**: 200
+- **Response**: [{"id":"57297e4b-9a3b-4957-841a-c8df4e31be45","tenantId":"660e8400-e29b-41d4-a716-446655440001","fea
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/office-locations
+- **Label**: Office Locations
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/roles
+- **Label**: Roles
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"660e8400-e29b-41d4-a716-44665544ee01","code":"TENANT_ADMIN","name":"Tenant Admini
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/permissions
+- **Label**: Permissions
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"9707adca-9715-4343-bd47-72d14caf43df","code":"AGENCY:CREATE","name":"Create Agenc
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/scheduled-reports
+- **Label**: Scheduled Reports
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/analytics/dashboard
+- **Label**: Analytics Dashboard
+- **HTTP Status**: 200
+- **Response**: {"viewType":"ADMIN","viewLabel":"Organization View","teamSize":31,"attendance":{"present":1,"absent"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/predictive-analytics/dashboard
+- **Label**: Predictive Analytics
+- **HTTP Status**: 200
+- **Response**: {"attritionSummary":{"totalEmployees":0,"lowRiskCount":0,"mediumRiskCount":0,"highRiskCount":0,"crit
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/analytics/org-health
+- **Label**: Org Health
+- **HTTP Status**: 200
+- **Response**: {"healthScore":{"score":82,"status":"EXCELLENT","trend":2.4},"turnover":{"annualTurnoverRate":0.0,"m
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/notifications?page=0&size=5
+- **Label**: Notifications
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":false,"sorted":true,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/approvals/inbox?page=0&size=5
+- **Label**: Approvals Inbox
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"83df6068-84e7-42ac-9d59-0d7db2b9e066","workflowDefinitionId":"f46844bc-2750-459b-
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/announcements?page=0&size=5
+- **Label**: Announcements
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"1987f4e6-b8ae-4a5c-a127-65e76d151a1d","title":"Team Meeting Friday 3 PM","content
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/benefits/plans
+- **Label**: Benefit Plans
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/benefits-enhanced/plans
+- **Label**: Benefits Enhanced Plans
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/benefits-enhanced/dashboard
+- **Label**: Benefits Dashboard
+- **HTTP Status**: 200
+- **Response**: {"claimsPendingPayment":0,"enrollmentsByStatus":[],"claimsSummaryByType":[],"monthlyClaimsTrend":[],
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/compensation/cycles
+- **Label**: Compensation Cycles
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"d9bcb14e-edcb-4872-a55c-5fcdd213c777","name":"Annual Review 2026","description":n
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/loans?page=0&size=5
+- **Label**: Loans
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"89417fe3-5fe2-49a0-ae7c-4d49bd00145d","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/contracts?page=0&size=5
+- **Label**: Contracts
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"21bba32c-d107-4494-bd86-905a352f9b27","title":"Employment Contract - Saran V","ty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/contracts/templates
+- **Label**: Contract Templates
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"36f78bce-d1ba-441d-a614-ddd358d17736","name":"QA Employment Template","type":"EMP
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/letters
+- **Label**: Letters
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"59a85048-6115-40ac-b807-1e2fca965233","referenceNumber":"EXP/2026/2026/0001","tem
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/holidays/upcoming
+- **Label**: Holidays
+- **HTTP Status**: 400
+- **Response**: {"timestamp":"2026-04-10T04:58:46.2534","status":400,"error":"Invalid Parameter","message":"Invalid 
+- **Status**: BAD-REQUEST
+
+## API ENDPOINT — /api/v1/projects?page=0&size=5
+- **Label**: Projects
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"48000000-0e03-0000-0000-000000000001","projectCode":"PROJ-001","name":"NU-AURA Pl
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/psa/projects?page=0&size=5
+- **Label**: PSA Projects
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":false,"sorted":true,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/resource-pools?page=0&size=5
+- **Label**: Resource Pools
+- **HTTP Status**: 200
+- **Response**: []
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/surveys?page=0&size=5
+- **Label**: Surveys
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/probation?page=0&size=5
+- **Label**: Probation
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"6013ac11-dcf1-4dcb-a550-47e0697e9cc1","employeeId":"f5b4afd9-c46b-4095-a70c-0fc40
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/home/dashboard
+- **Label**: Home
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T04:59:05.044497","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/wall/posts?page=0&size=5
+- **Label**: Wall
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"c54c8c02-5afb-40a4-9f52-b621aef81481","type":"PRAISE","content":"Saran was instru
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/tax-declarations?page=0&size=5
+- **Label**: Tax Declarations
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/audit-logs?page=0&size=5
+- **Label**: Audit Logs
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"28112e6f-9b3b-49a8-aeae-799624cf9421","entityType":"ATTENDANCE_RECORD","entityId"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/custom-fields/entities
+- **Label**: Custom Fields
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T04:59:17.661063","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/compliance/dashboard
+- **Label**: Compliance
+- **HTTP Status**: 200
+- **Response**: {"overdueAlerts":0,"totalActivePolicies":0,"expiringPolicies":0,"complianceScore":100,"alertsByStatu
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/budget/plans?page=0&size=5
+- **Label**: Budget
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T04:59:23.681289","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/recruitment/job-openings
+- **Label**: Recruitment Job Openings
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"b998cfb7-e78c-46cd-833b-e7b828f58cbf","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/candidates
+- **Label**: Recruitment Candidates
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"6f5dd141-f35e-4d33-88be-fdab69f79057","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/applicants?page=0&size=5
+- **Label**: Recruitment Applicants
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/interviews
+- **Label**: Recruitment Interviews
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"054d593c-0732-4ce0-abad-b518b12481eb","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/agencies?page=0&size=5
+- **Label**: Recruitment Agencies
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"2d008670-0073-437d-913a-53d87fcdd8e6","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/scorecards?page=0&size=5
+- **Label**: Recruitment Scorecards
+- **HTTP Status**: 200
+- **Response**: []
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recruitment/offers
+- **Label**: Recruitment Offers
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"dbcd1542-2791-4777-b74e-5bb1fdd7ac64","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/referrals?page=0&size=5
+- **Label**: Referrals
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"d2abed41-2aa7-492d-a06a-d3d810fb8e6b","referrerId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/onboarding/processes
+- **Label**: Onboarding Processes
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/onboarding/templates
+- **Label**: Onboarding Templates
+- **HTTP Status**: 200
+- **Response**: [{"id":"1f9efd54-6ad9-41d4-8f86-b03c1ea492cc","name":"QA Test Onboarding Template","description":"St
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/preboarding/candidates
+- **Label**: Preboarding Candidates
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"0a0841f0-c149-4587-abe2-045117ce4a98","firstName":"Vikram","lastName":"Nair","ful
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/exit/processes?page=0&size=5
+- **Label**: Exit Processes
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"7fddcf3f-d49f-4039-ab36-c9693f040488","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/offboarding?page=0&size=5
+- **Label**: Offboarding
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"7fddcf3f-d49f-4039-ab36-c9693f040488","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/reviews?page=0&size=5
+- **Label**: Performance Reviews
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"b816201a-e52d-4801-bdc7-7d9f068202e1","employeeId":"d202c1fd-e5a5-434f-9430-8a6e7
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/review-cycles?page=0&size=5
+- **Label**: Review Cycles
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"975d32e4-d7f1-4177-bf27-1e6fd59e6edc","cycleName":"Q3 2026 Performance Review","c
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/goals?page=0&size=5
+- **Label**: Goals
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"3f269285-d5b1-4752-99f6-ef3f87a6fed9","employeeId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/okr?page=0&size=5
+- **Label**: OKRs
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T05:00:17.676445","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/feedback360?page=0&size=5
+- **Label**: 360 Feedback
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T05:00:19.213551","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/performance/pip?page=0&size=5
+- **Label**: PIP
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"b969295e-23a3-46db-9863-a8e871a18903","employeeId":"48000000-e001-0000-0000-00000
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/training/programs?page=0&size=5
+- **Label**: Training Programs
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"7bf97338-4f5c-437e-b6bc-b2c18e71c41e","tenantId":"660e8400-e29b-41d4-a716-4466554
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/lms/courses?page=0&size=5
+- **Label**: LMS Courses
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"7ec309af-c949-4eb6-9f03-1b0771c1f957","createdAt":"2026-03-24T06:09:29.138271","u
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/lms/courses/published?page=0&size=5
+- **Label**: LMS Published
+- **HTTP Status**: 200
+- **Response**: {"content":[{"id":"7ec309af-c949-4eb6-9f03-1b0771c1f957","createdAt":"2026-03-24T06:09:29.138271","u
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/lms/learning-paths?page=0&size=5
+- **Label**: Learning Paths
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T05:00:32.943575","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## API ENDPOINT — /api/v1/survey-management?page=0&size=5
+- **Label**: Surveys Mgmt
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/recognition?page=0&size=5
+- **Label**: Recognition
+- **HTTP Status**: 405
+- **Response**: {"timestamp":"2026-04-10T05:00:36.643009","status":405,"error":"Method Not Allowed","message":"HTTP 
+- **Status**: METHOD-NOT-ALLOWED
+
+## API ENDPOINT — /api/v1/wellness/dashboard
+- **Label**: Wellness Dashboard
+- **HTTP Status**: 200
+- **Response**: {"myPoints":{"id":"fa2a2304-615c-4b5e-bb57-d38e4d98ae03","employeeId":"550e8400-e29b-41d4-a716-44665
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/wellness/programs/active
+- **Label**: Wellness Programs
+- **HTTP Status**: 200
+- **Response**: [{"id":"6feb4bd3-07da-4ff4-a17c-232361ac6dab","name":"10000 Steps Daily - April 2026","description":
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/knowledge/wiki/spaces?page=0&size=5
+- **Label**: Wiki Spaces
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/knowledge/wiki/pages?page=0&size=5
+- **Label**: Wiki Pages
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/knowledge/blogs?page=0&size=5
+- **Label**: Blogs
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/knowledge/blogs/categories
+- **Label**: Blog Categories
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/knowledge/templates?page=0&size=5
+- **Label**: Templates
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":5,"sort":{"unsorted":true,"sorted":false,"empty"
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/fluence/activities?page=0&size=5
+- **Label**: Fluence Activities
+- **HTTP Status**: 500
+- **Response**: {"timestamp":"2026-04-10T05:00:58.849046","status":500,"error":"Internal Server Error","message":"An
+- **Status**: FAIL
+
+## API ENDPOINT — /api/v1/fluence/search?query=test
+- **Label**: Fluence Search
+- **HTTP Status**: 200
+- **Response**: {"content":[],"pageable":{"pageNumber":0,"pageSize":20,"sort":{"unsorted":true,"sorted":false,"empty
+- **Status**: PASS
+
+## API ENDPOINT — /api/v1/fluence/attachments/recent
+- **Label**: Fluence Attachments
+- **HTTP Status**: 500
+- **Response**: {"timestamp":"2026-04-10T05:01:04.185425","status":500,"error":"Internal Server Error","message":"An
+- **Status**: FAIL
+
+## API ENDPOINT — /api/v1/knowledge/search?query=test
+- **Label**: Knowledge Search
+- **HTTP Status**: 404
+- **Response**: {"timestamp":"2026-04-10T05:01:05.946656","status":404,"error":"Not Found","message":"No endpoint fo
+- **Status**: NOT-FOUND
+
+## RBAC Test Results
+
+Tested with 4 roles: Employee (saran@nulogic.io), Team Lead (dhanush@nulogic.io), HR Manager (jagadeesh@nulogic.io), HR Admin (priya@nulogic.io)
+
+## RBAC — Employee -> /api/v1/payroll/runs?page=0&size=5
+- **Endpoint**: Payroll Runs
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — TeamLead -> /api/v1/payroll/runs?page=0&size=5
+- **Endpoint**: Payroll Runs
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — HRManager -> /api/v1/payroll/runs?page=0&size=5
+- **Endpoint**: Payroll Runs
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## RBAC — HRAdmin -> /api/v1/payroll/runs?page=0&size=5
+- **Endpoint**: Payroll Runs
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/admin/feature-flags
+- **Endpoint**: Feature Flags
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — TeamLead -> /api/v1/admin/feature-flags
+- **Endpoint**: Feature Flags
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — HRManager -> /api/v1/admin/feature-flags
+- **Endpoint**: Feature Flags
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — HRAdmin -> /api/v1/admin/feature-flags
+- **Endpoint**: Feature Flags
+- **Expected**: 200
+- **Actual**: 403
+- **Status**: FAIL
+
+## RBAC — Employee -> /api/v1/employees
+- **Endpoint**: POST Employees
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — TeamLead -> /api/v1/employees
+- **Endpoint**: POST Employees
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — HRManager -> /api/v1/employees
+- **Endpoint**: POST Employees
+- **Expected**: 200
+- **Actual**: 403
+- **Status**: FAIL
+
+## RBAC — HRAdmin -> /api/v1/employees
+- **Endpoint**: POST Employees
+- **Expected**: 200
+- **Actual**: 400
+- **Status**: FAIL
+
+## RBAC — Employee -> /api/v1/exit/processes?page=0&size=5
+- **Endpoint**: Exit Processes
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — TeamLead -> /api/v1/exit/processes?page=0&size=5
+- **Endpoint**: Exit Processes
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — HRManager -> /api/v1/exit/processes?page=0&size=5
+- **Endpoint**: Exit Processes
+- **Expected**: 200
+- **Actual**: 403
+- **Status**: FAIL
+
+## RBAC — HRAdmin -> /api/v1/exit/processes?page=0&size=5
+- **Endpoint**: Exit Processes
+- **Expected**: 200
+- **Actual**: 403
+- **Status**: FAIL
+
+## RBAC — Employee -> /api/v1/audit-logs?page=0&size=5
+- **Endpoint**: Audit Logs
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — TeamLead -> /api/v1/audit-logs?page=0&size=5
+- **Endpoint**: Audit Logs
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/roles
+- **Endpoint**: Roles
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/permissions
+- **Endpoint**: Permissions
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/analytics/dashboard
+- **Endpoint**: Analytics Dashboard
+- **Expected**: 403
+- **Actual**: 403
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/announcements?page=0&size=5
+- **Endpoint**: Announcements
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/notifications?page=0&size=5
+- **Endpoint**: Notifications
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/leave-requests?page=0&size=5
+- **Endpoint**: Leave Requests
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## RBAC — Employee -> /api/v1/attendance/today
+- **Endpoint**: My Attendance
+- **Expected**: 200
+- **Actual**: 200
+- **Status**: PASS
+
+## Bugs Found
+
+### BUG-1: Fluence Activities returns 500 Internal Server Error
+- **URL**: GET /api/v1/fluence/activities?page=0&size=5
+- **Severity**: P2 (feature broken)
+- **Impact**: Activity feed in NU-Fluence is non-functional
+
+### BUG-2: Fluence Attachments Recent returns 500 Internal Server Error
+- **URL**: GET /api/v1/fluence/attachments/recent
+- **Severity**: P2 (feature broken)
+- **Impact**: Recent attachments listing in NU-Fluence is non-functional
+
+### BUG-3: Exit Processes permission mismatch — requires EXIT:VIEW but roles have OFFBOARDING:VIEW
+- **URL**: GET /api/v1/exit/processes (as HR Manager or HR Admin)
+- **Severity**: P1 (RBAC violation)
+- **Impact**: HR Manager and HR Admin cannot access exit processes despite having OFFBOARDING:VIEW/MANAGE permissions
+- **Root Cause**: Permission check expects EXIT:VIEW but roles are granted OFFBOARDING:VIEW. Only SuperAdmin can access via bypass.
+- **Note**: The ExitManagementController code shows @RequiresPermission(Permission.OFFBOARDING_VIEW) which maps to 'OFFBOARDING:VIEW', but the error message says 'EXIT:VIEW'. This suggests a different interceptor or mapping is in play.
+
+### BUG-4: Feature Flags requires SYSTEM_ADMIN — HR Admin cannot access
+- **URL**: GET /api/v1/admin/feature-flags (as HR Admin)
+- **Severity**: P3 (design decision — not a bug if intentional)
+- **Impact**: Only SuperAdmin can manage feature flags. HR Admin (level 85) is blocked.
+- **Note**: This is by design — feature flags use @RequiresPermission(SYSTEM_ADMIN)
+
+### BUG-5: LMS Learning Paths returns 404 despite controller existing
+- **URL**: GET /api/v1/lms/learning-paths
+- **Severity**: P3 (feature-flagged)
+- **Root Cause**: Controller has @RequiresFeature(FeatureFlag.ENABLE_LMS) — likely feature flag is disabled
+
+### BUG-6: Holidays endpoint path mismatch
+- **URL**: GET /api/v1/holidays/upcoming
+- **Severity**: P3 (path issue)
+- **Impact**: The 'upcoming' path segment is treated as an ID parameter, returning 400. Needs dedicated endpoint or correct query parameter.
+
+### NOT-A-BUG: POST /api/v1/employees returns 403 for HR Manager
+- HR Manager has EMPLOYEE:UPDATE but not EMPLOYEE:CREATE. This is correct RBAC behavior.
+- HR Admin has EMPLOYEE:CREATE and returns 400 (validation error, not auth issue) — correct.
+
+## Final Totals
+
+| Category | Count |
+|----------|-------|
+| Total API endpoints tested | 93 |
+| PASS | 81 |
+| FAIL (500) | 2 |
+| NOT-FOUND (404) | 7 |
+| BAD-REQUEST (400) | 2 |
+| METHOD-NOT-ALLOWED (405) | 1 |
+| RBAC tests total | 25 |
+| RBAC PASS | 20 |
+| RBAC unexpected results | 5 |
+| P1 Bugs | 1 (EXIT:VIEW permission mismatch) |
+| P2 Bugs | 2 (Fluence Activities + Attachments 500s) |
+| P3 Issues | 3 (Feature-flagged endpoints, path issues) |
