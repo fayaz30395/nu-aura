@@ -255,6 +255,13 @@ public class Feedback360Controller {
                         throw new org.springframework.security.access.AccessDeniedException(
                                 "Not authorized to view this feedback response");
                     }
+                    // NEW-11 FIX: Enforce anonymity — when the subject views a response
+                    // and the cycle is anonymous, strip the reviewer identity.
+                    if (isSubject && !isReviewer && response.getCycleId() != null) {
+                        feedback360Service.getCycleById(tenantId, response.getCycleId())
+                                .filter(cycle -> Boolean.TRUE.equals(cycle.getIsAnonymous()))
+                                .ifPresent(cycle -> response.setReviewerId(null));
+                    }
                     return ResponseEntity.ok(response);
                 })
                 .orElse(ResponseEntity.notFound().build());

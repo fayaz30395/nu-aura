@@ -3,7 +3,9 @@ package com.hrms.infrastructure.payroll.repository;
 import com.hrms.domain.payroll.GlobalPayrollRun;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +19,12 @@ import java.util.UUID;
 public interface GlobalPayrollRunRepository extends JpaRepository<GlobalPayrollRun, UUID> {
 
     Optional<GlobalPayrollRun> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    // NEW-04 FIX: Pessimistic lock for state-transition operations (process, approve, lock).
+    // Prevents concurrent double-processing, matching domestic PayrollRunRepository pattern.
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM GlobalPayrollRun r WHERE r.id = :id AND r.tenantId = :tenantId")
+    Optional<GlobalPayrollRun> findByIdAndTenantIdForUpdate(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
     Optional<GlobalPayrollRun> findByRunCodeAndTenantId(String runCode, UUID tenantId);
 

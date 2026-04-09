@@ -322,6 +322,10 @@ public class PayrollComponentService {
             }
         } catch (BusinessException e) {
             throw e;
+        } catch (ArithmeticException e) {
+            // NEW-12 FIX: User-friendly division-by-zero message instead of opaque SpEL trace
+            throw new BusinessException(
+                    "Division by zero in formula '" + formula + "'. Check that divisor components have non-zero values.");
         } catch (Exception e) { // Intentional broad catch — payroll processing error boundary
             throw new BusinessException(
                     "Error evaluating formula '" + formula + "': " + e.getMessage());

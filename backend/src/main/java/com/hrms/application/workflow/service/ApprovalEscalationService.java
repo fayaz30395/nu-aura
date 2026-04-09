@@ -232,25 +232,15 @@ public class ApprovalEscalationService {
         step.setEscalatedToUserId(targetUserId);
         step.setReminderCount(step.getReminderCount() + 1);
 
-        // Create new step for the escalation target
-        StepExecution escalatedStep = StepExecution.builder()
-                .tenantId(tenantId)
-                .workflowExecution(step.getWorkflowExecution())
-                .approvalStep(step.getApprovalStep())
-                .stepOrder(step.getStepOrder())
-                .stepName("Escalated: " + step.getStepName().replaceAll("^(Escalated: )+", ""))
-                .status(StepExecution.StepStatus.PENDING)
-                .assignedToUserId(targetUserId)
-                .assignedAt(LocalDateTime.now())
-                .deadline(step.getDeadline())
-                .build();
+        // NEW-16 FIX: Removed dead StepExecution variable that was created but never
+        // persisted or returned. The caller (ApprovalEscalationJob.escalateStepIfEligible)
+        // is responsible for creating and saving the escalated step.
 
         // Log escalation
         log.info("Escalating step {} to user {} (strategy={}, tenant={})",
                 step.getId(), targetUserId, config.getEscalationType(), tenantId);
 
-        // Save both (original step as ESCALATED, new step as PENDING)
-        // Note: Both are saved together; the actual persistence is handled by the caller
+        // Mark original step as ESCALATED — caller handles persistence
         step.setStatus(StepExecution.StepStatus.ESCALATED);
         step.setAction(StepExecution.ApprovalAction.ESCALATE);
     }

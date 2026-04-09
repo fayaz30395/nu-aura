@@ -252,7 +252,8 @@ public class GlobalPayrollService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
-        GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
+        // NEW-04 FIX: Use pessimistic lock to prevent concurrent double-processing
+        GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found: " + runId));
 
         if (run.getStatus() != GlobalPayrollRun.PayrollRunStatus.DRAFT) {
@@ -333,7 +334,8 @@ public class GlobalPayrollService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
-        GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
+        // NEW-04 FIX: Use pessimistic lock to prevent concurrent approval race
+        GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found: " + runId));
 
         if (run.getStatus() != GlobalPayrollRun.PayrollRunStatus.PENDING_APPROVAL) {

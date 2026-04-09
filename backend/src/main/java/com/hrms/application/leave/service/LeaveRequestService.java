@@ -309,6 +309,29 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             }
         }
 
+        // NEW-08 FIX: Adjust pending balance when editing a PENDING leave request.
+        // Release the old pending amount and reserve the new amount atomically.
+        java.math.BigDecimal oldDays = request.getTotalDays();
+        java.math.BigDecimal newDays = leaveRequestData.getTotalDays();
+        UUID oldLeaveTypeId = request.getLeaveTypeId();
+        UUID newLeaveTypeId = leaveRequestData.getLeaveTypeId();
+
+        boolean daysChanged = oldDays != null && !oldDays.equals(newDays);
+        boolean typeChanged = oldLeaveTypeId != null && !oldLeaveTypeId.equals(newLeaveTypeId);
+
+        if (daysChanged || typeChanged) {
+            // Release old reservation
+            if (oldDays != null) {
+                leaveBalanceService.releasePendingLeave(
+                        request.getEmployeeId(), oldLeaveTypeId, oldDays);
+            }
+            // Reserve new amount (validates balance availability)
+            if (newDays != null) {
+                leaveBalanceService.addPendingLeave(
+                        request.getEmployeeId(), newLeaveTypeId, newDays);
+            }
+        }
+
         // Update the editable fields
         request.setLeaveTypeId(leaveRequestData.getLeaveTypeId());
         request.setStartDate(leaveRequestData.getStartDate());
@@ -418,6 +441,19 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         request.reject(rejectedBy, reason);
         leaveRequestRepository.save(request);
+
+        // NEW-03 FIX: Release pending leave balance reserved at request creation.
+        // Matches the pattern in rejectLeaveRequest() — without this, pending days
+        // remain locked when rejected via the approval workflow callback.
+        try {
+            leaveBalanceService.releasePendingLeave(
+                    request.getEmployeeId(),
+                    request.getLeaveTypeId(),
+                    request.getTotalDays());
+        } catch (Exception e) {
+            log.warn("Failed to release pending leave on workflow rejection for request {}: {}",
+                    entityId, e.getMessage());
+        }
 
         notifyLeaveRejected(request, reason);
         publishLeaveRejectedEvent(request, tenantId, rejectedBy, reason);

@@ -128,6 +128,21 @@ public class ExitManagementService {
         ExitProcess updatedProcess = exitProcessRepository.save(exitProcess);
 
         if (status == ExitProcess.ExitStatus.COMPLETED) {
+            // NEW-09 FIX: Synchronously terminate employee and revoke access when exit completes.
+            // Don't rely solely on Kafka consumer — if consumer is down, user retains active access.
+            try {
+                Employee employee = employeeRepository.findByIdAndTenantId(
+                        exitProcess.getEmployeeId(), tenantId).orElse(null);
+                if (employee != null && employee.getStatus() != Employee.EmployeeStatus.TERMINATED) {
+                    employee.terminate();
+                    employeeRepository.save(employee);
+                    log.info("Employee {} terminated synchronously on exit completion", exitProcess.getEmployeeId());
+                }
+            } catch (Exception e) {
+                log.error("Failed to terminate employee {} on exit completion: {}",
+                        exitProcess.getEmployeeId(), e.getMessage());
+            }
+
             publishOffboardedEvent(updatedProcess, tenantId);
         }
 
