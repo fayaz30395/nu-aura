@@ -35,12 +35,15 @@ export default function LeavePage() {
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
 
+  // BUG-034-02: Redirect /leave to /leave/my-leaves so the layout route
+  // always shows meaningful content instead of duplicating my-leaves
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
       return;
     }
+    router.replace('/leave/my-leaves');
   }, [isAuthenticated, hasHydrated, router]);
 
   const year = new Date().getFullYear();
