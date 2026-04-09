@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
-import {Bell, Loader2, Mail, MessageSquare} from 'lucide-react';
+import {Bell, BookOpen, Briefcase, DollarSign, Gift, Loader2, Mail, MessageSquare, UserPlus} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useNotificationPreferences, useUpdateNotificationPreferences} from '@/lib/hooks/queries/useNotifications';
 import type {NotificationPreferences as NotificationPreferencesType} from '@/lib/types/core/notifications';
@@ -23,35 +23,62 @@ interface NotificationPreference {
 const preferenceCategories: NotificationPreference[] = [
   {
     key: 'leave',
-    label: 'Leave Requests',
-    description: 'Notifications about leave applications and approvals',
+    label: 'Leave & Attendance',
+    description: 'Leave applications, approvals, check-in reminders, and missed punches',
     icon: <Bell className="h-5 w-5 text-accent-500"/>,
     email: true,
     push: true,
     inApp: true,
   },
   {
-    key: 'attendance',
-    label: 'Attendance Alerts',
-    description: 'Alerts for check-in reminders and missed punches',
-    icon: <Bell className="h-5 w-5 text-success-500"/>,
-    email: true,
-    push: false,
-    inApp: true,
-  },
-  {
     key: 'approvals',
-    label: 'Approval Workflows',
-    description: 'Updates on pending approvals and workflow status',
+    label: 'Approvals & Workflows',
+    description: 'Pending approvals, escalations, and workflow status updates',
     icon: <MessageSquare className="h-5 w-5 text-warning-500"/>,
     email: true,
     push: true,
     inApp: true,
   },
   {
+    key: 'payroll',
+    label: 'Payroll & Expenses',
+    description: 'Payslip availability, salary credits, and expense approvals',
+    icon: <DollarSign className="h-5 w-5 text-success-500"/>,
+    email: true,
+    push: false,
+    inApp: true,
+  },
+  {
+    key: 'performance',
+    label: 'Performance & Training',
+    description: 'Review cycles, goal updates, training assignments, and feedback',
+    icon: <BookOpen className="h-5 w-5 text-accent-600"/>,
+    email: true,
+    push: false,
+    inApp: true,
+  },
+  {
+    key: 'recruitment',
+    label: 'Recruitment & Onboarding',
+    description: 'Application updates, interview schedules, and onboarding tasks',
+    icon: <UserPlus className="h-5 w-5 text-accent-500"/>,
+    email: true,
+    push: false,
+    inApp: true,
+  },
+  {
+    key: 'celebrations',
+    label: 'Celebrations',
+    description: 'Birthdays, work anniversaries, and team milestones',
+    icon: <Gift className="h-5 w-5 text-accent-700"/>,
+    email: false,
+    push: false,
+    inApp: true,
+  },
+  {
     key: 'announcements',
-    label: 'Company Announcements',
-    description: 'Organization-wide updates and news',
+    label: 'System & Announcements',
+    description: 'Organization-wide updates, policy changes, and system alerts',
     icon: <Mail className="h-5 w-5 text-accent-700"/>,
     email: true,
     push: false,

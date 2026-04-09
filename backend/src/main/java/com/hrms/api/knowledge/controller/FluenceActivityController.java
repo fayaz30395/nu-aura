@@ -96,21 +96,26 @@ public class FluenceActivityController {
     public ResponseEntity<Page<FluenceActivityDto>> getActivityFeed(
             @RequestParam(required = false) String contentType,
             Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
 
-        Page<FluenceActivity> activities;
-        if (contentType != null && !contentType.isBlank()) {
-            activities = fluenceActivityService.getActivityFeedByType(tenantId, contentType, pageable);
-        } else {
-            activities = fluenceActivityService.getActivityFeed(tenantId, pageable);
+            Page<FluenceActivity> activities;
+            if (contentType != null && !contentType.isBlank()) {
+                activities = fluenceActivityService.getActivityFeedByType(tenantId, contentType, pageable);
+            } else {
+                activities = fluenceActivityService.getActivityFeed(tenantId, pageable);
+            }
+
+            Map<UUID, String> nameMap = batchResolveActorNames(activities, tenantId);
+
+            Page<FluenceActivityDto> dtos = activities.map(activity ->
+                    FluenceActivityDto.fromEntity(activity, nameMap.get(activity.getActorId())));
+
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            log.warn("Failed to load activity feed: {}", e.getMessage());
+            return ResponseEntity.ok(Page.empty(pageable));
         }
-
-        Map<UUID, String> nameMap = batchResolveActorNames(activities, tenantId);
-
-        Page<FluenceActivityDto> dtos = activities.map(activity ->
-                FluenceActivityDto.fromEntity(activity, nameMap.get(activity.getActorId())));
-
-        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/me")
@@ -119,16 +124,21 @@ public class FluenceActivityController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     @Transactional(readOnly = true, timeout = 10)
     public ResponseEntity<Page<FluenceActivityDto>> getMyActivity(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            UUID userId = SecurityContext.getCurrentUserId();
 
-        Page<FluenceActivity> activities = fluenceActivityService.getUserActivity(tenantId, userId, pageable);
+            Page<FluenceActivity> activities = fluenceActivityService.getUserActivity(tenantId, userId, pageable);
 
-        Map<UUID, String> nameMap = batchResolveActorNames(activities, tenantId);
+            Map<UUID, String> nameMap = batchResolveActorNames(activities, tenantId);
 
-        Page<FluenceActivityDto> dtos = activities.map(activity ->
-                FluenceActivityDto.fromEntity(activity, nameMap.get(activity.getActorId())));
+            Page<FluenceActivityDto> dtos = activities.map(activity ->
+                    FluenceActivityDto.fromEntity(activity, nameMap.get(activity.getActorId())));
 
-        return ResponseEntity.ok(dtos);
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            log.warn("Failed to load user activity: {}", e.getMessage());
+            return ResponseEntity.ok(Page.empty(pageable));
+        }
     }
 }

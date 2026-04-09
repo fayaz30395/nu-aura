@@ -47,8 +47,8 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
   const ERROR_LOG_THROTTLE_MS = 5000; // Suppress error logs for 5 seconds
 
   useEffect(() => {
-    // Only connect if authenticated
-    if (!isAuthenticated || !user?.employeeId) {
+    // Only connect if authenticated — use user.id (matches backend userId) not employeeId
+    if (!isAuthenticated || !user?.id) {
       if (stompClientRef.current?.active) {
         stompClientRef.current.deactivate();
       }
@@ -82,18 +82,20 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
       setIsConnected(true);
       log.info('WebSocket connected successfully');
 
-      // Subscribe to global broadcasts
-      client.subscribe('/topic/broadcast', (message: IMessage) => {
-        handleIncomingMessage(message);
-      });
+      // Subscribe to tenant-scoped broadcasts (matches backend broadcast path)
+      if (user.tenantId) {
+        client.subscribe(`/topic/tenant/${user.tenantId}/notifications`, (message: IMessage) => {
+          handleIncomingMessage(message);
+        });
+      }
 
-      // Subscribe to user-specific notifications
-      client.subscribe(`/topic/user/${user.employeeId}`, (message: IMessage) => {
+      // Subscribe to user-specific notifications (matches backend sendToUser path)
+      client.subscribe(`/topic/user/${user.id}/notifications`, (message: IMessage) => {
         handleIncomingMessage(message);
       });
 
       // Subscribe to approval-specific notifications
-      client.subscribe(`/topic/user/${user.employeeId}/approvals`, (message: IMessage) => {
+      client.subscribe(`/topic/user/${user.id}/approvals`, (message: IMessage) => {
         const notification = handleIncomingMessage(message);
         // Trigger approval-specific callbacks
         if (notification && notification.type === 'TASK_ASSIGNED') {
@@ -145,7 +147,7 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
         client.deactivate();
       }
     };
-  }, [isAuthenticated, user?.employeeId]);
+  }, [isAuthenticated, user?.id, user?.tenantId]);
 
   const handleIncomingMessage = (message: IMessage): Notification | null => {
     try {
@@ -160,7 +162,16 @@ export const WebSocketProvider = ({children}: { children: React.ReactNode }) => 
 
       log.debug('Received notification:', newNotification.type, newNotification.title);
 
-      // Optional: Play sound or show browser notification
+      // Dispatch event for React Query cache invalidation
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('notification-received', {detail: newNotification}));
+      }
+
+      // Show browser notification when tab is not focused
+      if (typeof document !== 'undefined' && document.hidden && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        new Notification(newNotification.title, {body: newNotification.message});
+      }
+
       return newNotification;
     } catch (e) {
       log.error('Failed to parse notification', e);

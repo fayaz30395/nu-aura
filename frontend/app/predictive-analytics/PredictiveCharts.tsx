@@ -60,7 +60,7 @@ const CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
         <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{color: entry.color}}>
-            {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(1) : entry.value}
+            {entry.name}: {typeof entry.value === 'number' && entry.value !== null ? entry.value.toFixed(1) : (entry.value ?? '-')}
           </p>
         ))}
       </div>

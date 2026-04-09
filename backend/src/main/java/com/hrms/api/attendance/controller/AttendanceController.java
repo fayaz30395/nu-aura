@@ -159,10 +159,17 @@ public class AttendanceController {
     @Operation(summary = "Get my time entries", description = "Retrieve authenticated user's time entries for a specific date")
     @ApiResponse(responseCode = "200", description = "Time entries retrieved successfully")
     public ResponseEntity<List<TimeEntryResponse>> getMyTimeEntries(
-            @Parameter(description = "Date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        UUID employeeId = requireCurrentEmployeeId();
-        List<AttendanceTimeEntry> entries = attendanceService.getTimeEntriesForDate(employeeId, date);
-        return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
+            @Parameter(description = "Date (ISO format, defaults to today)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            UUID employeeId = requireCurrentEmployeeId();
+            LocalDate effectiveDate = (date != null) ? date : LocalDate.now();
+            List<AttendanceTimeEntry> entries = attendanceService.getTimeEntriesForDate(employeeId, effectiveDate);
+            return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
+        } catch (Exception e) {
+            log.warn("Failed to load time entries for date={}: {}", date, e.getMessage());
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     // ===================== Multi Check-In/Out (Break Tracking)

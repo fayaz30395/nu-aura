@@ -611,6 +611,18 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   ))}
                 </div>
               )}
+              {/* View All footer */}
+              <div className="border-t border-surface-100 dark:border-surface-800 p-2">
+                <button
+                  onClick={() => {
+                    onClose();
+                    router.push('/notifications');
+                  }}
+                  className="w-full text-center text-xs font-medium text-accent-600 hover:text-accent-800 dark:text-accent-400 py-2 rounded hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                >
+                  View all notifications
+                </button>
+              </div>
             </>
           )}
         </div>

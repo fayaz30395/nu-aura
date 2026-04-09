@@ -1,5 +1,6 @@
 'use client';
 
+import {useEffect} from 'react';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notificationsApi} from '@/lib/api/notifications';
 import type {Notification, NotificationPreferences, PagedNotificationResponse} from '@/lib/types/core/notifications';
@@ -125,5 +126,40 @@ export function useUpdateNotificationPreferences() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: notificationKeys.preferences()});
     },
+  });
+}
+
+/**
+ * Hook that listens for WebSocket notification-received events and invalidates
+ * the unread count + inbox queries so the bell badge updates instantly.
+ */
+export function useNotificationCacheInvalidation() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handler = () => {
+      queryClient.invalidateQueries({queryKey: notificationKeys.unreadCount()});
+      queryClient.invalidateQueries({queryKey: notificationKeys.unread()});
+    };
+    window.addEventListener('notification-received', handler);
+    return () => window.removeEventListener('notification-received', handler);
+  }, [queryClient]);
+}
+
+/**
+ * Hook to fetch filtered paginated notifications (for Notification Center).
+ */
+export function useFilteredNotifications(
+  page: number = 0,
+  size: number = 20,
+  types?: string[],
+  isRead?: boolean,
+  enabled: boolean = true
+) {
+  return useQuery<PagedNotificationResponse>({
+    queryKey: [...notificationKeys.all, 'filtered', {page, size, types, isRead}],
+    queryFn: () => notificationsApi.getFilteredNotifications(page, size, types, isRead),
+    enabled,
+    staleTime: 15 * 1000,
   });
 }

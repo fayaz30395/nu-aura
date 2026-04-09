@@ -31,10 +31,20 @@ public class NotificationController {
     @RequiresPermission(NOTIFICATIONS_VIEW)
     public ResponseEntity<Page<NotificationResponse>> getMyNotifications(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) List<String> type,
+            @RequestParam(required = false) Boolean isRead
     ) {
         UUID currentUserId = SecurityContext.getCurrentUserId();
-        Page<Notification> notifications = notificationService.getUserNotifications(currentUserId, page, size);
+        Page<Notification> notifications;
+        if (type != null || isRead != null) {
+            List<Notification.NotificationType> types = type != null
+                    ? type.stream().map(Notification.NotificationType::valueOf).collect(Collectors.toList())
+                    : null;
+            notifications = notificationService.getFilteredNotifications(currentUserId, types, isRead, page, size);
+        } else {
+            notifications = notificationService.getUserNotifications(currentUserId, page, size);
+        }
         Page<NotificationResponse> response = notifications.map(NotificationResponse::fromEntity);
         return ResponseEntity.ok(response);
     }
@@ -95,6 +105,13 @@ public class NotificationController {
         );
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(NotificationResponse.fromEntity(notification));
+    }
+
+    @PutMapping("/{id}/read")
+    @RequiresPermission(NOTIFICATIONS_VIEW)
+    public ResponseEntity<Void> markAsRead(@PathVariable UUID id) {
+        notificationService.markAsRead(id);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/read-all")
