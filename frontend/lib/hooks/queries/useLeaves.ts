@@ -166,6 +166,8 @@ export function useUpdateLeaveRequest() {
     onSuccess: (_, {id}) => {
       queryClient.invalidateQueries({queryKey: leaveKeys.requestDetail(id)});
       queryClient.invalidateQueries({queryKey: leaveKeys.requests()});
+      // Invalidate balance cache since updateLeaveRequest now adjusts pending balance (NEW-08)
+      queryClient.invalidateQueries({queryKey: leaveKeys.balances()});
     },
   });
 }
