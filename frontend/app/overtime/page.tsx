@@ -173,13 +173,27 @@ export default function OvertimePage() {
     [approveReject, user?.employeeId]
   );
 
-  if (!hasHydrated || !permissionsReady) return null;
+  if (!hasHydrated || !permissionsReady) {
+    return (
+      <AppLayout activeMenuItem="overtime">
+        <div className="flex items-center justify-center h-64">
+          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
   if (!isAuthenticated) {
     router.push('/auth/login');
     return null;
   }
   if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {
-    return null;
+    return (
+      <AppLayout activeMenuItem="overtime">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-[var(--text-secondary)]">You don&apos;t have permission to view overtime.</p>
+        </div>
+      </AppLayout>
+    );
   }
 
   const tabs: { key: TabKey; label: string; permission?: string }[] = [

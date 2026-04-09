@@ -119,19 +119,29 @@ export default function AnalyticsPage() {
   }, [permReady, canViewAnalytics, router]);
 
   // RBAC guard — block render for unauthorized users (DEF-51)
-  if (!permReady || !canViewAnalytics) {
-    return null;
+  if (!permReady || !hasHydrated || isLoading) {
+    return (
+      <AppLayout activeMenuItem="analytics">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
   }
 
-  if (!hasHydrated || isLoading) {
+  if (!canViewAnalytics) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
-          <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
+      <AppLayout activeMenuItem="analytics">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <AlertCircle className="h-12 w-12 text-danger-500" />
+            <p className="text-[var(--text-secondary)]">You don&apos;t have permission to view analytics.</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
@@ -179,7 +189,7 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Analytics Dashboard
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 skeuo-deboss">

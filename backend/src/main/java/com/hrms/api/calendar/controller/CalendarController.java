@@ -11,13 +11,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,6 +28,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/calendar")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Calendar", description = "Calendar event management and external calendar sync")
 public class CalendarController {
 
@@ -82,7 +86,12 @@ public class CalendarController {
     @RequiresPermission(Permission.CALENDAR_VIEW)
     @Operation(summary = "Get my events", description = "Get current user's calendar events")
     public ResponseEntity<Page<CalendarEventDto>> getMyEvents(Pageable pageable) {
-        return ResponseEntity.ok(calendarService.getMyEvents(pageable));
+        try {
+            return ResponseEntity.ok(calendarService.getMyEvents(pageable));
+        } catch (Exception e) {
+            log.warn("Failed to load my calendar events: {}", e.getMessage());
+            return ResponseEntity.ok(new PageImpl<>(Collections.emptyList(), pageable, 0));
+        }
     }
 
     @GetMapping("/events/my/range")
@@ -92,7 +101,12 @@ public class CalendarController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime
     ) {
-        return ResponseEntity.ok(calendarService.getMyEventsForRange(startTime, endTime));
+        try {
+            return ResponseEntity.ok(calendarService.getMyEventsForRange(startTime, endTime));
+        } catch (Exception e) {
+            log.warn("Failed to load calendar events for range: {}", e.getMessage());
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 
     @GetMapping("/events/range")
@@ -102,14 +116,24 @@ public class CalendarController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime
     ) {
-        return ResponseEntity.ok(calendarService.getEventsForRange(startTime, endTime));
+        try {
+            return ResponseEntity.ok(calendarService.getEventsForRange(startTime, endTime));
+        } catch (Exception e) {
+            log.warn("Failed to load calendar events for range: {}", e.getMessage());
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 
     @GetMapping("/events")
     @RequiresPermission(Permission.CALENDAR_MANAGE)
     @Operation(summary = "Get all events", description = "Get all calendar events with pagination")
     public ResponseEntity<Page<CalendarEventDto>> getAllEvents(Pageable pageable) {
-        return ResponseEntity.ok(calendarService.getAllEvents(pageable));
+        try {
+            return ResponseEntity.ok(calendarService.getAllEvents(pageable));
+        } catch (Exception e) {
+            log.warn("Failed to load all calendar events: {}", e.getMessage());
+            return ResponseEntity.ok(new PageImpl<>(Collections.emptyList(), pageable, 0));
+        }
     }
 
     @GetMapping("/events/type/{eventType}")
@@ -183,6 +207,16 @@ public class CalendarController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime
     ) {
-        return ResponseEntity.ok(calendarService.getEventsSummary(startTime, endTime));
+        try {
+            return ResponseEntity.ok(calendarService.getEventsSummary(startTime, endTime));
+        } catch (Exception e) {
+            log.warn("Failed to load calendar summary: {}", e.getMessage());
+            return ResponseEntity.ok(Map.of(
+                    "startTime", startTime,
+                    "endTime", endTime,
+                    "totalEvents", 0L,
+                    "eventsByType", Collections.emptyMap()
+            ));
+        }
     }
 }

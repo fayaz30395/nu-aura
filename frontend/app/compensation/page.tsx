@@ -163,9 +163,24 @@ export default function CompensationPage() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectionReasonInput, setShowRejectionReasonInput] = useState(false);
 
-  // RBAC guard — all hooks declared above; safe to return null after them
-  if (!permReady || !hasPermission(Permissions.COMPENSATION_VIEW)) {
-    return null;
+  // RBAC guard — all hooks declared above; safe to return early after them
+  if (!permReady) {
+    return (
+      <AppLayout breadcrumbs={[{label: 'Dashboard', href: '/dashboard'}, {label: 'Compensation'}]} activeMenuItem="compensation">
+        <div className="flex items-center justify-center h-64">
+          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
+  if (!hasPermission(Permissions.COMPENSATION_VIEW)) {
+    return (
+      <AppLayout breadcrumbs={[{label: 'Dashboard', href: '/dashboard'}, {label: 'Compensation'}]} activeMenuItem="compensation">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-[var(--text-secondary)]">You don&apos;t have permission to view compensation.</p>
+        </div>
+      </AppLayout>
+    );
   }
 
   // Stats
