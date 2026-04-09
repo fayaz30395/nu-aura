@@ -120,20 +120,20 @@ export default function SalaryStructuresPage() {
                       <Table.Tr key={structure.id} className="cursor-pointer">
                         <Table.Td>{structure.employeeName || structure.employeeId || '—'}</Table.Td>
                         <Table.Td>{structure.effectiveDate ? new Date(structure.effectiveDate).toLocaleDateString() : '—'}</Table.Td>
-                        <Table.Td>{Number(structure.baseSalary ?? 0).toLocaleString('en-IN', {
+                        <Table.Td>{new Intl.NumberFormat('en-IN', {
                           style: 'currency',
                           currency: 'INR'
-                        })}</Table.Td>
-                        <Table.Td>{Number(structure.totalCTC ?? 0).toLocaleString('en-IN', {
+                        }).format(Number(structure.baseSalary) || 0)}</Table.Td>
+                        <Table.Td>{new Intl.NumberFormat('en-IN', {
                           style: 'currency',
                           currency: 'INR'
-                        })}</Table.Td>
+                        }).format(Number(structure.totalCTC) || 0)}</Table.Td>
                         <Table.Td>
                           <Badge
                             color={structure.status === 'ACTIVE' ? 'green' : structure.status === 'PENDING' ? 'yellow' : 'gray'}
                             variant="light"
                           >
-                            {structure.status}
+                            {structure.status || 'UNKNOWN'}
                           </Badge>
                         </Table.Td>
                       </Table.Tr>

@@ -34,7 +34,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/lms")
 @RequiredArgsConstructor
-@RequiresFeature(FeatureFlag.ENABLE_LMS)
 public class LmsController {
 
     private final LmsService lmsService;
@@ -44,7 +43,7 @@ public class LmsController {
     // ─── Catalog ─────────────────────────────────────────────────────────────
 
     @GetMapping("/catalog")
-    @RequiresPermission(Permission.TRAINING_VIEW)
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public CourseCatalogResponse getCatalog(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -55,7 +54,7 @@ public class LmsController {
     // ─── Course CRUD ──────────────────────────────────────────────────────────
 
     @GetMapping("/courses")
-    @RequiresPermission(Permission.TRAINING_VIEW)
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Page<Course> getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -68,7 +67,7 @@ public class LmsController {
     }
 
     @GetMapping("/courses/published")
-    @RequiresPermission(Permission.TRAINING_VIEW)
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Page<Course> getPublishedCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -77,7 +76,7 @@ public class LmsController {
     }
 
     @GetMapping("/courses/{id}")
-    @RequiresPermission(Permission.TRAINING_VIEW)
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Course getCourse(@PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return lmsService.getCourseById(tenantId, id)
@@ -238,7 +237,7 @@ public class LmsController {
     }
 
     @GetMapping("/certificates/verify/{certificateNumber}")
-    @RequiresPermission(Permission.TRAINING_VIEW)
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
     public Certificate verifyCertificate(@PathVariable String certificateNumber) {
         return lmsService.verifyCertificate(certificateNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,

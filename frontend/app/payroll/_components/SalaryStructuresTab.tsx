@@ -77,7 +77,7 @@ export function SalaryStructuresTab({
                  className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold">{structure.employeeName}</h3>
+                  <h3 className="text-xl font-semibold">{structure.employeeName || structure.employeeId || '—'}</h3>
                   <p className="text-body-secondary">
                     Effective: {formatDate(structure.effectiveDate)}
                   </p>
@@ -100,7 +100,7 @@ export function SalaryStructuresTab({
                 </div>
               </div>
 
-              {structure.allowances && structure.allowances.length > 0 && (
+              {Array.isArray(structure.allowances) && structure.allowances.length > 0 && (
                 <div className="mb-4">
                   <h4 className="font-semibold text-sm mb-2 text-success-700">Allowances</h4>
                   <div className="space-y-1">
@@ -114,7 +114,7 @@ export function SalaryStructuresTab({
                 </div>
               )}
 
-              {structure.deductions && structure.deductions.length > 0 && (
+              {Array.isArray(structure.deductions) && structure.deductions.length > 0 && (
                 <div className="mb-4">
                   <h4 className="font-semibold text-sm mb-2 text-danger-700">Deductions</h4>
                   <div className="space-y-1">

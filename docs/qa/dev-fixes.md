@@ -1,5 +1,226 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 31 — Orchestrator + Agent Fixes (2026-04-09)
+
+### GAP-R01 (P2): HR Manager blocked from /analytics — permission mismatch (FRONTEND + BACKEND — Orchestrator fix)
+- **Files**:
+  - `frontend/app/analytics/page.tsx` — RBAC guard only checked `REPORT:VIEW`
+  - `backend/src/main/java/com/hrms/api/analytics/controller/AnalyticsController.java` — 6 endpoints used `HrmsPermissionInitializer.REPORT_VIEW` (`"HRMS:REPORT:VIEW"`) instead of `Permission.ANALYTICS_VIEW` (`"ANALYTICS:VIEW"`)
+- **Root cause**: Two-layer mismatch. (1) Backend `/analytics/dashboard` checked `"HRMS:REPORT:VIEW"` — a namespaced permission that only existed in tests, not in any DB seed. V133 seeded `"ANALYTICS:VIEW"`. (2) Frontend checked `"REPORT:VIEW"` — yet another key.
+- **Fix**:
+  1. Backend: Replaced all 6 `HrmsPermissionInitializer.REPORT_VIEW` → `Permission.ANALYTICS_VIEW` in AnalyticsController. Removed unused import.
+  2. Frontend: Changed to `hasAnyPermission(REPORT_VIEW, ANALYTICS_VIEW)` for backwards compatibility.
+- **Verified**: mvn compile + tsc both pass (zero errors)
+- **Migration**: V133 (already applied — seeds ANALYTICS:VIEW for HR_MANAGER/HR_ADMIN)
+
+### BUG-017 (P1): /employees/directory infinite re-render loop (FRONTEND — Orchestrator fix)
+- **File**: `frontend/app/employees/directory/page.tsx`
+- **Root cause**: Classic React anti-pattern — syncing React Query data into useState via useEffect. `employeeSearchResponse.content` returned a new array reference on every render, causing the useEffect at line 200 to fire setEmployees → re-render → new array ref → repeat infinitely. Same issue with departments via deptData useMemo→useEffect→setState.
+- **Fix**: Removed 3 useState declarations (`employees`, `departments`, `totalPages`, `totalElements`) and their syncing useEffects. Derived values directly: `const employees = employeeSearchResponse.content`, `const departments = useMemo(() => departmentResponse ?? [], [departmentResponse])`, etc. This eliminates the render loop entirely.
+- **Verified**: tsc passes (zero errors)
+
+## Session 31 — P1 POST 500 Fixes + API Usability (2026-04-09)
+
+### BUG-P1-008/009/011 (P1): POST /api/v1/loans, /travel/requests, /holidays return 500 (BACKEND)
+- **Files**:
+  - `backend/src/main/java/com/hrms/common/entity/BaseEntity.java`
+  - `backend/src/main/resources/db/migration/V131__fix_p1_post_500_schema_safety.sql`
+- **Root cause**: Multiple contributing factors: (1) `BaseEntity` had `nullable = false` on `@Column` for `created_at` and `updated_at`, which could cause Hibernate validation to reject the entity before `AuditingEntityListener` populated those fields on certain code paths. (2) DB tables had strict `NOT NULL` on audit columns that could fail if JPA auditing didn't populate values before Hibernate INSERT. (3) `HttpMessageNotReadableException` from invalid enum values (e.g., "PERSONAL" instead of "PERSONAL_LOAN") was already fixed in Session 28 with a dedicated handler in GlobalExceptionHandler.
+- **Fix**:
+  1. Removed `nullable = false` from `created_at` and `updated_at` in BaseEntity — JPA auditing still populates these, but Hibernate won't reject the entity prematurely.
+  2. V131 migration: Ensures `deleted_at` column exists on `employee_loans`, `travel_requests`, `holidays`, `tickets`. Relaxes `NOT NULL` on `created_at`/`updated_at` while keeping `DEFAULT NOW()` as safety net.
+- **Migration**: V131__fix_p1_post_500_schema_safety.sql
+- **Verified**: mvn compile passes
+
+### BUG-R06 (P2): GET /api/v1/holidays returns 405 Method Not Allowed (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/api/attendance/controller/HolidayController.java`
+- **Root cause**: HolidayController had no `@GetMapping` at root path — only `/year/{year}` and `/{id}`. Calling `GET /holidays` or `GET /holidays?page=0&size=10` returned 405.
+- **Fix**: Added `@GetMapping` at root path that accepts optional `?year=` parameter (defaults to current year). Returns list of holidays for the specified year.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-R07 (P2): GET /api/v1/attendance/my-attendance returns 400 without date params (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/api/attendance/controller/AttendanceController.java`
+- **Root cause**: `getMyAttendance()` required `startDate` and `endDate` as mandatory `@RequestParam`. Calling the endpoint without dates (e.g., `?page=0&size=10`) returned 400 Missing Parameter.
+- **Fix**: Made `startDate` and `endDate` optional (`required = false`). Defaults: `endDate` = today, `startDate` = 30 days ago.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-ATT-002 (P1): POST /api/v1/attendance/regularization returns 500 — ALREADY FIXED
+- **Status**: Verified fixed in Session 19 (EncryptedStringConverter resilience)
+
+### BUG-HELP-001 (P1): POST /api/v1/helpdesk/tickets returns 500 — ALREADY FIXED
+- **Status**: Verified fixed in Session 24 (projection queries)
+
+### BUG-001 (P0-Security): Refresh token not invalidated on logout — ALREADY FIXED
+- **Status**: Verified fixed in Session 24 (revokeAllUserTokens on logout)
+
+### RBAC: HR Admin missing WALL:VIEW and OFFBOARDING:VIEW — ALREADY FIXED
+- **Status**: V127 seeds WALL:VIEW for HR Admin. V107 seeds OFFBOARDING:VIEW for HR Admin.
+
+### BUG-R04 (P1): Employee gets 403 on all LMS endpoints (BACKEND)
+- **File**: `backend/src/main/resources/db/migration/V132__seed_lms_course_view_for_employee.sql`
+- **Root cause**: LMS endpoints require `LMS:COURSE_VIEW` permission (or `TRAINING:VIEW`). The Employee role has `TRAINING:VIEW` in V107 and the controller accepts either. However, the `/my-courses` endpoint in `CourseEnrollmentController` only accepts `LMS:COURSE_VIEW`. The `LMS:COURSE_VIEW` permission was never seeded for Employee/Team Lead roles.
+- **Fix**: V132 migration seeds `LMS:COURSE_VIEW` permission for Employee (SELF scope), Team Lead (TEAM scope), HR Manager (ALL scope), and HR Admin (ALL scope).
+- **Migration**: V132__seed_lms_course_view_for_employee.sql
+- **Verified**: mvn compile passes
+
+### BUG-R03 (P2): Employee sees all offboarding records — ALREADY FIXED IN SOURCE
+- **Status**: Source code already has the fix (ExitManagementService.getAllExitProcesses scopes by employee role). Running server needs restart.
+
+### BUG-033 (P2): Employee gets 403 on leave-requests list — ALREADY FIXED IN SOURCE
+- **Status**: Source code already has `LEAVE:VIEW_SELF` in `@RequiresPermission` annotation. Running server needs restart.
+
+### BUG-R05 (P0): GET /api/v1/leave-requests times out for TEAM_LEAD and HR_MANAGER (BACKEND)
+- **Files**:
+  - `backend/src/main/java/com/hrms/api/leave/controller/LeaveRequestController.java`
+  - `backend/src/main/java/com/hrms/infrastructure/employee/repository/EmployeeRepository.java`
+- **Root cause**: The `toResponse()` mapper performed 3 individual DB queries per leave request (findManagerIdById, findFullNameById for manager, findFullNameById for approver). With a page of 20 requests, this was 60 separate queries. On Neon DB (serverless Postgres with cold-start connection overhead), this caused connection pool exhaustion and timeouts.
+- **Fix**:
+  1. Added `findFullNamesByIds(Collection<UUID>)` and `findManagerIdsByIds(Collection<UUID>)` batch JPQL queries to EmployeeRepository.
+  2. Added `toBatchResponse(Page<LeaveRequest>)` method that collects all employee IDs from the page, makes exactly 2 batch queries (one for manager IDs, one for all names), then maps responses using the pre-loaded data.
+  3. Updated all 3 list endpoints (getEmployeeLeaveRequests, getLeaveRequestsByStatus, getLeaveRequests) to use `toBatchResponse()`.
+  4. Net effect: 60 queries per page reduced to 2 queries. Eliminates connection pool exhaustion.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### GAP-R01 (P2): HR_MANAGER lacks ANALYTICS:VIEW permission (BACKEND)
+- **File**: `backend/src/main/resources/db/migration/V133__seed_analytics_view_for_hr_roles.sql`
+- **Root cause**: `ANALYTICS:VIEW` permission was never assigned to any role in V107 migration. Only SuperAdmin (who bypasses all checks) could access org health analytics.
+- **Fix**: V133 migration seeds `ANALYTICS:VIEW` for HR_MANAGER (ALL scope) and HR_ADMIN (ALL scope).
+- **Migration**: V133__seed_analytics_view_for_hr_roles.sql
+- **Verified**: mvn compile passes
+
+RESTART-NEEDED: All fixes in this session require backend restart to take effect (V131, V132, V133 migrations + batch query optimization).
+
+---
+
+## Session 30 — Additional Null Safety Hardening (2026-04-09)
+
+### BUG-003 (P0-Blocker): Additional toLocaleString crash guard on salary-structures page (FRONTEND)
+- **Files**:
+  - `frontend/app/payroll/salary-structures/page.tsx`
+  - `frontend/app/payroll/_components/SalaryStructuresTab.tsx`
+- **Root cause**: `salary-structures/page.tsx` used `Number(structure.baseSalary ?? 0).toLocaleString(...)` which could produce `"NaN"` if `baseSalary` is undefined (since `undefined ?? 0` resolves to 0 but the `Number()` wrapper was redundant and confusing). Replaced with `Intl.NumberFormat().format(Number(x) || 0)` which safely falls back to 0 for any non-numeric input. Also added employeeName fallback in `SalaryStructuresTab.tsx`.
+- **Fix**:
+  1. `salary-structures/page.tsx`: Replaced `Number(x ?? 0).toLocaleString(...)` with `new Intl.NumberFormat('en-IN', {...}).format(Number(x) || 0)` for baseSalary and totalCTC
+  2. `SalaryStructuresTab.tsx`: Added `|| structure.employeeId || '—'` fallback for employeeName display
+- **Verified**: tsc passes (zero errors)
+
+## Session 29 — Phase 3 Frontend Hardening (2026-04-09)
+
+### BUG-003 (P0-Blocker): /payroll/salary-structures and /payroll/structures — runtime crash hardening (FRONTEND)
+- **Files**:
+  - `frontend/app/payroll/_components/types.ts`
+  - `frontend/app/payroll/_components/SalaryStructuresTab.tsx`
+  - `frontend/app/payroll/structures/page.tsx`
+  - `frontend/app/payroll/salary-structures/page.tsx`
+- **Root cause**: Multiple null-safety gaps in payroll pages. (1) `formatDate()` in `_components/types.ts` called `new Date(dateString).toLocaleDateString()` without guarding against null/undefined/invalid dateString. (2) `SalaryStructuresTab.tsx` used truthy checks (`structure.allowances &&`) instead of `Array.isArray()` for array guards — if backend returns a non-array truthy value, `.length` or `.map()` would crash. (3) `structures/page.tsx` called `structure.allowances.map()` and `structure.deductions.map()` in the edit handler without null guards — crashes if backend returns null arrays. (4) `salary-structures/page.tsx` rendered `structure.status` without fallback for undefined.
+- **Fix**:
+  1. `formatDate()`: Added null/undefined guard and `isNaN(date.getTime())` check, returns '—' for invalid dates
+  2. `SalaryStructuresTab.tsx`: Changed `structure.allowances &&` to `Array.isArray(structure.allowances)` and same for deductions
+  3. `structures/page.tsx`: Added `?? []` null coalescing on `.allowances` and `.deductions` in edit handler; added `|| 'this employee'` fallback on delete confirmation message
+  4. `salary-structures/page.tsx`: Added `|| 'UNKNOWN'` fallback for status badge text
+- **Verified**: tsc passes (zero errors)
+
+### BUG-002 (P0-UX): Missing "Forgot Password" link — ALREADY FIXED (FRONTEND)
+- **File**: `frontend/app/auth/login/page.tsx` (line 726-733)
+- **Status**: Already fixed in prior session. Link to `/auth/forgot-password` exists. The forgot-password page (`frontend/app/auth/forgot-password/page.tsx`) is fully functional with form, Zod validation, and API call to `POST /api/v1/auth/forgot-password`.
+- **No changes needed**
+
+### BUG-001 (P0-Security): Refresh token not cleared on logout — ALREADY FIXED (BACKEND + FRONTEND)
+- **Files**: `frontend/lib/hooks/useAuth.ts` (logout function, lines 166-182), `frontend/lib/api/client.ts` (clearTokens)
+- **Status**: Already fixed in prior session (Session 24). Frontend logout correctly: (1) clears sessionStorage user data, (2) deauthenticates Zustand state, (3) cancels React Query in-flight requests, (4) clears localStorage/sessionStorage tokens, (5) calls `authApi.logout()` which POSTs to backend. Backend was fixed to revoke ALL user tokens (not just the current one) and to check timestamp-based revocation on refresh token validation.
+- **No changes needed**
+
+## Session 28 — P0/P1 Bug Verification + BUG-004 Leave 503 Root Cause Fix (2026-04-09)
+
+### BUG-004 (P0): GET /api/v1/leave-requests/status/PENDING returns 503 — Root Cause Fixed
+- **Files**:
+  - `backend/src/main/java/com/hrms/api/leave/controller/LeaveRequestController.java`
+  - `backend/src/main/java/com/hrms/infrastructure/employee/repository/EmployeeRepository.java`
+- **Root cause**: The `toResponse()` mapper loaded up to 3 full Employee entities per leave request via `employeeService.findByIdAndTenant()`. Each Employee entity includes `@Convert(converter = EncryptedStringConverter.class)` fields (taxId, bankAccountNumber, bankIfscCode). For a page of 20 leave requests, this triggers up to 60 additional DB queries, each deserializing encrypted fields. Under load (especially with Neon DB cold starts), this N+1 pattern exhausts the HikariCP connection pool, producing 503 Service Unavailable.
+- **Fix**:
+  1. Added `findManagerIdById(UUID id)` JPQL projection query to `EmployeeRepository` — returns only the managerId column, no entity load.
+  2. Rewrote `toResponse()` in `LeaveRequestController` to use `employeeRepository.findManagerIdById()` and `employeeRepository.findFullNameById()` projection queries instead of `employeeService.findByIdAndTenant()`. This eliminates all full Employee entity loads from the leave request listing flow.
+  3. Net effect: ~60 full-entity queries per page → ~3 single-column projection queries per leave request. No EncryptedStringConverter triggered.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-EXP-001 (P1): POST /api/v1/expenses returns 405
+- **Status**: ALREADY FIXED (Session 24) — @PostMapping at root path added to ExpenseClaimController
+- **Verified**: Line 52 of ExpenseClaimController.java has `@PostMapping` mapped to root path
+
+### BUG-HELP-001 (P1): POST /api/v1/helpdesk/tickets returns 500
+- **Status**: ALREADY FIXED (Session 24) — HelpdeskService rewritten to use findFullNameById() projection + safeGetEmployeeName() helper
+- **Verified**: Lines 380-465 of HelpdeskService.java confirm projection queries in use
+
+### BUG-EMP-002 (P1): PUT /api/v1/employees/{id} returns 500
+- **Status**: ALREADY FIXED (Session 19) — EncryptedStringConverter made resilient with catch-all exception handling returning fallback values instead of crashing
+- **Verified**: EncryptedStringConverter.convertToEntityAttribute() catches all exception types (lines 136-152)
+
+### BUG-ATT-002 (P1): POST /api/v1/attendance/regularization returns 500
+- **Status**: ALREADY FIXED (Session 19) — Same EncryptedStringConverter root cause as BUG-EMP-002
+- **Verified**: Same converter fix resolves this
+
+RESTART-NEEDED: LeaveRequestController projection queries and EmployeeRepository.findManagerIdById() require backend restart.
+
+---
+
+## Session 27 — P2/P3 Backend Bug Fixes from Use Case QA (2026-04-09)
+
+### BUG-P3-015 (Systematic): DB schema mismatch — tables missing deleted_at column and wrong column types
+- **File**: `backend/src/main/resources/db/migration/V129__fix_missing_columns_p2_p3_bugs.sql`
+- **Root cause**: V51 migration claimed to add `deleted_at` to `feedback_360_cycles`, `pulse_surveys`, `one_on_one_meetings` but analysis shows these were missed or failed silently. V128 fixed some tables but not these three. Additionally, `one_on_one_meetings.start_time` and `end_time` are `VARCHAR(50)` in DB but the entity maps them as `LocalTime`, causing type mismatch on INSERT (BUG-P3-018).
+- **Fix**: V129 migration that: (1) Adds `deleted_at TIMESTAMPTZ` to `feedback_360_cycles`, `pulse_surveys`, `one_on_one_meetings`, `surveys` using `IF NOT EXISTS`. (2) Converts `one_on_one_meetings.start_time` and `end_time` from `VARCHAR(50)` to `TIME` type, safely handling non-parseable values.
+- **Migration**: V129__fix_missing_columns_p2_p3_bugs.sql
+- **Verified**: mvn compile passes
+
+### BUG-P2-001 (Medium): Candidate creation returns 500 when candidateCode is null
+- **File**: `backend/src/main/java/com/hrms/application/recruitment/service/RecruitmentManagementService.java`
+- **Root cause**: `existsByTenantIdAndCandidateCode(tenantId, null)` causes DB integrity violation because NULL-NULL uniqueness check matches existing null records.
+- **Fix**: Added null/blank guard before the `existsByTenantIdAndCandidateCode` check. Only performs duplicate check when candidateCode is non-null and non-blank.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-P2-005 (Medium): Self-referral validation missing — employees can refer their own email
+- **File**: `backend/src/main/java/com/hrms/application/referral/service/ReferralService.java`
+- **Root cause**: `submitReferral()` had no check comparing the referrer's email against the candidateEmail. Any employee could refer their own email address.
+- **Fix**: Added self-referral check before duplicate candidate check. Loads referrer User by ID, compares email (case-insensitive) against candidateEmail. Throws `IllegalArgumentException("Cannot refer your own email address")` on match.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-P3-016 (Low): PIP check-in "notes" field not mapped to "progressNotes"
+- **File**: `backend/src/main/java/com/hrms/application/performance/dto/PIPCheckInRequest.java`
+- **Root cause**: The DTO field is `progressNotes` but clients may send `"notes"` in the JSON body. Jackson does not map unknown fields by default, so the notes content is silently dropped.
+- **Fix**: Added `@JsonAlias("notes")` to the `progressNotes` field so Jackson accepts both `"progressNotes"` and `"notes"` as valid field names.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-P2-007 (High): Scorecard template CRUD and submission APIs — NOT A BUG
+- **Status**: Already implemented
+- **Analysis**: The ScorecardController exists at `/api/v1/recruitment/scorecards` with full CRUD (GET, POST, PUT, DELETE) for templates and `POST /{id}/submit` for scorecard submission. The QA tested at `/api/v1/recruitment/scorecard-templates` which is the wrong path. The controller, service (ScorecardService), DTOs (ScorecardTemplateRequest/Response, ScorecardSubmissionRequest/Response), and repositories all exist and compile successfully.
+
+### BUG-P2-003 (High): Onboarding process creation fails with "Data Integrity Violation"
+- **Status**: NEEDS-REVIEW (BE)
+- **Analysis**: The OnboardingProcess entity does not extend TenantAware/BaseEntity (standalone entity with manual tenantId). The DB table has all required columns with proper DEFAULTs. FK constraint `fk_onboarding_processes_employee` references `employees(id)`. The "tenantId shows null" in the error response suggests either: (1) TenantContext.getCurrentTenant() returned null for the test session, or (2) the FK constraint failed because the employee UUID didn't exist in the employees table. V81 enables RLS on this table which requires `app.current_tenant_id` session variable. Recommend re-testing after V129 migration and backend restart.
+
+### BUG-P2-008 (Medium): Diversity analytics API not implemented
+- **Status**: NOT IMPLEMENTED — new feature needed
+- **Analysis**: No controller or service exists for `/api/v1/recruitment/analytics/diversity`. This is a new feature requirement, not a bug fix.
+
+### BUG-P3-014 (Low): Overlapping review cycles allowed — no date range validation
+- **Status**: NEEDS-REVIEW (BE)
+- **Analysis**: The ReviewCycleService.create() does not check for overlapping date ranges. Adding this validation would be a new business rule, not a bug fix. Recommend adding validation in a future sprint.
+
+### BUG-P3-017 (Low): Completed LMS course does not auto-generate certificate
+- **Status**: NEEDS-REVIEW (BE)
+- **Analysis**: Certificate generation may require manual trigger or configuration. Not a crash/500 — this is a feature gap.
+
+RESTART-NEEDED: V129 Flyway migration, candidate null-guard, self-referral validation, PIP field alias all require backend restart.
+
+---
+
 ## Session 26 — Frontend RBAC Sidebar + Admin Redirect Fixes (2026-04-08)
 
 ### BUG-SIDEBAR-SECTIONS (P2): Sidebar shows section headers to unauthorized roles
@@ -870,3 +1091,42 @@ cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend && ./start-backend.sh
 - **Fix**: Created Flyway migrations V125+V126 to add `is_deleted BOOLEAN NOT NULL DEFAULT FALSE` to `training_programs`. V125 was lost in a race condition (two backend processes starting simultaneously), V126 ensured it was applied.
 - **Migration**: V125 + V126
 - **Verified**: GET /api/v1/training/programs returns 200 with 3 programs
+
+## Session 30 — Row-Level Scoping & Permission Fixes (2026-04-09)
+
+### BUG-R02: Employee sees ALL contracts (row-level scoping gap) (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/application/contract/service/ContractService.java`
+- **Root cause**: Already fixed in prior session — `getAllContracts()` (lines 153-172) already uses `SecurityContext.isHRManager()` to scope: non-HR users see only their own contracts via `findByTenantIdAndEmployeeId()`.
+- **Status**: ALREADY FIXED — no changes needed
+
+### BUG-R03: Employee sees ALL offboarding/exit processes (data exposure) (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/application/exit/service/ExitManagementService.java`
+- **Root cause**: `getAllExitProcesses()` returned all tenant exit processes regardless of caller role. An employee with OFFBOARDING:VIEW could see every employee's exit process.
+- **Fix**: Added role-based scoping using `SecurityContext.isHRManager()`. Non-HR users now see only their own exit process via a Specification filter on `employeeId`. Falls back to empty page if no employeeId is on the security context.
+- **Verified**: `mvn compile -q` passes (zero errors)
+
+### BUG-033: Employee cannot view own leave requests via GET /api/v1/leave-requests (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/api/leave/controller/LeaveRequestController.java`
+- **Root cause**: The base `@GetMapping` for `/api/v1/leave-requests` had `@RequiresPermission({LEAVE_VIEW_ALL, LEAVE_VIEW_TEAM})` but was missing `LEAVE_VIEW_SELF`. Employees with only LEAVE_VIEW_SELF were rejected with 403. Additionally, the method body only resolved permission to LEAVE_VIEW_ALL or LEAVE_VIEW_TEAM, never SELF.
+- **Fix**: (1) Added `Permission.LEAVE_VIEW_SELF` to the `@RequiresPermission` annotation array. (2) Updated permission resolution to include a SELF branch. (3) When permission is LEAVE_VIEW_SELF, the query filters by `employeeId = currentEmployeeId` instead of using dataScopeService (which has no SELF mapping).
+- **Verified**: `mvn compile -q` passes (zero errors)
+
+## Session 30 — Backend Bug Fixes (2026-04-09)
+
+### BUG-R04: Employee gets 403 on LMS/training courses despite having TRAINING:VIEW (BACKEND)
+- **Files**: `backend/src/main/java/com/hrms/api/lms/controller/LmsController.java`
+- **Root cause**: Auth response permissions come from `app_role_permissions` (NU Platform) which includes `TRAINING:VIEW`, but JwtAuthFilter loads from the legacy `role_permissions` table via `getCachedPermissions()`. The LMS read endpoints only accepted `Permission.TRAINING_VIEW` but not the LMS-specific `Permission.LMS_COURSE_VIEW`. Employees with either permission (depending on which table their role is seeded in) could be rejected.
+- **Fix**: Updated all LMS read endpoints (catalog, courses, courses/published, courses/{id}, certificates/verify) to accept EITHER `TRAINING:VIEW` OR `LMS:COURSE_VIEW` via `@RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})`. The annotation uses OR logic, so having either permission grants access.
+- **Verified**: `mvn compile -q` passes (zero errors)
+
+### BUG-031: CSRF cookie not issued on login response (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/common/security/CsrfDoubleSubmitFilter.java`
+- **Root cause**: `shouldNotFilter()` returned `true` for auth endpoints (`/api/v1/auth/login`, `/google`, `/refresh`, etc.), which caused the entire filter to be skipped. Since the filter is responsible for setting the XSRF-TOKEN cookie, login responses never included it. Subsequent POST requests could not provide the CSRF token, breaking the double-submit cookie pattern.
+- **Fix**: Split the exclusion logic into two methods: (1) `shouldNotFilter()` now only skips truly non-browser paths (webhooks, actuator, WebSocket, SAML, API-key calls). (2) New `isValidationExcluded()` method identifies auth/public paths that skip CSRF validation but still run through the filter to receive the XSRF-TOKEN cookie. Extracted `setCsrfCookie()` helper for clarity.
+- **Verified**: `mvn compile -q` passes (zero errors)
+
+### BUG-034: Workflow escalation creates deeply nested step names (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/application/workflow/service/ApprovalEscalationService.java`
+- **Root cause**: `escalateStep()` prepended `"Escalated: "` to the current step name unconditionally. On repeated escalations, this produced names like `"Escalated: Escalated: Escalated: Manager Approval"`.
+- **Fix**: Strip any existing `"Escalated: "` prefix(es) before prepending the new one: `"Escalated: " + step.getStepName().replaceAll("^(Escalated: )+", "")`. This ensures the name is always `"Escalated: <original name>"` regardless of escalation depth.
+- **Verified**: `mvn compile -q` passes (zero errors)

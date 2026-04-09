@@ -58,6 +58,13 @@ public class ReferralService {
         log.info("Submitting referral for candidate {} by referrer {} tenant {}",
                 request.getCandidateEmail(), referrerId, tenantId);
 
+        // BUG-P2-005: Block self-referral — employees cannot refer their own email
+        User referrer = userRepository.findById(referrerId).orElse(null);
+        if (referrer != null && referrer.getEmail() != null
+                && referrer.getEmail().equalsIgnoreCase(request.getCandidateEmail())) {
+            throw new IllegalArgumentException("Cannot refer your own email address");
+        }
+
         // Check for duplicate candidate
         Optional<EmployeeReferral> existing = referralRepository.findByCandidateEmail(tenantId, request.getCandidateEmail());
         if (existing.isPresent()) {

@@ -1,5 +1,6 @@
 package com.hrms.application.performance.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,8 @@ public class PIPCheckInRequest {
     @NotNull
     private LocalDate checkInDate;
 
+    // BUG-P3-016: Accept both "progressNotes" and "notes" from clients
+    @JsonAlias("notes")
     private String progressNotes;
 
     private String managerComments;

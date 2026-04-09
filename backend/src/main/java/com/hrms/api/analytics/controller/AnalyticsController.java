@@ -5,7 +5,7 @@ import com.hrms.api.analytics.dto.DashboardContext;
 import com.hrms.application.analytics.dto.*;
 import com.hrms.application.analytics.service.AnalyticsService;
 import com.hrms.application.analytics.service.DashboardAnalyticsService;
-import com.hrms.application.platform.service.HrmsPermissionInitializer;
+
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
@@ -43,7 +43,7 @@ public class AnalyticsController {
      * - Manager: Team/reportees view
      * - Employee: Personal view only
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardAnalyticsResponse> getDashboardAnalytics() {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -65,7 +65,7 @@ public class AnalyticsController {
     /**
      * Get comprehensive dashboard metrics (cached).
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/metrics")
     public ResponseEntity<DashboardMetrics> getDashboardMetrics() {
         DashboardMetrics metrics = analyticsService.getDashboardMetrics();
@@ -75,7 +75,7 @@ public class AnalyticsController {
     /**
      * Get employee metrics for the current tenant.
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/employees")
     public ResponseEntity<EmployeeMetrics> getEmployeeMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -86,7 +86,7 @@ public class AnalyticsController {
     /**
      * Get headcount trend over specified months.
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/headcount-trend")
     public ResponseEntity<List<HeadcountTrend>> getHeadcountTrend(
             @RequestParam(defaultValue = "12") int months) {
@@ -97,7 +97,7 @@ public class AnalyticsController {
     /**
      * Get leave metrics for the current month.
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/leave")
     public ResponseEntity<LeaveMetrics> getLeaveMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -110,7 +110,7 @@ public class AnalyticsController {
     /**
      * Get payroll metrics for the current month.
      */
-    @RequiresPermission(HrmsPermissionInitializer.REPORT_VIEW)
+    @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/payroll")
     public ResponseEntity<PayrollMetrics> getPayrollMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();

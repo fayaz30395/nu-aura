@@ -150,13 +150,37 @@ public class ExitManagementService {
         return mapToExitProcessResponse(exitProcess);
     }
 
+    /**
+     * Get all exit processes for the tenant.
+     * BUG-R03 FIX: Employees see only their own exit process;
+     * HR Admin / HR Manager / SuperAdmin see all tenant exit processes.
+     */
     @Transactional(readOnly = true)
     public Page<ExitProcessResponse> getAllExitProcesses(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return exitProcessRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToExitProcessResponse);
+
+        // If the caller is HR-level or above, return all exit processes for the tenant.
+        // Otherwise, scope to the current employee's own exit process only.
+        if (SecurityContext.isHRManager()) {
+            return exitProcessRepository.findAll(
+                    (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
+                    pageable
+            ).map(this::mapToExitProcessResponse);
+        }
+
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId != null) {
+            return exitProcessRepository.findAll(
+                    (root, query, cb) -> cb.and(
+                            cb.equal(root.get("tenantId"), tenantId),
+                            cb.equal(root.get("employeeId"), employeeId)
+                    ),
+                    pageable
+            ).map(this::mapToExitProcessResponse);
+        }
+
+        // Fallback: no employee ID on context — return empty page
+        return Page.empty(pageable);
     }
 
     @Transactional(readOnly = true)

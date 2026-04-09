@@ -53,8 +53,11 @@ export interface FormModalState {
 // Shared formatter helpers
 export {formatCurrency} from '@/lib/utils';
 
-export function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
+export function formatDate(dateString: string | null | undefined) {
+  if (!dateString) return '—';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

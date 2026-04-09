@@ -127,8 +127,6 @@ export default function TeamDirectory() {
   const router = useRouter();
   useAuth();
   const {hasAnyPermission, isReady: permReady} = usePermissions();
-  const [employees, setEmployees] = useState<Employee[]>([]);
-
   // A3: Permission gate — directory requires VIEW_ALL or VIEW_TEAM
   useEffect(() => {
     if (!permReady) return;
@@ -136,9 +134,6 @@ export default function TeamDirectory() {
       router.replace('/dashboard');
     }
   }, [permReady, hasAnyPermission, router]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -168,11 +163,7 @@ export default function TeamDirectory() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Stable reference: prevents the useEffect below from running on every render.
-  const deptData = useMemo(() => departmentResponse ?? [], [departmentResponse]);
-  React.useEffect(() => {
-    setDepartments(deptData);
-  }, [deptData]);
+  const departments = useMemo(() => departmentResponse ?? [], [departmentResponse]);
 
   // React Query - search employees with filters
   const {data: employeeSearchResponse = EMPTY_SEARCH_RESULT, isPending} = useQuery({
@@ -193,15 +184,9 @@ export default function TeamDirectory() {
     staleTime: 30 * 1000, // 30 seconds
   });
 
-  // Update local state from React Query data
-  const searchContent = employeeSearchResponse.content;
-  const searchTotalPages = employeeSearchResponse.totalPages;
-  const searchTotalElements = employeeSearchResponse.totalElements;
-  React.useEffect(() => {
-    setEmployees(searchContent);
-    setTotalPages(searchTotalPages);
-    setTotalElements(searchTotalElements);
-  }, [searchContent, searchTotalPages, searchTotalElements]);
+  const employees = employeeSearchResponse.content;
+  const totalPages = employeeSearchResponse.totalPages;
+  const totalElements = employeeSearchResponse.totalElements;
 
   const handleSearch = useCallback(() => {
     setFilters((prev) => ({...prev, page: 0}));
