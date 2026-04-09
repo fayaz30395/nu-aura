@@ -73,8 +73,26 @@ export default function SalaryStructuresPage() {
   const updateStructureMutation = useUpdateSalaryStructure();
   const deleteStructureMutation = useDeleteSalaryStructure();
 
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
+  if (!permReady) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+          ))}
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasPermission(Permissions.PAYROLL_VIEW)) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6">
+          <p className="text-danger-600">You do not have permission to view salary structures.</p>
+        </div>
+      </AppLayout>
+    );
   }
 
   const loading =

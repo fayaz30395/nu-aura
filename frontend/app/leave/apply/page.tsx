@@ -1,7 +1,6 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -103,12 +102,7 @@ export default function ApplyLeavePage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <motion.div
-        initial={{opacity: 0, y: 12}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="max-w-4xl mx-auto"
-      >
+      <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -118,9 +112,9 @@ export default function ApplyLeavePage() {
           </button>
         </div>
 
-        <h1 className="text-xl font-bold skeuo-emboss">Apply for Leave</h1>
+        <h1 className="text-xl font-bold skeuo-emboss mb-6">Apply for Leave</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6 border border-[var(--border-main)] rounded-xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
@@ -256,7 +250,7 @@ export default function ApplyLeavePage() {
             </button>
           </div>
         </form>
-      </motion.div>
+      </div>
     </AppLayout>
   );
 }

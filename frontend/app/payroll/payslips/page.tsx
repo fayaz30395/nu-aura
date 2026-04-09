@@ -34,9 +34,27 @@ export default function PayslipsPage() {
 
   const {data: response, isLoading: loading, error: fetchError} = usePayslips(currentPage, pageSize);
 
-  // RBAC guard — all hooks declared above; safe to return null after them
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
+  // RBAC guard — all hooks declared above
+  if (!permReady) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+          ))}
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasPermission(Permissions.PAYROLL_VIEW)) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6">
+          <p className="text-danger-600">You do not have permission to view payslips.</p>
+        </div>
+      </AppLayout>
+    );
   }
   const payslips = response?.content || [];
   const totalPages = response?.totalPages || 0;

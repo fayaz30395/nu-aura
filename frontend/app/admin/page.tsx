@@ -33,7 +33,8 @@ type RoleAssignmentForm = z.infer<typeof roleAssignmentSchema>;
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const {isAdmin, hasRole} = usePermissions();
+  const {isAdmin, hasRole, isHR} = usePermissions();
+  const canAccessAdmin = isAdmin || hasRole(Roles.HR_ADMIN);
 
   // DEF-49: Only SuperAdmin users can see/assign the SUPER_ADMIN role option
   const ROLE_OPTIONS = useMemo(() => {
@@ -70,7 +71,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (authChecked && !isAdmin) {
+    if (authChecked && !canAccessAdmin) {
       router.replace('/me/dashboard');
     }
   }, [authChecked, isAdmin, router]);
@@ -126,7 +127,7 @@ export default function AdminDashboardPage() {
 
   // Show nothing while auth store hydrates; redirect is in-flight for non-admin users
   if (!authChecked) return null;
-  if (!isAdmin) {
+  if (!canAccessAdmin) {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-sm text-[var(--text-muted)]">Redirecting to dashboard...</p>

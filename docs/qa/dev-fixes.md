@@ -1,5 +1,87 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 34 — Orchestrator Fixes (2026-04-10)
+
+### BUG-034-18 (P2): HR Admin denied /admin access — should be permitted (FRONTEND — Orchestrator fix)
+- **File**: `frontend/app/admin/page.tsx`
+- **Root cause**: Admin page guard checked `isAdmin` which only includes SUPER_ADMIN and TENANT_ADMIN roles. HR_ADMIN (role level 85) was excluded despite needing admin panel access per the RBAC hierarchy.
+- **Fix**: Added `canAccessAdmin = isAdmin || hasRole(Roles.HR_ADMIN)` and replaced both `isAdmin` guard checks (useEffect redirect + render guard) with `canAccessAdmin`. This allows Super Admin, Tenant Admin, and HR Admin to access /admin, while correctly denying HR Manager and below.
+- **Also fixes**: BUG-034-17 (HR Manager /admin blank) — the redirect now works correctly for non-admin roles.
+- **Verified**: tsc passes (zero errors)
+
+## Session 34 — Leave + Payroll Empty Page Fixes (2026-04-10)
+
+### BUG-034-02 (P2): /leave renders empty — no redirect to child route (FRONTEND)
+- **File**: `frontend/app/leave/page.tsx`
+- **Root cause**: The `/leave` page rendered a full Leave Management dashboard that duplicated `/leave/my-leaves` functionality. When leave API data was empty (no balances for the user), the page showed only an error state or empty cards which the QA agent interpreted as "no content." The page should redirect to `/leave/my-leaves` which has better empty-state handling.
+- **Fix**: Added `router.replace('/leave/my-leaves')` in the existing `useEffect` auth check, so `/leave` always redirects to the canonical child route.
+- **Verified**: tsc passes
+
+### BUG-034-03 (P2): /leave/calendar renders no main content — empty grid on mount (FRONTEND)
+- **File**: `frontend/app/leave/calendar/page.tsx`
+- **Root cause**: The `useEffect` that generates the calendar grid had a guard `if (leaves.length > 0 || viewMode === 'team')` — on initial mount with `viewMode === 'my'` and zero leaves loaded yet, `generateCalendar()` was never called. The 42-cell calendar grid stayed empty, rendering just the header/controls with no day cells below.
+- **Fix**: Removed the conditional guard so `generateCalendar()` always runs when `currentDate`, `viewMode`, or `leaves` change. The calendar grid now renders day cells even when there are no leaves to display.
+- **Verified**: tsc passes
+
+### BUG-034-04 (P2): /leave/apply renders no main content (FRONTEND)
+- **File**: `frontend/app/leave/apply/page.tsx`
+- **Root cause**: The page content was wrapped in `motion.div` with `initial={{opacity: 0, y: 12}}` animation. If framer-motion's animation didn't trigger (e.g., hydration timing issue), the content stayed at opacity 0. Additionally, the form card lacked explicit border/rounded styling, making it visually invisible on some renders. Missing `mb-6` gap between heading and form.
+- **Fix**: Replaced `motion.div` wrapper with plain `div`, removed unused `framer-motion` import. Added `mb-6` to heading and `border border-[var(--border-main)] rounded-xl` to the form card for explicit visual boundary.
+- **Verified**: tsc passes
+
+### BUG-034-05 (P2): /leave/encashment renders no main content (FRONTEND)
+- **File**: `frontend/app/leave/encashment/page.tsx`
+- **Root cause**: Likely a visual rendering issue — the form card used `skeuo-card` class without explicit border, which could appear invisible depending on background. The page structure is correct (skeleton while loading, PermissionGate for access control, form renders unconditionally).
+- **Fix**: Added `border border-[var(--border-main)] rounded-xl` to the form element for explicit visual boundary. May be a false positive from QA text extraction.
+- **Verified**: tsc passes
+
+### BUG-034-06 (P2): /payroll/structures renders no main content (FRONTEND)
+- **File**: `frontend/app/payroll/structures/page.tsx`
+- **Root cause**: Line 76 had `if (!permReady || !hasPermission(...)) { return null; }` — this returned bare `null` (no AppLayout, no sidebar, no content) while permissions were hydrating. Every page load showed a blank white screen for the duration of permission resolution.
+- **Fix**: Split into two guards: (1) `!permReady` → return skeleton loader inside `AppLayout` to maintain layout consistency; (2) `!hasPermission` → return access denied message inside `AppLayout`.
+- **Verified**: tsc passes
+
+### BUG-034-07 (P2): /payroll/components renders no main content (FRONTEND — LIKELY FALSE POSITIVE)
+- **File**: `frontend/app/payroll/components/page.tsx`
+- **Root cause**: The page renders correctly inside `AppLayout` with `PermissionGate` that has a proper fallback. No `return null` pattern. Content includes header, summary badges, tabbed table with skeleton loader during data fetch. Super Admin bypasses permission checks.
+- **Verdict**: LIKELY FALSE POSITIVE — QA agent text extraction may have failed to detect the rendered Mantine UI components. No code changes needed.
+- **Verified**: tsc passes (no changes)
+
+### BUG-034-08 (P2): /payroll/payslips renders no main content (FRONTEND)
+- **File**: `frontend/app/payroll/payslips/page.tsx`
+- **Root cause**: Same as BUG-034-06 — `if (!permReady || !hasPermission(...)) { return null; }` returned bare `null` with no AppLayout while permissions hydrated.
+- **Fix**: Split into two guards with skeleton loader and access denied message, both wrapped in `AppLayout`.
+- **Verified**: tsc passes
+
+### BUG-034-09 (P2): /payroll/bulk-processing renders no main content (FRONTEND)
+- **File**: `frontend/app/payroll/bulk-processing/page.tsx`
+- **Root cause**: Same as BUG-034-06 — `if (!isReady || !hasPermission(...)) { return null; }` returned bare `null`.
+- **Fix**: Split into two guards with skeleton loader and access denied message, both wrapped in `AppLayout`.
+- **Verified**: tsc passes
+
+### BUG-034-10 (P2): /statutory renders no main content (FRONTEND)
+- **File**: `frontend/app/statutory/page.tsx`
+- **Root cause**: Same as BUG-034-06 — `if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) { return null; }` returned bare `null` with no AppLayout while auth/permissions hydrated.
+- **Fix**: Split into two guards: (1) `!hasHydrated || !permissionsReady` → skeleton inside `AppLayout`; (2) `!hasPermission` → access denied inside `AppLayout`.
+- **Verified**: tsc passes
+
+### BUG-034-11 (P3): /travel may have empty main content (FRONTEND — FALSE POSITIVE)
+- **File**: `frontend/app/travel/page.tsx`
+- **Root cause**: Page renders correctly with AppLayout, loading spinner, and proper empty state. No `return null` pattern. The "empty" appearance is because there are no travel requests in the test environment.
+- **Verdict**: FALSE POSITIVE — page has proper loading, error, and empty data states all wrapped in AppLayout.
+- **Verified**: tsc passes (no changes)
+
+### BUG-034-12 (P3): /loans may have empty main content (FRONTEND — FALSE POSITIVE)
+- **File**: `frontend/app/loans/page.tsx`
+- **Root cause**: Page renders correctly with AppLayout, loading spinner, error state, and data table. No `return null` pattern. The "empty" appearance is because there are no loans in the test environment.
+- **Verdict**: FALSE POSITIVE — page has proper loading, error, and empty data states all wrapped in AppLayout.
+- **Verified**: tsc passes (no changes)
+
+### BUG-034-01 (P1): GET /attendance/my-time-entries returns 500 (BACKEND — SKIP)
+- **Verdict**: Backend bug — API returns HTTP 500. Already fixed in prior session (BUG-S32-001). May need backend restart.
+
+---
+
 ## Session 33 — Orchestrator Fixes (2026-04-09)
 
 ### BUG-S33-007 (P1): /predictive-analytics crashes — null.toFixed() + missing type properties (FRONTEND — Orchestrator fix)

@@ -110,7 +110,7 @@ export default function LeaveEncashmentPage() {
               ))}
             </div>
           ) : (
-            <form onSubmit={handleSubmit((data) => encashMutation.mutate(data))} className="skeuo-card p-6 space-y-6">
+            <form onSubmit={handleSubmit((data) => encashMutation.mutate(data))} className="skeuo-card p-6 space-y-6 border border-[var(--border-main)] rounded-xl">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Leave Balance

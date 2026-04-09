@@ -17,9 +17,27 @@ export default function BulkProcessingPage() {
     }
   }, [isReady, hasPermission, router]);
 
-  // Render nothing while RBAC state hydrates; the effect above will redirect if unauthorised.
-  if (!isReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
-    return null;
+  // Show skeleton while RBAC state hydrates; the effect above will redirect if unauthorised.
+  if (!isReady) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+          ))}
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!hasPermission(Permissions.PAYROLL_PROCESS)) {
+    return (
+      <AppLayout activeMenuItem="payroll">
+        <div className="p-6">
+          <p className="text-danger-600">You do not have permission to process payroll.</p>
+        </div>
+      </AppLayout>
+    );
   }
 
   return (

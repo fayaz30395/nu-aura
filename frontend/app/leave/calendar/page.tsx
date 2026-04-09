@@ -57,11 +57,10 @@ export default function LeaveCalendarPage() {
     }
   }, [hasHydrated, user?.employeeId, viewMode]);
 
-  // Generate calendar when data or view mode changes
+  // Generate calendar when data, view mode, or month changes.
+  // Always generate — even with zero leaves the grid of day cells must render.
   useEffect(() => {
-    if (leaves.length > 0 || viewMode === 'team') {
-      generateCalendar();
-    }
+    generateCalendar();
     // generateCalendar is defined below and only depends on currentDate/viewMode/leaves
     // (all listed). Including it without useCallback would cause an infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
