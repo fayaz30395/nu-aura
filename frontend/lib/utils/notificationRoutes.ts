@@ -91,6 +91,16 @@ export const notificationRouteConfig: Record<string, string | ((id?: string) => 
   'WORK_ANNIVERSARY': '/dashboard',
   'ACHIEVEMENT_UNLOCKED': '/dashboard',
 
+  // Approval and task notifications
+  'TASK_ASSIGNED': '/approvals/inbox',
+  'APPROVAL_REQUIRED': '/approvals/inbox',
+  'APPROVAL_UPDATE': '/approvals/inbox',
+  'APPROVAL_ESCALATED': '/approvals/inbox',
+  'APPROVAL_APPROVED': '/approvals/inbox',
+  'APPROVAL_REJECTED': '/approvals/inbox',
+  'REMINDER': '/dashboard',
+  'SYSTEM': '/dashboard',
+
   // System notifications
   'ANNOUNCEMENT': '/announcements',
   'POLICY_UPDATE': '/policies',
@@ -110,6 +120,7 @@ export const fuzzyMatches: Record<string, string> = {
   'EXPENSE': '/expenses',
   'SHIFT': '/me/attendance',
   'TRAINING': '/training',
+  'APPROVAL': '/approvals/inbox',
   'RECRUITMENT': '/recruitment/applications',
   'TEAM': '/team',
 };

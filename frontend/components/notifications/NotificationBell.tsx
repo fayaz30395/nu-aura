@@ -274,6 +274,18 @@ export const NotificationBell: React.FC = () => {
               })
             )}
           </div>
+          {/* View All footer */}
+          <div className="border-t p-2">
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                router.push('/notifications');
+              }}
+              className="w-full text-center text-sm font-medium text-accent-600 hover:text-accent-800 py-2 rounded hover:bg-accent-50 transition-colors cursor-pointer"
+            >
+              View all notifications
+            </button>
+          </div>
         </div>
       )}
     </div>

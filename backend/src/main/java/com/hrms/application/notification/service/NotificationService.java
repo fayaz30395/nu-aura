@@ -86,6 +86,13 @@ public class NotificationService {
         return notificationRepository.findRecentNotifications(tenantId, userId, since);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Notification> getFilteredNotifications(UUID userId, List<Notification.NotificationType> types, Boolean isRead, int page, int size) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return notificationRepository.findFiltered(tenantId, userId, types, isRead, pageable);
+    }
+
     @Transactional
     public void markAsRead(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();

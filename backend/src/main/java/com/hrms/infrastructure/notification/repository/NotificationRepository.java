@@ -114,6 +114,22 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
             Pageable pageable
     );
 
+    /**
+     * Filtered query supporting optional type list and read status.
+     * When types is null, all types are returned. When isRead is null, both read and unread are returned.
+     */
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId " +
+            "AND (:types IS NULL OR n.type IN :types) " +
+            "AND (:isRead IS NULL OR n.isRead = :isRead) " +
+            "ORDER BY n.createdAt DESC")
+    Page<Notification> findFiltered(
+            @Param("tenantId") UUID tenantId,
+            @Param("userId") UUID userId,
+            @Param("types") java.util.List<Notification.NotificationType> types,
+            @Param("isRead") Boolean isRead,
+            Pageable pageable
+    );
+
     // ==================== MODIFICATION METHODS ====================
 
     @Modifying

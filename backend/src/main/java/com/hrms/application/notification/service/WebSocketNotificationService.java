@@ -29,19 +29,17 @@ public class WebSocketNotificationService {
     private final RedisWebSocketRelay redisWebSocketRelay;
 
     /**
-     * Send notification to a specific user.
+     * Send notification to a specific user via topic-based routing.
+     * Uses convertAndSend with a user-scoped topic path instead of convertAndSendToUser,
+     * which requires STOMP principal matching that doesn't align with our JWT auth flow.
      */
     @Transactional
     public void sendToUser(UUID userId, NotificationMessage notification) {
-        String destination = "/queue/notifications";
+        String destination = "/topic/user/" + userId + "/notifications";
         notification.setTimestamp(LocalDateTime.now());
         notification.setId(UUID.randomUUID());
 
-        redisWebSocketRelay.convertAndSendToUser(
-                userId.toString(),
-                destination,
-                notification
-        );
+        redisWebSocketRelay.convertAndSend(destination, notification);
 
         log.debug("Sent WebSocket notification to user {}: {}", userId, notification.getTitle());
     }

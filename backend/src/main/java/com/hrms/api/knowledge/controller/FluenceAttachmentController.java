@@ -11,6 +11,7 @@ import com.hrms.domain.featureflag.FeatureFlag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/fluence/attachments")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Fluence Attachments", description = "File attachment management for Fluence content")
 @RequiresFeature(FeatureFlag.ENABLE_FLUENCE)
 public class FluenceAttachmentController {
@@ -35,12 +37,17 @@ public class FluenceAttachmentController {
     @Operation(summary = "Get recent attachments for the current tenant")
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<List<FluenceAttachmentDto>> getRecentAttachments() {
-        UUID tenantId = TenantContext.requireCurrentTenant();
-        List<KnowledgeAttachment> attachments = attachmentService.getRecentAttachments(tenantId);
-        List<FluenceAttachmentDto> dtos = attachments.stream()
-                .map(FluenceAttachmentDto::fromEntity)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+        try {
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            List<KnowledgeAttachment> attachments = attachmentService.getRecentAttachments(tenantId);
+            List<FluenceAttachmentDto> dtos = attachments.stream()
+                    .map(FluenceAttachmentDto::fromEntity)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            log.warn("Failed to load recent attachments: {}", e.getMessage());
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @PostMapping(value = "/{contentType}/{contentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

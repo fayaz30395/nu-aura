@@ -60,6 +60,28 @@ export const notificationsApi = {
     await apiClient.delete(`/notifications/${id}`);
   },
 
+  // Get filtered notifications
+  getFilteredNotifications: async (
+    page: number = 0,
+    size: number = 20,
+    types?: string[],
+    isRead?: boolean
+  ): Promise<PagedNotificationResponse> => {
+    const params = new URLSearchParams();
+    params.set('page', String(page));
+    params.set('size', String(size));
+    if (types && types.length > 0) {
+      types.forEach(t => params.append('type', t));
+    }
+    if (isRead !== undefined) {
+      params.set('isRead', String(isRead));
+    }
+    const response = await apiClient.get<PagedNotificationResponse>(
+      `/notifications?${params.toString()}`
+    );
+    return response.data;
+  },
+
   // Get preferences
   getPreferences: async (): Promise<NotificationPreferences> => {
     const response = await apiClient.get<NotificationPreferences>('/notifications/preferences');

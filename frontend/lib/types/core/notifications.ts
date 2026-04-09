@@ -17,6 +17,14 @@ export type NotificationType =
   | 'SHIFT_CHANGED'
   | 'ROLE_UPDATED'
   | 'SYSTEM_ALERT'
+  | 'TASK_ASSIGNED'
+  | 'APPROVAL_REQUIRED'
+  | 'APPROVAL_UPDATE'
+  | 'APPROVAL_ESCALATED'
+  | 'APPROVAL_APPROVED'
+  | 'APPROVAL_REJECTED'
+  | 'REMINDER'
+  | 'SYSTEM'
   | 'GENERAL';
 
 export type NotificationPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';

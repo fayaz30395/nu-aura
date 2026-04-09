@@ -28,6 +28,12 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useOrganizationTrends, usePredictiveDashboard} from '@/lib/hooks/queries/usePredictiveAnalytics';
 import {formatCurrency} from '@/lib/utils';
+
+/** Safe toFixed — guards against null/undefined/NaN values */
+function safeFixed(val: number | null | undefined, digits: number, fallback = '-'): string {
+  if (val === null || val === undefined || isNaN(val)) return fallback;
+  return val.toFixed(digits);
+}
 import type {
   AnalyticsInsight,
   AttritionPrediction,
@@ -323,33 +329,38 @@ function SkillGapsSection({summary}: { summary: PredictiveAnalyticsDashboard['sk
 }
 
 function KeyMetricsRow({metrics}: { metrics: KeyMetric[] }) {
+  if (!metrics || metrics.length === 0) return null;
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {metrics.slice(0, 8).map((metric) => (
-        <Card key={metric.name}>
-          <CardContent className="p-4">
-            <div className="row-between mb-1">
-              <p className="text-caption uppercase tracking-wider">{metric.name}</p>
-              <TrendIcon trend={metric.trend}/>
-            </div>
-            <p className="text-xl font-bold text-[var(--text-primary)]">{metric.value}</p>
-            <div className="flex items-center gap-1 mt-1">
-              <span
-                className={`text-xs font-medium ${
-                  metric.status === 'GOOD'
-                    ? 'text-success-600'
-                    : metric.status === 'WARNING'
-                      ? 'text-warning-600'
-                      : 'text-danger-600'
-                }`}
-              >
-                {metric.changePercent > 0 ? '+' : ''}{metric.changePercent.toFixed(1)}%
-              </span>
-              <span className="text-caption">{metric.description}</span>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {metrics.slice(0, 8).map((metric) => {
+        if (!metric) return null;
+        const pct = typeof metric.changePercent === 'number' ? metric.changePercent : 0;
+        return (
+          <Card key={metric.name}>
+            <CardContent className="p-4">
+              <div className="row-between mb-1">
+                <p className="text-caption uppercase tracking-wider">{metric.name}</p>
+                <TrendIcon trend={metric.trend ?? 'STABLE'}/>
+              </div>
+              <p className="text-xl font-bold text-[var(--text-primary)]">{metric.value ?? '-'}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <span
+                  className={`text-xs font-medium ${
+                    metric.status === 'GOOD'
+                      ? 'text-success-600'
+                      : metric.status === 'WARNING'
+                        ? 'text-warning-600'
+                        : 'text-danger-600'
+                  }`}
+                >
+                  {pct > 0 ? '+' : ''}{pct.toFixed(1)}%
+                </span>
+                <span className="text-caption">{metric.description}</span>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -462,14 +473,14 @@ function TopAtRiskEmployeesTable({employees}: { employees: AttritionPrediction[]
                   <td className="py-2.5 px-4 text-center">
                       <span className="font-bold"
                             style={{color: RISK_COLORS[emp.riskLevel as keyof typeof RISK_COLORS] || 'var(--chart-muted)'}}>
-                        {emp.riskScore?.toFixed(0)}%
+                        {safeFixed(emp.riskScore, 0)}%
                       </span>
                   </td>
                   <td className="py-2.5 px-4 text-center">
                     <RiskBadge level={emp.riskLevel}/>
                   </td>
                   <td className="py-2.5 px-4 text-center text-[var(--text-secondary)]">
-                    {emp.confidenceScore?.toFixed(0)}%
+                    {safeFixed(emp.confidenceScore, 0)}%
                   </td>
                   <td className="py-2.5 px-4 text-[var(--text-secondary)]">
                     {topFactor ? topFactor.name : '-'}
@@ -504,17 +515,17 @@ function WorkforceSummaryPanel({summary}: { summary: PredictiveAnalyticsDashboar
     },
     {
       label: 'YTD Attrition Rate',
-      value: `${summary.yearToDateAttritionRate?.toFixed(1) ?? '-'}%`,
+      value: `${safeFixed(summary.yearToDateAttritionRate, 1)}%`,
       icon: <TrendingDown className="h-5 w-5 text-danger-500"/>
     },
     {
       label: 'Avg Tenure',
-      value: `${((summary.avgTenureMonths ?? 0) / 12).toFixed(1)} yrs`,
+      value: `${safeFixed((summary.avgTenureMonths ?? 0) / 12, 1)} yrs`,
       icon: <Briefcase className="h-5 w-5 text-warning-500"/>
     },
     {
       label: 'Avg Engagement',
-      value: `${summary.avgEngagementScore?.toFixed(1) ?? '-'}/5`,
+      value: `${safeFixed(summary.avgEngagementScore, 1)}/5`,
       icon: <Activity className="h-5 w-5 text-accent-500"/>
     },
     {
@@ -524,7 +535,7 @@ function WorkforceSummaryPanel({summary}: { summary: PredictiveAnalyticsDashboar
     },
     {
       label: 'Avg Time to Fill',
-      value: `${summary.avgTimeToFill?.toFixed(0) ?? '-'} days`,
+      value: `${safeFixed(summary.avgTimeToFill, 0)} days`,
       icon: <GraduationCap className="h-5 w-5 text-warning-500"/>
     },
     {
@@ -632,9 +643,9 @@ export default function PredictiveAnalyticsPage() {
   }
 
   const trends = orgTrends || dashboard.monthlyTrends || [];
-  const attritionSummary = dashboard.attritionSummary;
-  const workforceSummary = dashboard.workforceSummary;
-  const skillGapSummary = dashboard.skillGapSummary;
+  const attritionSummary = dashboard.attritionSummary ?? {} as PredictiveAnalyticsDashboard['attritionSummary'];
+  const workforceSummary = dashboard.workforceSummary ?? {} as PredictiveAnalyticsDashboard['workforceSummary'];
+  const skillGapSummary = dashboard.skillGapSummary ?? {} as PredictiveAnalyticsDashboard['skillGapSummary'];
 
   return (
     <AppLayout activeMenuItem="predictive-analytics">
@@ -725,14 +736,14 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-[var(--text-primary)]">{attritionSummary.avgRiskScore?.toFixed(1) ?? '-'}</p>
+                    className="text-3xl font-bold text-[var(--text-primary)]">{safeFixed(attritionSummary.avgRiskScore, 1)}</p>
                   <p className="text-body-muted">Avg Risk Score</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-danger-600">{attritionSummary.predictedAttritionRate?.toFixed(1) ?? '-'}%</p>
+                    className="text-3xl font-bold text-danger-600">{safeFixed(attritionSummary.predictedAttritionRate, 1)}%</p>
                   <p className="text-body-muted">Predicted Attrition Rate</p>
                 </CardContent>
               </Card>
@@ -791,14 +802,14 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-accent-600">{workforceSummary.avgEngagementScore?.toFixed(1) ?? '-'}</p>
+                    className="text-3xl font-bold text-accent-600">{safeFixed(workforceSummary.avgEngagementScore, 1)}</p>
                   <p className="text-body-muted">Avg Engagement (out of 5)</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-success-600">{workforceSummary.avgPerformanceRating?.toFixed(1) ?? '-'}</p>
+                    className="text-3xl font-bold text-success-600">{safeFixed(workforceSummary.avgPerformanceRating, 1)}</p>
                   <p className="text-body-muted">Avg Performance Rating</p>
                 </CardContent>
               </Card>
