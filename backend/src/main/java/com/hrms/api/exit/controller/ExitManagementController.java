@@ -40,13 +40,13 @@ public class ExitManagementController {
     // ==================== Exit Process Endpoints ====================
 
     @PostMapping("/processes")
-    @RequiresPermission(Permission.EXIT_INITIATE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<ExitProcessResponse> createExitProcess(@Valid @RequestBody ExitProcessRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitProcess(request));
     }
 
     @PutMapping("/processes/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<ExitProcessResponse> updateExitProcess(
             @PathVariable UUID id,
             @Valid @RequestBody ExitProcessRequest request) {
@@ -54,7 +54,7 @@ public class ExitManagementController {
     }
 
     @PatchMapping("/processes/{id}/status")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<ExitProcessResponse> updateExitStatus(
             @PathVariable UUID id,
             @RequestParam ExitProcess.ExitStatus status) {
@@ -62,31 +62,31 @@ public class ExitManagementController {
     }
 
     @GetMapping("/processes/{id}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<ExitProcessResponse> getExitProcessById(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.getExitProcessById(id));
     }
 
     @GetMapping("/processes/employee/{employeeId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<ExitProcessResponse> getExitProcessByEmployee(@PathVariable UUID employeeId) {
         return ResponseEntity.ok(exitService.getExitProcessByEmployee(employeeId));
     }
 
     @GetMapping("/processes")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<Page<ExitProcessResponse>> getAllExitProcesses(Pageable pageable) {
         return ResponseEntity.ok(exitService.getAllExitProcesses(pageable));
     }
 
     @GetMapping("/processes/status/{status}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<List<ExitProcessResponse>> getExitProcessesByStatus(@PathVariable ExitProcess.ExitStatus status) {
         return ResponseEntity.ok(exitService.getExitProcessesByStatus(status));
     }
 
     @DeleteMapping("/processes/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<Void> deleteExitProcess(@PathVariable UUID id) {
         exitService.deleteExitProcess(id);
         return ResponseEntity.noContent().build();
@@ -95,13 +95,13 @@ public class ExitManagementController {
     // ==================== Exit Clearance Endpoints ====================
 
     @PostMapping("/clearances")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<ExitClearanceResponse> createExitClearance(@Valid @RequestBody ExitClearanceRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitClearance(request));
     }
 
     @PutMapping("/clearances/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<ExitClearanceResponse> updateExitClearance(
             @PathVariable UUID id,
             @Valid @RequestBody ExitClearanceRequest request) {
@@ -109,19 +109,19 @@ public class ExitManagementController {
     }
 
     @GetMapping("/clearances/process/{exitProcessId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<List<ExitClearanceResponse>> getClearancesByExitProcess(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(exitService.getClearancesByExitProcess(exitProcessId));
     }
 
     @GetMapping("/clearances/approver/{approverId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     public ResponseEntity<List<ExitClearanceResponse>> getClearancesByApprover(@PathVariable UUID approverId) {
         return ResponseEntity.ok(exitService.getClearancesByApprover(approverId));
     }
 
     @DeleteMapping("/clearances/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     public ResponseEntity<Void> deleteExitClearance(@PathVariable UUID id) {
         exitService.deleteExitClearance(id);
         return ResponseEntity.noContent().build();
@@ -130,14 +130,14 @@ public class ExitManagementController {
     // ==================== Full & Final Settlement Endpoints ====================
 
     @PostMapping("/settlements")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Create a new F&F settlement")
     public ResponseEntity<FullAndFinalSettlementResponse> createSettlement(@Valid @RequestBody FullAndFinalSettlementRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createSettlement(request));
     }
 
     @PutMapping("/settlements/{id}")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Update an F&F settlement")
     public ResponseEntity<FullAndFinalSettlementResponse> updateSettlement(
             @PathVariable UUID id,
@@ -146,21 +146,21 @@ public class ExitManagementController {
     }
 
     @PostMapping("/settlements/{id}/submit")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Submit settlement for approval")
     public ResponseEntity<FullAndFinalSettlementResponse> submitSettlementForApproval(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.submitForApproval(id));
     }
 
     @PostMapping("/settlements/{id}/approve")
-    @RequiresPermission(Permission.EXIT_APPROVE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Approve an F&F settlement")
     public ResponseEntity<FullAndFinalSettlementResponse> approveSettlement(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.approveSettlement(id));
     }
 
     @PostMapping("/settlements/{id}/pay")
-    @RequiresPermission(Permission.EXIT_APPROVE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Process settlement payment")
     public ResponseEntity<FullAndFinalSettlementResponse> processSettlementPayment(
             @PathVariable UUID id,
@@ -170,28 +170,28 @@ public class ExitManagementController {
     }
 
     @GetMapping("/settlements/{id}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get settlement by ID")
     public ResponseEntity<FullAndFinalSettlementResponse> getSettlementById(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.getSettlementById(id));
     }
 
     @GetMapping("/settlements/process/{exitProcessId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get settlement by exit process")
     public ResponseEntity<FullAndFinalSettlementResponse> getSettlementByExitProcess(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(exitService.getSettlementByExitProcess(exitProcessId));
     }
 
     @GetMapping("/settlements")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get all settlements")
     public ResponseEntity<Page<FullAndFinalSettlementResponse>> getAllSettlements(Pageable pageable) {
         return ResponseEntity.ok(exitService.getAllSettlements(pageable));
     }
 
     @GetMapping("/settlements/pending-approvals")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get settlements pending approval")
     public ResponseEntity<List<FullAndFinalSettlementResponse>> getPendingApprovals() {
         return ResponseEntity.ok(exitService.getPendingApprovals());
@@ -200,14 +200,14 @@ public class ExitManagementController {
     // ==================== Exit Interview Endpoints ====================
 
     @PostMapping("/interviews")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Schedule an exit interview")
     public ResponseEntity<ExitInterviewResponse> createExitInterview(@Valid @RequestBody ExitInterviewRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitInterview(request));
     }
 
     @PutMapping("/interviews/{id}/conduct")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Conduct and record exit interview feedback")
     public ResponseEntity<ExitInterviewResponse> conductExitInterview(
             @PathVariable UUID id,
@@ -216,7 +216,7 @@ public class ExitManagementController {
     }
 
     @PatchMapping("/interviews/{id}/reschedule")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Reschedule an exit interview")
     public ResponseEntity<ExitInterviewResponse> rescheduleInterview(
             @PathVariable UUID id,
@@ -225,28 +225,28 @@ public class ExitManagementController {
     }
 
     @GetMapping("/interviews/{id}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get exit interview by ID")
     public ResponseEntity<ExitInterviewResponse> getExitInterviewById(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.getExitInterviewById(id));
     }
 
     @GetMapping("/interviews")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get all exit interviews")
     public ResponseEntity<Page<ExitInterviewResponse>> getAllExitInterviews(Pageable pageable) {
         return ResponseEntity.ok(exitService.getAllExitInterviews(pageable));
     }
 
     @GetMapping("/interviews/scheduled")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get scheduled interviews")
     public ResponseEntity<List<ExitInterviewResponse>> getScheduledInterviews() {
         return ResponseEntity.ok(exitService.getScheduledInterviews());
     }
 
     @GetMapping("/interviews/analytics")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get exit interview analytics")
     public ResponseEntity<Map<String, Object>> getExitInterviewAnalytics() {
         return ResponseEntity.ok(exitService.getExitInterviewAnalytics());
@@ -255,14 +255,14 @@ public class ExitManagementController {
     // ==================== Asset Recovery Endpoints ====================
 
     @PostMapping("/assets")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Create asset recovery record")
     public ResponseEntity<AssetRecoveryResponse> createAssetRecovery(@Valid @RequestBody AssetRecoveryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createAssetRecovery(request));
     }
 
     @PutMapping("/assets/{id}/return")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Record asset return")
     public ResponseEntity<AssetRecoveryResponse> recordAssetReturn(
             @PathVariable UUID id,
@@ -271,7 +271,7 @@ public class ExitManagementController {
     }
 
     @PatchMapping("/assets/{id}/lost")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Mark asset as lost")
     public ResponseEntity<AssetRecoveryResponse> markAssetAsLost(
             @PathVariable UUID id,
@@ -281,7 +281,7 @@ public class ExitManagementController {
     }
 
     @PatchMapping("/assets/{id}/waive")
-    @RequiresPermission(Permission.EXIT_APPROVE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Waive asset recovery")
     public ResponseEntity<AssetRecoveryResponse> waiveAssetRecovery(
             @PathVariable UUID id,
@@ -290,35 +290,35 @@ public class ExitManagementController {
     }
 
     @PatchMapping("/assets/{id}/verify")
-    @RequiresPermission(Permission.EXIT_MANAGE)
+    @RequiresPermission(Permission.OFFBOARDING_MANAGE)
     @Operation(summary = "Verify asset return")
     public ResponseEntity<AssetRecoveryResponse> verifyAssetReturn(@PathVariable UUID id) {
         return ResponseEntity.ok(exitService.verifyAssetReturn(id));
     }
 
     @GetMapping("/assets/process/{exitProcessId}")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get assets by exit process")
     public ResponseEntity<List<AssetRecoveryResponse>> getAssetsByExitProcess(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(exitService.getAssetsByExitProcess(exitProcessId));
     }
 
     @GetMapping("/assets/pending")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get pending asset recoveries")
     public ResponseEntity<List<AssetRecoveryResponse>> getPendingAssetRecoveries() {
         return ResponseEntity.ok(exitService.getPendingAssetRecoveries());
     }
 
     @GetMapping("/assets/process/{exitProcessId}/deductions")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get total deductions for exit process")
     public ResponseEntity<BigDecimal> getTotalDeductions(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(exitService.getTotalDeductionsForExitProcess(exitProcessId));
     }
 
     @GetMapping("/assets/process/{exitProcessId}/recovered")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Check if all assets are recovered")
     public ResponseEntity<Boolean> areAllAssetsRecovered(@PathVariable UUID exitProcessId) {
         return ResponseEntity.ok(exitService.areAllAssetsRecovered(exitProcessId));
@@ -327,7 +327,7 @@ public class ExitManagementController {
     // ==================== Dashboard Endpoint ====================
 
     @GetMapping("/dashboard")
-    @RequiresPermission(Permission.EXIT_VIEW)
+    @RequiresPermission(Permission.OFFBOARDING_VIEW)
     @Operation(summary = "Get exit management dashboard")
     public ResponseEntity<Map<String, Object>> getExitDashboard() {
         return ResponseEntity.ok(exitService.getExitDashboard());

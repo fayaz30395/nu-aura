@@ -163,7 +163,15 @@ export default function RestrictedHolidaysPage() {
     [mySelections]
   );
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
   if (!isAuthenticated) {
     router.push('/auth/login');
     return null;

@@ -45,7 +45,16 @@ export default function CalendarPage() {
   );
 
   if (!hasHydrated) {
-    return null;
+    return (
+      <AppLayout activeMenuItem="calendar">
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <p className="text-[var(--text-secondary)]">Loading calendar...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
   }
 
   if (!isAuthenticated) {
