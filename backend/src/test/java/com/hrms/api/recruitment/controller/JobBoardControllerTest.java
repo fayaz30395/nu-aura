@@ -71,7 +71,7 @@ class JobBoardControllerTest {
         posting = new JobBoardPosting();
         posting.setId(postingId);
         posting.setJobOpeningId(jobOpeningId);
-        posting.setBoard(JobBoardPosting.JobBoard.LINKEDIN);
+        posting.setBoardName(JobBoardPosting.JobBoard.LINKEDIN);
         posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
     }
 
@@ -97,7 +97,7 @@ class JobBoardControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].board").value("LINKEDIN"));
+                .andExpect(jsonPath("$[0].boardName").value("LINKEDIN"));
 
         verify(jobBoardService).postJob(eq(jobOpeningId), any());
     }

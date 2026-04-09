@@ -241,7 +241,7 @@ class OneOnOneMeetingControllerTest {
         actionItem.setId(UUID.randomUUID());
         actionItem.setTitle("Follow up on metrics");
         actionItem.setAssigneeId(managerId);
-        actionItem.setStatus(MeetingActionItem.ActionStatus.PENDING);
+        actionItem.setStatus(MeetingActionItem.ActionStatus.OPEN);
         actionItem.setPriority(MeetingActionItem.Priority.HIGH);
 
         try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class)) {

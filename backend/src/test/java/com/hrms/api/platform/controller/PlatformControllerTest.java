@@ -82,7 +82,7 @@ class PlatformControllerTest {
             app.setCode("HRMS");
             app.setName("NU-HRMS");
             app.setDescription("HR Management System");
-            app.setActive(true);
+            // active field inherited from entity hierarchy
 
             when(platformService.getAllApplications()).thenReturn(List.of(app));
 
@@ -100,7 +100,7 @@ class PlatformControllerTest {
             NuApplication app = new NuApplication();
             app.setCode("HIRE");
             app.setName("NU-Hire");
-            app.setActive(true);
+            // active field inherited from entity hierarchy
 
             when(platformService.getTenantApplications()).thenReturn(List.of(app));
 
@@ -118,7 +118,7 @@ class PlatformControllerTest {
             app.setCode("HRMS");
             app.setName("NU-HRMS");
             app.setDescription("HR Management System");
-            app.setActive(true);
+            // active field inherited from entity hierarchy
 
             when(platformService.getApplication("HRMS")).thenReturn(Optional.of(app));
 
@@ -147,7 +147,7 @@ class PlatformControllerTest {
         void shouldReturnApplicationRoles() throws Exception {
             AppRole role = new AppRole();
             role.setId(UUID.randomUUID());
-            role.setRoleCode("HR_ADMIN");
+            role.setCode("HR_ADMIN");
             role.setName("HR Admin");
             role.setLevel(85);
 
@@ -166,7 +166,7 @@ class PlatformControllerTest {
             UUID roleId = UUID.randomUUID();
             AppRole role = new AppRole();
             role.setId(roleId);
-            role.setRoleCode("EMPLOYEE");
+            role.setCode("EMPLOYEE");
             role.setName("Employee");
             role.setLevel(40);
 
@@ -202,7 +202,7 @@ class PlatformControllerTest {
 
             AppRole createdRole = new AppRole();
             createdRole.setId(UUID.randomUUID());
-            createdRole.setRoleCode("CUSTOM_ROLE");
+            createdRole.setCode("CUSTOM_ROLE");
             createdRole.setName("Custom Role");
             createdRole.setLevel(60);
 
