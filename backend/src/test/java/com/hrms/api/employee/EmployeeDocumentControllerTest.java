@@ -75,13 +75,14 @@ class EmployeeDocumentControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "test-doc.pdf", "application/pdf", "PDF content".getBytes());
 
-        FileUploadResult uploadResult = new FileUploadResult();
-        uploadResult.setObjectName("documents/test-doc.pdf");
-        uploadResult.setOriginalFilename("test-doc.pdf");
-        uploadResult.setContentType("application/pdf");
-        uploadResult.setSize(11L);
-        uploadResult.setCategory("documents");
-        uploadResult.setEntityId(employeeId);
+        FileUploadResult uploadResult = FileUploadResult.builder()
+                .objectName("documents/test-doc.pdf")
+                .originalFilename("test-doc.pdf")
+                .contentType("application/pdf")
+                .size(11L)
+                .category("documents")
+                .entityId(employeeId)
+                .build();
 
         when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_DOCUMENTS), eq(employeeId)))
                 .thenReturn(uploadResult);
@@ -104,13 +105,14 @@ class EmployeeDocumentControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "contract.pdf", "application/pdf", "contract content".getBytes());
 
-        FileUploadResult uploadResult = new FileUploadResult();
-        uploadResult.setObjectName("documents/contract.pdf");
-        uploadResult.setOriginalFilename("contract.pdf");
-        uploadResult.setContentType("application/pdf");
-        uploadResult.setSize(16L);
-        uploadResult.setCategory("documents");
-        uploadResult.setEntityId(employeeId);
+        FileUploadResult uploadResult = FileUploadResult.builder()
+                .objectName("documents/contract.pdf")
+                .originalFilename("contract.pdf")
+                .contentType("application/pdf")
+                .size(16L)
+                .category("documents")
+                .entityId(employeeId)
+                .build();
 
         when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_DOCUMENTS), eq(employeeId)))
                 .thenReturn(uploadResult);
@@ -130,13 +132,14 @@ class EmployeeDocumentControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "id-proof.png", "image/png", "image data".getBytes());
 
-        FileUploadResult uploadResult = new FileUploadResult();
-        uploadResult.setObjectName("documents/id-proof.png");
-        uploadResult.setOriginalFilename("id-proof.png");
-        uploadResult.setContentType("image/png");
-        uploadResult.setSize(10L);
-        uploadResult.setCategory("documents");
-        uploadResult.setEntityId(employeeId);
+        FileUploadResult uploadResult = FileUploadResult.builder()
+                .objectName("documents/id-proof.png")
+                .originalFilename("id-proof.png")
+                .contentType("image/png")
+                .size(10L)
+                .category("documents")
+                .entityId(employeeId)
+                .build();
 
         when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_DOCUMENTS), eq(employeeId)))
                 .thenReturn(uploadResult);
@@ -155,13 +158,14 @@ class EmployeeDocumentControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "doc.pdf", "application/pdf", "data".getBytes());
 
-        FileUploadResult uploadResult = new FileUploadResult();
-        uploadResult.setObjectName("documents/doc.pdf");
-        uploadResult.setOriginalFilename("doc.pdf");
-        uploadResult.setContentType("application/pdf");
-        uploadResult.setSize(4L);
-        uploadResult.setCategory("documents");
-        uploadResult.setEntityId(employeeId);
+        FileUploadResult uploadResult = FileUploadResult.builder()
+                .objectName("documents/doc.pdf")
+                .originalFilename("doc.pdf")
+                .contentType("application/pdf")
+                .size(4L)
+                .category("documents")
+                .entityId(employeeId)
+                .build();
 
         when(fileStorageService.uploadFile(any(), any(), any())).thenReturn(uploadResult);
         when(fileStorageService.getDownloadUrl(anyString())).thenReturn("https://example.com/doc.pdf");
@@ -179,13 +183,14 @@ class EmployeeDocumentControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "large-file.pdf", "application/pdf", new byte[2048]);
 
-        FileUploadResult uploadResult = new FileUploadResult();
-        uploadResult.setObjectName("documents/large-file.pdf");
-        uploadResult.setOriginalFilename("large-file.pdf");
-        uploadResult.setContentType("application/pdf");
-        uploadResult.setSize(2048L);
-        uploadResult.setCategory("documents");
-        uploadResult.setEntityId(employeeId);
+        FileUploadResult uploadResult = FileUploadResult.builder()
+                .objectName("documents/large-file.pdf")
+                .originalFilename("large-file.pdf")
+                .contentType("application/pdf")
+                .size(2048L)
+                .category("documents")
+                .entityId(employeeId)
+                .build();
 
         when(fileStorageService.uploadFile(any(), any(), any())).thenReturn(uploadResult);
         when(fileStorageService.getDownloadUrl(anyString())).thenReturn("https://example.com/f");
