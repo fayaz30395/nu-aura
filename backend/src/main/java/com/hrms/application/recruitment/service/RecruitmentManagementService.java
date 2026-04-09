@@ -97,8 +97,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating candidate {} for tenant {}", request.getEmail(), tenantId);
 
-        if (candidateRepository.existsByTenantIdAndCandidateCode(tenantId, request.getCandidateCode())) {
-            throw new IllegalArgumentException("Candidate with code " + request.getCandidateCode() + " already exists");
+        // BUG-P2-001: Guard against null candidateCode — existsBy with null candidateCode
+        // causes DB integrity violation when matching existing null records.
+        if (request.getCandidateCode() != null && !request.getCandidateCode().isBlank()) {
+            if (candidateRepository.existsByTenantIdAndCandidateCode(tenantId, request.getCandidateCode())) {
+                throw new IllegalArgumentException("Candidate with code " + request.getCandidateCode() + " already exists");
+            }
         }
 
         Candidate candidate = new Candidate();

@@ -141,14 +141,16 @@ public class AttendanceController {
 
     @GetMapping("/my-attendance")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
-    @Operation(summary = "Get my attendance", description = "Retrieve authenticated user's attendance records for a date range")
+    @Operation(summary = "Get my attendance", description = "Retrieve authenticated user's attendance records for a date range (defaults to last 30 days)")
     @ApiResponse(responseCode = "200", description = "Attendance records retrieved successfully")
     public ResponseEntity<Page<AttendanceResponse>> getMyAttendance(
-            @Parameter(description = "Start date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "End date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @Parameter(description = "Start date (ISO format, defaults to 30 days ago)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date (ISO format, defaults to today)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
         UUID employeeId = requireCurrentEmployeeId();
-        Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable);
+        LocalDate effectiveEnd = (endDate != null) ? endDate : LocalDate.now();
+        LocalDate effectiveStart = (startDate != null) ? startDate : effectiveEnd.minusDays(30);
+        Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, effectiveStart, effectiveEnd, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
     }
 

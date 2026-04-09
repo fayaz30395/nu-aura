@@ -34,6 +34,28 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT CONCAT(e.firstName, ' ', COALESCE(e.lastName, '')) FROM Employee e WHERE e.id = :id")
     Optional<String> findFullNameById(@Param("id") UUID id);
 
+    /**
+     * Lightweight projection to get an employee's managerId without loading the full entity.
+     * Avoids triggering EncryptedStringConverter on encrypted fields.
+     */
+    @Query("SELECT e.managerId FROM Employee e WHERE e.id = :id")
+    Optional<UUID> findManagerIdById(@Param("id") UUID id);
+
+    /**
+     * Batch lookup: get employee ID to full name mapping for a collection of IDs.
+     * Returns Object[] where [0] = UUID id, [1] = String fullName.
+     * Single query replaces N individual findFullNameById calls.
+     */
+    @Query("SELECT e.id, CONCAT(e.firstName, ' ', COALESCE(e.lastName, '')) FROM Employee e WHERE e.id IN :ids")
+    List<Object[]> findFullNamesByIds(@Param("ids") Collection<UUID> ids);
+
+    /**
+     * Batch lookup: get employee ID to manager ID mapping for a collection of IDs.
+     * Returns Object[] where [0] = UUID employeeId, [1] = UUID managerId.
+     */
+    @Query("SELECT e.id, e.managerId FROM Employee e WHERE e.id IN :ids")
+    List<Object[]> findManagerIdsByIds(@Param("ids") Collection<UUID> ids);
+
     Optional<Employee> findByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
     @EntityGraph(attributePaths = {"user"})

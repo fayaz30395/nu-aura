@@ -238,7 +238,7 @@ public class ApprovalEscalationService {
                 .workflowExecution(step.getWorkflowExecution())
                 .approvalStep(step.getApprovalStep())
                 .stepOrder(step.getStepOrder())
-                .stepName("Escalated: " + step.getStepName())
+                .stepName("Escalated: " + step.getStepName().replaceAll("^(Escalated: )+", ""))
                 .status(StepExecution.StepStatus.PENDING)
                 .assignedToUserId(targetUserId)
                 .assignedAt(LocalDateTime.now())

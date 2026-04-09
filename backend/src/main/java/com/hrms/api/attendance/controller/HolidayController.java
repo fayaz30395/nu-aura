@@ -45,6 +45,22 @@ public class HolidayController {
 
     // ===================== Read (all authenticated users) =====================
 
+    @Operation(summary = "Get holidays",
+            description = "Retrieves holidays for the current year (or specified year via ?year= param). Supports both paginated and list responses.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Holidays retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - valid authentication required")
+    })
+    @GetMapping
+    @RequiresPermission(Permission.ATTENDANCE_VIEW_SELF)
+    public ResponseEntity<List<Holiday>> getHolidays(
+            @Parameter(description = "Calendar year (defaults to current year)", example = "2026")
+            @RequestParam(required = false) Integer year) {
+        int targetYear = (year != null) ? year : java.time.Year.now().getValue();
+        List<Holiday> holidays = holidayService.getHolidaysByYear(targetYear);
+        return ResponseEntity.ok(holidays);
+    }
+
     @Operation(summary = "Get holidays by year",
             description = "Retrieves all holidays for a specific calendar year. Used for leave calculation and calendar display.")
     @ApiResponses({

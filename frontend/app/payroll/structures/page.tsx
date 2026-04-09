@@ -95,13 +95,13 @@ export default function SalaryStructuresPage() {
       employeeId: structure.employeeId,
       effectiveDate: structure.effectiveDate,
       baseSalary: structure.baseSalary,
-      allowances: structure.allowances.map(a => ({
+      allowances: (structure.allowances ?? []).map(a => ({
         name: a.name,
         amount: a.amount,
         type: a.type,
         description: a.description || ''
       })),
-      deductions: structure.deductions.map(d => ({
+      deductions: (structure.deductions ?? []).map(d => ({
         name: d.name,
         amount: d.amount,
         type: d.type,
@@ -220,7 +220,7 @@ export default function SalaryStructuresPage() {
           <DeleteConfirmModal
             isOpen={showDeleteConfirm && !!selectedStructure}
             title="Delete Salary Structure"
-            message={`Are you sure you want to delete the salary structure for ${selectedStructure?.employeeName}? This action cannot be undone.`}
+            message={`Are you sure you want to delete the salary structure for ${selectedStructure?.employeeName || 'this employee'}? This action cannot be undone.`}
             loading={deleteStructureMutation.isPending}
             onCancel={() => {
               setShowDeleteConfirm(false);

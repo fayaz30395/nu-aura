@@ -87,7 +87,7 @@ const _CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
 export default function AnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, hasAnyPermission, isReady: permReady} = usePermissions();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('30d');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
@@ -109,16 +109,17 @@ export default function AnalyticsPage() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  // RBAC guard — analytics requires REPORT_VIEW permission (DEF-51)
+  // RBAC guard — analytics requires REPORT_VIEW or ANALYTICS_VIEW permission (DEF-51)
+  const canViewAnalytics = hasAnyPermission(Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW);
   React.useEffect(() => {
     if (!permReady) return;
-    if (!hasPermission(Permissions.REPORT_VIEW)) {
+    if (!canViewAnalytics) {
       router.replace('/dashboard');
     }
-  }, [permReady, hasPermission, router]);
+  }, [permReady, canViewAnalytics, router]);
 
   // RBAC guard — block render for unauthorized users (DEF-51)
-  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+  if (!permReady || !canViewAnalytics) {
     return null;
   }
 

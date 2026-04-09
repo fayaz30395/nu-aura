@@ -10,6 +10,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,9 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.Set;
+import java.util.*;
 
 /**
  * REST controller for leave request management.
@@ -46,6 +45,7 @@ public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
     private final EmployeeService employeeService;
+    private final EmployeeRepository employeeRepository;
     private final com.hrms.common.security.DataScopeService dataScopeService;
 
     @PostMapping
@@ -124,7 +124,7 @@ public class LeaveRequestController {
         validateEmployeeAccess(employeeId, permission);
 
         Page<LeaveRequest> requests = leaveRequestService.getLeaveRequestsByEmployee(employeeId, pageable);
-        return ResponseEntity.ok(requests.map(this::toResponse));
+        return ResponseEntity.ok(toBatchResponse(requests));
     }
 
     @GetMapping("/status/{status}")
@@ -151,13 +151,14 @@ public class LeaveRequestController {
                 .and(cb.equal(root.get("status"), leaveStatus), scopeSpec.toPredicate(root, query, cb));
 
         Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(combinedSpec, pageable);
-        return ResponseEntity.ok(requests.map(this::toResponse));
+        return ResponseEntity.ok(toBatchResponse(requests));
     }
 
     @GetMapping
     @RequiresPermission({
             Permission.LEAVE_VIEW_ALL,
-            Permission.LEAVE_VIEW_TEAM
+            Permission.LEAVE_VIEW_TEAM,
+            Permission.LEAVE_VIEW_SELF
     })
     @Operation(summary = "Get all leave requests", description = "List leave requests with optional status filter via ?status= query param")
     @ApiResponse(responseCode = "200", description = "Leave requests retrieved successfully")
@@ -165,12 +166,25 @@ public class LeaveRequestController {
             @Parameter(description = "Filter by status (PENDING, APPROVED, REJECTED, CANCELLED)")
             @org.springframework.web.bind.annotation.RequestParam(required = false) String status,
             Pageable pageable) {
-        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
-                ? Permission.LEAVE_VIEW_ALL
-                : Permission.LEAVE_VIEW_TEAM;
+        // BUG-033 FIX: Determine view permission including LEAVE_VIEW_SELF.
+        // Users with only LEAVE_VIEW_SELF see their own leave requests only.
+        String permission;
+        if (com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)) {
+            permission = Permission.LEAVE_VIEW_ALL;
+        } else if (com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM)) {
+            permission = Permission.LEAVE_VIEW_TEAM;
+        } else {
+            permission = Permission.LEAVE_VIEW_SELF;
+        }
 
-        org.springframework.data.jpa.domain.Specification<LeaveRequest> spec = dataScopeService
-                .getScopeSpecification(permission);
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> spec;
+        if (Permission.LEAVE_VIEW_SELF.equals(permission)) {
+            // SELF scope: filter to current employee's own leave requests
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            spec = (root, query, cb) -> cb.equal(root.get("employeeId"), currentEmployeeId);
+        } else {
+            spec = dataScopeService.getScopeSpecification(permission);
+        }
 
         if (status != null && !status.isBlank()) {
             LeaveRequest.LeaveRequestStatus leaveStatus = LeaveRequest.LeaveRequestStatus.valueOf(status.toUpperCase());
@@ -181,7 +195,7 @@ public class LeaveRequestController {
         }
 
         Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(spec, pageable);
-        return ResponseEntity.ok(requests.map(this::toResponse));
+        return ResponseEntity.ok(toBatchResponse(requests));
     }
 
     @PostMapping("/{id}/approve")
@@ -264,6 +278,97 @@ public class LeaveRequestController {
         return ResponseEntity.ok(toResponse(updated));
     }
 
+    /**
+     * Batch-converts a page of LeaveRequest entities to response DTOs.
+     *
+     * <p>BUG-R05 FIX: Replaces per-request N+1 enrichment with 2 batch queries:
+     * 1 query for manager IDs, 1 query for all employee names. Reduces total queries
+     * from ~60 (3 per request x 20 per page) to exactly 2, fixing timeout on Neon DB.</p>
+     */
+    private Page<LeaveRequestResponse> toBatchResponse(Page<LeaveRequest> requests) {
+        if (requests.isEmpty()) {
+            return requests.map(this::toBasicResponse);
+        }
+
+        try {
+            // Collect all employee IDs we need to look up
+            Set<UUID> employeeIds = new HashSet<>();
+            for (LeaveRequest req : requests) {
+                if (req.getEmployeeId() != null) employeeIds.add(req.getEmployeeId());
+                if (req.getApprovedBy() != null) employeeIds.add(req.getApprovedBy());
+            }
+
+            // Batch query 1: get managerId for all employees in this page
+            Map<UUID, UUID> managerMap = new HashMap<>();
+            if (!employeeIds.isEmpty()) {
+                for (Object[] row : employeeRepository.findManagerIdsByIds(employeeIds)) {
+                    UUID empId = (UUID) row[0];
+                    UUID mgrId = (UUID) row[1];
+                    if (mgrId != null) {
+                        managerMap.put(empId, mgrId);
+                        employeeIds.add(mgrId); // also need manager names
+                    }
+                }
+            }
+
+            // Batch query 2: get full names for all IDs (employees + managers + approvers)
+            Map<UUID, String> nameMap = new HashMap<>();
+            if (!employeeIds.isEmpty()) {
+                for (Object[] row : employeeRepository.findFullNamesByIds(employeeIds)) {
+                    nameMap.put((UUID) row[0], (String) row[1]);
+                }
+            }
+
+            // Map each request using the pre-loaded data
+            return requests.map(req -> {
+                LeaveRequestResponse resp = toBasicResponse(req);
+
+                if (req.getEmployeeId() != null) {
+                    UUID managerId = managerMap.get(req.getEmployeeId());
+                    if (managerId != null) {
+                        resp.setApproverId(managerId);
+                        resp.setPendingApproverName(nameMap.get(managerId));
+                    }
+                }
+
+                if (req.getApprovedBy() != null) {
+                    resp.setApproverName(nameMap.get(req.getApprovedBy()));
+                }
+
+                return resp;
+            });
+        } catch (Exception e) {
+            log.warn("Batch enrichment failed, falling back to basic response: {}", e.getMessage());
+            return requests.map(this::toBasicResponse);
+        }
+    }
+
+    /**
+     * Basic response mapping without any enrichment (no DB lookups).
+     */
+    private LeaveRequestResponse toBasicResponse(LeaveRequest request) {
+        LeaveRequestResponse response = new LeaveRequestResponse();
+        BeanUtils.copyProperties(request, response);
+        response.setStatus(request.getStatus() != null ? request.getStatus().name() : "UNKNOWN");
+        if (request.getHalfDayPeriod() != null) {
+            response.setHalfDayPeriod(request.getHalfDayPeriod().name());
+        }
+        return response;
+    }
+
+    /**
+     * Converts a LeaveRequest entity to its response DTO.
+     *
+     * <p>BUG-004 FIX: Uses lightweight JPQL projection queries (findFullNameById,
+     * findManagerIdById) instead of loading full Employee entities. This avoids:
+     * <ul>
+     *   <li>N+1 query amplification (up to 3 Employee loads per leave request)</li>
+     *   <li>EncryptedStringConverter triggering on encrypted fields (taxId, bankAccount)</li>
+     *   <li>Connection pool exhaustion under load, which caused the original 503</li>
+     * </ul>
+     * <p>Note: This method is still used for single-entity responses (approve/reject/cancel).
+     * For list endpoints, use {@link #toBatchResponse(Page)} instead.</p>
+     */
     private LeaveRequestResponse toResponse(LeaveRequest request) {
         LeaveRequestResponse response = new LeaveRequestResponse();
         BeanUtils.copyProperties(request, response);
@@ -272,31 +377,27 @@ public class LeaveRequestController {
             response.setHalfDayPeriod(request.getHalfDayPeriod().name());
         }
 
-        // Get the employee to find reporting manager (approver)
-        UUID tenantId = TenantContext.getCurrentTenant();
+        // Use projection queries to avoid loading full Employee entities with encrypted fields
         if (request.getEmployeeId() != null) {
             try {
-                Optional<Employee> employeeOpt = employeeService.findByIdAndTenant(request.getEmployeeId(), tenantId);
-                if (employeeOpt.isPresent()) {
-                    Employee employee = employeeOpt.get();
-                    if (employee.getManagerId() != null) {
-                        response.setApproverId(employee.getManagerId());
-                        // Get the manager's name
-                        Optional<Employee> managerOpt = employeeService.findByIdAndTenant(employee.getManagerId(),
-                                tenantId);
-                        managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
-                    }
+                // Get managerId via lightweight projection (avoids EncryptedStringConverter)
+                Optional<UUID> managerIdOpt = employeeRepository.findManagerIdById(request.getEmployeeId());
+                if (managerIdOpt.isPresent() && managerIdOpt.get() != null) {
+                    response.setApproverId(managerIdOpt.get());
+                    // Get manager name via projection (single-column JPQL, no entity load)
+                    employeeRepository.findFullNameById(managerIdOpt.get())
+                            .ifPresent(response::setPendingApproverName);
                 }
             } catch (Exception e) { // Intentional broad catch — controller error boundary
                 log.debug("Non-critical enrichment failed for leave request {}: {}", request.getId(), e.getMessage());
             }
         }
 
-        // If already approved/rejected, get the approver's name
+        // If already approved/rejected, get the approver's name via projection
         if (request.getApprovedBy() != null) {
             try {
-                Optional<Employee> approverOpt = employeeService.findByIdAndTenant(request.getApprovedBy(), tenantId);
-                approverOpt.ifPresent(approver -> response.setApproverName(approver.getFullName()));
+                employeeRepository.findFullNameById(request.getApprovedBy())
+                        .ifPresent(response::setApproverName);
             } catch (Exception e) { // Intentional broad catch — controller error boundary
                 log.debug("Non-critical approver name enrichment failed for leave request {}: {}", request.getId(), e.getMessage());
             }
