@@ -64,6 +64,11 @@ public class StatutoryDeductionService {
     // create a DB-driven IncomeTaxSlab entity (similar to ProfessionalTaxSlab)
     // with fiscal_year, min_income, max_income, rate columns and a tenant-aware
     // repository. For now, these are correct for FY 2024-25.
+    // NEW-06 FIX: Rebate u/s 87A — income <= 7L under New Regime gets zero tax
+    private static final BigDecimal REBATE_87A_THRESHOLD = new BigDecimal("700000");
+    // NEW-14 FIX: 4% Health & Education Cess on tax liability
+    private static final BigDecimal CESS_RATE = new BigDecimal("0.04");
+
     private static final BigDecimal SLAB_3L = new BigDecimal("300000");
     private static final BigDecimal SLAB_6L = new BigDecimal("600000");
     private static final BigDecimal SLAB_9L = new BigDecimal("900000");
@@ -276,12 +281,23 @@ public class StatutoryDeductionService {
      *   Above ₹15,00,000         — 30%
      * </pre>
      * <p>
-     * Note: Rebate u/s 87A (income ≤ ₹7L → tax = 0) and surcharge/cess are intentionally
-     * excluded here for simplicity; they can be layered in a future enhancement.
+     * NEW-06 FIX: Rebate u/s 87A applied — income ≤ ₹7L under New Regime gets zero tax.
+     * NEW-14 FIX: 4% Health & Education Cess applied on tax liability.
      */
     private BigDecimal calculateMonthlyTds(BigDecimal grossSalary) {
         BigDecimal annualIncome = grossSalary.multiply(MONTHS_IN_YEAR);
+
+        // Rebate u/s 87A: income <= 7L under New Regime → zero tax
+        if (annualIncome.compareTo(REBATE_87A_THRESHOLD) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
         BigDecimal annualTax = computeNewRegimeTax(annualIncome);
+
+        // Apply 4% Health & Education Cess
+        BigDecimal cess = annualTax.multiply(CESS_RATE).setScale(2, RoundingMode.HALF_UP);
+        annualTax = annualTax.add(cess);
+
         return annualTax.divide(MONTHS_IN_YEAR, 2, RoundingMode.HALF_UP);
     }
 

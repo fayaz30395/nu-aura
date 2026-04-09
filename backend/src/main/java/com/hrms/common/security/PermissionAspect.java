@@ -9,6 +9,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -26,11 +28,16 @@ import java.util.stream.Collectors;
  * <p>When {@code revalidate = true}, permissions are fetched directly from the
  * database instead of trusting JWT claims. This provides defence against stale
  * JWT permissions on sensitive operations like payroll or admin actions.</p>
+ *
+ * <p>NEW-07 FIX: {@code @Order(HIGHEST_PRECEDENCE)} ensures this aspect runs
+ * before Spring MVC validation, so users without permission see 403 (not 400
+ * from validation errors that leak API contract details).</p>
  */
 @Aspect
 @Component
 @Slf4j
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class PermissionAspect {
 
     private final SecurityService securityService;

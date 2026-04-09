@@ -284,11 +284,12 @@ public class WorkflowEscalationScheduler {
         if (step.getAssignedToUserId() != null) {
             try {
                 // Get the approver's manager's manager
+                // NEW-17 FIX: Added soft-delete filters (is_active = true, is_deleted = false)
                 UUID skipLevelManager = jdbcTemplate.queryForObject(
                         "SELECT m2.user_id FROM employees e " +
-                                "JOIN employees m1 ON e.reporting_manager_id = m1.id " +
-                                "JOIN employees m2 ON m1.reporting_manager_id = m2.id " +
-                                "WHERE e.user_id = ? AND e.tenant_id = ?",
+                                "JOIN employees m1 ON e.reporting_manager_id = m1.id AND m1.is_active = true AND (m1.is_deleted = false OR m1.is_deleted IS NULL) " +
+                                "JOIN employees m2 ON m1.reporting_manager_id = m2.id AND m2.is_active = true AND (m2.is_deleted = false OR m2.is_deleted IS NULL) " +
+                                "WHERE e.user_id = ? AND e.tenant_id = ? AND e.is_active = true AND (e.is_deleted = false OR e.is_deleted IS NULL)",
                         UUID.class,
                         step.getAssignedToUserId(),
                         tenantId);
@@ -296,10 +297,11 @@ public class WorkflowEscalationScheduler {
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 // Try just the direct manager
                 try {
+                    // NEW-17 FIX: Added soft-delete filters
                     UUID directManager = jdbcTemplate.queryForObject(
                             "SELECT m.user_id FROM employees e " +
-                                    "JOIN employees m ON e.reporting_manager_id = m.id " +
-                                    "WHERE e.user_id = ? AND e.tenant_id = ?",
+                                    "JOIN employees m ON e.reporting_manager_id = m.id AND m.is_active = true AND (m.is_deleted = false OR m.is_deleted IS NULL) " +
+                                    "WHERE e.user_id = ? AND e.tenant_id = ? AND e.is_active = true AND (e.is_deleted = false OR e.is_deleted IS NULL)",
                             UUID.class,
                             step.getAssignedToUserId(),
                             tenantId);

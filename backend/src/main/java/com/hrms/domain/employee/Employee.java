@@ -131,6 +131,10 @@ public class Employee extends TenantAware {
     @Column(nullable = false, length = 20)
     private EmployeeStatus status;
 
+    // NEW-10: Flag for payroll recalculation after department transfer or other changes
+    @Column(name = "payroll_recalculation_required")
+    private Boolean payrollRecalculationRequired = false;
+
     @Convert(converter = EncryptedStringConverter.class)
     @Column(length = 100)
     private String bankAccountNumber;

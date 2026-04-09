@@ -268,6 +268,18 @@ public class ReviewCycleService {
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
+        // NEW-18 FIX: Enforce self-review deadline
+        if (review.getReviewCycleId() != null) {
+            reviewCycleRepository.findByIdAndTenantId(review.getReviewCycleId(), tenantId)
+                    .ifPresent(cycle -> {
+                        if (cycle.getSelfReviewDeadline() != null
+                                && LocalDate.now().isAfter(cycle.getSelfReviewDeadline())) {
+                            throw new IllegalArgumentException(
+                                    "Self-assessment deadline has passed (" + cycle.getSelfReviewDeadline() + ")");
+                        }
+                    });
+        }
+
         if (request.getCompetencyRatings() != null && !request.getCompetencyRatings().isEmpty()) {
             int avg = (int) Math.round(request.getCompetencyRatings().stream()
                     .mapToInt(SelfAssessmentRequest.CompetencyRatingItem::getRating)
@@ -293,6 +305,18 @@ public class ReviewCycleService {
 
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
+
+        // NEW-18 FIX: Enforce manager review deadline
+        if (review.getReviewCycleId() != null) {
+            reviewCycleRepository.findByIdAndTenantId(review.getReviewCycleId(), tenantId)
+                    .ifPresent(cycle -> {
+                        if (cycle.getManagerReviewDeadline() != null
+                                && LocalDate.now().isAfter(cycle.getManagerReviewDeadline())) {
+                            throw new IllegalArgumentException(
+                                    "Manager review deadline has passed (" + cycle.getManagerReviewDeadline() + ")");
+                        }
+                    });
+        }
 
         review.setManagerRating(request.getOverallRating());
         review.setIncrementRecommendation(request.getIncrementRecommendation());

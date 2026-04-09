@@ -123,6 +123,17 @@ public class Payslip extends TenantAware {
         if (specialAllowance != null) grossSalary = grossSalary.add(specialAllowance);
         if (otherAllowances != null) grossSalary = grossSalary.add(otherAllowances);
 
+        // NEW-01 FIX: Pro-rata salary for mid-month joiners / partial attendance.
+        // When both workingDays and presentDays are set and presentDays < workingDays,
+        // scale gross salary proportionally: gross * (presentDays / workingDays).
+        if (workingDays != null && presentDays != null
+                && workingDays > 0 && presentDays < workingDays) {
+            BigDecimal ratio = new BigDecimal(presentDays)
+                    .divide(new BigDecimal(workingDays), 6, java.math.RoundingMode.HALF_UP);
+            this.grossSalary = grossSalary.multiply(ratio)
+                    .setScale(2, java.math.RoundingMode.HALF_UP);
+        }
+
         this.totalDeductions = BigDecimal.ZERO;
         if (providentFund != null) totalDeductions = totalDeductions.add(providentFund);
         if (professionalTax != null) totalDeductions = totalDeductions.add(professionalTax);

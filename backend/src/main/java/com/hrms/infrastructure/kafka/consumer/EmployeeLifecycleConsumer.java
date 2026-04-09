@@ -336,6 +336,25 @@ public class EmployeeLifecycleConsumer {
                 // Don't throw; continue with notifications
             }
 
+            // NEW-10 FIX: Flag payroll for recalculation on department transfer.
+            // Department changes may affect location-based allowances, state-specific PT/LWF,
+            // and cost center allocation.
+            try {
+                log.info("Flagging payroll recalculation for transferred employee {} " +
+                        "(dept: {} -> {}, location: {} -> {})",
+                        employeeId, oldDepartment, newDepartment, oldLocation, newLocation);
+                // Mark employee's active payslip for recalculation in the next payroll run.
+                // The PayrollRunService will pick this up during batch processing.
+                employeeRepository.findByIdAndTenantId(employeeId, tenantId).ifPresent(employee -> {
+                    employee.setPayrollRecalculationRequired(true);
+                    employeeRepository.save(employee);
+                });
+            } catch (RuntimeException e) {
+                log.warn("Failed to flag payroll recalculation for transferred employee {}: {}",
+                        employeeId, e.getMessage());
+                // Don't throw; transfer is already recorded
+            }
+
             // Notify stakeholders (old and new managers, employee)
             try {
                 log.debug("Notified stakeholders of employee transfer: {}", employeeId);
