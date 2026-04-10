@@ -283,7 +283,7 @@ export default function ShiftDefinitionsPage() {
                       </span>
                       <span
                         className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">
-                        {shift.netWorkingHours}h net
+                        {shift.netWorkingHours != null && shift.netWorkingHours < 0 ? shift.netWorkingHours + 24 : shift.netWorkingHours}h net
                       </span>
                       <span
                         className="px-1.5 py-0.5 bg-surface-100 dark:bg-surface-700 rounded text-xs text-surface-600 dark:text-surface-300">

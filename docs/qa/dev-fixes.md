@@ -42,3 +42,27 @@
 - **Root cause**: `s.totalCTC.toLocaleString()` crashes when `totalCTC` is null/undefined (salary structure with no CTC value set).
 - **Fix**: Added nullish coalescing: `(s.totalCTC ?? 0).toLocaleString()` — defaults to 0 when CTC is undefined.
 - **Verified**: tsc passes
+
+## BUG-001 (R2): Payroll run name still blank after initial fix (FRONTEND)
+- **File**: frontend/app/payroll/_components/PayrollRunsTab.tsx:110
+- **Root cause**: Initial fix used `run.runName || fallback` which doesn't catch whitespace-only strings. The backend may return `" "` or the value could be a non-empty but blank string.
+- **Fix**: Changed to `run.runName?.trim() ? run.runName : fallback` — handles null, undefined, empty, and whitespace-only strings.
+- **Verified**: tsc passes
+
+## BUG-002 (R2): Leave calendar STILL had infinite loop after useMemo on leaves (FRONTEND)
+- **File**: frontend/app/leave/calendar/page.tsx
+- **Root cause**: The initial fix (useMemo on `leaves`) was insufficient. The real problem was the useEffect → generateCalendar() → setCalendarDays(days) → re-render cycle. Even with stable `leaves`, `setCalendarDays` triggers a re-render which re-runs the useEffect. The pattern of `useEffect + setState` for derived data is inherently fragile.
+- **Fix**: Replaced `useState(calendarDays)` + `useEffect(generateCalendar)` with a single `useMemo` that derives `calendarDays` directly from `currentDate` and `leaves`. No state, no effect, no render loop. Calendar days are now computed derivations, not stored state.
+- **Verified**: tsc passes
+
+## BUG-004 (R2): Night shift -16.5h still showing after initial fix (FRONTEND)
+- **File**: frontend/app/admin/shifts/page.tsx + frontend/app/shifts/definitions/page.tsx
+- **Root cause**: Dev server may not have hot-reloaded the fix. Also found a second instance of the same bug in shifts/definitions/page.tsx:286 that wasn't covered by the initial fix.
+- **Fix**: Applied same cross-midnight correction to shifts/definitions/page.tsx. Restarted frontend dev server with clean .next cache to ensure all changes are picked up.
+- **Verified**: tsc passes, frontend restarted
+
+## BUG-002 (R2-final): Leave calendar infinite loop — deeper fix (FRONTEND)
+- **File**: frontend/app/leave/calendar/page.tsx
+- **Root cause**: React Query's `data.content` creates new array references on every refetch/background update. Even with useMemo, the memo dependencies (`.data?.content`) kept changing referentially, triggering cascading re-renders. Additionally, the viewMode switching useEffect had `viewMode` in its deps, creating a potential re-trigger loop.
+- **Fix**: (1) Stabilized `leaves` using JSON.stringify comparison — memo only recomputes when actual leave data changes, not when React Query creates new wrapper objects. (2) Removed `viewMode` from the switching useEffect deps — it should only run once when hydration completes, not re-run on every viewMode change.
+- **Verified**: tsc passes

@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useRef, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AlertCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -37,7 +37,6 @@ export default function LeaveCalendarPage() {
       router.replace('/dashboard');
     }
   }, [permReady, hasPermission, router]);
-  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [viewMode, setViewMode] = useState<'team' | 'my'>('my');
 
   // Determine which query to use based on viewMode
@@ -45,36 +44,34 @@ export default function LeaveCalendarPage() {
   const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
 
-  const leaves = useMemo(
-    () => (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [],
-    [viewMode, employeeRequestsQuery.data?.content, approvedRequestsQuery.data?.content]
-  );
+  // Stabilize leaves with a ref to avoid render cascades from React Query refetches
+  const rawContent = viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content;
+  const leavesRef = useRef<LeaveRequest[]>([]);
+  const leavesJson = JSON.stringify(rawContent ?? []);
+  const leaves = useMemo(() => {
+    const parsed = JSON.parse(leavesJson) as LeaveRequest[];
+    leavesRef.current = parsed;
+    return parsed;
+  }, [leavesJson]);
+
   const isAnyError = employeeRequestsQuery.isError || approvedRequestsQuery.isError;
   const isAnyFetching = employeeRequestsQuery.fetchStatus === 'fetching' || approvedRequestsQuery.fetchStatus === 'fetching';
   const loading = !isAnyError && isAnyFetching && !employeeRequestsQuery.data && !approvedRequestsQuery.data;
 
-  // Switch to team view if user has no employeeId
+  // Switch to team view if user has no employeeId (run once on hydration)
   useEffect(() => {
-    if (hasHydrated && !user?.employeeId && viewMode === 'my') {
+    if (hasHydrated && !user?.employeeId) {
       setViewMode('team');
     }
-  }, [hasHydrated, user?.employeeId, viewMode]);
-
-  // Generate calendar when data, view mode, or month changes.
-  // Always generate — even with zero leaves the grid of day cells must render.
-  useEffect(() => {
-    generateCalendar();
-    // generateCalendar is defined below and only depends on currentDate/viewMode/leaves
-    // (all listed). Including it without useCallback would cause an infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDate, viewMode, leaves]);
+  }, [hasHydrated, user?.employeeId]);
 
-  const generateCalendar = () => {
+  // Derive calendar days from current state — no useEffect/setState needed
+  const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    const _lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
@@ -105,8 +102,8 @@ export default function LeaveCalendarPage() {
       });
     }
 
-    setCalendarDays(days);
-  };
+    return days;
+  }, [currentDate, leaves]);
 
   const previousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
