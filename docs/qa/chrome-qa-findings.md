@@ -1315,3 +1315,53 @@
 
 ## Overall Health: 8/12 tests PASS, 1 VERIFIED-FIXED, 3 bugs persisting (dev server HMR issues complicate verification)
 
+
+---
+
+# ROUND 3 — FINAL VERIFICATION + NAVIGATION TESTING (2026-04-10)
+
+## TASK 1: BUG FIX VERIFICATION
+
+## [BUG-001 Verification]: /payroll/runs — Draft run with no name
+- **Status**: STILL-BROKEN
+- **Details**: The RUN NAME column for the DRAFT payroll run is completely empty (innerHTML is blank). Expected "Untitled Run" in italic text. The PERIOD column shows em-dashes ("-- - --"), EMPLOYEES is blank, GROSS AMOUNT shows "-". The backend API returns no runName field for this draft run.
+- **Console errors**: none
+- **Bug**: BUG-001/BUG-008: Run name is empty for draft payroll runs — frontend shows blank cell instead of "Untitled Run" fallback. Likely a frontend rendering issue where the fallback text is not applied when runName is null/undefined.
+
+## [BUG-002 Verification]: /leave/calendar — Maximum update depth exceeded
+- **Status**: STILL-BROKEN
+- **Details**: Calendar renders visually (April 2026, legend, leave entries on Team tab). However, console output is 845K+ characters with "Maximum update depth exceeded" error at LeaveCalendarPage (page.tsx:26). The infinite re-render loop persists. Switching between My/Team tabs works functionally but the error fires on every render. The "My Leaves" tab styling stays highlighted even when Team Leaves content is shown (minor UI glitch).
+- **Console errors**: "Maximum update depth exceeded" — component calls setState inside useEffect with dependency that changes on every render
+- **Bug**: BUG-002/BUG-007: Infinite re-render loop persists in LeaveCalendarPage despite previous useMemo fix attempts. React Query data reference instability suspected.
+
+## [BUG-003 Verification]: /fluence/wall — Graceful empty state
+- **Status**: VERIFIED-FIXED
+- **Details**: Activity Wall renders correctly with Post/Poll/Praise composer tabs, Trending Content sidebar ("No trending content yet"), Recent Activity sidebar ("No recent activity"), and content filter tabs (All/Wiki/Blog/Template). Shows graceful message "Unable to load activity feed. The service may be temporarily unavailable." No crash, proper layout.
+- **Console errors**: none relevant
+- **Bug**: none — BUG-003 confirmed fixed
+
+## [BUG-004 Verification]: /admin/shifts — Night shift working hours
+- **Status**: STILL-BROKEN (CODE-FIXED / DEV-HMR-STALE)
+- **Details**: Night shift (NGT) 22:00-06:00 still shows "Working Hours: -16.5h" instead of expected 7.5h. All other shifts display correctly: Afternoon (7.5h), Flexible (5h), General (8h), Morning (7.5h). The negative calculation is a backend issue (overnight shift calculation not wrapping across midnight). Code fix confirmed in source but backend may need restart.
+- **Console errors**: none
+- **Bug**: BUG-004/BUG-009: Backend returns negative netWorkingHours for overnight shifts
+
+## [BUG-005 Verification]: /admin/payroll — Page crash with toLocaleString
+- **Status**: STILL-BROKEN (CODE-FIXED / DEV-HMR-STALE)
+- **Details**: Page crashes with "Admin Error - An unexpected error occurred. Please try again." and error message "Cannot read properties of undefined (reading 'toLocaleString')". Error boundary catches the crash gracefully (Try Again / Back to Admin / Go to Home). Bottom-left shows "4 errors" badge. Code fix confirmed in source but dev server HMR may be serving stale compiled modules.
+- **Console errors**: toLocaleString TypeError (155K+ chars of console output)
+- **Bug**: BUG-005/BUG-006: Payroll admin page crashes due to undefined data during Array.map iteration
+
+## TASK 2: INTERACTION TESTING
+
+## [Interaction]: /helpdesk/tickets — Ticket detail view
+- **Status**: FAIL
+- **Details**: Ticket list loads correctly with 7 tickets showing ticket ID, subject, requester, category, priority, status, and assignee columns. However, clicking on a ticket ID (styled as a blue link) does NOT navigate to a ticket detail view. Neither clicking the ticket ID nor clicking the row opens any detail panel or page. Ticket IDs appear to be non-functional links.
+- **Console errors**: none
+- **Bug**: BUG-010: Ticket IDs on /helpdesk/tickets are styled as links but not clickable — no ticket detail view navigation exists
+
+## [Interaction]: /contracts — Contract detail view
+- **Status**: FAIL
+- **Details**: Contracts list loads correctly with 3 contracts, stat cards (Active: 0, Expiring Soon: 0, Expired: 0, Total: 3), search, filter, and "+ New Contract" button. All contracts show DRAFT status. However, clicking "View" button does NOT navigate to a contract detail page. Breadcrumbs show "Home > Dashboard > Contracts" correctly. Note: All Active Contracts show 0 despite 3 DRAFT contracts existing — stat cards may not count DRAFT status.
+- **Console errors**: none
+- **Bug**: BUG-011: Contract "View" buttons on /contracts do not navigate to a detail page
