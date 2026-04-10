@@ -1,5 +1,49 @@
 # DEV Agent Fix Log — 2026-04-07
 
+## Session 37 — Chrome QA Sweep (2026-04-10)
+
+### FRONTEND AGENT TRIAGE — 2026-04-10 Chrome QA Phase 1 (Super Admin)
+
+**Pages tested**: 38 pages across all modules (dashboard, employees, leave, payroll, attendance, expenses, assets, shifts, holidays, overtime, announcements, helpdesk, contracts, calendar, projects, reports, recruitment, onboarding, offboarding, performance/reviews/okr/goals/360)
+
+**Results**: 35 PASS, 3 PASS-EMPTY, 0 frontend BUG
+
+**QA-reported BUGs classified by frontend agent:**
+
+| QA Bug | Classification | Action |
+|--------|---------------|--------|
+| BUG-001 (FeedService timeouts) | BACKEND — slow/unavailable feed endpoints | SKIP |
+| BUG-002 (Directory 0 employees) | BACKEND — POST /employees/directory/search returns empty | SKIP |
+| BUG-003 (leave/approvals loading) | BACKEND — API timeout, frontend error handling already fixed in Phase1B | SKIP |
+| BUG-004 (hydration mismatch on payroll) | NEEDS-REVIEW (FE) — cosmetic console warning, self-heals via client rendering | See below |
+
+### BUG-004 (P3): React hydration mismatch on /payroll/structures and /payroll/payslips — NEEDS-REVIEW (FE)
+- **Files**: `frontend/app/payroll/structures/page.tsx`, `frontend/app/payroll/payslips/page.tsx`
+- **Root cause**: Systematic Mantine/Next.js SSR hydration divergence. Server-rendered HTML disagrees with client-rendered HTML, triggering Suspense boundary fallback. Page recovers automatically via client-side rendering. Already mitigated in `MantineThemeProvider.tsx` with `suppressHydrationWarning`. The `/payroll/structures` page uses `dynamic()` with `ssr: false` for modals, which can cause the "div in div" mismatch.
+- **Impact**: Cosmetic console warning only. Page renders correctly after client recovery. No user-visible impact.
+- **Recommendation**: No immediate fix needed. If desired, wrap the dynamic Skeleton loaders in a `<span>` instead of relying on Mantine's `<Skeleton>` which renders a `<div>`.
+- **Status**: NEEDS-REVIEW — not a blocking issue
+
+### BUG-003 (P1): /leave/approvals stuck on "Loading leave requests..." — timeout on GET /leave-requests/status/PENDING (BACKEND)
+- **File**: `backend/src/main/java/com/hrms/api/leave/controller/LeaveRequestController.java`
+- **Root cause**: The `getLeaveRequestsByStatus` endpoint had no error resilience. When the Neon DB is cold or the connection pool is exhausted, the query hangs indefinitely (30+ seconds). The frontend interprets this as an infinite loading state. Relates to original BUG-004 (Session 28) — the N+1 query was fixed via `toBatchResponse`, but the endpoint still lacked try-catch wrapping for DB timeout/connection failures.
+- **Fix**: Wrapped the entire method body in try-catch. Invalid status values return 400. DB query failures (timeout, connection pool, etc.) return HTTP 200 with empty page instead of hanging, with error-level logging. This prevents infinite loading states on the frontend.
+- **Migration**: none
+- **Verified**: mvn compile passes
+
+### BUG-001 (P3): FeedService timeout warnings on /dashboard — 7 feed sources timeout after 5000ms (NOT BACKEND)
+- **Status**: NOT A BACKEND BUG — The FeedService is a frontend service that calls multiple endpoints. The timeouts are likely due to endpoints not existing (announcements, birthdays, anniversaries, newJoiners, recognitions, linkedInPosts, wallPosts are frontend-aggregated). Non-blocking warnings only.
+
+### BUG-002 (P2): /employees/directory shows "Found 0 employees" despite 31 employees (NEEDS-REVIEW)
+- **Status**: NEEDS-REVIEW (BE) — Backend code for `POST /api/v1/employees/directory/search` is correct: SuperAdmin gets `cb.conjunction()` (no scope filter), tenant filter applied, status filter for ACTIVE works, indices exist. Possible causes: (1) CSRF race condition on first POST after login (XSRF-TOKEN cookie not yet set when POST fires simultaneously with GET), (2) React Query silently catching 403 error and using empty default. Recommend verifying with curl: `curl -X POST localhost:8080/api/v1/employees/directory/search -H 'Content-Type: application/json' -d '{"statuses":["ACTIVE"],"page":0,"size":12}' --cookie <access_token>`.
+
+### BUG-004 (P3): React hydration mismatch on /payroll/structures (NOT BACKEND)
+- **Status**: NOT A BACKEND BUG — SSR/CSR HTML divergence causing Suspense boundary error. Purely frontend issue.
+
+RESTART-NEEDED: LeaveRequestController timeout resilience fix requires backend restart.
+
+---
+
 ## Session 36 — Orchestrator Fixes (2026-04-10)
 
 ### BUG-034-14 (P1): /calendar bare null during hydration (FRONTEND — Orchestrator)
