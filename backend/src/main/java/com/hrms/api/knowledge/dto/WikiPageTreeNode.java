@@ -16,4 +16,5 @@ public record WikiPageTreeNode(
         Integer viewCount,
         UUID parentPageId,
         List<WikiPageTreeNode> children
-) {}
+) {
+}

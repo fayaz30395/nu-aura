@@ -20,8 +20,7 @@ SELECT gen_random_uuid(),
        NOW()
 FROM users u
 WHERE u.email = 'fayaz.m@nulogic.io'
-  AND NOT EXISTS (SELECT 1 FROM roles r WHERE r.code = 'SUPER_ADMIN' AND r.tenant_id = u.tenant_id)
-  LIMIT 1;
+  AND NOT EXISTS (SELECT 1 FROM roles r WHERE r.code = 'SUPER_ADMIN' AND r.tenant_id = u.tenant_id) LIMIT 1;
 
 -- 3. Assign SUPER_ADMIN role to the user
 INSERT INTO user_roles (user_id, role_id)

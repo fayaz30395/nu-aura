@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   WellnessProgram,
   WellnessChallenge,
@@ -56,7 +56,7 @@ export const wellnessService = {
     const params: Record<string, string> = {};
     if (teamId) params.teamId = teamId;
     if (teamName) params.teamName = teamName;
-    await apiClient.post(`${BASE_URL}/challenges/${challengeId}/join`, undefined, { params });
+    await apiClient.post(`${BASE_URL}/challenges/${challengeId}/join`, undefined, {params});
   },
 
   async leaveChallenge(challengeId: string): Promise<void> {
@@ -71,7 +71,7 @@ export const wellnessService = {
 
   async getHealthLogs(startDate: string, endDate: string): Promise<HealthLog[]> {
     const response = await apiClient.get<HealthLog[]>(
-      `${BASE_URL}/health-logs`, { params: { startDate, endDate } }
+      `${BASE_URL}/health-logs`, {params: {startDate, endDate}}
     );
     return response.data;
   },
@@ -83,13 +83,13 @@ export const wellnessService = {
   },
 
   async getLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
-    const response = await apiClient.get<LeaderboardEntry[]>(`${BASE_URL}/leaderboard`, { params: { limit } });
+    const response = await apiClient.get<LeaderboardEntry[]>(`${BASE_URL}/leaderboard`, {params: {limit}});
     return response.data;
   },
 
   async getChallengeLeaderboard(challengeId: string, limit = 10): Promise<LeaderboardEntry[]> {
     const response = await apiClient.get<LeaderboardEntry[]>(
-      `${BASE_URL}/challenges/${challengeId}/leaderboard`, { params: { limit } }
+      `${BASE_URL}/challenges/${challengeId}/leaderboard`, {params: {limit}}
     );
     return response.data;
   },

@@ -222,7 +222,9 @@ WHERE r.name IN ('HR_ADMIN', 'HR_MANAGER', 'PAYROLL_MANAGER', 'SUPER_ADMIN')
   AND p.code IN ('LWF:VIEW', 'LWF:MANAGE')
   AND NOT EXISTS (SELECT 1
                   FROM role_permissions rp
-                  WHERE rp.role_id = r.id AND rp.permission_id = p.id AND rp.is_deleted = false)
+                  WHERE rp.role_id = r.id
+                    AND rp.permission_id = p.id
+                    AND rp.is_deleted = false)
   ON CONFLICT DO NOTHING;
 
 -- 6. Seed default LWF configurations for major Indian states

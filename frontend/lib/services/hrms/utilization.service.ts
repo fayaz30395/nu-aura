@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   UtilizationReport,
   TimeSummaryReport,
@@ -28,7 +28,7 @@ export const utilizationService = {
   ): Promise<UtilizationReport> {
     const response = await apiClient.get<UtilizationReport>(
       `/time-tracking/reports/employee/${employeeId}/utilization`,
-      { params: { startDate, endDate } }
+      {params: {startDate, endDate}}
     );
     return response.data;
   },
@@ -41,7 +41,7 @@ export const utilizationService = {
   ): Promise<TimeSummaryReport> {
     const response = await apiClient.get<TimeSummaryReport>(
       `/time-tracking/reports/employee/${employeeId}/summary`,
-      { params: { startDate, endDate } }
+      {params: {startDate, endDate}}
     );
     return response.data;
   },
@@ -53,7 +53,7 @@ export const utilizationService = {
   ): Promise<WeeklyTimeReport> {
     const response = await apiClient.get<WeeklyTimeReport>(
       `/time-tracking/reports/employee/${employeeId}/weekly`,
-      { params: { weekStartDate } }
+      {params: {weekStartDate}}
     );
     return response.data;
   },
@@ -66,7 +66,7 @@ export const utilizationService = {
   ): Promise<MonthlyTimeReport> {
     const response = await apiClient.get<MonthlyTimeReport>(
       `/time-tracking/reports/employee/${employeeId}/monthly`,
-      { params: { year: year.toString(), month: month.toString() } }
+      {params: {year: year.toString(), month: month.toString()}}
     );
     return response.data;
   },
@@ -79,7 +79,7 @@ export const utilizationService = {
   ): Promise<ProjectTimeReport> {
     const response = await apiClient.get<ProjectTimeReport>(
       `/time-tracking/reports/project/${projectId}`,
-      { params: { startDate, endDate } }
+      {params: {startDate, endDate}}
     );
     return response.data;
   },
@@ -96,7 +96,7 @@ export const utilizationService = {
 
     const response = await apiClient.get<UtilizationDashboardData>(
       `/time-tracking/reports/dashboard`,
-      { params }
+      {params}
     );
     return response.data;
   },
@@ -110,7 +110,7 @@ export const utilizationService = {
   ): Promise<PageResponse<EmployeeUtilization>> {
     const response = await apiClient.get<PageResponse<EmployeeUtilization>>(
       `/time-tracking/reports/utilization`,
-      { params: { startDate, endDate, page: page.toString(), size: size.toString() } }
+      {params: {startDate, endDate, page: page.toString(), size: size.toString()}}
     );
     return response.data;
   },
@@ -139,7 +139,7 @@ export const utilizationService = {
 
     const response = await apiClient.get<PageResponse<TimeEntry>>(
       `/time-tracking/entries`,
-      { params }
+      {params}
     );
     return response.data;
   },
@@ -149,7 +149,7 @@ export const utilizationService = {
     format: 'csv' | 'excel' | 'pdf',
     filters: UtilizationFilterOptions
   ): Promise<Blob> {
-    const params: Record<string, string> = { format };
+    const params: Record<string, string> = {format};
     if (filters.startDate) params.startDate = filters.startDate;
     if (filters.endDate) params.endDate = filters.endDate;
     if (filters.departmentId) params.departmentId = filters.departmentId;

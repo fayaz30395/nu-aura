@@ -41,56 +41,6 @@ public class ResourcePoolController {
     // DTOs (static inner classes — no separate DTO file needed at stub stage)
     // -----------------------------------------------------------------------
 
-    @Data
-    @NoArgsConstructor
-    public static class ResourcePoolSummary {
-        private UUID id;
-        private String name;
-        private String description;
-        private String poolType;        // SHARED | EXCLUSIVE
-        private int memberCount;
-        private boolean isActive;
-        private String createdAt;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class ResourcePoolMember {
-        private UUID employeeId;
-        private String employeeName;
-        private String designation;
-        private int currentAllocationPercent;
-        private int availablePercent;
-        private String joinedPoolAt;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class CreatePoolRequest {
-        @NotBlank
-        private String name;
-        private String description;
-        private String poolType = "SHARED";
-        private List<UUID> memberEmployeeIds;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class CreatePoolResponse {
-        private UUID id;
-        private String name;
-        private String description;
-        private String poolType;
-        private int memberCount;
-        private boolean isActive;
-        private String createdAt;
-        private String message;
-    }
-
-    // -----------------------------------------------------------------------
-    // Endpoints
-    // -----------------------------------------------------------------------
-
     /**
      * GET /api/v1/resource-pools
      * List all resource pools for the current tenant.
@@ -158,6 +108,10 @@ public class ResourcePoolController {
         return ResponseEntity.ok(Collections.emptyList());
     }
 
+    // -----------------------------------------------------------------------
+    // Endpoints
+    // -----------------------------------------------------------------------
+
     /**
      * POST /api/v1/resource-pools/{id}/members
      * Add employees to a resource pool.
@@ -186,5 +140,51 @@ public class ResourcePoolController {
             @PathVariable UUID id,
             @PathVariable UUID employeeId) {
         return ResponseEntity.noContent().build();
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class ResourcePoolSummary {
+        private UUID id;
+        private String name;
+        private String description;
+        private String poolType;        // SHARED | EXCLUSIVE
+        private int memberCount;
+        private boolean isActive;
+        private String createdAt;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class ResourcePoolMember {
+        private UUID employeeId;
+        private String employeeName;
+        private String designation;
+        private int currentAllocationPercent;
+        private int availablePercent;
+        private String joinedPoolAt;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class CreatePoolRequest {
+        @NotBlank
+        private String name;
+        private String description;
+        private String poolType = "SHARED";
+        private List<UUID> memberEmployeeIds;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class CreatePoolResponse {
+        private UUID id;
+        private String name;
+        private String description;
+        private String poolType;
+        private int memberCount;
+        private boolean isActive;
+        private String createdAt;
+        private String message;
     }
 }

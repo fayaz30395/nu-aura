@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   PayrollRun,
   PayrollRunRequest,
@@ -32,7 +32,7 @@ class PayrollService {
 
   async getAllPayrollRuns(page: number = 0, size: number = 20): Promise<Page<PayrollRun>> {
     const response = await apiClient.get<Page<PayrollRun>>('/payroll/runs', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -43,7 +43,7 @@ class PayrollService {
     size: number = 20
   ): Promise<Page<PayrollRun>> {
     const response = await apiClient.get<Page<PayrollRun>>(`/payroll/runs/status/${status}`, {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -85,7 +85,7 @@ class PayrollService {
 
   async getAllPayslips(page: number = 0, size: number = 20): Promise<Page<Payslip>> {
     const response = await apiClient.get<Page<Payslip>>('/payroll/payslips', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -98,7 +98,7 @@ class PayrollService {
     const response = await apiClient.get<Page<Payslip>>(
       `/payroll/payslips/employee/${employeeId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -112,7 +112,7 @@ class PayrollService {
     const response = await apiClient.get<Page<Payslip>>(
       `/payroll/payslips/run/${payrollRunId}/paged`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -132,7 +132,7 @@ class PayrollService {
   ): Promise<Payslip> {
     const response = await apiClient.get<Payslip>(
       `/payroll/payslips/employee/${employeeId}/period`,
-      { params: { year, month } }
+      {params: {year, month}}
     );
     return response.data;
   }
@@ -184,7 +184,7 @@ class PayrollService {
 
   async downloadPayslipPdfByPeriod(employeeId: string, year: number, month: number): Promise<Blob> {
     const response = await apiClient.get<Blob>(`/payroll/payslips/employee/${employeeId}/period/pdf`, {
-      params: { year, month },
+      params: {year, month},
       responseType: 'blob',
     });
     return response.data;
@@ -211,7 +211,7 @@ class PayrollService {
 
   async getAllSalaryStructures(page: number = 0, size: number = 20): Promise<Page<SalaryStructure>> {
     const response = await apiClient.get<Page<SalaryStructure>>('/payroll/salary-structures', {
-      params: { page, size },
+      params: {page, size},
     });
     return response.data;
   }
@@ -233,7 +233,7 @@ class PayrollService {
   async getActiveSalaryStructure(employeeId: string, date?: string): Promise<SalaryStructure> {
     const response = await apiClient.get<SalaryStructure>(
       `/payroll/salary-structures/employee/${employeeId}/active`,
-      { params: date ? { date } : undefined }
+      {params: date ? {date} : undefined}
     );
     return response.data;
   }
@@ -241,7 +241,7 @@ class PayrollService {
   async getActiveSalaryStructures(page: number = 0, size: number = 20): Promise<Page<SalaryStructure>> {
     const response = await apiClient.get<Page<SalaryStructure>>(
       '/payroll/salary-structures/active',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -277,7 +277,7 @@ class PayrollService {
 
   async getPayrollComponents(page = 0, size = 20): Promise<Page<PayrollComponent>> {
     const response = await apiClient.get<Page<PayrollComponent>>('/payroll/components', {
-      params: { page, size, sort: 'evaluationOrder,asc' }
+      params: {page, size, sort: 'evaluationOrder,asc'}
     });
     return response.data;
   }

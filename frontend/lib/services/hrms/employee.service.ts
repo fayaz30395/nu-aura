@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   Employee,
   CreateEmployeeRequest,
@@ -37,12 +37,12 @@ class EmployeeService {
     // When a search query is present, use the dedicated search endpoint
     if (search && search.trim()) {
       const response = await apiClient.get<Page<Employee>>('/employees/search', {
-        params: { query: search.trim(), page, size, status: status || undefined },
+        params: {query: search.trim(), page, size, status: status || undefined},
       });
       return response.data;
     }
     const response = await apiClient.get<Page<Employee>>('/employees', {
-      params: { page, size, sortBy, sortDirection, status: status || undefined },
+      params: {page, size, sortBy, sortDirection, status: status || undefined},
     });
     return response.data;
   }
@@ -53,7 +53,7 @@ class EmployeeService {
     size: number = 20
   ): Promise<Page<Employee>> {
     const response = await apiClient.get<Page<Employee>>('/employees/search', {
-      params: { query, page, size },
+      params: {query, page, size},
     });
     return response.data;
   }
@@ -122,7 +122,7 @@ class EmployeeService {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        params: { skipInvalid },
+        params: {skipInvalid},
       }
     );
     return response.data;

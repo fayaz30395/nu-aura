@@ -1,1 +1,11 @@
-{"timestamp":"2026-04-04T07:02:01.765989","status":404,"error":"Not Found","message":"No endpoint found for GET /api/v1/permissions/my-permissions","errors":null,"path":"/api/v1/permissions/my-permissions","requestId":"638dc6bc-2896-4a10-953d-8cca413d7f17","tenantId":"660e8400-e29b-41d4-a716-446655440001","errorCode":"ENDPOINT_NOT_FOUND"}
+{
+  "timestamp": "2026-04-04T07:02:01.765989",
+  "status": 404,
+  "error": "Not Found",
+  "message": "No endpoint found for GET /api/v1/permissions/my-permissions",
+  "errors": null,
+  "path": "/api/v1/permissions/my-permissions",
+  "requestId": "638dc6bc-2896-4a10-953d-8cca413d7f17",
+  "tenantId": "660e8400-e29b-41d4-a716-446655440001",
+  "errorCode": "ENDPOINT_NOT_FOUND"
+}

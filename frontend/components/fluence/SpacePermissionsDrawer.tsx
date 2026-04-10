@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Drawer, Select } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
+import {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Drawer, Select} from '@mantine/core';
+import {notifications} from '@mantine/notifications';
 import {
   Shield,
   Globe,
@@ -17,7 +17,7 @@ import {
   Loader2,
   UserCheck,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import {
   useUpdateWikiSpace,
   useSpaceMembers,
@@ -25,11 +25,11 @@ import {
   useUpdateSpaceMemberRoleMutation,
   useRemoveSpaceMemberMutation,
 } from '@/lib/hooks/queries/useFluence';
-import { Button } from '@/components/ui/Button';
-import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { typography, input as dsInput, card } from '@/lib/design-system';
-import { getInitials } from '@/lib/utils';
-import type { WikiSpace, WikiVisibility, SpaceMemberRole, SpaceMember } from '@/lib/types/platform/fluence';
+import {Button} from '@/components/ui/Button';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import {typography, input as dsInput, card} from '@/lib/design-system';
+import {getInitials} from '@/lib/utils';
+import type {WikiSpace, WikiVisibility, SpaceMemberRole, SpaceMember} from '@/lib/types/platform/fluence';
 
 // ─── Zod Schema ───────────────────────────────────────────────────────────────
 
@@ -86,9 +86,9 @@ const VISIBILITY_OPTIONS: VisibilityOption[] = [
 // ─── Role config ──────────────────────────────────────────────────────────────
 
 const ROLE_OPTIONS: { value: SpaceMemberRole; label: string }[] = [
-  { value: 'ADMIN', label: 'Admin' },
-  { value: 'EDITOR', label: 'Editor' },
-  { value: 'VIEWER', label: 'Viewer' },
+  {value: 'ADMIN', label: 'Admin'},
+  {value: 'EDITOR', label: 'Editor'},
+  {value: 'VIEWER', label: 'Viewer'},
 ];
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
@@ -104,24 +104,24 @@ interface SpacePermissionsDrawerProps {
 }
 
 export function SpacePermissionsDrawer({
-  space,
-  opened,
-  onClose,
-}: SpacePermissionsDrawerProps) {
+                                         space,
+                                         opened,
+                                         onClose,
+                                       }: SpacePermissionsDrawerProps) {
   const [activeTab, setActiveTab] = useState<DrawerTab>('visibility');
   const [selectedEmployee, setSelectedEmployee] = useState<{ id: string; name: string } | null>(null);
   const [newMemberRole, setNewMemberRole] = useState<SpaceMemberRole>('VIEWER');
 
-  const { mutate: updateSpace, isPending } = useUpdateWikiSpace();
+  const {mutate: updateSpace, isPending} = useUpdateWikiSpace();
 
   // ─── Member queries & mutations ──────────────────────────────────────────
-  const { data: members = [], isLoading: membersLoading } = useSpaceMembers(
+  const {data: members = [], isLoading: membersLoading} = useSpaceMembers(
     space?.id ?? '',
     opened && !!space?.id
   );
-  const { mutate: addMember, isPending: isAdding } = useAddSpaceMemberMutation();
-  const { mutate: updateRole, isPending: isUpdatingRole } = useUpdateSpaceMemberRoleMutation();
-  const { mutate: removeMember } = useRemoveSpaceMemberMutation();
+  const {mutate: addMember, isPending: isAdding} = useAddSpaceMemberMutation();
+  const {mutate: updateRole, isPending: isUpdatingRole} = useUpdateSpaceMemberRoleMutation();
+  const {mutate: removeMember} = useRemoveSpaceMemberMutation();
 
   const existingMemberUserIds = members.map((m) => m.userId);
 
@@ -132,7 +132,7 @@ export function SpacePermissionsDrawer({
     setValue,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<PermissionsFormValues>({
     resolver: zodResolver(permissionsSchema),
     defaultValues: {
@@ -199,7 +199,7 @@ export function SpacePermissionsDrawer({
     if (!space || !selectedEmployee) return;
 
     addMember(
-      { spaceId: space.id, userId: selectedEmployee.id, role: newMemberRole },
+      {spaceId: space.id, userId: selectedEmployee.id, role: newMemberRole},
       {
         onSuccess: () => {
           notifications.show({
@@ -225,7 +225,7 @@ export function SpacePermissionsDrawer({
     if (!space || role === member.role) return;
 
     updateRole(
-      { spaceId: space.id, userId: member.userId, role },
+      {spaceId: space.id, userId: member.userId, role},
       {
         onSuccess: () => {
           notifications.show({
@@ -249,7 +249,7 @@ export function SpacePermissionsDrawer({
     if (!space) return;
 
     removeMember(
-      { spaceId: space.id, userId: member.userId },
+      {spaceId: space.id, userId: member.userId},
       {
         onSuccess: () => {
           notifications.show({
@@ -279,22 +279,22 @@ export function SpacePermissionsDrawer({
       onClose={onClose}
       title={
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-[var(--accent-700)]" />
+          <Shield className="h-5 w-5 text-[var(--accent-700)]"/>
           <span className={typography.cardTitle}>Space Permissions</span>
         </div>
       }
       position="right"
       size="md"
       styles={{
-        header: { borderBottom: '1px solid var(--border-main)', paddingBottom: '1rem' },
-        body: { padding: '1.5rem' },
+        header: {borderBottom: '1px solid var(--border-main)', paddingBottom: '1rem'},
+        body: {padding: '1.5rem'},
       }}
     >
       {space && (
         <motion.div
-          initial={{ opacity: 0, x: 8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.25 }}
+          initial={{opacity: 0, x: 8}}
+          animate={{opacity: 1, x: 0}}
+          transition={{duration: 0.25}}
         >
           {/* Space info header */}
           <div className={`${card.base} p-4 mb-4`}>
@@ -316,7 +316,7 @@ export function SpacePermissionsDrawer({
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <Globe className="h-4 w-4" />
+              <Globe className="h-4 w-4"/>
               Visibility
             </button>
             <button
@@ -328,10 +328,11 @@ export function SpacePermissionsDrawer({
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <Users className="h-4 w-4" />
+              <Users className="h-4 w-4"/>
               Members
               {members.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs rounded-md bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
+                <span
+                  className="ml-1 px-1.5 py-0.5 text-xs rounded-md bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]">
                   {members.length}
                 </span>
               )}
@@ -363,7 +364,7 @@ export function SpacePermissionsDrawer({
                   <div className="mt-2 flex items-center gap-2 p-2 rounded-lg bg-[var(--bg-secondary)]">
                     {(() => {
                       const Icon = selectedVisibilityOption.icon;
-                      return <Icon className="h-4 w-4 text-[var(--text-muted)]" />;
+                      return <Icon className="h-4 w-4 text-[var(--text-muted)]"/>;
                     })()}
                     <p className="text-xs text-[var(--text-secondary)]">
                       {selectedVisibilityOption.description}
@@ -440,7 +441,7 @@ export function SpacePermissionsDrawer({
               {/* Add Member section */}
               <div className={`${card.base} p-4`}>
                 <p className={`${typography.body} font-medium mb-4`}>
-                  <UserPlus className="h-4 w-4 inline-block mr-2 align-text-bottom" />
+                  <UserPlus className="h-4 w-4 inline-block mr-2 align-text-bottom"/>
                   Add Member
                 </p>
                 <div className="space-y-4">
@@ -473,7 +474,7 @@ export function SpacePermissionsDrawer({
                       onClick={handleAddMember}
                     >
                       {isAdding ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin"/>
                       ) : (
                         'Add'
                       )}
@@ -490,13 +491,13 @@ export function SpacePermissionsDrawer({
 
                 {membersLoading && (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-[var(--text-muted)]" />
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--text-muted)]"/>
                   </div>
                 )}
 
                 {!membersLoading && members.length === 0 && (
                   <div className="flex flex-col items-center py-8">
-                    <UserCheck className="h-8 w-8 text-[var(--text-muted)] mb-2" />
+                    <UserCheck className="h-8 w-8 text-[var(--text-muted)] mb-2"/>
                     <p className="text-sm text-[var(--text-muted)]">No members yet</p>
                     <p className="text-xs text-[var(--text-muted)] mt-1">
                       Add members using the form above
@@ -513,7 +514,8 @@ export function SpacePermissionsDrawer({
                           className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors group"
                         >
                           {/* Avatar */}
-                          <div className="w-8 h-8 rounded-full bg-[var(--accent-primary-subtle)] flex items-center justify-center text-xs font-medium text-[var(--accent-primary)] flex-shrink-0">
+                          <div
+                            className="w-8 h-8 rounded-full bg-[var(--accent-primary-subtle)] flex items-center justify-center text-xs font-medium text-[var(--accent-primary)] flex-shrink-0">
                             {getInitials(member.userName ?? '')}
                           </div>
 
@@ -558,7 +560,7 @@ export function SpacePermissionsDrawer({
                             className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--status-danger-text)] hover:bg-danger-50 dark:hover:bg-danger-950 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
                             aria-label={`Remove ${member.userName ?? 'member'}`}
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-4 w-4"/>
                           </button>
                         </div>
                       );

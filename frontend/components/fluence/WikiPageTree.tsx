@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import {useState, useCallback} from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import {motion, AnimatePresence} from 'framer-motion';
 import {
   ChevronRight,
   ChevronDown,
@@ -11,9 +11,9 @@ import {
   Pin,
   Eye,
 } from 'lucide-react';
-import { Tooltip } from '@mantine/core';
-import type { WikiPageTreeNode } from '@/lib/types/platform/fluence';
-import { typography, iconSize } from '@/lib/design-system';
+import {Tooltip} from '@mantine/core';
+import type {WikiPageTreeNode} from '@/lib/types/platform/fluence';
+import {typography, iconSize} from '@/lib/design-system';
 
 // ─── Status Badge ───────────────────────────────────────────────────────────
 
@@ -26,7 +26,7 @@ const STATUS_STYLES: Record<string, string> = {
     'bg-[var(--status-neutral-bg)] text-[var(--status-neutral-text)]',
 };
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({status}: { status: string }) {
   const style = STATUS_STYLES[status] || STATUS_STYLES.DRAFT;
   return (
     <span
@@ -46,7 +46,7 @@ interface TreeNodeProps {
   maxDepth: number;
 }
 
-function TreeNode({ node, spaceSlug, depth, maxDepth }: TreeNodeProps) {
+function TreeNode({node, spaceSlug, depth, maxDepth}: TreeNodeProps) {
   const [expanded, setExpanded] = useState(depth < 1);
   const hasChildren = node.children.length > 0 && depth < maxDepth;
 
@@ -66,7 +66,7 @@ function TreeNode({ node, spaceSlug, depth, maxDepth }: TreeNodeProps) {
       <Link
         href={`/fluence/wiki/${node.id}`}
         className="group flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[var(--bg-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-        style={{ paddingLeft: `${paddingLeft + 16}px` }}
+        style={{paddingLeft: `${paddingLeft + 16}px`}}
       >
         {/* Expand / collapse toggle */}
         {hasChildren ? (
@@ -76,20 +76,20 @@ function TreeNode({ node, spaceSlug, depth, maxDepth }: TreeNodeProps) {
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
-              <ChevronDown className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+              <ChevronDown className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
             ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+              <ChevronRight className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
             )}
           </button>
         ) : (
-          <span className="flex-shrink-0 w-5" />
+          <span className="flex-shrink-0 w-5"/>
         )}
 
         {/* Icon */}
         {hasChildren && expanded ? (
-          <FolderOpen className={`${iconSize.button} flex-shrink-0 text-[var(--accent-600)]`} />
+          <FolderOpen className={`${iconSize.button} flex-shrink-0 text-[var(--accent-600)]`}/>
         ) : (
-          <File className={`${iconSize.button} flex-shrink-0 text-[var(--text-muted)]`} />
+          <File className={`${iconSize.button} flex-shrink-0 text-[var(--text-muted)]`}/>
         )}
 
         {/* Title */}
@@ -100,18 +100,18 @@ function TreeNode({ node, spaceSlug, depth, maxDepth }: TreeNodeProps) {
         {/* Pinned indicator */}
         {node.isPinned && (
           <Tooltip label="Pinned" withArrow>
-            <Pin className="h-3 w-3 flex-shrink-0 text-[var(--accent-600)] fill-current" />
+            <Pin className="h-3 w-3 flex-shrink-0 text-[var(--accent-600)] fill-current"/>
           </Tooltip>
         )}
 
         {/* Status badge */}
         {node.status !== 'PUBLISHED' && (
-          <StatusBadge status={node.status} />
+          <StatusBadge status={node.status}/>
         )}
 
         {/* View count */}
         <span className="flex items-center gap-1 flex-shrink-0">
-          <Eye className="h-3 w-3 text-[var(--text-muted)]" />
+          <Eye className="h-3 w-3 text-[var(--text-muted)]"/>
           <span className={typography.caption}>{node.viewCount}</span>
         </span>
       </Link>
@@ -120,10 +120,10 @@ function TreeNode({ node, spaceSlug, depth, maxDepth }: TreeNodeProps) {
       <AnimatePresence initial={false}>
         {hasChildren && expanded && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            initial={{opacity: 0, height: 0}}
+            animate={{opacity: 1, height: 'auto'}}
+            exit={{opacity: 0, height: 0}}
+            transition={{duration: 0.2, ease: 'easeInOut'}}
             className="overflow-hidden"
           >
             {node.children.map((child) => (
@@ -150,11 +150,11 @@ interface WikiPageTreeProps {
   maxDepth?: number;
 }
 
-export function WikiPageTree({ nodes, spaceSlug, maxDepth = 3 }: WikiPageTreeProps) {
+export function WikiPageTree({nodes, spaceSlug, maxDepth = 3}: WikiPageTreeProps) {
   if (nodes.length === 0) {
     return (
       <div className="py-8 text-center">
-        <File className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-50" />
+        <File className="h-8 w-8 mx-auto mb-2 text-[var(--text-muted)] opacity-50"/>
         <p className="text-sm text-[var(--text-muted)]">No pages in this space</p>
       </div>
     );

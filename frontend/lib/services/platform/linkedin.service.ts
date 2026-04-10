@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client';
+import {apiClient} from '@/lib/api/client';
 // LinkedIn service - uses /api/v1/linkedin-posts endpoints for stub implementation
 import type {
   LinkedInPost,
@@ -26,11 +26,11 @@ class LinkedInService {
     page: number = 0,
     size: number = 10
   ): Promise<PagedResponse<LinkedInPost>> {
-    const empty: PagedResponse<LinkedInPost> = { content: [], totalElements: 0, totalPages: 0, size, number: page };
+    const empty: PagedResponse<LinkedInPost> = {content: [], totalElements: 0, totalPages: 0, size, number: page};
     try {
       const response = await apiClient.getPermissive<PagedResponse<LinkedInPost>>(
         `${BASE_URL}/active`,
-        { params: { page, size } }
+        {params: {page, size}}
       );
       return response.status === 403 ? empty : response.data;
     } catch {
@@ -51,7 +51,7 @@ class LinkedInService {
       const response = await apiClient.get<PagedResponse<LinkedInPost>>(
         BASE_URL,
         {
-          params: { page, size },
+          params: {page, size},
         }
       );
       return response.data;

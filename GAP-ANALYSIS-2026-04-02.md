@@ -210,16 +210,19 @@ blocking task for 100%. All other modules are production-ready or near-productio
 ### Recommendations for NU-HRMS → 100%
 
 1. **Priority 1 (1-2 days):**
-  - Complete Probation module UI (full forms + approval workflow)
-  - Un-skip 10+ skipped E2E tests in fnf-settlement.spec.ts
+
+- Complete Probation module UI (full forms + approval workflow)
+- Un-skip 10+ skipped E2E tests in fnf-settlement.spec.ts
 
 2. **Priority 2 (1-2 days):**
-  - Complete Exit Interview & F&F Settlement UI
-  - Un-skip tests in onboarding-offboarding.spec.ts
+
+- Complete Exit Interview & F&F Settlement UI
+- Un-skip tests in onboarding-offboarding.spec.ts
 
 3. **Priority 3 (1 day):**
-  - Polish Statutory Filing & Travel modules
-  - Add missing edge case tests
+
+- Polish Statutory Filing & Travel modules
+- Add missing edge case tests
 
 ---
 
@@ -328,12 +331,14 @@ onboarding-offboarding (12 skipped)
 ### Recommendations for NU-Hire → 100%
 
 1. **Priority 1 (2-3 days):**
-  - Fix AIRecruitmentFileParsingIntegrationTest (remove @Disabled, fix test logic)
-  - Complete AI recruitment frontend (resume parser UI, candidate matching)
+
+- Fix AIRecruitmentFileParsingIntegrationTest (remove @Disabled, fix test logic)
+- Complete AI recruitment frontend (resume parser UI, candidate matching)
 
 2. **Priority 2 (1 day):**
-  - Un-skip 12 onboarding-offboarding E2E tests
-  - Polish edge cases
+
+- Un-skip 12 onboarding-offboarding E2E tests
+- Polish edge cases
 
 ---
 
@@ -449,12 +454,14 @@ onboarding-offboarding (12 skipped)
 ### Recommendations for NU-Grow → 100%
 
 1. **Priority 1 (1-2 days):**
-  - Implement learning paths UI (course sequencing)
-  - Add skill mapping dashboard
+
+- Implement learning paths UI (course sequencing)
+- Add skill mapping dashboard
 
 2. **Priority 2 (1 day):**
-  - Complete remaining report templates
-  - Add predictive analytics features (trending skills, etc.)
+
+- Complete remaining report templates
+- Add predictive analytics features (trending skills, etc.)
 
 ---
 
@@ -502,54 +509,62 @@ onboarding-offboarding (12 skipped)
 #### Routes Defined (but incomplete):
 
 1. `/fluence/wiki/` — **25KB page.tsx** — IMPLEMENTED
-  - Wiki page listing with search, folder view, creation flow
-  - Rich text editor (Tiptap integration)
-  - Full CRUD operations
-  - Comment system on pages
-  - Collaborative editing support
+
+- Wiki page listing with search, folder view, creation flow
+- Rich text editor (Tiptap integration)
+- Full CRUD operations
+- Comment system on pages
+- Collaborative editing support
 
 2. `/fluence/blogs/` — **27KB page.tsx** — IMPLEMENTED
-  - Blog post listing with category filter
-  - Blog creation form
-  - Draft/publish workflow
-  - Author profile display
-  - Comment system
+
+- Blog post listing with category filter
+- Blog creation form
+- Draft/publish workflow
+- Author profile display
+- Comment system
 
 3. `/fluence/drive/` — **24KB page.tsx** — IMPLEMENTED
-  - Google Drive file listing & previewer
-  - Folder hierarchy navigation
-  - File upload
-  - Sharing controls (read/comment/edit permissions)
-  - Mobile-responsive file explorer
+
+- Google Drive file listing & previewer
+- Folder hierarchy navigation
+- File upload
+- Sharing controls (read/comment/edit permissions)
+- Mobile-responsive file explorer
 
 4. `/fluence/templates/` — **20KB page.tsx** — IMPLEMENTED
-  - Template listing with search
-  - Template preview modal
-  - Template CRUD (create from blank, edit, duplicate)
-  - Tag-based organization
-  - Usage analytics
+
+- Template listing with search
+- Template preview modal
+- Template CRUD (create from blank, edit, duplicate)
+- Tag-based organization
+- Usage analytics
 
 5. `/fluence/wall/` — **22KB page.tsx** — IMPLEMENTED
-  - Social feed/wall posting
-  - Like and comment system
-  - @mentions with autocomplete
-  - Rich text editor
-  - Real-time notification of new posts
+
+- Social feed/wall posting
+- Like and comment system
+- @mentions with autocomplete
+- Rich text editor
+- Real-time notification of new posts
 
 6. `/fluence/my-content/` — **18KB page.tsx** — IMPLEMENTED
-  - User's personal content (pages, posts, uploads)
-  - Quick access to drafts
-  - Content statistics (views, likes, comments)
+
+- User's personal content (pages, posts, uploads)
+- Quick access to drafts
+- Content statistics (views, likes, comments)
 
 7. `/fluence/search/` — **16KB page.tsx** — IMPLEMENTED
-  - Global full-text search
-  - Advanced filters (type, date, author)
-  - Search result previews
+
+- Global full-text search
+- Advanced filters (type, date, author)
+- Search result previews
 
 8. `/fluence/dashboard/` — **15KB page.tsx** — IMPLEMENTED
-  - Quick links to content
-  - Trending content
-  - Recent activity feed
+
+- Quick links to content
+- Trending content
+- Recent activity feed
 
 #### Files Structure:
 
@@ -699,19 +714,22 @@ Total NU-Fluence files: 51 files, 9,330 lines of code
 ### Recommendations for NU-Fluence → 100%
 
 1. **Quick wins (2-3 days):**
-  - Add permission assignment UI for spaces/pages
-  - Implement notification subscriptions (watch content)
-  - Polish Elasticsearch search with filters & suggestions
+
+- Add permission assignment UI for spaces/pages
+- Implement notification subscriptions (watch content)
+- Polish Elasticsearch search with filters & suggestions
 
 2. **Medium effort (4-6 days):**
-  - Real-time collaboration features (cursors, conflict resolution, active editors)
-  - AI content features (summarization, recommendations)
-  - Analytics dashboard
+
+- Real-time collaboration features (cursors, conflict resolution, active editors)
+- AI content features (summarization, recommendations)
+- Analytics dashboard
 
 3. **Large effort (3-4 days each):**
-  - Slack/Teams integrations
-  - Advanced permission model refinements
-  - Email newsletter integration
+
+- Slack/Teams integrations
+- Advanced permission model refinements
+- Email newsletter integration
 
 ---
 
@@ -866,12 +884,14 @@ hook
 ### Recommendations for Platform → 100%
 
 1. **Quick win (1 day):**
-  - Audit trail export (CSV, PDF)
-  - Permission request self-service UI
+
+- Audit trail export (CSV, PDF)
+- Permission request self-service UI
 
 2. **Minor (1-2 days):**
-  - SAML SSO integration testing
-  - Audit timeline visualization
+
+- SAML SSO integration testing
+- Audit timeline visualization
 
 ---
 
@@ -895,18 +915,21 @@ hook
 ### Technical Debt (Minor)
 
 1. **Skipped E2E tests** — 23 total skipped across 3 files:
-  - `fnf-settlement.spec.ts` — 10 skipped (F&F settlement edge cases)
-  - `onboarding-offboarding.spec.ts` — 12 skipped (exit interview scenarios)
-  - `analytics.spec.ts` — 1 skipped (analytics report rendering)
+
+- `fnf-settlement.spec.ts` — 10 skipped (F&F settlement edge cases)
+- `onboarding-offboarding.spec.ts` — 12 skipped (exit interview scenarios)
+- `analytics.spec.ts` — 1 skipped (analytics report rendering)
 
 2. **Disabled Java test** — 1 disabled integration test:
-  - `AIRecruitmentFileParsingIntegrationTest.java` — @Disabled (AI resume parsing needs work)
+
+- `AIRecruitmentFileParsingIntegrationTest.java` — @Disabled (AI resume parsing needs work)
 
 3. **Design system cleanup** — All Tailwind utilities migrated to CSS variables (Blue Monochrome),
    but potential for refinement on:
-  - Chart palette optimization
-  - Focus states on all interactive elements
-  - Shadow depth hierarchy review
+
+- Chart palette optimization
+- Focus states on all interactive elements
+- Shadow depth hierarchy review
 
 ### Database Health
 
@@ -925,12 +948,14 @@ Platform is fully functional. No critical blockers.
 ### Soft Blockers (Minor)
 
 1. **NU-Fluence completion** — Unblocks full platform feature parity
-  - Blocks: Advanced collaboration, AI content features, full search
-  - Impact: 5-10% of planned NU-Fluence capability
+
+- Blocks: Advanced collaboration, AI content features, full search
+- Impact: 5-10% of planned NU-Fluence capability
 
 2. **Skipped E2E tests** — Unblocks confidence in edge-case handling
-  - Blocks: QA sign-off for F&F settlement and onboarding flows
-  - Impact: Low (happy paths work, edge cases untested)
+
+- Blocks: QA sign-off for F&F settlement and onboarding flows
+- Impact: Low (happy paths work, edge cases untested)
 
 ---
 
@@ -1008,19 +1033,22 @@ test.skip('should render analytics dashboard with all charts', ...)
 ### Test Recommendations
 
 1. **Un-skip all E2E tests** (2-3 days effort)
-  - Fix settlement calculation edge cases
-  - Verify onboarding workflow with all role combinations
-  - Verify analytics chart rendering
+
+- Fix settlement calculation edge cases
+- Verify onboarding workflow with all role combinations
+- Verify analytics chart rendering
 
 2. **Enable AIRecruitmentFileParsingIntegrationTest** (2-3 days effort)
-  - Fix file parsing logic
-  - Add test data fixtures
-  - Verify end-to-end resume parsing
+
+- Fix file parsing logic
+- Add test data fixtures
+- Verify end-to-end resume parsing
 
 3. **Add cross-module integration tests** (2-3 days effort)
-  - Leave approval → Payroll deduction chain
-  - Onboarding → Attendance setup
-  - Review → Salary revision flow
+
+- Leave approval → Payroll deduction chain
+- Onboarding → Attendance setup
+- Review → Salary revision flow
 
 ---
 
@@ -1075,8 +1103,10 @@ test.skip('should render analytics dashboard with all charts', ...)
 **Subtasks:**
 
 1. Enable AIRecruitmentFileParsingIntegrationTest — 1-2 days
-  - Fix file parsing logic in backend
-  - Add test fixtures for resume data
+
+- Fix file parsing logic in backend
+- Add test fixtures for resume data
+
 2. Un-skip fnf-settlement.spec.ts (10 tests) — 1 day
 3. Un-skip onboarding-offboarding.spec.ts (12 tests) — 1 day
 4. Un-skip analytics.spec.ts (1 test) — 0.5 days
@@ -1452,31 +1482,36 @@ No high-severity risks identified. Platform is stable.
 ### Medium Severity
 
 1. **Skipped E2E Tests (23 total)**
-  - **Risk:** Edge cases in F&F settlement, onboarding edge cases untested
-  - **Impact:** Low — happy paths tested, edge cases untested
-  - **Mitigation:** Un-skip tests before production release (Task 1.2)
+
+- **Risk:** Edge cases in F&F settlement, onboarding edge cases untested
+- **Impact:** Low — happy paths tested, edge cases untested
+- **Mitigation:** Un-skip tests before production release (Task 1.2)
 
 2. **NU-Fluence Incomplete (55% remaining)**
-  - **Risk:** Advanced features (real-time editing, AI content) not available at launch
-  - **Impact:** Medium — core NU-Fluence features work, advanced features missing
-  - **Mitigation:** Phase 1 of task list (8-12 days effort)
+
+- **Risk:** Advanced features (real-time editing, AI content) not available at launch
+- **Impact:** Medium — core NU-Fluence features work, advanced features missing
+- **Mitigation:** Phase 1 of task list (8-12 days effort)
 
 3. **Disabled Integration Test (1 total)**
-  - **Risk:** AI recruitment file parsing not fully tested
-  - **Impact:** Low — feature is optional, fallback available
-  - **Mitigation:** Enable and fix test (Task 1.2, 2-3 days)
+
+- **Risk:** AI recruitment file parsing not fully tested
+- **Impact:** Low — feature is optional, fallback available
+- **Mitigation:** Enable and fix test (Task 1.2, 2-3 days)
 
 ### Low Severity
 
 1. **Design System Refinements**
-  - **Risk:** Some edge cases in focus states, shadows might not be perfectly aligned
-  - **Impact:** Minimal — system is functional and compliant
-  - **Mitigation:** Iterative refinement after launch
+
+- **Risk:** Some edge cases in focus states, shadows might not be perfectly aligned
+- **Impact:** Minimal — system is functional and compliant
+- **Mitigation:** Iterative refinement after launch
 
 2. **Permission Cache Staleness (1hr TTL)**
-  - **Risk:** If permissions are updated, users won't see new permissions for up to 1 hour
-  - **Impact:** Very low — acceptable for HR use case
-  - **Mitigation:** Add manual cache invalidation endpoint if needed (0.5 days)
+
+- **Risk:** If permissions are updated, users won't see new permissions for up to 1 hour
+- **Impact:** Very low — acceptable for HR use case
+- **Mitigation:** Add manual cache invalidation endpoint if needed (0.5 days)
 
 ---
 

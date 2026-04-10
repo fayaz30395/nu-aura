@@ -233,25 +233,28 @@ correctly excluded from this audit:
 ### Immediate (P0) -- 1 endpoint
 
 1. **Add `@RequiresPermission` to `UserController.getCurrentUser()`**
-  - If open to all authenticated users: add `@RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)` (
-    already granted to all roles)
-  - Document the design decision with a comment
+
+- If open to all authenticated users: add `@RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)` (
+  already granted to all roles)
+- Document the design decision with a comment
 
 ### Short-term (P1) -- 3 endpoints
 
 2. **Migrate `FileUploadController` from `@PreAuthorize` to `@RequiresPermission`**
-  - `uploadProfilePhoto()`: Add `@RequiresPermission(Permission.DOCUMENT_UPLOAD)` and move
-    self-service logic to service layer
-  - `uploadDocument()`: Replace with `@RequiresPermission(Permission.DOCUMENT_UPLOAD)`
-  - `deleteFile()`: Replace with `@RequiresPermission(Permission.DOCUMENT_DELETE)`
-  - Fix non-standard permission format (`HRMS:DOCUMENT:*` to `DOCUMENT:*`)
+
+- `uploadProfilePhoto()`: Add `@RequiresPermission(Permission.DOCUMENT_UPLOAD)` and move
+  self-service logic to service layer
+- `uploadDocument()`: Replace with `@RequiresPermission(Permission.DOCUMENT_UPLOAD)`
+- `deleteFile()`: Replace with `@RequiresPermission(Permission.DOCUMENT_DELETE)`
+- Fix non-standard permission format (`HRMS:DOCUMENT:*` to `DOCUMENT:*`)
 
 ### Medium-term (P2) -- 5 endpoints
 
 3. **Add specific permissions to `QuizController`**
-  - Replace `@PreAuthorize("isAuthenticated()")` with `@RequiresPermission(Permission.LMS_VIEW)` or
-    equivalent
-  - Define `LMS:VIEW`, `LMS:SUBMIT` permissions if they don't exist
+
+- Replace `@PreAuthorize("isAuthenticated()")` with `@RequiresPermission(Permission.LMS_VIEW)` or
+  equivalent
+- Define `LMS:VIEW`, `LMS:SUBMIT` permissions if they don't exist
 
 ---
 
