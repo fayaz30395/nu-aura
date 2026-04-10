@@ -107,7 +107,7 @@ export function PayrollRunsTab({
             {filtered.map((run) => (
               <tr key={run.id}
                   className="border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                <td className="px-6 py-4 text-sm font-medium">{run.runName}</td>
+                <td className="px-6 py-4 text-sm font-medium">{run.runName || <span className="text-[var(--text-muted)] italic">Untitled Run</span>}</td>
                 <td className="px-6 py-4 text-body-secondary">
                   {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
                 </td>

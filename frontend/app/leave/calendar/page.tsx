@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AlertCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -45,7 +45,10 @@ export default function LeaveCalendarPage() {
   const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
 
-  const leaves = (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [];
+  const leaves = useMemo(
+    () => (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [],
+    [viewMode, employeeRequestsQuery.data?.content, approvedRequestsQuery.data?.content]
+  );
   const isAnyError = employeeRequestsQuery.isError || approvedRequestsQuery.isError;
   const isAnyFetching = employeeRequestsQuery.fetchStatus === 'fetching' || approvedRequestsQuery.fetchStatus === 'fetching';
   const loading = !isAnyError && isAnyFetching && !employeeRequestsQuery.data && !approvedRequestsQuery.data;

@@ -320,7 +320,10 @@ export default function ShiftsManagementPage() {
                       </div>
                     )}
                     <div className="text-body-secondary">
-                      Working Hours: {shift.netWorkingHours || shift.fullDayHours}h
+                      Working Hours: {(() => {
+                        const hours = shift.netWorkingHours ?? shift.fullDayHours;
+                        return hours != null && hours < 0 ? hours + 24 : hours;
+                      })()}h
                     </div>
                   </div>
 

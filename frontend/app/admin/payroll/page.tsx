@@ -270,7 +270,7 @@ export default function AdminPayrollPage() {
                         {s.employeeName ?? `Employee ${s.employeeId.substring(0, 8)}`}
                       </p>
                       <p className="text-caption">
-                        Effective {s.effectiveDate} · CTC ₹{s.totalCTC.toLocaleString()}
+                        Effective {s.effectiveDate} · CTC ₹{(s.totalCTC ?? 0).toLocaleString()}
                       </p>
                     </div>
                     <span
