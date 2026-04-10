@@ -137,21 +137,29 @@ public class LeaveRequestController {
     public ResponseEntity<Page<LeaveRequestResponse>> getLeaveRequestsByStatus(
             @Parameter(description = "Leave request status") @PathVariable String status,
             Pageable pageable) {
-        LeaveRequest.LeaveRequestStatus leaveStatus = LeaveRequest.LeaveRequestStatus.valueOf(status);
+        try {
+            LeaveRequest.LeaveRequestStatus leaveStatus = LeaveRequest.LeaveRequestStatus.valueOf(status);
 
-        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
-                ? Permission.LEAVE_VIEW_ALL
-                : Permission.LEAVE_VIEW_TEAM;
+            String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
+                    ? Permission.LEAVE_VIEW_ALL
+                    : Permission.LEAVE_VIEW_TEAM;
 
-        org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = dataScopeService
-                .getScopeSpecification(permission);
+            org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = dataScopeService
+                    .getScopeSpecification(permission);
 
-        // Combine status and scope
-        org.springframework.data.jpa.domain.Specification<LeaveRequest> combinedSpec = (root, query, cb) -> cb
-                .and(cb.equal(root.get("status"), leaveStatus), scopeSpec.toPredicate(root, query, cb));
+            // Combine status and scope
+            org.springframework.data.jpa.domain.Specification<LeaveRequest> combinedSpec = (root, query, cb) -> cb
+                    .and(cb.equal(root.get("status"), leaveStatus), scopeSpec.toPredicate(root, query, cb));
 
-        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(combinedSpec, pageable);
-        return ResponseEntity.ok(toBatchResponse(requests));
+            Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(combinedSpec, pageable);
+            return ResponseEntity.ok(toBatchResponse(requests));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid leave request status '{}': {}", status, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("Failed to fetch leave requests by status '{}': {}", status, e.getMessage());
+            return ResponseEntity.ok(Page.empty(pageable).map(r -> new LeaveRequestResponse()));
+        }
     }
 
     @GetMapping
