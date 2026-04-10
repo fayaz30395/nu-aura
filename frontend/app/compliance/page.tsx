@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {
   Title,
   Text,
@@ -20,7 +20,7 @@ import {
   Tooltip,
   ThemeIcon,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
+import {notifications} from '@mantine/notifications';
 import {
   IconCheck,
   IconAlertTriangle,
@@ -33,9 +33,9 @@ import {
   IconRefresh,
   IconCheckbox,
 } from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout/AppLayout';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
   useComplianceDashboard,
   useActivePolicies,
@@ -48,8 +48,8 @@ import {
   useUpdateAlertStatus,
   useEscalateAlert,
 } from '@/lib/hooks/queries/useCompliance';
-import type { CompliancePolicy, ComplianceChecklist, ComplianceAlert } from '@/lib/types/hrms/compliance';
-import { formatDate } from '@/lib/utils';
+import type {CompliancePolicy, ComplianceChecklist, ComplianceAlert} from '@/lib/types/hrms/compliance';
+import {formatDate} from '@/lib/utils';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -96,7 +96,7 @@ interface StatCardProps {
   sub?: string;
 }
 
-function StatCard({ label, value, icon, color, sub }: StatCardProps) {
+function StatCard({label, value, icon, color, sub}: StatCardProps) {
   return (
     <Paper withBorder p="md" radius="md" className="shadow-[var(--shadow-card)]">
       <Group gap="sm" mb={8}>
@@ -114,7 +114,7 @@ function StatCard({ label, value, icon, color, sub }: StatCardProps) {
 // ─── Policies Tab ─────────────────────────────────────────────────────────────
 
 function PoliciesTab() {
-  const { data: policiesPage, isLoading } = useActivePolicies();
+  const {data: policiesPage, isLoading} = useActivePolicies();
   const policies = policiesPage?.content ?? [];
   const publishMutation = usePublishPolicy();
   const archiveMutation = useArchivePolicy();
@@ -122,33 +122,38 @@ function PoliciesTab() {
   const handlePublish = async (policy: CompliancePolicy) => {
     try {
       await publishMutation.mutateAsync(policy.id);
-      notifications.show({ title: 'Published', message: `${policy.name} is now live`, color: 'green', icon: <IconCheck size={14} /> });
+      notifications.show({
+        title: 'Published',
+        message: `${policy.name} is now live`,
+        color: 'green',
+        icon: <IconCheck size={14}/>
+      });
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to publish policy', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to publish policy', color: 'red'});
     }
   };
 
   const handleArchive = async (policy: CompliancePolicy) => {
     try {
       await archiveMutation.mutateAsync(policy.id);
-      notifications.show({ title: 'Archived', message: `${policy.name} has been archived`, color: 'gray' });
+      notifications.show({title: 'Archived', message: `${policy.name} has been archived`, color: 'gray'});
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to archive policy', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to archive policy', color: 'red'});
     }
   };
 
-  if (isLoading) return <Center h={200}><Loader /></Center>;
+  if (isLoading) return <Center h={200}><Loader/></Center>;
   if (!policies.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconFileText size={32} color="var(--text-muted)" />
+        <IconFileText size={32} color="var(--text-muted)"/>
         <Text c="dimmed">No active policies</Text>
       </Stack>
     </Center>
   );
 
   return (
-    <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
+    <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
       <Table striped highlightOnHover>
         <Table.Thead className="bg-surface-100 dark:bg-surface-800">
           <Table.Tr>
@@ -202,7 +207,7 @@ function PoliciesTab() {
                         loading={publishMutation.isPending && publishMutation.variables === policy.id}
                         onClick={() => handlePublish(policy)}
                       >
-                        <IconCheck size={16} />
+                        <IconCheck size={16}/>
                       </ActionIcon>
                     </Tooltip>
                   )}
@@ -217,7 +222,7 @@ function PoliciesTab() {
                         loading={archiveMutation.isPending && archiveMutation.variables === policy.id}
                         onClick={() => handleArchive(policy)}
                       >
-                        <IconFileText size={16} />
+                        <IconFileText size={16}/>
                       </ActionIcon>
                     </Tooltip>
                   )}
@@ -234,24 +239,29 @@ function PoliciesTab() {
 // ─── Checklists Tab ───────────────────────────────────────────────────────────
 
 function ChecklistsTab() {
-  const { data: checklistsPage, isLoading } = useActiveChecklists();
+  const {data: checklistsPage, isLoading} = useActiveChecklists();
   const checklists = checklistsPage?.content ?? [];
   const completeMutation = useCompleteChecklist();
 
   const handleComplete = async (checklist: ComplianceChecklist) => {
     try {
       await completeMutation.mutateAsync(checklist.id);
-      notifications.show({ title: 'Completed', message: `${checklist.name} marked complete`, color: 'green', icon: <IconCheck size={14} /> });
+      notifications.show({
+        title: 'Completed',
+        message: `${checklist.name} marked complete`,
+        color: 'green',
+        icon: <IconCheck size={14}/>
+      });
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to complete checklist', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to complete checklist', color: 'red'});
     }
   };
 
-  if (isLoading) return <Center h={200}><Loader /></Center>;
+  if (isLoading) return <Center h={200}><Loader/></Center>;
   if (!checklists.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconClipboardList size={32} color="var(--text-muted)" />
+        <IconClipboardList size={32} color="var(--text-muted)"/>
         <Text c="dimmed">No active checklists</Text>
       </Stack>
     </Center>
@@ -290,7 +300,7 @@ function ChecklistsTab() {
                     loading={completeMutation.isPending && completeMutation.variables === cl.id}
                     onClick={() => handleComplete(cl)}
                   >
-                    <IconCheckbox size={16} />
+                    <IconCheckbox size={16}/>
                   </ActionIcon>
                 </Tooltip>
               )}
@@ -301,7 +311,7 @@ function ChecklistsTab() {
                 size="sm"
                 radius="xl"
                 color={pct === 100 ? 'green' : isOverdue ? 'red' : 'blue'}
-                style={{ flex: 1 }}
+                style={{flex: 1}}
               />
               <Text size="xs" c="dimmed" w={36} ta="right">
                 {cl.completedItems ?? 0}/{cl.totalItems ?? 0}
@@ -317,34 +327,34 @@ function ChecklistsTab() {
 // ─── Alerts Tab ───────────────────────────────────────────────────────────────
 
 function AlertsTab() {
-  const { data: alertsPage, isLoading } = useActiveAlerts();
+  const {data: alertsPage, isLoading} = useActiveAlerts();
   const alerts = alertsPage?.content ?? [];
   const updateMutation = useUpdateAlertStatus();
   const escalateMutation = useEscalateAlert();
 
   const handleResolve = async (alert: ComplianceAlert) => {
     try {
-      await updateMutation.mutateAsync({ id: alert.id, status: 'RESOLVED', resolution: 'Resolved via dashboard' });
-      notifications.show({ title: 'Resolved', message: alert.title, color: 'green', icon: <IconCheck size={14} /> });
+      await updateMutation.mutateAsync({id: alert.id, status: 'RESOLVED', resolution: 'Resolved via dashboard'});
+      notifications.show({title: 'Resolved', message: alert.title, color: 'green', icon: <IconCheck size={14}/>});
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to resolve alert', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to resolve alert', color: 'red'});
     }
   };
 
   const handleEscalate = async (alert: ComplianceAlert) => {
     try {
       await escalateMutation.mutateAsync(alert.id);
-      notifications.show({ title: 'Escalated', message: alert.title, color: 'orange' });
+      notifications.show({title: 'Escalated', message: alert.title, color: 'orange'});
     } catch {
-      notifications.show({ title: 'Error', message: 'Failed to escalate alert', color: 'red' });
+      notifications.show({title: 'Error', message: 'Failed to escalate alert', color: 'red'});
     }
   };
 
-  if (isLoading) return <Center h={200}><Loader /></Center>;
+  if (isLoading) return <Center h={200}><Loader/></Center>;
   if (!alerts.length) return (
     <Center h={200}>
       <Stack align="center" gap="xs">
-        <IconBell size={32} color="var(--text-muted)" />
+        <IconBell size={32} color="var(--text-muted)"/>
         <Text c="dimmed">No active compliance alerts</Text>
         <Text size="xs" c="dimmed">You&apos;re all clear!</Text>
       </Stack>
@@ -352,7 +362,7 @@ function AlertsTab() {
   );
 
   return (
-    <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
+    <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
       <Table striped highlightOnHover>
         <Table.Thead className="bg-surface-100 dark:bg-surface-800">
           <Table.Tr>
@@ -407,7 +417,7 @@ function AlertsTab() {
                           onClick={() => handleResolve(alert)}
                           loading={updateMutation.isPending}
                         >
-                          <IconCheck size={16} />
+                          <IconCheck size={16}/>
                         </ActionIcon>
                       </Tooltip>
                       {alert.status !== 'ESCALATED' && (
@@ -421,7 +431,7 @@ function AlertsTab() {
                             onClick={() => handleEscalate(alert)}
                             loading={escalateMutation.isPending}
                           >
-                            <IconArrowUpRight size={16} />
+                            <IconArrowUpRight size={16}/>
                           </ActionIcon>
                         </Tooltip>
                       )}
@@ -443,8 +453,8 @@ export default function CompliancePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string | null>('overview');
 
-  const { data: dashboard, isLoading: dashLoading, refetch } = useComplianceDashboard();
-  const { data: criticalAlertsPage } = useCriticalAlerts();
+  const {data: dashboard, isLoading: dashLoading, refetch} = useComplianceDashboard();
+  const {data: criticalAlertsPage} = useCriticalAlerts();
   const criticalAlerts = criticalAlertsPage?.content ?? [];
 
   const stats = dashboard as Record<string, number> | undefined;
@@ -476,7 +486,7 @@ export default function CompliancePage() {
             </div>
             <Button
               variant="subtle"
-              leftSection={<IconRefresh size={16} />}
+              leftSection={<IconRefresh size={16}/>}
               onClick={() => refetch()}
               className="cursor-pointer"
             >
@@ -486,18 +496,21 @@ export default function CompliancePage() {
 
           {/* Critical Alert Banner */}
           {criticalAlerts.length > 0 && (
-            <Paper withBorder p="sm" radius="md" style={{ borderColor: 'var(--mantine-color-red-5)', background: 'var(--mantine-color-red-0)' }}>
+            <Paper withBorder p="sm" radius="md"
+                   style={{borderColor: 'var(--mantine-color-red-5)', background: 'var(--mantine-color-red-0)'}}>
               <Group gap="sm">
-                <IconAlertTriangle size={20} color="var(--mantine-color-red-6)" />
+                <IconAlertTriangle size={20} color="var(--mantine-color-red-6)"/>
                 <Text size="sm" fw={600} c="red.7">
-                  {criticalAlerts.length} critical compliance alert{criticalAlerts.length > 1 ? 's' : ''} require{criticalAlerts.length === 1 ? 's' : ''} immediate attention
+                  {criticalAlerts.length} critical compliance
+                  alert{criticalAlerts.length > 1 ? 's' : ''} require{criticalAlerts.length === 1 ? 's' : ''} immediate
+                  attention
                 </Text>
                 <Button
                   variant="outline"
                   color="red"
                   size="xs"
                   className="cursor-pointer"
-                  style={{ marginLeft: 'auto' }}
+                  style={{marginLeft: 'auto'}}
                   onClick={() => setActiveTab('alerts')}
                 >
                   View Alerts
@@ -508,32 +521,32 @@ export default function CompliancePage() {
 
           {/* Stats */}
           {dashLoading ? (
-            <Center h={100}><Loader size="sm" /></Center>
+            <Center h={100}><Loader size="sm"/></Center>
           ) : (
-            <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
+            <SimpleGrid cols={{base: 2, sm: 4}} spacing="md">
               <StatCard
                 label="Active Policies"
                 value={stats?.activePolicies ?? stats?.totalPolicies ?? '—'}
-                icon={<IconShield size={16} />}
+                icon={<IconShield size={16}/>}
                 color="blue"
               />
               <StatCard
                 label="Pending Acknowledgments"
                 value={stats?.pendingAcknowledgments ?? '—'}
-                icon={<IconFileText size={16} />}
+                icon={<IconFileText size={16}/>}
                 color="yellow"
                 sub="Require employee sign-off"
               />
               <StatCard
                 label="Open Checklists"
                 value={stats?.openChecklists ?? stats?.totalChecklists ?? '—'}
-                icon={<IconClipboardList size={16} />}
+                icon={<IconClipboardList size={16}/>}
                 color="indigo"
               />
               <StatCard
                 label="Active Alerts"
                 value={stats?.activeAlerts ?? stats?.totalAlerts ?? '—'}
-                icon={<IconBell size={16} />}
+                icon={<IconBell size={16}/>}
                 color={criticalAlerts.length > 0 ? 'red' : 'green'}
                 sub={criticalAlerts.length > 0 ? `${criticalAlerts.length} critical` : 'All clear'}
               />
@@ -545,21 +558,21 @@ export default function CompliancePage() {
             <Tabs.List>
               <Tabs.Tab
                 value="overview"
-                leftSection={<IconShield size={14} />}
+                leftSection={<IconShield size={14}/>}
                 className="cursor-pointer"
               >
                 Policies
               </Tabs.Tab>
               <Tabs.Tab
                 value="checklists"
-                leftSection={<IconClipboardList size={14} />}
+                leftSection={<IconClipboardList size={14}/>}
                 className="cursor-pointer"
               >
                 Checklists
               </Tabs.Tab>
               <Tabs.Tab
                 value="alerts"
-                leftSection={<IconAlertCircle size={14} />}
+                leftSection={<IconAlertCircle size={14}/>}
                 className="cursor-pointer"
               >
                 Alerts
@@ -572,13 +585,13 @@ export default function CompliancePage() {
             </Tabs.List>
 
             <Tabs.Panel value="overview" pt="md">
-              <PoliciesTab />
+              <PoliciesTab/>
             </Tabs.Panel>
             <Tabs.Panel value="checklists" pt="md">
-              <ChecklistsTab />
+              <ChecklistsTab/>
             </Tabs.Panel>
             <Tabs.Panel value="alerts" pt="md">
-              <AlertsTab />
+              <AlertsTab/>
             </Tabs.Panel>
           </Tabs>
         </Stack>

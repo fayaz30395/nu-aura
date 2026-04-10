@@ -163,7 +163,8 @@ VALUES (gen_random_uuid(),
         'ACTIVE',
         1,
         '/icons/hrms.svg',
-        NOW(), NOW(), 0, false) ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT (code)
+WHERE is_deleted = false DO NOTHING;
 
 INSERT INTO nu_applications (id, code, name, description, base_url, api_base_path, is_system_app,
                              status, display_order, icon_url,
@@ -178,7 +179,8 @@ VALUES (gen_random_uuid(),
         'ACTIVE',
         2,
         '/icons/hire.svg',
-        NOW(), NOW(), 0, false) ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT (code)
+WHERE is_deleted = false DO NOTHING;
 
 INSERT INTO nu_applications (id, code, name, description, base_url, api_base_path, is_system_app,
                              status, display_order, icon_url,
@@ -193,7 +195,8 @@ VALUES (gen_random_uuid(),
         'ACTIVE',
         3,
         '/icons/grow.svg',
-        NOW(), NOW(), 0, false) ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT (code)
+WHERE is_deleted = false DO NOTHING;
 
 INSERT INTO nu_applications (id, code, name, description, base_url, api_base_path, is_system_app,
                              status, display_order, icon_url,
@@ -208,4 +211,5 @@ VALUES (gen_random_uuid(),
         'ACTIVE',
         4,
         '/icons/fluence.svg',
-        NOW(), NOW(), 0, false) ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
+        NOW(), NOW(), 0, false) ON CONFLICT (code)
+WHERE is_deleted = false DO NOTHING;

@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
-import { scorecardService } from '@/lib/services/hire/scorecard.service';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {notifications} from '@mantine/notifications';
+import {scorecardService} from '@/lib/services/hire/scorecard.service';
 import type {
   CreateScorecardRequest,
   UpdateScorecardRequest,
@@ -56,7 +56,7 @@ export function useCreateScorecardMutation() {
   return useMutation({
     mutationFn: (data: CreateScorecardRequest) => scorecardService.createScorecard(data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: scorecardKeys.all });
+      queryClient.invalidateQueries({queryKey: scorecardKeys.all});
       notifications.show({
         title: 'Scorecard saved',
         message: 'Interview scorecard has been created',
@@ -77,10 +77,10 @@ export function useCreateScorecardMutation() {
 export function useUpdateScorecardMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateScorecardRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateScorecardRequest }) =>
       scorecardService.updateScorecard(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: scorecardKeys.all });
+      queryClient.invalidateQueries({queryKey: scorecardKeys.all});
       notifications.show({
         title: 'Scorecard updated',
         message: 'Interview scorecard has been updated',
@@ -102,7 +102,7 @@ export function useSubmitScorecardMutation() {
   return useMutation({
     mutationFn: (id: string) => scorecardService.submitScorecard(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: scorecardKeys.all });
+      queryClient.invalidateQueries({queryKey: scorecardKeys.all});
       notifications.show({
         title: 'Scorecard submitted',
         message: 'Interview scorecard has been submitted for review',
@@ -125,7 +125,7 @@ export function useCreateScorecardTemplateMutation() {
     mutationFn: (data: CreateScorecardTemplateRequest) =>
       scorecardService.createTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: scorecardKeys.templates() });
+      queryClient.invalidateQueries({queryKey: scorecardKeys.templates()});
       notifications.show({
         title: 'Template created',
         message: 'Scorecard template has been created',

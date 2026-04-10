@@ -57,7 +57,7 @@ public class WikiPageService {
         createPageVersion(saved, "Initial version", tenantId, page.getCreatedBy());
 
         log.info("Created wiki page: {} in space: {}", saved.getId(),
-            page.getSpace() != null ? page.getSpace().getId() : null);
+                page.getSpace() != null ? page.getSpace().getId() : null);
         publishFluenceEvent(saved.getId(), tenantId, FluenceContentEvent.ACTION_CREATED);
         recordActivity(tenantId, page.getCreatedBy(), "CREATED", saved);
         return saved;

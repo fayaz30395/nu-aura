@@ -135,9 +135,9 @@ public class CacheWarmUpService {
             org.springframework.cache.CacheManager cacheManager = ctx.getBean(org.springframework.cache.CacheManager.class);
 
             String[] securityCaches = {
-                CacheConfig.ROLE_PERMISSIONS,
-                CacheConfig.PERMISSIONS,
-                CacheConfig.ROLES
+                    CacheConfig.ROLE_PERMISSIONS,
+                    CacheConfig.PERMISSIONS,
+                    CacheConfig.ROLES
             };
 
             for (String cacheName : securityCaches) {

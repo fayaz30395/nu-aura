@@ -8,7 +8,9 @@ description: Use when asked to "validate and fix", "browser QA loop", "autonomou
 ## Overview
 
 This skill orchestrates an autonomous cycle that:
-1. **Validates** every route across all 9 roles — RBAC, render health, CRUD flows, console errors, network failures, design system, a11y, performance
+
+1. **Validates** every route across all 9 roles — RBAC, render health, CRUD flows, console errors,
+   network failures, design system, a11y, performance
 2. **Diagnoses** any issues found (P0–P3 severity)
 3. **Fixes** P0/P1/P2 issues automatically in code
 4. **Rechecks** to confirm fixes (up to 3x per issue)
@@ -42,6 +44,7 @@ mkdir -p /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/qa-reports/validate-fix-loo
 ```
 
 If services are not running:
+
 ```bash
 cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura
 docker-compose up -d
@@ -54,17 +57,17 @@ cd frontend && npm run dev &
 
 ## ROLES & CREDENTIALS
 
-| Role | Email | Password |
-|------|-------|----------|
-| SUPER_ADMIN | fayaz.m@nulogic.io | Welcome@123 |
-| TENANT_ADMIN | sarankarthick.maran@nulogic.io | Welcome@123 |
-| HR_ADMIN | jagadeesh@nulogic.io | Welcome@123 |
-| HR_MANAGER | jagadeesh@nulogic.io | Welcome@123 |
-| MANAGER | sumit@nulogic.io | Welcome@123 |
-| TEAM_LEAD | mani@nulogic.io | Welcome@123 |
-| EMPLOYEE | saran@nulogic.io | Welcome@123 |
-| RECRUITMENT_ADMIN | suresh@nulogic.io | Welcome@123 |
-| FINANCE_ADMIN | jagadeesh@nulogic.io | Welcome@123 |
+| Role              | Email                          | Password    |
+|-------------------|--------------------------------|-------------|
+| SUPER_ADMIN       | fayaz.m@nulogic.io             | Welcome@123 |
+| TENANT_ADMIN      | sarankarthick.maran@nulogic.io | Welcome@123 |
+| HR_ADMIN          | jagadeesh@nulogic.io           | Welcome@123 |
+| HR_MANAGER        | jagadeesh@nulogic.io           | Welcome@123 |
+| MANAGER           | sumit@nulogic.io               | Welcome@123 |
+| TEAM_LEAD         | mani@nulogic.io                | Welcome@123 |
+| EMPLOYEE          | saran@nulogic.io               | Welcome@123 |
+| RECRUITMENT_ADMIN | suresh@nulogic.io              | Welcome@123 |
+| FINANCE_ADMIN     | jagadeesh@nulogic.io           | Welcome@123 |
 
 **Auth rate limit**: 5 req/min. Space role switches by ≥15 seconds.
 Group tests by role to minimize login switches.
@@ -74,6 +77,7 @@ Group tests by role to minimize login switches.
 ## SCOPE — ALL ROUTES
 
 ### MY SPACE (all 9 roles — no requiredPermission on these)
+
 ```
 /me/dashboard  /me/profile    /me/leave       /me/attendance
 /me/payslips   /me/assets     /me/documents   /me/loans
@@ -82,6 +86,7 @@ Group tests by role to minimize login switches.
 ```
 
 ### NU-HRMS Admin
+
 ```
 /dashboard         /employees        /departments      /attendance
 /leave             /payroll          /compensation     /benefits
@@ -100,6 +105,7 @@ Group tests by role to minimize login switches.
 ```
 
 ### NU-Hire
+
 ```
 /recruitment  /recruitment/candidates  /recruitment/pipeline
 /onboarding   /preboarding             /offboarding
@@ -107,6 +113,7 @@ Group tests by role to minimize login switches.
 ```
 
 ### NU-Grow
+
 ```
 /performance  /performance/reviews  /okr        /feedback360
 /training     /learning             /recognition /surveys
@@ -114,6 +121,7 @@ Group tests by role to minimize login switches.
 ```
 
 ### NU-Fluence
+
 ```
 /fluence/wiki    /fluence/blogs      /fluence/templates
 /fluence/drive   /fluence/search     /fluence/my-content
@@ -127,6 +135,7 @@ Group tests by role to minimize login switches.
 Check ALL of the following per route per role:
 
 ### 1. RBAC ACCESS CONTROL
+
 - Route renders full content for authorized roles
 - Route redirects to `/me/dashboard` (NOT 404/500) for unauthorized roles
 - Sidebar nav items shown/hidden correctly per role
@@ -135,6 +144,7 @@ Check ALL of the following per route per role:
 - `/me/*` routes accessible to ALL roles regardless of permissions
 
 ### 2. PAGE RENDER HEALTH
+
 - Visible content loads (not blank white page)
 - No unhandled React errors / ErrorBoundary triggered
 - No hydration mismatch in console
@@ -144,6 +154,7 @@ Check ALL of the following per route per role:
 - Error state renders when API fails (no silent blank page)
 
 ### 3. CONSOLE & NETWORK
+
 - Zero console ERRORs (filter: HMR, favicon, Kafka/ES infra noise expected)
 - Zero failed API requests that should succeed
 - No CORS errors
@@ -153,6 +164,7 @@ Check ALL of the following per route per role:
 - No 500 errors from backend
 
 ### 4. DATA RENDERING
+
 - Tables render with rows (seed data from Flyway V8)
 - Stat cards show real numbers (not NaN, "--", null, undefined)
 - Charts render (Recharts SVG has visible bars/lines, not empty)
@@ -166,6 +178,7 @@ Check ALL of the following per route per role:
 Run at least one full CRUD cycle per module per authorized role:
 
 #### Employees (HR_ADMIN, HR_MANAGER, SUPER_ADMIN)
+
 - Create employee → verify appears in list
 - Edit personal info → verify persisted on reload
 - View all profile tabs: Personal, Employment, Documents, Assets, Leave, Payroll
@@ -173,6 +186,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - Filter by department → list narrows correctly
 
 #### Leave (all roles)
+
 - EMPLOYEE: Apply casual leave for tomorrow → verify PENDING status shown
 - TEAM_LEAD/MANAGER: Approve a pending leave → verify APPROVED status
 - HR_MANAGER: View all-employee leave calendar
@@ -180,6 +194,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - Leave type dropdown populated with types
 
 #### Attendance (all roles)
+
 - EMPLOYEE: Clock in → verify record created with timestamp
 - EMPLOYEE: Clock out → verify duration calculated
 - MANAGER: View team attendance for today
@@ -187,35 +202,41 @@ Run at least one full CRUD cycle per module per authorized role:
 - Attendance calendar renders with color-coded markers
 
 #### Payroll (SUPER_ADMIN, HR_ADMIN, HR_MANAGER, FINANCE_ADMIN)
+
 - Payroll runs list loads with ≥1 run
 - Click a run → salary breakdown table shows components
 - Download payslip → file downloads (not 404)
 - Statutory filings list loads with filing types
 
 #### Recruitment (SUPER_ADMIN, HR_ADMIN, RECRUITMENT_ADMIN)
+
 - Job listings load on Kanban/list view
 - Create a job posting → appears in list
 - Move candidate between pipeline stages (drag or button)
 - Interview schedule form opens and submits without error
 
 #### Performance (SUPER_ADMIN, HR_ADMIN, HR_MANAGER, MANAGER, TEAM_LEAD)
+
 - Review cycles list loads
 - OKR tree renders for current quarter
 - 360 Feedback form opens, fields accept input, submits
 - Goal creation validates required fields and saves
 
 #### Training (view: all roles; create: HR_ADMIN, HR_MANAGER)
+
 - Training programs list loads with at least one program
 - Enroll employee in a training → enrollment confirmed
 - Mark training complete → "Generate Certificate" button appears
 
 #### Cross-Role Approval Flow
+
 - `saran` (EMPLOYEE) submits leave request
 - `sumit` (MANAGER) sees it in /approvals → approves
 - `saran` refreshes → status shows APPROVED
 - Approval badge count on /approvals updates correctly
 
 ### 6. FORM VALIDATION
+
 - Required field shows inline error on empty submit
 - Email fields reject invalid format
 - Date range: end date < start date is rejected
@@ -226,6 +247,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - Form resets after successful submission (where applicable)
 
 ### 7. MY SPACE SELF-SERVICE — EMPLOYEE role (saran@nulogic.io)
+
 - `/me/dashboard` → Quick stats: leave balance, attendance %, pending approvals — all non-zero
 - `/me/profile` → Edit phone/address → save → verify persisted on reload
 - `/me/leave` → Leave history visible, apply form submits
@@ -235,6 +257,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - `/me/training` → Enrolled trainings visible
 
 ### 8. NAVIGATION & SIDEBAR
+
 - Active app (HRMS / Hire / Grow / Fluence) highlighted in app switcher
 - Waffle grid shows all 4 sub-apps
 - Sidebar items expand/collapse on click
@@ -243,6 +266,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - App switcher preserves auth session when switching sub-apps
 
 ### 9. DESIGN SYSTEM COMPLIANCE (spot-check 10 pages)
+
 - No raw `bg-white` on card components (must be `bg-[var(--bg-card)]`)
 - Buttons use `skeuo-button` with `active:translate-y-px`
 - No `shadow-sm/md/lg` (must use `shadow-[var(--shadow-card)]` etc.)
@@ -253,6 +277,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - Focus rings visible on keyboard Tab navigation
 
 ### 10. ACCESSIBILITY (spot-check 5 critical pages)
+
 - All icon-only buttons have `aria-label`
 - Form inputs have `<label>` or `aria-label`
 - Modals trap focus and close on Escape key
@@ -261,6 +286,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - Images have `alt` text
 
 ### 11. DARK MODE
+
 - Toggle dark mode (header or settings)
 - Verify 5 pages: `/dashboard`, `/employees`, `/leave`, `/recruitment`, `/performance`
 - No white backgrounds leaking through on cards
@@ -268,12 +294,14 @@ Run at least one full CRUD cycle per module per authorized role:
 - Charts visible in dark mode
 
 ### 12. PERFORMANCE
+
 - Flag WARN if page load > 3000ms
 - Flag FAIL if page load > 5000ms
 - Flag WARN if any API call > 2000ms
 - Note top 10 slowest routes in report
 
 ### 13. SESSION & AUTH
+
 - Login with each role → lands on correct page
 - Refresh page while logged in → session persists
 - Navigate to admin route as EMPLOYEE → redirect (not 500)
@@ -281,6 +309,7 @@ Run at least one full CRUD cycle per module per authorized role:
 - 401 is NOT returned on permitted, authenticated requests
 
 ### 14. RESPONSIVE (1366px laptop viewport)
+
 - Sidebar collapses to icon-only at 1366px
 - Tables scroll horizontally (not broken layout)
 - Modals fit viewport (not clipped off-screen)
@@ -290,23 +319,24 @@ Run at least one full CRUD cycle per module per authorized role:
 
 ## RBAC ACCESS MATRIX — EXPECTED BEHAVIOR
 
-| Route | SUPER | HR_ADM | HR_MGR | MGR | TL | EMP | REC | FIN |
-|-------|:-----:|:------:|:------:|:---:|:--:|:---:|:---:|:---:|
-| /me/* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| /employees | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| /payroll | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| /admin/roles | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| /recruitment | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| /performance | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| /settings | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| /analytics | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| /reports | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| /fluence/* | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| /onboarding | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| /approvals | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| Route        | SUPER | HR_ADM | HR_MGR | MGR | TL | EMP | REC | FIN |
+|--------------|:-----:|:------:|:------:|:---:|:--:|:---:|:---:|:---:|
+| /me/*        |   ✅   |   ✅    |   ✅    |  ✅  | ✅  |  ✅  |  ✅  |  ✅  |
+| /employees   |   ✅   |   ✅    |   ✅    |  ✅  | ✅  |  ❌  |  ❌  |  ❌  |
+| /payroll     |   ✅   |   ✅    |   ✅    |  ❌  | ❌  |  ❌  |  ❌  |  ✅  |
+| /admin/roles |   ✅   |   ✅    |   ❌    |  ❌  | ❌  |  ❌  |  ❌  |  ❌  |
+| /recruitment |   ✅   |   ✅    |   ✅    |  ❌  | ❌  |  ❌  |  ✅  |  ❌  |
+| /performance |   ✅   |   ✅    |   ✅    |  ✅  | ✅  |  ❌  |  ❌  |  ❌  |
+| /settings    |   ✅   |   ✅    |   ❌    |  ❌  | ❌  |  ❌  |  ❌  |  ❌  |
+| /analytics   |   ✅   |   ✅    |   ✅    |  ❌  | ❌  |  ❌  |  ❌  |  ❌  |
+| /reports     |   ✅   |   ✅    |   ✅    |  ❌  | ❌  |  ❌  |  ❌  |  ✅  |
+| /fluence/*   |   ✅   |   ✅    |   ✅    |  ✅  | ✅  |  ✅  |  ✅  |  ✅  |
+| /onboarding  |   ✅   |   ✅    |   ✅    |  ❌  | ❌  |  ❌  |  ✅  |  ❌  |
+| /approvals   |   ✅   |   ✅    |   ✅    |  ✅  | ✅  |  ❌  |  ✅  |  ✅  |
 
 ❌ = must redirect to `/me/dashboard` — NOT render partial content, NOT return 500.
-Any 200 response with admin data to an unauthorized role = **P0 security bug — stop and fix immediately**.
+Any 200 response with admin data to an unauthorized role = **P0 security bug — stop and fix
+immediately**.
 
 ---
 
@@ -314,14 +344,15 @@ Any 200 response with admin data to an unauthorized role = **P0 security bug —
 
 ### Severity & Action
 
-| Level | Condition | Action | Max Retries |
-|-------|-----------|--------|-------------|
-| **P0** | RBAC leak, wrong tenant data, auth bypass, full page JS crash | Fix immediately, block next batch until resolved | 3 |
-| **P1** | Console ERROR from app code, 4xx on permitted endpoint, broken CRUD, form submit silent fail | Fix in current batch | 3 |
-| **P2** | Missing loading/empty/error state, design token violation, wrong redirect target, render > 3s | Fix if straightforward, continue if complex | 1 |
-| **P3** | A11y improvement, render 1–3s, dark mode edge case, visual polish | Log only — do NOT auto-fix | 0 |
+| Level  | Condition                                                                                     | Action                                           | Max Retries |
+|--------|-----------------------------------------------------------------------------------------------|--------------------------------------------------|-------------|
+| **P0** | RBAC leak, wrong tenant data, auth bypass, full page JS crash                                 | Fix immediately, block next batch until resolved | 3           |
+| **P1** | Console ERROR from app code, 4xx on permitted endpoint, broken CRUD, form submit silent fail  | Fix in current batch                             | 3           |
+| **P2** | Missing loading/empty/error state, design token violation, wrong redirect target, render > 3s | Fix if straightforward, continue if complex      | 1           |
+| **P3** | A11y improvement, render 1–3s, dark mode edge case, visual polish                             | Log only — do NOT auto-fix                       | 0           |
 
 ### Fix Protocol
+
 1. Read the failing file before editing — never rewrite from scratch
 2. Make the minimal targeted change — do not refactor surrounding code
 3. Verify TypeScript compiles: `cd frontend && npx tsc --noEmit 2>&1 | head -20`
@@ -355,6 +386,7 @@ For each USE_CASE:
 ```
 
 ### Batch Parallelism
+
 - Batch size: **5 routes per parallel batch**
 - Parallelize: validations for **different routes only**
 - Never parallelize: two agents modifying the **same file**
@@ -461,31 +493,31 @@ Save to: `qa-reports/validate-fix-loop/report-{YYYY-MM-DD}.md`
 
 ## CONFIGURATION
 
-| Setting | Default |
-|---------|---------|
-| MAX_RETRIES | 3 |
-| BATCH_SIZE | 5 |
-| RENDER_TIMEOUT | 10000ms |
-| NETWORK_IDLE_TIMEOUT | 5000ms |
-| ROLE_SWITCH_PAUSE | 15s |
-| SCREENSHOT_ON_PASS | false |
-| SCREENSHOT_ON_FAIL | true |
-| AUTO_COMMIT_FIXES | false |
+| Setting              | Default |
+|----------------------|---------|
+| MAX_RETRIES          | 3       |
+| BATCH_SIZE           | 5       |
+| RENDER_TIMEOUT       | 10000ms |
+| NETWORK_IDLE_TIMEOUT | 5000ms  |
+| ROLE_SWITCH_PAUSE    | 15s     |
+| SCREENSHOT_ON_PASS   | false   |
+| SCREENSHOT_ON_FAIL   | true    |
+| AUTO_COMMIT_FIXES    | false   |
 
 ---
 
 ## ERROR HANDLING
 
-| Scenario | Action |
-|----------|--------|
-| Service not running | Attempt to start, abort if fails |
-| Login fails | Abort entire loop — auth is prerequisite |
-| Rate limit 429 | Wait 60s, retry |
-| Fix causes TS errors | Revert immediately, try alternative |
-| Fix breaks other routes | Revert, mark UNRESOLVED |
-| Network timeout | Retry once, then mark infrastructure issue |
-| Chrome MCP disconnect | Fall back to Playwright for remaining cases |
-| Git lock file | Remove `.git/HEAD.lock` and retry commit |
+| Scenario                | Action                                      |
+|-------------------------|---------------------------------------------|
+| Service not running     | Attempt to start, abort if fails            |
+| Login fails             | Abort entire loop — auth is prerequisite    |
+| Rate limit 429          | Wait 60s, retry                             |
+| Fix causes TS errors    | Revert immediately, try alternative         |
+| Fix breaks other routes | Revert, mark UNRESOLVED                     |
+| Network timeout         | Retry once, then mark infrastructure issue  |
+| Chrome MCP disconnect   | Fall back to Playwright for remaining cases |
+| Git lock file           | Remove `.git/HEAD.lock` and retry commit    |
 
 ---
 

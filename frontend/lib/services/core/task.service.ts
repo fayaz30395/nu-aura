@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/client';
-import { wrapServiceCall } from '@/lib/utils/service-error';
+import {apiClient} from '@/lib/api/client';
+import {wrapServiceCall} from '@/lib/utils/service-error';
 import {
   Task,
   TaskListItem,
@@ -38,7 +38,7 @@ export const taskService = {
     wrapServiceCall(`${SERVICE_NAME}.updateTask`, async () => {
       const response = await apiClient.put<Task>(`${BASE_URL}/${id}`, request);
       return response.data;
-    }, { context: { taskId: id } }),
+    }, {context: {taskId: id}}),
 
   /**
    * Get task by ID
@@ -47,7 +47,7 @@ export const taskService = {
     wrapServiceCall(`${SERVICE_NAME}.getTask`, async () => {
       const response = await apiClient.get<Task>(`${BASE_URL}/${id}`);
       return response.data;
-    }, { context: { taskId: id } }),
+    }, {context: {taskId: id}}),
 
   /**
    * Get task by task code (e.g., PROJ-001)
@@ -56,7 +56,7 @@ export const taskService = {
     wrapServiceCall(`${SERVICE_NAME}.getTaskByCode`, async () => {
       const response = await apiClient.get<Task>(`${BASE_URL}/code/${taskCode}`);
       return response.data;
-    }, { context: { taskCode } }),
+    }, {context: {taskCode}}),
 
   /**
    * List tasks in a project with filters
@@ -76,10 +76,10 @@ export const taskService = {
       const hasParams = Object.keys(params).length > 0;
       const response = await apiClient.get<TasksPageResponse>(
         `${BASE_URL}/project/${projectId}`,
-        hasParams ? { params } : undefined
+        hasParams ? {params} : undefined
       );
       return response.data;
-    }, { context: { projectId } }),
+    }, {context: {projectId}}),
 
   /**
    * List tasks assigned to a user
@@ -87,17 +87,17 @@ export const taskService = {
   getAssigneeTasks: (assigneeId: string, page = 0, size = 50): Promise<TasksPageResponse> =>
     wrapServiceCall(`${SERVICE_NAME}.getAssigneeTasks`, async () => {
       const response = await apiClient.get<TasksPageResponse>(
-        `${BASE_URL}/assignee/${assigneeId}`, { params: { page, size } }
+        `${BASE_URL}/assignee/${assigneeId}`, {params: {page, size}}
       );
       return response.data;
-    }, { context: { assigneeId } }),
+    }, {context: {assigneeId}}),
 
   /**
    * Get all tasks with pagination
    */
   getAllTasks: (page = 0, size = 50): Promise<TasksPageResponse> =>
     wrapServiceCall(`${SERVICE_NAME}.getAllTasks`, async () => {
-      const response = await apiClient.get<TasksPageResponse>(BASE_URL, { params: { page, size } });
+      const response = await apiClient.get<TasksPageResponse>(BASE_URL, {params: {page, size}});
       return response.data;
     }),
 
@@ -108,7 +108,7 @@ export const taskService = {
     wrapServiceCall(`${SERVICE_NAME}.getSubtasks`, async () => {
       const response = await apiClient.get<Task[]>(`${BASE_URL}/${parentTaskId}/subtasks`);
       return response.data;
-    }, { context: { parentTaskId } }),
+    }, {context: {parentTaskId}}),
 
   /**
    * Get tasks in a milestone
@@ -117,7 +117,7 @@ export const taskService = {
     wrapServiceCall(`${SERVICE_NAME}.getMilestoneTasks`, async () => {
       const response = await apiClient.get<TaskListItem[]>(`${BASE_URL}/milestone/${milestoneId}`);
       return response.data;
-    }, { context: { milestoneId } }),
+    }, {context: {milestoneId}}),
 
   /**
    * Delete a task
@@ -125,37 +125,37 @@ export const taskService = {
   deleteTask: (id: string): Promise<void> =>
     wrapServiceCall(`${SERVICE_NAME}.deleteTask`, async () => {
       await apiClient.delete(`${BASE_URL}/${id}`);
-    }, { context: { taskId: id } }),
+    }, {context: {taskId: id}}),
 
   /**
    * Update task status
    */
   updateTaskStatus: (id: string, status: TaskStatus): Promise<Task> =>
     wrapServiceCall(`${SERVICE_NAME}.updateTaskStatus`, async () => {
-      const request: TaskStatusUpdateRequest = { status };
+      const request: TaskStatusUpdateRequest = {status};
       const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/status`, request);
       return response.data;
-    }, { context: { taskId: id, newStatus: status } }),
+    }, {context: {taskId: id, newStatus: status}}),
 
   /**
    * Assign task to a user
    */
   assignTask: (id: string, assigneeId: string, assigneeName: string): Promise<Task> =>
     wrapServiceCall(`${SERVICE_NAME}.assignTask`, async () => {
-      const request: TaskAssignRequest = { assigneeId, assigneeName };
+      const request: TaskAssignRequest = {assigneeId, assigneeName};
       const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/assign`, request);
       return response.data;
-    }, { context: { taskId: id, assigneeId } }),
+    }, {context: {taskId: id, assigneeId}}),
 
   /**
    * Log time on a task
    */
   logTime: (id: string, hours: number, description?: string): Promise<Task> =>
     wrapServiceCall(`${SERVICE_NAME}.logTime`, async () => {
-      const request: TaskLogTimeRequest = { hours, description };
+      const request: TaskLogTimeRequest = {hours, description};
       const response = await apiClient.post<Task>(`${BASE_URL}/${id}/log-time`, request);
       return response.data;
-    }, { context: { taskId: id, hours } }),
+    }, {context: {taskId: id, hours}}),
 
   // ============================================================
   // Helper methods (synchronous, no API calls - no error handling needed)
@@ -189,10 +189,10 @@ export const taskService = {
    */
   getPriorityBadge(priority: TaskPriority): { bg: string; text: string } {
     const badges: Record<TaskPriority, { bg: string; text: string }> = {
-      LOW: { bg: 'bg-[var(--bg-surface)] dark:bg-surface-800', text: 'text-[var(--text-secondary)]' },
-      MEDIUM: { bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-600 dark:text-accent-400' },
-      HIGH: { bg: 'bg-warning-100 dark:bg-warning-900', text: 'text-warning-600 dark:text-warning-400' },
-      CRITICAL: { bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-600 dark:text-danger-400' },
+      LOW: {bg: 'bg-[var(--bg-surface)] dark:bg-surface-800', text: 'text-[var(--text-secondary)]'},
+      MEDIUM: {bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-600 dark:text-accent-400'},
+      HIGH: {bg: 'bg-warning-100 dark:bg-warning-900', text: 'text-warning-600 dark:text-warning-400'},
+      CRITICAL: {bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-600 dark:text-danger-400'},
     };
     return badges[priority] || badges.MEDIUM;
   },
@@ -202,13 +202,13 @@ export const taskService = {
    */
   getStatusBadge(status: TaskStatus): { bg: string; text: string } {
     const badges: Record<TaskStatus, { bg: string; text: string }> = {
-      BACKLOG: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
-      TODO: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]' },
-      IN_PROGRESS: { bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-700 dark:text-accent-300' },
-      IN_REVIEW: { bg: 'bg-accent-300 dark:bg-accent-900', text: 'text-accent-900 dark:text-accent-500' },
-      BLOCKED: { bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-700 dark:text-danger-300' },
-      DONE: { bg: 'bg-success-100 dark:bg-success-900', text: 'text-success-700 dark:text-success-300' },
-      CANCELLED: { bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-muted)]' },
+      BACKLOG: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]'},
+      TODO: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]'},
+      IN_PROGRESS: {bg: 'bg-accent-100 dark:bg-accent-900', text: 'text-accent-700 dark:text-accent-300'},
+      IN_REVIEW: {bg: 'bg-accent-300 dark:bg-accent-900', text: 'text-accent-900 dark:text-accent-500'},
+      BLOCKED: {bg: 'bg-danger-100 dark:bg-danger-900', text: 'text-danger-700 dark:text-danger-300'},
+      DONE: {bg: 'bg-success-100 dark:bg-success-900', text: 'text-success-700 dark:text-success-300'},
+      CANCELLED: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-muted)]'},
     };
     return badges[status] || badges.TODO;
   },

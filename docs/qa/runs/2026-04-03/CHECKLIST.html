@@ -1,34 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>NU-AURA QA Checklist — 2026-04-04 Run #5</title>
-<style>
-  :root {--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--green:#3fb950;--amber:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',monospace;font-size:13px;line-height:1.6;padding:24px}
-  h1{font-size:22px;color:var(--blue);margin-bottom:4px}
-  .subtitle{color:var(--muted);font-size:12px;margin-bottom:20px}
-  .stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-  .stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:100px;text-align:center}
-  .stat-val{font-size:24px;font-weight:700;display:block}
-  .stat-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}
-  .green{color:var(--green)} .amber{color:var(--amber)} .red{color:var(--red)} .blue{color:var(--blue)}
-  h2{font-size:16px;color:var(--blue);margin:24px 0 10px;border-bottom:1px solid var(--border);padding-bottom:6px}
-  h3{font-size:14px;color:var(--muted);margin:16px 0 8px}
-  table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px}
-  th{background:var(--bg3);color:var(--muted);text-align:left;padding:6px 10px;border:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
-  td{padding:6px 10px;border:1px solid var(--border);vertical-align:top}
-  tr:nth-child(even){background:var(--bg2)}
-  .fixed{color:var(--green)} .open{color:var(--amber)} .progress{color:var(--blue)} .fail{color:var(--red)} .pending{color:var(--muted)}
-  .refresh{position:fixed;top:12px;right:16px;font-size:11px;color:var(--muted)}
-  code{background:var(--bg3);padding:1px 5px;border-radius:3px;font-size:11px}
-</style>
+  <meta charset="UTF-8">
+  <title>NU-AURA QA Checklist — 2026-04-04 Run #5</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --amber: #d29922;
+      --red: #f85149;
+      --blue: #58a6ff;
+      --purple: #bc8cff
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 24px
+    }
+
+    h1 {
+      font-size: 22px;
+      color: var(--blue);
+      margin-bottom: 4px
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 20px
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap
+    }
+
+    .stat {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 18px;
+      min-width: 100px;
+      text-align: center
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: 700;
+      display: block
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .green {
+      color: var(--green)
+    }
+
+    .amber {
+      color: var(--amber)
+    }
+
+    .red {
+      color: var(--red)
+    }
+
+    .blue {
+      color: var(--blue)
+    }
+
+    h2 {
+      font-size: 16px;
+      color: var(--blue);
+      margin: 24px 0 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px
+    }
+
+    h3 {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 16px 0 8px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 12px
+    }
+
+    th {
+      background: var(--bg3);
+      color: var(--muted);
+      text-align: left;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px
+    }
+
+    td {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      vertical-align: top
+    }
+
+    tr:nth-child(even) {
+      background: var(--bg2)
+    }
+
+    .fixed {
+      color: var(--green)
+    }
+
+    .open {
+      color: var(--amber)
+    }
+
+    .progress {
+      color: var(--blue)
+    }
+
+    .fail {
+      color: var(--red)
+    }
+
+    .pending {
+      color: var(--muted)
+    }
+
+    .refresh {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    code {
+      background: var(--bg3);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px
+    }
+  </style>
 </head>
 <body>
 <h1>NU-AURA QA Checklist — Run #5</h1>
-<div class="subtitle">2026-04-04 QA Run #5 FINAL | Full static audit — 16 bugs found, 16 fixed | 94 total fixed | CONDITIONAL GO</div>
-<div style="margin-bottom:12px;padding:8px 14px;background:#0d1f0d;border-left:3px solid var(--green);border-radius:4px;font-size:12px;color:var(--green)">
+<div class="subtitle">2026-04-04 QA Run #5 FINAL | Full static audit — 16 bugs found, 16 fixed | 94 total fixed |
+  CONDITIONAL GO
+</div>
+<div
+  style="margin-bottom:12px;padding:8px 14px;background:#0d1f0d;border-left:3px solid var(--green);border-radius:4px;font-size:12px;color:var(--green)">
   ✅ GO — All 107 bugs fixed across all runs. 0 open bugs. Cleared for release. (commit ad870763)
 </div>
 
@@ -40,505 +186,2462 @@
   <div class="stat"><span class="stat-val green">0</span><span class="stat-label">P0/Critical Open</span></div>
 </div>
 <p style="margin:4px 0;color:var(--muted)"># NU-AURA QA &amp; Deployment Checklist — 2026-04-04 Run #5</p>
-<p style="margin:4px 0;color:var(--muted)">&gt; <strong>Last updated:</strong> 2026-04-04 | <strong>Source:</strong> Run #4 all fixes confirmed ✅ + Run #5 full 6-module static audit</p>
-<p style="margin:4px 0;color:var(--muted)">> Legend: <span class="fixed">✅</span> Done · <span class="progress">⏳</span> In Progress · <span class="fail">❌</span> Failing · <span class="open">⚠️</span> Needs Fix · 🔵 Skipped · 📋 Pending</p>
+<p style="margin:4px 0;color:var(--muted)">&gt; <strong>Last updated:</strong> 2026-04-04 | <strong>Source:</strong> Run
+  #4 all fixes confirmed ✅ + Run #5 full 6-module static audit</p>
+<p style="margin:4px 0;color:var(--muted)">> Legend: <span class="fixed">✅</span> Done · <span class="progress">⏳</span>
+  In Progress · <span class="fail">❌</span> Failing · <span class="open">⚠️</span> Needs Fix · 🔵 Skipped · 📋 Pending</p>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Overall Status — Run #5</h2>
-<table><thead><tr><th>Category</th><th>Total</th><th>Fixed</th><th>Open</th><th>Notes</th></tr></thead><tbody>
-<tr><td>Use Cases (JUnit)</td><td>318</td><td>264</td><td>54 pending</td><td>0 failing</td></tr>
-<tr><td>All Bugs (Runs #1–#5 + Final)</td><td>107</td><td><span class="fixed">107 fixed</span></td><td><span class="fixed">0 open</span></td><td>All bugs resolved (commit ad870763)</td></tr>
-<tr><td>CRITICAL Bugs</td><td>4</td><td><span class="fixed">4 fixed</span></td><td>0</td><td>All fixed</td></tr>
-<tr><td>P0 Bugs (Tenant Isolation / Permission)</td><td>15</td><td><span class="fixed">15 fixed</span></td><td>0</td><td>All fixed</td></tr>
-<tr><td>P1 Bugs</td><td>22</td><td><span class="fixed">22 fixed</span></td><td>0</td><td>All fixed including letter GET, salary template, half-day normalization</td></tr>
-<tr><td>P2 / Spec / Feature Gaps</td><td>66</td><td><span class="fixed">66 fixed</span></td><td>0</td><td>All fixed — cookie path, feature-flag /admin prefix, FnF refactor, cert endpoint</td></tr>
-<tr><td>Backend Compile</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
-<tr><td>Frontend Build</td><td>—</td><td><span class="fixed">✅ Clean</span></td><td>—</td><td>—</td></tr>
-<tr><td>Flyway Migrations</td><td>V0–V112</td><td><span class="fixed">✅ Applied</span></td><td>—</td><td>—</td></tr>
-<tr style="background:#0d1f0d"><td colspan="5" style="color:var(--green);font-weight:700">✅ GO/NO-GO: GO — All 107 bugs fixed. 0 open bugs. Cleared for production release.</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Category</th>
+    <th>Total</th>
+    <th>Fixed</th>
+    <th>Open</th>
+    <th>Notes</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Use Cases (JUnit)</td>
+    <td>318</td>
+    <td>264</td>
+    <td>54 pending</td>
+    <td>0 failing</td>
+  </tr>
+  <tr>
+    <td>All Bugs (Runs #1–#5 + Final)</td>
+    <td>107</td>
+    <td><span class="fixed">107 fixed</span></td>
+    <td><span class="fixed">0 open</span></td>
+    <td>All bugs resolved (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>CRITICAL Bugs</td>
+    <td>4</td>
+    <td><span class="fixed">4 fixed</span></td>
+    <td>0</td>
+    <td>All fixed</td>
+  </tr>
+  <tr>
+    <td>P0 Bugs (Tenant Isolation / Permission)</td>
+    <td>15</td>
+    <td><span class="fixed">15 fixed</span></td>
+    <td>0</td>
+    <td>All fixed</td>
+  </tr>
+  <tr>
+    <td>P1 Bugs</td>
+    <td>22</td>
+    <td><span class="fixed">22 fixed</span></td>
+    <td>0</td>
+    <td>All fixed including letter GET, salary template, half-day normalization</td>
+  </tr>
+  <tr>
+    <td>P2 / Spec / Feature Gaps</td>
+    <td>66</td>
+    <td><span class="fixed">66 fixed</span></td>
+    <td>0</td>
+    <td>All fixed — cookie path, feature-flag /admin prefix, FnF refactor, cert endpoint</td>
+  </tr>
+  <tr>
+    <td>Backend Compile</td>
+    <td>—</td>
+    <td><span class="fixed">✅ Clean</span></td>
+    <td>—</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>Frontend Build</td>
+    <td>—</td>
+    <td><span class="fixed">✅ Clean</span></td>
+    <td>—</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>Flyway Migrations</td>
+    <td>V0–V112</td>
+    <td><span class="fixed">✅ Applied</span></td>
+    <td>—</td>
+    <td>—</td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td colspan="5" style="color:var(--green);font-weight:700">✅ GO/NO-GO: GO — All 107 bugs fixed. 0 open bugs. Cleared
+      for production release.
+    </td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Bug Tracker</h2>
 <h3>🔴 P0 — Release Blockers</h3>
-<table><thead><tr><th>Bug</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>BUG-004</td><td>RBAC failure — V96 wiped role_permissions</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V107 repopulates all roles</td></tr>
-<tr><td>BUG-QA3-001</td><td>Permission prefix mismatch (HRMS: prefix)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — normalizePermissionCode() strips prefix</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>BUG-004</td>
+    <td>RBAC failure — V96 wiped role_permissions</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V107 repopulates all roles</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-001</td>
+    <td>Permission prefix mismatch (HRMS: prefix)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — normalizePermissionCode() strips prefix</td>
+  </tr>
+  </tbody>
+</table>
 <h3>🟠 P1 — Major Functional Issues</h3>
-<table><thead><tr><th>Bug</th><th>Endpoint</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>BUG-001</td><td>POST /auth/mfa/verify</td><td>Missing <code>verified</code> field in response</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span></td></tr>
-<tr><td>BUG-002</td><td>POST /auth/refresh</td><td>JWT refresh always 401</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — validateRefreshToken()</td></tr>
-<tr><td>BUG-005</td><td>POST /loans</td><td>Loan creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td></tr>
-<tr><td>BUG-006</td><td>POST /travel/requests</td><td>Travel creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td></tr>
-<tr><td>BUG-QA3-002</td><td>POST /auth/login</td><td>Account lockout not enforced</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — AccountLockoutService wired</td></tr>
-<tr><td>BUG-QA2-009</td><td>PUT /employees/{id}/deactivate</td><td>Deactivation 500 NPE</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — gate userRepository.save() behind firstName/lastName check (LazyInit fix)</td></tr>
-<tr><td>BUG-QA2-010</td><td>POST /assets</td><td>Asset creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V112 adds <code>version</code> column</td></tr>
-<tr><td>BUG-QA2-012</td><td>POST /self-service/profile-updates</td><td>Profile update 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard on getCurrentEmployeeId()</td></tr>
-<tr><td>BUG-QA2-003</td><td>POST /letters/generate</td><td>Letter saved then 404 on GET</td><td><span class="open"><span class="open">⚠️</span> OPEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>Endpoint</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>BUG-001</td>
+    <td>POST /auth/mfa/verify</td>
+    <td>Missing <code>verified</code> field in response</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span></td>
+  </tr>
+  <tr>
+    <td>BUG-002</td>
+    <td>POST /auth/refresh</td>
+    <td>JWT refresh always 401</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — validateRefreshToken()</td>
+  </tr>
+  <tr>
+    <td>BUG-005</td>
+    <td>POST /loans</td>
+    <td>Loan creation 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td>
+  </tr>
+  <tr>
+    <td>BUG-006</td>
+    <td>POST /travel/requests</td>
+    <td>Travel creation 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard employeeId</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-002</td>
+    <td>POST /auth/login</td>
+    <td>Account lockout not enforced</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — AccountLockoutService wired</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-009</td>
+    <td>PUT /employees/{id}/deactivate</td>
+    <td>Deactivation 500 NPE</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — gate userRepository.save() behind
+      firstName/lastName check (LazyInit fix)
+    </td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-010</td>
+    <td>POST /assets</td>
+    <td>Asset creation 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V112 adds <code>version</code> column</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-012</td>
+    <td>POST /self-service/profile-updates</td>
+    <td>Profile update 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard on getCurrentEmployeeId()</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-003</td>
+    <td>POST /letters/generate</td>
+    <td>Letter saved then 404 on GET</td>
+    <td><span class="open"><span class="open">⚠️</span> OPEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🟡 P2 — Significant Issues</h3>
-<table><thead><tr><th>Bug</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>BUG-007</td><td>Backend OOM — heap 92-96% of Xmx400m</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — Xmx1024m, ZGC</td></tr>
-<tr><td>BUG-014</td><td>Announcement creation 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V109 wall_post_id</td></tr>
-<tr><td>BUG-QA3-003</td><td>/employees/me has @RequiresPermission (MY SPACE violation)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — removed annotation</td></tr>
-<tr><td>BUG-QA3-004</td><td>No NEW_JOINER seed user</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 newjoiner@nulogic.io</td></tr>
-<tr><td>BUG-QA3-006</td><td>EMPLOYEE cannot submit referrals</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 adds REFERRAL perms</td></tr>
-<tr><td>BUG-QA3-007</td><td>Interview scheduling 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards in InterviewService</td></tr>
-<tr><td>BUG-QA3-008</td><td>Job requisition creation 400</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — auto-generate job code</td></tr>
-<tr><td>BUG-QA3-009</td><td>Referral creation 500 for SUPER_ADMIN</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards + validation</td></tr>
-<tr><td>BUG-QA4-001</td><td>Review cycle activate 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V108 start_date/end_date columns</td></tr>
-<tr><td>BUG-QA4-002</td><td>Self-review 403 for all non-admin</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA4-003</td><td>360 feedback 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA4-004</td><td>OKR creation 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA4-005</td><td>Survey creation 400 DB violation</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA4-006</td><td>Dashboard 403 for non-admin</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA4-008</td><td>1-on-1 meeting creation 400</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td></tr>
-<tr><td>BUG-QA2-002</td><td>Contract creation null <code>terms</code> 500</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard in createVersion()</td></tr>
-<tr><td>BUG-QA3-005</td><td>Document upload 404 (path mismatch)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — new EmployeeDocumentController delegates to FileStorageService</td></tr>
-<tr><td>BUG-QA2-001</td><td>Leave field aliases (<code>name</code>, <code>maxDaysPerYear</code>)</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — @JsonAlias added; totalDays now optional (computed from dates)</td></tr>
-<tr><td>BUG-QA2-004</td><td>Probation <code>durationMonths</code> required but undocumented</td><td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — defaults to 3 months when omitted</td></tr>
-<tr><td>BUG-003</td><td>Salary structure per-employee vs templates (design gap)</td><td><span class="fixed">✅ FIXED</span> — bulkCreateFromTemplate() added (commit ad870763)</td></tr>
-<tr><td>BUG-008</td><td>Report endpoint GET vs POST mismatch</td><td><span class="fixed">✅ FIXED</span> — verified: GET /scheduled-reports is correct; spec updated</td></tr>
-<tr><td>BUG-009</td><td>Feature flag path /admin prefix mismatch</td><td><span class="fixed">✅ FIXED</span> — moved to /api/v1/admin/feature-flags (commit ad870763)</td></tr>
-<tr><td>BUG-010</td><td>FnF endpoint path/field mismatch</td><td><span class="fixed">✅ FIXED</span> — FnFController refactored with class-level @RequestMapping (commit ad870763)</td></tr>
-<tr><td>BUG-011</td><td>Leave request endpoint path mismatch</td><td><span class="fixed">✅ FIXED</span> — verified /api/v1/leave-requests matches frontend; paths aligned</td></tr>
-<tr><td>BUG-012</td><td>Refresh token cookie path too restrictive</td><td><span class="fixed">✅ FIXED</span> — cookie path changed from /api/v1/auth to / (commit ad870763)</td></tr>
-<tr><td>BUG-013</td><td>Statutory endpoint paths wrong in spec</td><td><span class="fixed">✅ FIXED</span> — verified /payroll/statutory-filings matches frontend; paths aligned</td></tr>
-<tr><td>BUG-QA2-005</td><td>Platform /applications endpoint 500</td><td><span class="fixed">✅ FIXED</span> — V111 seeds PLATFORM:VIEW + nu_applications rows</td></tr>
-<tr><td>BUG-QA2-006</td><td>Shift roster blocked by SQL injection false-positive</td><td><span class="fixed">✅ FIXED</span> — InputSanitizer pattern narrowed (prior run)</td></tr>
-<tr><td>BUG-QA2-007</td><td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td><td><span class="fixed">✅ FIXED</span> — updateLeaveRequest() normalization added (commit ad870763)</td></tr>
-<tr><td>BUG-QA2-008</td><td>Retroactive leave blocked by @FutureOrPresent</td><td><span class="fixed">✅ FIXED</span> — @FutureOrPresent removed from startDate (prior run)</td></tr>
-<tr><td>BUG-QA2-011</td><td>Resource pool endpoints missing (404)</td><td><span class="fixed">✅ FIXED</span> — ResourcePoolController stub returns 200/empty (prior run)</td></tr>
-<tr><td>BUG-QA4-007</td><td>Certificate generation pipeline incomplete</td><td><span class="fixed">✅ FIXED</span> — POST /training/enrollments/{id}/generate-certificate added (commit ad870763)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>BUG-007</td>
+    <td>Backend OOM — heap 92-96% of Xmx400m</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — Xmx1024m, ZGC</td>
+  </tr>
+  <tr>
+    <td>BUG-014</td>
+    <td>Announcement creation 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V109 wall_post_id</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-003</td>
+    <td>/employees/me has @RequiresPermission (MY SPACE violation)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — removed annotation</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-004</td>
+    <td>No NEW_JOINER seed user</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 newjoiner@nulogic.io</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-006</td>
+    <td>EMPLOYEE cannot submit referrals</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V110 adds REFERRAL perms</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-007</td>
+    <td>Interview scheduling 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards in InterviewService</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-008</td>
+    <td>Job requisition creation 400</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — auto-generate job code</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-009</td>
+    <td>Referral creation 500 for SUPER_ADMIN</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guards + validation</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-001</td>
+    <td>Review cycle activate 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — V108 start_date/end_date columns</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-002</td>
+    <td>Self-review 403 for all non-admin</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-003</td>
+    <td>360 feedback 400 DB violation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-004</td>
+    <td>OKR creation 400 DB violation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-005</td>
+    <td>Survey creation 400 DB violation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-006</td>
+    <td>Dashboard 403 for non-admin</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-008</td>
+    <td>1-on-1 meeting creation 400</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> (via BUG-004 V107)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-002</td>
+    <td>Contract creation null <code>terms</code> 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — null guard in createVersion()</td>
+  </tr>
+  <tr>
+    <td>BUG-QA3-005</td>
+    <td>Document upload 404 (path mismatch)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — new EmployeeDocumentController delegates to
+      FileStorageService
+    </td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-001</td>
+    <td>Leave field aliases (<code>name</code>, <code>maxDaysPerYear</code>)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — @JsonAlias added; totalDays now optional
+      (computed from dates)
+    </td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-004</td>
+    <td>Probation <code>durationMonths</code> required but undocumented</td>
+    <td><span class="fixed"><span class="fixed">✅</span> FIXED</span> — defaults to 3 months when omitted</td>
+  </tr>
+  <tr>
+    <td>BUG-003</td>
+    <td>Salary structure per-employee vs templates (design gap)</td>
+    <td><span class="fixed">✅ FIXED</span> — bulkCreateFromTemplate() added (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-008</td>
+    <td>Report endpoint GET vs POST mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — verified: GET /scheduled-reports is correct; spec updated</td>
+  </tr>
+  <tr>
+    <td>BUG-009</td>
+    <td>Feature flag path /admin prefix mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — moved to /api/v1/admin/feature-flags (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-010</td>
+    <td>FnF endpoint path/field mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — FnFController refactored with class-level @RequestMapping (commit ad870763)
+    </td>
+  </tr>
+  <tr>
+    <td>BUG-011</td>
+    <td>Leave request endpoint path mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — verified /api/v1/leave-requests matches frontend; paths aligned</td>
+  </tr>
+  <tr>
+    <td>BUG-012</td>
+    <td>Refresh token cookie path too restrictive</td>
+    <td><span class="fixed">✅ FIXED</span> — cookie path changed from /api/v1/auth to / (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-013</td>
+    <td>Statutory endpoint paths wrong in spec</td>
+    <td><span class="fixed">✅ FIXED</span> — verified /payroll/statutory-filings matches frontend; paths aligned</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-005</td>
+    <td>Platform /applications endpoint 500</td>
+    <td><span class="fixed">✅ FIXED</span> — V111 seeds PLATFORM:VIEW + nu_applications rows</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-006</td>
+    <td>Shift roster blocked by SQL injection false-positive</td>
+    <td><span class="fixed">✅ FIXED</span> — InputSanitizer pattern narrowed (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-007</td>
+    <td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td>
+    <td><span class="fixed">✅ FIXED</span> — updateLeaveRequest() normalization added (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-008</td>
+    <td>Retroactive leave blocked by @FutureOrPresent</td>
+    <td><span class="fixed">✅ FIXED</span> — @FutureOrPresent removed from startDate (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-011</td>
+    <td>Resource pool endpoints missing (404)</td>
+    <td><span class="fixed">✅ FIXED</span> — ResourcePoolController stub returns 200/empty (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-007</td>
+    <td>Certificate generation pipeline incomplete</td>
+    <td><span class="fixed">✅ FIXED</span> — POST /training/enrollments/{id}/generate-certificate added (commit
+      ad870763)
+    </td>
+  </tr>
+  </tbody>
+</table>
 
 <h3>✅ QA Run #3 — New Fixes (BUG-NEW-001 to BUG-NEW-022)</h3>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>BUG-NEW-001</td><td><code>ExitManagementService.java:51</code></td><td>P0 — Tenant isolation: exit request looked up without tenant filter</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId()</td></tr>
-<tr><td>BUG-NEW-002</td><td><code>AnnouncementService.java</code></td><td>P0 — RBAC leak: any employee could view any other employee's announcements</td><td><span class="fixed">✅ FIXED</span> — ownership check added</td></tr>
-<tr><td>BUG-NEW-003</td><td><code>ReviewCycleController.java:72</code></td><td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td></tr>
-<tr><td>BUG-NEW-004</td><td><code>ReviewCycleController.java:82</code></td><td>P1 — DELETE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_DELETE</td></tr>
-<tr><td>BUG-NEW-005</td><td><code>ReviewCycleController.java:89</code></td><td>P1 — APPROVE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_APPROVE</td></tr>
-<tr><td>BUG-NEW-006</td><td><code>PerformanceReviewController.java:99</code></td><td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td><td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td></tr>
-<tr><td>BUG-NEW-007</td><td><code>WikiPageService.java:53</code></td><td>P2 — NPE if wiki page created without space set</td><td><span class="fixed">✅ FIXED</span> — null-guarded log</td></tr>
-<tr><td>BUG-NEW-008</td><td><code>ResourcePoolController.java</code></td><td>P2 — Not-found path returned 200 instead of 404</td><td><span class="fixed">✅ FIXED</span> — ResponseEntity.notFound()</td></tr>
-<tr><td>BUG-NEW-009</td><td><code>LeaveRequestService.java</code></td><td>P1 — Employee could cancel another employee's leave request</td><td><span class="fixed">✅ FIXED</span> — ownership check + AccessDeniedException</td></tr>
-<tr><td>BUG-NEW-010</td><td><code>LoanService.java:88</code></td><td>P1 — Loan amount validation comparison inverted (accepted 0 or negative)</td><td><span class="fixed">✅ FIXED</span> — compareTo(ZERO) &gt; 0</td></tr>
-<tr><td>BUG-NEW-011</td><td><code>BenefitManagementService.java</code></td><td>P2 — activatePlan/deactivatePlan missing @Transactional</td><td><span class="fixed">✅ FIXED</span> — @Transactional added to both</td></tr>
-<tr><td>BUG-NEW-012</td><td><code>Feedback360Controller.java</code></td><td>P2 — submitResponse: silent no-op if request not found (Optional.get())</td><td><span class="fixed">✅ FIXED</span> — orElseThrow(EntityNotFoundException)</td></tr>
-<tr><td>BUG-NEW-013</td><td><code>Feedback360Controller.java</code></td><td>P1 — getResponse: anyone could read any 360 response (no visibility guard)</td><td><span class="fixed">✅ FIXED</span> — reviewer/subject guard + AccessDeniedException</td></tr>
-<tr><td>BUG-NEW-014</td><td><code>V110__add_employee_referral_permissions.sql</code></td><td>P0 — V110 migration: wrong column names (full_name, is_active, is_mfa_enabled)</td><td><span class="fixed">✅ FIXED</span> — corrected to first_name/last_name/status/mfa_enabled</td></tr>
-<tr><td>BUG-NEW-015</td><td><code>LoanController.java</code></td><td>P2 — POST /loans returned 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td></tr>
-<tr><td>BUG-NEW-016</td><td><code>TimeTrackingController.java</code></td><td>P2 — POST /entries returned 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td></tr>
-<tr><td>BUG-NEW-017</td><td><code>GoalController.java</code></td><td>P1 — DELETE /goals/{id} endpoint missing entirely</td><td><span class="fixed">✅ FIXED</span> — @DeleteMapping + GOAL_DELETE permission added</td></tr>
-<tr><td>BUG-NEW-018</td><td><code>HelpdeskController.java</code></td><td>P1 — update/assign/resolve/close used SYSTEM_ADMIN instead of role-specific perms</td><td><span class="fixed">✅ FIXED</span> — HELPDESK_TICKET_RESOLVE/ASSIGN</td></tr>
-<tr><td>BUG-NEW-019</td><td><code>BlogPostService.java + BlogPostController.java</code></td><td>P1 — /active returned all posts including ARCHIVED; readOnly tx silently dropped view count saves</td><td><span class="fixed">✅ FIXED</span> — dedicated getActivePosts(PUBLISHED) + removed readOnly</td></tr>
-<tr><td>BUG-NEW-020</td><td><code>CustomFieldController.java</code></td><td>P2 — @RequiresPermission used raw strings instead of Permission.* constants</td><td><span class="fixed">✅ FIXED</span> — all 22 replaced with Permission.CUSTOM_FIELD_*</td></tr>
-<tr><td>BUG-NEW-021</td><td><code>PayrollRunService.java</code></td><td>P1 — payroll run could initiate with employees missing salary structures</td><td><span class="fixed">✅ FIXED</span> — validateSalaryStructuresCoverage() pre-flight added</td></tr>
-<tr><td>BUG-NEW-022</td><td><code>payroll.service.ts:279</code></td><td>P2 — template string query param bypassed URL encoding</td><td><span class="fixed">✅ FIXED</span> — axios params object</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>BUG-NEW-001</td>
+    <td><code>ExitManagementService.java:51</code></td>
+    <td>P0 — Tenant isolation: exit request looked up without tenant filter</td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId()</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-002</td>
+    <td><code>AnnouncementService.java</code></td>
+    <td>P0 — RBAC leak: any employee could view any other employee's announcements</td>
+    <td><span class="fixed">✅ FIXED</span> — ownership check added</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-003</td>
+    <td><code>ReviewCycleController.java:72</code></td>
+    <td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td>
+    <td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-004</td>
+    <td><code>ReviewCycleController.java:82</code></td>
+    <td>P1 — DELETE endpoint required REVIEW_CREATE permission</td>
+    <td><span class="fixed">✅ FIXED</span> — REVIEW_DELETE</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-005</td>
+    <td><code>ReviewCycleController.java:89</code></td>
+    <td>P1 — APPROVE endpoint required REVIEW_CREATE permission</td>
+    <td><span class="fixed">✅ FIXED</span> — REVIEW_APPROVE</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-006</td>
+    <td><code>PerformanceReviewController.java:99</code></td>
+    <td>P1 — UPDATE endpoint required REVIEW_CREATE permission</td>
+    <td><span class="fixed">✅ FIXED</span> — REVIEW_UPDATE</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-007</td>
+    <td><code>WikiPageService.java:53</code></td>
+    <td>P2 — NPE if wiki page created without space set</td>
+    <td><span class="fixed">✅ FIXED</span> — null-guarded log</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-008</td>
+    <td><code>ResourcePoolController.java</code></td>
+    <td>P2 — Not-found path returned 200 instead of 404</td>
+    <td><span class="fixed">✅ FIXED</span> — ResponseEntity.notFound()</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-009</td>
+    <td><code>LeaveRequestService.java</code></td>
+    <td>P1 — Employee could cancel another employee's leave request</td>
+    <td><span class="fixed">✅ FIXED</span> — ownership check + AccessDeniedException</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-010</td>
+    <td><code>LoanService.java:88</code></td>
+    <td>P1 — Loan amount validation comparison inverted (accepted 0 or negative)</td>
+    <td><span class="fixed">✅ FIXED</span> — compareTo(ZERO) &gt; 0</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-011</td>
+    <td><code>BenefitManagementService.java</code></td>
+    <td>P2 — activatePlan/deactivatePlan missing @Transactional</td>
+    <td><span class="fixed">✅ FIXED</span> — @Transactional added to both</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-012</td>
+    <td><code>Feedback360Controller.java</code></td>
+    <td>P2 — submitResponse: silent no-op if request not found (Optional.get())</td>
+    <td><span class="fixed">✅ FIXED</span> — orElseThrow(EntityNotFoundException)</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-013</td>
+    <td><code>Feedback360Controller.java</code></td>
+    <td>P1 — getResponse: anyone could read any 360 response (no visibility guard)</td>
+    <td><span class="fixed">✅ FIXED</span> — reviewer/subject guard + AccessDeniedException</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-014</td>
+    <td><code>V110__add_employee_referral_permissions.sql</code></td>
+    <td>P0 — V110 migration: wrong column names (full_name, is_active, is_mfa_enabled)</td>
+    <td><span class="fixed">✅ FIXED</span> — corrected to first_name/last_name/status/mfa_enabled</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-015</td>
+    <td><code>LoanController.java</code></td>
+    <td>P2 — POST /loans returned 200 instead of 201 Created</td>
+    <td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-016</td>
+    <td><code>TimeTrackingController.java</code></td>
+    <td>P2 — POST /entries returned 200 instead of 201 Created</td>
+    <td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-017</td>
+    <td><code>GoalController.java</code></td>
+    <td>P1 — DELETE /goals/{id} endpoint missing entirely</td>
+    <td><span class="fixed">✅ FIXED</span> — @DeleteMapping + GOAL_DELETE permission added</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-018</td>
+    <td><code>HelpdeskController.java</code></td>
+    <td>P1 — update/assign/resolve/close used SYSTEM_ADMIN instead of role-specific perms</td>
+    <td><span class="fixed">✅ FIXED</span> — HELPDESK_TICKET_RESOLVE/ASSIGN</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-019</td>
+    <td><code>BlogPostService.java + BlogPostController.java</code></td>
+    <td>P1 — /active returned all posts including ARCHIVED; readOnly tx silently dropped view count saves</td>
+    <td><span class="fixed">✅ FIXED</span> — dedicated getActivePosts(PUBLISHED) + removed readOnly</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-020</td>
+    <td><code>CustomFieldController.java</code></td>
+    <td>P2 — @RequiresPermission used raw strings instead of Permission.* constants</td>
+    <td><span class="fixed">✅ FIXED</span> — all 22 replaced with Permission.CUSTOM_FIELD_*</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-021</td>
+    <td><code>PayrollRunService.java</code></td>
+    <td>P1 — payroll run could initiate with employees missing salary structures</td>
+    <td><span class="fixed">✅ FIXED</span> — validateSalaryStructuresCoverage() pre-flight added</td>
+  </tr>
+  <tr>
+    <td>BUG-NEW-022</td>
+    <td><code>payroll.service.ts:279</code></td>
+    <td>P2 — template string query param bypassed URL encoding</td>
+    <td><span class="fixed">✅ FIXED</span> — axios params object</td>
+  </tr>
+  </tbody>
+</table>
 
 <h3>🔴🟣 QA Run #4 — NEW Issues Found (Second-Pass Audit)</h3>
-<p style="margin:4px 0 10px;font-size:12px;color:var(--muted)">All bugs below are confirmed open as of 2026-04-03 second audit. None were fixed in the prior run.</p>
+<p style="margin:4px 0 10px;font-size:12px;color:var(--muted)">All bugs below are confirmed open as of 2026-04-03 second
+  audit. None were fixed in the prior run.</p>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 CRITICAL — Data Integrity / Type Errors</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RECHECK-PAY-001</td><td><code>SalaryStructureRepository.java</code></td><td>CRITICAL — Wrong generic type: <code>Page&lt;SalaryStructureRepository&gt;</code> instead of <code>Page&lt;SalaryStructure&gt;</code> — causes ClassCastException at runtime</td><td><span class="fixed">✅ FIXED</span> — Page&lt;SalaryStructure&gt; in commit 21d781a8</td></tr>
-<tr><td>RECHECK-PLAT-001</td><td><code>NuPlatformService.java</code></td><td>CRITICAL — getRoleById() fetches by ID only with no tenant filter — cross-tenant role data leak</td><td><span class="fixed">✅ FIXED</span> — tenant filter via TenantContext (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-PLAT-002</td><td><code>NuPlatformService.java</code></td><td>CRITICAL — grantAccess() does not validate that target userId belongs to caller's tenant</td><td><span class="fixed">✅ FIXED</span> — AccessDeniedException on cross-tenant userId (commit 21d781a8)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RECHECK-PAY-001</td>
+    <td><code>SalaryStructureRepository.java</code></td>
+    <td>CRITICAL — Wrong generic type: <code>Page&lt;SalaryStructureRepository&gt;</code> instead of <code>Page&lt;SalaryStructure&gt;</code>
+      — causes ClassCastException at runtime
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — Page&lt;SalaryStructure&gt; in commit 21d781a8</td>
+  </tr>
+  <tr>
+    <td>RECHECK-PLAT-001</td>
+    <td><code>NuPlatformService.java</code></td>
+    <td>CRITICAL — getRoleById() fetches by ID only with no tenant filter — cross-tenant role data leak</td>
+    <td><span class="fixed">✅ FIXED</span> — tenant filter via TenantContext (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-PLAT-002</td>
+    <td><code>NuPlatformService.java</code></td>
+    <td>CRITICAL — grantAccess() does not validate that target userId belongs to caller's tenant</td>
+    <td><span class="fixed">✅ FIXED</span> — AccessDeniedException on cross-tenant userId (commit 21d781a8)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — IDOR (Insecure Direct Object Reference)</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RECHECK-HR-001</td><td><code>AnnouncementController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam — any user reads any employee's announcements</td><td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext.getCurrentEmployeeId() (commit c57d73da)</td></tr>
-<tr><td>RECHECK-HR-002</td><td><code>ContentViewController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>viewerId</code> as @RequestParam — cross-user view tracking manipulation</td><td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td></tr>
-<tr><td>RECHECK-HR-003</td><td><code>TaxDeclarationController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam — tax declaration impersonation</td><td><span class="fixed">✅ FIXED</span> — removed approverId/employeeId/verifiedBy params, all derived from SecurityContext (commit c57d73da)</td></tr>
-<tr><td>RECHECK-HR-004</td><td><code>ProjectTimesheetController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>approverId</code> for timesheet approval — impersonation</td><td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td></tr>
-<tr><td>RECHECK-HR-005</td><td><code>OvertimeManagementController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>approverId</code> in approval action — privilege escalation</td><td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td></tr>
-<tr><td>RECHECK-HR-006</td><td><code>GoalController.java</code></td><td>P0 IDOR — Accepts arbitrary <code>approverId</code> for goal approval — cross-user approval impersonation</td><td><span class="fixed">✅ FIXED</span> — verified already fixed in prior commit; confirmed correct (commit c57d73da)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RECHECK-HR-001</td>
+    <td><code>AnnouncementController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam — any user reads any employee's
+      announcements
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext.getCurrentEmployeeId()
+      (commit c57d73da)
+    </td>
+  </tr>
+  <tr>
+    <td>RECHECK-HR-002</td>
+    <td><code>ContentViewController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>viewerId</code> as @RequestParam — cross-user view tracking manipulation</td>
+    <td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-HR-003</td>
+    <td><code>TaxDeclarationController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>employeeId</code> as @RequestParam — tax declaration impersonation</td>
+    <td><span class="fixed">✅ FIXED</span> — removed approverId/employeeId/verifiedBy params, all derived from
+      SecurityContext (commit c57d73da)
+    </td>
+  </tr>
+  <tr>
+    <td>RECHECK-HR-004</td>
+    <td><code>ProjectTimesheetController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>approverId</code> for timesheet approval — impersonation</td>
+    <td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-HR-005</td>
+    <td><code>OvertimeManagementController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>approverId</code> in approval action — privilege escalation</td>
+    <td><span class="fixed">✅ FIXED</span> — removed @RequestParam, derives from SecurityContext (commit c57d73da)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-HR-006</td>
+    <td><code>GoalController.java</code></td>
+    <td>P0 IDOR — Accepts arbitrary <code>approverId</code> for goal approval — cross-user approval impersonation</td>
+    <td><span class="fixed">✅ FIXED</span> — verified already fixed in prior commit; confirmed correct (commit c57d73da)
+    </td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟠 HIGH — Wrong Permission Codes</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RECHECK-GROW-001</td><td><code>GoalController.java — updateGoal()</code></td><td>HIGH — PUT /goals/{id} used <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.GOAL_UPDATE (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-GROW-002</td><td><code>GoalController.java — updateProgress()</code></td><td>HIGH — PUT /goals/{id}/progress used <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.GOAL_UPDATE (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-GROW-003</td><td><code>TrainingManagementController.java — updateTraining()</code></td><td>HIGH — PUT used <code>TRAINING_CREATE</code> instead of <code>TRAINING_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — TRAINING_UPDATE added to Permission.java (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-GROW-004</td><td><code>TrainingManagementController.java — deleteTraining()</code></td><td>HIGH — DELETE used <code>TRAINING_CREATE</code> instead of <code>TRAINING_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — TRAINING_DELETE added to Permission.java (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-PLAT-003</td><td><code>NuPlatformService.java — getApplicationRoles()</code></td><td>HIGH — roles could be returned without tenant filter</td><td><span class="fixed">✅ FIXED</span> — confirmed always tenant-scoped via findByTenantIdAndApplicationCode (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-MISC-002</td><td><code>ProjectController.java</code></td><td>HIGH — PUT/DELETE used <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code>/<code>PROJECT_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — PROJECT_UPDATE/DELETE added to Permission.java (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-FE-001</td><td><code>employee.service.ts + 8 other service files</code></td><td>HIGH — template string query params bypass URL encoding</td><td><span class="fixed">✅ FIXED</span> — 29 instances across 9 files converted to axios params objects (commit 8ad240f6)</td></tr>
-<tr><td>RECHECK-FE-002</td><td><code>task, compensation, recognition, training, wellness, survey, importExport services</code></td><td>HIGH — 7 more service files with same template-string pattern</td><td><span class="fixed">✅ FIXED</span> — all converted to params objects (commit 8ad240f6)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RECHECK-GROW-001</td>
+    <td><code>GoalController.java — updateGoal()</code></td>
+    <td>HIGH — PUT /goals/{id} used <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.GOAL_UPDATE (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-GROW-002</td>
+    <td><code>GoalController.java — updateProgress()</code></td>
+    <td>HIGH — PUT /goals/{id}/progress used <code>GOAL_CREATE</code> instead of <code>GOAL_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.GOAL_UPDATE (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-GROW-003</td>
+    <td><code>TrainingManagementController.java — updateTraining()</code></td>
+    <td>HIGH — PUT used <code>TRAINING_CREATE</code> instead of <code>TRAINING_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — TRAINING_UPDATE added to Permission.java (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-GROW-004</td>
+    <td><code>TrainingManagementController.java — deleteTraining()</code></td>
+    <td>HIGH — DELETE used <code>TRAINING_CREATE</code> instead of <code>TRAINING_DELETE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — TRAINING_DELETE added to Permission.java (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-PLAT-003</td>
+    <td><code>NuPlatformService.java — getApplicationRoles()</code></td>
+    <td>HIGH — roles could be returned without tenant filter</td>
+    <td><span class="fixed">✅ FIXED</span> — confirmed always tenant-scoped via findByTenantIdAndApplicationCode (commit
+      21d781a8)
+    </td>
+  </tr>
+  <tr>
+    <td>RECHECK-MISC-002</td>
+    <td><code>ProjectController.java</code></td>
+    <td>HIGH — PUT/DELETE used <code>PROJECT_CREATE</code> instead of
+      <code>PROJECT_UPDATE</code>/<code>PROJECT_DELETE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — PROJECT_UPDATE/DELETE added to Permission.java (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-FE-001</td>
+    <td><code>employee.service.ts + 8 other service files</code></td>
+    <td>HIGH — template string query params bypass URL encoding</td>
+    <td><span class="fixed">✅ FIXED</span> — 29 instances across 9 files converted to axios params objects (commit
+      8ad240f6)
+    </td>
+  </tr>
+  <tr>
+    <td>RECHECK-FE-002</td>
+    <td><code>task, compensation, recognition, training, wellness, survey, importExport services</code></td>
+    <td>HIGH — 7 more service files with same template-string pattern</td>
+    <td><span class="fixed">✅ FIXED</span> — all converted to params objects (commit 8ad240f6)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟡 MEDIUM — Minor Logic / Contract Issues</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RECHECK-PAY-002</td><td><code>StatutoryFilingController.java</code></td><td>MEDIUM — POST /statutory/filings returned 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-PLAT-004</td><td><code>NuPlatformService.java — revokeAccess()</code></td><td>MEDIUM — revokeAccess() missing audit log for compliance</td><td><span class="fixed">✅ FIXED</span> — structured log.info with userId/appCode/tenantId/revokedBy (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-ADM-001</td><td><code>AdminService.java</code></td><td>MEDIUM — department lookup missing tenantId filter in one code path</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() used instead of findById() (commit 21d781a8)</td></tr>
-<tr><td>RECHECK-MISC-003</td><td><code>HelpdeskController.java — deleteTicket()</code></td><td>MEDIUM — DELETE used <code>HELPDESK_CATEGORY_MANAGE</code> instead of <code>HELPDESK_TICKET_MANAGE</code></td><td><span class="fixed">✅ FIXED</span> — HELPDESK_TICKET_MANAGE added to Permission.java (commit 21d781a8)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RECHECK-PAY-002</td>
+    <td><code>StatutoryFilingController.java</code></td>
+    <td>MEDIUM — POST /statutory/filings returned 200 instead of 201 Created</td>
+    <td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-PLAT-004</td>
+    <td><code>NuPlatformService.java — revokeAccess()</code></td>
+    <td>MEDIUM — revokeAccess() missing audit log for compliance</td>
+    <td><span class="fixed">✅ FIXED</span> — structured log.info with userId/appCode/tenantId/revokedBy (commit
+      21d781a8)
+    </td>
+  </tr>
+  <tr>
+    <td>RECHECK-ADM-001</td>
+    <td><code>AdminService.java</code></td>
+    <td>MEDIUM — department lookup missing tenantId filter in one code path</td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() used instead of findById() (commit 21d781a8)</td>
+  </tr>
+  <tr>
+    <td>RECHECK-MISC-003</td>
+    <td><code>HelpdeskController.java — deleteTicket()</code></td>
+    <td>MEDIUM — DELETE used <code>HELPDESK_CATEGORY_MANAGE</code> instead of <code>HELPDESK_TICKET_MANAGE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — HELPDESK_TICKET_MANAGE added to Permission.java (commit 21d781a8)</td>
+  </tr>
+  </tbody>
+</table>
 
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Use Case Test Coverage</h2>
 <h3>🔐 Auth (UC-AUTH-001 to 007)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-AUTH-001</td><td>Email/password login + lockout</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-AUTH-002</td><td>Google OAuth login</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-AUTH-003</td><td>MFA setup & verify</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-001 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-AUTH-004</td><td>Logout + token blacklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-AUTH-005</td><td>Token refresh</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-002 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-AUTH-006</td><td>Password reset flow</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-AUTH-007</td><td>Rate limiting (429)</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-AUTH-001</td>
+    <td>Email/password login + lockout</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-002</td>
+    <td>Google OAuth login</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-003</td>
+    <td>MFA setup & verify</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-001 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-004</td>
+    <td>Logout + token blacklist</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-005</td>
+    <td>Token refresh</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-002 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-006</td>
+    <td>Password reset flow</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-AUTH-007</td>
+    <td>Rate limiting (429)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <h3>💰 Payroll (UC-PAY-001 to 016)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-PAY-001</td><td>Create salary structure</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-003 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-PAY-002</td><td>Initiate payroll run</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PAY-003</td><td>SpEL formula evaluation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PAY-004</td><td>Payslip PDF generation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PAY-005</td><td>Lock payroll run</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PAY-006</td><td>Payroll adjustments</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PAY-007 to 016</td><td>Extended payroll UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-PAY-001</td>
+    <td>Create salary structure</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-003 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-PAY-002</td>
+    <td>Initiate payroll run</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PAY-003</td>
+    <td>SpEL formula evaluation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PAY-004</td>
+    <td>Payslip PDF generation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PAY-005</td>
+    <td>Lock payroll run</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PAY-006</td>
+    <td>Payroll adjustments</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PAY-007 to 016</td>
+    <td>Extended payroll UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <h3><span class="fixed">✅</span> Approvals (UC-APPR-001 to 005)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-APPR-001</td><td>Leave approval chain</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-APPR-002</td><td>Leave rejection with reason</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-APPR-003</td><td>Expense approval chain</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-APPR-004</td><td>Overtime approval / wrong approver</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-APPR-005</td><td>Escalation on timeout</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-APPR-001</td>
+    <td>Leave approval chain</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-APPR-002</td>
+    <td>Leave rejection with reason</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-APPR-003</td>
+    <td>Expense approval chain</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-APPR-004</td>
+    <td>Overtime approval / wrong approver</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-APPR-005</td>
+    <td>Escalation on timeout</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <h3>🧾 FnF Settlement (UC-FNF-001 to 005)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-FNF-001</td><td>Pro-rata calculation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-FNF-002</td><td>Leave encashment in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-FNF-003</td><td>Pending expense in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-FNF-004</td><td>Loan deduction in FnF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-FNF-005</td><td>Final payslip PDF</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-FNF-001</td>
+    <td>Pro-rata calculation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-FNF-002</td>
+    <td>Leave encashment in FnF</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-FNF-003</td>
+    <td>Pending expense in FnF</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-FNF-004</td>
+    <td>Loan deduction in FnF</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-FNF-005</td>
+    <td>Final payslip PDF</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>⚡ Performance Benchmarks (UC-PERF-001 to 008)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-PERF-001</td><td>Dashboard < 3000ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-002</td><td>Employee list 500 rows < 5000ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-003</td><td>Payroll run < 60s</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-004</td><td>API median < 300ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-005</td><td>Leave submit < 500ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-006</td><td>1000-row export < 30s</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-007</td><td>WebSocket notification < 500ms</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-PERF-008</td><td>5 concurrent requests all 200</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-PERF-001</td>
+    <td>Dashboard < 3000ms</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-002</td>
+    <td>Employee list 500 rows < 5000ms</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-003</td>
+    <td>Payroll run < 60s</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-004</td>
+    <td>API median < 300ms</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-005</td>
+    <td>Leave submit < 500ms</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-006</td>
+    <td>1000-row export < 30s</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-007</td>
+    <td>WebSocket notification < 500ms</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-PERF-008</td>
+    <td>5 concurrent requests all 200</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>👤 Employees (UC-EMP-001 to 018)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-EMP-001</td><td>Create employee</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-EMP-002</td><td>Update employee fields</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-EMP-003</td><td>Bulk import</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-EMP-004</td><td>Employment change</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-EMP-005</td><td>Org chart</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-EMP-006 to 011</td><td>Extended employee UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
-<tr><td>UC-EMP-012</td><td>Deactivate employee</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-009 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-EMP-013 to 018</td><td>Further employee UCs</td><td><span class="pending">📋 PENDING</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-EMP-001</td>
+    <td>Create employee</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-002</td>
+    <td>Update employee fields</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-003</td>
+    <td>Bulk import</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-004</td>
+    <td>Employment change</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-005</td>
+    <td>Org chart</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-006 to 011</td>
+    <td>Extended employee UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-EMP-012</td>
+    <td>Deactivate employee</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-009 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-EMP-013 to 018</td>
+    <td>Further employee UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <h3>🕐 Attendance (UC-ATT-001 to 012)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-ATT-001</td><td>Check-in / check-out</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-ATT-002</td><td>Regularization flow</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-ATT-003</td><td>Shift assignment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-ATT-004 to 012</td><td>Extended attendance UCs</td><td><span class="pending">📋 PENDING</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-ATT-001</td>
+    <td>Check-in / check-out</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-ATT-002</td>
+    <td>Regularization flow</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-ATT-003</td>
+    <td>Shift assignment</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-ATT-004 to 012</td>
+    <td>Extended attendance UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🏖️ Leave (UC-LEAVE-001 to 015)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-LEAVE-001</td><td>Apply leave</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-001 <span class="progress">⏳</span></td></tr>
-<tr><td>UC-LEAVE-002</td><td>Carry-forward balance</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-LEAVE-003</td><td>Leave encashment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-LEAVE-004 to 015</td><td>Extended leave UCs</td><td><span class="pending">📋 PENDING</span></td><td>BUG-QA2-007/008 <span class="open">⚠️</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-LEAVE-001</td>
+    <td>Apply leave</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-001 <span class="progress">⏳</span></td>
+  </tr>
+  <tr>
+    <td>UC-LEAVE-002</td>
+    <td>Carry-forward balance</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-LEAVE-003</td>
+    <td>Leave encashment</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-LEAVE-004 to 015</td>
+    <td>Extended leave UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+    <td>BUG-QA2-007/008 <span class="open">⚠️</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🎁 Benefits (UC-BEN-001 to 008)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-BEN-001</td><td>Benefit enrollment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-BEN-002</td><td>Auto-enrollment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-BEN-003 to 008</td><td>Extended benefit UCs</td><td><span class="pending">📋 PENDING</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-BEN-001</td>
+    <td>Benefit enrollment</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-BEN-002</td>
+    <td>Auto-enrollment</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-BEN-003 to 008</td>
+    <td>Extended benefit UCs</td>
+    <td><span class="pending">📋 PENDING</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>💻 Assets (UC-ASSET-001 to 005+)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-ASSET-001</td><td>Assign asset</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-ASSET-002</td><td>Return asset</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-ASSET-003 to 005</td><td>Create/update assets</td><td><span class="pending">📋 PENDING</span></td><td>BUG-QA2-010 <span class="fixed">✅</span> V112</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-ASSET-001</td>
+    <td>Assign asset</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-ASSET-002</td>
+    <td>Return asset</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-ASSET-003 to 005</td>
+    <td>Create/update assets</td>
+    <td><span class="pending">📋 PENDING</span></td>
+    <td>BUG-QA2-010 <span class="fixed">✅</span> V112</td>
+  </tr>
+  </tbody>
+</table>
 <h3>🏢 Departments (UC-DEPT-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-DEPT-001</td><td>Create / delete dept</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-DEPT-001</td>
+    <td>Create / delete dept</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>💵 Compensation (UC-COMP-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-COMP-001</td><td>Bands + history</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-COMP-001</td>
+    <td>Bands + history</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🧑‍💼 Probation (UC-PROB-001 to 005)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-PROB-001</td><td>Probation list + confirm</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PROB-002</td><td>Extend probation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PROB-003</td><td>Manager review</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PROB-004</td><td>Auto-notification</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-PROB-005</td><td>HR dashboard aggregation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-004 <span class="progress">⏳</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-PROB-001</td>
+    <td>Probation list + confirm</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PROB-002</td>
+    <td>Extend probation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PROB-003</td>
+    <td>Manager review</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PROB-004</td>
+    <td>Auto-notification</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-PROB-005</td>
+    <td>HR dashboard aggregation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-004 <span class="progress">⏳</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🙋 My Space (UC-MY-001 to 008)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-MY-001</td><td>All MY SPACE 200</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-002</td><td>Payslip history scoped</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-003</td><td>Payslip PDF download</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-004</td><td>Leave balance</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-005</td><td>Attendance history</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-006</td><td>My assets</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-007</td><td>Loan repayment schedule</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-MY-008</td><td>Profile self-update</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-012 <span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-MY-001</td>
+    <td>All MY SPACE 200</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-002</td>
+    <td>Payslip history scoped</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-003</td>
+    <td>Payslip PDF download</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-004</td>
+    <td>Leave balance</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-005</td>
+    <td>Attendance history</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-006</td>
+    <td>My assets</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-007</td>
+    <td>Loan repayment schedule</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-MY-008</td>
+    <td>Profile self-update</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-012 <span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>💸 Expenses (UC-EXP-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-EXP-001</td><td>Submit / scope expense</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-EXP-001</td>
+    <td>Submit / scope expense</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🏦 Loans (UC-LOAN-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-LOAN-001</td><td>Apply + repayment schedule</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-005 <span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-LOAN-001</td>
+    <td>Apply + repayment schedule</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-005 <span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>✈️ Travel (UC-TRAVEL-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-TRAVEL-001</td><td>Submit + approve travel</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-006 <span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-TRAVEL-001</td>
+    <td>Submit + approve travel</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-006 <span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📊 Statutory (UC-STAT-001 to 003)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-STAT-001</td><td>PF calculation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-STAT-002</td><td>TDS + Form 16</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-STAT-003</td><td>LWF deduction</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-013 <span class="open">⚠️</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-STAT-001</td>
+    <td>PF calculation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-013 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-STAT-002</td>
+    <td>TDS + Form 16</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-013 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-STAT-003</td>
+    <td>LWF deduction</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-013 <span class="open">⚠️</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>🎫 Helpdesk (UC-HELP-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-HELP-001</td><td>Ticket CRUD + resolve</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-HELP-001</td>
+    <td>Ticket CRUD + resolve</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>⏱️ Timesheets (UC-TIME-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-TIME-001</td><td>Log time + view own</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-TIME-001</td>
+    <td>Log time + view own</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📦 Resources (UC-RESOURCE-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-RESOURCE-001</td><td>Allocate resources</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-011 <span class="open">⚠️</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-RESOURCE-001</td>
+    <td>Allocate resources</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-011 <span class="open">⚠️</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📄 Contracts (UC-CONTRACT-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-CONTRACT-001</td><td>Create + e-sign</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-CONTRACT-001</td>
+    <td>Create + e-sign</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📝 Letters (UC-LETTER-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-LETTER-001</td><td>Generate experience letter</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-003 <span class="open">⚠️</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-LETTER-001</td>
+    <td>Generate experience letter</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-003 <span class="open">⚠️</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📈 Reports (UC-REPORT-001 to 002)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-REPORT-001</td><td>Headcount report</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-008 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-REPORT-002</td><td>Scheduled report</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-008 <span class="open">⚠️</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-REPORT-001</td>
+    <td>Headcount report</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-008 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-REPORT-002</td>
+    <td>Scheduled report</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-008 <span class="open">⚠️</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>⚙️ Admin (UC-ADMIN-001 to 002)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-ADMIN-001</td><td>Feature flags</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-009 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-ADMIN-002</td><td>Holiday management</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-ADMIN-001</td>
+    <td>Feature flags</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-009 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-ADMIN-002</td>
+    <td>Holiday management</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <h3>🔔 Notifications (UC-NOTIF-001)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-NOTIF-001</td><td>View + mark read</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-NOTIF-001</td>
+    <td>View + mark read</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>⚙️ Settings (UC-SETTINGS-001 to 007)</h3>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-SETTINGS-001</td><td>Change password</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-002</td><td>Password complexity</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-003</td><td>MFA from settings</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-004</td><td>Revoke session</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-005</td><td>Notification preferences</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-006</td><td>SSO configuration</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-<tr><td>UC-SETTINGS-007</td><td>Display preferences</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-SETTINGS-001</td>
+    <td>Change password</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-002</td>
+    <td>Password complexity</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-003</td>
+    <td>MFA from settings</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-004</td>
+    <td>Revoke session</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-005</td>
+    <td>Notification preferences</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-006</td>
+    <td>SSO configuration</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  <tr>
+    <td>UC-SETTINGS-007</td>
+    <td>Display preferences</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📢 Announcements (UC-ANNC-*)</h3>
-<table><thead><tr><th>UC</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-ANNC-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-014 <span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-ANNC-*</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-014 <span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📅 Calendar (UC-CAL-*)</h3>
-<table><thead><tr><th>UC</th><th>Test</th></tr></thead><tbody>
-<tr><td>UC-CAL-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Test</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-CAL-*</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>📁 Documents (UC-DOC-*)</h3>
-<table><thead><tr><th>UC</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-DOC-*</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-005 <span class="progress">⏳</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-DOC-*</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA3-005 <span class="progress">⏳</span></td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>NU-Hire (UC-HIRE-001 to 018)</h2>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-HIRE-001</td><td>Job requisition create</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-008 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-HIRE-002</td><td>Pipeline stage move</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-003</td><td>Schedule interview + feedback</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-007 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-HIRE-004</td><td>Generate + send offer letter</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-003 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-HIRE-005</td><td>Preboarding valid token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-006</td><td>Onboarding checklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-007</td><td>Offboarding + FnF trigger</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-008</td><td>Employee referral submit</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA3-006 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-HIRE-009</td><td>Resume parse from upload</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-010</td><td>Bulk candidate import</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-011</td><td>Resend expired offer</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-012</td><td>Invalid preboarding token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-013</td><td>Expired preboarding token</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-014</td><td>Exit interview public URL</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-015</td><td>Career portal job listing</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-016</td><td>Referral rewards</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-017</td><td>Interview scorecard</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-HIRE-018</td><td>Onboarding doc checklist</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-HIRE-001</td>
+    <td>Job requisition create</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA3-008 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-002</td>
+    <td>Pipeline stage move</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-003</td>
+    <td>Schedule interview + feedback</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA3-007 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-004</td>
+    <td>Generate + send offer letter</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-003 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-005</td>
+    <td>Preboarding valid token</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-006</td>
+    <td>Onboarding checklist</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-007</td>
+    <td>Offboarding + FnF trigger</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-008</td>
+    <td>Employee referral submit</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA3-006 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-009</td>
+    <td>Resume parse from upload</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-010</td>
+    <td>Bulk candidate import</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-011</td>
+    <td>Resend expired offer</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-012</td>
+    <td>Invalid preboarding token</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-013</td>
+    <td>Expired preboarding token</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-014</td>
+    <td>Exit interview public URL</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-015</td>
+    <td>Career portal job listing</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-016</td>
+    <td>Referral rewards</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-017</td>
+    <td>Interview scorecard</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-HIRE-018</td>
+    <td>Onboarding doc checklist</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>NU-Grow (UC-GROW-001 to 022)</h2>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-GROW-001</td><td>Review cycle create</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-001 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-GROW-002</td><td>Self-review submit</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-002 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-GROW-003</td><td>Manager review + final rating</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-004</td><td>360 feedback request</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-003 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-GROW-005</td><td>Create OKR + cascade</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-004 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-GROW-006</td><td>LMS enrollment + completion</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-007</td><td>Kudos to peer</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-008</td><td>Survey create + respond</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-005 <span class="fixed">✅</span></td></tr>
-<tr><td>UC-GROW-009</td><td>Wellness program join</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-010</td><td>Calibration 9-box</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-011</td><td>9-box assessment</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-012</td><td>PIP initiation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-013</td><td>PIP progress update</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-014</td><td>Goal check-in</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-015</td><td>OKR cascade</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-016</td><td>OKR progress scoring</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-017</td><td>360 anonymity verified</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-018</td><td>Aggregate perf scores</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-019</td><td>Training certificate</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-007 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-GROW-020</td><td>Training prerequisite check</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-021</td><td>Pulse survey launch</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-GROW-022</td><td>1-on-1 notes</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA4-008 <span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-GROW-001</td>
+    <td>Review cycle create</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-001 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-002</td>
+    <td>Self-review submit</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-002 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-003</td>
+    <td>Manager review + final rating</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-004</td>
+    <td>360 feedback request</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-003 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-005</td>
+    <td>Create OKR + cascade</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-004 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-006</td>
+    <td>LMS enrollment + completion</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-007</td>
+    <td>Kudos to peer</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-008</td>
+    <td>Survey create + respond</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-005 <span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-009</td>
+    <td>Wellness program join</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-010</td>
+    <td>Calibration 9-box</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-011</td>
+    <td>9-box assessment</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-012</td>
+    <td>PIP initiation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-013</td>
+    <td>PIP progress update</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-014</td>
+    <td>Goal check-in</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-015</td>
+    <td>OKR cascade</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-016</td>
+    <td>OKR progress scoring</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-017</td>
+    <td>360 anonymity verified</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-018</td>
+    <td>Aggregate perf scores</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-019</td>
+    <td>Training certificate</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-007 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-GROW-020</td>
+    <td>Training prerequisite check</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-021</td>
+    <td>Pulse survey launch</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-GROW-022</td>
+    <td>1-on-1 notes</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA4-008 <span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>RBAC & Security (UC-RBAC, UC-TENANT, UC-SEC)</h2>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Status</th></tr></thead><tbody>
-<tr><td>UC-RBAC-001 to 020</td><td>Full RBAC boundary matrix</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS</td></tr>
-<tr><td>UC-TENANT-001</td><td>Cross-tenant isolation</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS</td></tr>
-<tr><td>UC-SEC-001 to 012</td><td>Security hardening checks</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>PASS (2 SKIP)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-RBAC-001 to 020</td>
+    <td>Full RBAC boundary matrix</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>PASS</td>
+  </tr>
+  <tr>
+    <td>UC-TENANT-001</td>
+    <td>Cross-tenant isolation</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>PASS</td>
+  </tr>
+  <tr>
+    <td>UC-SEC-001 to 012</td>
+    <td>Security hardening checks</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>PASS (2 SKIP)</td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Dashboard & Platform (UC-DASH, UC-APPSW, UC-SMOKE)</h2>
-<table><thead><tr><th>UC</th><th>Description</th><th>Test</th><th>Bug</th></tr></thead><tbody>
-<tr><td>UC-DASH-001 to 008</td><td>Dashboard variants per role</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>BUG-QA2-005 <span class="open">⚠️</span></td></tr>
-<tr><td>UC-APPSW-001 to 003</td><td>App switcher access</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-<tr><td>UC-SMOKE-001 to 005</td><td>Smoke tests — all modules</td><td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td><td>—</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>UC</th>
+    <th>Description</th>
+    <th>Test</th>
+    <th>Bug</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>UC-DASH-001 to 008</td>
+    <td>Dashboard variants per role</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>BUG-QA2-005 <span class="open">⚠️</span></td>
+  </tr>
+  <tr>
+    <td>UC-APPSW-001 to 003</td>
+    <td>App switcher access</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>UC-SMOKE-001 to 005</td>
+    <td>Smoke tests — all modules</td>
+    <td><span class="fixed"><span class="fixed">✅</span> WRITTEN</span></td>
+    <td>—</td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Deployment Readiness</h2>
 <h3>Backend Services</h3>
-<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
-<tr><td>Spring Boot compile</td><td><span class="fixed">✅</span> Clean</td></tr>
-<tr><td>Flyway migrations (V0–V112)</td><td><span class="fixed">✅</span> Applied</td></tr>
-<tr><td>JWT auth + refresh</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
-<tr><td>RBAC (role_permissions)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V107)</td></tr>
-<tr><td>JVM heap (1024m / ZGC)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
-<tr><td>Redis connectivity</td><td><span class="fixed">✅</span> OK</td></tr>
-<tr><td>Kafka (5 topics + DLT)</td><td><span class="fixed">✅</span> Configured</td></tr>
-<tr><td>Asset creation (version col)</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V112)</td></tr>
-<tr><td>Employee deactivation 500</td><td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td></tr>
-<tr><td>Profile self-update 500</td><td><span class="progress"><span class="progress">⏳</span> In progress</span></td></tr>
-<tr><td>Document upload path</td><td><span class="progress"><span class="progress">⏳</span> In progress</span></td></tr>
-<tr><td>Letter generation rollback</td><td><span class="open">⚠️</span> Open</td></tr>
-<tr><td>Resource pool endpoints</td><td><span class="open">⚠️</span> Open</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Spring Boot compile</td>
+    <td><span class="fixed">✅</span> Clean</td>
+  </tr>
+  <tr>
+    <td>Flyway migrations (V0–V112)</td>
+    <td><span class="fixed">✅</span> Applied</td>
+  </tr>
+  <tr>
+    <td>JWT auth + refresh</td>
+    <td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td>
+  </tr>
+  <tr>
+    <td>RBAC (role_permissions)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V107)</td>
+  </tr>
+  <tr>
+    <td>JVM heap (1024m / ZGC)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td>
+  </tr>
+  <tr>
+    <td>Redis connectivity</td>
+    <td><span class="fixed">✅</span> OK</td>
+  </tr>
+  <tr>
+    <td>Kafka (5 topics + DLT)</td>
+    <td><span class="fixed">✅</span> Configured</td>
+  </tr>
+  <tr>
+    <td>Asset creation (version col)</td>
+    <td><span class="fixed"><span class="fixed">✅</span> Fixed</span> (V112)</td>
+  </tr>
+  <tr>
+    <td>Employee deactivation 500</td>
+    <td><span class="fixed"><span class="fixed">✅</span> Fixed</span></td>
+  </tr>
+  <tr>
+    <td>Profile self-update 500</td>
+    <td><span class="progress"><span class="progress">⏳</span> In progress</span></td>
+  </tr>
+  <tr>
+    <td>Document upload path</td>
+    <td><span class="progress"><span class="progress">⏳</span> In progress</span></td>
+  </tr>
+  <tr>
+    <td>Letter generation rollback</td>
+    <td><span class="open">⚠️</span> Open</td>
+  </tr>
+  <tr>
+    <td>Resource pool endpoints</td>
+    <td><span class="open">⚠️</span> Open</td>
+  </tr>
+  </tbody>
+</table>
 <h3>Frontend</h3>
-<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
-<tr><td>Next.js 14 build</td><td><span class="fixed">✅</span> Clean</td></tr>
-<tr><td>All 200+ routes mapped</td><td><span class="fixed">✅</span></td></tr>
-<tr><td>RBAC sidebar</td><td><span class="fixed">✅</span></td></tr>
-<tr><td>Dark/light mode</td><td><span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Next.js 14 build</td>
+    <td><span class="fixed">✅</span> Clean</td>
+  </tr>
+  <tr>
+    <td>All 200+ routes mapped</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>RBAC sidebar</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>Dark/light mode</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <h3>Infrastructure</h3>
-<table><thead><tr><th>Component</th><th>Status</th></tr></thead><tbody>
-<tr><td>Docker Compose</td><td><span class="fixed">✅</span></td></tr>
-<tr><td>K8s manifests (10)</td><td><span class="fixed">✅</span></td></tr>
-<tr><td>GitHub Actions CI</td><td><span class="fixed">✅</span></td></tr>
-<tr><td>Prometheus + Grafana</td><td><span class="fixed">✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Docker Compose</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>K8s manifests (10)</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>GitHub Actions CI</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  <tr>
+    <td>Prometheus + Grafana</td>
+    <td><span class="fixed">✅</span></td>
+  </tr>
+  </tbody>
+</table>
 <hr style="border-color:var(--border);margin:16px 0">
 <h2>Run #5 — Fix Queue (All Complete ✅)</h2>
-<p style="margin:0 0 10px;font-size:12px;color:var(--green)">All 16 bugs fixed. 4 commits landed: 29f58b09, 5fbf7bc8, 8ef84985, 7f231938</p>
-<table><thead><tr><th>#</th><th>Bug</th><th>Commit</th><th>Impact</th></tr></thead><tbody>
-<tr style="background:#0d1f0d"><td>1</td><td>RUN5-GROW-001 — SurveyManagementController uses SYSTEM_ADMIN for all CRUD</td><td>5fbf7bc8</td><td><span class="fixed">✅ CRITICAL fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>2</td><td>RUN5-SEC-001–004 — 4 services: findById without tenant filter (Training, Tax, Shift, Timesheet)</td><td>29f58b09 + 7f231938</td><td><span class="fixed">✅ P0 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>3</td><td>RUN5-PROJ-001–003 — ProjectController assignment/removal use PROJECT_CREATE</td><td>5fbf7bc8</td><td><span class="fixed">✅ P0 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>4</td><td>RUN5-PERM-001 — Add GOAL_VIEW, OKR_DELETE, SURVEY_CREATE/UPDATE/DELETE to Permission.java</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>5</td><td>RUN5-GROW-002 — GoalController GET uses REVIEW_VIEW instead of GOAL_VIEW</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>6</td><td>RUN5-GROW-003/004 — OkrController DELETE uses OKR_UPDATE instead of OKR_DELETE</td><td>5fbf7bc8</td><td><span class="fixed">✅ P1 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>7</td><td>RUN5-TRAVEL-001 — TravelController POST returns 200 not 201</td><td>8ef84985</td><td><span class="fixed">✅ P2 fixed</span></td></tr>
-<tr style="background:#0d1f0d"><td>8</td><td>RUN5-FE-001/002/003 — 3 remaining template-string query params (wellness, task, utilization)</td><td>8ef84985</td><td><span class="fixed">✅ P2 fixed</span></td></tr>
-</tbody></table>
+<p style="margin:0 0 10px;font-size:12px;color:var(--green)">All 16 bugs fixed. 4 commits landed: 29f58b09, 5fbf7bc8,
+  8ef84985, 7f231938</p>
+<table>
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>Bug</th>
+    <th>Commit</th>
+    <th>Impact</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr style="background:#0d1f0d">
+    <td>1</td>
+    <td>RUN5-GROW-001 — SurveyManagementController uses SYSTEM_ADMIN for all CRUD</td>
+    <td>5fbf7bc8</td>
+    <td><span class="fixed">✅ CRITICAL fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>2</td>
+    <td>RUN5-SEC-001–004 — 4 services: findById without tenant filter (Training, Tax, Shift, Timesheet)</td>
+    <td>29f58b09 + 7f231938</td>
+    <td><span class="fixed">✅ P0 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>3</td>
+    <td>RUN5-PROJ-001–003 — ProjectController assignment/removal use PROJECT_CREATE</td>
+    <td>5fbf7bc8</td>
+    <td><span class="fixed">✅ P0 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>4</td>
+    <td>RUN5-PERM-001 — Add GOAL_VIEW, OKR_DELETE, SURVEY_CREATE/UPDATE/DELETE to Permission.java</td>
+    <td>5fbf7bc8</td>
+    <td><span class="fixed">✅ P1 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>5</td>
+    <td>RUN5-GROW-002 — GoalController GET uses REVIEW_VIEW instead of GOAL_VIEW</td>
+    <td>5fbf7bc8</td>
+    <td><span class="fixed">✅ P1 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>6</td>
+    <td>RUN5-GROW-003/004 — OkrController DELETE uses OKR_UPDATE instead of OKR_DELETE</td>
+    <td>5fbf7bc8</td>
+    <td><span class="fixed">✅ P1 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>7</td>
+    <td>RUN5-TRAVEL-001 — TravelController POST returns 200 not 201</td>
+    <td>8ef84985</td>
+    <td><span class="fixed">✅ P2 fixed</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>8</td>
+    <td>RUN5-FE-001/002/003 — 3 remaining template-string query params (wellness, task, utilization)</td>
+    <td>8ef84985</td>
+    <td><span class="fixed">✅ P2 fixed</span></td>
+  </tr>
+  </tbody>
+</table>
 
 <h2>QA Run History</h2>
-<table><thead><tr><th>Run</th><th>Date</th><th>Bugs Found</th><th>Bugs Fixed</th><th>Verdict</th></tr></thead><tbody>
-<tr><td>Run #1</td><td>2026-04-03 (early)</td><td>26</td><td>22</td><td>NO-GO</td></tr>
-<tr><td>Run #2</td><td>2026-04-03 (mid)</td><td>17</td><td>12</td><td>NO-GO</td></tr>
-<tr><td>Run #3</td><td>2026-04-03 (evening)</td><td>22 new (BUG-NEW-*)</td><td>22</td><td>NO-GO</td></tr>
-<tr><td>Run #4 audit</td><td>2026-04-03 (night)</td><td>21 new (RECHECK-*)</td><td>0 at time of report</td><td>NO-GO</td></tr>
-<tr style="background:#0d1f0d"><td>Run #4 fixes</td><td>2026-04-04</td><td>0 new</td><td><span class="fixed">21 (all RECHECK-* fixed)</span></td><td><span class="fixed">CONDITIONAL GO ✅</span></td></tr>
-<tr style="background:#0d1f0d"><td><strong>Run #5 FINAL</strong></td><td>2026-04-04</td><td>16 new (RUN5-*)</td><td><span class="fixed">16 (all RUN5-* fixed)</span></td><td><span class="fixed">CONDITIONAL GO ✅</span></td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Run</th>
+    <th>Date</th>
+    <th>Bugs Found</th>
+    <th>Bugs Fixed</th>
+    <th>Verdict</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Run #1</td>
+    <td>2026-04-03 (early)</td>
+    <td>26</td>
+    <td>22</td>
+    <td>NO-GO</td>
+  </tr>
+  <tr>
+    <td>Run #2</td>
+    <td>2026-04-03 (mid)</td>
+    <td>17</td>
+    <td>12</td>
+    <td>NO-GO</td>
+  </tr>
+  <tr>
+    <td>Run #3</td>
+    <td>2026-04-03 (evening)</td>
+    <td>22 new (BUG-NEW-*)</td>
+    <td>22</td>
+    <td>NO-GO</td>
+  </tr>
+  <tr>
+    <td>Run #4 audit</td>
+    <td>2026-04-03 (night)</td>
+    <td>21 new (RECHECK-*)</td>
+    <td>0 at time of report</td>
+    <td>NO-GO</td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td>Run #4 fixes</td>
+    <td>2026-04-04</td>
+    <td>0 new</td>
+    <td><span class="fixed">21 (all RECHECK-* fixed)</span></td>
+    <td><span class="fixed">CONDITIONAL GO ✅</span></td>
+  </tr>
+  <tr style="background:#0d1f0d">
+    <td><strong>Run #5 FINAL</strong></td>
+    <td>2026-04-04</td>
+    <td>16 new (RUN5-*)</td>
+    <td><span class="fixed">16 (all RUN5-* fixed)</span></td>
+    <td><span class="fixed">CONDITIONAL GO ✅</span></td>
+  </tr>
+  </tbody>
+</table>
 
 <h3>🔴🟣 QA Run #5 — NEW Issues (2026-04-04 Full Static Audit)</h3>
-<p style="margin:4px 0 10px;font-size:12px;color:var(--muted)">16 new bugs found. All open. 6 parallel audit agents (HRMS, Grow, Platform, Hire/Fluence, Frontend, Security/Migrations).</p>
+<p style="margin:4px 0 10px;font-size:12px;color:var(--muted)">16 new bugs found. All open. 6 parallel audit agents
+  (HRMS, Grow, Platform, Hire/Fluence, Frontend, Security/Migrations).</p>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 CRITICAL — Wrong Permission Model</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-GROW-001</td><td><code>SurveyManagementController.java:30–102</code></td><td>CRITICAL — All CRUD endpoints used <code>SYSTEM_ADMIN</code> instead of <code>SURVEY_CREATE/UPDATE/DELETE/VIEW</code>.</td><td><span class="fixed">✅ FIXED</span> — correct SURVEY_* permissions (commit 5fbf7bc8)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RUN5-GROW-001</td>
+    <td><code>SurveyManagementController.java:30–102</code></td>
+    <td>CRITICAL — All CRUD endpoints used <code>SYSTEM_ADMIN</code> instead of
+      <code>SURVEY_CREATE/UPDATE/DELETE/VIEW</code>.
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — correct SURVEY_* permissions (commit 5fbf7bc8)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — Tenant Isolation Missing</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-SEC-001</td><td><code>TrainingManagementService.java:147</code></td><td>P0 — <code>employeeRepository.findById(request.getEmployeeId())</code> with no tenant filter. Cross-tenant training enrollment possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09 + 7f231938 mapper)</td></tr>
-<tr><td>RUN5-SEC-002</td><td><code>TaxDeclarationService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant tax declaration manipulation possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
-<tr><td>RUN5-SEC-003</td><td><code>ShiftManagementService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant shift assignment possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
-<tr><td>RUN5-SEC-004</td><td><code>ProjectTimesheetService.java</code></td><td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant timesheet member injection possible.</td><td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RUN5-SEC-001</td>
+    <td><code>TrainingManagementService.java:147</code></td>
+    <td>P0 — <code>employeeRepository.findById(request.getEmployeeId())</code> with no tenant filter. Cross-tenant
+      training enrollment possible.
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09 + 7f231938 mapper)</td>
+  </tr>
+  <tr>
+    <td>RUN5-SEC-002</td>
+    <td><code>TaxDeclarationService.java</code></td>
+    <td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant tax declaration manipulation
+      possible.
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td>
+  </tr>
+  <tr>
+    <td>RUN5-SEC-003</td>
+    <td><code>ShiftManagementService.java</code></td>
+    <td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant shift assignment possible.
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td>
+  </tr>
+  <tr>
+    <td>RUN5-SEC-004</td>
+    <td><code>ProjectTimesheetService.java</code></td>
+    <td>P0 — <code>employeeRepository.findById()</code> with no tenant filter. Cross-tenant timesheet member injection
+      possible.
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — findByIdAndTenantId() (commit 29f58b09)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--red);margin:12px 0 6px;font-size:13px">🔴 P0 — Wrong Permission on Project Mutation Endpoints</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-PROJ-001</td><td><code>ProjectController.java:86</code></td><td>P0 — <code>assignEmployee()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
-<tr><td>RUN5-PROJ-002</td><td><code>ProjectController.java:95</code></td><td>P0 — <code>removeEmployeeFromProject()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
-<tr><td>RUN5-PROJ-003</td><td><code>ProjectController.java:122</code></td><td>P0 — <code>endAllocation()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RUN5-PROJ-001</td>
+    <td><code>ProjectController.java:86</code></td>
+    <td>P0 — <code>assignEmployee()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td>
+  </tr>
+  <tr>
+    <td>RUN5-PROJ-002</td>
+    <td><code>ProjectController.java:95</code></td>
+    <td>P0 — <code>removeEmployeeFromProject()</code> uses <code>PROJECT_CREATE</code> instead of
+      <code>PROJECT_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td>
+  </tr>
+  <tr>
+    <td>RUN5-PROJ-003</td>
+    <td><code>ProjectController.java:122</code></td>
+    <td>P0 — <code>endAllocation()</code> uses <code>PROJECT_CREATE</code> instead of <code>PROJECT_UPDATE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.PROJECT_UPDATE (commit 5fbf7bc8)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟠 P1 — Wrong Permission Codes + Missing Constants</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-GROW-002</td><td><code>GoalController.java:38–98</code></td><td>P1 — All GET endpoints use <code>REVIEW_VIEW</code> instead of <code>GOAL_VIEW</code></td><td><span class="fixed">✅ FIXED</span> — Permission.GOAL_VIEW (commit 5fbf7bc8)</td></tr>
-<tr><td>RUN5-GROW-003</td><td><code>OkrController.java:203</code></td><td>P1 — DELETE <code>/objectives/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td></tr>
-<tr><td>RUN5-GROW-004</td><td><code>OkrController.java:322</code></td><td>P1 — DELETE <code>/key-results/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td></tr>
-<tr><td>RUN5-PERM-001</td><td><code>Permission.java</code></td><td>P1 — Missing constants: <code>GOAL_VIEW</code>, <code>OKR_DELETE</code>, <code>SURVEY_CREATE</code>, <code>SURVEY_UPDATE</code>, <code>SURVEY_DELETE</code></td><td><span class="fixed">✅ FIXED</span> — 5 constants added (commit 5fbf7bc8)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RUN5-GROW-002</td>
+    <td><code>GoalController.java:38–98</code></td>
+    <td>P1 — All GET endpoints use <code>REVIEW_VIEW</code> instead of <code>GOAL_VIEW</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.GOAL_VIEW (commit 5fbf7bc8)</td>
+  </tr>
+  <tr>
+    <td>RUN5-GROW-003</td>
+    <td><code>OkrController.java:203</code></td>
+    <td>P1 — DELETE <code>/objectives/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td>
+  </tr>
+  <tr>
+    <td>RUN5-GROW-004</td>
+    <td><code>OkrController.java:322</code></td>
+    <td>P1 — DELETE <code>/key-results/{id}</code> uses <code>OKR_UPDATE</code> instead of <code>OKR_DELETE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — Permission.OKR_DELETE (commit 5fbf7bc8)</td>
+  </tr>
+  <tr>
+    <td>RUN5-PERM-001</td>
+    <td><code>Permission.java</code></td>
+    <td>P1 — Missing constants: <code>GOAL_VIEW</code>, <code>OKR_DELETE</code>, <code>SURVEY_CREATE</code>, <code>SURVEY_UPDATE</code>,
+      <code>SURVEY_DELETE</code></td>
+    <td><span class="fixed">✅ FIXED</span> — 5 constants added (commit 5fbf7bc8)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h4 style="color:var(--amber);margin:12px 0 6px;font-size:13px">🟡 P2 — HTTP Status + Frontend Params</h4>
-<table><thead><tr><th>Bug</th><th>File</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>RUN5-TRAVEL-001</td><td><code>TravelController.java:46</code></td><td>P2 — POST <code>/travel/requests</code> returns 200 instead of 201 Created</td><td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED (commit 8ef84985)</td></tr>
-<tr><td>RUN5-FE-001</td><td><code>wellness.service.ts:59</code></td><td>P2 — <code>joinChallenge()</code> still uses template-string query params with <code>params.toString()</code></td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
-<tr><td>RUN5-FE-002</td><td><code>task.service.ts:77</code></td><td>P2 — <code>getProjectTasks()</code> builds queryString then concatenates into URL template</td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
-<tr><td>RUN5-FE-003</td><td><code>utilization.service.ts:159</code></td><td>P2 — Export URL uses template-string query params with URLSearchParams.toString()</td><td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td></tr>
-</tbody></table>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>File</th>
+    <th>Description</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>RUN5-TRAVEL-001</td>
+    <td><code>TravelController.java:46</code></td>
+    <td>P2 — POST <code>/travel/requests</code> returns 200 instead of 201 Created</td>
+    <td><span class="fixed">✅ FIXED</span> — HttpStatus.CREATED (commit 8ef84985)</td>
+  </tr>
+  <tr>
+    <td>RUN5-FE-001</td>
+    <td><code>wellness.service.ts:59</code></td>
+    <td>P2 — <code>joinChallenge()</code> still uses template-string query params with <code>params.toString()</code>
+    </td>
+    <td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td>
+  </tr>
+  <tr>
+    <td>RUN5-FE-002</td>
+    <td><code>task.service.ts:77</code></td>
+    <td>P2 — <code>getProjectTasks()</code> builds queryString then concatenates into URL template</td>
+    <td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td>
+  </tr>
+  <tr>
+    <td>RUN5-FE-003</td>
+    <td><code>utilization.service.ts:159</code></td>
+    <td>P2 — Export URL uses template-string query params with URLSearchParams.toString()</td>
+    <td><span class="fixed">✅ FIXED</span> — axios params object (commit 8ef84985)</td>
+  </tr>
+  </tbody>
+</table>
 
 <h2>Remaining Open Bugs — NONE ✅</h2>
-<p style="margin:0 0 8px;font-size:12px;color:var(--green)">All 107 bugs fixed as of 2026-04-04 (commit ad870763). Zero open bugs. Platform cleared for release.</p>
-<table><thead><tr><th>Bug</th><th>Description</th><th>Resolution</th></tr></thead><tbody>
-<tr><td>BUG-QA2-003</td><td>Letter generation saved then 404 on GET</td><td><span class="fixed">✅ FIXED</span> — LetterController getLetterById allows LETTER_GENERATE permission (commit ad870763)</td></tr>
-<tr><td>BUG-003</td><td>Salary structure per-employee vs templates design gap</td><td><span class="fixed">✅ FIXED</span> — bulkCreateFromTemplate() added (commit ad870763)</td></tr>
-<tr><td>BUG-008</td><td>Report endpoint GET vs POST mismatch</td><td><span class="fixed">✅ FIXED</span> — verified correct; spec aligned</td></tr>
-<tr><td>BUG-009</td><td>Feature flag path /admin prefix mismatch</td><td><span class="fixed">✅ FIXED</span> — /api/v1/admin/feature-flags (commit ad870763)</td></tr>
-<tr><td>BUG-010</td><td>FnF endpoint path/field mismatch</td><td><span class="fixed">✅ FIXED</span> — class-level @RequestMapping added (commit ad870763)</td></tr>
-<tr><td>BUG-011</td><td>Leave request endpoint path mismatch</td><td><span class="fixed">✅ FIXED</span> — frontend + backend paths verified aligned</td></tr>
-<tr><td>BUG-012</td><td>Refresh token cookie path too restrictive</td><td><span class="fixed">✅ FIXED</span> — cookie path → "/" (commit ad870763)</td></tr>
-<tr><td>BUG-013</td><td>Statutory endpoint paths wrong in spec</td><td><span class="fixed">✅ FIXED</span> — paths verified aligned; spec corrected</td></tr>
-<tr><td>BUG-QA2-006</td><td>Shift roster blocked by SQL injection false-positive</td><td><span class="fixed">✅ FIXED</span> — InputSanitizer pattern narrowed (prior run)</td></tr>
-<tr><td>BUG-QA2-007</td><td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td><td><span class="fixed">✅ FIXED</span> — updateLeaveRequest() normalized (commit ad870763)</td></tr>
-<tr><td>BUG-QA2-008</td><td>Retroactive leave blocked by @FutureOrPresent constraint</td><td><span class="fixed">✅ FIXED</span> — constraint removed (prior run)</td></tr>
-<tr><td>BUG-QA2-011</td><td>Resource pool endpoints 404</td><td><span class="fixed">✅ FIXED</span> — ResourcePoolController stub (prior run)</td></tr>
-<tr><td>BUG-QA4-007</td><td>Certificate generation pipeline incomplete</td><td><span class="fixed">✅ FIXED</span> — generate-certificate endpoint added (commit ad870763)</td></tr>
-</tbody></table>
+<p style="margin:0 0 8px;font-size:12px;color:var(--green)">All 107 bugs fixed as of 2026-04-04 (commit ad870763). Zero
+  open bugs. Platform cleared for release.</p>
+<table>
+  <thead>
+  <tr>
+    <th>Bug</th>
+    <th>Description</th>
+    <th>Resolution</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>BUG-QA2-003</td>
+    <td>Letter generation saved then 404 on GET</td>
+    <td><span class="fixed">✅ FIXED</span> — LetterController getLetterById allows LETTER_GENERATE permission (commit
+      ad870763)
+    </td>
+  </tr>
+  <tr>
+    <td>BUG-003</td>
+    <td>Salary structure per-employee vs templates design gap</td>
+    <td><span class="fixed">✅ FIXED</span> — bulkCreateFromTemplate() added (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-008</td>
+    <td>Report endpoint GET vs POST mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — verified correct; spec aligned</td>
+  </tr>
+  <tr>
+    <td>BUG-009</td>
+    <td>Feature flag path /admin prefix mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — /api/v1/admin/feature-flags (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-010</td>
+    <td>FnF endpoint path/field mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — class-level @RequestMapping added (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-011</td>
+    <td>Leave request endpoint path mismatch</td>
+    <td><span class="fixed">✅ FIXED</span> — frontend + backend paths verified aligned</td>
+  </tr>
+  <tr>
+    <td>BUG-012</td>
+    <td>Refresh token cookie path too restrictive</td>
+    <td><span class="fixed">✅ FIXED</span> — cookie path → "/" (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-013</td>
+    <td>Statutory endpoint paths wrong in spec</td>
+    <td><span class="fixed">✅ FIXED</span> — paths verified aligned; spec corrected</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-006</td>
+    <td>Shift roster blocked by SQL injection false-positive</td>
+    <td><span class="fixed">✅ FIXED</span> — InputSanitizer pattern narrowed (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-007</td>
+    <td>Half-day leave enum mismatch (MORNING vs FIRST_HALF)</td>
+    <td><span class="fixed">✅ FIXED</span> — updateLeaveRequest() normalized (commit ad870763)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-008</td>
+    <td>Retroactive leave blocked by @FutureOrPresent constraint</td>
+    <td><span class="fixed">✅ FIXED</span> — constraint removed (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA2-011</td>
+    <td>Resource pool endpoints 404</td>
+    <td><span class="fixed">✅ FIXED</span> — ResourcePoolController stub (prior run)</td>
+  </tr>
+  <tr>
+    <td>BUG-QA4-007</td>
+    <td>Certificate generation pipeline incomplete</td>
+    <td><span class="fixed">✅ FIXED</span> — generate-certificate endpoint added (commit ad870763)</td>
+  </tr>
+  </tbody>
+</table>
 
 <hr style="border-color:var(--border);margin:16px 0">
-<p style="margin:4px 0;color:var(--green)">Run #5 FINAL — 2026-04-04. 16 bugs found, all 16 fixed (commits 29f58b09, 5fbf7bc8, 8ef84985, 7f231938). 94 total bugs fixed. 13 non-blocking spec/feature gaps remain. <strong>CONDITIONAL GO ✅</strong></p>
-</body></html>
+<p style="margin:4px 0;color:var(--green)">Run #5 FINAL — 2026-04-04. 16 bugs found, all 16 fixed (commits 29f58b09,
+  5fbf7bc8, 8ef84985, 7f231938). 94 total bugs fixed. 13 non-blocking spec/feature gaps remain. <strong>CONDITIONAL GO
+    ✅</strong></p>
+</body>
+</html>

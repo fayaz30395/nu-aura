@@ -152,7 +152,8 @@ ALTER TABLE roster_entries FORCE ROW LEVEL SECURITY;
 DO
 $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'saml_identity_providers') THEN
+    IF
+EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'saml_identity_providers') THEN
         EXECUTE 'ALTER TABLE saml_identity_providers FORCE ROW LEVEL SECURITY';
 END IF;
 END $$;
@@ -293,7 +294,8 @@ ALTER TABLE expense_items FORCE ROW LEVEL SECURITY;
 DO
 $$
 BEGIN
-    IF NOT EXISTS (
+    IF
+NOT EXISTS (
         SELECT 1 FROM information_schema.table_constraints
         WHERE constraint_name = 'fk_rhs_employee' AND table_name = 'restricted_holiday_selections'
     ) THEN
@@ -306,7 +308,8 @@ END $$;
 DO
 $$
 BEGIN
-    IF NOT EXISTS (
+    IF
+NOT EXISTS (
         SELECT 1 FROM information_schema.table_constraints
         WHERE constraint_name = 'fk_expense_advance_employee' AND table_name = 'expense_advances'
     ) THEN
@@ -319,7 +322,8 @@ END $$;
 DO
 $$
 BEGIN
-    IF NOT EXISTS (
+    IF
+NOT EXISTS (
         SELECT 1 FROM information_schema.table_constraints
         WHERE constraint_name = 'fk_roster_entry_employee' AND table_name = 'roster_entries'
     ) THEN
@@ -332,7 +336,8 @@ END $$;
 DO
 $$
 BEGIN
-    IF NOT EXISTS (
+    IF
+NOT EXISTS (
         SELECT 1 FROM information_schema.table_constraints
         WHERE constraint_name = 'fk_roster_entry_shift' AND table_name = 'roster_entries'
     ) THEN

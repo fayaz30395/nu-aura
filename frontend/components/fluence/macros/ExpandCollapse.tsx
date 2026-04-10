@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
-import type { TiptapNode } from '@/lib/types/platform/macro';
+import {useState} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
+import {ChevronRight} from 'lucide-react';
+import type {TiptapNode} from '@/lib/types/platform/macro';
 
 // ── Text Extraction ──────────────────────────────────────────────────────────
 
@@ -33,11 +33,11 @@ interface ExpandCollapseProps {
  * framer-motion. Clicking the header toggles content visibility.
  */
 export function ExpandCollapse({
-  title,
-  defaultExpanded = false,
-  content,
-  className = '',
-}: ExpandCollapseProps) {
+                                 title,
+                                 defaultExpanded = false,
+                                 content,
+                                 className = '',
+                               }: ExpandCollapseProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const bodyText = content ? extractContentText(content) : '';
 
@@ -62,11 +62,11 @@ export function ExpandCollapse({
         aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${title}`}
       >
         <motion.span
-          animate={{ rotate: isExpanded ? 90 : 0 }}
-          transition={{ duration: 0.15, ease: 'easeInOut' }}
+          animate={{rotate: isExpanded ? 90 : 0}}
+          transition={{duration: 0.15, ease: 'easeInOut'}}
           className="shrink-0"
         >
-          <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
+          <ChevronRight className="w-4 h-4 text-[var(--text-muted)]"/>
         </motion.span>
         <span className="text-sm font-medium text-[var(--text-primary)]">
           {title}
@@ -77,10 +77,10 @@ export function ExpandCollapse({
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            initial={{height: 0, opacity: 0}}
+            animate={{height: 'auto', opacity: 1}}
+            exit={{height: 0, opacity: 0}}
+            transition={{duration: 0.2, ease: 'easeInOut'}}
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-2 border-t border-[var(--border-subtle)]">

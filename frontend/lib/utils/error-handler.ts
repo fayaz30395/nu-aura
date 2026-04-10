@@ -11,8 +11,8 @@
  * sent to an error tracking service (Sentry, Rollbar, etc.).
  */
 
-import { isProduction } from '@/lib/config';
-import { logger } from './logger';
+import {isProduction} from '@/lib/config';
+import {logger} from './logger';
 
 /**
  * Error severity levels for categorization
@@ -70,7 +70,9 @@ export interface ErrorInfo {
  */
 export interface ErrorTrackingService {
   captureError(error: Error, info: ErrorInfo): void;
+
   captureMessage(message: string, severity: ErrorSeverity): void;
+
   setUser(userId: string | null): void;
 }
 
@@ -78,9 +80,12 @@ export interface ErrorTrackingService {
  * Default no-op error tracking service
  */
 const noopTracker: ErrorTrackingService = {
-  captureError: () => {},
-  captureMessage: () => {},
-  setUser: () => {},
+  captureError: () => {
+  },
+  captureMessage: () => {
+  },
+  setUser: () => {
+  },
 };
 
 // Global error tracking service (can be replaced with Sentry, etc.)
@@ -231,7 +236,8 @@ export function handleError(
 let _globalHandlersCleanup: (() => void) | null = null;
 
 export function initGlobalErrorHandlers(): () => void {
-  if (typeof window === 'undefined') return () => {};
+  if (typeof window === 'undefined') return () => {
+  };
 
   // Guard: only attach once
   if (_globalHandlersCleanup) {
@@ -322,13 +328,13 @@ export function getErrorMessage(error: unknown, fallback = 'An unexpected error 
  */
 export function createQueryErrorHandler() {
   return (error: Error) => {
-    handleError(error, { source: 'react-query' });
+    handleError(error, {source: 'react-query'});
 
     // Show Mantine notification to user
     // Dynamic import to avoid circular dependencies and SSR issues
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { notifications } = require('@mantine/notifications');
+      const {notifications} = require('@mantine/notifications');
       const category = categorizeError(error);
       const message = getErrorMessage(error);
       const userMessage = getUserMessage(category, message);

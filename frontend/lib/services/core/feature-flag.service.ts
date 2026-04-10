@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/client';
-import type { FeatureFlag, FeatureFlagRequest, FeatureFlagMap } from '@/lib/types/core/feature-flag';
+import {apiClient} from '@/lib/api/client';
+import type {FeatureFlag, FeatureFlagRequest, FeatureFlagMap} from '@/lib/types/core/feature-flag';
 
 export const featureFlagService = {
   getAll: () =>

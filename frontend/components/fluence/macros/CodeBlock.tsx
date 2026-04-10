@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
-import { Check, Copy } from 'lucide-react';
+import {useState, useCallback, useRef} from 'react';
+import {Check, Copy} from 'lucide-react';
 
 interface MacroCodeBlockProps {
   language?: string;
@@ -17,10 +17,10 @@ interface MacroCodeBlockProps {
  * area to provide strong visual contrast.
  */
 export function MacroCodeBlock({
-  language = 'text',
-  code,
-  className = '',
-}: MacroCodeBlockProps) {
+                                 language = 'text',
+                                 code,
+                                 className = '',
+                               }: MacroCodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -52,7 +52,8 @@ export function MacroCodeBlock({
       `}
     >
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-1.5 bg-[var(--surface-2)] border-b border-[var(--border-main)]">
+      <div
+        className="flex items-center justify-between px-4 py-1.5 bg-[var(--surface-2)] border-b border-[var(--border-main)]">
         <span className="px-2 py-0.5 text-xs font-medium rounded bg-[var(--accent-100)] text-[var(--accent-800)]">
           {language}
         </span>
@@ -70,12 +71,12 @@ export function MacroCodeBlock({
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-[var(--status-success-text)]" />
+              <Check className="w-3.5 h-3.5 text-[var(--status-success-text)]"/>
               <span className="text-[var(--status-success-text)]">Copied</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5" />
+              <Copy className="w-3.5 h-3.5"/>
               <span>Copy</span>
             </>
           )}
@@ -90,7 +91,7 @@ export function MacroCodeBlock({
               <div key={index} className="flex">
                 <span
                   className="select-none shrink-0 pr-4 text-right text-[var(--sidebar-text-muted)]"
-                  style={{ minWidth: `${lineNumberWidth + 1}ch` }}
+                  style={{minWidth: `${lineNumberWidth + 1}ch`}}
                   aria-hidden="true"
                 >
                   {index + 1}

@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import type {
   CompensationReviewCycle,
   SalaryRevision,
@@ -7,7 +7,7 @@ import type {
   SalaryRevisionRequest,
   CycleStatus,
 } from '../../types/hrms/compensation';
-import type { PaginatedResponse } from '../../types/core/common';
+import type {PaginatedResponse} from '../../types/core/common';
 
 const BASE_URL = '/compensation';
 
@@ -25,7 +25,7 @@ export const compensationService = {
 
   async getAllCycles(page = 0, size = 10): Promise<PaginatedResponse<CompensationReviewCycle>> {
     const response = await apiClient.get<PaginatedResponse<CompensationReviewCycle>>(
-      `${BASE_URL}/cycles`, { params: { page, size } }
+      `${BASE_URL}/cycles`, {params: {page, size}}
     );
     return response.data;
   },
@@ -37,7 +37,7 @@ export const compensationService = {
 
   async updateCycleStatus(cycleId: string, status: CycleStatus): Promise<CompensationReviewCycle> {
     const response = await apiClient.post<CompensationReviewCycle>(
-      `${BASE_URL}/cycles/${cycleId}/status`, undefined, { params: { status } }
+      `${BASE_URL}/cycles/${cycleId}/status`, undefined, {params: {status}}
     );
     return response.data;
   },
@@ -62,14 +62,14 @@ export const compensationService = {
 
   async getAllRevisions(page = 0, size = 10): Promise<PaginatedResponse<SalaryRevision>> {
     const response = await apiClient.get<PaginatedResponse<SalaryRevision>>(
-      `${BASE_URL}/revisions`, { params: { page, size } }
+      `${BASE_URL}/revisions`, {params: {page, size}}
     );
     return response.data;
   },
 
   async getRevisionsByCycle(cycleId: string, page = 0, size = 10): Promise<PaginatedResponse<SalaryRevision>> {
     const response = await apiClient.get<PaginatedResponse<SalaryRevision>>(
-      `${BASE_URL}/cycles/${cycleId}/revisions`, { params: { page, size } }
+      `${BASE_URL}/cycles/${cycleId}/revisions`, {params: {page, size}}
     );
     return response.data;
   },
@@ -83,7 +83,7 @@ export const compensationService = {
 
   async getPendingApprovals(page = 0, size = 10): Promise<PaginatedResponse<SalaryRevision>> {
     const response = await apiClient.get<PaginatedResponse<SalaryRevision>>(
-      `${BASE_URL}/revisions/pending`, { params: { page, size } }
+      `${BASE_URL}/revisions/pending`, {params: {page, size}}
     );
     return response.data;
   },
@@ -98,7 +98,7 @@ export const compensationService = {
     const response = await apiClient.post<SalaryRevision>(
       `${BASE_URL}/revisions/${revisionId}/review`,
       undefined,
-      comments ? { params: { comments } } : undefined,
+      comments ? {params: {comments}} : undefined,
     );
     return response.data;
   },
@@ -107,7 +107,7 @@ export const compensationService = {
     const response = await apiClient.post<SalaryRevision>(
       `${BASE_URL}/revisions/${revisionId}/approve`,
       undefined,
-      comments ? { params: { comments } } : undefined,
+      comments ? {params: {comments}} : undefined,
     );
     return response.data;
   },
@@ -116,7 +116,7 @@ export const compensationService = {
     const response = await apiClient.post<SalaryRevision>(
       `${BASE_URL}/revisions/${revisionId}/reject`,
       undefined,
-      { params: { reason } },
+      {params: {reason}},
     );
     return response.data;
   },

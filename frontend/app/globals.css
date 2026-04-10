@@ -51,9 +51,8 @@
     --skeleton-base: #eceef5;
 
     /* ── Background Atmosphere (Single blue wash) ────────────────── */
-    --bg-pattern:
-      radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.03), transparent 60%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 251, 1) 50%);
+    --bg-pattern: radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.03), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 251, 1) 50%);
     --bg-pattern-size: auto, auto;
 
     /* ── Text Hierarchy (Blue-tinted darks) ───────────────────────── */
@@ -141,40 +140,29 @@
     --dropdown-divider: #eceef5;
 
     /* ── Skeuomorphism (Blue-tinted tactile depth) ─────────────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(255, 255, 255, 0.65),
-      0 1px 2px rgba(14, 18, 37, 0.06),
-      0 4px 12px rgba(14, 18, 37, 0.04);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 2px 4px rgba(14, 18, 37, 0.08),
-      0 8px 20px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(14, 18, 37, 0.10),
-      inset 0 1px 2px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(255, 255, 255, 0.50),
-      0 1px 2px rgba(14, 18, 37, 0.10),
-      0 2px 4px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      0 1px 3px rgba(14, 18, 37, 0.12),
-      0 3px 8px rgba(14, 18, 37, 0.08);
-    --shadow-skeuo-input:
-      inset 0 1px 3px rgba(14, 18, 37, 0.06),
-      0 1px 0 rgba(255, 255, 255, 0.80);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(255, 255, 255, 0.65),
-      0 -1px 0 rgba(14, 18, 37, 0.04);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(14, 18, 37, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.70) 0%, rgba(240, 243, 252, 0.30) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 18, 37, 0.03) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 242, 247, 0.50) 100%);
+    --shadow-skeuo-card: inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 1px 2px rgba(14, 18, 37, 0.06),
+    0 4px 12px rgba(14, 18, 37, 0.04);
+    --shadow-skeuo-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 2px 4px rgba(14, 18, 37, 0.08),
+    0 8px 20px rgba(14, 18, 37, 0.06);
+    --shadow-skeuo-pressed: inset 0 2px 4px rgba(14, 18, 37, 0.10),
+    inset 0 1px 2px rgba(14, 18, 37, 0.06);
+    --shadow-skeuo-button: inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(14, 18, 37, 0.10),
+    0 2px 4px rgba(14, 18, 37, 0.06);
+    --shadow-skeuo-button-hover: inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 3px rgba(14, 18, 37, 0.12),
+    0 3px 8px rgba(14, 18, 37, 0.08);
+    --shadow-skeuo-input: inset 0 1px 3px rgba(14, 18, 37, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.80);
+    --shadow-skeuo-emboss: 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 -1px 0 rgba(14, 18, 37, 0.04);
+    --shadow-skeuo-table-header: inset 0 -1px 0 rgba(14, 18, 37, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    --gradient-skeuo-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.70) 0%, rgba(240, 243, 252, 0.30) 100%);
+    --gradient-skeuo-button: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 18, 37, 0.03) 100%);
+    --gradient-skeuo-card: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 242, 247, 0.50) 100%);
     --glass-bg: rgba(255, 255, 255, 0.72);
     --glass-border: rgba(188, 201, 242, 0.35);
     --glass-blur: 14px;
@@ -210,9 +198,8 @@
     --skeleton-base: #1e2440;
 
     /* ── Background Atmosphere (Deep blue wash) ──────────────────── */
-    --bg-pattern:
-      radial-gradient(800px 400px at 0% 0%, rgba(41, 82, 163, 0.08), transparent 60%),
-      linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(8, 12, 24, 1) 50%);
+    --bg-pattern: radial-gradient(800px 400px at 0% 0%, rgba(41, 82, 163, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(8, 12, 24, 1) 50%);
     --bg-pattern-size: auto, auto;
 
     /* ── Text Hierarchy (Blue-tinted whites) ─────────────────────── */
@@ -300,40 +287,29 @@
     --dropdown-divider: #1e2440;
 
     /* ── Skeuomorphism (Dark — subtle blue edge glow) ───────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(104, 132, 220, 0.06),
-      0 1px 2px rgba(0, 0, 0, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(104, 132, 220, 0.10),
-      0 2px 4px rgba(0, 0, 0, 0.30),
-      0 8px 20px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(0, 0, 0, 0.28),
-      inset 0 1px 2px rgba(0, 0, 0, 0.18);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(104, 132, 220, 0.08),
-      0 1px 2px rgba(0, 0, 0, 0.20),
-      0 2px 4px rgba(0, 0, 0, 0.15);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(104, 132, 220, 0.12),
-      0 1px 3px rgba(0, 0, 0, 0.25),
-      0 3px 8px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-input:
-      inset 0 1px 3px rgba(0, 0, 0, 0.18),
-      0 1px 0 rgba(104, 132, 220, 0.04);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(104, 132, 220, 0.06),
-      0 -1px 0 rgba(0, 0, 0, 0.12);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 rgba(104, 132, 220, 0.05);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.06) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.06) 0%, rgba(0, 0, 0, 0.08) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.04) 100%);
+    --shadow-skeuo-card: inset 0 1px 0 rgba(104, 132, 220, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-skeuo-card-hover: inset 0 1px 0 rgba(104, 132, 220, 0.10),
+    0 2px 4px rgba(0, 0, 0, 0.30),
+    0 8px 20px rgba(0, 0, 0, 0.20);
+    --shadow-skeuo-pressed: inset 0 2px 4px rgba(0, 0, 0, 0.28),
+    inset 0 1px 2px rgba(0, 0, 0, 0.18);
+    --shadow-skeuo-button: inset 0 1px 0 rgba(104, 132, 220, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.20),
+    0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-skeuo-button-hover: inset 0 1px 0 rgba(104, 132, 220, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.25),
+    0 3px 8px rgba(0, 0, 0, 0.20);
+    --shadow-skeuo-input: inset 0 1px 3px rgba(0, 0, 0, 0.18),
+    0 1px 0 rgba(104, 132, 220, 0.04);
+    --shadow-skeuo-emboss: 0 1px 0 rgba(104, 132, 220, 0.06),
+    0 -1px 0 rgba(0, 0, 0, 0.12);
+    --shadow-skeuo-table-header: inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(104, 132, 220, 0.05);
+    --gradient-skeuo-surface: linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.06) 100%);
+    --gradient-skeuo-button: linear-gradient(180deg, rgba(104, 132, 220, 0.06) 0%, rgba(0, 0, 0, 0.08) 100%);
+    --gradient-skeuo-card: linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.04) 100%);
     --glass-bg: rgba(14, 19, 34, 0.82);
     --glass-border: rgba(104, 132, 220, 0.10);
     --glass-blur: 14px;
@@ -400,12 +376,29 @@
     line-height: 1.2;
   }
 
-  h1 { @apply text-3xl; }
-  h2 { @apply text-2xl; }
-  h3 { @apply text-xl; }
-  h4 { @apply text-lg; }
-  h5 { @apply text-base; }
-  h6 { @apply text-sm uppercase tracking-wider font-medium; }
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
+
+  h5 {
+    @apply text-base;
+  }
+
+  h6 {
+    @apply text-sm uppercase tracking-wider font-medium;
+  }
 
   /* ── Interactive Elements (Consistent Cursors) ───────────────── */
   button,
@@ -460,8 +453,8 @@
     border-color: var(--border-subtle);
     box-shadow: var(--shadow-skeuo-card);
     transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 180ms ease-out,
-                border-color 180ms ease-out;
+    box-shadow 180ms ease-out,
+    border-color 180ms ease-out;
   }
 
   .card-interactive:hover {
@@ -674,21 +667,25 @@
     color: var(--status-success-text);
     border: 1px solid var(--status-success-border);
   }
+
   .status-danger {
     background-color: var(--status-danger-bg);
     color: var(--status-danger-text);
     border: 1px solid var(--status-danger-border);
   }
+
   .status-warning {
     background-color: var(--status-warning-bg);
     color: var(--status-warning-text);
     border: 1px solid var(--status-warning-border);
   }
+
   .status-info {
     background-color: var(--status-info-bg);
     color: var(--status-info-text);
     border: 1px solid var(--status-info-border);
   }
+
   .status-neutral {
     background-color: var(--status-neutral-bg);
     color: var(--status-neutral-text);
@@ -702,36 +699,44 @@
     font-family: var(--font-head), var(--font-body), system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
+
   .text-section-title {
     @apply text-xl font-semibold tracking-tight;
     color: var(--text-primary);
     font-family: var(--font-head), var(--font-body), system-ui, sans-serif;
   }
+
   .text-card-title {
     @apply text-base font-semibold;
     color: var(--text-primary);
   }
+
   .text-body {
     @apply text-sm;
     color: var(--text-primary);
   }
+
   .text-body-secondary {
     @apply text-sm;
     color: var(--text-secondary);
   }
+
   .text-caption {
     @apply text-xs;
     color: var(--text-muted);
   }
+
   .text-micro {
     @apply text-xs font-medium uppercase tracking-wider;
     color: var(--text-muted);
   }
+
   .text-stat-large {
     @apply text-3xl font-semibold tabular-nums;
     color: var(--text-primary);
     font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   }
+
   .text-stat-medium {
     @apply text-2xl font-semibold tabular-nums;
     color: var(--text-primary);
@@ -747,17 +752,19 @@
     box-shadow: var(--shadow-skeuo-input);
     transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
   }
+
   .input-aura:hover {
     border-color: var(--border-strong);
   }
+
   .input-aura:focus {
     border-color: var(--accent-primary);
-    box-shadow:
-      var(--shadow-skeuo-input),
-      0 0 0 2px var(--bg-main),
-      0 0 0 4px var(--ring-primary);
+    box-shadow: var(--shadow-skeuo-input),
+    0 0 0 2px var(--bg-main),
+    0 0 0 4px var(--ring-primary);
     outline: none;
   }
+
   .input-aura::placeholder {
     color: var(--text-muted);
   }
@@ -768,24 +775,23 @@
     background-image: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover));
     color: #ffffff;
     border: none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.20),
-      0 2px 4px rgba(5, 7, 102, 0.25),
-      0 8px 20px rgba(5, 7, 102, 0.20);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    0 2px 4px rgba(5, 7, 102, 0.25),
+    0 8px 20px rgba(5, 7, 102, 0.20);
     transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
+
   .btn-primary:hover {
     filter: brightness(1.04);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 4px 8px rgba(5, 7, 102, 0.28),
-      0 10px 24px rgba(5, 7, 102, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 8px rgba(5, 7, 102, 0.28),
+    0 10px 24px rgba(5, 7, 102, 0.22);
     transform: translateY(-0.5px);
   }
+
   .btn-primary:active {
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.20),
-      0 1px 2px rgba(5, 7, 102, 0.18);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.20),
+    0 1px 2px rgba(5, 7, 102, 0.18);
     transform: translateY(0.5px);
     filter: brightness(0.98);
   }
@@ -799,12 +805,14 @@
     box-shadow: var(--shadow-skeuo-button);
     transition: background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 120ms ease-out, transform 100ms ease-out;
   }
+
   .btn-secondary:hover {
     background-color: var(--bg-card-hover);
     border-color: var(--border-strong);
     box-shadow: var(--shadow-skeuo-button-hover);
     transform: translateY(-0.5px);
   }
+
   .btn-secondary:active {
     box-shadow: var(--shadow-skeuo-pressed);
     transform: translateY(0.5px);
@@ -817,10 +825,12 @@
     border: none;
     transition: background-color 180ms ease-out, color 180ms ease-out, transform 100ms ease-out;
   }
+
   .btn-ghost:hover {
     background-color: var(--bg-card-hover);
     color: var(--text-primary);
   }
+
   .btn-ghost:active {
     box-shadow: var(--shadow-skeuo-pressed);
     transform: translateY(0.5px);
@@ -916,10 +926,9 @@
 
   .skeuo-input:focus {
     border-color: var(--accent-primary);
-    box-shadow:
-      var(--shadow-skeuo-input),
-      0 0 0 2px var(--bg-main),
-      0 0 0 4px var(--ring-primary);
+    box-shadow: var(--shadow-skeuo-input),
+    0 0 0 2px var(--bg-main),
+    0 0 0 4px var(--ring-primary);
     outline: none;
   }
 
@@ -934,28 +943,24 @@
 
   /* ── Skeuomorphic Embossed Text (Raised Typography) ──────────── */
   .skeuo-emboss {
-    text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.5),
-      0 -1px 0 rgba(0, 0, 0, 0.04);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 -1px 0 rgba(0, 0, 0, 0.04);
   }
 
   .dark .skeuo-emboss {
-    text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.05),
-      0 -1px 0 rgba(0, 0, 0, 0.25);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 -1px 0 rgba(0, 0, 0, 0.25);
   }
 
   /* ── Skeuomorphic Debossed Text (Engraved Typography) ────────── */
   .skeuo-deboss {
-    text-shadow:
-      0 -1px 0 rgba(0, 0, 0, 0.15),
-      0 1px 0 rgba(255, 255, 255, 0.3);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
   .dark .skeuo-deboss {
-    text-shadow:
-      0 -1px 0 rgba(0, 0, 0, 0.40),
-      0 1px 0 rgba(255, 255, 255, 0.04);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.40),
+    0 1px 0 rgba(255, 255, 255, 0.04);
   }
 
   /* ── Skeuomorphic Surface (Elevated + Textured) ──────────────── */
@@ -980,27 +985,24 @@
   /* ── Skeuomorphic Toggle Switch (Physical Toggle) ────────────── */
   .skeuo-toggle {
     @apply relative inline-flex h-7 w-12 items-center rounded-full cursor-pointer;
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.12),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     background-color: var(--border-main);
     transition: background-color 200ms ease-out;
   }
 
   .skeuo-toggle[data-checked="true"] {
     background-color: var(--accent-primary);
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.15),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.08);
   }
 
   .skeuo-toggle-knob {
     @apply absolute h-5 w-5 rounded-full;
     background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.20),
-      0 1px 1px rgba(0, 0, 0, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20),
+    0 1px 1px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
     left: 2px;
     transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -1020,6 +1022,7 @@
     .card-interactive:hover {
       transform: none;
     }
+
     .skeuo-button:hover,
     .skeuo-button:active {
       transform: none;
@@ -1030,13 +1033,13 @@
 @layer utilities {
   /* ── Typography Micro-Scale Utilities ──────────────────────── */
   .text-2xs {
-    font-size: 0.625rem;    /* 10px */
-    line-height: 0.875rem;  /* 14px */
+    font-size: 0.625rem; /* 10px */
+    line-height: 0.875rem; /* 14px */
   }
 
   .text-3xs {
-    font-size: 0.6875rem;   /* 11px */
-    line-height: 1rem;      /* 16px */
+    font-size: 0.6875rem; /* 11px */
+    line-height: 1rem; /* 16px */
   }
 
   /* ── Staggered Reveal (Purposeful Motion) ────────────────────── */
@@ -1048,14 +1051,37 @@
     animation: riseIn 320ms ease-out both;
   }
 
-  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-  .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
-  .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
-  .stagger-children > *:nth-child(4) { animation-delay: 180ms; }
-  .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
-  .stagger-children > *:nth-child(6) { animation-delay: 300ms; }
-  .stagger-children > *:nth-child(7) { animation-delay: 360ms; }
-  .stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+  .stagger-children > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .stagger-children > *:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .stagger-children > *:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .stagger-children > *:nth-child(4) {
+    animation-delay: 180ms;
+  }
+
+  .stagger-children > *:nth-child(5) {
+    animation-delay: 240ms;
+  }
+
+  .stagger-children > *:nth-child(6) {
+    animation-delay: 300ms;
+  }
+
+  .stagger-children > *:nth-child(7) {
+    animation-delay: 360ms;
+  }
+
+  .stagger-children > *:nth-child(8) {
+    animation-delay: 420ms;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .page-reveal,
@@ -1117,27 +1143,35 @@
   .badge-success {
     @apply bg-success-50 text-success-700 border border-success-200;
   }
+
   .dark .badge-success {
     @apply bg-success-950/20 text-success-400 border-success-800;
   }
+
   .badge-danger {
     @apply bg-danger-50 text-danger-700 border border-danger-200;
   }
+
   .dark .badge-danger {
     @apply bg-danger-950/20 text-danger-400 border-danger-800;
   }
+
   .badge-warning {
     @apply bg-warning-50 text-warning-700 border border-warning-200;
   }
+
   .dark .badge-warning {
     @apply bg-warning-950/20 text-warning-400 border-warning-800;
   }
+
   .badge-info {
     @apply bg-info-50 text-info-700 border border-info-200;
   }
+
   .dark .badge-info {
     @apply bg-info-950/20 text-info-400 border-info-800;
   }
+
   .badge-neutral {
     @apply bg-[var(--surface-2)] text-[var(--text-muted)] border border-[var(--border-main)];
   }
@@ -1278,8 +1312,8 @@ html, body {
 /* ── Subtle Card Lift on Hover ─────────────────────────────────────── */
 .card-lift {
   transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 200ms ease-out,
-              border-color 200ms ease-out;
+  box-shadow 200ms ease-out,
+  border-color 200ms ease-out;
 }
 
 .card-lift:hover {
@@ -1301,6 +1335,7 @@ html, body {
   background: var(--bg-card);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .fluence-editor-canvas:focus-within {
   border-color: var(--border-main);
   box-shadow: 0 0 0 3px var(--accent-primary-subtle);
@@ -1324,12 +1359,15 @@ html, body {
 .fluence-editor-content .ProseMirror h1 {
   @apply text-3xl font-bold mt-8 mb-4 text-[var(--text-primary)];
 }
+
 .fluence-editor-content .ProseMirror h2 {
   @apply text-2xl font-semibold mt-6 mb-3 text-[var(--text-primary)];
 }
+
 .fluence-editor-content .ProseMirror h3 {
   @apply text-xl font-semibold mt-4 mb-2 text-[var(--text-primary)];
 }
+
 .fluence-editor-content .ProseMirror p {
   @apply text-base leading-7 mb-2 text-[var(--text-primary)];
 }
@@ -1337,12 +1375,15 @@ html, body {
 .fluence-editor-content .ProseMirror ul {
   @apply list-disc pl-6 mb-4;
 }
+
 .fluence-editor-content .ProseMirror ol {
   @apply list-decimal pl-6 mb-4;
 }
+
 .fluence-editor-content .ProseMirror li {
   @apply mb-1;
 }
+
 .fluence-editor-content .ProseMirror li p {
   @apply mb-0;
 }
@@ -1354,6 +1395,7 @@ html, body {
 .fluence-editor-content .ProseMirror pre {
   @apply bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg p-4 my-4 overflow-x-auto font-mono text-sm border border-[var(--border-main)];
 }
+
 .fluence-editor-content .ProseMirror pre code {
   @apply bg-transparent text-inherit p-0 rounded-none;
 }
@@ -1369,6 +1411,7 @@ html, body {
 .fluence-editor-content .ProseMirror img {
   @apply max-w-full h-auto rounded-lg my-4;
 }
+
 .fluence-editor-content .ProseMirror img.ProseMirror-selectednode {
   @apply ring-2 ring-[var(--accent-primary)] ring-offset-2;
 }
@@ -1376,13 +1419,16 @@ html, body {
 .fluence-editor-content .ProseMirror table {
   @apply w-full border-collapse my-4;
 }
+
 .fluence-editor-content .ProseMirror table td,
 .fluence-editor-content .ProseMirror table th {
   @apply border border-[var(--border-main)] px-3 py-2 text-left text-sm min-w-[80px];
 }
+
 .fluence-editor-content .ProseMirror table th {
   @apply bg-[var(--bg-surface)] font-semibold text-[var(--text-primary)];
 }
+
 .fluence-editor-content .ProseMirror table td {
   @apply text-[var(--text-primary)];
 }

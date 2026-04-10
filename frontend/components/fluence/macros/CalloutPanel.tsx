@@ -1,7 +1,7 @@
 'use client';
 
-import { Info, AlertTriangle, Lightbulb } from 'lucide-react';
-import type { CalloutVariant, TiptapNode } from '@/lib/types/platform/macro';
+import {Info, AlertTriangle, Lightbulb} from 'lucide-react';
+import type {CalloutVariant, TiptapNode} from '@/lib/types/platform/macro';
 
 // ── Variant Configuration ────────────────────────────────────────────────────
 
@@ -69,11 +69,11 @@ interface CalloutPanelProps {
  * title, and content body. Supports three variants: info, warning, and note.
  */
 export function CalloutPanel({
-  variant,
-  title,
-  content,
-  className = '',
-}: CalloutPanelProps) {
+                               variant,
+                               title,
+                               content,
+                               className = '',
+                             }: CalloutPanelProps) {
   const config = VARIANT_CONFIG[variant];
   const Icon = config.icon;
   const bodyText = content ? extractContentText(content) : '';
@@ -88,7 +88,7 @@ export function CalloutPanel({
       aria-label={title ?? config.label}
     >
       <div className="flex items-start gap-2">
-        <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${config.iconColorClass}`} />
+        <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${config.iconColorClass}`}/>
         <div className="min-w-0 flex-1">
           {title && (
             <p className={`text-sm font-semibold ${config.titleColorClass} mb-1`}>

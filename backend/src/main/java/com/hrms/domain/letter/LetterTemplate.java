@@ -63,6 +63,7 @@ public class LetterTemplate extends TenantAware {
     private Integer templateVersion;
     @Column(columnDefinition = "TEXT")
     private String availablePlaceholders;
+
     public enum LetterCategory {
         OFFER,
         APPOINTMENT,

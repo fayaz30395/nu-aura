@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, ChevronDown, ChevronRight, User } from 'lucide-react';
+import {useState} from 'react';
+import {Star, ChevronDown, ChevronRight, User} from 'lucide-react';
 import type {
   InterviewScorecard,
   ScorecardRecommendation,
@@ -59,17 +59,17 @@ function getConsensusLabel(scorecards: InterviewScorecard[]): {
     .map((s) => s.recommendation)
     .filter((r): r is ScorecardRecommendation => !!r);
 
-  if (recs.length === 0) return { label: 'No recommendations', color: 'var(--text-muted)' };
+  if (recs.length === 0) return {label: 'No recommendations', color: 'var(--text-muted)'};
 
   const positive = recs.filter((r) => r === 'STRONG_YES' || r === 'YES').length;
   const negative = recs.filter((r) => r === 'STRONG_NO' || r === 'NO').length;
   const ratio = positive / recs.length;
 
-  if (ratio >= 0.75) return { label: 'Strong consensus: Hire', color: 'var(--success-600)' };
-  if (ratio >= 0.5) return { label: 'Leaning: Hire', color: 'var(--success-400)' };
-  if (negative / recs.length >= 0.75) return { label: 'Strong consensus: Pass', color: 'var(--danger-600)' };
-  if (negative / recs.length >= 0.5) return { label: 'Leaning: Pass', color: 'var(--warning-500)' };
-  return { label: 'Mixed signals', color: 'var(--warning-400)' };
+  if (ratio >= 0.75) return {label: 'Strong consensus: Hire', color: 'var(--success-600)'};
+  if (ratio >= 0.5) return {label: 'Leaning: Hire', color: 'var(--success-400)'};
+  if (negative / recs.length >= 0.75) return {label: 'Strong consensus: Pass', color: 'var(--danger-600)'};
+  if (negative / recs.length >= 0.5) return {label: 'Leaning: Pass', color: 'var(--warning-500)'};
+  return {label: 'Mixed signals', color: 'var(--warning-400)'};
 }
 
 function renderStars(rating: number, size: number = 14) {
@@ -92,7 +92,7 @@ function renderStars(rating: number, size: number = 14) {
 
 // ==================== Sub-components ====================
 
-function RecommendationBadge({ recommendation }: { recommendation?: ScorecardRecommendation }) {
+function RecommendationBadge({recommendation}: { recommendation?: ScorecardRecommendation }) {
   if (!recommendation) {
     return (
       <span className="inline-flex px-2 py-0.5 text-xs rounded-md bg-[var(--surface-100)] text-[var(--text-muted)]">
@@ -114,7 +114,7 @@ interface ScorecardCardProps {
   scorecard: InterviewScorecard;
 }
 
-function ScorecardCard({ scorecard }: ScorecardCardProps) {
+function ScorecardCard({scorecard}: ScorecardCardProps) {
   const [expanded, setExpanded] = useState(false);
   const weightedAvg = computeWeightedAverage(scorecard.criteria);
 
@@ -134,8 +134,9 @@ function ScorecardCard({ scorecard }: ScorecardCardProps) {
       {/* Header row */}
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="flex items-center justify-center w-8 h-8 rounded-md bg-[var(--accent-50)] text-[var(--accent-primary)]">
-            <User size={16} />
+          <div
+            className="flex items-center justify-center w-8 h-8 rounded-md bg-[var(--accent-50)] text-[var(--accent-primary)]">
+            <User size={16}/>
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-[var(--text-primary)] truncate">
@@ -167,7 +168,7 @@ function ScorecardCard({ scorecard }: ScorecardCardProps) {
           </div>
 
           {/* Recommendation */}
-          <RecommendationBadge recommendation={scorecard.recommendation} />
+          <RecommendationBadge recommendation={scorecard.recommendation}/>
 
           {/* Expand toggle */}
           <button
@@ -176,7 +177,7 @@ function ScorecardCard({ scorecard }: ScorecardCardProps) {
             className="cursor-pointer p-1.5 rounded-md hover:bg-[var(--bg-main)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
             aria-label={expanded ? 'Collapse criteria' : 'Expand criteria'}
           >
-            {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            {expanded ? <ChevronDown size={16}/> : <ChevronRight size={16}/>}
           </button>
         </div>
       </div>
@@ -237,11 +238,11 @@ interface ScorecardSummaryProps {
   scorecards: InterviewScorecard[];
 }
 
-export function ScorecardSummary({ scorecards }: ScorecardSummaryProps) {
+export function ScorecardSummary({scorecards}: ScorecardSummaryProps) {
   if (scorecards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <Star size={32} className="text-[var(--text-muted)] mb-2" />
+        <Star size={32} className="text-[var(--text-muted)] mb-2"/>
         <p className="text-sm text-[var(--text-muted)]">
           No scorecards submitted yet
         </p>
@@ -266,7 +267,7 @@ export function ScorecardSummary({ scorecards }: ScorecardSummaryProps) {
             {scorecards.length}
           </p>
         </div>
-        <div className="h-8 w-px bg-[var(--border-subtle)]" />
+        <div className="h-8 w-px bg-[var(--border-subtle)]"/>
         <div>
           <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
             Avg Rating
@@ -278,14 +279,14 @@ export function ScorecardSummary({ scorecards }: ScorecardSummaryProps) {
             {renderStars(avgOverall, 14)}
           </div>
         </div>
-        <div className="h-8 w-px bg-[var(--border-subtle)]" />
+        <div className="h-8 w-px bg-[var(--border-subtle)]"/>
         <div>
           <p className="text-xs uppercase tracking-wide text-[var(--text-muted)]">
             Consensus
           </p>
           <p
             className="text-sm font-semibold mt-1"
-            style={{ color: consensus.color }}
+            style={{color: consensus.color}}
           >
             {consensus.label}
           </p>
@@ -295,7 +296,7 @@ export function ScorecardSummary({ scorecards }: ScorecardSummaryProps) {
       {/* Individual scorecards */}
       <div className="space-y-2">
         {scorecards.map((sc) => (
-          <ScorecardCard key={sc.id} scorecard={sc} />
+          <ScorecardCard key={sc.id} scorecard={sc}/>
         ))}
       </div>
     </div>

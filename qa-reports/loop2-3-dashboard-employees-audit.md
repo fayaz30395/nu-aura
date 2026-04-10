@@ -39,6 +39,7 @@
 ### MEDIUM
 
 #### MD-01: Dashboard uses
+
 `NuAuraLoader` (full-page spinner) instead of skeleton for in-page loading
 
 - **File**: `frontend/app/dashboard/page.tsx` (line 476)
@@ -63,6 +64,7 @@
 - **Impact**: Inconsistent loading UX across the platform.
 
 #### MD-03: `PUT /api/v1/employees/me` uses
+
 `EMPLOYEE_VIEW_SELF` permission instead of an UPDATE permission
 
 - **File**: `backend/src/main/java/com/hrms/api/employee/EmployeeController.java` (line 140)
@@ -74,6 +76,7 @@
 - **Impact**: Permission model inconsistency; violates least-privilege principle.
 
 #### MD-04: Dashboard Check In/Out buttons lack explicit `disabled` prop -- relies solely on
+
 `isLoading`
 
 - **File**: `frontend/app/dashboard/page.tsx` (lines 622-636)
@@ -105,6 +108,7 @@
 ### LOW
 
 #### LO-01: Dashboard `loading.tsx` uses Mantine
+
 `Skeleton` while the rest of the app uses custom CSS skeletons
 
 - **File**: `frontend/app/dashboard/loading.tsx`

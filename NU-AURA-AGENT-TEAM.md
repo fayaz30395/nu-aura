@@ -43,9 +43,13 @@ This keeps the team reviewable, safe, and operationally useful.
 ## Prerequisites
 
 1. Run from the NU-AURA project root:
-  - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`
+
+- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura`
+
 2. Read repo instructions first:
-  - `AGENTS.md`
+
+- `AGENTS.md`
+
 3. Prefer existing repo tooling before adding anything new.
 4. If using an agent-team capable client, enable the relevant team / delegation mode there.
 
@@ -204,14 +208,17 @@ used.
 5. Every code fix must be followed by validation.
 6. Every validation must update the living report.
 7. If a blocker is found, document:
-  - impact
-  - exact failing area
-  - suspected cause
-  - required dependency or environment gap
+
+- impact
+- exact failing area
+- suspected cause
+- required dependency or environment gap
+
 8. Require lead review before changes to:
-  - `SecurityConfig.java`
-  - `frontend/middleware.ts`
-  - any Flyway migration
+
+- `SecurityConfig.java`
+- `frontend/middleware.ts`
+- any Flyway migration
 
 ---
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { List, ChevronDown, ChevronUp } from 'lucide-react';
-import type { TiptapNode, TableOfContentsEntry } from '@/lib/types/platform/macro';
+import {useState, useMemo, useCallback} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
+import {List, ChevronDown, ChevronUp} from 'lucide-react';
+import type {TiptapNode, TableOfContentsEntry} from '@/lib/types/platform/macro';
 
 interface MacroTableOfContentsProps {
   /** Full Tiptap document content to extract headings from */
@@ -70,10 +70,10 @@ function extractHeadings(nodes: TiptapNode[]): TableOfContentsEntry[] {
  * a clickable, collapsible navigation list with smooth scroll-to behavior.
  */
 export function MacroTableOfContents({
-  content,
-  sticky = false,
-  className = '',
-}: MacroTableOfContentsProps) {
+                                       content,
+                                       sticky = false,
+                                       className = '',
+                                     }: MacroTableOfContentsProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeId, setActiveId] = useState<string>('');
 
@@ -82,7 +82,7 @@ export function MacroTableOfContents({
   const handleClick = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({behavior: 'smooth', block: 'start'});
       setActiveId(id);
     }
   }, []);
@@ -107,15 +107,16 @@ export function MacroTableOfContents({
         aria-label="Toggle table of contents"
       >
         <span className="flex items-center gap-2">
-          <List className="w-4 h-4 text-[var(--accent-primary)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-700)] transition-colors">
+          <List className="w-4 h-4 text-[var(--accent-primary)]"/>
+          <span
+            className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-700)] transition-colors">
             Table of Contents
           </span>
         </span>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-[var(--text-muted)]" />
+          <ChevronUp className="w-4 h-4 text-[var(--text-muted)]"/>
         ) : (
-          <ChevronDown className="w-4 h-4 text-[var(--text-muted)]" />
+          <ChevronDown className="w-4 h-4 text-[var(--text-muted)]"/>
         )}
       </button>
 
@@ -124,10 +125,10 @@ export function MacroTableOfContents({
         {isExpanded && (
           <motion.nav
             className="space-y-0.5"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            initial={{height: 0, opacity: 0}}
+            animate={{height: 'auto', opacity: 1}}
+            exit={{height: 0, opacity: 0}}
+            transition={{duration: 0.2, ease: 'easeInOut'}}
             aria-label="Page headings"
           >
             {headings.map((heading) => (
@@ -140,12 +141,12 @@ export function MacroTableOfContents({
                   focus-visible:outline-none focus-visible:ring-2
                   focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                   ${
-                    activeId === heading.id
-                      ? 'bg-[var(--accent-100)] text-[var(--accent-800)] font-medium'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]'
-                  }
+                  activeId === heading.id
+                    ? 'bg-[var(--accent-100)] text-[var(--accent-800)] font-medium'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]'
+                }
                 `}
-                style={{ marginLeft: `${(heading.level - minLevel) * 12}px` }}
+                style={{marginLeft: `${(heading.level - minLevel) * 12}px`}}
                 aria-label={`Jump to ${heading.text}`}
               >
                 {heading.text}

@@ -1,4 +1,4 @@
-import { Permissions } from '../hooks/usePermissions';
+import {Permissions} from '../hooks/usePermissions';
 
 /**
  * Route protection configuration

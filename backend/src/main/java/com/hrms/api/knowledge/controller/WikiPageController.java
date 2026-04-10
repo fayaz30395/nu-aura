@@ -84,8 +84,8 @@ public class WikiPageController {
         Map<UUID, Employee> authorsByUserId = authorUserIds.isEmpty()
                 ? Map.of()
                 : employeeRepository.findAllByUserIdIn(authorUserIds).stream()
-                        .filter(e -> e.getUser() != null)
-                        .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
+                  .filter(e -> e.getUser() != null)
+                  .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
 
         return pages.map(page -> {
             if (page.getCreatedBy() == null) {

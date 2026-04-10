@@ -309,7 +309,7 @@ create departments.
 7. **Employee DTO does not expose salary, bank account numbers, or national IDs** -- sensitive
    financial data is excluded from the response.
 8. **Data-level scoping works for GET /employees** -- EMPLOYEE sees 0 records while SUPER_ADMIN sees
-  22.
+22.
 9. **GET /employees/me** correctly works for all roles (self-service pattern).
 
 ---

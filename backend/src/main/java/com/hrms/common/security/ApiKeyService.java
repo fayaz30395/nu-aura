@@ -27,6 +27,7 @@ public class ApiKeyService {
     private static final SecureRandom secureRandom = new SecureRandom();
     private final ApiKeyRepository apiKeyRepository;
     private final PasswordEncoder passwordEncoder;
+
     public ApiKeyService(@Lazy ApiKeyRepository apiKeyRepository, PasswordEncoder passwordEncoder) {
         this.apiKeyRepository = apiKeyRepository;
         this.passwordEncoder = passwordEncoder;

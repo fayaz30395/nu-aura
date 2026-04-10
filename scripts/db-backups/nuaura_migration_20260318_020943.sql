@@ -9763,17 +9763,19 @@ COPY public.app_permissions (display_order, is_deleted, is_system_permission, cr
 0	f	f	2026-03-12 18:03:16.205608	2026-03-12 18:03:16.205608	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	c0179cea-530e-4d61-b0da-4cfd8f6608ca
 \N	CREATE
-Core HR	EMPLOYEE	HRMS:EMPLOYEE:CREATE	Create Employees
+Core HR	EMPLOYEE	HRMS:EMPLOYEE:CREATE
+Create Employees
 \N	Add new employees to the system
 0	f	f	2026-03-12 18:03:16.216763	2026-03-12 18:03:16.216763	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	e3ca3a5b-5c7a-445a-933e-7d47422d6879
 \N
 UPDATE Core HR EMPLOYEE HRMS:EMPLOYEE:
 UPDATE
-Update Employees \N Modify employee information
+  Update Employees \N Modify employee information
   0 f f 2026-03-12 18:03:16.221311 2026-03-12 18:03:16.221311 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N e6dbefb3-2246-47af-a78c-d89f8b0c6ac3 \N
 DELETE
-Core HR	EMPLOYEE	HRMS:EMPLOYEE:DELETE	Delete Employees
+Core HR	EMPLOYEE	HRMS:EMPLOYEE:DELETE
+Delete Employees
 \N	Remove employees from the system
 0	f	f	2026-03-12 18:03:16.224775	2026-03-12 18:03:16.224775	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	ab2137b3-c0a2-4015-9622-42bbe0f6b17e
@@ -9806,17 +9808,19 @@ Core HR	EMPLOYEE	HRMS:EMPLOYEE:DELETE	Delete Employees
 0	f	f	2026-03-12 18:03:16.259521	2026-03-12 18:03:16.259521	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	96736e72-a2ed-4bd0-9270-381f40b1499e
 \N	CREATE
-Organization	DEPARTMENT	HRMS:DEPARTMENT:CREATE	Create Departments
+Organization	DEPARTMENT	HRMS:DEPARTMENT:CREATE
+Create Departments
 \N	Create new departments
 0	f	f	2026-03-12 18:03:16.265295	2026-03-12 18:03:16.265295	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	1fe6639a-033b-4ff2-9e87-fecac6020003
 \N
 UPDATE Organization DEPARTMENT HRMS:DEPARTMENT:
 UPDATE
-Update Departments \N Modify department information
+  Update Departments \N Modify department information
   0 f f 2026-03-12 18:03:16.269329 2026-03-12 18:03:16.269329 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N 03455bcf-c8c1-4469-a368-2a1f40e84c27 \N
 DELETE
-Organization	DEPARTMENT	HRMS:DEPARTMENT:DELETE	Delete Departments
+Organization	DEPARTMENT	HRMS:DEPARTMENT:DELETE
+Delete Departments
 \N	Remove departments
 0	f	f	2026-03-12 18:03:16.274578	2026-03-12 18:03:16.274578	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	55ca98f4-ade6-43b0-b067-dc42930b8a3b
@@ -9906,7 +9910,8 @@ Organization	DEPARTMENT	HRMS:DEPARTMENT:DELETE	Delete Departments
 \N	437bb131-1284-4b97-89a1-cc18c576e9fc
 \N	GOAL_CREATE	Performance	PERFORMANCE	HRMS:PERFORMANCE:GOAL_CREATE	Create
 Goals
-\N	Create performance goals
+\N	Create
+performance goals
 0	f	f	2026-03-12 18:03:16.379696	2026-03-12 18:03:16.379696	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	a84167ac-5157-413d-8643-05d5dff95883
 \N	GOAL_REVIEW	Performance	PERFORMANCE	HRMS:PERFORMANCE:GOAL_REVIEW	Review Goals
@@ -9927,7 +9932,8 @@ Goals
 \N	c28e372d-93ed-420d-b4e5-6e51e8f392dd
 \N	JOB_CREATE	Recruitment	RECRUITMENT	HRMS:RECRUITMENT:JOB_CREATE	Create
 Jobs
-\N	Create job postings
+\N	Create
+job postings
 0	f	f	2026-03-12 18:03:16.401767	2026-03-12 18:03:16.401767	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	aed4c2e2-0004-476d-8439-b2c8e80a8993
 \N	CANDIDATE_MANAGE	Recruitment	RECRUITMENT	HRMS:RECRUITMENT:CANDIDATE_MANAGE	Manage Candidates
@@ -9943,17 +9949,19 @@ Jobs
 0	f	f	2026-03-12 18:03:16.411382	2026-03-12 18:03:16.411382	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	48f5cdb9-4d47-431c-82e3-cd4d112042eb
 \N	CREATE
-Project Management	PROJECT	HRMS:PROJECT:CREATE	Create Projects
+Project Management	PROJECT	HRMS:PROJECT:CREATE
+Create Projects
 \N	Create and manage projects
 0	f	f	2026-03-12 18:03:16.413591	2026-03-12 18:03:16.413591	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	82423f60-41ee-4dea-a45e-29b33d0b9d0d
 \N
 UPDATE Project Management PROJECT HRMS:PROJECT:
 UPDATE
-Update Projects \N Modify project information
+  Update Projects \N Modify project information
   0 f f 2026-03-12 18:03:16.417564 2026-03-12 18:03:16.417564 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N 140d77b9-9d15-44e1-b92e-5a2b0f23df12 \N
 DELETE
-Project Management	PROJECT	HRMS:PROJECT:DELETE	Delete Projects
+Project Management	PROJECT	HRMS:PROJECT:DELETE
+Delete Projects
 \N	Remove projects
 0	f	f	2026-03-12 18:03:16.421271	2026-03-12 18:03:16.421271	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	074a994a-774c-4ecd-8dd4-a704a10ac003
@@ -9966,7 +9974,8 @@ Project Management	PROJECT	HRMS:PROJECT:DELETE	Delete Projects
 0	f	f	2026-03-12 18:03:16.433373	2026-03-12 18:03:16.433373	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	695dad9e-743d-40b0-a334-6ede1cf7902d
 \N	CREATE
-Reports	REPORT	HRMS:REPORT:CREATE	Create Reports
+Reports	REPORT	HRMS:REPORT:CREATE
+Create Reports
 \N	Generate and export reports
 0	f	f	2026-03-12 18:03:16.435758	2026-03-12 18:03:16.435758	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	76ee7bff-9537-423c-afc2-4618ec484e8e
@@ -9979,7 +9988,8 @@ Reports	REPORT	HRMS:REPORT:CREATE	Create Reports
 0	f	f	2026-03-12 18:03:16.445324	2026-03-12 18:03:16.445324	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	dcae6121-e5d4-4b8c-b69b-61477a75d419
 \N	CREATE
-Communication	ANNOUNCEMENT	HRMS:ANNOUNCEMENT:CREATE	Create Announcements
+Communication	ANNOUNCEMENT	HRMS:ANNOUNCEMENT:CREATE
+Create Announcements
 \N	Create new announcements
 0	f	f	2026-03-12 18:03:16.448625	2026-03-12 18:03:16.448625	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	afbd5e14-9aed-4ee5-b77b-1490045c4f42
@@ -10018,7 +10028,8 @@ and manage user accounts
 0	f	f	2026-03-12 18:03:16.475835	2026-03-12 18:03:16.475835	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	36227281-fa15-46ab-b107-d65c3b5bc827
 \N	CREATE
-Performance	PIP	HRMS:PIP:CREATE	Create PIPs
+Performance	PIP	HRMS:PIP:CREATE
+Create PIPs
 \N	Create Performance Improvement Plans
 0	f	f	2026-03-12 18:03:16.482302	2026-03-12 18:03:16.482302	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	2c929bd6-770c-4e7d-a523-627a65634798
@@ -15559,7 +15570,8 @@ software products meet quality standards by developing, documenting, and executi
 </p><p><span style="color: rgb(158, 158, 158);">&nbsp;
 +3</span></p><p><strong>Key Responsibilities</strong></p><ul><li><strong>Test Strategy &amp; Execution
 :</strong>&nbsp;Design
-, create, and maintain comprehensive test plans, cases, and automated test scripts.</li><li><strong>Defect Tracking:</strong>&nbsp;Identify
+, create
+, and maintain comprehensive test plans, cases, and automated test scripts.</li><li><strong>Defect Tracking:</strong>&nbsp;Identify
 , document, and track software bugs through to resolution, including performing regression testing.</li><li><strong>Testing Types:</strong>&nbsp;Conduct
 functional, integration, system, performance, and security testing.</li><li><strong>Collaboration:</strong>&nbsp;
 Work with developers and product managers to understand requirements and provide feedback for improvements.</li></ul>
@@ -16226,7 +16238,8 @@ f
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000002
 \N	create
-employee	employee.create	Create Employees	Add new employees
+employee	employee.create	Create
+Employees	Add new employees
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000003
 \N
@@ -16234,14 +16247,16 @@ update employee employee.update
 Update Employees Modify employee info
   f 2026-03-13 04:06:31.882179 2026-03-13 04:06:31.882179 0 \N 660e8401-0001-0001-0001-000000000004 \N
 delete
-employee	employee.delete	Delete Employees	Remove employees
+employee	employee.delete	Delete
+Employees	Remove employees
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000011
 \N	read	department	department.read	View Departments	View departments
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000012
 \N	create
-department	department.create	Create Departments	Create departments
+department	department.create	Create
+Departments	Create departments
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000013
 \N
@@ -16249,7 +16264,8 @@ update department department.update
 Update Departments Modify departments
   f 2026-03-13 04:06:31.882179 2026-03-13 04:06:31.882179 0 \N 660e8401-0001-0001-0001-000000000014 \N
 delete
-department	department.delete	Delete Departments	Remove departments
+department	department.delete	Delete
+Departments	Remove departments
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000021
 \N	read	attendance	attendance.read	View Attendance	View attendance

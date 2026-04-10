@@ -1,15 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
-import { usePathname } from 'next/navigation';
+import {useMemo} from 'react';
+import {usePathname} from 'next/navigation';
 import {
   type AppCode,
   type NuApp,
   PLATFORM_APPS,
   getAppForRoute,
 } from '@/lib/config/apps';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 
 interface ActiveAppState {
   /** Current app code */
@@ -28,8 +28,8 @@ interface ActiveAppState {
  */
 export function useActiveApp(): ActiveAppState {
   const pathname = usePathname();
-  const { user, hasHydrated } = useAuth();
-  const { permissions, roles } = usePermissions();
+  const {user, hasHydrated} = useAuth();
+  const {permissions, roles} = usePermissions();
 
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
@@ -82,5 +82,5 @@ export function useActiveApp(): ActiveAppState {
     };
   }, []);
 
-  return { appCode, app, hasAppAccess, getAppEntryRoute };
+  return {appCode, app, hasAppAccess, getAppEntryRoute};
 }

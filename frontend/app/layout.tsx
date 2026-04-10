@@ -1,9 +1,9 @@
-import type { Metadata, Viewport } from 'next';
-import { Montserrat, Open_Sans, Roboto_Mono } from 'next/font/google';
-import { ColorSchemeScript } from '@mantine/core';
-import { getThemeScript } from '@/lib/theme/theme-script';
+import type {Metadata, Viewport} from 'next';
+import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
+import {ColorSchemeScript} from '@mantine/core';
+import {getThemeScript} from '@/lib/theme/theme-script';
 import './globals.css';
-import { Providers } from './providers';
+import {Providers} from './providers';
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -41,20 +41,20 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({
-  children,
-}: {
+                                     children,
+                                   }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* FOUC prevention — runs synchronously before paint */}
-        <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
-        <ColorSchemeScript defaultColorScheme="dark" />
-      </head>
-      <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
-        <Providers>{children}</Providers>
-      </body>
+    <head>
+      {/* FOUC prevention — runs synchronously before paint */}
+      <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
+      <ColorSchemeScript defaultColorScheme="dark"/>
+    </head>
+    <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>
+    <Providers>{children}</Providers>
+    </body>
     </html>
   );
 }

@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Select, Textarea, Loader } from '@mantine/core';
-import { Star, Save, Send, ChevronDown } from 'lucide-react';
+import {useCallback, useEffect} from 'react';
+import {useForm, useFieldArray, Controller} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Select, Textarea, Loader} from '@mantine/core';
+import {Star, Save, Send, ChevronDown} from 'lucide-react';
 import {
   useScorecardTemplates,
   useCreateScorecardMutation,
@@ -47,18 +47,18 @@ const RECOMMENDATION_OPTIONS: {
   label: string;
   color: string;
 }[] = [
-  { value: 'STRONG_YES', label: 'Strong Yes', color: 'var(--success-600)' },
-  { value: 'YES', label: 'Yes', color: 'var(--success-400)' },
-  { value: 'NEUTRAL', label: 'Neutral', color: 'var(--text-muted)' },
-  { value: 'NO', label: 'No', color: 'var(--warning-500)' },
-  { value: 'STRONG_NO', label: 'Strong No', color: 'var(--danger-500)' },
+  {value: 'STRONG_YES', label: 'Strong Yes', color: 'var(--success-600)'},
+  {value: 'YES', label: 'Yes', color: 'var(--success-400)'},
+  {value: 'NEUTRAL', label: 'Neutral', color: 'var(--text-muted)'},
+  {value: 'NO', label: 'No', color: 'var(--warning-500)'},
+  {value: 'STRONG_NO', label: 'Strong No', color: 'var(--danger-500)'},
 ];
 
 const DEFAULT_CRITERIA = [
-  { name: 'Technical Skills', category: 'Technical', rating: 0, weight: 1, orderIndex: 0 },
-  { name: 'Problem Solving', category: 'Technical', rating: 0, weight: 1, orderIndex: 1 },
-  { name: 'Communication', category: 'Soft Skills', rating: 0, weight: 1, orderIndex: 2 },
-  { name: 'Culture Fit', category: 'Soft Skills', rating: 0, weight: 1, orderIndex: 3 },
+  {name: 'Technical Skills', category: 'Technical', rating: 0, weight: 1, orderIndex: 0},
+  {name: 'Problem Solving', category: 'Technical', rating: 0, weight: 1, orderIndex: 1},
+  {name: 'Communication', category: 'Soft Skills', rating: 0, weight: 1, orderIndex: 2},
+  {name: 'Culture Fit', category: 'Soft Skills', rating: 0, weight: 1, orderIndex: 3},
 ];
 
 // ==================== Sub-components ====================
@@ -69,7 +69,7 @@ interface StarRatingProps {
   size?: number;
 }
 
-function StarRating({ value, onChange, size = 18 }: StarRatingProps) {
+function StarRating({value, onChange, size = 18}: StarRatingProps) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -104,12 +104,12 @@ interface ScorecardFormProps {
 }
 
 export function ScorecardForm({
-  interviewId,
-  applicantId,
-  jobOpeningId,
-  onComplete,
-}: ScorecardFormProps) {
-  const { data: templates, isLoading: templatesLoading } = useScorecardTemplates();
+                                interviewId,
+                                applicantId,
+                                jobOpeningId,
+                                onComplete,
+                              }: ScorecardFormProps) {
+  const {data: templates, isLoading: templatesLoading} = useScorecardTemplates();
   const createMutation = useCreateScorecardMutation();
   const submitMutation = useSubmitScorecardMutation();
 
@@ -119,7 +119,7 @@ export function ScorecardForm({
     setValue,
     watch,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ScorecardFormValues>({
     resolver: zodResolver(scorecardFormSchema),
     defaultValues: {
@@ -131,7 +131,7 @@ export function ScorecardForm({
     },
   });
 
-  const { fields } = useFieldArray({ control, name: 'criteria' });
+  const {fields} = useFieldArray({control, name: 'criteria'});
   const watchedTemplateId = watch('templateId');
 
   const applyTemplate = useCallback(
@@ -199,7 +199,7 @@ export function ScorecardForm({
         <Controller
           control={control}
           name="templateId"
-          render={({ field }) => (
+          render={({field}) => (
             <Select
               label="Template"
               placeholder={templatesLoading ? 'Loading templates...' : 'Select a template (optional)'}
@@ -213,7 +213,7 @@ export function ScorecardForm({
               onChange={(val) => field.onChange(val ?? undefined)}
               clearable
               size="sm"
-              rightSection={templatesLoading ? <Loader size={14} /> : <ChevronDown size={14} />}
+              rightSection={templatesLoading ? <Loader size={14}/> : <ChevronDown size={14}/>}
               classNames={{
                 input: 'bg-[var(--bg-card)] border-[var(--border-main)] text-[var(--text-primary)] text-sm',
                 label: 'text-xs font-medium text-[var(--text-secondary)] mb-1',
@@ -250,7 +250,7 @@ export function ScorecardForm({
                     <Controller
                       control={control}
                       name={`criteria.${idx}.notes`}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <input
                           {...field}
                           value={field.value ?? ''}
@@ -266,7 +266,7 @@ export function ScorecardForm({
                   <Controller
                     control={control}
                     name={`criteria.${idx}.rating`}
-                    render={({ field }) => (
+                    render={({field}) => (
                       <StarRating
                         value={field.value}
                         onChange={field.onChange}
@@ -293,8 +293,8 @@ export function ScorecardForm({
           <Controller
             control={control}
             name="overallRating"
-            render={({ field }) => (
-              <StarRating value={field.value} onChange={field.onChange} size={22} />
+            render={({field}) => (
+              <StarRating value={field.value} onChange={field.onChange} size={22}/>
             )}
           />
           {errors.overallRating && (
@@ -309,7 +309,7 @@ export function ScorecardForm({
           <Controller
             control={control}
             name="recommendation"
-            render={({ field }) => (
+            render={({field}) => (
               <Select
                 label="Recommendation"
                 placeholder="Select..."
@@ -336,7 +336,7 @@ export function ScorecardForm({
         <Controller
           control={control}
           name="overallNotes"
-          render={({ field }) => (
+          render={({field}) => (
             <Textarea
               label="Overall Notes"
               placeholder="Summary of interview performance, key observations..."
@@ -362,7 +362,7 @@ export function ScorecardForm({
           disabled={isSaving}
           className="skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] cursor-pointer hover:bg-[var(--bg-main)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
         >
-          <Save size={14} />
+          <Save size={14}/>
           Save Draft
         </button>
         <button
@@ -371,7 +371,7 @@ export function ScorecardForm({
           disabled={isSaving}
           className="skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-white cursor-pointer hover:bg-[var(--accent-primary-hover)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
         >
-          <Send size={14} />
+          <Send size={14}/>
           Submit
         </button>
       </div>
