@@ -66,3 +66,15 @@
 - **Root cause**: React Query's `data.content` creates new array references on every refetch/background update. Even with useMemo, the memo dependencies (`.data?.content`) kept changing referentially, triggering cascading re-renders. Additionally, the viewMode switching useEffect had `viewMode` in its deps, creating a potential re-trigger loop.
 - **Fix**: (1) Stabilized `leaves` using JSON.stringify comparison — memo only recomputes when actual leave data changes, not when React Query creates new wrapper objects. (2) Removed `viewMode` from the switching useEffect deps — it should only run once when hydration completes, not re-run on every viewMode change.
 - **Verified**: tsc passes
+
+## BUG-010: Helpdesk ticket IDs not navigating to detail view (FRONTEND)
+- **File**: frontend/app/helpdesk/tickets/page.tsx
+- **Root cause**: Ticket ID was rendered as a `<span>` inside a `<tr>` with `onClick={onNavigate}`. While the row onClick did trigger `router.push`, the ticket ID itself had no anchor semantics — no right-click "Open in new tab", no hover underline, no accessibility affordance, and any accidental DOM stopPropagation upstream would silently break it.
+- **Fix**: Replaced the `<span>` with a real Next.js `<Link href="/helpdesk/tickets/${id}">` so the ticket ID is a genuine anchor. Row-level click-through still works. Added `hover:underline` + `cursor-pointer` for visual affordance and `e.stopPropagation()` to prevent double-navigation.
+- **Verified**: tsc passes
+
+## BUG-011: Contract "View" button not navigating to detail page (FRONTEND)
+- **File**: frontend/app/contracts/page.tsx
+- **Root cause**: `<Button onClick={() => router.push(...)}>` works but relies on the JS bundle being fully hydrated and the click handler being attached. On Mantine `<Button>`, some variants render as `<button>` which can't be middle-clicked or opened in new tabs. On slow hydration, clicks may no-op.
+- **Fix**: Changed to `<Button component={Link} href=...>` so Mantine renders the element as a real `<a>` anchor from Next.js Link. Navigation now works whether or not JS is hydrated and supports new-tab opening.
+- **Verified**: tsc passes

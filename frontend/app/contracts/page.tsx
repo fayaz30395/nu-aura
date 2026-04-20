@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
+import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
@@ -171,12 +172,11 @@ export default function ContractsPage() {
                       <Badge>{contract.pendingSignatureCount} pending</Badge>}</Table.Td>
                     <Table.Td>
                       <Button
+                        component={Link}
+                        href={`/contracts/${contract.id}`}
                         variant="light"
                         size="xs"
-                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                          e.stopPropagation();
-                          router.push(`/contracts/${contract.id}`);
-                        }}
+                        onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
                       >
                         View
                       </Button>

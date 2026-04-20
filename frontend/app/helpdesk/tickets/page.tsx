@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useMemo, useState} from 'react';
+import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -515,8 +516,13 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
       onClick={onNavigate}
     >
       <td className="px-4 py-4 whitespace-nowrap">
-        <span
-          className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
+        <Link
+          href={`/helpdesk/tickets/${ticket.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="text-sm font-mono text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+        >
+          {ticket.ticketNumber || ticket.id.slice(0, 8)}
+        </Link>
       </td>
       <td className="px-4 py-4">
         <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
