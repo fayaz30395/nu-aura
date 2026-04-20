@@ -24,7 +24,7 @@ import {logger} from '../utils/logger';
 const REFRESH_INTERVAL_MS = 50 * 60 * 1000; // 50 minutes
 const MIN_REFRESH_GAP_MS = 5 * 60 * 1000;   // 5 minutes minimum between refreshes
 
-export function useTokenRefresh(isAuthenticated: boolean) {
+export function useTokenRefresh(isAuthenticated: boolean): void {
   const lastRefreshRef = useRef<number>(Date.now());
   const refreshingRef = useRef<boolean>(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);

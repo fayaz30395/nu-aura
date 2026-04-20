@@ -64,6 +64,7 @@ export function useCreateObjective() {
   const queryClient = useQueryClient();
 
   return useMutation<Objective, Error, ObjectiveRequest>({
+    // Cast needed: service returns service-local Objective; hook exposes types/grow/performance Objective
     mutationFn: (data: ObjectiveRequest) => okrService.createObjective(data) as unknown as Promise<Objective>,
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});

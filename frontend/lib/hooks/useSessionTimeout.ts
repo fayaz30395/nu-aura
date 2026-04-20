@@ -39,7 +39,13 @@ interface SessionTimeoutState {
   warningId: ReturnType<typeof setTimeout> | null;
 }
 
-export function useSessionTimeout(enabled: boolean = true) {
+interface SessionTimeoutInfo {
+  inactivityDurationMs: number;
+  timeUntilWarningMs: number;
+  timeUntilLogoutMs: number;
+}
+
+export function useSessionTimeout(enabled: boolean = true): SessionTimeoutInfo {
   const {logout, isAuthenticated} = useAuth();
   const stateRef = useRef<SessionTimeoutState>({
     lastActivityTime: Date.now(),

@@ -1,6 +1,11 @@
 import {useQueryClient} from '@tanstack/react-query';
 import {useCallback, useEffect} from 'react';
 
+const DEFAULT_PREFETCH_STALE_MS = 60_000; // 1 minute
+const CRITICAL_PRELOAD_STALE_MS = 5 * 60 * 1000; // 5 minutes
+const IDLE_CALLBACK_TIMEOUT_MS = 2000;
+const IDLE_FALLBACK_DELAY_MS = 100;
+
 /**
  * Hook for prefetching data on hover or visibility
  * Improves perceived performance by loading data before user needs it
@@ -16,7 +21,7 @@ export function usePreloadData() {
     <T>(
       queryKey: readonly unknown[],
       queryFn: () => Promise<T>,
-      staleTime = 60000 // 1 minute
+      staleTime = DEFAULT_PREFETCH_STALE_MS
     ) => {
       return {
         onMouseEnter: () => {
@@ -43,7 +48,7 @@ export function usePreloadData() {
       }>
     ) => {
       await Promise.all(
-        queries.map(({queryKey, queryFn, staleTime = 60000}) =>
+        queries.map(({queryKey, queryFn, staleTime = DEFAULT_PREFETCH_STALE_MS}) =>
           queryClient.prefetchQuery({
             queryKey,
             queryFn,
@@ -88,7 +93,7 @@ export function useVisibilityPrefetch<T>(
   }
 ) {
   const queryClient = useQueryClient();
-  const {threshold = 0.5, enabled = true, staleTime = 60000} = options || {};
+  const {threshold = 0.5, enabled = true, staleTime = DEFAULT_PREFETCH_STALE_MS} = options || {};
 
   const prefetchRef = useCallback(
     (element: HTMLElement | null) => {
@@ -139,7 +144,7 @@ export function useCriticalDataPreload(
 
     // Use requestIdleCallback for non-blocking prefetch
     const callback = () => {
-      queries.forEach(({queryKey, queryFn, staleTime = 300000}) => {
+      queries.forEach(({queryKey, queryFn, staleTime = CRITICAL_PRELOAD_STALE_MS}) => {
         queryClient.prefetchQuery({
           queryKey,
           queryFn,
@@ -149,11 +154,11 @@ export function useCriticalDataPreload(
     };
 
     if ('requestIdleCallback' in window) {
-      const id = requestIdleCallback(callback, {timeout: 2000});
+      const id = requestIdleCallback(callback, {timeout: IDLE_CALLBACK_TIMEOUT_MS});
       return () => cancelIdleCallback(id);
     } else {
       // Fallback for Safari
-      const id = setTimeout(callback, 100);
+      const id = setTimeout(callback, IDLE_FALLBACK_DELAY_MS);
       return () => clearTimeout(id);
     }
   }, [queryClient, queries, enabled]);

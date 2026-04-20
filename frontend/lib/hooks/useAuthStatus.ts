@@ -4,6 +4,17 @@ import {useCallback, useEffect, useState} from 'react';
 import {apiClient} from '../api/client';
 import {is401Error} from '../utils/type-guards';
 
+const DEFAULT_MAX_CHECK_AGE_MS = 5 * 60 * 1000; // 5 minutes
+
+interface AuthStatus {
+  isValid: boolean | null;
+  isChecking: boolean;
+  lastChecked: Date | null;
+  verifySession: () => Promise<boolean | null>;
+  needsRefresh: (maxAgeMs?: number) => boolean;
+  verifyIfNeeded: (maxAgeMs?: number) => Promise<boolean | null>;
+}
+
 /**
  * Hook to verify authentication status via the backend.
  *
@@ -15,7 +26,7 @@ import {is401Error} from '../utils/type-guards';
  * - Detecting token expiration before making critical operations
  * - Server-side validation of auth state
  */
-export function useAuthStatus() {
+export function useAuthStatus(): AuthStatus {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
@@ -52,7 +63,7 @@ export function useAuthStatus() {
    * Check if session needs refresh based on last check time.
    * @param maxAgeMs Maximum age of last check before re-verification (default: 5 minutes)
    */
-  const needsRefresh = useCallback((maxAgeMs: number = 5 * 60 * 1000) => {
+  const needsRefresh = useCallback((maxAgeMs: number = DEFAULT_MAX_CHECK_AGE_MS) => {
     if (!lastChecked) return true;
     return Date.now() - lastChecked.getTime() > maxAgeMs;
   }, [lastChecked]);
@@ -87,7 +98,7 @@ export function useAuthStatus() {
  * Hook to automatically verify session on mount and optionally on interval.
  * @param intervalMs Optional interval to re-verify (0 = disabled)
  */
-export function useAutoVerifySession(intervalMs: number = 0) {
+export function useAutoVerifySession(intervalMs: number = 0): AuthStatus {
   const authStatus = useAuthStatus();
 
   useEffect(() => {
