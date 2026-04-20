@@ -35,7 +35,12 @@ function mapRemoteToPresence(emp: RemoteWorkerResponse): EmployeePresence {
   };
 }
 
-function Avatar({name, size = 'md'}: { name: string; size?: 'sm' | 'md' }) {
+interface AvatarProps {
+  name: string;
+  size?: 'sm' | 'md';
+}
+
+function Avatar({name, size = 'md'}: AvatarProps) {
   const initials = getInitials(name);
   const sizeClasses = size === 'sm' ? 'h-7 w-7 text-2xs' : 'h-9 w-9 text-xs';
   return (

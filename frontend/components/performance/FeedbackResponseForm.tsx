@@ -64,15 +64,13 @@ const ratingCategories: RatingCategory[] = [
   },
 ];
 
-const RatingStars = ({
-                       rating,
-                       onChange,
-                       disabled = false,
-                     }: {
+interface RatingStarsProps {
   rating: number;
   onChange?: (r: number) => void;
   disabled?: boolean;
-}) => {
+}
+
+function RatingStars({rating, onChange, disabled = false}: RatingStarsProps) {
   return (
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -94,7 +92,7 @@ const RatingStars = ({
       ))}
     </div>
   );
-};
+}
 
 export default function FeedbackResponseForm({
                                                requestId,

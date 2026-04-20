@@ -60,19 +60,21 @@ const matrixLabels: Record<string, { title: string; description: string; color: 
   },
 };
 
+interface EmployeeCardProps {
+  employee: EmployeeCalibration;
+  onClick?: () => void;
+  onDragStart: (e: React.DragEvent) => void;
+  isDragging: boolean;
+  readOnly?: boolean;
+}
+
 function EmployeeCard({
                         employee,
                         onClick,
                         onDragStart,
                         isDragging,
                         readOnly,
-                      }: {
-  employee: EmployeeCalibration;
-  onClick?: () => void;
-  onDragStart: (e: React.DragEvent) => void;
-  isDragging: boolean;
-  readOnly?: boolean;
-}) {
+                      }: EmployeeCardProps) {
   return (
     <div
       draggable={!readOnly}
@@ -111,6 +113,16 @@ function EmployeeCard({
   );
 }
 
+interface MatrixCellProps {
+  performance: number;
+  potential: number;
+  employees: EmployeeCalibration[];
+  onDrop: (e: React.DragEvent) => void;
+  onEmployeeClick?: (employee: EmployeeCalibration) => void;
+  onEmployeeDragStart: (employee: EmployeeCalibration) => (e: React.DragEvent) => void;
+  readOnly?: boolean;
+}
+
 function MatrixCell({
                       performance,
                       potential,
@@ -119,15 +131,7 @@ function MatrixCell({
                       onEmployeeClick,
                       onEmployeeDragStart,
                       readOnly,
-                    }: {
-  performance: number;
-  potential: number;
-  employees: EmployeeCalibration[];
-  onDrop: (e: React.DragEvent) => void;
-  onEmployeeClick?: (employee: EmployeeCalibration) => void;
-  onEmployeeDragStart: (employee: EmployeeCalibration) => (e: React.DragEvent) => void;
-  readOnly?: boolean;
-}) {
+                    }: MatrixCellProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const key = `${performance}-${potential}`;
   const cellInfo = matrixLabels[key];

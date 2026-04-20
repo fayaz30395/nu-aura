@@ -192,17 +192,19 @@ export function EmployeeCapacityDisplay({
 /**
  * Compact version of capacity display for inline use
  */
+interface CompactCapacityDisplayProps {
+  capacity: EmployeeCapacity;
+  status: string;
+  statusColor: string;
+  className?: string;
+}
+
 function CompactCapacityDisplay({
                                   capacity,
                                   status: _status,
                                   statusColor,
                                   className,
-                                }: {
-  capacity: EmployeeCapacity;
-  status: string;
-  statusColor: string;
-  className?: string;
-}) {
+                                }: CompactCapacityDisplayProps) {
   const isOverAllocated = capacity.totalAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
 
   return (
@@ -239,7 +241,12 @@ function CompactCapacityDisplay({
 /**
  * Status badge component
  */
-function StatusBadge({status, label}: { status: string; label: string }) {
+interface StatusBadgeProps {
+  status: string;
+  label: string;
+}
+
+function StatusBadge({status, label}: StatusBadgeProps) {
   const bgColors: Record<string, string> = {
     OVER_ALLOCATED: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
     OPTIMAL: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
@@ -270,7 +277,11 @@ function StatusBadge({status, label}: { status: string; label: string }) {
 /**
  * Single allocation row in breakdown
  */
-function AllocationRow({allocation}: { allocation: AllocationBreakdown }) {
+interface AllocationRowProps {
+  allocation: AllocationBreakdown;
+}
+
+function AllocationRow({allocation}: AllocationRowProps) {
   return (
     <div
       className={cn(

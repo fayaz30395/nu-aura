@@ -88,15 +88,13 @@ function DefaultErrorFallback({error, onReset}: DefaultErrorFallbackProps) {
   );
 }
 
-export function WithErrorBoundary({
-                                    children,
-                                    fallback,
-                                    onError,
-                                  }: {
+interface WithErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-}) {
+}
+
+export function WithErrorBoundary({children, fallback, onError}: WithErrorBoundaryProps) {
   return (
     <ErrorBoundary fallback={fallback} onError={onError}>
       {children}

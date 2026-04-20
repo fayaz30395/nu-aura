@@ -74,15 +74,13 @@ function getTextSelection(): TextSelection | null {
 
 // ─── Single Comment Thread ──────────────────────────────────────────────────
 
-function CommentThread({
-  comment,
-  pageId,
-  depth = 0,
-}: {
+interface CommentThreadProps {
   comment: WikiInlineComment;
   pageId: string;
   depth?: number;
-}) {
+}
+
+function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
   const [showReply, setShowReply] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const replyMutation = useReplyToInlineComment();

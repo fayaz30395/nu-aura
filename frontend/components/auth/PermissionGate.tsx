@@ -114,16 +114,15 @@ export function PermissionGate({
   return hasAccess ? children : fallback;
 }
 
+interface SimpleGateProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
 /**
  * Component that only renders for admin users
  */
-export function AdminGate({
-                            children,
-                            fallback = null,
-                          }: {
-  children: ReactNode;
-  fallback?: ReactNode;
-}): ReactNode {
+export function AdminGate({children, fallback = null}: SimpleGateProps): ReactNode {
   const {isAdmin, isReady} = usePermissions();
 
   if (!isReady) return null;
@@ -133,13 +132,7 @@ export function AdminGate({
 /**
  * Component that only renders for HR users
  */
-export function HRGate({
-                         children,
-                         fallback = null,
-                       }: {
-  children: ReactNode;
-  fallback?: ReactNode;
-}): ReactNode {
+export function HRGate({children, fallback = null}: SimpleGateProps): ReactNode {
   const {isHR, isReady} = usePermissions();
 
   if (!isReady) return null;
@@ -149,13 +142,7 @@ export function HRGate({
 /**
  * Component that only renders for managers
  */
-export function ManagerGate({
-                              children,
-                              fallback = null,
-                            }: {
-  children: ReactNode;
-  fallback?: ReactNode;
-}): ReactNode {
+export function ManagerGate({children, fallback = null}: SimpleGateProps): ReactNode {
   const {isManager, isReady} = usePermissions();
 
   if (!isReady) return null;

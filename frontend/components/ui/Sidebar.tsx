@@ -212,7 +212,7 @@ const ChildrenFlyover: React.FC<{
                     }
                   }}
                   className={childClasses}
-                  prefetch={true}
+                  prefetch
                 >
                   {childContent}
                 </Link>
@@ -382,7 +382,7 @@ const SidebarMenuItem: React.FC<{
           onClick={handleClick}
           className={commonClasses}
           style={activeStyles}
-          prefetch={true}
+          prefetch
         >
           {content}
         </Link>

@@ -315,7 +315,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Header — fixed height */}
         <Header
           onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          showMenuButton={true}
+          showMenuButton
           onProfile={handleProfile}
           onSettings={handleSettings}
           onLogout={handleLogout}

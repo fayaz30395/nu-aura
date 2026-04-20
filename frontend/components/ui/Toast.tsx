@@ -21,7 +21,11 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export function ToastProvider({children}: { children: ReactNode }) {
+interface ToastProviderProps {
+  children: ReactNode;
+}
+
+export function ToastProvider({children}: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const removeToast = useCallback((id: string) => {
@@ -73,7 +77,12 @@ export function ToastProvider({children}: { children: ReactNode }) {
   );
 }
 
-function ToastItem({toast, onClose}: { toast: Toast; onClose: () => void }) {
+interface ToastItemProps {
+  toast: Toast;
+  onClose: () => void;
+}
+
+function ToastItem({toast, onClose}: ToastItemProps) {
   const styles = {
     success: 'bg-success-50 border-success-200 text-success-800',
     error: 'bg-danger-50 border-danger-200 text-danger-800',

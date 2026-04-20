@@ -137,17 +137,14 @@ export function ResourceAvailabilityCalendar({
 /**
  * Single employee row in the calendar
  */
-function EmployeeRow({
-                       employee,
-                       dates,
-                       onDayClick,
-                       onEmployeeClick,
-                     }: {
+interface EmployeeRowProps {
   employee: EmployeeAvailability;
   dates: Date[];
   onDayClick?: (employeeId: string, date: string) => void;
   onEmployeeClick?: (employeeId: string) => void;
-}) {
+}
+
+function EmployeeRow({employee, dates, onDayClick, onEmployeeClick}: EmployeeRowProps) {
   // Create a map of date -> availability for quick lookup
   const availabilityMap = useMemo(() => {
     const map = new Map<string, ResourceAvailabilityDay>();
@@ -218,17 +215,19 @@ function EmployeeRow({
 /**
  * Single day cell showing availability status
  */
+interface AvailabilityCellProps {
+  date: string;
+  availability?: ResourceAvailabilityDay;
+  isWeekend: boolean;
+  onClick?: () => void;
+}
+
 function AvailabilityCell({
                             date: _date,
                             availability,
                             isWeekend,
                             onClick,
-                          }: {
-  date: string;
-  availability?: ResourceAvailabilityDay;
-  isWeekend: boolean;
-  onClick?: () => void;
-}) {
+                          }: AvailabilityCellProps) {
   const status = availability?.status || (isWeekend ? 'HOLIDAY' : 'AVAILABLE');
   const color = getAvailabilityStatusColor(status);
   const capacity = availability?.availableCapacity ?? (isWeekend ? 0 : 100);

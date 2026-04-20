@@ -132,15 +132,17 @@ export function SectionBoundary({
  * Inner wrapper that provides the section-specific error fallback.
  * Separated so ErrorBoundary can use the class component pattern.
  */
+interface SectionBoundaryInnerProps {
+  children: ReactNode;
+  name?: string;
+  errorFallback?: ReactNode;
+}
+
 function SectionBoundaryInner({
                                 children,
                                 name: _name,
                                 errorFallback,
-                              }: {
-  children: ReactNode;
-  name?: string;
-  errorFallback?: ReactNode;
-}) {
+                              }: SectionBoundaryInnerProps) {
   // If a custom fallback was already provided to the parent ErrorBoundary,
   // just render children — the ErrorBoundary handles the fallback.
   if (errorFallback) return <>{children}</>;

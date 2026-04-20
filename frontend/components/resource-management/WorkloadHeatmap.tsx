@@ -114,15 +114,13 @@ export function WorkloadHeatmap({
 /**
  * Single row in the heatmap
  */
-function HeatmapRow({
-                      row,
-                      onEmployeeClick,
-                      onCellClick,
-                    }: {
+interface HeatmapRowProps {
   row: WorkloadHeatmapRow;
   onEmployeeClick?: (employeeId: string) => void;
   onCellClick?: (employeeId: string, weekStart: string) => void;
-}) {
+}
+
+function HeatmapRow({row, onEmployeeClick, onCellClick}: HeatmapRowProps) {
   const hasOverAllocation = row.cells.some(
     (cell) => cell.allocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED
   );
@@ -174,13 +172,12 @@ function HeatmapRow({
 /**
  * Single cell in the heatmap
  */
-function HeatmapCell({
-                       cell,
-                       onClick,
-                     }: {
+interface HeatmapCellProps {
   cell: WorkloadHeatmapCell;
   onClick?: () => void;
-}) {
+}
+
+function HeatmapCell({cell, onClick}: HeatmapCellProps) {
   const backgroundColor = getCellColor(cell.allocation);
   const textColor = cell.allocation > 60 ? 'text-white' : 'text-surface-700 dark:text-surface-300';
 

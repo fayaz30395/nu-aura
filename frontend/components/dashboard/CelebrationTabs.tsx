@@ -6,7 +6,11 @@ import {useNewJoinees, useUpcomingAnniversaries, useUpcomingBirthdays} from '@/l
 
 type TabType = 'birthdays' | 'anniversaries' | 'newJoiners';
 
-function AvatarInitials({name}: { name: string }) {
+interface AvatarInitialsProps {
+  name: string;
+}
+
+function AvatarInitials({name}: AvatarInitialsProps) {
   const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   return (
     <div

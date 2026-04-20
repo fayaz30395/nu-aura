@@ -70,8 +70,13 @@ export function SkeletonStatCard() {
   );
 }
 
+interface SkeletonTableProps {
+  rows?: number;
+  columns?: number;
+}
+
 /** Skeleton for table rows */
-export function SkeletonTable({rows = 5, columns = 4}: { rows?: number; columns?: number }) {
+export function SkeletonTable({rows = 5, columns = 4}: SkeletonTableProps) {
   return (
     <div className="card-aura overflow-hidden" aria-hidden="true">
       {/* Header */}
@@ -101,8 +106,12 @@ export function SkeletonTable({rows = 5, columns = 4}: { rows?: number; columns?
   );
 }
 
+interface SkeletonChartProps {
+  height?: string;
+}
+
 /** Skeleton for chart containers */
-export function SkeletonChart({height = 'h-64'}: { height?: string }) {
+export function SkeletonChart({height = 'h-64'}: SkeletonChartProps) {
   return (
     <div className={cn('card-aura p-6', height)} aria-hidden="true">
       <div className="row-between mb-6">
@@ -197,6 +206,10 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
   },
 ];
 
+interface NuAuraLoaderProps {
+  message?: string;
+}
+
 /**
  * Animated branded loading screen for NU-AURA platform.
  *
@@ -204,7 +217,7 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
  * around the NULogic atom icon like a neural network coming alive.
  * Pure CSS animations, no Framer Motion dependency.
  */
-export function NuAuraLoader({message = 'Loading your workspace...'}: { message?: string }) {
+export function NuAuraLoader({message = 'Loading your workspace...'}: NuAuraLoaderProps) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[var(--bg-page)] transition-colors select-none">
       <div className="flex flex-col items-center gap-8">

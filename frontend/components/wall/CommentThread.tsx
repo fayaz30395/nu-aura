@@ -23,7 +23,11 @@ interface CommentThreadProps {
 
 // ==================== Avatar Component ====================
 
-function AuthorAvatar({author}: { author: AuthorInfo }): JSX.Element {
+interface AuthorAvatarProps {
+  author: AuthorInfo;
+}
+
+function AuthorAvatar({author}: AuthorAvatarProps): JSX.Element {
   const initials = author.fullName
     .split(' ')
     .map((name) => name[0])

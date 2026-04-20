@@ -23,7 +23,12 @@ const DEMO_BALANCES: LeaveBalance[] = [
   {leaveTypeId: '3', leaveName: 'SICK LEAVE', available: 10, total: 10, used: 0},
 ];
 
-function CircularProgress({used, total}: { used: number; total: number }) {
+interface CircularProgressProps {
+  used: number;
+  total: number;
+}
+
+function CircularProgress({used, total}: CircularProgressProps) {
   const percentage = total > 0 ? (used / total) * 100 : 0;
   const radius = 54;
   const circumference = 2 * Math.PI * radius;

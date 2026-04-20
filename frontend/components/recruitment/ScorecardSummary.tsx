@@ -92,7 +92,11 @@ function renderStars(rating: number, size: number = 14) {
 
 // ==================== Sub-components ====================
 
-function RecommendationBadge({recommendation}: { recommendation?: ScorecardRecommendation }) {
+interface RecommendationBadgeProps {
+  recommendation?: ScorecardRecommendation;
+}
+
+function RecommendationBadge({recommendation}: RecommendationBadgeProps) {
   if (!recommendation) {
     return (
       <span className="inline-flex px-2 py-0.5 text-xs rounded-md bg-[var(--surface-100)] text-[var(--text-muted)]">

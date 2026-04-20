@@ -26,7 +26,11 @@ const STATUS_STYLES: Record<string, string> = {
     'bg-[var(--status-neutral-bg)] text-[var(--status-neutral-text)]',
 };
 
-function StatusBadge({status}: { status: string }) {
+interface StatusBadgeProps {
+  status: string;
+}
+
+function StatusBadge({status}: StatusBadgeProps) {
   const style = STATUS_STYLES[status] || STATUS_STYLES.DRAFT;
   return (
     <span

@@ -61,17 +61,14 @@ export function WorkloadSummaryStats({summary, className}: WorkloadSummaryStatsP
   );
 }
 
-function StatItem({
-                    label,
-                    value,
-                    color,
-                    highlight
-                  }: {
+interface StatItemProps {
   label: string;
   value: string | number;
   color?: string;
   highlight?: boolean;
-}) {
+}
+
+function StatItem({label, value, color, highlight}: StatItemProps) {
   return (
     <div className="flex items-baseline gap-1.5">
       <span className={cn(

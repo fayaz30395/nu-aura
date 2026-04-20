@@ -9,7 +9,12 @@ import {useUpcomingBirthdays} from '@/lib/hooks/queries/useHome';
 
 /* ─── Balloon SVG Components ─────────────────────────────────────────────── */
 
-function Balloon({color, className}: { color: string; className?: string }) {
+interface BalloonProps {
+  color: string;
+  className?: string;
+}
+
+function Balloon({color, className}: BalloonProps) {
   return (
     <svg viewBox="0 0 40 60" className={className} fill="none">
       <ellipse cx="20" cy="22" rx="14" ry="18" fill={color}/>
@@ -57,7 +62,12 @@ function FloatingBalloons() {
 
 /* ─── Confetti Particles ─────────────────────────────────────────────────── */
 
-function ConfettiParticle({delay, left}: { delay: number; left: string }) {
+interface ConfettiParticleProps {
+  delay: number;
+  left: string;
+}
+
+function ConfettiParticle({delay, left}: ConfettiParticleProps) {
   const colors = ['var(--chart-secondary)', 'var(--chart-warning)', 'var(--chart-accent)', 'var(--chart-success)', 'var(--chart-primary)', 'var(--chart-warning)'];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
@@ -117,7 +127,11 @@ function BuntingFlags() {
 
 /* ─── Wisher Avatars ─────────────────────────────────────────────────────── */
 
-function WisherAvatars({wishers}: { wishers: { name: string; avatarUrl?: string }[] }) {
+interface WisherAvatarsProps {
+  wishers: { name: string; avatarUrl?: string }[];
+}
+
+function WisherAvatars({wishers}: WisherAvatarsProps) {
   if (wishers.length === 0) return null;
 
   return (

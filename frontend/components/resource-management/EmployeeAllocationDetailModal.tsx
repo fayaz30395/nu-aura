@@ -338,6 +338,17 @@ export function EmployeeAllocationDetailModal({
   );
 }
 
+interface AllocationCardProps {
+  allocation: ProjectAllocationDetail;
+  allAllocations: ProjectAllocationDetail[];
+  onClick?: () => void;
+  isEditing?: boolean;
+  onEdit?: () => void;
+  onSaveEdit?: (data: AllocationEditData) => void;
+  onCancelEdit?: () => void;
+  canEdit?: boolean;
+}
+
 function AllocationCard({
                           allocation,
                           allAllocations,
@@ -347,16 +358,7 @@ function AllocationCard({
                           onSaveEdit,
                           onCancelEdit,
                           canEdit,
-                        }: {
-  allocation: ProjectAllocationDetail;
-  allAllocations: ProjectAllocationDetail[];
-  onClick?: () => void;
-  isEditing?: boolean;
-  onEdit?: () => void;
-  onSaveEdit?: (data: AllocationEditData) => void;
-  onCancelEdit?: () => void;
-  canEdit?: boolean;
-}) {
+                        }: AllocationCardProps) {
   const [editStartDate, setEditStartDate] = useState(allocation.startDate);
   const [editEndDate, setEditEndDate] = useState(allocation.endDate || '');
   const [editPercentage, setEditPercentage] = useState(allocation.allocationPercentage);
@@ -619,7 +621,11 @@ function AllocationCard({
   );
 }
 
-function HistoryCard({request}: { request: AllocationApprovalRequest }) {
+interface HistoryCardProps {
+  request: AllocationApprovalRequest;
+}
+
+function HistoryCard({request}: HistoryCardProps) {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'APPROVED':
