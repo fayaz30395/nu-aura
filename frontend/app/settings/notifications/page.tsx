@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
-import {Bell, BookOpen, Briefcase, DollarSign, Gift, Loader2, Mail, MessageSquare, UserPlus} from 'lucide-react';
+import {Bell, BookOpen, DollarSign, Gift, Loader2, Mail, MessageSquare, UserPlus} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useNotificationPreferences, useUpdateNotificationPreferences} from '@/lib/hooks/queries/useNotifications';
 import type {NotificationPreferences as NotificationPreferencesType} from '@/lib/types/core/notifications';

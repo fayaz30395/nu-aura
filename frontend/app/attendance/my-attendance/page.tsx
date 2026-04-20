@@ -120,8 +120,18 @@ function AttendanceTimelineBar({record}: { record: AttendanceRecord }) {
 }
 
 // ─── Status dot component ──────────────────────────────────────────
+function getStatusDotColor(hours: number): string {
+  if (hours >= 8) {
+    return 'bg-success-500';
+  }
+  if (hours >= 4) {
+    return 'bg-warning-500';
+  }
+  return 'bg-danger-500';
+}
+
 function StatusDot({hours}: { hours: number }) {
-  const color = hours >= 8 ? 'bg-success-500' : hours >= 6 ? 'bg-warning-500' : hours >= 4 ? 'bg-warning-500' : 'bg-danger-500';
+  const color = getStatusDotColor(hours);
   return <div className={`w-2.5 h-2.5 rounded-full ${color} shrink-0`}/>;
 }
 

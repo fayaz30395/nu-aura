@@ -33,7 +33,7 @@ type RoleAssignmentForm = z.infer<typeof roleAssignmentSchema>;
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const {isAdmin, hasRole, isHR} = usePermissions();
+  const {isAdmin, hasRole} = usePermissions();
   const canAccessAdmin = isAdmin || hasRole(Roles.HR_ADMIN);
 
   // DEF-49: Only SuperAdmin users can see/assign the SUPER_ADMIN role option

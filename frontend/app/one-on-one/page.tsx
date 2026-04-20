@@ -243,6 +243,19 @@ function StatCard({
 
 // ─── Main Page ──────────────────────────────────────────────────────────────
 
+function getDetailTabLabel(tab: 'agenda' | 'actions' | 'notes' | 'feedback'): string {
+  switch (tab) {
+    case 'agenda':
+      return 'Talking Points';
+    case 'actions':
+      return 'Action Items';
+    case 'notes':
+      return 'Notes';
+    case 'feedback':
+      return 'Feedback';
+  }
+}
+
 export default function OneOnOnePage() {
   // ── State ──────────────────────────────────────────────────────────
   const [view, setView] = useState<'list' | 'detail' | 'schedule'>('list');
@@ -631,7 +644,7 @@ export default function OneOnOnePage() {
                           : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                       }`}
                     >
-                      {tab === 'agenda' ? 'Talking Points' : tab === 'actions' ? 'Action Items' : tab === 'notes' ? 'Notes' : 'Feedback'}
+                      {getDetailTabLabel(tab)}
                     </button>
                   ))}
                 </div>

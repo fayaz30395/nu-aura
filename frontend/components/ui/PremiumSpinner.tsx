@@ -148,11 +148,50 @@ export function GradientRingSpinner({size = 'md', className}: Omit<PremiumSpinne
   );
 }
 
+function getDotSize(size: 'sm' | 'md' | 'lg' | 'xl'): number {
+  switch (size) {
+    case 'sm':
+      return 8;
+    case 'md':
+      return 12;
+    case 'lg':
+      return 16;
+    case 'xl':
+      return 20;
+  }
+}
+
+function getBarWidth(size: 'sm' | 'md' | 'lg' | 'xl'): number {
+  switch (size) {
+    case 'sm':
+      return 4;
+    case 'md':
+      return 5;
+    case 'lg':
+      return 6;
+    case 'xl':
+      return 8;
+  }
+}
+
+function getBarMaxHeight(size: 'sm' | 'md' | 'lg' | 'xl'): number {
+  switch (size) {
+    case 'sm':
+      return 24;
+    case 'md':
+      return 32;
+    case 'lg':
+      return 40;
+    case 'xl':
+      return 48;
+  }
+}
+
 /**
  * Pulse Dots Spinner - Multiple pulsing dots with wave effect
  */
 export function PulseDotsSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const dotSize = size === 'sm' ? 8 : size === 'md' ? 12 : size === 'lg' ? 16 : 20;
+  const dotSize = getDotSize(size);
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
@@ -181,8 +220,8 @@ export function PulseDotsSpinner({size = 'md', className}: Omit<PremiumSpinnerPr
  * Wave Bars Spinner - Animated sound wave bars
  */
 export function WaveBarsSpinner({size = 'md', className}: Omit<PremiumSpinnerProps, 'variant'>) {
-  const barWidth = size === 'sm' ? 4 : size === 'md' ? 5 : size === 'lg' ? 6 : 8;
-  const maxHeight = size === 'sm' ? 24 : size === 'md' ? 32 : size === 'lg' ? 40 : 48;
+  const barWidth = getBarWidth(size);
+  const maxHeight = getBarMaxHeight(size);
 
   return (
     <div className={cn('flex items-end gap-1.5', className)} style={{height: maxHeight}}>

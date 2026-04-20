@@ -42,6 +42,19 @@ type SlackConfigFormData = z.infer<typeof slackConfigSchema>;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+function getTestButtonLabel(testResult: 'idle' | 'testing' | 'success' | 'error'): string {
+  switch (testResult) {
+    case 'testing':
+      return 'Testing...';
+    case 'success':
+      return 'Connected!';
+    case 'error':
+      return 'Failed';
+    case 'idle':
+      return 'Test Connection';
+  }
+}
+
 export default function SlackIntegrationPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -398,7 +411,7 @@ export default function SlackIntegrationPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <RefreshCw className={`h-4 w-4 ${testResult === 'testing' ? 'animate-spin' : ''}`}/>
-              {testResult === 'testing' ? 'Testing...' : testResult === 'success' ? 'Connected!' : testResult === 'error' ? 'Failed' : 'Test Connection'}
+              {getTestButtonLabel(testResult)}
             </button>
             <button type="submit"
                     disabled={isSubmitting || !isDirty}

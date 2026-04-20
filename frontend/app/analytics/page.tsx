@@ -84,6 +84,19 @@ const _CustomTooltip = ({active, payload, label}: CustomTooltipProps) => {
   return null;
 };
 
+function getRangeLabel(range: '7d' | '30d' | '90d' | 'custom'): string {
+  switch (range) {
+    case '7d':
+      return '7 Days';
+    case '30d':
+      return '30 Days';
+    case '90d':
+      return '90 Days';
+    case 'custom':
+      return 'Custom';
+  }
+}
+
 export default function AnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
@@ -208,7 +221,7 @@ export default function AnalyticsPage() {
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
                   }`}
                 >
-                  {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : 'Custom'}
+                  {getRangeLabel(range)}
                 </button>
               ))}
             </div>
