@@ -5,6 +5,16 @@ description: Use when asked to add a permission, wire RBAC, create a new permiss
 
 # RBAC Permission Wiring
 
+## Autonomy Contract
+
+- **Runs without further prompts** once invoked. Infer module + action from the request; ask at most
+  ONE clarifying question only if the permission key is ambiguous.
+- **Halts autonomously** when all 4 layers are wired: backend constant, controller annotation,
+  frontend constant, and database seed (Flyway migration appended or new `V{next}__` file written).
+- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-migration`, or `skill-management`.
+- **Single concern:** RBAC wiring only. Schema changes go through `nu-migration`; end-to-end RBAC
+  verification (URL + DOM + negative API 403) is the job of `nu-chrome-e2e`.
+
 > **Purpose:** Wire a new permission across ALL 4 layers of the NU-AURA RBAC system in a single
 > pass.
 > Prevents the common bug where a permission exists in one layer but is missing in another.

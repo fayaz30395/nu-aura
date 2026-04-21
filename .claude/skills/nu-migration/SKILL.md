@@ -5,6 +5,16 @@ description: Use when asked to add a table, create a new migration, make a schem
 
 # Flyway Migration Generator
 
+## Autonomy Contract
+
+- **Runs without further prompts** once invoked. Ask at most ONE clarifying question only if target
+  table/column names cannot be inferred from the current request.
+- **Halts autonomously** when the generated SQL is written to
+  `backend/src/main/resources/db/migration/V{next}__*.sql` and passes Flyway syntax validation.
+- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-permission`, or `skill-management`.
+- **Single concern:** Flyway SQL only. Permission wiring belongs in `nu-permission`; QA belongs in
+  `nu-chrome-e2e`.
+
 > **Purpose:** Generate production-ready Flyway SQL migrations for the NU-AURA PostgreSQL schema.
 > Every migration follows the established patterns from V0-V103 and enforces multi-tenant isolation,
 > soft deletes, and proper indexing.
