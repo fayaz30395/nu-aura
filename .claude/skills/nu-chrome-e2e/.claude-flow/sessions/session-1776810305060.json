@@ -1,0 +1,14 @@
+{
+  "id": "session-1776810305060",
+  "startedAt": "2026-04-21T22:25:05.060Z",
+  "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/skills/nu-chrome-e2e",
+  "context": {},
+  "metrics": {
+    "edits": 6,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "endedAt": "2026-04-21T22:27:37.863Z",
+  "duration": 152804
+}
