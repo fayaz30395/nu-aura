@@ -5,7 +5,7 @@
 -- ============================================================================
 
 -- Ensure the ANALYTICS:VIEW permission exists
-INSERT INTO permissions (id, code, name, description, module, action, created_at, updated_at, version, is_deleted)
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES (gen_random_uuid(), 'ANALYTICS:VIEW', 'Analytics View', 'View analytics and org health dashboards', 'analytics',
         'view', NOW(), NOW(), 0, false)
 ON CONFLICT (code) DO NOTHING;

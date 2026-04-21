@@ -1,0 +1,10 @@
+{
+  "mode": "FULL",
+  "worker_count": 10,
+  "role_passes": 6,
+  "fixer_concurrency_cap": 5,
+  "run_dir": "docs/qa/runs/super-e2e-20260421T192516Z",
+  "git_sha": "4c3d7fd38abd8b7234ca86dfcca2f7ccfb699e5e",
+  "started_at_utc": "2026-04-21T19:25:16Z",
+  "base_urls": {"frontend": "http://localhost:3000", "backend": "http://localhost:8080"}
+}

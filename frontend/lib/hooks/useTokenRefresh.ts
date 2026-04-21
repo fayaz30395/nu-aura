@@ -22,7 +22,10 @@ import {logger} from '../utils/logger';
  */
 
 const REFRESH_INTERVAL_MS = 50 * 60 * 1000; // 50 minutes
-const MIN_REFRESH_GAP_MS = 5 * 60 * 1000;   // 5 minutes minimum between refreshes
+// 30-minute gap: refresh tokens are single-use, so every visibility-change fire consumes
+// one. A 5-minute gap let rapid tab switches burn through tokens faster than the periodic
+// timer could replace them, triggering 401 loops in multi-tab sessions (BUG-W3-02).
+const MIN_REFRESH_GAP_MS = 30 * 60 * 1000;
 
 export function useTokenRefresh(isAuthenticated: boolean): void {
   const lastRefreshRef = useRef<number>(Date.now());

@@ -1,0 +1,15 @@
+{
+  "tab_group_id": 603408365,
+  "map": {
+    "W1":  {"tab_id": 1283664350, "role": "SuperAdmin",   "demo": "Fayaz M",  "shard": "hrms-core"},
+    "W2":  {"tab_id": 1283664351, "role": "HR Admin",     "demo": "HR Admin", "shard": "hrms-ops"},
+    "W3":  {"tab_id": 1283664352, "role": "HR Admin",     "demo": "HR Admin", "shard": "hire"},
+    "W4":  {"tab_id": 1283664353, "role": "HR Manager",   "demo": "HR Manager","shard": "grow"},
+    "W5":  {"tab_id": 1283664354, "role": "Employee",     "demo": "Saran V",  "shard": "fluence"},
+    "W6":  {"tab_id": 1283664355, "role": "Employee",     "demo": "Saran V",  "shard": "self-service"},
+    "W7":  {"tab_id": 1283664356, "role": "Employee",     "demo": "Saran V",  "shard": "rbac-negatives"},
+    "W8":  {"tab_id": 1283664357, "role": "SuperAdmin",   "demo": "Fayaz M",  "shard": "workflows-gifs"},
+    "W9":  {"tab_id": 1283664358, "role": "Team Lead",    "demo": "Team Lead","shard": "approvals"},
+    "W10": {"tab_id": 1283664359, "role": "SuperAdmin",   "demo": "Fayaz M",  "shard": "known-bugs"}
+  }
+}

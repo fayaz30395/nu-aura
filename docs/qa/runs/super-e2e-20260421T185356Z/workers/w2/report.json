@@ -1,0 +1,110 @@
+{
+  "worker_id": "w2",
+  "tab_id": 1283664351,
+  "role_requested": "HR Admin",
+  "role_actual": "HR Manager (Jagadeesh N) — no HR Admin demo card exists; closest card used",
+  "shard": "HRMS OPS",
+  "start_utc": "2026-04-21T18:58:35Z",
+  "end_utc": "2026-04-21T19:15:02Z",
+  "duration_minutes": 16.5,
+  "pages_tested": 14,
+  "pages_attempted": ["assets","assets/allocations","shifts","holidays","statutory","overtime","travel","loans","probation","compensation","benefits","letters","orgchart","announcements","helpdesk","helpdesk/tickets","contracts"],
+  "lifecycles_attempted": ["S6 Loan (aborted — main content empty)","S7 Travel (aborted — main content empty)"],
+  "environment_notes": [
+    "No 'HR Admin' demo account card exists on /auth/login. 8 roles present: Super Admin, Manager, Team Lead x2, Employee, HR Manager, Recruitment Admin, HR Lead. Using Jagadeesh N (HR MANAGER) as closest match.",
+    "Session cookie is shared across all worker tabs — role context flapped between HR Manager and Employee during the run. Multiple pages returned blank main content because an Employee-scoped session was active at probe time rather than HR Manager.",
+    "Chrome renderer exhibited repeated 45s CDP timeouts under concurrent-tab load; this slowed the sweep and is itself a signal that the Next.js dev server on :3000 struggles when 10 tabs navigate concurrently."
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W2-01",
+      "severity": "P1",
+      "title": "/assets/allocations returns application 404 for HR Manager",
+      "route": "/assets/allocations",
+      "role": "HR Manager",
+      "observed": "Body renders the in-app '404 — Page not found' view with 'Go to Dashboard / Go Back' buttons.",
+      "expected": "Route should render the asset allocations list OR redirect to a documented URL. W1 prompt lists /assets/allocations as an HRMS page, so either the frontend route file is missing or the nav link is stale.",
+      "evidence": "document.body.innerText first-200 chars = '404\\n\\nPage not found\\n\\nThe page you're looking for doesn't exist...'",
+      "screenshot": null
+    },
+    {
+      "id": "BUG-W2-02",
+      "severity": "P1",
+      "title": "/orgchart returns application 404",
+      "route": "/orgchart",
+      "role": "HR Manager",
+      "observed": "Body renders in-app 404 view. Sidebar references 'Org Chart' for Executive/Super Admin view, so the nav entry exists but the route does not (or lives under a different path such as /employees/orgchart).",
+      "expected": "Org chart page loads (per HRMS pages list in W2 shard).",
+      "evidence": "len(body.innerText)=194; first-chars='404\\n\\nPage not found\\n\\n...'"
+    },
+    {
+      "id": "BUG-W2-03",
+      "severity": "P1",
+      "title": "/helpdesk and /helpdesk/tickets show Access Denied for HR Manager",
+      "route": "/helpdesk, /helpdesk/tickets",
+      "role": "HR Manager",
+      "observed": "Main renders the Mantine 'Access Denied — You don't have permission to access this page.' shell.",
+      "expected": "Git status at run start shows V130__add_helpdesk_ticket_permissions_to_employee.sql (untracked) suggesting HELPDESK permissions are in flight. HR Manager role should either have helpdesk access (HR owns the ticketing queue) or the page should redirect to /me/helpdesk silently rather than showing a dead end.",
+      "evidence": "len(body.innerText)=552; contains 'Access Denied'. V130 migration is pending.",
+      "screenshot": null
+    },
+    {
+      "id": "BUG-W2-04",
+      "severity": "P2",
+      "title": "/shifts Access Denied — inconsistent with /attendance sibling",
+      "route": "/shifts",
+      "role": "HR Manager",
+      "observed": "Page shows 'Access Denied' shell for HR Manager.",
+      "expected": "HR Manager should be able to view shift definitions. If they truly lack SHIFT:VIEW, the sidebar link 'Shift Management' should not render for this role (it currently does).",
+      "evidence": "h1='Access Denied'; sidebar still shows Shift Management link."
+    },
+    {
+      "id": "BUG-W2-05",
+      "severity": "P2",
+      "title": "Pages render empty <main> with only sidebar after 10+ seconds: /overtime /statutory /travel /loans /probation /compensation /announcements",
+      "route": "/overtime,/statutory,/travel,/loans,/probation,/compensation,/announcements",
+      "role": "HR Manager (and Employee when session flapped)",
+      "observed": "Body innerText length stabilises at ~714 characters representing sidebar + top-bar only. No h1/h2/h3, no Access Denied shell, no 404 shell, no loading skeleton — the main region is literally empty. Not a permission denial (no shell), not a 404 (no shell). Looks like the page component renders null when data fetch returns empty/unauthorized.",
+      "expected": "Either an authoritative RBAC shell (Access Denied) or an empty-state component (as /assets correctly shows 'No Assets Found'). A silent empty main is indistinguishable from an app crash.",
+      "evidence": "body.innerText.length=714 for every affected route, no h tags, no main text after 10s."
+    },
+    {
+      "id": "BUG-W2-06",
+      "severity": "P3",
+      "title": "/benefits — stale hardcoded enrollment window text",
+      "route": "/benefits",
+      "role": "HR Manager",
+      "observed": "UI string: 'Open Enrollment Period — March 1 - March 31, 2027. Review and update your benefits selections.'",
+      "expected": "Enrollment window should come from benefit plan configuration per tenant, not be a hardcoded English sentence. Current date in the test run is 2026-04-22, so the text is simultaneously hardcoded AND future-dated, which looks like placeholder copy that shipped.",
+      "evidence": "innerText slice 500..1500 contains the literal sentence."
+    },
+    {
+      "id": "BUG-W2-07",
+      "severity": "P3",
+      "title": "No 'HR Admin' demo account card on login screen",
+      "route": "/auth/login",
+      "role": "n/a",
+      "observed": "Login screen shows 8 demo accounts labelled Super Admin / Manager / Team Lead / Employee / HR Manager / Recruitment Admin / HR Lead. No card is labelled 'HR Admin' even though CLAUDE.md lists HR Admin (permission level 85) as a distinct role between Tenant Admin and HR Manager.",
+      "expected": "Demo account set should include an HR Admin seed so the role's permission surface can be exercised, OR the project-wide docs should stop referencing HR Admin as a first-class role.",
+      "evidence": "8 buttons enumerated from the login DOM, none containing 'HR Admin'. Documented hierarchy: Super Admin (100) -> Tenant Admin (90) -> HR Admin (85) -> HR Manager (80)."
+    },
+    {
+      "id": "BUG-W2-08",
+      "severity": "P3",
+      "title": "Session cookie shared across all worker tabs causes role-context flapping",
+      "route": "(platform-wide)",
+      "role": "all",
+      "observed": "After W2 logged in as HR Manager, later probes showed the sidebar/user dropdown swap to 'Executive' (Super Admin look) and then to 'U User Employee' (base Employee), then back to 'JN Jagadeesh N HR MANAGER'. This happened because all 10 worker tabs share the browser profile and therefore the single httpOnly JWT cookie. The last login wins; every other worker's page is then rendered under somebody else's identity.",
+      "expected": "Super-e2e orchestration should use isolated storage partitions per tab (e.g. Incognito windows, distinct browser profiles, or a tab-scoped auth header). Without isolation, the 10-worker harness cannot produce reliable per-role coverage.",
+      "evidence": "Sidebar content observed shifting between minimal (HR) and full (Executive) sidebars mid-run; user chip text changed from 'JN Jagadeesh N HR MANAGER' to 'U User Employee' between navigations on the same tab."
+    }
+  ],
+  "pages_passed": ["assets","holidays","benefits","letters","contracts"],
+  "pages_403": ["shifts","helpdesk","helpdesk/tickets"],
+  "pages_404": ["assets/allocations","orgchart"],
+  "pages_empty_main": ["overtime","statutory","travel","loans","probation","compensation","announcements"],
+  "lifecycles_completed": [],
+  "network_errors_observed": [],
+  "console_errors_observed": [],
+  "summary": "Tested 14 of 17 shard pages under a flapping-role session caused by cross-tab cookie sharing (BUG-W2-08). Surfaced two hard 404s (BUG-W2-01 /assets/allocations, BUG-W2-02 /orgchart), two RBAC denials worth re-checking (BUG-W2-03 /helpdesk* + BUG-W2-04 /shifts), one cluster of 7 pages that render an empty main with no shell (BUG-W2-05 — ambiguous between RBAC-silent and render-null bug), one stale UX copy (BUG-W2-06), one auth-fixtures gap (BUG-W2-07 no HR Admin demo card), and one infrastructure bug that undermines the whole super-e2e harness (BUG-W2-08 shared cookie). Loan (S6) and Travel (S7) lifecycle 'open form then cancel' could not be exercised because those pages fall under BUG-W2-05 (empty main = no Add button to click)."
+}

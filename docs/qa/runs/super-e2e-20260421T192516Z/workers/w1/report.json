@@ -1,0 +1,147 @@
+{
+  "worker": "w1",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664350,
+  "started_at": "2026-04-21T19:27:20Z",
+  "finished_at": "2026-04-21T19:42:30Z",
+  "pages": [
+    {
+      "url": "/dashboard",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": ["GET /api/v1/analytics/dashboard -> 403"],
+      "note": "Renders but analytics/dashboard API 403 for SuperAdmin"
+    },
+    {
+      "url": "/employees",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Employee Management"
+    },
+    {
+      "url": "/attendance",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": ["/ws/ xhr_streaming 503", "/ws/ xhr_send 404"],
+      "note": "Main content rendered (attendance widget). WebSocket infra issues observed but non-blocking."
+    },
+    {
+      "url": "/attendance/my",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "H1=Page not found; route not registered in Next.js app router"
+    },
+    {
+      "url": "/leave",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Leave Management, h2=Leave Balance (2026), Recent Leave Requests"
+    },
+    {
+      "url": "/leave/apply",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Apply for Leave, 1 form with 6 inputs"
+    },
+    {
+      "url": "/leave/balance",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "H1=Page not found; route missing"
+    },
+    {
+      "url": "/leave/approvals",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Leave Approvals"
+    },
+    {
+      "url": "/payroll",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Payroll Management"
+    },
+    {
+      "url": "/payroll/runs",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Payroll Runs"
+    },
+    {
+      "url": "/payroll/my-payslips",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "H1=Page not found; route missing despite MY SPACE sidebar link"
+    },
+    {
+      "url": "/payroll/settings",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "H1=Page not found; route missing"
+    },
+    {
+      "url": "/expenses",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Expense Claims"
+    },
+    {
+      "url": "/expenses/reports",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "h1=Expense Reports"
+    }
+  ],
+  "bugs": [
+    {
+      "severity": "P1",
+      "page": "/attendance/my",
+      "title": "Route /attendance/my returns 404",
+      "expected": "My Attendance page (sidebar MY SPACE link)"
+    },
+    {
+      "severity": "P1",
+      "page": "/leave/balance",
+      "title": "Route /leave/balance returns 404"
+    },
+    {
+      "severity": "P1",
+      "page": "/payroll/my-payslips",
+      "title": "Route /payroll/my-payslips returns 404 (sidebar MY SPACE link broken)"
+    },
+    {
+      "severity": "P1",
+      "page": "/payroll/settings",
+      "title": "Route /payroll/settings returns 404"
+    },
+    {
+      "severity": "P1",
+      "page": "/dashboard",
+      "title": "GET /api/v1/analytics/dashboard returns 403 for SUPER_ADMIN (SuperAdmin bypass broken for analytics endpoint)"
+    }
+  ],
+  "summary": {
+    "total": 14,
+    "pass": 10,
+    "pass_empty": 0,
+    "fail": 4,
+    "skipped": 0
+  },
+  "session_checks": [
+    {"at": "start", "email": "fayaz.m@nulogic.io", "roles": ["SUPER_ADMIN","SKIP_LEVEL_MANAGER","REPORTING_MANAGER"]},
+    {"at": "after-6-pages", "email": "fayaz.m@nulogic.io"},
+    {"at": "end", "email": "fayaz.m@nulogic.io"}
+  ]
+}

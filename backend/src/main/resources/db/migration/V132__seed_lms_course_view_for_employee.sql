@@ -7,7 +7,7 @@
 -- ============================================================================
 
 -- Ensure the LMS:COURSE_VIEW permission exists
-INSERT INTO permissions (id, code, name, description, module, action, created_at, updated_at, version, is_deleted)
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES (gen_random_uuid(), 'LMS:COURSE_VIEW', 'LMS Course View', 'View LMS courses and content', 'lms', 'course_view',
         NOW(), NOW(), 0, false)
 ON CONFLICT (code) DO NOTHING;

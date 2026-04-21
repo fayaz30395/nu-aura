@@ -1,0 +1,17 @@
+{
+  "worker": "W1",
+  "role": "SuperAdmin",
+  "tab_id": 1283664350,
+  "started_at": "2026-04-21T18:53:56Z",
+  "finished_at": "2026-04-21T19:05:00Z",
+  "pages": [],
+  "flows": [],
+  "bugs": [],
+  "summary": {
+    "total": 14,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 14,
+    "fail_reason": "Demo card click on Fayaz M did not trigger any login API call in this tab — no /api/auth POST fired. Only /api/v1/auth/refresh succeeded (204). Tab 1283664350 stayed on /auth/login after multiple single/double clicks; other worker tabs authenticated successfully with the same demo panel. Tab became unresponsive on final navigate. Cannot confirm whether this is a click-handler regression or a tab-specific race."
+  }
+}

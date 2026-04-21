@@ -1,0 +1,74 @@
+{
+  "worker": "W3",
+  "role": "HR Admin (mapped to Suresh M / RECRUITMENT ADMIN — no HR Admin demo card)",
+  "tab_id": 1283664352,
+  "started_at": "2026-04-22T00:27:30Z",
+  "finished_at": "2026-04-22T00:31:00Z",
+  "pages": [
+    { "url": "/auth/login", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/dashboard", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment/jobs", "status": "PASS", "screenshot": null, "console_errors": ["POST /auth/refresh 401 after parallel-worker login collision"], "network_errors": ["POST /api/v1/auth/refresh 401"] },
+    { "url": "/recruitment/jobs/new", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": ["session-kick prevented navigation"] },
+    { "url": "/recruitment/candidates", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment/pipeline", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment/agencies", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment/interviews", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
+    { "url": "/recruitment/onboarding", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] }
+  ],
+  "flows": [
+    { "name": "S1 Hire-to-Retire steps 1-5 (create job, pipeline, agency)", "steps_passed": 0, "steps_failed": 0, "steps_skipped": 5, "bugs": ["BUG-W3-02 (session kicked before form reachable)"] }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W3-01",
+      "severity": "P2",
+      "category": "ui",
+      "title": "Demo Login Panel is missing an 'HR Admin' card required by W3 contract",
+      "url": "http://localhost:3000/auth/login",
+      "file_hint": "frontend/app/auth/login/page.tsx (demo accounts list)",
+      "repro": [
+        "Navigate to /auth/login with NEXT_PUBLIC_DEMO_MODE=true",
+        "Inspect Demo Accounts panel",
+        "Observe 8 roles present: SUPER ADMIN, MANAGER, TEAM LEAD x3, EMPLOYEE, HR MANAGER, RECRUITMENT ADMIN — but no HR ADMIN"
+      ],
+      "evidence": "docs/qa/runs/super-e2e-20260421T185356Z/workers/w3/findings.jsonl",
+      "impact": "QA harness and orchestrator cannot realize the HR Admin role via one-click demo login; forces fallback to RECRUITMENT ADMIN which has narrower permissions."
+    },
+    {
+      "id": "BUG-W3-02",
+      "severity": "P1",
+      "category": "api",
+      "title": "POST /auth/refresh returns 401 when another tab logs in as the same demo user (session invalidated silently)",
+      "url": "http://localhost:3000/recruitment/jobs",
+      "endpoint": "POST /api/v1/auth/refresh",
+      "http_status": 401,
+      "file_hint": "backend/src/main/java/com/hrms/api/auth/controller/AuthController.java + TokenBlacklistService",
+      "repro": [
+        "Tab A: click Suresh M demo card -> lands on /dashboard",
+        "Tab B (any parallel worker): click Suresh M demo card",
+        "Tab A: navigate to /recruitment/jobs -> ApiClient throws [ERROR] POST /auth/refresh 401 -> middleware redirects to /auth/login?returnUrl=..."
+      ],
+      "evidence": "console messages [1] and [5] captured on tab 1283664352 at 00:28:58 and 00:30:18",
+      "impact": "Concurrent parallel test harness or any two analysts using the same demo persona in different browsers/tabs will silently kick each other to login. Breaks shared-demo-account QA workflow. Root cause is likely single-active-JWT refresh-token rotation invalidating prior session without surfacing a 'signed in elsewhere' UX."
+    },
+    {
+      "bug_id_observational": "W3-OBS-01",
+      "severity": "P3",
+      "category": "perf",
+      "title": "Notifications/Workflow-inbox polling 30s timeout on first navigation after login",
+      "url": "http://localhost:3000/recruitment/jobs",
+      "endpoint": "GET /api/v1/notifications/unread, /notifications/unread/count, /workflow/inbox/count",
+      "http_status": "timeout after 30000ms (client-side)",
+      "notes": "Server returned 200 eventually but client-side ApiClient hit 30s timeout. Suggests slow cold-cache response or axios timeout set too tightly for notification polling endpoints on first-paint."
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "pass": 4,
+    "fail": 0,
+    "skipped": 6,
+    "shard_status": "PARTIAL — login succeeded, first 3 pages verified, then session invalidated by parallel worker login collision; per hard-rule #5 (2-retry cap) shard exited early to avoid blocking swarm."
+  },
+  "notes": "No 'HR Admin' role card exists in Demo Accounts panel; used 'Suresh M / RECRUITMENT ADMIN' as nearest admin-tier recruitment persona. Sessions kept being kicked because multiple W-workers share the same small set of demo personas. Recommend: (a) add dedicated HR ADMIN demo card, (b) allow concurrent sessions for a single demo identity in demo mode, or (c) assign unique demo identities per W-worker slot."
+}

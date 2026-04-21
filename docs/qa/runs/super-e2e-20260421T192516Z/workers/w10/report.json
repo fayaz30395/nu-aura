@@ -1,0 +1,49 @@
+{
+  "worker": "W10",
+  "tab_id": 1283664359,
+  "role": "SuperAdmin",
+  "user": "fayaz.m@nulogic.io",
+  "run_dir": "docs/qa/runs/super-e2e-20260421T192516Z",
+  "session_verified_at_start": true,
+  "session_verified_at_end": true,
+  "session_roles": ["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"],
+  "scope": "Retest prior bugs from super-e2e-20260421T185356Z",
+  "verdicts": [
+    {
+      "bug_id": "BUG-W9-01",
+      "url": "http://localhost:3000/approvals/history",
+      "verdict": "STILL_OPEN",
+      "evidence": "Page body = '404 Page not found The page you're looking for doesn't exist, has been moved, or you may not have permission to view it.' Route still missing from frontend/app/approvals/"
+    },
+    {
+      "bug_id": "BUG-W9-02",
+      "url": "http://localhost:3000/approvals/delegations",
+      "verdict": "STILL_OPEN",
+      "evidence": "Page body = '404 Page not found ...' Route still missing. API endpoint likely exists but no frontend page."
+    },
+    {
+      "bug_id": "BUG-W3-01",
+      "url": "http://localhost:3000/auth/login",
+      "verdict": "STILL_OPEN",
+      "evidence": "Demo panel enumerated on tab 1283664353: 8 cards present = SUPER ADMIN (Fayaz M), MANAGER (Sumit Kumar), TEAM LEAD x3 (Mani S, Gokul R, Dhanush A), EMPLOYEE (Saran V), HR MANAGER (Jagadeesh N), RECRUITMENT ADMIN (Suresh M). NO 'HR ADMIN' card present. Matches prior report exactly."
+    },
+    {
+      "bug_id": "BUG-W8-01",
+      "url": "http://localhost:3000/fluence/wiki",
+      "verdict": "STILL_OPEN",
+      "evidence": "Clicked 'New Page' button -> dropdown opens with 'Create Space' and 'Create Page'. Clicked 'Create Page' -> no dialog opens, no navigation, no console error, no network call. Page stays at /fluence/wiki with no visible effect. Create flow is broken (button wired but handler no-ops)."
+    },
+    {
+      "bug_id": "BUG-W8-02",
+      "url": "http://localhost:3000/expenses",
+      "verdict": "FIXED",
+      "evidence": "Page renders 'Expense Claims' header with stats (2 Total Claims) and 2 DRAFT claims listed: EXP-202604-0001 (TRAVEL ₹2,500, E2E Lifecycle Test - Client meeting travel expenses) and EXP-202604-0003 (TRAVEL $6,800, Client meeting expenses). API GET /api/v1/expenses returns populated content[]. Page no longer empty."
+    }
+  ],
+  "notes": [
+    "Session check mid-run on tab 1283664359 confirmed still SUPER_ADMIN (no flip).",
+    "Parallel workers caused occasional CDP timeouts on other tabs; primary tab 1283664359 remained functional.",
+    "Legacy F-03..F-09 registry not located under docs/qa/ — no known-bug registry at that name; skipped.",
+    "Tabs 1283664357 and 1283664358 were navigated by other workers during this run (observed via tabs_context)."
+  ]
+}

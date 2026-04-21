@@ -1,0 +1,49 @@
+{
+  "worker": "W6",
+  "role": "Employee (Saran V - intended)",
+  "actual_session": "Fayaz M SUPER_ADMIN (session cookie shared across tabs — other workers overwrote my cookie)",
+  "tab_id": 1283664355,
+  "run_dir": "docs/qa/runs/super-e2e-20260421T185356Z",
+  "startup_notes": [
+    "Chrome MCP runs in one profile → single httpOnly session cookie is shared across all tabs/workers.",
+    "Clicking Saran V card POSTed /auth/login but returned 409 Conflict (session already active for another demo user) and/or immediately overwritten by parallel workers' logins.",
+    "All subsequent navigation executed under whichever session was most recent; /api/v1/auth/me confirms Fayaz M SUPER_ADMIN."
+  ],
+  "pages_tested": [
+    {"url": "/me", "status": "404 Not Found", "bug": "BUG-W6-01"},
+    {"url": "/me/profile", "status": "renders empty main (714 chars total, just sidebar)", "bug": "BUG-W6-02"},
+    {"url": "/me/attendance", "status": "OK — renders Today's Status, Present/Absent/Leave stats, Attendance Calendar (April 2026)"},
+    {"url": "/me/leave", "status": "404 Not Found", "bug": "BUG-W6-03"},
+    {"url": "/me/payslips", "status": "renders empty main (714 chars total, no payslip content)", "bug": "BUG-W6-04"},
+    {"url": "/me/documents", "status": "renders breadcrumb only (742 chars, no document list / empty state)", "bug": "BUG-W6-05"},
+    {"url": "/me/helpdesk", "status": "404 Not Found", "bug": "BUG-W6-06"},
+    {"url": "/dashboard", "status": "renders empty main (714 chars, sidebar only — no widgets/content)", "bug": "BUG-W6-07"},
+    {"url": "/notifications", "status": "OK — shows All/Unread/Approvals/Leave/Payroll/System tabs and 'No notifications' empty state"},
+    {"url": "/approvals/inbox", "status": "OK — shows Delegate / Pending / Approved Today / Rejected Today cards, filter pills"},
+    {"url": "/helpdesk/tickets", "status": "OK list — shows existing tickets including TKT-20260403165420-B689 'Test ticket' by Saran V"}
+  ],
+  "lifecycle_S8_helpdesk": {
+    "intended_subject": "E2E-20260421-W6-ticket",
+    "executed": false,
+    "reason": "BUG-W6-08 — clicking 'Create Ticket' button did not open any dialog/modal (0 [role=dialog] or <dialog> elements after click; no subject/description inputs appeared). Cannot fill or cancel a form that never opens."
+  },
+  "bugs": [
+    {"id": "BUG-W6-01", "severity": "medium", "page": "/me", "summary": "Missing index route — returns 404 Page not found. 'My Space' sidebar root has no landing page."},
+    {"id": "BUG-W6-02", "severity": "high", "page": "/me/profile", "summary": "Page shell loads but main content area is empty (712–714 body chars is sidebar + frame only). Profile fields, avatar, edit controls all missing."},
+    {"id": "BUG-W6-03", "severity": "high", "page": "/me/leave", "summary": "404 Not Found. Sidebar link 'My Leaves' likely points to a different path (e.g., /leave/my) — broken navigation contract for self-service leave."},
+    {"id": "BUG-W6-04", "severity": "high", "page": "/me/payslips", "summary": "Empty main — no payslip list, no empty-state text, no download actions."},
+    {"id": "BUG-W6-05", "severity": "medium", "page": "/me/documents", "summary": "Page renders only 'Documents' header/breadcrumb; no upload, list, or empty state after data fetch."},
+    {"id": "BUG-W6-06", "severity": "medium", "page": "/me/helpdesk", "summary": "404 Not Found. Self-service helpdesk entry does not exist."},
+    {"id": "BUG-W6-07", "severity": "high", "page": "/dashboard", "summary": "Generic /dashboard main area is empty for authenticated user (sidebar-only render). Should show widgets or redirect to role-appropriate dashboard."},
+    {"id": "BUG-W6-08", "severity": "critical", "page": "/helpdesk/tickets", "summary": "'Create Ticket' button click produces no modal/dialog (repro: click ref_143 twice, querySelectorAll('[role=dialog],dialog,.modal') returns 0). Users cannot file a new ticket from this page."},
+    {"id": "BUG-W6-09", "severity": "critical", "page": "/auth/login", "summary": "Demo-login POST /auth/login returns 409 Conflict and no sign-out happens first. In a multi-tab scenario the existing session is never invalidated or swapped; clicking a different demo card silently fails to switch identity."}
+  ],
+  "design_findings": [
+    "Sidebar shows all admin sections to an Employee role — sidebar filtering by role/permission is not happening (visible: System Admin, Organization Setup, Workflows, Import/Export, Integrations). Confirmed under SUPER_ADMIN session, but there is no Employee-scoped 'My Space only' sidebar rendering observed during /me/* visits."
+  ],
+  "artifacts": {
+    "console_signal": "POST /auth/login 409 (observed 00:29:21 during Saran V card click).",
+    "network_signal": "Chrome shows /auth/login _rsc requests returning 503 intermittently (likely Next.js RSC rate-limit under parallel workers).",
+    "auth_me_payload": "userId=550e8400-...-440030, email=fayaz.m@nulogic.io, roles=[SUPER_ADMIN,SKIP_LEVEL_MANAGER,REPORTING_MANAGER]"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "worker": "W9",
+  "role": "Team Lead",
+  "demo_user": "Mani S",
+  "tab_id": 1283664358,
+  "started_at": "2026-04-22T00:27:00Z",
+  "finished_at": "2026-04-22T00:33:00Z",
+  "pages": [
+    {
+      "url": "/auth/login",
+      "status": "PASS",
+      "notes": "Demo login panel rendered; clicked Mani S Team Lead card; redirected to /me/dashboard"
+    },
+    {
+      "url": "/approvals/inbox",
+      "status": "PASS-EMPTY",
+      "counts": {"pending": 0, "approved_today": 0, "rejected_today": 0},
+      "filters": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "console_errors": [],
+      "network_errors": [],
+      "api_calls": [
+        "GET /api/v1/workflow/inbox/count -> 200",
+        "GET /api/v1/workflow/delegations/my -> 200",
+        "GET /api/v1/workflow/inbox?status=PENDING&page=0&size=20 -> 200"
+      ]
+    },
+    {
+      "url": "/approvals/history",
+      "status": "FAIL",
+      "notes": "Renders 404 'Page not found'. No frontend route exists (only /approvals and /approvals/inbox present in frontend/app/approvals)."
+    },
+    {
+      "url": "/approvals/delegations",
+      "status": "FAIL",
+      "notes": "Renders 404 'Page not found'. Backend endpoint /api/v1/workflow/delegations/my exists and returns 200, but no UI page."
+    }
+  ],
+  "flows": [
+    {
+      "name": "S1 step 10 — open pending approval task (view-only)",
+      "steps_passed": 0,
+      "steps_failed": 0,
+      "skipped": true,
+      "reason": "Team Lead inbox empty (0 pending) — no task to open. Lifecycle observation: workflow step routing did not produce a Team Lead approval task at time of run. Cannot capture workflow_step name without seed data."
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W9-01",
+      "severity": "P2",
+      "category": "ui",
+      "title": "/approvals/history route missing — 404",
+      "url": "http://localhost:3000/approvals/history",
+      "repro": [
+        "Login as Team Lead (Mani S)",
+        "Navigate to /approvals/history",
+        "Observe generic 404 Page not found"
+      ],
+      "evidence": "frontend/app/approvals contains only page.tsx + inbox/page.tsx; no history/page.tsx",
+      "file_hint": "frontend/app/approvals/history/page.tsx (missing)",
+      "impact": "Users cannot review past approval decisions from dedicated history view; history tab may be linked from notifications/emails producing 404s"
+    },
+    {
+      "id": "BUG-W9-02",
+      "severity": "P2",
+      "category": "ui",
+      "title": "/approvals/delegations route missing — 404 (API exists)",
+      "url": "http://localhost:3000/approvals/delegations",
+      "repro": [
+        "Login as Team Lead",
+        "Navigate to /approvals/delegations",
+        "Observe 404"
+      ],
+      "evidence": "Backend endpoint GET /api/v1/workflow/delegations/my returns 200 and is consumed by inbox page, but no dedicated delegations management page exists",
+      "file_hint": "frontend/app/approvals/delegations/page.tsx (missing)",
+      "impact": "Team Leads/Managers cannot configure out-of-office delegation through a dedicated UI; only inline 'Delegate' action on inbox exists"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "pass": 1,
+    "pass_empty": 1,
+    "fail": 2,
+    "skipped": 1
+  },
+  "rbac_note": "Team Lead filter check: inbox correctly shows 0 Pending with no drafts from other roles visible. No P1 RBAC leak observed (but no data to confirm positive filtering either — inbox empty)."
+}

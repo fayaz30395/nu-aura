@@ -143,8 +143,17 @@ public class AuthController {
             return ResponseEntity.badRequest().build();
         }
 
-        // Call authService.refresh() FIRST to get new tokens, THEN revoke the old token
-        AuthResponse authResponse = authService.refresh(refreshToken);
+        // Call authService.refresh() FIRST to get new tokens, THEN revoke the old token.
+        // If refresh fails (invalid/expired/revoked token), clear the stale cookie so the
+        // browser stops sending it on subsequent requests — otherwise the client loops on
+        // 401s with a dead cookie it cannot drop (httpOnly).
+        AuthResponse authResponse;
+        try {
+            authResponse = authService.refresh(refreshToken);
+        } catch (RuntimeException ex) {
+            clearAuthCookies(response);
+            throw ex;
+        }
 
         // Revoke the old refresh token after successful refresh
         tokenProvider.revokeToken(refreshToken);

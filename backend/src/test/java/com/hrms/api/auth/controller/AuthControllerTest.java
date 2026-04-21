@@ -199,6 +199,27 @@ class AuthControllerTest {
             mockMvc.perform(post("/api/v1/auth/refresh"))
                     .andExpect(status().isBadRequest());
         }
+
+        @Test
+        @DisplayName("BUG-W3-02: Should clear auth cookies when refresh fails so client drops stale httpOnly cookie")
+        void shouldClearCookiesOnRefreshFailure() throws Exception {
+            when(authService.refresh(anyString()))
+                    .thenThrow(new com.hrms.common.exception.AuthenticationException(
+                            "Invalid or expired refresh token"));
+
+            // No GlobalExceptionHandler in WebMvcTest slice → MockMvc rethrows.
+            // We still observe the controller having set clear-cookie headers on the response
+            // BEFORE rethrowing, which is exactly what we're asserting.
+            try {
+                mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("X-Refresh-Token", "revoked-or-expired-token"));
+            } catch (Exception expected) {
+                // expected — AuthenticationException propagates without a handler
+            }
+
+            verify(cookieConfig).createClearAccessTokenCookie();
+            verify(cookieConfig).createClearRefreshTokenCookie();
+        }
     }
 
     @Nested

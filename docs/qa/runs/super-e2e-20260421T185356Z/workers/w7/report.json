@@ -1,0 +1,29 @@
+{
+  "worker": "W7",
+  "role_tested": "Employee (Saran V)",
+  "tab_id": 1283664356,
+  "status": "INCONCLUSIVE",
+  "infrastructure_finding": {
+    "id": "BUG-W7-01",
+    "severity": "P2",
+    "category": "qa-infrastructure",
+    "title": "Parallel chrome-mcp workers share cookies — RBAC negative matrix cannot be run in parallel",
+    "description": "All worker tabs in the same Chrome browser profile share httpOnly JWT cookies for origin http://localhost:3000. When multiple workers log in as different roles in parallel, the last login wins and overrides all other sessions. Verified by calling /api/v1/auth/me from W7 tab (expected Saran V / Employee) and getting Fayaz M / SUPER_ADMIN response instead. This means role-specific RBAC worker shards (W7 Employee, and any similar) cannot run concurrently with higher-privilege workers; they produce false SUPER_ADMIN data leaks in every response.",
+    "recommendation": "Run RBAC negative matrix tests serially, or use separate Chrome profiles / incognito windows per worker, or drop cookies-based auth in favor of Authorization header per-request for test mode."
+  },
+  "rbac_matrix": [
+    {"url": "/employees", "result": "INCONCLUSIVE", "note": "Redirected to /dashboard on first attempt (looked like PASS), but /api/v1/auth/me returned SUPER_ADMIN role (cookie overridden by parallel worker). Cannot distinguish role enforcement from cookie hijack."},
+    {"url": "/payroll/runs", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."},
+    {"url": "/recruitment/jobs/new", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."},
+    {"url": "/admin/users", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."},
+    {"url": "/admin/roles", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."},
+    {"url": "/performance/reviews", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."},
+    {"url": "/helpdesk/tickets", "result": "NOT_TESTED", "note": "Skipped — session no longer Employee."}
+  ],
+  "pages": [
+    {"url": "/auth/login", "status": "PASS", "note": "Demo account card for Saran V (Employee) visible and clickable. POST /api/v1/auth/login returned 200 on login."},
+    {"url": "/dashboard", "status": "PASS_INITIAL", "note": "Immediately after Saran V login, sidebar showed Employee-appropriate items only: HOME, MY SPACE (Dashboard/Profile/Payslips/Attendance/Leaves/Documents), PEOPLE (Departments/Approvals), HR OPERATIONS (Shift/Leave/Contracts), PROJECTS & WORK (Calendar), ADMIN (Workflows). No Employees list, no Payroll, no System Admin. After ~30s, parallel worker cookie override caused sidebar to expand to full admin menu (Employees, Payroll, System Admin, Organization Setup, etc.)."}
+  ],
+  "bugs_filed": [],
+  "summary": "Login worked. First-navigation /employees redirected back to /dashboard (apparent PASS) but within seconds, shared-cookie override from parallel workers replaced Saran V's session with SUPER_ADMIN. /api/v1/auth/me confirmed identity flip to Fayaz M. RBAC negative matrix cannot be validly executed under the current parallel worker design — flagged as infrastructure issue BUG-W7-01."
+}

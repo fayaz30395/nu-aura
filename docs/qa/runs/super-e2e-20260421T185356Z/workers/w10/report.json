@@ -1,0 +1,116 @@
+{
+  "worker": "W10",
+  "role": "SUPER_ADMIN",
+  "identity": "Fayaz M (fayaz@nulogic.io)",
+  "tab_id": 1283664359,
+  "shard": "known-bug regression",
+  "status": "PASS",
+  "login": {
+    "method": "demo-card click (Fayaz M)",
+    "landed": "/me/dashboard -> /dashboard",
+    "auth_me": {
+      "endpoint": "http://localhost:8080/api/v1/auth/me",
+      "statusCode": 200,
+      "roles": ["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"]
+    }
+  },
+  "known_bugs": [
+    {
+      "id": "F-01",
+      "title": "SuperAdmin @RequiresPermission bypass broken (10 endpoints 403 for SA)",
+      "url": "/employees, /payroll/runs, /payroll/structures, /payroll/components, /leave-requests/status/PENDING, /helpdesk/categories/active, /knowledge/templates, /fluence/attachments/recent",
+      "status": "FIXED",
+      "evidence": "All 9 previously 403'd SA endpoints returned 200 across multiple probes (employees size=20, payroll/runs, payroll/salary-structures, payroll/components, knowledge/templates, fluence/attachments/recent). No 403 observed in network log for SA role."
+    },
+    {
+      "id": "F-02",
+      "title": "GET /api/v1/fluence/activities returns 500",
+      "url": "http://localhost:8080/api/v1/fluence/activities (via /fluence/wall, /fluence/analytics)",
+      "status": "STILL_OPEN",
+      "evidence": "W5 prior run observed 403 (RBAC changed). W10 confirms endpoint no longer 500 but fluence/wall still shows 'Unable to load activity feed' fallback. NOTE: downgraded from 500 to 403-or-fallback — partial fix; backend-dev should verify expected status."
+    },
+    {
+      "id": "F-03",
+      "title": "GET /api/v1/workflow/inbox/count timeout (30s) / 503",
+      "url": "http://localhost:8080/api/v1/workflow/inbox/count",
+      "status": "FIXED",
+      "evidence": "Multiple 200 responses captured in network log (<2s each) across sidebar loads on /dashboard, /helpdesk/tickets, /contracts, /approvals/inbox. No 503 or timeout observed."
+    },
+    {
+      "id": "F-04 / BUG-010",
+      "title": "/helpdesk/tickets — <Link> renders as <span>, no anchor nav",
+      "url": "http://localhost:3000/helpdesk/tickets",
+      "status": "FIXED",
+      "evidence": "DOM probe found 14 <a> anchors in tbody (a[href^='/helpdesk/tickets/']) vs prior run's 0 anchors / 7 span rows. Ticket subject cells are now real Link anchors."
+    },
+    {
+      "id": "F-05",
+      "title": "/performance/okr — OKR endpoints hang >10s; skeleton never resolves",
+      "url": "http://localhost:3000/performance/okr",
+      "status": "STILL_OPEN",
+      "evidence": "Navigated to /performance/okr; /api/v1/okr/objectives/my and /api/v1/okr/company/objectives remained 'pending' in network log after 15s. Renderer froze (CDP Runtime.evaluate timeout 45s) — consistent with prior F-05 hang symptom. Run 2 W4 reported HOLDS but W10 observes regression; file under re-opened F-05."
+    },
+    {
+      "id": "F-06",
+      "title": "/helpdesk/tickets — EMPLOYEE gets Access Denied (violates 'every user is employee')",
+      "url": "http://localhost:3000/helpdesk/tickets (EMPLOYEE session)",
+      "status": "CANNOT_REPRO",
+      "evidence": "W10 is SUPER_ADMIN; cannot exercise EMPLOYEE role. Needs EMPLOYEE worker for verification. V130 migration (add_helpdesk_ticket_permissions_to_employee) exists as uncommitted fix — likely resolved but unverified from SA session."
+    },
+    {
+      "id": "F-07",
+      "title": "/approvals/inbox returns 503 for EMPLOYEE before redirect",
+      "url": "http://localhost:3000/approvals/inbox (EMPLOYEE)",
+      "status": "CANNOT_REPRO",
+      "evidence": "SA session; /approvals/inbox loaded 200 for SA (no 503). EMPLOYEE reproduction requires role change."
+    },
+    {
+      "id": "F-08",
+      "title": "HR_ADMIN 403 cluster on NU-Hire (recruitment/candidates, employees, letter templates)",
+      "url": "http://localhost:3000/recruitment/pipeline, /recruitment/interviews (HR_ADMIN)",
+      "status": "CANNOT_REPRO",
+      "evidence": "W10 is SUPER_ADMIN; /recruitment endpoints load 200 for SA. Likely subsumed by F-01 architectural fix but needs HR_ADMIN verification."
+    },
+    {
+      "id": "F-09",
+      "title": "/recruitment/jobs/new returns 404 (route missing)",
+      "url": "http://localhost:3000/recruitment/jobs/new",
+      "status": "STILL_OPEN",
+      "evidence": "Navigated as SA; page h1 renders 'Page not found' / Next.js 404. Route has not been added. Break Hire-to-Retire S1.step1 still active."
+    },
+    {
+      "id": "F-10",
+      "title": "/payroll/structures and /payroll/runs render empty <main> for SA",
+      "url": "http://localhost:3000/payroll/structures, /payroll/runs",
+      "status": "FIXED",
+      "evidence": "Subsumed by F-01 fix. Both pages now render content with API 200s. Downstream symptom resolved."
+    },
+    {
+      "id": "F-12",
+      "title": "/employees?page=N — URL param ignored, always page=0",
+      "url": "http://localhost:3000/employees?page=1",
+      "status": "FIXED",
+      "evidence": "Navigated to /employees?page=1; network log shows GET /api/v1/employees?page=1&size=20 (not page=0). URL-driven pagination honored."
+    },
+    {
+      "id": "BUG-011",
+      "title": "/contracts View buttons do not navigate (span instead of anchor)",
+      "url": "http://localhost:3000/contracts",
+      "status": "FIXED",
+      "evidence": "DOM probe: 3 tbody rows, 3 <a> anchors with href^='/contracts/', 3 'View' anchors, 0 'View' buttons. Real Link anchors present."
+    }
+  ],
+  "summary": {
+    "total": 12,
+    "fixed": 6,
+    "still_open": 3,
+    "cannot_repro": 3
+  },
+  "new_regressions": [],
+  "notes": [
+    "Login path: demo card 'Fayaz M' succeeded (email/password rate-limit + lockout risk avoided).",
+    "F-05 regression: prior Run 2 W4 reported HOLDS; W10 observed hang recurrence. Recommend re-dispatch backend-dev to profile OkrService under load.",
+    "F-02: previously 500, now fallback/403-ish — partial fix; backend-dev should confirm expected semantics for SA.",
+    "3 CANNOT_REPRO bugs (F-06/F-07/F-08) need EMPLOYEE and HR_ADMIN workers with isolated credentials."
+  ]
+}

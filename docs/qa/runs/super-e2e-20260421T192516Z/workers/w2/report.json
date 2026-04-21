@@ -1,0 +1,87 @@
+{
+  "worker": "W2",
+  "tab_id": 1283664351,
+  "role": "RECRUITMENT_ADMIN",
+  "email": "suresh@nulogic.io",
+  "started_at": "2026-04-21T19:25:16Z",
+  "pages_tested": 10,
+  "session_checks": [
+    {"after_page": "/assets (init)", "status": "OK", "email": "suresh@nulogic.io"},
+    {"after_page": "/overtime (3rd)", "status": "OK", "email": "suresh@nulogic.io"},
+    {"after_page": "/contracts (10th)", "status": "OK", "email": "suresh@nulogic.io"}
+  ],
+  "results": [
+    {
+      "page": "/assets",
+      "status": "PASS-DENIED",
+      "notes": "Page renders empty-state; backend GET /api/v1/assets returns 403 for RECRUITMENT_ADMIN. UI does NOT show Access Denied gate — instead shows empty state with 'Add Asset' CTA (see BUG-W2-02).",
+      "api_errors": ["GET /assets 403"],
+      "console_errors": 2
+    },
+    {
+      "page": "/shifts",
+      "status": "PASS-DENIED",
+      "notes": "Proper Access Denied gate rendered. RECRUITMENT_ADMIN correctly refused.",
+      "api_errors": ["GET /shifts/team-schedule 403", "GET /shifts/active 403"]
+    },
+    {
+      "page": "/holidays",
+      "status": "PASS",
+      "notes": "Full holiday calendar renders (10 holidays, 8 national, 2 festival). Page accessible to RECRUITMENT_ADMIN as expected (HOLIDAY:VIEW is shared perm)."
+    },
+    {
+      "page": "/overtime",
+      "status": "PASS-DENIED",
+      "notes": "Page renders with 'Request Overtime' CTA and tabs, but backend returns 403. See BUG-W2-03 — inconsistent gating.",
+      "api_errors": ["GET /overtime 403"]
+    },
+    {
+      "page": "/travel",
+      "status": "PASS-DENIED",
+      "notes": "Proper Access Denied gate rendered. First nav attempt caused renderer hang/timeout (recovered after re-nav); possible transient issue.",
+      "api_errors": ["GET /travel/requests 403"]
+    },
+    {
+      "page": "/loans",
+      "status": "PASS-DENIED",
+      "notes": "Proper Access Denied gate rendered.",
+      "api_errors": ["GET /loans/my 403"]
+    },
+    {
+      "page": "/probation",
+      "status": "PASS-EMPTY",
+      "notes": "Probation page renders with empty state. Backend returns 200 (probation is shared HR read). Tabs: Active/Upcoming/History."
+    },
+    {
+      "page": "/letters",
+      "status": "PASS",
+      "notes": "Letter Generation page renders with templates dropdown (22 letter types) and empty state. Full UI."
+    },
+    {
+      "page": "/orgchart",
+      "status": "FAIL",
+      "notes": "HARD 404 — Next.js not-found.tsx rendered. Route does not exist in frontend. See BUG-W2-01."
+    },
+    {
+      "page": "/contracts",
+      "status": "PASS-DENIED",
+      "notes": "Page renders UI with 'New Contract' CTA despite backend 403. See BUG-W2-04.",
+      "api_errors": ["GET /contracts 403"]
+    }
+  ],
+  "bugs_logged": ["BUG-W2-01", "BUG-W2-02", "BUG-W2-03", "BUG-W2-04"],
+  "summary": {
+    "pass": 2,
+    "pass_empty": 1,
+    "pass_denied": 6,
+    "fail": 1,
+    "total": 10
+  },
+  "common_console_errors": [
+    "WebSocket Authentication required for WebSocket connections (attempts 1-5)",
+    "GET /workflow/inbox/count timeout of 30000ms exceeded",
+    "Repeated 403 errors on HR-ops resources (expected for role)"
+  ],
+  "session_integrity": "STABLE — verified 3x, no flip",
+  "finished_at": "2026-04-21T19:37:00Z"
+}

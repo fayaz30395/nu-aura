@@ -1,0 +1,143 @@
+{
+  "worker": "W8",
+  "role": "SuperAdmin",
+  "tab_id": 1283664357,
+  "started_at": "2026-04-22T00:28:00Z",
+  "finished_at": "2026-04-22T00:35:00Z",
+  "demo_account": "Fayaz M",
+  "flows": [
+    {
+      "name": "Leave apply workflow",
+      "url": "http://localhost:3000/leave/apply",
+      "status": "PASS",
+      "steps_passed": 5,
+      "steps_failed": 0,
+      "steps": [
+        "Navigate to /leave/apply - form rendered",
+        "Leave Type combobox present (ref_144)",
+        "Start date filled 2026-05-01",
+        "End date filled 2026-05-02",
+        "Reason textarea filled 'E2E-W8 test reason'",
+        "Cancel clicked to avoid persistence"
+      ],
+      "notes": "Form fields all render. 'Total Days Requested: 0 days' did not update client-side after filling dates — potential UI bug (BUG-W8-03, P2).",
+      "bugs": ["BUG-W8-03"]
+    },
+    {
+      "name": "Attendance check-in",
+      "url": "http://localhost:3000/me/attendance",
+      "status": "PASS",
+      "steps_passed": 2,
+      "steps_failed": 0,
+      "steps": [
+        "Navigate to /me/attendance - page loaded",
+        "Today's Status heading present (ref_143) with 'No attendance record for today'",
+        "Check In button present (ref_145) - did NOT click to avoid persistent data"
+      ],
+      "notes": "Widget visible & interactive. Not clicked per instructions.",
+      "bugs": []
+    },
+    {
+      "name": "Wiki create page",
+      "url": "http://localhost:3000/fluence/wiki",
+      "status": "FAIL",
+      "steps_passed": 2,
+      "steps_failed": 2,
+      "steps": [
+        "Navigate to /fluence/wiki - page loaded",
+        "Found 'New Page' button (ref_69) and 'Create Page' (ref_72)",
+        "Click New Page - no visible modal/route change (FAIL)",
+        "Click Create Page - still no title input rendered (FAIL)"
+      ],
+      "notes": "BUG-W8-01 P1: Both 'New Page' and 'Create Page' buttons on /fluence/wiki do not open a create form (no dialog, no route change). Likely requires a Space to be selected first but no affordance is surfaced. Blocks wiki page creation flow.",
+      "bugs": ["BUG-W8-01"]
+    },
+    {
+      "name": "Expense submit (S2 lifecycle)",
+      "url": "http://localhost:3000/expenses/reports",
+      "status": "FAIL",
+      "steps_passed": 1,
+      "steps_failed": 1,
+      "steps": [
+        "Navigate to /expenses/reports - URL resolved",
+        "main.innerText is empty after 10s wait - page content not rendering (FAIL)"
+      ],
+      "notes": "BUG-W8-02 P1: /expenses/reports renders empty main element. No vendor/amount form available — likely backend timeouts (see BUG-W8-04) cascade or route has broken data fetch.",
+      "bugs": ["BUG-W8-02"]
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W8-01",
+      "severity": "P1",
+      "category": "ui",
+      "title": "Wiki /fluence/wiki New Page & Create Page buttons no-op",
+      "url": "http://localhost:3000/fluence/wiki",
+      "repro": [
+        "Login as SuperAdmin",
+        "Navigate to /fluence/wiki",
+        "Click 'New Page' or 'Create Page' button",
+        "Expected: modal or navigation to page editor with title + content fields",
+        "Actual: no visible state change; no dialog/editor appears"
+      ],
+      "evidence": "read_page returned no dialog/title input after click",
+      "detected_at": "2026-04-22T00:34:00Z"
+    },
+    {
+      "id": "BUG-W8-02",
+      "severity": "P1",
+      "category": "ui",
+      "title": "/expenses/reports main content empty — page does not render",
+      "url": "http://localhost:3000/expenses/reports",
+      "repro": [
+        "Login as SuperAdmin",
+        "Navigate to /expenses/reports",
+        "Wait 10s",
+        "Expected: expense reports list + 'New Expense Report' button",
+        "Actual: document.querySelector('main').innerText === ''"
+      ],
+      "evidence": "javascript_tool returned 'empty' for main.innerText",
+      "detected_at": "2026-04-22T00:35:00Z"
+    },
+    {
+      "id": "BUG-W8-03",
+      "severity": "P2",
+      "category": "ui",
+      "title": "Leave apply 'Total Days Requested' does not update after dates filled",
+      "url": "http://localhost:3000/leave/apply",
+      "repro": [
+        "Navigate to /leave/apply",
+        "Set Start Date 2026-05-01 and End Date 2026-05-02 via form_input",
+        "Expected: 'Total Days Requested: 2 days' (or 1 day incl. end)",
+        "Actual: remains '0 days' (may be missing change-event dispatch on programmatic input, or react-hook-form not rebinding)"
+      ],
+      "evidence": "ref_154 text '0 days' post-input",
+      "detected_at": "2026-04-22T00:32:00Z"
+    },
+    {
+      "id": "BUG-W8-04",
+      "severity": "P1",
+      "category": "perf",
+      "title": "Multiple /api/v1 endpoints time out at 30s",
+      "url": "http://localhost:3000/dashboard (global)",
+      "endpoint": "GET /notifications/unread, /notifications/unread/count, /workflow/inbox/count, /analytics/dashboard",
+      "http_status": 0,
+      "repro": [
+        "Open any authenticated page",
+        "Open console -> observe 4x [ApiClient] Error: timeout of 30000ms exceeded"
+      ],
+      "evidence": "console messages at 00:32:12 (4 timeouts)",
+      "detected_at": "2026-04-22T00:32:12Z"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "pass": 2,
+    "fail": 2,
+    "skipped": 0,
+    "bugs_found": 4,
+    "bugs_p0": 0,
+    "bugs_p1": 3,
+    "bugs_p2": 1
+  }
+}

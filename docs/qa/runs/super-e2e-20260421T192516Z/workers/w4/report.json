@@ -1,0 +1,28 @@
+{
+  "worker": "w4",
+  "role": "HR_MANAGER",
+  "account": "jagadeesh@nulogic.io",
+  "tab_id": 1283664353,
+  "run_dir": "docs/qa/runs/super-e2e-20260421T192516Z",
+  "session_verified_initial": true,
+  "session_verified_mid": true,
+  "session_flipped": false,
+  "pages_tested": 7,
+  "results": [
+    {"route":"/performance","status":"PASS","notes":"Hub rendered with 10 tiles. Stats populated (Active Goals=4, Progress=62%). APIs /goals, /review-cycles/active, /okr/dashboard/summary, /feedback360/my-pending-reviews = 200. No errors."},
+    {"route":"/performance/reviews","status":"PASS","notes":"Review list rendered with SELF + MANAGER DRAFT cards. Filters present. /reviews/employee/{id} resolved. No errors."},
+    {"route":"/performance/okr","status":"PASS-EMPTY","notes":"OKR page rendered with New Objective CTA, My Objectives(0). APIs /okr/objectives/my and /okr/company/objectives fired."},
+    {"route":"/performance/360","status":"FAIL","bug_id":"W4-BUG-001","notes":"Frontend route missing, 404 page rendered."},
+    {"route":"/performance/training","status":"FAIL","bug_id":"W4-BUG-002","notes":"Frontend route missing, 404 page rendered."},
+    {"route":"/performance/surveys","status":"FAIL","bug_id":"W4-BUG-003","notes":"Frontend route missing, 404 page rendered."},
+    {"route":"/performance/recognition","status":"FAIL","bug_id":"W4-BUG-004","notes":"Frontend route missing, 404 page rendered."}
+  ],
+  "summary": {"pass":2,"pass_empty":1,"fail":4,"bugs_logged":5},
+  "bugs": [
+    "W4-BUG-001 P1 /performance/360 404",
+    "W4-BUG-002 P1 /performance/training 404",
+    "W4-BUG-003 P1 /performance/surveys 404",
+    "W4-BUG-004 P1 /performance/recognition 404",
+    "W4-BUG-005 P2 4/7 NU-Grow sidebar links broken (aggregate)"
+  ]
+}

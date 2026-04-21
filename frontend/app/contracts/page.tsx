@@ -63,6 +63,7 @@ export default function ContractsPage() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
+      <PermissionGate permission={Permissions.CONTRACT_VIEW}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -211,6 +212,7 @@ export default function ContractsPage() {
           </div>
         )}
       </div>
+      </PermissionGate>
     </AppLayout>
   );
 }

@@ -1,0 +1,77 @@
+{
+  "worker": "W3",
+  "tab_id": 1283664352,
+  "role": "RECRUITMENT_ADMIN",
+  "user": "suresh@nulogic.io",
+  "roles_verified": ["RECRUITMENT_ADMIN", "REPORTING_MANAGER"],
+  "session_flip_detected": false,
+  "session_flip_note": "Backend /auth/me always returned suresh@nulogic.io with RECRUITMENT_ADMIN across checks. However frontend middleware bounced to /auth/login despite valid session, triggered by repeated POST /auth/refresh 401.",
+  "pages_tested": [
+    {
+      "path": "/recruitment",
+      "status": "PASS",
+      "note": "Loaded; APIs job-openings, departments, employees all 200. /auth/refresh 401 observed (non-blocking on initial render)."
+    },
+    {
+      "path": "/recruitment/jobs",
+      "status": "FAIL",
+      "note": "First nav redirected to /auth/login. Re-nav reached URL but rendered 'Access Denied - You don't have permission to access this page' while backend APIs for recruitment returned 200. BUG-W3-01 P1."
+    },
+    {
+      "path": "/recruitment/candidates",
+      "status": "FAIL-BLOCKED",
+      "note": "Navigation triggered but renderer froze (CDP Runtime.evaluate timeout 45s). BUG-W3-03. Page state unverified."
+    },
+    {
+      "path": "/recruitment/pipeline",
+      "status": "SKIPPED",
+      "note": "Tab renderer frozen; skipped to avoid wasted time. Same frontend RBAC guard as /jobs likely blocks this page too."
+    },
+    {
+      "path": "/recruitment/agencies",
+      "status": "SKIPPED",
+      "note": "Tab renderer frozen; skipped."
+    },
+    {
+      "path": "/recruitment/interviews",
+      "status": "SKIPPED",
+      "note": "Tab renderer frozen; skipped. GET /recruitment/interviews?page=0&size=100 returned 200 in network log, so likely loadable."
+    },
+    {
+      "path": "/onboarding",
+      "status": "SKIPPED",
+      "note": "Tab renderer frozen; skipped."
+    }
+  ],
+  "api_summary": {
+    "200_endpoints": [
+      "/api/v1/auth/me",
+      "/api/v1/notifications/unread",
+      "/api/v1/notifications/unread/count",
+      "/api/v1/workflow/inbox/count",
+      "/api/v1/recruitment/job-openings?page=0&size=100",
+      "/api/v1/recruitment/candidates?page=0&size=100",
+      "/api/v1/recruitment/job-openings/status/OPEN?size=1000",
+      "/api/v1/recruitment/interviews?page=0&size=100",
+      "/api/v1/departments/active",
+      "/api/v1/employees?page=0&size=100&sortBy=createdAt&sortDirection=DESC"
+    ],
+    "401_endpoints": ["POST /api/v1/auth/refresh (loops every ~minute)"],
+    "500_endpoints": [],
+    "403_endpoints": []
+  },
+  "console_errors": [
+    "POST /auth/refresh 401 (x5 during session)",
+    "GET /notifications/unread timeout 30000ms (one-off)",
+    "GET /notifications/unread/count timeout 30000ms (one-off)",
+    "GET /workflow/inbox/count timeout 30000ms (one-off)"
+  ],
+  "bugs_filed": ["BUG-W3-01", "BUG-W3-02", "BUG-W3-03"],
+  "totals": {
+    "pass": 1,
+    "pass_empty": 0,
+    "fail": 2,
+    "skipped": 4
+  },
+  "completed_at": "2026-04-22T00:33:00Z"
+}
