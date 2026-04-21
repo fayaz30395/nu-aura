@@ -1,0 +1,74 @@
+{
+  "worker": "W3",
+  "role": "HR_ADMIN",
+  "tab_id": 1283664289,
+  "started_at": "2026-04-21T17:54:52Z",
+  "finished_at": "2026-04-21T18:02:30Z",
+  "pages": [],
+  "flows": [],
+  "bugs": [
+    {
+      "bug_id": "BUG-W3-1",
+      "worker": "W3",
+      "tab_id": 1283664289,
+      "severity": "P1",
+      "category": "api",
+      "title": "HR_ADMIN + fayaz fallback login failing — Password@123 in original contract is wrong (actual is Welcome@123)",
+      "url": "http://localhost:3000/auth/login",
+      "endpoint": "POST /api/v1/auth/login",
+      "http_status": 401,
+      "repro": [
+        "Follow WORKER_CONTRACT.md original (pre-edit) credentials: Password@123",
+        "POST /api/v1/auth/login hradmin@nulogic.io -> 401",
+        "POST /api/v1/auth/login fayaz@nulogic.io -> 401",
+        "Contract later edited mid-run: correct password is Welcome@123"
+      ],
+      "evidence": "bugs.jsonl",
+      "detected_at": "2026-04-21T17:58:50Z"
+    },
+    {
+      "bug_id": "BUG-W3-2",
+      "worker": "W3",
+      "tab_id": 1283664289,
+      "severity": "P1",
+      "category": "api",
+      "title": "Auth rate limit (5/min) shared bucket trips under parallel worker login storm despite W_INDEX*12s stagger (36s for W3)",
+      "url": "http://localhost:3000/auth/login",
+      "endpoint": "POST /api/v1/auth/login",
+      "http_status": 429,
+      "repro": [
+        "10 workers stagger logins at W_INDEX*12s intervals (0,12,24,36,48,60,72,84,96,108)",
+        "Multiple POSTs land in same 60s window -> 429 returned",
+        "Forces 65s+ cooldown then re-attempt"
+      ],
+      "evidence": "network log: 3x 429 responses in short span",
+      "detected_at": "2026-04-21T17:55:30Z"
+    },
+    {
+      "bug_id": "BUG-W3-3",
+      "worker": "W3",
+      "tab_id": 1283664289,
+      "severity": "P2",
+      "category": "api",
+      "title": "Account lockout (423 Locked) triggered on hradmin@nulogic.io after mixed failed attempts",
+      "url": "http://localhost:3000/auth/login",
+      "endpoint": "POST /api/v1/auth/login",
+      "http_status": 423,
+      "repro": [
+        "3 failed Password@123 attempts + subsequent Welcome@123 attempt -> 423 Locked",
+        "AccountLockoutService: 5 attempts / 15min window hit",
+        "Shard cannot proceed until 15min lockout expires"
+      ],
+      "evidence": "network log entry #9 returned 423",
+      "detected_at": "2026-04-21T18:02:10Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 8,
+    "shard_status": "FAILED_LOGIN"
+  },
+  "notes": "Shard aborted per WORKER_CONTRACT rule 7 (login fails 2x -> FAILED). Root-cause cascade: (1) initial contract specified Password@123; actual password is Welcome@123 (contract was edited mid-run to correct). (2) W3 stagger (36s) + concurrent worker auth storm tripped the shared 5/min rate limit (429). (3) Multiple 401 attempts with wrong password triggered account lockout (423 Locked on hradmin@nulogic.io). Regression probes NOT executed: /recruitment, /recruitment/jobs, /recruitment/jobs/new (F-09 404 check), /recruitment/candidates (F-08 403 cluster), /recruitment/pipeline, /recruitment/agencies, /recruitment/interviews, /onboarding. API regression checks (candidates / letters templates / employees) also skipped. Fix forward: (a) broadcast credential update to all workers before launch; (b) widen auth rate limit or increase per-worker stagger >20s; (c) clear hradmin@nulogic.io lockout in Redis (AccountLockoutService key) before rerunning W3."
+}

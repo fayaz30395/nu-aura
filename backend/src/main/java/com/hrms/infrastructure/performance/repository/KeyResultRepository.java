@@ -15,6 +15,13 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, UUID> {
 
     List<KeyResult> findAllByObjectiveId(UUID objectiveId);
 
+    /**
+     * Batch-fetch key results for many objectives in a single query to avoid N+1.
+     * Used by OKR list endpoints (my objectives / company objectives).
+     */
+    @Query("SELECT kr FROM KeyResult kr WHERE kr.objectiveId IN :objectiveIds ORDER BY kr.weight DESC")
+    List<KeyResult> findAllByObjectiveIdIn(@Param("objectiveIds") List<UUID> objectiveIds);
+
     List<KeyResult> findAllByTenantIdAndOwnerId(UUID tenantId, UUID ownerId);
 
     Optional<KeyResult> findByIdAndTenantId(UUID id, UUID tenantId);

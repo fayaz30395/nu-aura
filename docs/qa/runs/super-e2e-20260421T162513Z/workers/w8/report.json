@@ -1,0 +1,48 @@
+{
+  "worker": "W8",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664294,
+  "user": "fayaz.m@nulogic.io (Fayaz M — SUPER ADMIN)",
+  "flows": [
+    {
+      "name": "WF-1 Leave Apply",
+      "url": "/leave/apply",
+      "status": "PASS",
+      "notes": "Apply for Leave form renders with all required fields: Leave Type (select) *, Start Date *, End Date *, Half Day toggle, Reason * (textarea), Submit Leave Request + Cancel buttons. Heading 'Apply for Leave' present. 6 input/select/textarea controls detected. No console errors. Form not submitted (no real data created)."
+    },
+    {
+      "name": "WF-2 Attendance",
+      "url": "/attendance",
+      "status": "PASS",
+      "notes": "Attendance page rendered with LIVE TIME clock, NOT STARTED state, 'CHECK IN' card + 'Check In' button visible (button NOT clicked to avoid creating real attendance record). Dashboard shows AVG IN, AVG HRS, Present/Absent counters, Upcoming Holidays, This Week summary. Greeting 'Good Evening, Fayaz · Tuesday, April 21, 2026'. No console errors."
+    },
+    {
+      "name": "WF-3 Wiki Create",
+      "url": "/fluence/wiki/new",
+      "status": "PASS",
+      "notes": "Wiki new-page editor rendered. Title input with 'Untitled' placeholder present. Editor slash-command hint 'Type / for commands · Select text for formatting' visible. Toolbar buttons: Draft, Organization, Preview, Save Draft, Publish. Tiptap editor container detected via 5 editor/prose divs. No console errors. Page not saved/published."
+    },
+    {
+      "name": "WF-4 Expense",
+      "url": "/expenses",
+      "status": "PASS",
+      "notes": "Expense Claims page renders with header 'Expense Claims — Submit and manage your expense claims', 'New Claim' button (x2 — header + empty state CTA), 4 stat cards (Pending, Approved, Pending Amount ₹0.00, Total Claims), tabs (My Claims / Pending Approval / All Claims / Analytics), Filters control, empty state 'No Expense Claims — Submit your first expense claim'. Backend API /api/v1/expenses slow-loading (pending) but UI chrome rendered correctly."
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0
+  },
+  "console_observations": [
+    "Non-critical: GET /notifications/unread, /notifications/unread/count, /workflow/inbox/count — 30s timeout (backend load from parallel workers). Not blocking for workflow pages."
+  ],
+  "rules_honored": [
+    "No form submissions (no real leave applied)",
+    "Check-in button NOT clicked (no real attendance record created)",
+    "Wiki not saved/published",
+    "No expense claim created",
+    "Stayed on tab 1283664294 throughout"
+  ],
+  "timestamp": "2026-04-21T22:07:00Z"
+}

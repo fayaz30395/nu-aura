@@ -1,0 +1,140 @@
+{
+  "worker": "W4",
+  "role": "HR_MANAGER",
+  "tab_id": 1283664290,
+  "shard": "NU-Grow",
+  "started_at": "2026-04-21T16:25:49Z",
+  "credentials": "jagadeesh@nulogic.io",
+  "login": {
+    "status": "PASS",
+    "method": "email/password via email login form",
+    "landing": "/me/dashboard",
+    "notes": "Required multiple submits; eventually React form accepted native setter + input event dispatch"
+  },
+  "pages": [
+    {
+      "path": "/performance",
+      "status": "PASS",
+      "heading": "Performance Management",
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok",
+      "notes": "Performance Hub landing renders, sidebar active"
+    },
+    {
+      "path": "/performance/reviews",
+      "status": "PASS",
+      "heading": "Performance Reviews",
+      "api_calls": ["/api/v1/reviews/employee/{id}"],
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok_with_data",
+      "notes": "Cycles NOT present — page lists individual Review records (SELF DRAFT, MANAGER DRAFT for 01/07/2026-30/09/2026). S4 'cycles list' expectation not met: no review cycles UI; only per-employee reviews. Finding: no cycles-management view at /performance/reviews."
+    },
+    {
+      "path": "/performance/okr",
+      "status": "FAIL",
+      "heading": null,
+      "api_calls": [
+        "/api/v1/okr/objectives/my (GET pending/hanging)",
+        "/api/v1/okr/company/objectives (GET pending/hanging)"
+      ],
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "stuck_on_skeleton_loader",
+      "notes": "OKR tree does NOT render. Main element stays at innerHTML length 4159 (skeleton-aura placeholders). Both OKR GET endpoints remain pending >10s — slow or unresponsive backend endpoints. S11 OKR tree check FAILED."
+    },
+    {
+      "path": "/performance/360-feedback",
+      "status": "PASS",
+      "heading": "360-Degree Feedback",
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok_empty_state",
+      "notes": "Multi-rater feedback UI renders. Empty state: 'No feedback cycles' — CTA 'Create a new 360-degree feedback cycle to get started.' Tabs: Feedback Cycles (0), Pending Reviews (0), My Results (0)"
+    },
+    {
+      "path": "/training",
+      "status": "PASS",
+      "heading": "Training Programs",
+      "api_calls": [
+        "/api/v1/training/programs?page=0&size=20 (200)",
+        "/api/v1/training/enrollments/employee/{id} (200)"
+      ],
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok_empty_data",
+      "notes": "Tabs: My Trainings, Course Catalog, Manage Programs, Growth Roadmap. Counters all 0. Renders after ~5-7s wait."
+    },
+    {
+      "path": "/surveys",
+      "status": "PASS",
+      "heading": "Employee Surveys",
+      "api_calls": ["/api/v1/survey-management?page=0&size=20 (200)"],
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok_empty_data",
+      "notes": "Counters Total/Active/Drafts/Completed/Responses all 0. Filters: Status (Draft/Active/Paused/Completed/Archived) + Type (Engagement/Satisfaction/Pulse/Exit/Feedback/Custom). Render latency ~5-7s."
+    },
+    {
+      "path": "/recognition",
+      "status": "PASS",
+      "heading": "Employee Recognition",
+      "api_calls": [
+        "/api/v1/recognition/feed?page=0&size=20 (200)",
+        "/api/v1/recognition/received (200)",
+        "/api/v1/recognition/given (200)",
+        "/api/v1/recognition/leaderboard?limit=5 (200)",
+        "/api/v1/recognition/points (200)"
+      ],
+      "console_errors": 0,
+      "network_4xx_5xx": 0,
+      "classification": "render_ok_empty_data",
+      "notes": "Tabs: Public Feed, Received, Given, Top Contributors, Quick Recognize. Award types: Kudos, Appreciation, Achievement, Spot Award. All metrics = 0."
+    }
+  ],
+  "step3_lightweight": {
+    "S4_performance_reviews_cycles": {
+      "status": "NOT_APPLICABLE",
+      "notes": "Page renders individual reviews, not cycles. No cycle list UI observed at /performance/reviews. No cycle-creation was attempted (rules: no create)."
+    },
+    "S11_okr_tree": {
+      "status": "FAIL",
+      "notes": "OKR tree never rendered; page stuck on skeleton loader because /api/v1/okr/objectives/my and /api/v1/okr/company/objectives GET requests remain pending."
+    }
+  },
+  "findings": [
+    {
+      "id": "W4-F1",
+      "severity": "HIGH",
+      "page": "/performance/okr",
+      "title": "OKR page stuck on skeleton loader — both OKR endpoints hang as pending",
+      "details": "GET /api/v1/okr/objectives/my and GET /api/v1/okr/company/objectives never return (status pending beyond 10s). UI never exits skeleton-aura placeholder state. No OKR tree rendered. No console errors. Suggests backend OKRController is slow, blocked, or has a long-running query for HR_MANAGER role."
+    },
+    {
+      "id": "W4-F2",
+      "severity": "LOW",
+      "page": "/performance/reviews",
+      "title": "Cycles list is not exposed on this route",
+      "details": "Reviews page lists reviews per employee, not cycles. If cycles management is a separate feature, it is not linked from /performance/reviews. This may be by design but conflicts with the S4 task expectation of a 'cycles list'."
+    },
+    {
+      "id": "W4-F3",
+      "severity": "INFO",
+      "page": "multiple NU-Grow pages",
+      "title": "Long skeleton-loader time (~5-7s) on first paint",
+      "details": "Surveys, Training, Recognition all require 5-7 seconds before content replaces skeleton. OPTIONS/CORS preflight + cold-start Spring endpoint latency suspected. Not a failure, but affects perceived performance."
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "pass": 6,
+    "fail": 1,
+    "not_applicable": 0,
+    "console_errors_total": 0,
+    "network_4xx_5xx_total": 0,
+    "pending_api_calls": 2,
+    "notes": "6/7 pages render correctly. /performance/okr fails due to hanging OKR backend endpoints. No console errors or 4xx/5xx network responses anywhere. Login succeeded as jagadeesh@nulogic.io (HR_MANAGER)."
+  },
+  "finished_at": "2026-04-21T16:34:30Z"
+}

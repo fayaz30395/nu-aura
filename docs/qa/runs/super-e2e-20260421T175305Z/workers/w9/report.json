@@ -1,0 +1,62 @@
+{
+  "worker": "W9",
+  "role": "MULTI (TEAM_LEAD, HR_MANAGER, HR_ADMIN)",
+  "tab_id": 1283664295,
+  "started_at": "2026-04-21T17:54:17Z",
+  "finished_at": "2026-04-21T23:33:00Z",
+  "pages": [
+    {
+      "url": "/approvals/inbox",
+      "role": "TEAM_LEAD",
+      "status": "FAIL",
+      "screenshot": "workers/w9/screenshots/approvals-inbox-teamlead.png",
+      "console_errors": [
+        "POST /auth/login 429",
+        "POST /auth/login 401"
+      ],
+      "network_errors": ["/auth/login 401", "/auth/refresh 429"],
+      "note": "Login to teamlead@nulogic.io rejected (401). Never reached /approvals/inbox. Fixture gap."
+    },
+    {
+      "url": "/approvals/inbox",
+      "role": "HR_MANAGER",
+      "status": "FAIL",
+      "screenshot": "workers/w9/screenshots/approvals-inbox-hrmanager.png",
+      "console_errors": [
+        "POST /auth/login 401"
+      ],
+      "network_errors": ["/auth/login 401"],
+      "note": "Login to hrmanager@nulogic.io rejected (401). Never reached /approvals/inbox. Fixture gap."
+    },
+    {
+      "url": "/approvals/inbox",
+      "role": "HR_ADMIN",
+      "status": "FAIL",
+      "screenshot": "workers/w9/screenshots/approvals-inbox-hradmin.png",
+      "console_errors": [
+        "POST /auth/login 401",
+        "POST /auth/login 423"
+      ],
+      "network_errors": ["/auth/login 401", "/auth/login 423"],
+      "note": "Login to hradmin@nulogic.io rejected with 401 then 423 (account locked via AccountLockoutService after 5 failures). Never reached /approvals/inbox."
+    }
+  ],
+  "flows": [
+    {
+      "flow": "role-switch matrix on /approvals/inbox",
+      "status": "FAIL",
+      "reason": "All three non-SuperAdmin role fixtures (teamlead/hrmanager/hradmin @nulogic.io with Password@123) fail 401 authentication. Target page /approvals/inbox never rendered under any role. Shared browser rate limit (10 parallel worker tabs) also contributed to initial 429s."
+    }
+  ],
+  "bugs": [
+    "BUG-W9-1 (P3, rbac): TEAM_LEAD fixture credentials invalid",
+    "BUG-W9-2 (P3, rbac): HR_MANAGER fixture credentials invalid",
+    "BUG-W9-3 (P2, rbac): HR_ADMIN fixture credentials invalid + AccountLockoutService triggered (423)"
+  ],
+  "summary": {
+    "total": 3,
+    "pass": 0,
+    "fail": 3,
+    "skipped": 0
+  }
+}

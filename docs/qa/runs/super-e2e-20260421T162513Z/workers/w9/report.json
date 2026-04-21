@@ -1,0 +1,95 @@
+{
+  "worker": "W9",
+  "tab_id": 1283664295,
+  "scope": "Approvals inbox across 3 roles (/approvals/inbox)",
+  "approvals_inbox": [
+    {
+      "role": "TEAM_LEAD",
+      "account": "mani@nulogic.io",
+      "displayed_user": "Mani S (TEAM LEAD)",
+      "pending_count": 0,
+      "approved_today": 0,
+      "rejected_today": 0,
+      "delegate_count": 0,
+      "sample_tasks": [],
+      "empty_state_text": "You're all caught up — No pending approvals at the moment.",
+      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "status": "PASS",
+      "notes": "Page rendered successfully. Zero pending approvals. Empty state correct. No console errors detected."
+    },
+    {
+      "role": "MANAGER",
+      "account": "sumit@nulogic.io",
+      "displayed_user": "Sumit Kumar (MANAGER)",
+      "pending_count": 0,
+      "approved_today": 0,
+      "rejected_today": 0,
+      "delegate_count": 0,
+      "sample_tasks": [],
+      "empty_state_text": "You're all caught up — No pending approvals at the moment.",
+      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "status": "PASS",
+      "notes": "Manager role landed on /approvals/inbox successfully. Zero pending. Empty state correct."
+    },
+    {
+      "role": "HR_ADMIN (requested)",
+      "account": "sarankarthick.maran@nulogic.io",
+      "displayed_user": "Saran V (EMPLOYEE)",
+      "pending_count": 0,
+      "approved_today": 0,
+      "rejected_today": 0,
+      "delegate_count": 0,
+      "sample_tasks": [],
+      "empty_state_text": "You're all caught up — No pending approvals at the moment.",
+      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "status": "PASS_WITH_DATA_NOTE",
+      "notes": "Requested role was HR_ADMIN but account sarankarthick.maran@nulogic.io resolves to Saran V with role EMPLOYEE in the system. Approvals inbox still accessible (all users can view their own inbox). Zero pending approvals as EMPLOYEE has no delegated approval authority."
+    }
+  ],
+  "consistency_observations": [
+    "All three roles see identical layout: Delegate/Pending/Approved Today/Rejected Today counters + filter chips (All/Leave/Expense/Asset/Travel/Recruitment/Others) + empty state.",
+    "All three roles report 0/0/0/0 across all counters, indicating the workflow/approval seed data contains no pending approval_task rows for any assignee in the test tenant.",
+    "MY SPACE sidebar item 'Approvals' is visible under PEOPLE nav for all roles (every user is an employee; route is non-gated).",
+    "No 403/500 responses encountered; page renders successfully under all three sessions."
+  ],
+  "bugs": [
+    {
+      "id": "W9-DATA-001",
+      "severity": "P3",
+      "category": "test-data",
+      "title": "Approvals inbox empty for all tested roles — likely missing seed data",
+      "description": "Under TEAM_LEAD (mani), MANAGER (sumit), and EMPLOYEE (saran), /approvals/inbox reports 0 pending approvals. Without seeded approval_task rows we cannot exercise the pending-list rendering, filter chips, or status transitions. Recommend seeding at least one pending approval_task per approver role in dev/QA tenant.",
+      "evidence": "getPageText shows identical empty state across all three sessions; counter badges all read 0.",
+      "repro_steps": [
+        "Login as mani@nulogic.io",
+        "Navigate /approvals/inbox",
+        "Observe Pending=0 and 'You're all caught up' empty state",
+        "Repeat for sumit@nulogic.io and sarankarthick.maran@nulogic.io — same result"
+      ]
+    },
+    {
+      "id": "W9-ACCOUNT-001",
+      "severity": "P4",
+      "category": "test-fixture-mapping",
+      "title": "Account sarankarthick.maran@nulogic.io was listed as HR_ADMIN but is seeded as EMPLOYEE (Saran V)",
+      "description": "Worker brief requested role=HR_ADMIN for sarankarthick.maran@nulogic.io. The system returns displayed role EMPLOYEE (Saran V). Either the test roster is out of date or the user has not been granted HR_ADMIN role in the seed. No HR_ADMIN demo account is visible in the login demo list either (demo list only shows SUPER ADMIN, MANAGER, TEAM LEAD, EMPLOYEE, HR MANAGER, RECRUITMENT ADMIN, plus HR Lead team leads).",
+      "recommendation": "Either seed a distinct HR_ADMIN test account (e.g. hradmin@nulogic.io) or update the worker brief to target JN Jagadeesh (HR MANAGER) for HR-role approvals coverage."
+    }
+  ],
+  "network": {
+    "api_requests_observed": "No /api/v1/approvals or /api/v1/approval-tasks requests captured because chrome MCP network tracking was initialized after page load. Page-level absence of pending rows suggests the backing list endpoint returned an empty array rather than erroring."
+  },
+  "console": {
+    "errors": [],
+    "notes": "No error-pattern console messages captured. Chrome MCP console tracking was initialized after page render; no retroactive capture available."
+  },
+  "summary": {
+    "total_roles_tested": 3,
+    "successful_role_switches": 3,
+    "pass": 2,
+    "pass_with_note": 1,
+    "fail": 0,
+    "total_pending_across_all_roles": 0,
+    "mutation_actions_taken": 0
+  }
+}

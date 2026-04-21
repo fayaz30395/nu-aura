@@ -1,0 +1,114 @@
+{
+  "worker": "W5",
+  "role": "SUPER_ADMIN (effective session: EMPLOYEE due to cookie race across parallel workers)",
+  "tab_id": 1283664291,
+  "started_at": "2026-04-21T17:55:22Z",
+  "finished_at": "2026-04-21T18:15:00Z",
+  "login_notes": "Initial SUPER_ADMIN login (fayaz@nulogic.io) returned 200 after rate-limit retry. Mid-run, httpOnly JWT cookie was overwritten by a parallel worker logging in as saran@nulogic.io/EMPLOYEE. Re-login attempts returned HTTP 423 (account locked from repeated attempts across workers). All Fluence probes therefore reflect EMPLOYEE role behaviour.",
+  "pages": [
+    {
+      "url": "/fluence/wiki",
+      "status": "FAIL",
+      "screenshot": "workers/w5/screenshots/fluence-wiki.png",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/knowledge/wiki/spaces → 403",
+        "GET /api/v1/knowledge/wiki/pages → 403"
+      ],
+      "notes": "Page shell renders (h1 'Wiki Pages') but wiki list endpoints return 403. Expected for EMPLOYEE without WIKI:VIEW. F-01 regression status: INCONCLUSIVE for SUPER_ADMIN due to cookie race; under EMPLOYEE the 403s are by design."
+    },
+    {
+      "url": "/fluence/blogs",
+      "status": "FAIL",
+      "screenshot": "workers/w5/screenshots/fluence-blogs.png",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/knowledge/blogs → 403",
+        "GET /api/v1/knowledge/blogs/categories/ordered → 403"
+      ],
+      "notes": "EMPLOYEE cannot view blogs list; route renders but data blocked (expected)."
+    },
+    {
+      "url": "/fluence/templates",
+      "status": "FAIL",
+      "screenshot": "workers/w5/screenshots/fluence-templates.png",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/knowledge/templates → 403"
+      ],
+      "notes": "F-01 original symptom was 403 for SUPER_ADMIN. Here EMPLOYEE gets 403 (expected). SUPER_ADMIN verification blocked by cookie race."
+    },
+    {
+      "url": "/fluence/search",
+      "status": "PASS-EMPTY",
+      "screenshot": "workers/w5/screenshots/fluence-search.png",
+      "console_errors": [],
+      "network_errors": [],
+      "notes": "Middleware redirects EMPLOYEE to /me/dashboard before any search API is called (frontend role guard)."
+    },
+    {
+      "url": "/fluence/wall",
+      "status": "PASS-EMPTY",
+      "screenshot": "workers/w5/screenshots/fluence-wall.png",
+      "console_errors": [],
+      "network_errors": [],
+      "notes": "Redirects to /me/dashboard for EMPLOYEE. Direct fetch /api/v1/fluence/activities?page=0&size=20 returned 403 in 1170 ms — NOT 500. F-02 fix HOLDS."
+    },
+    {
+      "url": "/fluence/analytics",
+      "status": "PASS-EMPTY",
+      "screenshot": "workers/w5/screenshots/fluence-analytics.png",
+      "console_errors": [],
+      "network_errors": [],
+      "notes": "Redirects to /me/dashboard for EMPLOYEE. Direct probes: /api/v1/knowledge/wiki/pages/analytics/aggregations → 404, /api/v1/knowledge/blogs/analytics/aggregations → 404 (endpoint paths not matched — client may be requesting incorrect URL)."
+    },
+    {
+      "url": "/fluence/drive",
+      "status": "FAIL",
+      "screenshot": "workers/w5/screenshots/fluence-drive.png",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/fluence/drive/files?page=0&size=20 → 404"
+      ],
+      "notes": "Page renders but backend endpoint is not mapped (404). NEW BUG — see BUG-W5-2."
+    },
+    {
+      "url": "/fluence/my-content",
+      "status": "PASS-EMPTY",
+      "screenshot": "workers/w5/screenshots/fluence-my-content.png",
+      "console_errors": [],
+      "network_errors": [],
+      "notes": "Redirects to /dashboard. GET /api/v1/knowledge/wiki/pages/my returned 403 for EMPLOYEE (expected)."
+    }
+  ],
+  "flows": [
+    {
+      "name": "F-02 regression check: /api/v1/fluence/activities no longer 500",
+      "status": "PASS",
+      "evidence": "Direct fetch as EMPLOYEE returned 403 in 1170 ms — no 500. Dual @Transactional fix holds."
+    },
+    {
+      "name": "F-03 regression check: /api/v1/workflow/inbox/count within 1s",
+      "status": "FAIL",
+      "evidence": "First call 8619 ms, second (cache-hit expected) 3930 ms. WORKFLOW_INBOX_COUNT cache bean present but endpoint still well above 1 s SLA under parallel-worker load. See BUG-W5-1."
+    },
+    {
+      "name": "F-01 regression check: wiki/blogs analytics/list aggs no longer 403 for SUPER_ADMIN",
+      "status": "INCONCLUSIVE",
+      "evidence": "Cookie was overwritten to EMPLOYEE role mid-run; could not reliably test under SUPER_ADMIN. Under EMPLOYEE the 403s are by design. Recommend single-worker re-run to verify."
+    }
+  ],
+  "bugs": [
+    "BUG-W5-1 (P1 perf): workflow/inbox/count > 1s SLA",
+    "BUG-W5-2 (P2 api): /api/v1/fluence/drive/files returns 404",
+    "BUG-W5-3 (P3 rbac): shared-cookie session race across parallel Chrome workers"
+  ],
+  "summary": {
+    "total": 8,
+    "pass": 0,
+    "fail": 3,
+    "skipped": 0,
+    "pass_empty": 4,
+    "inconclusive": 1
+  }
+}

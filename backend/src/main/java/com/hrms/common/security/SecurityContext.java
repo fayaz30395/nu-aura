@@ -432,19 +432,51 @@ public class SecurityContext {
     // ==================== Role Checks ====================
 
     /**
-     * Check if user has a specific role in the current application
+     * Check if user has a specific role in the current application.
+     * <p>
+     * F-01 FIX (P0): SuperAdmin 403 on ~10 endpoints was root-caused to role-claim
+     * format drift between token issuers. Tokens minted by
+     * {@code generateToken(Authentication, ...)} serialize authorities via
+     * {@code GrantedAuthority::getAuthority}, which prefixes {@code ROLE_} (Spring
+     * convention). Tokens minted by {@code generateTokenWithAppPermissions} store
+     * role codes as-is ({@code "SUPER_ADMIN"}). A cross-tab cookie that lands on
+     * the first path would populate {@code currentRoles} with
+     * {@code "ROLE_SUPER_ADMIN"}, and {@code hasRole("SUPER_ADMIN")} would return
+     * false — silently skipping the SuperAdmin bypass in
+     * {@link PermissionAspect} and {@link PermissionHandlerInterceptor}.
+     * <p>
+     * Normalising on lookup (strip {@code ROLE_} prefix, exact-case match on the
+     * stored role code) fixes the bypass for every {@code @RequiresPermission}
+     * endpoint at once without touching N controllers, while remaining strict on
+     * the role-code value itself (no case folding — all RoleHierarchy constants
+     * are {@code UPPER_SNAKE_CASE}).
      */
     public static boolean hasRole(String role) {
-        return getCurrentRoles().contains(role);
+        if (role == null) {
+            return false;
+        }
+        Set<String> userRoles = getCurrentRoles();
+        if (userRoles.contains(role)) {
+            return true;
+        }
+        // F-01: tolerate ROLE_-prefixed claim (Spring GrantedAuthority convention)
+        String prefixed = "ROLE_" + role;
+        if (userRoles.contains(prefixed)) {
+            return true;
+        }
+        // F-01: tolerate caller that passed in ROLE_-prefixed role while claims are bare
+        if (role.startsWith("ROLE_")) {
+            return userRoles.contains(role.substring(5));
+        }
+        return false;
     }
 
     /**
      * Check if user has any of the given roles
      */
     public static boolean hasAnyRole(String... roles) {
-        Set<String> userRoles = getCurrentRoles();
         for (String role : roles) {
-            if (userRoles.contains(role)) {
+            if (hasRole(role)) {
                 return true;
             }
         }

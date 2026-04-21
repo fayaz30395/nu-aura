@@ -1365,3 +1365,12 @@
 - **Details**: Contracts list loads correctly with 3 contracts, stat cards (Active: 0, Expiring Soon: 0, Expired: 0, Total: 3), search, filter, and "+ New Contract" button. All contracts show DRAFT status. However, clicking "View" button does NOT navigate to a contract detail page. Breadcrumbs show "Home > Dashboard > Contracts" correctly. Note: All Active Contracts show 0 despite 3 DRAFT contracts existing — stat cards may not count DRAFT status.
 - **Console errors**: none
 - **Bug**: BUG-011: Contract "View" buttons on /contracts do not navigate to a detail page
+
+---
+## Session 39 — Chrome Extension Not Connected
+- **Status**: BLOCKED
+- **Date**: 2026-04-21
+- **Details**: Attempted to start Phase 1 Super Admin sweep and Phase 2 RBAC spot checks across ~50 pages. Unable to proceed: `mcp__claude-in-chrome__tabs_context_mcp` returned "No Chrome extension connected." No browser session available for live QA.
+- **Required action**: User must install / connect the Claude Chrome extension, then re-run Session 39 QA.
+- **Bugs found**: none (blocked before any page tested)
+---

@@ -1,0 +1,101 @@
+{
+  "worker": "w7",
+  "role": "EMPLOYEE",
+  "user": "saran@nulogic.io",
+  "tab_id": 1283664293,
+  "started_at": "2026-04-21T16:26:25Z",
+  "completed_at": "2026-04-21T16:42:00Z",
+  "session_notes": "Parallel workers flipped shared browser cookie (session observed as mani@nulogic.io TEAM_LEAD during /payroll/structures probe; re-logged in as saran before API probes and final UI classifications). API probes below were verified under confirmed saran@nulogic.io/EMPLOYEE session via /api/v1/users/me immediately before each batch.",
+  "rbac_matrix": [
+    {
+      "url": "/admin",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "UI shows explicit 'Access Denied — You do not have permission to access the admin dashboard.' (main panel h1='Access Denied'). No admin content rendered. Confirmed saran@nulogic.io/EMPLOYEE session."
+    },
+    {
+      "url": "/payroll/runs",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "Main pane empty (bodyLen ~52, no table, no sidebar content). Direct API probe GET /api/v1/payroll/runs returned 403 for EMPLOYEE session. Earlier 200 observed was under mani@nulogic.io (TEAM_LEAD) after parallel worker flipped cookie — not a leak."
+    },
+    {
+      "url": "/payroll/structures",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "Main content empty. API probe GET /api/v1/payroll/salary-structures returned 403 for EMPLOYEE session."
+    },
+    {
+      "url": "/recruitment",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "UI shows '🔒 Access Denied — You don\\'t have permission to access this page. Go to Home'. Note: EMPLOYEE role does hold RECRUITMENT:VIEW permission (42 perms total), which is why the listing endpoint /api/v1/recruitment/job-openings returns 200 (intentional internal job board). The /recruitment index page itself is still guarded and denies EMPLOYEE access; sensitive sub-resources /api/v1/recruitment/candidates and /api/v1/recruitment/agencies return 403."
+    },
+    {
+      "url": "/statutory",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "Page navigation redirected to /me/dashboard (observed location.pathname='/me/dashboard' after nav to /statutory, with Saran's My Space dashboard rendered)."
+    },
+    {
+      "url": "/fluence/analytics",
+      "expected": "DENY",
+      "actual": "DENIED",
+      "evidence": "Page redirected to /me/dashboard (location.pathname='/me/dashboard' after nav to /fluence/analytics)."
+    },
+    {
+      "url": "/employees",
+      "expected": "DENY (or SELF-only data)",
+      "actual": "DENIED",
+      "evidence": "Page redirected to /dashboard (location.pathname='/dashboard' showing dashboard summary, no employee directory). API probe GET /api/v1/employees returned 403 for EMPLOYEE session — no roster data leaked."
+    }
+  ],
+  "api_probes": [
+    {"url": "/api/v1/payroll/runs", "status": 403, "note": "denied as expected"},
+    {"url": "/api/v1/payroll/structures", "status": 404, "note": "endpoint path not present; salary-structures used instead"},
+    {"url": "/api/v1/payroll/salary-structures", "status": 403, "note": "denied as expected"},
+    {"url": "/api/v1/recruitment/job-openings", "status": 200, "note": "intentional: EMPLOYEE role has RECRUITMENT:VIEW permission (internal job board); endpoint exposes job openings list only"},
+    {"url": "/api/v1/recruitment/candidates", "status": 403, "note": "denied as expected"},
+    {"url": "/api/v1/recruitment/agencies", "status": 403, "note": "denied as expected"},
+    {"url": "/api/v1/employees", "status": 403, "note": "denied as expected"},
+    {"url": "/api/v1/admin/users", "status": 403, "note": "denied as expected"}
+  ],
+  "counts": {
+    "pass_denied": 7,
+    "fail_leak": 0,
+    "total": 7
+  },
+  "bugs": [],
+  "observations": [
+    {
+      "severity": "INFO",
+      "title": "EMPLOYEE role has RECRUITMENT:VIEW permission",
+      "detail": "EMPLOYEE role includes RECRUITMENT:VIEW (verified via /api/v1/users/me — permissions.filter startsWith RECRUITMENT returns ['RECRUITMENT:VIEW']). This allows GET /api/v1/recruitment/job-openings → 200. This appears intentional (internal job board visibility), but the UI /recruitment page itself still shows Access Denied for EMPLOYEE. Consider reviewing whether this design is correct: if EMPLOYEE is meant to browse internal job openings, expose a dedicated /careers or /jobs page; if not, revoke RECRUITMENT:VIEW from EMPLOYEE seed."
+    },
+    {
+      "severity": "LOW",
+      "title": "/payroll/runs and /payroll/structures render blank main pane instead of explicit Access Denied message",
+      "detail": "Unlike /admin (explicit 'Access Denied' h1) and /recruitment ('🔒 Access Denied'), the payroll pages render an empty main region when EMPLOYEE navigates. While the API denies (403) and no data leaks, the UX is confusing. Recommend wrapping /payroll/runs and /payroll/structures with the same PermissionGuard component that shows an explicit Access Denied state."
+    },
+    {
+      "severity": "INFO",
+      "title": "Shared browser cookie across parallel Chrome workers",
+      "detail": "Login clicks in one tab replace the auth cookie for the entire browser instance. Parallel RBAC matrix testing across roles can produce false positives/negatives unless each worker verifies /api/v1/users/me immediately before each probe and re-logs in on drift. This is an E2E harness concern, not a product bug."
+    }
+  ],
+  "screenshot_refs": [],
+  "raw_evidence": {
+    "admin_ui_body": "Collapse ⌘B MANAGEMENT Dashboard SETTINGS Settings Pro Features All modules active NU-HRMS NU-AURA Platform SV Saran V EMPLOYEE ✕ Access Denied You do not have permission to access the admin dashboard.",
+    "recruitment_ui_body": "🔒 Access Denied You don't have permission to access this page. Go to Home",
+    "statutory_redirect_path": "/me/dashboard",
+    "fluence_analytics_redirect_path": "/me/dashboard",
+    "employees_redirect_path": "/dashboard",
+    "payroll_runs_main_innertext_length": 0,
+    "users_me_confirmed": {
+      "email": "saran@nulogic.io",
+      "roles": ["EMPLOYEE"],
+      "permission_count": 42,
+      "recruitment_perms": ["RECRUITMENT:VIEW"]
+    }
+  }
+}

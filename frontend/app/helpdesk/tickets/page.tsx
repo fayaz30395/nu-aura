@@ -2,7 +2,6 @@
 
 import React, {useMemo, useState} from 'react';
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -78,7 +77,6 @@ type CreateTicketFormData = z.infer<typeof createTicketSchema>;
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function TicketListPage() {
-  const router = useRouter();
   const {user} = useAuth();
   const toast = useToast();
 
@@ -362,7 +360,6 @@ export default function TicketListPage() {
                   <TicketRow
                     key={ticket.id}
                     ticket={ticket}
-                    onNavigate={() => router.push(`/helpdesk/tickets/${ticket.id}`)}
                     onStatusChange={handleQuickStatusChange}
                     formatDate={formatDate}
                   />
@@ -500,32 +497,33 @@ export default function TicketListPage() {
 
 interface TicketRowProps {
   ticket: TicketResponse;
-  onNavigate: () => void;
   onStatusChange: (id: string, status: TicketStatus) => void;
   formatDate: (date: string | null) => string;
 }
 
-function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowProps) {
+function TicketRow({ticket, onStatusChange, formatDate}: TicketRowProps) {
   const priorityCfg = PRIORITY_CONFIG[ticket.priority] ?? PRIORITY_CONFIG.MEDIUM;
   const statusCfg = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.OPEN;
   const StatusIcon = statusCfg.icon;
+  const detailHref = `/helpdesk/tickets/${ticket.id}`;
 
   return (
-    <tr
-      className="h-11 hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
-      onClick={onNavigate}
-    >
+    <tr className="h-11 hover:bg-[var(--bg-card-hover)] transition-colors">
       <td className="px-4 py-4 whitespace-nowrap">
         <Link
-          href={`/helpdesk/tickets/${ticket.id}`}
-          onClick={(e) => e.stopPropagation()}
-          className="text-sm font-mono text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+          href={detailHref}
+          className="text-sm font-mono text-accent-700 dark:text-accent-400 hover:underline"
         >
           {ticket.ticketNumber || ticket.id.slice(0, 8)}
         </Link>
       </td>
       <td className="px-4 py-4">
-        <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
+        <Link
+          href={detailHref}
+          className="text-sm font-medium text-[var(--text-primary)] line-clamp-1 hover:underline"
+        >
+          {ticket.subject}
+        </Link>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center gap-2">
@@ -558,7 +556,7 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
       <td className="px-4 py-4 whitespace-nowrap">
         <span className="text-body-muted">{formatDate(ticket.createdAt)}</span>
       </td>
-      <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+      <td className="px-4 py-4 whitespace-nowrap">
         <PermissionGate permission={Permissions.HELPDESK_TICKET_RESOLVE}>
           <select
             className="text-xs bg-transparent border border-[var(--border-main)] rounded px-1.5 py-1 text-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:ring-accent-700"

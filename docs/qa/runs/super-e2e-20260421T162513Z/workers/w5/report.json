@@ -1,0 +1,154 @@
+{
+  "worker": "W5",
+  "role": "HR_ADMIN",
+  "actual_role": "SUPER_ADMIN",
+  "tab_id": 1283664291,
+  "start_delay_s": 48,
+  "login": {
+    "email": "sarankarthick.maran@nulogic.io",
+    "status": "success",
+    "note": "Logged in as Fayaz M (SUPER ADMIN) - session cookie shared across tabs, ended up as super admin rather than HR Admin"
+  },
+  "pages": [
+    {
+      "path": "/fluence/wiki",
+      "status": "PASS",
+      "rendered": true,
+      "text": "Wiki Pages / Create and manage knowledge base documentation / Spaces (No spaces yet) / No pages yet",
+      "console_errors": [],
+      "network_4xx_5xx": []
+    },
+    {
+      "path": "/fluence/blogs",
+      "status": "PASS",
+      "rendered": true,
+      "text": "Blog & Articles / Read and share insights with your team / New Post",
+      "console_errors": [],
+      "network_4xx_5xx": []
+    },
+    {
+      "path": "/fluence/templates",
+      "status": "FAIL",
+      "rendered": true,
+      "text": "Templates / Reusable document templates for your team / Create Template",
+      "console_errors": [
+        "[ApiClient] Error: GET /knowledge/templates 403 Request failed with status code 403"
+      ],
+      "network_4xx_5xx": [
+        { "url": "/api/v1/knowledge/templates", "status": 403 }
+      ]
+    },
+    {
+      "path": "/fluence/search",
+      "status": "PASS",
+      "rendered": true,
+      "text": "Search NU-Fluence / Find wiki pages, blog posts, and templates with full-text search / Tabs All/Wiki Pages/Blog Posts/Templates / Start searching",
+      "console_errors": [],
+      "network_4xx_5xx": []
+    },
+    {
+      "path": "/fluence/wall",
+      "status": "FAIL",
+      "rendered": true,
+      "text": "Activity Wall / See what is happening across your knowledge base / Post/Poll/Praise composer / Trending Content (empty) / Recent Activity (empty) / 'Unable to load activity feed. The service may be temporarily unavailable.'",
+      "console_errors": [
+        "[ApiClient] Error: GET /fluence/activities 500 Request failed with status code 500",
+        "[ApiClient] Error: GET /workflow/inbox/count timeout of 30000ms exceeded"
+      ],
+      "network_4xx_5xx": [
+        { "url": "/api/v1/fluence/activities", "status": 500 },
+        { "url": "/api/v1/workflow/inbox/count", "status": "timeout" }
+      ],
+      "s9_announcement_check": {
+        "feed_renders": true,
+        "trending_renders": true,
+        "feed_populated": false,
+        "fallback_message_shown": true
+      }
+    },
+    {
+      "path": "/fluence/analytics",
+      "status": "FAIL",
+      "rendered": true,
+      "text": "Content Analytics / Track content performance across NU-Fluence / Total Views 0 / Total Likes 0 / Total Comments 0 / Active Content 0 / Activity Trend chart (Mar 24 - Apr 21) / Distribution / Top Content (No content yet) / Recent Activity (No recent activities)",
+      "console_errors": [
+        "[ApiClient] Error: GET /knowledge/blogs 403",
+        "[ApiClient] Error: GET /fluence/activities 403",
+        "[ApiClient] Error: GET /knowledge/templates 403",
+        "[ApiClient] Error: GET /workflow/inbox/count timeout of 30000ms exceeded"
+      ],
+      "network_4xx_5xx": [
+        { "url": "/api/v1/knowledge/wiki/pages", "status": 403 },
+        { "url": "/api/v1/knowledge/blogs", "status": 403 },
+        { "url": "/api/v1/knowledge/templates", "status": 403 },
+        { "url": "/api/v1/fluence/activities", "status": 403 },
+        { "url": "/api/v1/workflow/inbox/count", "status": 503 }
+      ],
+      "note": "Analytics aggregator endpoints hit raw content APIs that enforce per-entity permissions - returns 403 though SuperAdmin should bypass. 503 on workflow/inbox/count intermittent."
+    },
+    {
+      "path": "/fluence/drive",
+      "status": "FAIL",
+      "rendered": true,
+      "text": "NU-Fluence Drive / Upload, manage, and share files across your knowledge base / Drag and drop a file, or click to browse / Max 50MB / All Files 0/Documents 0/Images 0/Spreadsheets 0/Other 0 / No files uploaded yet / Getting Started",
+      "console_errors": [
+        "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+      ],
+      "network_4xx_5xx": [
+        { "url": "/api/v1/fluence/attachments/recent", "status": 403 }
+      ]
+    },
+    {
+      "path": "/fluence/my-content",
+      "status": "PASS",
+      "rendered": true,
+      "text": "Page renders generic NU-Fluence dashboard skeleton (4 stat cards + 2 content columns) - no text content extractor output but visual confirms layout",
+      "console_errors": [],
+      "network_4xx_5xx": []
+    }
+  ],
+  "s9_announcement_checks": {
+    "wall_feed_renders": true,
+    "wall_trending_renders": true,
+    "wiki_spaces_renders": true,
+    "create_anything": false
+  },
+  "summary": {
+    "total": 8,
+    "pass": 4,
+    "fail": 4,
+    "pass_pages": ["/fluence/wiki", "/fluence/blogs", "/fluence/search", "/fluence/my-content"],
+    "fail_pages": ["/fluence/templates", "/fluence/wall", "/fluence/analytics", "/fluence/drive"],
+    "bug_clusters": [
+      {
+        "id": "W5-BUG-1",
+        "severity": "HIGH",
+        "title": "Knowledge endpoints return 403 for SUPER_ADMIN",
+        "endpoints": [
+          "GET /api/v1/knowledge/templates",
+          "GET /api/v1/knowledge/wiki/pages (analytics aggregator call)",
+          "GET /api/v1/knowledge/blogs (analytics aggregator call)",
+          "GET /api/v1/fluence/attachments/recent",
+          "GET /api/v1/fluence/activities (analytics)"
+        ],
+        "impact": "Super Admin should bypass permission checks per RBAC hierarchy; missing KNOWLEDGE:VIEW/FLUENCE:VIEW in permission set or controller not invoking SecurityService bypass"
+      },
+      {
+        "id": "W5-BUG-2",
+        "severity": "HIGH",
+        "title": "Activity feed 500 error on wall",
+        "endpoint": "GET /api/v1/fluence/activities",
+        "status": 500,
+        "impact": "Wall shows 'Unable to load activity feed. The service may be temporarily unavailable.' fallback"
+      },
+      {
+        "id": "W5-BUG-3",
+        "severity": "MEDIUM",
+        "title": "workflow/inbox/count intermittent timeouts and 503s",
+        "endpoint": "GET /api/v1/workflow/inbox/count",
+        "status": "503 / timeout 30s",
+        "impact": "Sidebar inbox badge broken; repeated 30s timeouts slow down page hydration"
+      }
+    ]
+  }
+}

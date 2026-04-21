@@ -1,0 +1,22 @@
+{
+  "worker": "W4",
+  "role": "HR_MANAGER",
+  "tab_id": 1283664290,
+  "started_at": "2026-04-21T17:53:05Z",
+  "finished_at": "2026-04-21T17:58:00Z",
+  "auth_notes": "hrmanager@nulogic.io/Password@123 returned 401; fayaz@nulogic.io got 423 LOCKED after prior 429s. Logged in via demo HR MANAGER button (Jagadeesh N) which succeeded with 200.",
+  "pages": [
+    {"url": "/performance", "status": "PASS", "h1": "Performance Management", "console_errors": [], "network_errors": []},
+    {"url": "/performance/reviews", "status": "PASS", "h1": "Performance Reviews", "console_errors": [], "network_errors": []},
+    {"url": "/performance/okr", "status": "PASS", "h1": "OKR Management", "console_errors": [], "network_errors": ["/api/v1/okr/company/objectives -> 403 (BUG-W4-1)"], "notes": "F-05 regression: objectives/my=200, page rendered under 10s, NO hang"},
+    {"url": "/performance/360-feedback", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "/training", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "/surveys", "status": "FAIL", "console_errors": [], "network_errors": ["page doc /surveys -> 503 (BUG-W4-2)"]},
+    {"url": "/recognition", "status": "PASS", "h1": "Employee Recognition", "console_errors": [], "network_errors": []}
+  ],
+  "flows": [
+    {"name": "F-05 OKR regression", "status": "PARTIAL-PASS", "details": "/api/v1/okr/objectives/my returned 200 within 5s; page rendered under 10s without hang. However /api/v1/okr/company/objectives returned 403 for HR_MANAGER role — RBAC gap logged as BUG-W4-1."}
+  ],
+  "bugs": ["BUG-W4-1", "BUG-W4-2"],
+  "summary": {"total": 7, "pass": 6, "fail": 1, "skipped": 0}
+}

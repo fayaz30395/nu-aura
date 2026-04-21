@@ -1,0 +1,58 @@
+{
+  "worker": "W10",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664296,
+  "started_at": "2026-04-21T23:25:00Z",
+  "finished_at": "2026-04-21T23:33:00Z",
+  "status": "FAILED",
+  "failure_reason": "Cannot authenticate as SuperAdmin (fayaz@nulogic.io). Account is locked (HTTP 423 — AccountLockoutService 5 attempts/15min). Fallback EMPLOYEE (sarankarthick.maran@nulogic.io) returns 401 Bad credentials. Tab 1283664296 started in a stale session as saran@nulogic.io (EMPLOYEE role); role mismatch prevents executing SuperAdmin regression battery (F-01, F-10, F-12 require payroll/employees which EMPLOYEE cannot access). Auth rate-limit (5/min) across parallel workers compounded the lockout.",
+  "pages": [
+    {
+      "url": "http://localhost:3000/payroll/runs",
+      "status": "FAIL",
+      "network_errors": [
+        {"url": "/api/v1/payroll/runs?page=0&size=100", "status": 403, "role_at_time": "EMPLOYEE (saran)"}
+      ],
+      "note": "403 expected for EMPLOYEE; inconclusive for SuperAdmin F-01 verification"
+    },
+    {
+      "url": "http://localhost:3000/employees",
+      "status": "FAIL",
+      "network_errors": [
+        {"url": "/api/v1/employees?page=0&size=20", "status": 403, "role_at_time": "EMPLOYEE (saran)"}
+      ],
+      "note": "403 expected for EMPLOYEE; inconclusive for SuperAdmin F-01 verification"
+    }
+  ],
+  "flows": [],
+  "regressions": [
+    {"id": "F-01", "status": "BLOCKED", "reason": "SuperAdmin login locked; cannot verify bypass"},
+    {"id": "F-02", "status": "BLOCKED", "reason": "Session invalidated; /fluence/wall redirects to login"},
+    {"id": "F-03", "status": "BLOCKED", "reason": "Session invalidated"},
+    {"id": "F-04", "status": "BLOCKED", "reason": "Session invalidated"},
+    {"id": "F-05", "status": "BLOCKED", "reason": "Session invalidated"},
+    {"id": "F-10", "status": "BLOCKED", "reason": "Session invalidated; needs SuperAdmin"},
+    {"id": "F-12", "status": "BLOCKED", "reason": "Session invalidated; needs SuperAdmin"},
+    {"id": "BUG-011", "status": "BLOCKED", "reason": "Session invalidated"}
+  ],
+  "bugs": [
+    {
+      "bug_id": "BUG-W10-1",
+      "worker": "W10",
+      "severity": "P1",
+      "category": "infra",
+      "title": "SuperAdmin account fayaz@nulogic.io locked during parallel E2E run — blocks all SuperAdmin workers",
+      "endpoint": "/api/v1/auth/login",
+      "http_status": 423,
+      "detected_at": "2026-04-21T23:30:56Z",
+      "repro": [
+        "Parallel workers each attempt login as fayaz@nulogic.io",
+        "AccountLockoutService triggers after 5 failed attempts within 15min",
+        "All subsequent SuperAdmin logins return HTTP 423 Account Locked",
+        "Recovery requires 15min wait or admin unlock"
+      ],
+      "recommendation": "For multi-worker super-e2e runs: either (a) share a single pre-established SuperAdmin session cookie across workers, (b) stagger logins >60s apart and use dedicated SuperAdmin test accounts per worker, or (c) disable account-lockout for test tenant"
+    }
+  ],
+  "summary": {"total": 8, "pass": 0, "fail": 0, "blocked": 8, "skipped": 0}
+}

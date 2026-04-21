@@ -1,0 +1,22 @@
+{
+  "worker": "W2",
+  "role": "HR_ADMIN",
+  "tab_id": 1283664288,
+  "started_at": "2026-04-21T17:53:29Z",
+  "finished_at": "2026-04-21T17:58:50Z",
+  "shard_status": "FAILED",
+  "failure_reason": "Login failed on this tab — hradmin@nulogic.io returned 401, fallback fayaz@nulogic.io also returned 401 (both with Password@123 AND Welcome@123), and the auth endpoint rate-limited us with 429 after 2–3 attempts. Per worker contract rule 7 (≥2 login failures), shard returned early before probing the 13 HRMS ops pages.",
+  "login_attempts": [
+    {"email": "hradmin@nulogic.io", "password": "Password@123", "result": "401"},
+    {"email": "fayaz@nulogic.io", "password": "Password@123", "result": "401"},
+    {"email": "fayaz@nulogic.io", "password": "Welcome@123", "result": "429 rate-limited"}
+  ],
+  "pages": [],
+  "flows": [],
+  "bugs": [
+    {"bug_id": "BUG-W2-1", "severity": "P3", "category": "test-fixture", "title": "HR_ADMIN fixture hradmin@nulogic.io returns 401 with contract password"},
+    {"bug_id": "BUG-W2-2", "severity": "P1", "category": "test-fixture", "title": "Fallback SuperAdmin fayaz@nulogic.io also returns 401 with Password@123 — no working login for W2 shard"},
+    {"bug_id": "BUG-W2-3", "severity": "P1", "category": "api", "title": "Auth rate-limiter 429 triggers after 2–3 attempts — blocks fallback recovery"}
+  ],
+  "summary": {"total": 13, "pass": 0, "fail": 0, "skipped": 13}
+}

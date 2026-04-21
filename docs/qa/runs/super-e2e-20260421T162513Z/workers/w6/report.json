@@ -1,0 +1,97 @@
+{
+  "worker": "W6",
+  "role": "EMPLOYEE",
+  "tab_id": 1283664292,
+  "login": {
+    "method": "demo-account",
+    "user": "Saran V",
+    "email": "saran@nulogic.io",
+    "status": "PASS"
+  },
+  "tests": [
+    {
+      "path": "/admin",
+      "expected": "denial (redirect or hidden)",
+      "observed_url": "http://localhost:3000/admin",
+      "observed_ui": "Access Denied card: 'You do not have permission to access the admin dashboard.' Sidebar shows only Dashboard + Settings (no admin menus).",
+      "console_errors": 0,
+      "network_4xx_5xx": [],
+      "status": "PASS",
+      "note": "RBAC correctly blocks EMPLOYEE from /admin. No admin UI exposed."
+    },
+    {
+      "path": "/approvals/inbox",
+      "expected": "page renders or clean denial",
+      "observed_url_after": "http://localhost:3000/me/dashboard",
+      "observed_ui": "Redirected back to /me/dashboard (no approvals/inbox view rendered for EMPLOYEE).",
+      "console_errors": 0,
+      "network_4xx_5xx": [
+        { "url": "/approvals/inbox", "status": 503 }
+      ],
+      "status": "FAIL",
+      "bug": "BUG-W6-001",
+      "note": "Next.js route returned HTTP 503 on /approvals/inbox document request, then redirect to /me/dashboard. 503 indicates server/middleware error rather than clean 403 or redirect. Expected: clean redirect OR empty-state 'No approvals for your role'."
+    },
+    {
+      "path": "/me/profile",
+      "expected": "profile renders",
+      "observed_url": "http://localhost:3000/me/profile",
+      "observed_ui": "Profile shell + sidebar (HOME, MY SPACE, PEOPLE nav groups) renders. Content area shows skeleton loaders (profile data fetch slow).",
+      "console_errors": 0,
+      "network_4xx_5xx": [],
+      "status": "PASS",
+      "note": "Page authorizes correctly. Header briefly shows placeholder 'User / Employee' instead of 'Saran V / EMPLOYEE' — likely auth context race, resolves on subsequent nav."
+    },
+    {
+      "path": "/me/dashboard",
+      "expected": "dashboard renders",
+      "observed_url": "http://localhost:3000/me/dashboard",
+      "observed_ui": "Breadcrumb 'Home > My Dashboard'. 4 stat-card skeletons + 2 detail-panel skeletons render. Sidebar MY SPACE active.",
+      "console_errors": 0,
+      "network_4xx_5xx": [],
+      "status": "PASS",
+      "note": "Dashboard shell and sidebar render cleanly for EMPLOYEE. Skeleton state persists long but no API failures observed in this shard."
+    }
+  ],
+  "s8_helpdesk": {
+    "path": "/helpdesk/tickets",
+    "expected": "my tickets list (lightweight check)",
+    "observed_ui": "Access Denied page with lock icon: 'You don't have permission to access this page.' + 'Go to Home' button.",
+    "console_errors": 0,
+    "network_4xx_5xx": [
+      { "url": "/helpdesk", "status": 503 }
+    ],
+    "status": "FAIL",
+    "bug": "BUG-W6-002",
+    "note": "EMPLOYEE cannot view own helpdesk tickets — RBAC too restrictive. Per NU-AURA spec, 'Every User Is an Employee' and self-service tickets should be accessible (HELPDESK:VIEW_OWN or equivalent). Also GET /helpdesk returned 503 (same route-handler/middleware class of issue as BUG-W6-001)."
+  },
+  "summary": {
+    "total": 4,
+    "pass": 2,
+    "fail": 1,
+    "expected_denial_pass": 1,
+    "s8_helpdesk": "FAIL",
+    "bugs": [
+      {
+        "id": "BUG-W6-001",
+        "path": "/approvals/inbox",
+        "severity": "MEDIUM",
+        "title": "Approvals inbox returns 503 for EMPLOYEE before redirect",
+        "evidence": "GET /approvals/inbox -> 503; UI lands on /me/dashboard"
+      },
+      {
+        "id": "BUG-W6-002",
+        "path": "/helpdesk/tickets",
+        "severity": "HIGH",
+        "title": "EMPLOYEE denied access to own helpdesk tickets (self-service broken)",
+        "evidence": "Access Denied UI for saran@nulogic.io (EMPLOYEE role); GET /helpdesk returned 503"
+      }
+    ]
+  },
+  "constraints_respected": {
+    "stayed_on_tab": true,
+    "no_delete_clicks": true,
+    "no_new_tabs_opened": true,
+    "started_after_60s_delay": true
+  }
+}

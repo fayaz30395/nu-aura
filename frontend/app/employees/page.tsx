@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -64,6 +64,8 @@ type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
 export default function EmployeesPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { hasPermission, isReady: permReady } = usePermissions();
 
   // ALL hooks must be called unconditionally before any returns (React rules)
@@ -74,8 +76,28 @@ export default function EmployeesPage() {
   const [currentTab, setCurrentTab] = useState('basic'); // basic, personal, employment, bank
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  const [currentPage, setCurrentPage] = useState(0);
   const PAGE_SIZE = 20;
+
+  // Page is driven by the ?page= URL param (1-based in URL, 0-based for the API).
+  // Falls back to page 1 when the param is missing or invalid.
+  const parsedPageParam = Number(searchParams.get('page'));
+  const urlPage = Number.isFinite(parsedPageParam) && parsedPageParam >= 1
+    ? Math.floor(parsedPageParam)
+    : 1;
+  const currentPage = urlPage - 1;
+
+  const setCurrentPage = (updater: number | ((prev: number) => number)) => {
+    const next = typeof updater === 'function' ? updater(currentPage) : updater;
+    const nextUrlPage = Math.max(1, next + 1);
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextUrlPage <= 1) {
+      params.delete('page');
+    } else {
+      params.set('page', String(nextUrlPage));
+    }
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  };
 
   // React Query - fetch employees, managers, and departments
   const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(

@@ -1,0 +1,153 @@
+{
+  "worker": "W10",
+  "tab_id": 1283664296,
+  "role_verified": "SUPER_ADMIN (Fayaz M)",
+  "run_notes": "Browser session was highly unstable — many parallel workers caused frequent renderer timeouts (CDP Runtime.evaluate 45s timeouts) and multiple Next.js /_rsc responses with 503. Dev server appears overloaded. Logged in via email form submit on /auth/login.",
+  "regressions": [
+    {
+      "bug_id": "BUG-010",
+      "description": "Tickets list should use real <a href> Link anchors for ticket numbers (fixed in commit ddee8fe5)",
+      "url": "http://localhost:3000/helpdesk/tickets",
+      "status": "REGRESSION-OPEN",
+      "evidence": {
+        "source_file": "frontend/app/helpdesk/tickets/page.tsx",
+        "source_lines": "519-525",
+        "source_has_link": true,
+        "rendered_dom": "first row first cell renders <span class=\"text-sm font-mono text-accent-700 dark:text-accent-400\">TKT-20260409035940-BBE6</span> — NO <a> element",
+        "tbody_anchor_count": 0,
+        "tbody_row_count": 7,
+        "tickets_api_status": 200,
+        "note": "Source code contains <Link href={`/helpdesk/tickets/${ticket.id}`}> but rendered HTML has <span>. Likely cached/stale Next.js dev build not picking up committed fix. From a black-box user test, the fix is not reachable — classify as REGRESSION-OPEN until dev bundle rebuilds or prod confirms."
+      }
+    },
+    {
+      "bug_id": "BUG-011",
+      "description": "Contracts list should use real <a href> Link anchors",
+      "url": "http://localhost:3000/contracts",
+      "status": "INCONCLUSIVE",
+      "evidence": {
+        "main_len": 0,
+        "tbody_rows": 0,
+        "network_backend_calls": 0,
+        "note": "Page never rendered main content during test window (renderer session was unstable, role momentarily flipped to Employee sidebar shell). No /api/v1/contracts request observed. Could not verify anchor presence. Retry recommended on a quiet dev server."
+      }
+    },
+    {
+      "bug_id": "dashboard-clean-load",
+      "description": "Dashboard loads without console errors",
+      "url": "http://localhost:3000/dashboard",
+      "status": "REGRESSION-FIXED",
+      "evidence": {
+        "h1": "Welcome back, Fayaz!",
+        "main_len": 573,
+        "new_errors_after_dashboard_load": 0,
+        "note": "No new console errors triggered by /dashboard load itself; only pre-existing 403 from prior helpdesk visit."
+      }
+    },
+    {
+      "bug_id": "employees-pagination",
+      "description": "Employees table pagination via ?page=2 URL",
+      "url": "http://localhost:3000/employees?page=2",
+      "status": "REGRESSION-OPEN",
+      "evidence": {
+        "main_snippet": "Employee Management ... No Employees Found",
+        "backend_request": "GET /api/v1/employees?page=0&size=20&sortBy=createdAt&sortDirection=DESC",
+        "url_param_page": 2,
+        "api_param_page": 0,
+        "note": "Frontend ignored ?page=2 URL param and always requested page=0. Pagination is not URL-driven."
+      }
+    },
+    {
+      "bug_id": "leave-renders-no-500",
+      "description": "Leave balances render without 500 errors",
+      "url": "http://localhost:3000/leave",
+      "status": "REGRESSION-FIXED",
+      "evidence": {
+        "redirect_to": "/leave/my-leaves",
+        "leave_balances_api": "GET /api/v1/leave-balances/employee/<uuid>/year/2026 → 200",
+        "leave_types_api": "GET /api/v1/leave-types/active → 200",
+        "leave_requests_api": "GET /api/v1/leave-requests/employee/<uuid>?page=0&size=5 → 200",
+        "http_500s": 0,
+        "note": "All leave APIs return 200. UI showed 'Loading leave requests...' within test window."
+      }
+    },
+    {
+      "bug_id": "payroll-runs-renders",
+      "description": "Payroll runs list renders as SUPER_ADMIN",
+      "url": "http://localhost:3000/payroll/runs",
+      "status": "REGRESSION-OPEN",
+      "evidence": {
+        "main_snippet": "Payroll Runs ... No Payroll Runs Yet",
+        "ui_rendered": true,
+        "api_error_console": "GET /payroll/runs 403 Request failed with status code 403",
+        "note": "UI shell renders (empty state), BUT backend returns 403 to SUPER_ADMIN for /payroll/runs. UI hides this behind an empty state. SUPER_ADMIN should bypass all permission checks (per CLAUDE.md RBAC). NEW underlying bug."
+      }
+    },
+    {
+      "bug_id": "fluence-wiki-tree",
+      "description": "Space tree renders on /fluence/wiki",
+      "url": "http://localhost:3000/fluence/wiki",
+      "status": "REGRESSION-FIXED",
+      "evidence": {
+        "main_snippet": "Wiki Pages ... Spaces ... No spaces yet ... Create Space",
+        "http_500s": 0,
+        "note": "Wiki page renders with empty state for zero spaces. No errors."
+      }
+    }
+  ],
+  "new_bugs": [
+    {
+      "id": "NEW-BUG-W10-001",
+      "severity": "HIGH",
+      "title": "SUPER_ADMIN receives 403 on GET /api/v1/employees",
+      "url": "http://localhost:3000/employees",
+      "backend": "GET http://localhost:8080/api/v1/employees?page=0&size=20&sortBy=createdAt&sortDirection=DESC → 403",
+      "role": "SUPER_ADMIN (Fayaz M)",
+      "console": "[ApiClient] Error: GET /employees 403 Request failed with status code 403",
+      "expected": "SuperAdmin bypasses ALL permission checks per CLAUDE.md — should return 200",
+      "impact": "Employees list shows 'No Employees Found' empty state — masks permission bug"
+    },
+    {
+      "id": "NEW-BUG-W10-002",
+      "severity": "HIGH",
+      "title": "SUPER_ADMIN receives 403 on GET /api/v1/payroll/runs (implied)",
+      "url": "http://localhost:3000/payroll/runs",
+      "backend": "console: [ApiClient] Error: GET /payroll/runs 403",
+      "role": "SUPER_ADMIN",
+      "expected": "SuperAdmin should bypass all permission checks",
+      "impact": "Shows 'No Payroll Runs Yet' empty state — masks underlying 403"
+    },
+    {
+      "id": "NEW-BUG-W10-003",
+      "severity": "MEDIUM",
+      "title": "SUPER_ADMIN receives 403 on GET /api/v1/helpdesk/categories/active",
+      "url": "http://localhost:3000/helpdesk/tickets",
+      "backend": "GET http://localhost:8080/api/v1/helpdesk/categories/active → 403",
+      "role": "SUPER_ADMIN",
+      "expected": "SuperAdmin should bypass all permission checks; active categories should be readable by ticket creators",
+      "impact": "Category dropdown in Create Ticket modal will be empty for SuperAdmin"
+    },
+    {
+      "id": "NEW-BUG-W10-004",
+      "severity": "MEDIUM",
+      "title": "/employees?page=N URL param not honored — frontend always requests page=0",
+      "url": "http://localhost:3000/employees?page=2",
+      "frontend": "GET http://localhost:8080/api/v1/employees?page=0&size=20&... regardless of URL page param",
+      "expected": "URL ?page param should map to API page param for deep-linkable pagination",
+      "impact": "Cannot deep-link to a specific employee list page"
+    },
+    {
+      "id": "NEW-BUG-W10-005",
+      "severity": "LOW-OBS",
+      "title": "Next.js dev server returning 503 on RSC navigations",
+      "backend": "/leave/my-leaves?_rsc=ufl96 → 503 (multiple occurrences)",
+      "expected": "200 OK on RSC payload",
+      "impact": "Dev server instability under parallel E2E load; not likely a prod defect but worth tracking"
+    }
+  ],
+  "counts": {
+    "regressions_checked": 7,
+    "regressions_still_broken": 3,
+    "new_bugs": 5
+  }
+}

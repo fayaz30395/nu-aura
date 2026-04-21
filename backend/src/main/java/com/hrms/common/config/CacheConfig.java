@@ -59,6 +59,9 @@ public class CacheConfig implements CachingConfigurer {
     public static final String TENANT_ATTENDANCE_CONFIG = "tenantAttendanceConfig";
     public static final String UPCOMING_BIRTHDAYS = "upcomingBirthdays";
     public static final String UPCOMING_ANNIVERSARIES = "upcomingAnniversaries";
+    // F-03 FIX: Short-TTL cache for workflow inbox count to prevent 30s timeouts
+    // under parallel hydration load. Sidebar badge polls this — 30s freshness is fine.
+    public static final String WORKFLOW_INBOX_COUNT = "workflowInboxCount";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -109,6 +112,9 @@ public class CacheConfig implements CachingConfigurer {
         // Analytics caches - short-lived to reflect near-real-time data
         cacheConfigurations.put(ANALYTICS_SUMMARY, defaultConfig.entryTtl(Duration.ofMinutes(5)));
         cacheConfigurations.put(DASHBOARD_METRICS, defaultConfig.entryTtl(Duration.ofMinutes(5)));
+
+        // F-03 FIX: Workflow inbox count — 30s TTL. Sidebar badge hot path.
+        cacheConfigurations.put(WORKFLOW_INBOX_COUNT, defaultConfig.entryTtl(Duration.ofSeconds(30)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

@@ -1,0 +1,129 @@
+{
+  "worker": "W3",
+  "role": "HR_ADMIN",
+  "tab_id": 1283664289,
+  "user": "sarankarthick.maran@nulogic.io",
+  "shard": "NU-Hire",
+  "pages": [
+    {
+      "path": "/recruitment",
+      "status": "PASS",
+      "http_errors": [],
+      "console_errors": 0,
+      "notes": "Renders; job-openings, candidates, interviews, notifications OPTIONS+GET 200/pending"
+    },
+    {
+      "path": "/recruitment/jobs",
+      "status": "PASS",
+      "http_errors": [],
+      "console_errors": 0,
+      "notes": "Renders; job-openings, departments/active, employees, notifications all OPTIONS 200 with pending GETs"
+    },
+    {
+      "path": "/recruitment/candidates",
+      "status": "FAIL",
+      "http_errors": [
+        "GET /api/v1/employees 403"
+      ],
+      "console_errors": 1,
+      "notes": "ApiClient error logged on navigate: GET /employees 403. HR_ADMIN lacks employees.read indirect grant on this page. Surfaced via console only; page UI may still render."
+    },
+    {
+      "path": "/recruitment/pipeline",
+      "status": "FAIL",
+      "http_errors": [
+        "GET /api/v1/recruitment/candidates 403",
+        "GET /api/v1/employees 403",
+        "GET /api/v1/letters/templates/active 403"
+      ],
+      "console_errors": 3,
+      "notes": "Three 403s. HR_ADMIN missing RECRUITMENT_CANDIDATE:READ and LETTERS:READ grants; pipeline board degraded."
+    },
+    {
+      "path": "/recruitment/agencies",
+      "status": "PASS",
+      "http_errors": [],
+      "console_errors": 0,
+      "notes": "All requests 200 (recruitment/agencies, job-openings, letters/templates/active, applicants/pipeline)"
+    },
+    {
+      "path": "/recruitment/interviews",
+      "status": "FAIL",
+      "http_errors": [
+        "GET /api/v1/recruitment/candidates 403"
+      ],
+      "console_errors": 1,
+      "notes": "Page renders interviews list (200) but candidates fetch 403s — interviewer cannot expand candidate context."
+    },
+    {
+      "path": "/onboarding",
+      "status": "SKIPPED",
+      "http_errors": [],
+      "console_errors": 0,
+      "notes": "Page shell loaded (page.js+error.js+loading.js chunks) but <main> region rendered empty. No API calls observed. Likely empty-state or missing onboarding dashboard component."
+    }
+  ],
+  "flows": [
+    {
+      "id": "S1.step1",
+      "name": "Hire-to-Retire step 1 — open /recruitment/jobs/new",
+      "status": "FAIL",
+      "bug_ref": "BUG-W3-001",
+      "notes": "Route returns 404 Page Not Found. Cannot begin job creation flow from this path."
+    },
+    {
+      "id": "S1.step2",
+      "name": "Hire-to-Retire step 2 — /recruitment/candidates list renders",
+      "status": "PARTIAL",
+      "notes": "Page route loads but candidate data cannot be fetched (403 from backend); see /recruitment/candidates."
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W3-001",
+      "severity": "HIGH",
+      "title": "/recruitment/jobs/new returns 404 Page Not Found",
+      "role": "HR_ADMIN",
+      "evidence": "Navigate to http://localhost:3000/recruitment/jobs/new -> 404 page with no job creation form; only back/dashboard links present",
+      "impact": "HR_ADMIN cannot create new job openings via direct URL. Breaks S1 Hire-to-Retire flow step 1."
+    },
+    {
+      "id": "BUG-W3-002",
+      "severity": "HIGH",
+      "title": "HR_ADMIN gets 403 on GET /api/v1/recruitment/candidates from pipeline/interviews pages",
+      "role": "HR_ADMIN",
+      "evidence": "Console: [ApiClient] Error: GET /recruitment/candidates 403 — on both /recruitment/pipeline and /recruitment/interviews",
+      "impact": "Pipeline board cannot load candidates column; interviewers cannot see candidate metadata. RBAC gap for HR_ADMIN permission set."
+    },
+    {
+      "id": "BUG-W3-003",
+      "severity": "MEDIUM",
+      "title": "HR_ADMIN gets 403 on GET /api/v1/employees from recruitment pages",
+      "role": "HR_ADMIN",
+      "evidence": "Console logs on /recruitment/candidates and /recruitment/pipeline: [ApiClient] Error: GET /employees 403",
+      "impact": "Employee autocomplete/assignment (hiring managers, interviewer picker) broken on recruitment workflows. HR_ADMIN should have employee:read."
+    },
+    {
+      "id": "BUG-W3-004",
+      "severity": "MEDIUM",
+      "title": "HR_ADMIN gets 403 on GET /api/v1/letters/templates/active on /recruitment/pipeline",
+      "role": "HR_ADMIN",
+      "evidence": "Console: [ApiClient] Error: GET /letters/templates/active 403",
+      "impact": "Offer letter template dropdown unavailable in pipeline; cannot issue offers from this view."
+    },
+    {
+      "id": "BUG-W3-005",
+      "severity": "LOW",
+      "title": "/onboarding renders empty <main> region",
+      "role": "HR_ADMIN",
+      "evidence": "find tool reports main region empty; only breadcrumb and chrome visible; no API calls observed",
+      "impact": "Either empty-state missing, data loading silently fails, or onboarding landing page not implemented for HR_ADMIN. Needs design/implementation verification."
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "pass": 3,
+    "fail": 3,
+    "skipped": 1
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "worker": "W1",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664287,
+  "started_at": "2026-04-21T16:26:20Z",
+  "finished_at": "2026-04-21T16:58:00Z",
+  "pages": [
+    {"url": "http://localhost:3000/dashboard", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/employees", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/attendance", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/leave", "status": "PASS", "console_errors": [], "network_errors": [], "note": "Redirected to /leave/my-leaves"},
+    {"url": "http://localhost:3000/leave/approvals", "status": "PASS", "console_errors": [], "network_errors": ["notifications 503 (transient, resolved on retry)"]},
+    {"url": "http://localhost:3000/leave/calendar", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/leave-requests/status/PENDING 403", "GET /api/v1/employees?size=500 403"]},
+    {"url": "http://localhost:3000/payroll", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/payroll/runs", "status": "FAIL", "console_errors": [], "network_errors": ["Main content did not render within 10s, body empty after sidebar load"]},
+    {"url": "http://localhost:3000/payroll/structures", "status": "FAIL", "console_errors": [], "network_errors": ["Main content empty — route renders only sidebar chrome"]},
+    {"url": "http://localhost:3000/payroll/components", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/payroll/salary-structures 403", "Main empty"]},
+    {"url": "http://localhost:3000/payroll/statutory", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/payroll/components 403", "Main empty"]},
+    {"url": "http://localhost:3000/expenses", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/assets", "status": "PASS", "console_errors": [], "network_errors": []},
+    {"url": "http://localhost:3000/shifts", "status": "PASS", "console_errors": [], "network_errors": []}
+  ],
+  "flows": [
+    {"name": "S3-leave-balance", "steps_passed": 1, "steps_failed": 0, "bugs": [], "note": "/leave redirects to /leave/my-leaves which loads list view (balance card not shown on my-leaves; shown on /leave/calendar widgets which rendered 0)"}
+  ],
+  "bugs": [
+    {
+      "id": "BUG-W1-01",
+      "severity": "P1",
+      "title": "SUPER_ADMIN gets 403 on /api/v1/leave-requests/status/PENDING and /api/v1/employees?size=500 from /leave/calendar",
+      "url": "http://localhost:3000/leave/calendar",
+      "repro": [
+        "Login as fayaz.m@nulogic.io (SUPER_ADMIN)",
+        "Navigate to /leave/calendar",
+        "Observe Network tab: GET /api/v1/leave-requests/status/PENDING?page=0&size=50 → 403",
+        "GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC → 403",
+        "Expected: SuperAdmin bypasses all permission checks per CLAUDE.md; should return 200"
+      ]
+    },
+    {
+      "id": "BUG-W1-02",
+      "severity": "P1",
+      "title": "SUPER_ADMIN gets 403 on /api/v1/payroll/salary-structures and /api/v1/payroll/components",
+      "url": "http://localhost:3000/payroll/components",
+      "repro": [
+        "Login as SUPER_ADMIN",
+        "Navigate to /payroll/components → 403 on /api/v1/payroll/components",
+        "Navigate to /payroll/statutory → same 403",
+        "Expected: SuperAdmin bypass should grant access"
+      ]
+    },
+    {
+      "id": "BUG-W1-03",
+      "severity": "P2",
+      "title": "/payroll/structures and /payroll/runs render only sidebar — main content area empty",
+      "url": "http://localhost:3000/payroll/structures",
+      "repro": [
+        "Login as SUPER_ADMIN",
+        "Navigate to /payroll/structures",
+        "Wait 10s",
+        "Observe: <main> element is empty, no headings rendered; only sidebar chrome visible",
+        "Same behavior on /payroll/runs"
+      ]
+    }
+  ],
+  "summary": {"total": 14, "pass": 9, "fail": 5, "skipped": 0}
+}

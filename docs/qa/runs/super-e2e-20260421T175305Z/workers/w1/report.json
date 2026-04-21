@@ -1,0 +1,60 @@
+{
+  "worker": "W1",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664287,
+  "started_at": "2026-04-21T17:54:14Z",
+  "finished_at": "2026-04-21T23:29:10Z",
+  "shard_status": "FAILED",
+  "failure_reason": "Login blocked. Initial SA credentials (fayaz@nulogic.io/Password@123) returned 401. Retry with Welcome@123 (advertised on login page) blocked by rate limiter (429) and then by account lockout (423 — 'Account Locked: too many failed login attempts'). Fixture gap: contract specifies Password@123 but login UI displays Password for all accounts: Welcome@123. Two login attempts (401, 429) triggered AccountLockoutService (5 attempts / 15min window). Aborted per WORKER_CONTRACT rule 7 after 2 login failures.",
+  "pages": [],
+  "flows": [],
+  "bugs": [
+    {
+      "bug_id": "BUG-W1-1",
+      "worker": "W1",
+      "tab_id": 1283664287,
+      "severity": "P1",
+      "category": "rbac",
+      "title": "SuperAdmin credential fixture mismatch — contract says Password@123, UI/backend accepts Welcome@123",
+      "url": "http://localhost:3000/auth/login",
+      "endpoint": "POST http://localhost:8080/api/v1/auth/login",
+      "http_status": 401,
+      "repro": [
+        "Open /auth/login",
+        "Click 'Sign in with Email'",
+        "Enter fayaz@nulogic.io / Password@123 (per WORKER_CONTRACT credentials)",
+        "Click Sign In",
+        "Observe POST /api/v1/auth/login -> 401"
+      ],
+      "evidence": "workers/w1/report.json (network log captured in this run)",
+      "detected_at": "2026-04-21T23:26:40Z"
+    },
+    {
+      "bug_id": "BUG-W1-2",
+      "worker": "W1",
+      "tab_id": 1283664287,
+      "severity": "P2",
+      "category": "api",
+      "title": "Auth rate limiter + account lockout together block retries without clear UX — 429 + 423 indistinguishable on login form",
+      "url": "http://localhost:3000/auth/login",
+      "endpoint": "POST http://localhost:8080/api/v1/auth/login",
+      "http_status": 429,
+      "repro": [
+        "Attempt login twice within 60s window",
+        "Second attempt returns 429 Too many requests",
+        "After rate window, further attempts return 423 Account Locked for 15 min",
+        "Login form does not surface which condition occurred — user sees generic failure"
+      ],
+      "evidence": "workers/w1/report.json (network log)",
+      "detected_at": "2026-04-21T23:29:04Z"
+    }
+  ],
+  "summary": {
+    "total": 14,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 14,
+    "login_attempts": 2,
+    "login_outcome": "failed_then_locked"
+  }
+}

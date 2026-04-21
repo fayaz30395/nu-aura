@@ -1,0 +1,31 @@
+{
+  "worker": "W8",
+  "role": "SUPER_ADMIN",
+  "tab_id": 1283664294,
+  "started_at": "2026-04-21T23:25:00Z",
+  "finished_at": "2026-04-21T23:31:30Z",
+  "status": "FAILED",
+  "failure_reason": "Login failed 2x. Initial contract password Password@123 triggered 429 (rate limit) then 401; contract was then corrected mid-run to Welcome@123 but fayaz@nulogic.io account was already locked (HTTP 423). Fallback hradmin@nulogic.io/Welcome@123 returned 401.",
+  "pages": [
+    {
+      "url": "http://localhost:3000/auth/login",
+      "status": "FAIL",
+      "screenshot": null,
+      "console_errors": [
+        "POST /auth/login 429",
+        "POST /auth/login 401",
+        "POST /auth/login 423 (account locked)",
+        "POST /auth/login 401 (hradmin fallback)"
+      ],
+      "network_errors": ["429", "401", "423"]
+    }
+  ],
+  "flows": [
+    {"name": "workflow-leave-apply", "status": "SKIPPED", "reason": "login failed"},
+    {"name": "workflow-attendance", "status": "SKIPPED", "reason": "login failed"},
+    {"name": "workflow-wiki-create", "status": "SKIPPED", "reason": "login failed"},
+    {"name": "workflow-expense", "status": "SKIPPED", "reason": "login failed"}
+  ],
+  "bugs": ["BUG-W8-1"],
+  "summary": {"total": 4, "pass": 0, "fail": 0, "skipped": 4}
+}

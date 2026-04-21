@@ -1,6 +1,7 @@
 package com.hrms.application.workflow.service;
 
 import com.hrms.api.workflow.dto.*;
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
@@ -18,6 +19,7 @@ import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.leave.LeaveRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -988,7 +990,17 @@ public class WorkflowService {
     /**
      * Returns inbox summary counts for the current user:
      * pending, approvedToday, rejectedToday.
+     *
+     * <p>F-03 FIX: Cached for 30s (per tenant+user) to prevent sidebar badge
+     * polls from serializing on the DB under parallel hydration load. The
+     * default {@code keyGenerator} bean prefixes keys with tenant+user context,
+     * so cross-tenant leakage is impossible.</p>
      */
+    @Cacheable(
+            value = CacheConfig.WORKFLOW_INBOX_COUNT,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':' + T(com.hrms.common.security.SecurityContext).getCurrentUserId()",
+            condition = "T(com.hrms.common.security.TenantContext).getCurrentTenant() != null && T(com.hrms.common.security.SecurityContext).getCurrentUserId() != null"
+    )
     @Transactional(readOnly = true)
     public Map<String, Long> getInboxCounts() {
         UUID tenantId = TenantContext.requireCurrentTenant();

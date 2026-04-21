@@ -1,0 +1,26 @@
+{
+  "worker": "W2",
+  "role": "HR_ADMIN",
+  "tab_id": 1283664288,
+  "started_at": "2026-04-21T21:56:47Z",
+  "finished_at": "2026-04-21T21:58:15Z",
+  "status": "LOGIN_FAILED",
+  "pages": [],
+  "flows": [],
+  "bugs": [
+    {
+      "id": "W2-LOGIN-001",
+      "severity": "blocker",
+      "page": "/auth/login",
+      "symptom": "POST /auth/login returned 401 twice for sarankarthick.maran@nulogic.io / Welcome@123",
+      "evidence": "[ApiClient] Error: POST /auth/login 401 Request failed with status code 401 (2 occurrences at 21:57:25 and 21:57:39)",
+      "notes": "Credentials may be invalid for HR_ADMIN, or account is locked (AccountLockoutService: 5 attempts / 15min). Parallel worker auth rate limit (5/min) also a suspect; 45s wait between attempts did not resolve."
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 13
+  }
+}

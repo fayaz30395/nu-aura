@@ -68,12 +68,27 @@ public class OkrService {
     @Transactional(readOnly = true)
     public List<Objective> getObjectivesByOwnerList(UUID tenantId, UUID ownerId) {
         List<Objective> objectives = objectiveRepository.findAllByTenantIdAndOwnerIdList(tenantId, ownerId);
-        // Load key results for each objective
-        for (Objective obj : objectives) {
-            List<KeyResult> keyResults = keyResultRepository.findAllByObjectiveId(obj.getId());
-            obj.setKeyResults(keyResults);
-        }
+        attachKeyResults(objectives);
         return objectives;
+    }
+
+    /**
+     * Batch-load key results for a list of objectives in a single query
+     * (instead of N individual findAllByObjectiveId calls). Fixes F-05 OKR hang.
+     */
+    private void attachKeyResults(List<Objective> objectives) {
+        if (objectives == null || objectives.isEmpty()) {
+            return;
+        }
+        List<UUID> ids = objectives.stream().map(Objective::getId).toList();
+        List<KeyResult> all = keyResultRepository.findAllByObjectiveIdIn(ids);
+        Map<UUID, List<KeyResult>> byObjective = new HashMap<>();
+        for (KeyResult kr : all) {
+            byObjective.computeIfAbsent(kr.getObjectiveId(), k -> new ArrayList<>()).add(kr);
+        }
+        for (Objective obj : objectives) {
+            obj.setKeyResults(byObjective.getOrDefault(obj.getId(), new ArrayList<>()));
+        }
     }
 
     @Transactional(readOnly = true)
@@ -122,11 +137,7 @@ public class OkrService {
     @Transactional(readOnly = true)
     public List<Objective> getCompanyObjectives(UUID tenantId) {
         List<Objective> objectives = objectiveRepository.findByLevel(tenantId, ObjectiveLevel.COMPANY);
-        // Load key results for each objective
-        for (Objective obj : objectives) {
-            List<KeyResult> keyResults = keyResultRepository.findAllByObjectiveId(obj.getId());
-            obj.setKeyResults(keyResults);
-        }
+        attachKeyResults(objectives);
         return objectives;
     }
 
