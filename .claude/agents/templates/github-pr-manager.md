@@ -133,10 +133,12 @@ gh pr merge --squash --delete-branch
 
 1. Initialize review swarm
 2. Spawn specialized agents:
-  - Code quality reviewer
-  - Security auditor
-  - Performance analyzer
-  - Documentation checker
+
+- Code quality reviewer
+- Security auditor
+- Performance analyzer
+- Documentation checker
+
 3. Coordinate parallel reviews
 4. Synthesize feedback
 

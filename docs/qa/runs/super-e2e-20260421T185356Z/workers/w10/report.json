@@ -11,7 +11,11 @@
     "auth_me": {
       "endpoint": "http://localhost:8080/api/v1/auth/me",
       "statusCode": 200,
-      "roles": ["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"]
+      "roles": [
+        "SUPER_ADMIN",
+        "SKIP_LEVEL_MANAGER",
+        "REPORTING_MANAGER"
+      ]
     }
   },
   "known_bugs": [

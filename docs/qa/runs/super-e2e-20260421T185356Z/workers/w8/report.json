@@ -21,7 +21,9 @@
         "Cancel clicked to avoid persistence"
       ],
       "notes": "Form fields all render. 'Total Days Requested: 0 days' did not update client-side after filling dates — potential UI bug (BUG-W8-03, P2).",
-      "bugs": ["BUG-W8-03"]
+      "bugs": [
+        "BUG-W8-03"
+      ]
     },
     {
       "name": "Attendance check-in",
@@ -50,7 +52,9 @@
         "Click Create Page - still no title input rendered (FAIL)"
       ],
       "notes": "BUG-W8-01 P1: Both 'New Page' and 'Create Page' buttons on /fluence/wiki do not open a create form (no dialog, no route change). Likely requires a Space to be selected first but no affordance is surfaced. Blocks wiki page creation flow.",
-      "bugs": ["BUG-W8-01"]
+      "bugs": [
+        "BUG-W8-01"
+      ]
     },
     {
       "name": "Expense submit (S2 lifecycle)",
@@ -63,7 +67,9 @@
         "main.innerText is empty after 10s wait - page content not rendering (FAIL)"
       ],
       "notes": "BUG-W8-02 P1: /expenses/reports renders empty main element. No vendor/amount form available — likely backend timeouts (see BUG-W8-04) cascade or route has broken data fetch.",
-      "bugs": ["BUG-W8-02"]
+      "bugs": [
+        "BUG-W8-02"
+      ]
     }
   ],
   "bugs": [

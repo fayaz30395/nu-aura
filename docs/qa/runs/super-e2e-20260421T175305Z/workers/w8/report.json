@@ -17,15 +17,42 @@
         "POST /auth/login 423 (account locked)",
         "POST /auth/login 401 (hradmin fallback)"
       ],
-      "network_errors": ["429", "401", "423"]
+      "network_errors": [
+        "429",
+        "401",
+        "423"
+      ]
     }
   ],
   "flows": [
-    {"name": "workflow-leave-apply", "status": "SKIPPED", "reason": "login failed"},
-    {"name": "workflow-attendance", "status": "SKIPPED", "reason": "login failed"},
-    {"name": "workflow-wiki-create", "status": "SKIPPED", "reason": "login failed"},
-    {"name": "workflow-expense", "status": "SKIPPED", "reason": "login failed"}
+    {
+      "name": "workflow-leave-apply",
+      "status": "SKIPPED",
+      "reason": "login failed"
+    },
+    {
+      "name": "workflow-attendance",
+      "status": "SKIPPED",
+      "reason": "login failed"
+    },
+    {
+      "name": "workflow-wiki-create",
+      "status": "SKIPPED",
+      "reason": "login failed"
+    },
+    {
+      "name": "workflow-expense",
+      "status": "SKIPPED",
+      "reason": "login failed"
+    }
   ],
-  "bugs": ["BUG-W8-1"],
-  "summary": {"total": 4, "pass": 0, "fail": 0, "skipped": 4}
+  "bugs": [
+    "BUG-W8-1"
+  ],
+  "summary": {
+    "total": 4,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 4
+  }
 }

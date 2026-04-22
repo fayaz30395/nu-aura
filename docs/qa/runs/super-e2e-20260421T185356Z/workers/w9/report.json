@@ -14,8 +14,20 @@
     {
       "url": "/approvals/inbox",
       "status": "PASS-EMPTY",
-      "counts": {"pending": 0, "approved_today": 0, "rejected_today": 0},
-      "filters": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "counts": {
+        "pending": 0,
+        "approved_today": 0,
+        "rejected_today": 0
+      },
+      "filters": [
+        "All",
+        "Leave",
+        "Expense",
+        "Asset",
+        "Travel",
+        "Recruitment",
+        "Others"
+      ],
       "console_errors": [],
       "network_errors": [],
       "api_calls": [

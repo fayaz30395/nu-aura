@@ -11,11 +11,12 @@
 
 ## Iteration Log
 
-| # | Started            | Ended              | UCs run | New rows | Fixes applied | Result       |
-|---|--------------------|--------------------|---------|----------|---------------|--------------|
-|   |                    |                    |         |          |               |              |
+| # | Started | Ended | UCs run | New rows | Fixes applied | Result |
+|---|---------|-------|---------|----------|---------------|--------|
+|   |         |       |         |          |               |        |
 
-**Clean-sweep exit requires:** `full_catalog_ran = true AND new_rows = 0 AND fixes_applied = 0` in the final iteration.
+**Clean-sweep exit requires:** `full_catalog_ran = true AND new_rows = 0 AND fixes_applied = 0` in
+the final iteration.
 
 ---
 
@@ -25,12 +26,13 @@ Columns: `ID | UC | Route | Role | Severity | State | Reproduction | Evidence | 
 
 - `State` ∈ {OPEN, IN_PROGRESS, FIXED, VERIFIED, DUP, WONTFIX}
 - `Severity` ∈ {P0, P1, P2, P3}   (P3 = log only, never blocks clean-sweep)
-- `Evidence` = screenshot path / HAR / console log path relative to `.claude/skills/nu-chrome-e2e/runs/{{RUN_ID}}/`
+- `Evidence` = screenshot path / HAR / console log path relative to
+  `.claude/skills/nu-chrome-e2e/runs/{{RUN_ID}}/`
 - `Fix Ref` = commit SHA or file:line when State=FIXED
 
-| ID      | UC            | Route         | Role     | Sev | State | Reproduction (1 line)                | Evidence                        | Owner     | Fix Ref |
-|---------|---------------|---------------|----------|-----|-------|--------------------------------------|---------------------------------|-----------|---------|
-| B-0001  |               |               |          |     | OPEN  |                                      |                                 |           |         |
+| ID     | UC | Route | Role | Sev | State | Reproduction (1 line) | Evidence | Owner | Fix Ref |
+|--------|----|-------|------|-----|-------|-----------------------|----------|-------|---------|
+| B-0001 |    |       |      |     | OPEN  |                       |          |       |         |
 
 ---
 

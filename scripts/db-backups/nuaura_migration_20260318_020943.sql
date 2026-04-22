@@ -9764,7 +9764,8 @@ COPY public.app_permissions (display_order, is_deleted, is_system_permission, cr
 \N	c0179cea-530e-4d61-b0da-4cfd8f6608ca
 \N	CREATE
 Core HR	EMPLOYEE	HRMS:EMPLOYEE:CREATE
-Create Employees
+Create
+Employees
 \N	Add new employees to the system
 0	f	f	2026-03-12 18:03:16.216763	2026-03-12 18:03:16.216763	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	e3ca3a5b-5c7a-445a-933e-7d47422d6879
@@ -9775,7 +9776,8 @@ UPDATE
   0 f f 2026-03-12 18:03:16.221311 2026-03-12 18:03:16.221311 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N e6dbefb3-2246-47af-a78c-d89f8b0c6ac3 \N
 DELETE
 Core HR	EMPLOYEE	HRMS:EMPLOYEE:DELETE
-Delete Employees
+Delete
+Employees
 \N	Remove employees from the system
 0	f	f	2026-03-12 18:03:16.224775	2026-03-12 18:03:16.224775	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	ab2137b3-c0a2-4015-9622-42bbe0f6b17e
@@ -9809,8 +9811,10 @@ Delete Employees
 \N	96736e72-a2ed-4bd0-9270-381f40b1499e
 \N	CREATE
 Organization	DEPARTMENT	HRMS:DEPARTMENT:CREATE
-Create Departments
-\N	Create new departments
+Create
+Departments
+\N	Create
+new departments
 0	f	f	2026-03-12 18:03:16.265295	2026-03-12 18:03:16.265295	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	1fe6639a-033b-4ff2-9e87-fecac6020003
 \N
@@ -9820,7 +9824,8 @@ UPDATE
   0 f f 2026-03-12 18:03:16.269329 2026-03-12 18:03:16.269329 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N 03455bcf-c8c1-4469-a368-2a1f40e84c27 \N
 DELETE
 Organization	DEPARTMENT	HRMS:DEPARTMENT:DELETE
-Delete Departments
+Delete
+Departments
 \N	Remove departments
 0	f	f	2026-03-12 18:03:16.274578	2026-03-12 18:03:16.274578	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	55ca98f4-ade6-43b0-b067-dc42930b8a3b
@@ -9950,8 +9955,10 @@ job postings
 \N	48f5cdb9-4d47-431c-82e3-cd4d112042eb
 \N	CREATE
 Project Management	PROJECT	HRMS:PROJECT:CREATE
-Create Projects
-\N	Create and manage projects
+Create
+Projects
+\N	Create
+and manage projects
 0	f	f	2026-03-12 18:03:16.413591	2026-03-12 18:03:16.413591	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	82423f60-41ee-4dea-a45e-29b33d0b9d0d
 \N
@@ -9961,7 +9968,8 @@ UPDATE
   0 f f 2026-03-12 18:03:16.417564 2026-03-12 18:03:16.417564 0 b63547a7-eb8c-4661-a22a-a9d6c3f8ee81 \N 140d77b9-9d15-44e1-b92e-5a2b0f23df12 \N
 DELETE
 Project Management	PROJECT	HRMS:PROJECT:DELETE
-Delete Projects
+Delete
+Projects
 \N	Remove projects
 0	f	f	2026-03-12 18:03:16.421271	2026-03-12 18:03:16.421271	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	074a994a-774c-4ecd-8dd4-a704a10ac003
@@ -9975,7 +9983,8 @@ Delete Projects
 \N	695dad9e-743d-40b0-a334-6ede1cf7902d
 \N	CREATE
 Reports	REPORT	HRMS:REPORT:CREATE
-Create Reports
+Create
+Reports
 \N	Generate and export reports
 0	f	f	2026-03-12 18:03:16.435758	2026-03-12 18:03:16.435758	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	76ee7bff-9537-423c-afc2-4618ec484e8e
@@ -9989,8 +9998,10 @@ Create Reports
 \N	dcae6121-e5d4-4b8c-b69b-61477a75d419
 \N	CREATE
 Communication	ANNOUNCEMENT	HRMS:ANNOUNCEMENT:CREATE
-Create Announcements
-\N	Create new announcements
+Create
+Announcements
+\N	Create
+new announcements
 0	f	f	2026-03-12 18:03:16.448625	2026-03-12 18:03:16.448625	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	afbd5e14-9aed-4ee5-b77b-1490045c4f42
 \N	MANAGE	Communication	ANNOUNCEMENT	HRMS:ANNOUNCEMENT:MANAGE	Manage Announcements
@@ -10029,8 +10040,10 @@ and manage user accounts
 \N	36227281-fa15-46ab-b107-d65c3b5bc827
 \N	CREATE
 Performance	PIP	HRMS:PIP:CREATE
-Create PIPs
-\N	Create Performance Improvement Plans
+Create
+PIPs
+\N	Create
+Performance Improvement Plans
 0	f	f	2026-03-12 18:03:16.482302	2026-03-12 18:03:16.482302	0	b63547a7-eb8c-4661-a22a-a9d6c3f8ee81
 \N	2c929bd6-770c-4e7d-a523-627a65634798
 \N	MANAGE	Performance	PIP	HRMS:PIP:MANAGE	Manage PIPs
@@ -16256,7 +16269,8 @@ f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000012
 \N	create
 department	department.create	Create
-Departments	Create departments
+Departments	Create
+departments
 f	2026-03-13 04:06:31.882179	2026-03-13 04:06:31.882179	0
 \N	660e8401-0001-0001-0001-000000000013
 \N

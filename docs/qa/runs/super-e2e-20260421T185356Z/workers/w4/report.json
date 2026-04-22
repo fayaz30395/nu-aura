@@ -1,1 +1,19 @@
-{"worker":"W4","role":"HR Manager","tab_id":1283664353,"started_at":"2026-04-21T18:54:32Z","finished_at":"2026-04-21T18:58:31Z","status":"ABORTED","abort_reason":"tab 1283664353 did not transition after demo click; rate-limit pressure on other tabs","pages":[],"flows":[],"bugs":[],"summary":{"total":0,"pass":0,"fail":0,"skipped":7,"aborted":1}}
+{
+  "worker": "W4",
+  "role": "HR Manager",
+  "tab_id": 1283664353,
+  "started_at": "2026-04-21T18:54:32Z",
+  "finished_at": "2026-04-21T18:58:31Z",
+  "status": "ABORTED",
+  "abort_reason": "tab 1283664353 did not transition after demo click; rate-limit pressure on other tabs",
+  "pages": [],
+  "flows": [],
+  "bugs": [],
+  "summary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 7,
+    "aborted": 1
+  }
+}

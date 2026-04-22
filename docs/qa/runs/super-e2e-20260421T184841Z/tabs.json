@@ -1,12 +1,52 @@
 {
-  "W1": {"tab_id": 1283664315, "role": "SUPER_ADMIN", "email": "fayaz.m@nulogic.io"},
-  "W2": {"tab_id": 1283664316, "role": "HR_MANAGER",  "email": "jagadeesh@nulogic.io"},
-  "W3": {"tab_id": 1283664317, "role": "HR_MANAGER",  "email": "jagadeesh@nulogic.io"},
-  "W4": {"tab_id": 1283664318, "role": "HR_MANAGER",  "email": "jagadeesh@nulogic.io"},
-  "W5": {"tab_id": 1283664319, "role": "EMPLOYEE",    "email": "saran@nulogic.io"},
-  "W6": {"tab_id": 1283664320, "role": "EMPLOYEE",    "email": "saran@nulogic.io"},
-  "W7": {"tab_id": 1283664321, "role": "EMPLOYEE",    "email": "saran@nulogic.io"},
-  "W8": {"tab_id": 1283664322, "role": "SUPER_ADMIN", "email": "fayaz.m@nulogic.io"},
-  "W9": {"tab_id": 1283664323, "role": "TEAM_LEAD",   "email": "mani@nulogic.io"},
-  "W10":{"tab_id": 1283664324, "role": "SUPER_ADMIN", "email": "fayaz.m@nulogic.io"}
+  "W1": {
+    "tab_id": 1283664315,
+    "role": "SUPER_ADMIN",
+    "email": "fayaz.m@nulogic.io"
+  },
+  "W2": {
+    "tab_id": 1283664316,
+    "role": "HR_MANAGER",
+    "email": "jagadeesh@nulogic.io"
+  },
+  "W3": {
+    "tab_id": 1283664317,
+    "role": "HR_MANAGER",
+    "email": "jagadeesh@nulogic.io"
+  },
+  "W4": {
+    "tab_id": 1283664318,
+    "role": "HR_MANAGER",
+    "email": "jagadeesh@nulogic.io"
+  },
+  "W5": {
+    "tab_id": 1283664319,
+    "role": "EMPLOYEE",
+    "email": "saran@nulogic.io"
+  },
+  "W6": {
+    "tab_id": 1283664320,
+    "role": "EMPLOYEE",
+    "email": "saran@nulogic.io"
+  },
+  "W7": {
+    "tab_id": 1283664321,
+    "role": "EMPLOYEE",
+    "email": "saran@nulogic.io"
+  },
+  "W8": {
+    "tab_id": 1283664322,
+    "role": "SUPER_ADMIN",
+    "email": "fayaz.m@nulogic.io"
+  },
+  "W9": {
+    "tab_id": 1283664323,
+    "role": "TEAM_LEAD",
+    "email": "mani@nulogic.io"
+  },
+  "W10": {
+    "tab_id": 1283664324,
+    "role": "SUPER_ADMIN",
+    "email": "fayaz.m@nulogic.io"
+  }
 }

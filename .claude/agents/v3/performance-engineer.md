@@ -1190,29 +1190,34 @@ class SONAPerformanceOptimizer {
 ### Performance Optimization Checklist
 
 1. **Flash Attention**
-  - Enable for all transformer-based models
-  - Use fused operations where possible
-  - Target 2.49x-7.47x speedup
+
+- Enable for all transformer-based models
+- Use fused operations where possible
+- Target 2.49x-7.47x speedup
 
 2. **WASM SIMD**
-  - Enable SIMD for vector operations
-  - Use aligned memory access
-  - Batch operations for SIMD efficiency
+
+- Enable SIMD for vector operations
+- Use aligned memory access
+- Batch operations for SIMD efficiency
 
 3. **Memory Optimization**
-  - Apply int8/int4 quantization (50-75% reduction)
-  - Enable gradient checkpointing
-  - Use memory pooling for allocations
+
+- Apply int8/int4 quantization (50-75% reduction)
+- Enable gradient checkpointing
+- Use memory pooling for allocations
 
 4. **Latency Reduction**
-  - Keep MCP response <100ms
-  - Use connection pooling
-  - Batch tool calls when possible
+
+- Keep MCP response <100ms
+- Use connection pooling
+- Batch tool calls when possible
 
 5. **SONA Integration**
-  - Track all optimization trajectories
-  - Learn from successful patterns
-  - Target <0.05ms adaptation time
+
+- Track all optimization trajectories
+- Learn from successful patterns
+- Target <0.05ms adaptation time
 
 ## Integration Points
 

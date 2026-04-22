@@ -1,7 +1,8 @@
 # NU-AURA Super E2E Report
 
 - Run: `docs/qa/runs/super-e2e-20260421T192516Z`
-- Mode: **FULL (truncated)** — passes P1–P3 completed; P4 Manager / P5 Team Lead / P6 Employee deferred by operator
+- Mode: **FULL (truncated)** — passes P1–P3 completed; P4 Manager / P5 Team Lead / P6 Employee
+  deferred by operator
 - Git SHA: `0b3aee04866bc12dacb7168dfb5590b7d5dc1386`
 - Started: 2026-04-21T19:25:16Z
 - Wall-time: ~25 min for P1–P3 (plus skill-doc rewrite)
@@ -34,18 +35,18 @@ headline classes:
 
 ## Summary (workers that reported)
 
-| Worker | Role | Tab | Pass | Status | Pages | Bugs |
-|--------|------|-----|------|--------|-------|------|
-| W1 | SUPER_ADMIN | 1283664350 | P1 | COMPLETE | 14 HRMS core | 5 |
-| W8 | SUPER_ADMIN | 1283664357 | P1 | COMPLETE | workflow GIFs + admin | 4 |
-| W10 | SUPER_ADMIN | 1283664359 | P1 | COMPLETE | known-bug retest | verdicts only |
-| W4 | HR_MANAGER | 1283664353 | P2 | COMPLETE | 7 NU-Grow pages | 5 |
-| W2 | RECRUITMENT_ADMIN | 1283664351 | P3 | COMPLETE | 10 pages | 4 |
-| W3 | RECRUITMENT_ADMIN | 1283664352 | P3 | COMPLETE (flaky nav) | 3 recruitment pages | 3 |
-| W5 | Employee | 1283664354 | P6 | NOT RUN | — | — |
-| W6 | Employee | 1283664355 | P6 | NOT RUN | — | — |
-| W7 | Employee RBAC- | 1283664356 | P6 | NOT RUN | — | — |
-| W9 | Team Lead | 1283664358 | P5 | NOT RUN | — | — |
+| Worker | Role              | Tab        | Pass | Status               | Pages                 | Bugs          |
+|--------|-------------------|------------|------|----------------------|-----------------------|---------------|
+| W1     | SUPER_ADMIN       | 1283664350 | P1   | COMPLETE             | 14 HRMS core          | 5             |
+| W8     | SUPER_ADMIN       | 1283664357 | P1   | COMPLETE             | workflow GIFs + admin | 4             |
+| W10    | SUPER_ADMIN       | 1283664359 | P1   | COMPLETE             | known-bug retest      | verdicts only |
+| W4     | HR_MANAGER        | 1283664353 | P2   | COMPLETE             | 7 NU-Grow pages       | 5             |
+| W2     | RECRUITMENT_ADMIN | 1283664351 | P3   | COMPLETE             | 10 pages              | 4             |
+| W3     | RECRUITMENT_ADMIN | 1283664352 | P3   | COMPLETE (flaky nav) | 3 recruitment pages   | 3             |
+| W5     | Employee          | 1283664354 | P6   | NOT RUN              | —                     | —             |
+| W6     | Employee          | 1283664355 | P6   | NOT RUN              | —                     | —             |
+| W7     | Employee RBAC-    | 1283664356 | P6   | NOT RUN              | —                     | —             |
+| W9     | Team Lead         | 1283664358 | P5   | NOT RUN              | —                     | —             |
 
 ---
 
@@ -53,7 +54,8 @@ headline classes:
 
 ### P1 — Missing routes (frontend not mounted)
 
-- **BUG-W1-01** `/attendance/my` → 404 (listed in MY SPACE sidebar) — `frontend/app/attendance/my/page.tsx` missing
+- **BUG-W1-01** `/attendance/my` → 404 (listed in MY SPACE sidebar) —
+  `frontend/app/attendance/my/page.tsx` missing
 - **BUG-W1-02** `/leave/balance` → 404
 - **BUG-W1-03** `/payroll/my-payslips` → 404 (listed in MY SPACE sidebar)
 - **BUG-W1-04** `/payroll/settings` → 404

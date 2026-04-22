@@ -159,7 +159,7 @@ Before spawning any teammate, YOU (the orchestrator) must:
    # JUnit Generation Status — 2026-04-03
 
    | UC ID | Target Test Class | Method Count | Status | Notes |
-            |-------|------------------|-------------|--------|-------|
+                  |-------|------------------|-------------|--------|-------|
    | UC-AUTH-001 | AuthControllerTest.java | 3 | PENDING | |
    ... (one row per UC, Status=PENDING)
 

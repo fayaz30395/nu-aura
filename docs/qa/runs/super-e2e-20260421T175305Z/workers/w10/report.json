@@ -11,7 +11,11 @@
       "url": "http://localhost:3000/payroll/runs",
       "status": "FAIL",
       "network_errors": [
-        {"url": "/api/v1/payroll/runs?page=0&size=100", "status": 403, "role_at_time": "EMPLOYEE (saran)"}
+        {
+          "url": "/api/v1/payroll/runs?page=0&size=100",
+          "status": 403,
+          "role_at_time": "EMPLOYEE (saran)"
+        }
       ],
       "note": "403 expected for EMPLOYEE; inconclusive for SuperAdmin F-01 verification"
     },
@@ -19,21 +23,57 @@
       "url": "http://localhost:3000/employees",
       "status": "FAIL",
       "network_errors": [
-        {"url": "/api/v1/employees?page=0&size=20", "status": 403, "role_at_time": "EMPLOYEE (saran)"}
+        {
+          "url": "/api/v1/employees?page=0&size=20",
+          "status": 403,
+          "role_at_time": "EMPLOYEE (saran)"
+        }
       ],
       "note": "403 expected for EMPLOYEE; inconclusive for SuperAdmin F-01 verification"
     }
   ],
   "flows": [],
   "regressions": [
-    {"id": "F-01", "status": "BLOCKED", "reason": "SuperAdmin login locked; cannot verify bypass"},
-    {"id": "F-02", "status": "BLOCKED", "reason": "Session invalidated; /fluence/wall redirects to login"},
-    {"id": "F-03", "status": "BLOCKED", "reason": "Session invalidated"},
-    {"id": "F-04", "status": "BLOCKED", "reason": "Session invalidated"},
-    {"id": "F-05", "status": "BLOCKED", "reason": "Session invalidated"},
-    {"id": "F-10", "status": "BLOCKED", "reason": "Session invalidated; needs SuperAdmin"},
-    {"id": "F-12", "status": "BLOCKED", "reason": "Session invalidated; needs SuperAdmin"},
-    {"id": "BUG-011", "status": "BLOCKED", "reason": "Session invalidated"}
+    {
+      "id": "F-01",
+      "status": "BLOCKED",
+      "reason": "SuperAdmin login locked; cannot verify bypass"
+    },
+    {
+      "id": "F-02",
+      "status": "BLOCKED",
+      "reason": "Session invalidated; /fluence/wall redirects to login"
+    },
+    {
+      "id": "F-03",
+      "status": "BLOCKED",
+      "reason": "Session invalidated"
+    },
+    {
+      "id": "F-04",
+      "status": "BLOCKED",
+      "reason": "Session invalidated"
+    },
+    {
+      "id": "F-05",
+      "status": "BLOCKED",
+      "reason": "Session invalidated"
+    },
+    {
+      "id": "F-10",
+      "status": "BLOCKED",
+      "reason": "Session invalidated; needs SuperAdmin"
+    },
+    {
+      "id": "F-12",
+      "status": "BLOCKED",
+      "reason": "Session invalidated; needs SuperAdmin"
+    },
+    {
+      "id": "BUG-011",
+      "status": "BLOCKED",
+      "reason": "Session invalidated"
+    }
   ],
   "bugs": [
     {
@@ -54,5 +94,11 @@
       "recommendation": "For multi-worker super-e2e runs: either (a) share a single pre-established SuperAdmin session cookie across workers, (b) stagger logins >60s apart and use dedicated SuperAdmin test accounts per worker, or (c) disable account-lockout for test tenant"
     }
   ],
-  "summary": {"total": 8, "pass": 0, "fail": 0, "blocked": 8, "skipped": 0}
+  "summary": {
+    "total": 8,
+    "pass": 0,
+    "fail": 0,
+    "blocked": 8,
+    "skipped": 0
+  }
 }

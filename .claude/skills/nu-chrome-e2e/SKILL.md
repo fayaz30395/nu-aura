@@ -86,19 +86,19 @@ repair must be **minimal, reversible, and documented in `bootstrap.log`**.
 
 Classify the failure first, then apply the matching strategy.
 
-| Symptom (from backend log / docker logs) | Class | Strategy |
-|------------------------------------------|-------|----------|
+| Symptom (from backend log / docker logs)                                         | Class                     | Strategy                                                                                                                                                                                                                                                                                            |
+|----------------------------------------------------------------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `Flyway ... Script V\d+.*failed` + `column ".*" of relation ".*" does not exist` | **FLYWAY_MISSING_COLUMN** | Inspect `pg_trigger` for `NEW.<col>` references. If a stale trigger uses the missing column → drop it in a new `V{n+1}a__medic_drop_stale_trigger.sql` repair migration. If the migration itself forgot the column → add `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` to a pre-V{n} repair migration. |
-| `Flyway ... failed` + `relation ".*" does not exist` | **FLYWAY_MISSING_TABLE** | Search earlier migrations for the CREATE TABLE; if missing, add `CREATE TABLE IF NOT EXISTS` in a repair migration that sorts BEFORE the failing version. |
-| `Flyway ... failed` + `duplicate key value` on `flyway_schema_history` | **FLYWAY_DIRTY_HISTORY** | Run `UPDATE flyway_schema_history SET success=true WHERE version='...' AND checksum IS NULL;` ONLY if the underlying change is already applied; verify via information_schema first. |
-| `Flyway ... failed` + `syntax error` | **FLYWAY_SQL_ERROR** | Open the failing SQL, apply a ≤3-line fix (typo, missing semicolon, wrong quoting). Document the exact edit. |
-| Flyway reports `Migrations have failed validation` / checksum mismatch | **FLYWAY_CHECKSUM** | `mvn -pl backend flyway:repair` (safe). Never `flyway:clean`. |
-| `Port 8080 already in use` | **PORT_CONFLICT** | `lsof -ti tcp:8080 \| xargs kill -9` (only stale java/node dev processes — never user shells). |
-| `Cannot connect to Neon` / `SSL error` / DNS timeout | **DB_UNREACHABLE** | Ping Neon host, check VPN, wait 30 s and retry twice. If still down → ABORT reason=neon_unreachable. |
-| `redis-cli ping` returns error | **REDIS_DOWN** | `docker restart hrms-redis` ; wait 10 s ; retry. |
-| `kafka-topics` times out | **KAFKA_DOWN** | `docker restart hrms-kafka hrms-zookeeper` ; wait 30 s ; retry. |
-| Backend stuck on `Started HrmsApplication` > 60 s without `Tomcat started` | **BEAN_DEADLOCK** | Dump thread via `jstack <pid>` ; grep for BLOCKED on Redis/ES ; if infra is the cause, recycle Step 2 then retry Step 3. |
-| Elasticsearch refuses connections | **ES_DOWN** | `docker restart hrms-elasticsearch` ; wait 45 s ; retry. |
+| `Flyway ... failed` + `relation ".*" does not exist`                             | **FLYWAY_MISSING_TABLE**  | Search earlier migrations for the CREATE TABLE; if missing, add `CREATE TABLE IF NOT EXISTS` in a repair migration that sorts BEFORE the failing version.                                                                                                                                           |
+| `Flyway ... failed` + `duplicate key value` on `flyway_schema_history`           | **FLYWAY_DIRTY_HISTORY**  | Run `UPDATE flyway_schema_history SET success=true WHERE version='...' AND checksum IS NULL;` ONLY if the underlying change is already applied; verify via information_schema first.                                                                                                                |
+| `Flyway ... failed` + `syntax error`                                             | **FLYWAY_SQL_ERROR**      | Open the failing SQL, apply a ≤3-line fix (typo, missing semicolon, wrong quoting). Document the exact edit.                                                                                                                                                                                        |
+| Flyway reports `Migrations have failed validation` / checksum mismatch           | **FLYWAY_CHECKSUM**       | `mvn -pl backend flyway:repair` (safe). Never `flyway:clean`.                                                                                                                                                                                                                                       |
+| `Port 8080 already in use`                                                       | **PORT_CONFLICT**         | `lsof -ti tcp:8080 \| xargs kill -9` (only stale java/node dev processes — never user shells).                                                                                                                                                                                                      |
+| `Cannot connect to Neon` / `SSL error` / DNS timeout                             | **DB_UNREACHABLE**        | Ping Neon host, check VPN, wait 30 s and retry twice. If still down → ABORT reason=neon_unreachable.                                                                                                                                                                                                |
+| `redis-cli ping` returns error                                                   | **REDIS_DOWN**            | `docker restart hrms-redis` ; wait 10 s ; retry.                                                                                                                                                                                                                                                    |
+| `kafka-topics` times out                                                         | **KAFKA_DOWN**            | `docker restart hrms-kafka hrms-zookeeper` ; wait 30 s ; retry.                                                                                                                                                                                                                                     |
+| Backend stuck on `Started HrmsApplication` > 60 s without `Tomcat started`       | **BEAN_DEADLOCK**         | Dump thread via `jstack <pid>` ; grep for BLOCKED on Redis/ES ; if infra is the cause, recycle Step 2 then retry Step 3.                                                                                                                                                                            |
+| Elasticsearch refuses connections                                                | **ES_DOWN**               | `docker restart hrms-elasticsearch` ; wait 45 s ; retry.                                                                                                                                                                                                                                            |
 
 After every Medic repair:
 
@@ -122,23 +122,23 @@ Only on a fully green summary does the 7-persona QA loop start.
 
 ### Defaults
 
-| Setting | Value |
-|---------|------:|
-| mode | `--full` |
-| base_url | `http://localhost:3000` |
-| first role | `SUPER_ADMIN` |
-| MAX_ITERATIONS | `25` |
-| MAX_DURATION (`--full`) | `90min` |
-| MAX_DURATION (`--rbac`) | `25min` |
-| MAX_DURATION (`--crud`) | `30min` |
-| ROLE_SWITCH_PAUSE | `15s` |
-| BATCH_SIZE (tabs per role) | `5` |
-| RENDER_TIMEOUT | `10000ms` |
-| NETWORK_IDLE_TIMEOUT | `5000ms` |
-| SCREENSHOT_ON_PASS | `false` |
-| SCREENSHOT_ON_FAIL | `true` |
-| AUTO_COMMIT_FIXES | `false` |
-| MAX_RETRIES_PER_BUG | `3` |
+| Setting                    |                   Value |
+|----------------------------|------------------------:|
+| mode                       |                `--full` |
+| base_url                   | `http://localhost:3000` |
+| first role                 |           `SUPER_ADMIN` |
+| MAX_ITERATIONS             |                    `25` |
+| MAX_DURATION (`--full`)    |                 `90min` |
+| MAX_DURATION (`--rbac`)    |                 `25min` |
+| MAX_DURATION (`--crud`)    |                 `30min` |
+| ROLE_SWITCH_PAUSE          |                   `15s` |
+| BATCH_SIZE (tabs per role) |                     `5` |
+| RENDER_TIMEOUT             |               `10000ms` |
+| NETWORK_IDLE_TIMEOUT       |                `5000ms` |
+| SCREENSHOT_ON_PASS         |                 `false` |
+| SCREENSHOT_ON_FAIL         |                  `true` |
+| AUTO_COMMIT_FIXES          |                 `false` |
+| MAX_RETRIES_PER_BUG        |                     `3` |
 
 ### Tool Fallback Chain
 
@@ -177,14 +177,14 @@ Write all files even on abort.
 
 ## Modes
 
-| Flag | Behavior | Time budget |
-|------|----------|------------:|
-| `--full` *(default)* | All phases: baseline, RBAC matrix, CRUD, cross-cutting | 90 min |
-| `--rbac` | Access/deny matrix only, all 9 roles × all routes (765 UCs) | 25 min |
-| `--crud` | Interactive flows + approvals (44 + 6 UCs) | 30 min |
-| `--route <path>` | Single route across all authorized roles | 5 min |
-| `--uc <id>` | Single use case by ID, e.g. `UC-RBAC-042` | 3 min |
-| `--module <name>` | All use cases touching a module, e.g. `--module leave` | 15 min |
+| Flag                 | Behavior                                                    | Time budget |
+|----------------------|-------------------------------------------------------------|------------:|
+| `--full` *(default)* | All phases: baseline, RBAC matrix, CRUD, cross-cutting      |      90 min |
+| `--rbac`             | Access/deny matrix only, all 9 roles × all routes (765 UCs) |      25 min |
+| `--crud`             | Interactive flows + approvals (44 + 6 UCs)                  |      30 min |
+| `--route <path>`     | Single route across all authorized roles                    |       5 min |
+| `--uc <id>`          | Single use case by ID, e.g. `UC-RBAC-042`                   |       3 min |
+| `--module <name>`    | All use cases touching a module, e.g. `--module leave`      |      15 min |
 
 Zero-args invocation defaults to `--full`.
 
@@ -215,17 +215,17 @@ has a stable ID, inputs, expected outcome, and severity on failure.
 
 **ID scheme**: `UC-<CATEGORY>-<NNN>`
 
-| Category | Count | Source |
-|----------|------:|--------|
-| `UC-RBAC-*` | 765 | Generated from the role × route matrix via `generate-rbac-cases.sh` |
-| `UC-CRUD-*` | 44  | Hand-authored interactive journeys |
-| `UC-APPR-*` | 6   | Cross-role approval chains |
-| `UC-FORM-*` | 30  | 10 forms × 3 checks (required / format / submit) |
-| `UC-SESS-*` | 10  | Auth + session |
-| `UC-A11Y-*` | 15  | 5 pages × 3 a11y checks |
-| `UC-DS-*`   | 20  | Design system grep rules |
-| `UC-PERF-*` | 10  | Top 10 heaviest routes |
-| **Total**   | **900** | |
+| Category    |   Count | Source                                                              |
+|-------------|--------:|---------------------------------------------------------------------|
+| `UC-RBAC-*` |     765 | Generated from the role × route matrix via `generate-rbac-cases.sh` |
+| `UC-CRUD-*` |      44 | Hand-authored interactive journeys                                  |
+| `UC-APPR-*` |       6 | Cross-role approval chains                                          |
+| `UC-FORM-*` |      30 | 10 forms × 3 checks (required / format / submit)                    |
+| `UC-SESS-*` |      10 | Auth + session                                                      |
+| `UC-A11Y-*` |      15 | 5 pages × 3 a11y checks                                             |
+| `UC-DS-*`   |      20 | Design system grep rules                                            |
+| `UC-PERF-*` |      10 | Top 10 heaviest routes                                              |
+| **Total**   | **900** |                                                                     |
 
 ### Three verifications per RBAC case
 
@@ -282,31 +282,32 @@ MCP) are green, or until every strategy in the playbook is exhausted. Outputs
 `bootstrap.log` and the `[BOOT] summary:` line. No other persona may run until
 Persona 0 reports green.
 
-| # | Persona | Responsibility | Outputs |
-|--:|---------|----------------|---------|
-| 1 | **Orchestrator** | Picks next iteration's work; decides termination. | iteration plan entry |
-| 2 | **QA** | Runs use cases via Chrome MCP tabs. PASS/FAIL only — no diagnosis. | raw results |
-| 3 | **Bug Validator** | Re-runs each FAIL alone to confirm (reject flakes); dedupes. | confirmed rows |
-| 4 | **QA Lead** | Assigns severity (P0–P3), scopes the smallest affected area, defines "done". | severity + done criterion |
-| 5 | **Developer Lead** | **Thinks first**: writes a one-line fix plan. Rejects anything requiring refactor or multi-file change beyond strict necessity. | one-line fix plan |
-| 6 | **Developer** | Applies the approved minimal edit. No new abstractions, no extra comments. | diff |
-| 7 | **Compiler & Composer** | Runs `tsc --noEmit` + `mvn compile -q`. On green: requeues the UC, updates the single sheet. On red: reverts, returns to Bug Validator. | sheet update |
+| # | Persona                 | Responsibility                                                                                                                          | Outputs                   |
+|--:|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
+| 1 | **Orchestrator**        | Picks next iteration's work; decides termination.                                                                                       | iteration plan entry      |
+| 2 | **QA**                  | Runs use cases via Chrome MCP tabs. PASS/FAIL only — no diagnosis.                                                                      | raw results               |
+| 3 | **Bug Validator**       | Re-runs each FAIL alone to confirm (reject flakes); dedupes.                                                                            | confirmed rows            |
+| 4 | **QA Lead**             | Assigns severity (P0–P3), scopes the smallest affected area, defines "done".                                                            | severity + done criterion |
+| 5 | **Developer Lead**      | **Thinks first**: writes a one-line fix plan. Rejects anything requiring refactor or multi-file change beyond strict necessity.         | one-line fix plan         |
+| 6 | **Developer**           | Applies the approved minimal edit. No new abstractions, no extra comments.                                                              | diff                      |
+| 7 | **Compiler & Composer** | Runs `tsc --noEmit` + `mvn compile -q`. On green: requeues the UC, updates the single sheet. On red: reverts, returns to Bug Validator. | sheet update              |
 
 ### Think-before-fix rule (Persona 5)
 
 - Proposed fix must change **≤ 3 lines** unless QA Lead's scope explicitly says otherwise.
 - If the fix introduces a new file → Developer Lead rejects and re-scopes.
-- If the fix suggests an abstraction ("let's extract a helper") → reject — duplicate three lines instead.
+- If the fix suggests an abstraction ("let's extract a helper") → reject — duplicate three lines
+  instead.
 - If the fix "also touches" unrelated code → reject — separate concern.
 
 ### Worker pool (physical parallelism)
 
-| Pool | Count | Owned by | Constraint |
-|------|------:|----------|-----------|
-| Chrome MCP tabs | 5 | QA | Same login session |
-| Fixers | 2 | Developer | One FE, one BE. Per-file `flock` |
-| Compile gate | 1 | Compiler & Composer | Serialized — only one `tsc`+`mvn` at a time |
-| Bug Validator | 1 | Bug Validator | Serial — one re-run at a time |
+| Pool            | Count | Owned by            | Constraint                                  |
+|-----------------|------:|---------------------|---------------------------------------------|
+| Chrome MCP tabs |     5 | QA                  | Same login session                          |
+| Fixers          |     2 | Developer           | One FE, one BE. Per-file `flock`            |
+| Compile gate    |     1 | Compiler & Composer | Serialized — only one `tsc`+`mvn` at a time |
+| Bug Validator   |     1 | Bug Validator       | Serial — one re-run at a time               |
 
 ### File-lock (prevents fix collisions)
 
@@ -316,7 +317,8 @@ Before Developer edits any file:
 flock -w 30 "$LOCK_DIR/$(printf '%s' "$FILE" | md5sum | cut -d' ' -f1).lock" -c "true"
 ```
 
-Lock dir: `qa-reports/nu-chrome-e2e/<run>/locks/`. On 30s timeout, Developer picks a different FIXING row.
+Lock dir: `qa-reports/nu-chrome-e2e/<run>/locks/`. On 30s timeout, Developer picks a different
+FIXING row.
 
 ---
 
@@ -354,7 +356,8 @@ requires one additional iteration that produces **zero new bugs** and applies
 - `SKILL_EXIT: ok` — latest iteration:
   (1) every row VERIFIED/REJECTED; (2) full catalog ran; (3) `new_rows=0` AND `fixes_applied=0`.
 - `SKILL_EXIT: partial` — MAX_ITERATIONS/time exhausted; P0/P1 all VERIFIED, some P2/P3 UNRESOLVED.
-- `SKILL_EXIT: failed` — any P0 OPEN/UNRESOLVED at termination, OR the clean-sweep iteration introduced new bugs (regression loop).
+- `SKILL_EXIT: failed` — any P0 OPEN/UNRESOLVED at termination, OR the clean-sweep iteration
+  introduced new bugs (regression loop).
 
 In practice: minimum 1 iteration on a clean system (the mandatory clean sweep),
 otherwise N+1 where iteration N fixed the last bug and N+1 confirms no
@@ -380,7 +383,8 @@ For each role R:
 **Rules**:
 
 - **One role at a time** (not one role per tab). Auth rate limit is per-login attempt.
-- **5 tabs per role** sharing the same cookie (Chrome MCP supports multi-tab on one session; Playwright fallback uses 5 `browserContext` instances with shared storage state).
+- **5 tabs per role** sharing the same cookie (Chrome MCP supports multi-tab on one session;
+  Playwright fallback uses 5 `browserContext` instances with shared storage state).
 - **Routes batched evenly** across tabs.
 - **15s pause between role switches**.
 
@@ -497,21 +501,21 @@ deferred MCP tools.
 
 ## Error handling
 
-| Scenario                | Action                                                   |
-|-------------------------|----------------------------------------------------------|
+| Scenario                | Action                                                  |
+|-------------------------|---------------------------------------------------------|
 | Docker daemon down      | `open -a Docker`, poll 90 s; if still down → ABORT      |
-| Infra container down    | `docker-compose up -d`, per-container healthcheck poll   |
-| Backend down            | Bootstrap Medic classifies log; apply matching strategy  |
+| Infra container down    | `docker-compose up -d`, per-container healthcheck poll  |
+| Backend down            | Bootstrap Medic classifies log; apply matching strategy |
 | Flyway migration fails  | Bootstrap Medic: inspect triggers → repair migration    |
-| Port 8080 in use        | `lsof -ti :8080 \| xargs kill -9` (stale dev only)       |
-| Frontend compile fails  | Read log, fix ≤3-line TS/CSS error, restart              |
-| Login fails             | Abort entire loop — auth is prerequisite                 |
-| Rate limit 429          | Wait 60s, retry                                          |
-| Fix causes TS errors    | Revert immediately; try alternative once                 |
-| Fix breaks other routes | Revert; mark UNRESOLVED                                  |
-| Network timeout         | Retry once; then mark infrastructure issue               |
-| Chrome MCP disconnect   | Fall back to Playwright for remaining cases              |
-| Git lock file           | Remove `.git/HEAD.lock` and retry commit                 |
+| Port 8080 in use        | `lsof -ti :8080 \| xargs kill -9` (stale dev only)      |
+| Frontend compile fails  | Read log, fix ≤3-line TS/CSS error, restart             |
+| Login fails             | Abort entire loop — auth is prerequisite                |
+| Rate limit 429          | Wait 60s, retry                                         |
+| Fix causes TS errors    | Revert immediately; try alternative once                |
+| Fix breaks other routes | Revert; mark UNRESOLVED                                 |
+| Network timeout         | Retry once; then mark infrastructure issue              |
+| Chrome MCP disconnect   | Fall back to Playwright for remaining cases             |
+| Git lock file           | Remove `.git/HEAD.lock` and retry commit                |
 
 ---
 

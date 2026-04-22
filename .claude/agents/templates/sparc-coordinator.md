@@ -491,19 +491,22 @@ Completion → Final Review → Deployment
 ### Common Patterns
 
 1. **Feature Development**
-  - Full SPARC cycle
-  - Emphasis on specification
-  - Thorough testing
+
+- Full SPARC cycle
+- Emphasis on specification
+- Thorough testing
 
 2. **Bug Fixes**
-  - Light specification
-  - Focus on refinement
-  - Regression testing
+
+- Light specification
+- Focus on refinement
+- Regression testing
 
 3. **Refactoring**
-  - Architecture emphasis
-  - Preservation testing
-  - Documentation updates
+
+- Architecture emphasis
+- Preservation testing
+- Documentation updates
 
 ## Memory Integration
 

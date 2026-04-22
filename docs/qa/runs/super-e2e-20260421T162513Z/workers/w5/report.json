@@ -35,7 +35,10 @@
         "[ApiClient] Error: GET /knowledge/templates 403 Request failed with status code 403"
       ],
       "network_4xx_5xx": [
-        { "url": "/api/v1/knowledge/templates", "status": 403 }
+        {
+          "url": "/api/v1/knowledge/templates",
+          "status": 403
+        }
       ]
     },
     {
@@ -56,8 +59,14 @@
         "[ApiClient] Error: GET /workflow/inbox/count timeout of 30000ms exceeded"
       ],
       "network_4xx_5xx": [
-        { "url": "/api/v1/fluence/activities", "status": 500 },
-        { "url": "/api/v1/workflow/inbox/count", "status": "timeout" }
+        {
+          "url": "/api/v1/fluence/activities",
+          "status": 500
+        },
+        {
+          "url": "/api/v1/workflow/inbox/count",
+          "status": "timeout"
+        }
       ],
       "s9_announcement_check": {
         "feed_renders": true,
@@ -78,11 +87,26 @@
         "[ApiClient] Error: GET /workflow/inbox/count timeout of 30000ms exceeded"
       ],
       "network_4xx_5xx": [
-        { "url": "/api/v1/knowledge/wiki/pages", "status": 403 },
-        { "url": "/api/v1/knowledge/blogs", "status": 403 },
-        { "url": "/api/v1/knowledge/templates", "status": 403 },
-        { "url": "/api/v1/fluence/activities", "status": 403 },
-        { "url": "/api/v1/workflow/inbox/count", "status": 503 }
+        {
+          "url": "/api/v1/knowledge/wiki/pages",
+          "status": 403
+        },
+        {
+          "url": "/api/v1/knowledge/blogs",
+          "status": 403
+        },
+        {
+          "url": "/api/v1/knowledge/templates",
+          "status": 403
+        },
+        {
+          "url": "/api/v1/fluence/activities",
+          "status": 403
+        },
+        {
+          "url": "/api/v1/workflow/inbox/count",
+          "status": 503
+        }
       ],
       "note": "Analytics aggregator endpoints hit raw content APIs that enforce per-entity permissions - returns 403 though SuperAdmin should bypass. 503 on workflow/inbox/count intermittent."
     },
@@ -95,7 +119,10 @@
         "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
       ],
       "network_4xx_5xx": [
-        { "url": "/api/v1/fluence/attachments/recent", "status": 403 }
+        {
+          "url": "/api/v1/fluence/attachments/recent",
+          "status": 403
+        }
       ]
     },
     {
@@ -117,8 +144,18 @@
     "total": 8,
     "pass": 4,
     "fail": 4,
-    "pass_pages": ["/fluence/wiki", "/fluence/blogs", "/fluence/search", "/fluence/my-content"],
-    "fail_pages": ["/fluence/templates", "/fluence/wall", "/fluence/analytics", "/fluence/drive"],
+    "pass_pages": [
+      "/fluence/wiki",
+      "/fluence/blogs",
+      "/fluence/search",
+      "/fluence/my-content"
+    ],
+    "fail_pages": [
+      "/fluence/templates",
+      "/fluence/wall",
+      "/fluence/analytics",
+      "/fluence/drive"
+    ],
     "bug_clusters": [
       {
         "id": "W5-BUG-1",

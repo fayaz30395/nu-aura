@@ -25,7 +25,9 @@
       "path": "/performance/reviews",
       "status": "PASS",
       "heading": "Performance Reviews",
-      "api_calls": ["/api/v1/reviews/employee/{id}"],
+      "api_calls": [
+        "/api/v1/reviews/employee/{id}"
+      ],
       "console_errors": 0,
       "network_4xx_5xx": 0,
       "classification": "render_ok_with_data",
@@ -70,7 +72,9 @@
       "path": "/surveys",
       "status": "PASS",
       "heading": "Employee Surveys",
-      "api_calls": ["/api/v1/survey-management?page=0&size=20 (200)"],
+      "api_calls": [
+        "/api/v1/survey-management?page=0&size=20 (200)"
+      ],
       "console_errors": 0,
       "network_4xx_5xx": 0,
       "classification": "render_ok_empty_data",

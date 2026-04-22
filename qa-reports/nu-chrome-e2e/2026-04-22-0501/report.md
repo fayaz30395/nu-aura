@@ -37,12 +37,14 @@ Full transcript: `bootstrap.log`.
 ## Execution (Personas 1–7)
 
 ### Role coverage
-| Role | Logged in | Routes sampled | Result |
-|------|-----------|---------------:|--------|
-| SUPER_ADMIN | yes | 5 | 5/5 render pass, 1 P2 feed timeout, 1 P3 catalog mismatch |
-| TENANT_ADMIN .. FINANCE_ADMIN | **not executed** | 0 | deferred |
+
+| Role                          | Logged in        | Routes sampled | Result                                                    |
+|-------------------------------|------------------|---------------:|-----------------------------------------------------------|
+| SUPER_ADMIN                   | yes              |              5 | 5/5 render pass, 1 P2 feed timeout, 1 P3 catalog mismatch |
+| TENANT_ADMIN .. FINANCE_ADMIN | **not executed** |              0 | deferred                                                  |
 
 ### Routes verified (SUPER_ADMIN)
+
 - `/me/dashboard` — renders; 7 feed sources each 5s timeout (BUG-001, P2).
 - `/admin/employees` — renders; roster loads.
 - `/admin/payroll` — renders.
@@ -50,6 +52,7 @@ Full transcript: `bootstrap.log`.
 - `/me/leave` — 404 (catalog says `/me/leave`, app exposes `/me/leaves`) → BUG-002, P3 catalog bug.
 
 ### Not executed in this run
+
 - 765 UC-RBAC negative matrix (URL + DOM + negative-API three-check).
 - 44 UC-CRUD interactive flows.
 - 6 UC-APPR approval chains.
@@ -63,10 +66,10 @@ Full transcript: `bootstrap.log`.
 
 See `bug-sheet.md`. 2 rows, both OPEN.
 
-| # | UC | Sev | Summary |
-|--:|----|-----|---------|
-| 1 | UC-SMOKE-DASH-FEED | P2 | `/me/dashboard` — 7 feed sources all hit 5s timeout; `frontend/lib/services/core/feed.service.ts:21`. |
-| 2 | UC-CATALOG-LEAVE-PATH | P3 | Catalog references `/me/leave`; actual route is `/me/leaves`. Fix is in `use-cases.yaml`, not app. |
+| # | UC                    | Sev | Summary                                                                                               |
+|--:|-----------------------|-----|-------------------------------------------------------------------------------------------------------|
+| 1 | UC-SMOKE-DASH-FEED    | P2  | `/me/dashboard` — 7 feed sources all hit 5s timeout; `frontend/lib/services/core/feed.service.ts:21`. |
+| 2 | UC-CATALOG-LEAVE-PATH | P3  | Catalog references `/me/leave`; actual route is `/me/leaves`. Fix is in `use-cases.yaml`, not app.    |
 
 No P0 / P1 raised in the sampled scope.
 

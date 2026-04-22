@@ -7,27 +7,106 @@
   "started_at": "2026-04-21T23:25:30Z",
   "finished_at": "2026-04-21T23:28:10Z",
   "role_verified_via_api": true,
-  "me_endpoint_result": {"email":"saran@nulogic.io","roles":["EMPLOYEE"]},
+  "me_endpoint_result": {
+    "email": "saran@nulogic.io",
+    "roles": [
+      "EMPLOYEE"
+    ]
+  },
   "pages": [
-    {"url":"/admin","status":"PASS","evidence":"Access Denied banner, sidebar shows EMPLOYEE persona (Saran V)","screenshot":"workers/w7/screenshots/admin.png","data_leaked":false},
-    {"url":"/payroll/runs","status":"PASS","evidence":"Redirected to /me/dashboard, no payroll run data rendered","screenshot":"workers/w7/screenshots/payroll-runs.png","data_leaked":false},
-    {"url":"/payroll/structures","status":"PASS","evidence":"Access Denied 🔒 banner rendered","screenshot":"workers/w7/screenshots/payroll-structures.png","data_leaked":false},
-    {"url":"/recruitment","status":"PASS","evidence":"Access Denied 🔒 banner rendered, NU-Hire sidebar only shows sub-items but main content denied","screenshot":"workers/w7/screenshots/recruitment.png","data_leaked":false},
-    {"url":"/statutory","status":"PASS-EMPTY","evidence":"Main content empty, no statutory data rendered; sidebar rendered admin-shaped nav shell but no data","screenshot":"workers/w7/screenshots/statutory.png","data_leaked":false,"note":"Sidebar briefly showed admin links (Executive/Employees/Payroll/Reports/System Admin) for EMPLOYEE role — client-side nav filtering may be too permissive (UI-only, no data leak)"},
-    {"url":"/fluence/analytics","status":"PASS-EMPTY","evidence":"Main content empty, no analytics data rendered","screenshot":"workers/w7/screenshots/fluence-analytics.png","data_leaked":false},
-    {"url":"/employees","status":"PASS","evidence":"Access Denied 🔒 banner, zero employee roster rows (denied=true, hasEmployees=false, bodyLen=398)","screenshot":"workers/w7/screenshots/employees.png","data_leaked":false}
+    {
+      "url": "/admin",
+      "status": "PASS",
+      "evidence": "Access Denied banner, sidebar shows EMPLOYEE persona (Saran V)",
+      "screenshot": "workers/w7/screenshots/admin.png",
+      "data_leaked": false
+    },
+    {
+      "url": "/payroll/runs",
+      "status": "PASS",
+      "evidence": "Redirected to /me/dashboard, no payroll run data rendered",
+      "screenshot": "workers/w7/screenshots/payroll-runs.png",
+      "data_leaked": false
+    },
+    {
+      "url": "/payroll/structures",
+      "status": "PASS",
+      "evidence": "Access Denied 🔒 banner rendered",
+      "screenshot": "workers/w7/screenshots/payroll-structures.png",
+      "data_leaked": false
+    },
+    {
+      "url": "/recruitment",
+      "status": "PASS",
+      "evidence": "Access Denied 🔒 banner rendered, NU-Hire sidebar only shows sub-items but main content denied",
+      "screenshot": "workers/w7/screenshots/recruitment.png",
+      "data_leaked": false
+    },
+    {
+      "url": "/statutory",
+      "status": "PASS-EMPTY",
+      "evidence": "Main content empty, no statutory data rendered; sidebar rendered admin-shaped nav shell but no data",
+      "screenshot": "workers/w7/screenshots/statutory.png",
+      "data_leaked": false,
+      "note": "Sidebar briefly showed admin links (Executive/Employees/Payroll/Reports/System Admin) for EMPLOYEE role — client-side nav filtering may be too permissive (UI-only, no data leak)"
+    },
+    {
+      "url": "/fluence/analytics",
+      "status": "PASS-EMPTY",
+      "evidence": "Main content empty, no analytics data rendered",
+      "screenshot": "workers/w7/screenshots/fluence-analytics.png",
+      "data_leaked": false
+    },
+    {
+      "url": "/employees",
+      "status": "PASS",
+      "evidence": "Access Denied 🔒 banner, zero employee roster rows (denied=true, hasEmployees=false, bodyLen=398)",
+      "screenshot": "workers/w7/screenshots/employees.png",
+      "data_leaked": false
+    }
   ],
   "api_probe": [
-    {"endpoint":"/api/v1/employees","status":403,"expected":"deny","verdict":"PASS"},
-    {"endpoint":"/api/v1/payroll/runs","status":403,"expected":"deny","verdict":"PASS"},
-    {"endpoint":"/api/v1/payroll/structures","status":404,"expected":"deny","verdict":"PASS (route differs)"},
-    {"endpoint":"/api/v1/recruitment/jobs","status":404,"expected":"deny","verdict":"PASS (route differs)"},
-    {"endpoint":"/api/v1/fluence/analytics/overview","status":404,"expected":"deny","verdict":"PASS (route differs)"}
+    {
+      "endpoint": "/api/v1/employees",
+      "status": 403,
+      "expected": "deny",
+      "verdict": "PASS"
+    },
+    {
+      "endpoint": "/api/v1/payroll/runs",
+      "status": 403,
+      "expected": "deny",
+      "verdict": "PASS"
+    },
+    {
+      "endpoint": "/api/v1/payroll/structures",
+      "status": 404,
+      "expected": "deny",
+      "verdict": "PASS (route differs)"
+    },
+    {
+      "endpoint": "/api/v1/recruitment/jobs",
+      "status": 404,
+      "expected": "deny",
+      "verdict": "PASS (route differs)"
+    },
+    {
+      "endpoint": "/api/v1/fluence/analytics/overview",
+      "status": 404,
+      "expected": "deny",
+      "verdict": "PASS (route differs)"
+    }
   ],
   "flows": [],
   "bugs": [],
   "potential_findings": [
-    {"severity":"P3","category":"ui","title":"Sidebar briefly shows admin-shaped navigation for EMPLOYEE on /statutory and /fluence/analytics","evidence":"On navigate to /statutory, sidebar rendered: Executive, Employees, Team Directory, Org Chart, Payroll, Compensation, Statutory, Reports, Analytics, System Admin — none of which EMPLOYEE should see. Main content was empty (no data leak), so confirmed UI-only issue. Role verified still EMPLOYEE via /api/v1/auth/me during observation.","reproduces":"Login as EMPLOYEE → navigate to /statutory → observe sidebar"}
+    {
+      "severity": "P3",
+      "category": "ui",
+      "title": "Sidebar briefly shows admin-shaped navigation for EMPLOYEE on /statutory and /fluence/analytics",
+      "evidence": "On navigate to /statutory, sidebar rendered: Executive, Employees, Team Directory, Org Chart, Payroll, Compensation, Statutory, Reports, Analytics, System Admin — none of which EMPLOYEE should see. Main content was empty (no data leak), so confirmed UI-only issue. Role verified still EMPLOYEE via /api/v1/auth/me during observation.",
+      "reproduces": "Login as EMPLOYEE → navigate to /statutory → observe sidebar"
+    }
   ],
   "summary": {
     "total": 7,

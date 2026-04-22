@@ -113,26 +113,27 @@ When using `--fix`, the following optimizations may be applied:
 
 1. **Topology Optimization**
 
-  - Switch to more efficient topology
-  - Adjust communication patterns
-  - Reduce coordination overhead
+- Switch to more efficient topology
+- Adjust communication patterns
+- Reduce coordination overhead
 
 2. **Caching Enhancement**
 
-  - Enable memory caching
-  - Optimize cache strategies
-  - Preload common patterns
+- Enable memory caching
+- Optimize cache strategies
+- Preload common patterns
 
 3. **Concurrency Tuning**
 
-  - Adjust agent counts
-  - Optimize parallel execution
-  - Balance workload distribution
+- Adjust agent counts
+- Optimize parallel execution
+- Balance workload distribution
 
 4. **Priority Adjustment**
-  - Reorder task queues
-  - Prioritize critical paths
-  - Reduce wait times
+
+- Reorder task queues
+- Prioritize critical paths
+- Reduce wait times
 
 ## Performance Impact
 

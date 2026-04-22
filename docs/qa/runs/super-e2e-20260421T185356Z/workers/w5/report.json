@@ -1,1 +1,19 @@
-{"worker":"W5","role":"Employee","tab_id":1283664354,"started_at":"2026-04-21T18:54:44Z","finished_at":"2026-04-21T18:58:08Z","status":"ABORTED","abort_reason":"demo login panel button did not fire after click via found ref; no report produced","pages":[],"flows":[],"bugs":[],"summary":{"total":0,"pass":0,"fail":0,"skipped":0,"aborted":1}}
+{
+  "worker": "W5",
+  "role": "Employee",
+  "tab_id": 1283664354,
+  "started_at": "2026-04-21T18:54:44Z",
+  "finished_at": "2026-04-21T18:58:08Z",
+  "status": "ABORTED",
+  "abort_reason": "demo login panel button did not fire after click via found ref; no report produced",
+  "pages": [],
+  "flows": [],
+  "bugs": [],
+  "summary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0,
+    "skipped": 0,
+    "aborted": 1
+  }
+}

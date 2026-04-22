@@ -197,34 +197,39 @@ npx claude-flow@alpha verify integration --test-suite full
 The verification system evaluates:
 
 1. **Code Correctness**
-  - Syntax validation
-  - Type checking (TypeScript)
-  - Logic flow analysis
-  - Error handling completeness
+
+- Syntax validation
+- Type checking (TypeScript)
+- Logic flow analysis
+- Error handling completeness
 
 2. **Best Practices**
-  - Code style adherence
-  - SOLID principles
-  - Design patterns usage
-  - Modularity and reusability
+
+- Code style adherence
+- SOLID principles
+- Design patterns usage
+- Modularity and reusability
 
 3. **Security**
-  - Vulnerability scanning
-  - Secret detection
-  - Input validation
-  - Authentication/authorization checks
+
+- Vulnerability scanning
+- Secret detection
+- Input validation
+- Authentication/authorization checks
 
 4. **Performance**
-  - Algorithmic complexity
-  - Memory usage patterns
-  - Database query optimization
-  - Bundle size impact
+
+- Algorithmic complexity
+- Memory usage patterns
+- Database query optimization
+- Bundle size impact
 
 5. **Documentation**
-  - JSDoc/TypeDoc completeness
-  - README accuracy
-  - API documentation
-  - Code comments quality
+
+- JSDoc/TypeDoc completeness
+- README accuracy
+- API documentation
+- Code comments quality
 
 #### JSON Output for CI/CD
 

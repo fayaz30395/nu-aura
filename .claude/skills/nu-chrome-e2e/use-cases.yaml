@@ -6615,7 +6615,7 @@ use_cases:
     journey:
       - click: button[data-testid="add-employee"]
       - submit
-      - assert_inline_error_all: ["First name is required", "Email is required"]
+      - assert_inline_error_all: [ "First name is required", "Email is required" ]
     severity_on_miss: P1
   - id: UC-FORM-create-employee-fmt
     category: FORM
@@ -6860,47 +6860,47 @@ use_cases:
   - id: UC-SESS-001
     category: SESS
     role: SUPER_ADMIN
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-002
     category: SESS
     role: TENANT_ADMIN
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-003
     category: SESS
     role: HR_ADMIN
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-004
     category: SESS
     role: HR_MANAGER
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-005
     category: SESS
     role: MANAGER
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-006
     category: SESS
     role: TEAM_LEAD
-    journey: [login, assert_url_contains: /dashboard]
+    journey: [ login, assert_url_contains: /dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-007
     category: SESS
     role: EMPLOYEE
-    journey: [login, assert_url_contains: /me/dashboard]
+    journey: [ login, assert_url_contains: /me/dashboard ]
     severity_on_miss: P0
   - id: UC-SESS-008
     category: SESS
     role: RECRUITMENT_ADMIN
-    journey: [login, assert_url_contains: /recruitment]
+    journey: [ login, assert_url_contains: /recruitment ]
     severity_on_miss: P0
   - id: UC-SESS-009
     category: SESS
     role: FINANCE_ADMIN
-    journey: [login, assert_url_contains: /payroll]
+    journey: [ login, assert_url_contains: /payroll ]
     severity_on_miss: P0
   - id: UC-SESS-010
     category: SESS
@@ -7161,13 +7161,13 @@ use_cases:
     category: DS
     tool: browser
     description: "5 pages render clean in dark mode"
-    routes: [/dashboard, /employees, /me/leave, /recruitment, /performance]
+    routes: [ /dashboard, /employees, /me/leave, /recruitment, /performance ]
     severity_on_miss: P2
   - id: UC-DS-1366
     category: DS
     tool: browser
     description: "5 pages render at 1366px viewport without clip"
-    routes: [/dashboard, /employees, /me/leave, /recruitment, /performance]
+    routes: [ /dashboard, /employees, /me/leave, /recruitment, /performance ]
     severity_on_miss: P2
 
   # ============================================================

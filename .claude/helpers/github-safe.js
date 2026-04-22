@@ -10,7 +10,7 @@
  */
 
 import {execSync} from 'child_process';
-import {writeFileSync, unlinkSync} from 'fs';
+import {unlinkSync, writeFileSync} from 'fs';
 import {tmpdir} from 'os';
 import {join} from 'path';
 import {randomBytes} from 'crypto';

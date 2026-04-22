@@ -6,7 +6,11 @@
   "run_dir": "docs/qa/runs/super-e2e-20260421T192516Z",
   "session_verified_at_start": true,
   "session_verified_at_end": true,
-  "session_roles": ["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"],
+  "session_roles": [
+    "SUPER_ADMIN",
+    "SKIP_LEVEL_MANAGER",
+    "REPORTING_MANAGER"
+  ],
   "scope": "Retest prior bugs from super-e2e-20260421T185356Z",
   "verdicts": [
     {

@@ -2,15 +2,75 @@
   "tab_group_id": 603408365,
   "login_tab": 1283664350,
   "map": {
-    "W1":  {"tab_id": 1283664350, "role": "SuperAdmin",       "demo": "Fayaz M",  "shard": "hrms-core",     "pass": 1},
-    "W8":  {"tab_id": 1283664357, "role": "SuperAdmin",       "demo": "Fayaz M",  "shard": "workflows-gifs","pass": 1},
-    "W10": {"tab_id": 1283664359, "role": "SuperAdmin",       "demo": "Fayaz M",  "shard": "known-bugs",    "pass": 1},
-    "W4":  {"tab_id": 1283664353, "role": "HR Manager",       "demo": "HR Manager","shard": "grow",         "pass": 2},
-    "W3":  {"tab_id": 1283664352, "role": "Recruitment Admin","demo": "Suresh M", "shard": "hire",          "pass": 3},
-    "W2":  {"tab_id": 1283664351, "role": "Recruitment Admin","demo": "Suresh M", "shard": "hrms-ops",      "pass": 3},
-    "W9":  {"tab_id": 1283664358, "role": "Team Lead",        "demo": "Mani S",   "shard": "approvals",     "pass": 5},
-    "W5":  {"tab_id": 1283664354, "role": "Employee",         "demo": "Saran V",  "shard": "fluence",       "pass": 6},
-    "W6":  {"tab_id": 1283664355, "role": "Employee",         "demo": "Saran V",  "shard": "self-service",  "pass": 6},
-    "W7":  {"tab_id": 1283664356, "role": "Employee",         "demo": "Saran V",  "shard": "rbac-negatives","pass": 6}
+    "W1": {
+      "tab_id": 1283664350,
+      "role": "SuperAdmin",
+      "demo": "Fayaz M",
+      "shard": "hrms-core",
+      "pass": 1
+    },
+    "W8": {
+      "tab_id": 1283664357,
+      "role": "SuperAdmin",
+      "demo": "Fayaz M",
+      "shard": "workflows-gifs",
+      "pass": 1
+    },
+    "W10": {
+      "tab_id": 1283664359,
+      "role": "SuperAdmin",
+      "demo": "Fayaz M",
+      "shard": "known-bugs",
+      "pass": 1
+    },
+    "W4": {
+      "tab_id": 1283664353,
+      "role": "HR Manager",
+      "demo": "HR Manager",
+      "shard": "grow",
+      "pass": 2
+    },
+    "W3": {
+      "tab_id": 1283664352,
+      "role": "Recruitment Admin",
+      "demo": "Suresh M",
+      "shard": "hire",
+      "pass": 3
+    },
+    "W2": {
+      "tab_id": 1283664351,
+      "role": "Recruitment Admin",
+      "demo": "Suresh M",
+      "shard": "hrms-ops",
+      "pass": 3
+    },
+    "W9": {
+      "tab_id": 1283664358,
+      "role": "Team Lead",
+      "demo": "Mani S",
+      "shard": "approvals",
+      "pass": 5
+    },
+    "W5": {
+      "tab_id": 1283664354,
+      "role": "Employee",
+      "demo": "Saran V",
+      "shard": "fluence",
+      "pass": 6
+    },
+    "W6": {
+      "tab_id": 1283664355,
+      "role": "Employee",
+      "demo": "Saran V",
+      "shard": "self-service",
+      "pass": 6
+    },
+    "W7": {
+      "tab_id": 1283664356,
+      "role": "Employee",
+      "demo": "Saran V",
+      "shard": "rbac-negatives",
+      "pass": 6
+    }
   }
 }

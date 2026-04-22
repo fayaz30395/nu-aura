@@ -26,7 +26,10 @@
       "observed_ui": "Redirected back to /me/dashboard (no approvals/inbox view rendered for EMPLOYEE).",
       "console_errors": 0,
       "network_4xx_5xx": [
-        { "url": "/approvals/inbox", "status": 503 }
+        {
+          "url": "/approvals/inbox",
+          "status": 503
+        }
       ],
       "status": "FAIL",
       "bug": "BUG-W6-001",
@@ -59,7 +62,10 @@
     "observed_ui": "Access Denied page with lock icon: 'You don't have permission to access this page.' + 'Go to Home' button.",
     "console_errors": 0,
     "network_4xx_5xx": [
-      { "url": "/helpdesk", "status": 503 }
+      {
+        "url": "/helpdesk",
+        "status": 503
+      }
     ],
     "status": "FAIL",
     "bug": "BUG-W6-002",

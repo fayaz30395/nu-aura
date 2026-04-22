@@ -4,77 +4,140 @@
 
 ---
 
-
 ## BUG-001: Payroll run row displays empty name and "— - —" for period (FRONTEND)
+
 - **File**: frontend/app/payroll/_components/PayrollRunsTab.tsx
-- **Root cause**: When a payroll run has null/empty `runName`, the table cell renders blank. The `payrollPeriodStart` and `payrollPeriodEnd` fields are also null/undefined, causing `formatDate()` to return "—" for each, resulting in "— - —" display. This is primarily a data quality issue (incomplete draft run), but the frontend lacked a fallback for empty run names.
-- **Fix**: Added fallback text "Untitled Run" (italic, muted) when `run.runName` is falsy. The period display already handles null gracefully via `formatDate()` returning "—", which is acceptable behavior for incomplete data.
+- **Root cause**: When a payroll run has null/empty `runName`, the table cell renders blank. The
+  `payrollPeriodStart` and `payrollPeriodEnd` fields are also null/undefined, causing `formatDate()`
+  to return "—" for each, resulting in "— - —" display. This is primarily a data quality issue (
+  incomplete draft run), but the frontend lacked a fallback for empty run names.
+- **Fix**: Added fallback text "Untitled Run" (italic, muted) when `run.runName` is falsy. The
+  period display already handles null gracefully via `formatDate()` returning "—", which is
+  acceptable behavior for incomplete data.
 - **Verified**: tsc passes
 
 ## BUG-001: Payroll run row displays empty name and period (NEEDS-REVIEW)
+
 - **File**: N/A (data quality issue)
-- **Root cause**: A test payroll_run record exists in the database with null payPeriodMonth/payPeriodYear values, likely created before NOT NULL constraints were enforced on the PayrollRun entity. The backend PayrollRun entity has `@Column(nullable = false)` on these fields, so new records cannot be created with null values.
-- **Fix**: This is a data quality issue — the stale test record should be cleaned up or updated with valid month/year values. No backend code change needed. The PayrollController correctly returns the entity as-is; the frontend shows "— - —" because the month/year fields are null.
+- **Root cause**: A test payroll_run record exists in the database with null
+  payPeriodMonth/payPeriodYear values, likely created before NOT NULL constraints were enforced on
+  the PayrollRun entity. The backend PayrollRun entity has `@Column(nullable = false)` on these
+  fields, so new records cannot be created with null values.
+- **Fix**: This is a data quality issue — the stale test record should be cleaned up or updated with
+  valid month/year values. No backend code change needed. The PayrollController correctly returns
+  the entity as-is; the frontend shows "— - —" because the month/year fields are null.
 - **Migration**: none
 - **Verified**: Backend code review — PayrollRun entity constraints are correct
-- **Status**: NEEDS-REVIEW (BE) — recommend cleaning up stale test data via SQL: `UPDATE payroll_runs SET pay_period_month = EXTRACT(MONTH FROM payroll_date), pay_period_year = EXTRACT(YEAR FROM payroll_date) WHERE pay_period_month IS NULL;`
+- **Status**: NEEDS-REVIEW (BE) — recommend cleaning up stale test data via SQL:
+  `UPDATE payroll_runs SET pay_period_month = EXTRACT(MONTH FROM payroll_date), pay_period_year = EXTRACT(YEAR FROM payroll_date) WHERE pay_period_month IS NULL;`
 
 ## BUG-002: LeaveCalendarPage "Maximum update depth exceeded" React error (FRONTEND)
+
 - **File**: frontend/app/leave/calendar/page.tsx
-- **Root cause**: `leaves` was derived via `??` operator on every render, creating a new array reference each time. This new reference triggered the useEffect on line 67 that calls `generateCalendar()` → `setCalendarDays()`, which caused a re-render, creating another new `leaves` reference — infinite loop.
-- **Fix**: Wrapped `leaves` derivation in `useMemo` with stable dependencies `[viewMode, employeeRequestsQuery.data?.content, approvedRequestsQuery.data?.content]`. React Query returns stable references for `.data.content` so the memo only recomputes when actual data changes.
+- **Root cause**: `leaves` was derived via `??` operator on every render, creating a new array
+  reference each time. This new reference triggered the useEffect on line 67 that calls
+  `generateCalendar()` → `setCalendarDays()`, which caused a re-render, creating another new
+  `leaves` reference — infinite loop.
+- **Fix**: Wrapped `leaves` derivation in `useMemo` with stable dependencies
+  `[viewMode, employeeRequestsQuery.data?.content, approvedRequestsQuery.data?.content]`. React
+  Query returns stable references for `.data.content` so the memo only recomputes when actual data
+  changes.
 - **Verified**: tsc passes
 
 ## BUG-003: /fluence/wall activity feed fails to load (INFRASTRUCTURE)
+
 - **File**: frontend/components/fluence/ActivityFeed.tsx (component is correct)
-- **Root cause**: The activity feed API (`/api/v1/fluence/activities`) depends on Elasticsearch which is not running in the dev environment. The ActivityFeed component correctly shows a timeout fallback message after 8s ("Unable to load activity feed. The service may be temporarily unavailable.").
-- **Fix**: No code fix needed — this is an infrastructure dependency. Start Elasticsearch via `docker-compose up -d elasticsearch` to resolve. The component already handles the error gracefully.
+- **Root cause**: The activity feed API (`/api/v1/fluence/activities`) depends on Elasticsearch
+  which is not running in the dev environment. The ActivityFeed component correctly shows a timeout
+  fallback message after 8s ("Unable to load activity feed. The service may be temporarily
+  unavailable.").
+- **Fix**: No code fix needed — this is an infrastructure dependency. Start Elasticsearch via
+  `docker-compose up -d elasticsearch` to resolve. The component already handles the error
+  gracefully.
 - **Status**: NEEDS-REVIEW — infrastructure dependency, not a code bug
 
 ## BUG-004: Night shift shows -16.5h working hours (FRONTEND)
+
 - **File**: frontend/app/admin/shifts/page.tsx
-- **Root cause**: `netWorkingHours` is computed by backend as `endTime - startTime - breakMinutes`. For night shifts that cross midnight (e.g., 22:00-06:00), this produces a negative value: 6-22=-16, minus 1.5h break = -16.5h. The frontend displayed this negative value as-is.
-- **Fix**: Added cross-midnight correction: if `netWorkingHours` is negative, add 24 to get the correct positive value (e.g., -16.5 + 24 = 7.5h).
+- **Root cause**: `netWorkingHours` is computed by backend as `endTime - startTime - breakMinutes`.
+  For night shifts that cross midnight (e.g., 22:00-06:00), this produces a negative value:
+  6-22=-16, minus 1.5h break = -16.5h. The frontend displayed this negative value as-is.
+- **Fix**: Added cross-midnight correction: if `netWorkingHours` is negative, add 24 to get the
+  correct positive value (e.g., -16.5 + 24 = 7.5h).
 - **Verified**: tsc passes
 
 ## BUG-005: /admin/payroll crashes — TypeError on toLocaleString (FRONTEND)
+
 - **File**: frontend/app/admin/payroll/page.tsx:273
-- **Root cause**: `s.totalCTC.toLocaleString()` crashes when `totalCTC` is null/undefined (salary structure with no CTC value set).
-- **Fix**: Added nullish coalescing: `(s.totalCTC ?? 0).toLocaleString()` — defaults to 0 when CTC is undefined.
+- **Root cause**: `s.totalCTC.toLocaleString()` crashes when `totalCTC` is null/undefined (salary
+  structure with no CTC value set).
+- **Fix**: Added nullish coalescing: `(s.totalCTC ?? 0).toLocaleString()` — defaults to 0 when CTC
+  is undefined.
 - **Verified**: tsc passes
 
 ## BUG-001 (R2): Payroll run name still blank after initial fix (FRONTEND)
+
 - **File**: frontend/app/payroll/_components/PayrollRunsTab.tsx:110
-- **Root cause**: Initial fix used `run.runName || fallback` which doesn't catch whitespace-only strings. The backend may return `" "` or the value could be a non-empty but blank string.
-- **Fix**: Changed to `run.runName?.trim() ? run.runName : fallback` — handles null, undefined, empty, and whitespace-only strings.
+- **Root cause**: Initial fix used `run.runName || fallback` which doesn't catch whitespace-only
+  strings. The backend may return `" "` or the value could be a non-empty but blank string.
+- **Fix**: Changed to `run.runName?.trim() ? run.runName : fallback` — handles null, undefined,
+  empty, and whitespace-only strings.
 - **Verified**: tsc passes
 
 ## BUG-002 (R2): Leave calendar STILL had infinite loop after useMemo on leaves (FRONTEND)
+
 - **File**: frontend/app/leave/calendar/page.tsx
-- **Root cause**: The initial fix (useMemo on `leaves`) was insufficient. The real problem was the useEffect → generateCalendar() → setCalendarDays(days) → re-render cycle. Even with stable `leaves`, `setCalendarDays` triggers a re-render which re-runs the useEffect. The pattern of `useEffect + setState` for derived data is inherently fragile.
-- **Fix**: Replaced `useState(calendarDays)` + `useEffect(generateCalendar)` with a single `useMemo` that derives `calendarDays` directly from `currentDate` and `leaves`. No state, no effect, no render loop. Calendar days are now computed derivations, not stored state.
+- **Root cause**: The initial fix (useMemo on `leaves`) was insufficient. The real problem was the
+  useEffect → generateCalendar() → setCalendarDays(days) → re-render cycle. Even with stable
+  `leaves`, `setCalendarDays` triggers a re-render which re-runs the useEffect. The pattern of
+  `useEffect + setState` for derived data is inherently fragile.
+- **Fix**: Replaced `useState(calendarDays)` + `useEffect(generateCalendar)` with a single `useMemo`
+  that derives `calendarDays` directly from `currentDate` and `leaves`. No state, no effect, no
+  render loop. Calendar days are now computed derivations, not stored state.
 - **Verified**: tsc passes
 
 ## BUG-004 (R2): Night shift -16.5h still showing after initial fix (FRONTEND)
+
 - **File**: frontend/app/admin/shifts/page.tsx + frontend/app/shifts/definitions/page.tsx
-- **Root cause**: Dev server may not have hot-reloaded the fix. Also found a second instance of the same bug in shifts/definitions/page.tsx:286 that wasn't covered by the initial fix.
-- **Fix**: Applied same cross-midnight correction to shifts/definitions/page.tsx. Restarted frontend dev server with clean .next cache to ensure all changes are picked up.
+- **Root cause**: Dev server may not have hot-reloaded the fix. Also found a second instance of the
+  same bug in shifts/definitions/page.tsx:286 that wasn't covered by the initial fix.
+- **Fix**: Applied same cross-midnight correction to shifts/definitions/page.tsx. Restarted frontend
+  dev server with clean .next cache to ensure all changes are picked up.
 - **Verified**: tsc passes, frontend restarted
 
 ## BUG-002 (R2-final): Leave calendar infinite loop — deeper fix (FRONTEND)
+
 - **File**: frontend/app/leave/calendar/page.tsx
-- **Root cause**: React Query's `data.content` creates new array references on every refetch/background update. Even with useMemo, the memo dependencies (`.data?.content`) kept changing referentially, triggering cascading re-renders. Additionally, the viewMode switching useEffect had `viewMode` in its deps, creating a potential re-trigger loop.
-- **Fix**: (1) Stabilized `leaves` using JSON.stringify comparison — memo only recomputes when actual leave data changes, not when React Query creates new wrapper objects. (2) Removed `viewMode` from the switching useEffect deps — it should only run once when hydration completes, not re-run on every viewMode change.
+- **Root cause**: React Query's `data.content` creates new array references on every
+  refetch/background update. Even with useMemo, the memo dependencies (`.data?.content`) kept
+  changing referentially, triggering cascading re-renders. Additionally, the viewMode switching
+  useEffect had `viewMode` in its deps, creating a potential re-trigger loop.
+- **Fix**: (1) Stabilized `leaves` using JSON.stringify comparison — memo only recomputes when
+  actual leave data changes, not when React Query creates new wrapper objects. (2) Removed
+  `viewMode` from the switching useEffect deps — it should only run once when hydration completes,
+  not re-run on every viewMode change.
 - **Verified**: tsc passes
 
 ## BUG-010: Helpdesk ticket IDs not navigating to detail view (FRONTEND)
+
 - **File**: frontend/app/helpdesk/tickets/page.tsx
-- **Root cause**: Ticket ID was rendered as a `<span>` inside a `<tr>` with `onClick={onNavigate}`. While the row onClick did trigger `router.push`, the ticket ID itself had no anchor semantics — no right-click "Open in new tab", no hover underline, no accessibility affordance, and any accidental DOM stopPropagation upstream would silently break it.
-- **Fix**: Replaced the `<span>` with a real Next.js `<Link href="/helpdesk/tickets/${id}">` so the ticket ID is a genuine anchor. Row-level click-through still works. Added `hover:underline` + `cursor-pointer` for visual affordance and `e.stopPropagation()` to prevent double-navigation.
+- **Root cause**: Ticket ID was rendered as a `<span>` inside a `<tr>` with `onClick={onNavigate}`.
+  While the row onClick did trigger `router.push`, the ticket ID itself had no anchor semantics — no
+  right-click "Open in new tab", no hover underline, no accessibility affordance, and any accidental
+  DOM stopPropagation upstream would silently break it.
+- **Fix**: Replaced the `<span>` with a real Next.js `<Link href="/helpdesk/tickets/${id}">` so the
+  ticket ID is a genuine anchor. Row-level click-through still works. Added `hover:underline` +
+  `cursor-pointer` for visual affordance and `e.stopPropagation()` to prevent double-navigation.
 - **Verified**: tsc passes
 
 ## BUG-011: Contract "View" button not navigating to detail page (FRONTEND)
+
 - **File**: frontend/app/contracts/page.tsx
-- **Root cause**: `<Button onClick={() => router.push(...)}>` works but relies on the JS bundle being fully hydrated and the click handler being attached. On Mantine `<Button>`, some variants render as `<button>` which can't be middle-clicked or opened in new tabs. On slow hydration, clicks may no-op.
-- **Fix**: Changed to `<Button component={Link} href=...>` so Mantine renders the element as a real `<a>` anchor from Next.js Link. Navigation now works whether or not JS is hydrated and supports new-tab opening.
+- **Root cause**: `<Button onClick={() => router.push(...)}>` works but relies on the JS bundle
+  being fully hydrated and the click handler being attached. On Mantine `<Button>`, some variants
+  render as `<button>` which can't be middle-clicked or opened in new tabs. On slow hydration,
+  clicks may no-op.
+- **Fix**: Changed to `<Button component={Link} href=...>` so Mantine renders the element as a real
+  `<a>` anchor from Next.js Link. Navigation now works whether or not JS is hydrated and supports
+  new-tab opening.
 - **Verified**: tsc passes

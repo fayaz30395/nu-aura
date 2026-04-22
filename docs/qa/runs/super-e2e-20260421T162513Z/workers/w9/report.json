@@ -13,7 +13,15 @@
       "delegate_count": 0,
       "sample_tasks": [],
       "empty_state_text": "You're all caught up — No pending approvals at the moment.",
-      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "filters_visible": [
+        "All",
+        "Leave",
+        "Expense",
+        "Asset",
+        "Travel",
+        "Recruitment",
+        "Others"
+      ],
       "status": "PASS",
       "notes": "Page rendered successfully. Zero pending approvals. Empty state correct. No console errors detected."
     },
@@ -27,7 +35,15 @@
       "delegate_count": 0,
       "sample_tasks": [],
       "empty_state_text": "You're all caught up — No pending approvals at the moment.",
-      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "filters_visible": [
+        "All",
+        "Leave",
+        "Expense",
+        "Asset",
+        "Travel",
+        "Recruitment",
+        "Others"
+      ],
       "status": "PASS",
       "notes": "Manager role landed on /approvals/inbox successfully. Zero pending. Empty state correct."
     },
@@ -41,7 +57,15 @@
       "delegate_count": 0,
       "sample_tasks": [],
       "empty_state_text": "You're all caught up — No pending approvals at the moment.",
-      "filters_visible": ["All", "Leave", "Expense", "Asset", "Travel", "Recruitment", "Others"],
+      "filters_visible": [
+        "All",
+        "Leave",
+        "Expense",
+        "Asset",
+        "Travel",
+        "Recruitment",
+        "Others"
+      ],
       "status": "PASS_WITH_DATA_NOTE",
       "notes": "Requested role was HR_ADMIN but account sarankarthick.maran@nulogic.io resolves to Saran V with role EMPLOYEE in the system. Approvals inbox still accessible (all users can view their own inbox). Zero pending approvals as EMPLOYEE has no delegated approval authority."
     }

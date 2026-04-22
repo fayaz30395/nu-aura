@@ -8,19 +8,19 @@ bug by grepping `frontend/app/` for the actual page file AND checking the live s
 The testers navigated to URLs they *assumed* a role should have, rather than URLs actually
 rendered in the sidebar. Every "404" below has a real working page at a different path.
 
-| Reported "missing" | Real route (exists) | Verdict |
-|--------------------|---------------------|---------|
-| `/attendance/my` | `/attendance/my-attendance` (`AttendanceSidebar.tsx:15`) | INVALID |
-| `/leave/balance` | Balance is rendered inline on `/leave` main page | INVALID |
-| `/payroll/my-payslips` | `/payroll/payslips` | INVALID |
-| `/orgchart` (BUG-W2-01) | `/org-chart` AND `/organization-chart` (both exist) | INVALID |
-| `/performance/360` (BUG-W4-001) | `/performance/360-feedback` AND `/feedback360` | INVALID |
-| `/performance/training` (BUG-W4-002) | `/training` (top-level) | INVALID |
-| `/performance/surveys` (BUG-W4-003) | `/surveys` (top-level) | INVALID |
-| `/performance/recognition` (BUG-W4-004) | `/recognition` (top-level) | INVALID |
-| BUG-W4-005 (consolidation of above) | — | INVALID (derivative) |
-| `/payroll/settings` | Likely `/admin/payroll` (exists) | INVALID (suspected) |
-| `/admin/audit-logs` | Likely `/admin/system` (exists) | NEEDS-VERIFICATION |
+| Reported "missing"                      | Real route (exists)                                      | Verdict              |
+|-----------------------------------------|----------------------------------------------------------|----------------------|
+| `/attendance/my`                        | `/attendance/my-attendance` (`AttendanceSidebar.tsx:15`) | INVALID              |
+| `/leave/balance`                        | Balance is rendered inline on `/leave` main page         | INVALID              |
+| `/payroll/my-payslips`                  | `/payroll/payslips`                                      | INVALID              |
+| `/orgchart` (BUG-W2-01)                 | `/org-chart` AND `/organization-chart` (both exist)      | INVALID              |
+| `/performance/360` (BUG-W4-001)         | `/performance/360-feedback` AND `/feedback360`           | INVALID              |
+| `/performance/training` (BUG-W4-002)    | `/training` (top-level)                                  | INVALID              |
+| `/performance/surveys` (BUG-W4-003)     | `/surveys` (top-level)                                   | INVALID              |
+| `/performance/recognition` (BUG-W4-004) | `/recognition` (top-level)                               | INVALID              |
+| BUG-W4-005 (consolidation of above)     | —                                                        | INVALID (derivative) |
+| `/payroll/settings`                     | Likely `/admin/payroll` (exists)                         | INVALID (suspected)  |
+| `/admin/audit-logs`                     | Likely `/admin/system` (exists)                          | NEEDS-VERIFICATION   |
 
 **Root cause of the false positives:** the tester prompt allowed workers to probe
 MY-SPACE-style URLs ("attendance/my", "payroll/my-payslips") by name-guessing rather than
@@ -82,19 +82,20 @@ One architect-agent fix on the shared RBAC page shell would resolve all three.
 
 - **Scope for fixer dispatch: 6 bugs** (3 P1 auth/RBAC + 3 P2 gating drift)
 - **1 needs product decision** (BUG-W8-01 /admin/tenants)
-- **12 closed as INVALID** (BUG-W8-03 added on second-pass verification — `/workflows/builder` is yet another speculated URL; real path is `/workflows/new` which works correctly)
+- **12 closed as INVALID** (BUG-W8-03 added on second-pass verification — `/workflows/builder` is
+  yet another speculated URL; real path is `/workflows/new` which works correctly)
 
 ## Fixer dispatch summary (this run)
 
-| Bug | Fix | File(s) |
-|-----|-----|---------|
-| BUG-W3-02 | Clear auth cookies on refresh failure + widen frontend gap 5→30 min | `backend/.../AuthController.java`, `frontend/lib/hooks/useTokenRefresh.ts` |
-| BUG-W2-02 | Wrap `/assets` page body in `PermissionGate permission={ASSET_VIEW}` | `frontend/app/assets/page.tsx` |
-| BUG-W2-04 | Wrap `/contracts` page body in `PermissionGate permission={CONTRACT_VIEW}` | `frontend/app/contracts/page.tsx` |
-| BUG-W2-03 | DEFERRED — `/overtime` legitimately serves `OVERTIME_REQUEST`-only users (employees submitting their own). Fix belongs on the team-list tab, not the page shell. |
+| Bug       | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | File(s)                                                                    |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| BUG-W3-02 | Clear auth cookies on refresh failure + widen frontend gap 5→30 min                                                                                                                                                                                                                                                                                                                                                                                                                                                                | `backend/.../AuthController.java`, `frontend/lib/hooks/useTokenRefresh.ts` |
+| BUG-W2-02 | Wrap `/assets` page body in `PermissionGate permission={ASSET_VIEW}`                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `frontend/app/assets/page.tsx`                                             |
+| BUG-W2-04 | Wrap `/contracts` page body in `PermissionGate permission={CONTRACT_VIEW}`                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `frontend/app/contracts/page.tsx`                                          |
+| BUG-W2-03 | DEFERRED — `/overtime` legitimately serves `OVERTIME_REQUEST`-only users (employees submitting their own). Fix belongs on the team-list tab, not the page shell.                                                                                                                                                                                                                                                                                                                                                                   |
 | BUG-W3-01 | LIKELY DOWNSTREAM of BUG-W3-02 — W3's `report.json` shows "First nav redirected to /auth/login. Re-nav reached URL but rendered Access Denied." This matches the auth refresh 401 loop signature: middleware bounces to login, session is effectively half-dead, re-navigation reaches the page but `user.roles` is stale or cleared. Route config `frontend/lib/config/routes.ts:678` requires only `RECRUITMENT:VIEW`/`RECRUITMENT:CREATE`, which RECRUITMENT_ADMIN has per V107. **Re-verify after BUG-W3-02 fix is deployed.** |
-| BUG-W1-05 | DEFERRED — SuperAdminBypassTest passes; almost certainly a paint race where the analytics fetch fires before the JWT cookie round-trips on first load. Needs Network+Performance DevTools timing capture to confirm. |
-| BUG-W8-01 | Product decision — route `/admin/tenants` has no sidebar entry; either build or remove dead link. |
+| BUG-W1-05 | DEFERRED — SuperAdminBypassTest passes; almost certainly a paint race where the analytics fetch fires before the JWT cookie round-trips on first load. Needs Network+Performance DevTools timing capture to confirm.                                                                                                                                                                                                                                                                                                               |
+| BUG-W8-01 | Product decision — route `/admin/tenants` has no sidebar entry; either build or remove dead link.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ## Skill follow-up
 

@@ -87,22 +87,25 @@ npx claude-flow@alpha memory retrieve --key "project/standards"
 ### Phase 2: Deep Analysis
 
 1. **Static Analysis**
-  - Run linters and type checkers
-  - Execute security scanners
-  - Perform complexity analysis
-  - Check test coverage
+
+- Run linters and type checkers
+- Execute security scanners
+- Perform complexity analysis
+- Check test coverage
 
 2. **Pattern Recognition**
-  - Identify recurring issues
-  - Detect anti-patterns
-  - Find optimization opportunities
-  - Locate refactoring candidates
+
+- Identify recurring issues
+- Detect anti-patterns
+- Find optimization opportunities
+- Locate refactoring candidates
 
 3. **Dependency Analysis**
-  - Map module dependencies
-  - Check for circular dependencies
-  - Analyze package versions
-  - Identify security vulnerabilities
+
+- Map module dependencies
+- Check for circular dependencies
+- Analyze package versions
+- Identify security vulnerabilities
 
 ### Phase 3: Report Generation
 

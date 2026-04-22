@@ -1,15 +1,274 @@
-{"bug_id":"BUG-W2-1","worker":"W2","tab_id":1283664288,"severity":"P3","category":"test-fixture","title":"HR_ADMIN fixture hradmin@nulogic.io returns 401 Unauthorized","url":"http://localhost:3000/auth/login","endpoint":"POST /api/v1/auth/login","http_status":401,"repro":["POST {email:hradmin@nulogic.io,password:Password@123}","returns 401"],"evidence":"network trace","detected_at":"2026-04-21T17:57:53Z"}
-{"bug_id":"BUG-W2-2","worker":"W2","tab_id":1283664288,"severity":"P1","category":"test-fixture","title":"Fallback SuperAdmin fayaz@nulogic.io also returns 401 with Password@123 — no working login for W2 shard","url":"http://localhost:3000/auth/login","endpoint":"POST /api/v1/auth/login","http_status":401,"repro":["POST {email:fayaz@nulogic.io,password:Password@123}","returns 401"],"evidence":"network trace","detected_at":"2026-04-21T17:57:53Z"}
-{"bug_id":"BUG-W2-3","worker":"W2","tab_id":1283664288,"severity":"P1","category":"api","title":"Auth rate-limiter 429 after 2-3 attempts — blocks HR_ADMIN login and fallback","url":"http://localhost:3000/auth/login","endpoint":"POST /api/v1/auth/login","http_status":429,"repro":["Submit login 2-3x","429 Too Many Requests returned"],"evidence":"network trace","detected_at":"2026-04-21T17:58:33Z"}
-{"bug_id":"BUG-W1-1","worker":"W1","tab_id":1283664287,"severity":"P1","category":"rbac","title":"SuperAdmin credential fixture mismatch — contract says Password@123, login UI advertises Welcome@123","url":"http://localhost:3000/auth/login","endpoint":"POST http://localhost:8080/api/v1/auth/login","http_status":401,"repro":["Open /auth/login","Click Sign in with Email","Enter fayaz@nulogic.io / Password@123 per WORKER_CONTRACT","Submit","401 returned"],"evidence":"workers/w1/report.json","detected_at":"2026-04-21T23:26:40Z"}
-{"bug_id":"BUG-W1-2","worker":"W1","tab_id":1283664287,"severity":"P2","category":"api","title":"Account lockout triggered after 2 login attempts — shard cannot recover for 15min","url":"http://localhost:3000/auth/login","endpoint":"POST http://localhost:8080/api/v1/auth/login","http_status":423,"repro":["Attempt 1 returns 401","Wait then attempt 2 returns 429","Attempt 3 after rate window returns 423 Account Locked"],"evidence":"workers/w1/report.json","detected_at":"2026-04-21T23:29:04Z"}
-{"bug_id":"BUG-W4-1","worker":"W4","tab_id":1283664290,"severity":"P2","category":"rbac","title":"HR_MANAGER gets 403 on /api/v1/okr/company/objectives","url":"http://localhost:3000/performance/okr","endpoint":"/api/v1/okr/company/objectives","http_status":403,"repro":["Login as demo HR MANAGER (Jagadeesh)","Navigate /performance/okr","Network call to /okr/company/objectives returns 403"],"evidence":"workers/w4/network/okr.json","detected_at":"2026-04-21T18:00:08Z"}
-{"bug_id":"BUG-W9-1","worker":"W9","tab_id":1283664295,"severity":"P3","category":"rbac","title":"TEAM_LEAD login 401 — teamlead@nulogic.io credentials invalid (fixture gap)","url":"http://localhost:3000/auth/login","endpoint":"POST /auth/login","http_status":401,"repro":["Navigate /auth/login","Submit teamlead@nulogic.io / Password@123","Observe 401"],"evidence":"workers/w9/screenshots/","detected_at":"2026-04-21T23:30:37Z"}
-{"bug_id":"BUG-W4-2","worker":"W4","tab_id":1283664290,"severity":"P1","category":"ui","title":"/surveys page returns 503 Service Unavailable","url":"http://localhost:3000/surveys","endpoint":"/surveys","http_status":503,"repro":["Login as HR_MANAGER demo","Navigate /surveys","Next.js page doc returns 503; body empty"],"evidence":"workers/w4/network/surveys.json","detected_at":"2026-04-21T18:01:38Z"}
-{"bug_id":"BUG-W8-1","worker":"W8","tab_id":1283664294,"severity":"P1","category":"rbac","title":"SuperAdmin account locked (423); credentials fixture mismatch (contract updated mid-run Password@123 -> Welcome@123); hradmin fallback also 401","url":"http://localhost:3000/auth/login","endpoint":"POST /auth/login","http_status":423,"repro":["Login fayaz@nulogic.io/Password@123 -> 429 then 401","Retry fayaz@nulogic.io/Welcome@123 -> 423 locked","Fallback hradmin@nulogic.io/Welcome@123 -> 401"],"evidence":"workers/w8/report.json","detected_at":"2026-04-21T23:31:15Z"}
-{"bug_id":"BUG-W9-2","worker":"W9","tab_id":1283664295,"severity":"P3","category":"rbac","title":"HR_MANAGER login 401 — hrmanager@nulogic.io credentials invalid (fixture gap)","url":"http://localhost:3000/auth/login","endpoint":"POST /auth/login","http_status":401,"repro":["/auth/login","Submit hrmanager@nulogic.io / Password@123","401"],"evidence":"workers/w9/screenshots/","detected_at":"2026-04-21T23:31:30Z"}
-{"bug_id":"BUG-W9-3","worker":"W9","tab_id":1283664295,"severity":"P2","category":"rbac","title":"HR_ADMIN account locked (423) after failed attempts — AccountLockoutService triggered; credentials for hradmin@nulogic.io invalid","url":"http://localhost:3000/auth/login","endpoint":"POST /auth/login","http_status":423,"repro":["/auth/login","Submit hradmin@nulogic.io / Password@123","Multiple 401s then 423 Locked"],"evidence":"workers/w9/screenshots/","detected_at":"2026-04-21T23:32:24Z"}
-{"bug_id":"BUG-W10-1","worker":"W10","tab_id":1283664296,"severity":"P1","category":"infra","title":"SuperAdmin fayaz@nulogic.io locked (HTTP 423) — blocks all SuperAdmin workers in parallel runs","url":"http://localhost:3000/auth/login","endpoint":"/api/v1/auth/login","http_status":423,"repro":["Parallel workers login as fayaz@nulogic.io","AccountLockoutService triggers after 5 failed attempts/15min","Subsequent logins return 423"],"evidence":"workers/w10/report.json","detected_at":"2026-04-21T23:30:56Z"}
-{"bug_id":"BUG-W5-1","worker":"W5","tab_id":1283664291,"severity":"P1","category":"perf","title":"workflow/inbox/count exceeds 1s SLA (F-03 regression)","url":"http://localhost:3000/me/dashboard","endpoint":"/api/v1/workflow/inbox/count","http_status":200,"repro":["Login as EMPLOYEE (saran@nulogic.io)","Call GET /api/v1/workflow/inbox/count","First call: 8619ms","Second call (cache hit expected): 3930ms","Exceeds 1s SLA per worker contract F-03 regression check"],"evidence":"workers/w5/screenshots/fluence-my-dashboard.png","detected_at":"2026-04-21T18:10:00Z"}
-{"bug_id":"BUG-W5-2","worker":"W5","tab_id":1283664291,"severity":"P2","category":"api","title":"/api/v1/fluence/drive/files endpoint returns 404 (missing)","url":"http://localhost:3000/fluence/drive","endpoint":"/api/v1/fluence/drive/files?page=0&size=20","http_status":404,"repro":["Login as EMPLOYEE","Navigate to /fluence/drive","Frontend page renders (no redirect) but calls GET /api/v1/fluence/drive/files → 404 (endpoint not mapped)","Result: Drive UI has no data; user sees empty/broken state"],"evidence":"workers/w5/screenshots/fluence-drive.png","detected_at":"2026-04-21T18:10:00Z"}
-{"bug_id":"BUG-W5-3","worker":"W5","tab_id":1283664291,"severity":"P3","category":"rbac","title":"Shared-cookie session race across Chrome workers (test infra)","url":"http://localhost:3000/fluence/wiki","endpoint":"n/a","http_status":null,"repro":["W5 logs in as SUPER_ADMIN (fayaz@nulogic.io)","Other workers (same browser profile) log in as other roles","httpOnly cookie is overwritten → W5 becomes EMPLOYEE mid-run","/api/v1/auth/me returns saran@nulogic.io not fayaz@nulogic.io","Impact: prevents reliable per-role RBAC matrix under parallel workers"],"evidence":"workers/w5/screenshots/fluence-wiki.png","detected_at":"2026-04-21T18:10:00Z"}
+{
+  "bug_id": "BUG-W2-1",
+  "worker": "W2",
+  "tab_id": 1283664288,
+  "severity": "P3",
+  "category": "test-fixture",
+  "title": "HR_ADMIN fixture hradmin@nulogic.io returns 401 Unauthorized",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /api/v1/auth/login",
+  "http_status": 401,
+  "repro": [
+    "POST {email:hradmin@nulogic.io,password:Password@123}",
+    "returns 401"
+  ],
+  "evidence": "network trace",
+  "detected_at": "2026-04-21T17:57:53Z"
+}
+{
+  "bug_id": "BUG-W2-2",
+  "worker": "W2",
+  "tab_id": 1283664288,
+  "severity": "P1",
+  "category": "test-fixture",
+  "title": "Fallback SuperAdmin fayaz@nulogic.io also returns 401 with Password@123 — no working login for W2 shard",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /api/v1/auth/login",
+  "http_status": 401,
+  "repro": [
+    "POST {email:fayaz@nulogic.io,password:Password@123}",
+    "returns 401"
+  ],
+  "evidence": "network trace",
+  "detected_at": "2026-04-21T17:57:53Z"
+}
+{
+  "bug_id": "BUG-W2-3",
+  "worker": "W2",
+  "tab_id": 1283664288,
+  "severity": "P1",
+  "category": "api",
+  "title": "Auth rate-limiter 429 after 2-3 attempts — blocks HR_ADMIN login and fallback",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /api/v1/auth/login",
+  "http_status": 429,
+  "repro": [
+    "Submit login 2-3x",
+    "429 Too Many Requests returned"
+  ],
+  "evidence": "network trace",
+  "detected_at": "2026-04-21T17:58:33Z"
+}
+{
+  "bug_id": "BUG-W1-1",
+  "worker": "W1",
+  "tab_id": 1283664287,
+  "severity": "P1",
+  "category": "rbac",
+  "title": "SuperAdmin credential fixture mismatch — contract says Password@123, login UI advertises Welcome@123",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST http://localhost:8080/api/v1/auth/login",
+  "http_status": 401,
+  "repro": [
+    "Open /auth/login",
+    "Click Sign in with Email",
+    "Enter fayaz@nulogic.io / Password@123 per WORKER_CONTRACT",
+    "Submit",
+    "401 returned"
+  ],
+  "evidence": "workers/w1/report.json",
+  "detected_at": "2026-04-21T23:26:40Z"
+}
+{
+  "bug_id": "BUG-W1-2",
+  "worker": "W1",
+  "tab_id": 1283664287,
+  "severity": "P2",
+  "category": "api",
+  "title": "Account lockout triggered after 2 login attempts — shard cannot recover for 15min",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST http://localhost:8080/api/v1/auth/login",
+  "http_status": 423,
+  "repro": [
+    "Attempt 1 returns 401",
+    "Wait then attempt 2 returns 429",
+    "Attempt 3 after rate window returns 423 Account Locked"
+  ],
+  "evidence": "workers/w1/report.json",
+  "detected_at": "2026-04-21T23:29:04Z"
+}
+{
+  "bug_id": "BUG-W4-1",
+  "worker": "W4",
+  "tab_id": 1283664290,
+  "severity": "P2",
+  "category": "rbac",
+  "title": "HR_MANAGER gets 403 on /api/v1/okr/company/objectives",
+  "url": "http://localhost:3000/performance/okr",
+  "endpoint": "/api/v1/okr/company/objectives",
+  "http_status": 403,
+  "repro": [
+    "Login as demo HR MANAGER (Jagadeesh)",
+    "Navigate /performance/okr",
+    "Network call to /okr/company/objectives returns 403"
+  ],
+  "evidence": "workers/w4/network/okr.json",
+  "detected_at": "2026-04-21T18:00:08Z"
+}
+{
+  "bug_id": "BUG-W9-1",
+  "worker": "W9",
+  "tab_id": 1283664295,
+  "severity": "P3",
+  "category": "rbac",
+  "title": "TEAM_LEAD login 401 — teamlead@nulogic.io credentials invalid (fixture gap)",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /auth/login",
+  "http_status": 401,
+  "repro": [
+    "Navigate /auth/login",
+    "Submit teamlead@nulogic.io / Password@123",
+    "Observe 401"
+  ],
+  "evidence": "workers/w9/screenshots/",
+  "detected_at": "2026-04-21T23:30:37Z"
+}
+{
+  "bug_id": "BUG-W4-2",
+  "worker": "W4",
+  "tab_id": 1283664290,
+  "severity": "P1",
+  "category": "ui",
+  "title": "/surveys page returns 503 Service Unavailable",
+  "url": "http://localhost:3000/surveys",
+  "endpoint": "/surveys",
+  "http_status": 503,
+  "repro": [
+    "Login as HR_MANAGER demo",
+    "Navigate /surveys",
+    "Next.js page doc returns 503; body empty"
+  ],
+  "evidence": "workers/w4/network/surveys.json",
+  "detected_at": "2026-04-21T18:01:38Z"
+}
+{
+  "bug_id": "BUG-W8-1",
+  "worker": "W8",
+  "tab_id": 1283664294,
+  "severity": "P1",
+  "category": "rbac",
+  "title": "SuperAdmin account locked (423); credentials fixture mismatch (contract updated mid-run Password@123 -> Welcome@123); hradmin fallback also 401",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /auth/login",
+  "http_status": 423,
+  "repro": [
+    "Login fayaz@nulogic.io/Password@123 -> 429 then 401",
+    "Retry fayaz@nulogic.io/Welcome@123 -> 423 locked",
+    "Fallback hradmin@nulogic.io/Welcome@123 -> 401"
+  ],
+  "evidence": "workers/w8/report.json",
+  "detected_at": "2026-04-21T23:31:15Z"
+}
+{
+  "bug_id": "BUG-W9-2",
+  "worker": "W9",
+  "tab_id": 1283664295,
+  "severity": "P3",
+  "category": "rbac",
+  "title": "HR_MANAGER login 401 — hrmanager@nulogic.io credentials invalid (fixture gap)",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /auth/login",
+  "http_status": 401,
+  "repro": [
+    "/auth/login",
+    "Submit hrmanager@nulogic.io / Password@123",
+    "401"
+  ],
+  "evidence": "workers/w9/screenshots/",
+  "detected_at": "2026-04-21T23:31:30Z"
+}
+{
+  "bug_id": "BUG-W9-3",
+  "worker": "W9",
+  "tab_id": 1283664295,
+  "severity": "P2",
+  "category": "rbac",
+  "title": "HR_ADMIN account locked (423) after failed attempts — AccountLockoutService triggered; credentials for hradmin@nulogic.io invalid",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "POST /auth/login",
+  "http_status": 423,
+  "repro": [
+    "/auth/login",
+    "Submit hradmin@nulogic.io / Password@123",
+    "Multiple 401s then 423 Locked"
+  ],
+  "evidence": "workers/w9/screenshots/",
+  "detected_at": "2026-04-21T23:32:24Z"
+}
+{
+  "bug_id": "BUG-W10-1",
+  "worker": "W10",
+  "tab_id": 1283664296,
+  "severity": "P1",
+  "category": "infra",
+  "title": "SuperAdmin fayaz@nulogic.io locked (HTTP 423) — blocks all SuperAdmin workers in parallel runs",
+  "url": "http://localhost:3000/auth/login",
+  "endpoint": "/api/v1/auth/login",
+  "http_status": 423,
+  "repro": [
+    "Parallel workers login as fayaz@nulogic.io",
+    "AccountLockoutService triggers after 5 failed attempts/15min",
+    "Subsequent logins return 423"
+  ],
+  "evidence": "workers/w10/report.json",
+  "detected_at": "2026-04-21T23:30:56Z"
+}
+{
+  "bug_id": "BUG-W5-1",
+  "worker": "W5",
+  "tab_id": 1283664291,
+  "severity": "P1",
+  "category": "perf",
+  "title": "workflow/inbox/count exceeds 1s SLA (F-03 regression)",
+  "url": "http://localhost:3000/me/dashboard",
+  "endpoint": "/api/v1/workflow/inbox/count",
+  "http_status": 200,
+  "repro": [
+    "Login as EMPLOYEE (saran@nulogic.io)",
+    "Call GET /api/v1/workflow/inbox/count",
+    "First call: 8619ms",
+    "Second call (cache hit expected): 3930ms",
+    "Exceeds 1s SLA per worker contract F-03 regression check"
+  ],
+  "evidence": "workers/w5/screenshots/fluence-my-dashboard.png",
+  "detected_at": "2026-04-21T18:10:00Z"
+}
+{
+  "bug_id": "BUG-W5-2",
+  "worker": "W5",
+  "tab_id": 1283664291,
+  "severity": "P2",
+  "category": "api",
+  "title": "/api/v1/fluence/drive/files endpoint returns 404 (missing)",
+  "url": "http://localhost:3000/fluence/drive",
+  "endpoint": "/api/v1/fluence/drive/files?page=0&size=20",
+  "http_status": 404,
+  "repro": [
+    "Login as EMPLOYEE",
+    "Navigate to /fluence/drive",
+    "Frontend page renders (no redirect) but calls GET /api/v1/fluence/drive/files → 404 (endpoint not mapped)",
+    "Result: Drive UI has no data; user sees empty/broken state"
+  ],
+  "evidence": "workers/w5/screenshots/fluence-drive.png",
+  "detected_at": "2026-04-21T18:10:00Z"
+}
+{
+  "bug_id": "BUG-W5-3",
+  "worker": "W5",
+  "tab_id": 1283664291,
+  "severity": "P3",
+  "category": "rbac",
+  "title": "Shared-cookie session race across Chrome workers (test infra)",
+  "url": "http://localhost:3000/fluence/wiki",
+  "endpoint": "n/a",
+  "http_status": null,
+  "repro": [
+    "W5 logs in as SUPER_ADMIN (fayaz@nulogic.io)",
+    "Other workers (same browser profile) log in as other roles",
+    "httpOnly cookie is overwritten → W5 becomes EMPLOYEE mid-run",
+    "/api/v1/auth/me returns saran@nulogic.io not fayaz@nulogic.io",
+    "Impact: prevents reliable per-role RBAC matrix under parallel workers"
+  ],
+  "evidence": "workers/w5/screenshots/fluence-wiki.png",
+  "detected_at": "2026-04-21T18:10:00Z"
+}

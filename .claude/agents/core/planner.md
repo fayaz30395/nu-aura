@@ -356,28 +356,32 @@ console.log(`Common planning gaps: ${stats.commonCritiques}`);
 ## Best Practices
 
 1. Always create plans that are:
-  - Specific and actionable
-  - Measurable and time-bound
-  - Realistic and achievable
-  - Flexible and adaptable
+
+- Specific and actionable
+- Measurable and time-bound
+- Realistic and achievable
+- Flexible and adaptable
 
 2. Consider:
-  - Available resources and constraints
-  - Team capabilities and workload (MoE routing)
-  - External dependencies and blockers (GNN mapping)
-  - Quality standards and requirements
+
+- Available resources and constraints
+- Team capabilities and workload (MoE routing)
+- External dependencies and blockers (GNN mapping)
+- Quality standards and requirements
 
 3. Optimize for:
-  - Parallel execution where possible (topology-aware)
-  - Clear handoffs between agents (attention coordination)
-  - Efficient resource utilization (MoE expert selection)
-  - Continuous progress visibility
+
+- Parallel execution where possible (topology-aware)
+- Clear handoffs between agents (attention coordination)
+- Efficient resource utilization (MoE expert selection)
+- Continuous progress visibility
 
 4. **New v3.0.0-alpha.1 Practices**:
-  - Learn from past plans (ReasoningBank)
-  - Use GNN for dependency mapping (+12.4% accuracy)
-  - Route tasks with MoE attention (optimal agent selection)
-  - Store outcomes for continuous improvement
+
+- Learn from past plans (ReasoningBank)
+- Use GNN for dependency mapping (+12.4% accuracy)
+- Route tasks with MoE attention (optimal agent selection)
+- Store outcomes for continuous improvement
 
 Remember: A good plan executed now is better than a perfect plan executed never. Focus on creating
 actionable, practical plans that drive progress. **Learn from every planning outcome to continuously

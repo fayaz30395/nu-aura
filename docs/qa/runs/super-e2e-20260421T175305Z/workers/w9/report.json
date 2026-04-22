@@ -14,7 +14,10 @@
         "POST /auth/login 429",
         "POST /auth/login 401"
       ],
-      "network_errors": ["/auth/login 401", "/auth/refresh 429"],
+      "network_errors": [
+        "/auth/login 401",
+        "/auth/refresh 429"
+      ],
       "note": "Login to teamlead@nulogic.io rejected (401). Never reached /approvals/inbox. Fixture gap."
     },
     {
@@ -25,7 +28,9 @@
       "console_errors": [
         "POST /auth/login 401"
       ],
-      "network_errors": ["/auth/login 401"],
+      "network_errors": [
+        "/auth/login 401"
+      ],
       "note": "Login to hrmanager@nulogic.io rejected (401). Never reached /approvals/inbox. Fixture gap."
     },
     {
@@ -37,7 +42,10 @@
         "POST /auth/login 401",
         "POST /auth/login 423"
       ],
-      "network_errors": ["/auth/login 401", "/auth/login 423"],
+      "network_errors": [
+        "/auth/login 401",
+        "/auth/login 423"
+      ],
       "note": "Login to hradmin@nulogic.io rejected with 401 then 423 (account locked via AccountLockoutService after 5 failures). Never reached /approvals/inbox."
     }
   ],

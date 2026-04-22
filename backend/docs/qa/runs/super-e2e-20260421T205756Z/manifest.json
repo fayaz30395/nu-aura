@@ -1,1 +1,12 @@
-{"mode":"REGRESSION-FOCUSED","started_at":"2026-04-21T20:58:02Z","git_sha":"4c3d7fd38abd8b7234ca86dfcca2f7ccfb699e5e","scope":["BUG-W3-02 refresh cookie clearing","BUG-W2-02 /assets PermissionGate","BUG-W2-04 /contracts PermissionGate","BUG-W3-01 RECRUITMENT_ADMIN /recruitment/jobs"],"note":"Focused regression on post-triage fixer dispatch from 20260421T192516Z run. Full 6-pass matrix skipped — only verifying the four bugs explicitly fixed/pending re-check."}
+{
+  "mode": "REGRESSION-FOCUSED",
+  "started_at": "2026-04-21T20:58:02Z",
+  "git_sha": "4c3d7fd38abd8b7234ca86dfcca2f7ccfb699e5e",
+  "scope": [
+    "BUG-W3-02 refresh cookie clearing",
+    "BUG-W2-02 /assets PermissionGate",
+    "BUG-W2-04 /contracts PermissionGate",
+    "BUG-W3-01 RECRUITMENT_ADMIN /recruitment/jobs"
+  ],
+  "note": "Focused regression on post-triage fixer dispatch from 20260421T192516Z run. Full 6-pass matrix skipped — only verifying the four bugs explicitly fixed/pending re-check."
+}

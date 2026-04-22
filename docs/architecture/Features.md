@@ -16,31 +16,31 @@
 
 ## Module-Level Completion
 
-| Module                  | Backend | Frontend | Overall | Notes                                      |
-|-------------------------|---------|----------|---------|--------------------------------------------|
-| **Auth & RBAC**         | 97%     | 93%      | 95%     | MFA, Google SSO, data scoping all working  |
-| **Employee Mgmt**       | 97%     | 93%      | 95%     | 40+ fields, hierarchy, custom fields       |
-| **Performance + PIP**   | 96%     | 94%      | 95%     | Reviews, 360, OKRs, 9-box, calibration     |
-| **Dashboard**           | 95%     | 95%      | 95%     | Employee, manager, executive views         |
-| **Admin Panel**         | 96%     | 94%      | 95%     | Roles, holidays, shifts, custom fields     |
-| **Leave**               | 95%     | 91%      | 93%     | Accrual, encashment, policies              |
-| **Payroll**             | 95%     | 91%      | 93%     | SpEL engine, statutory, bulk processing    |
-| **Attendance**          | 94%     | 90%      | 92%     | Mobile, shift swap, comp-off, auto-reg     |
-| **Analytics/Reports**   | 94%     | 90%      | 92%     | Scheduled reports, org health              |
-| **Recruitment ATS**     | 98%     | 96%      | 97%     | Kanban, AI parsing, job boards, agencies, scorecards |
-| **Resource Allocation** | 93%     | 91%      | 92%     | Workload, capacity, conflicts              |
-| **FnF/Offboarding**     | 93%     | 91%      | 92%     | Exit interview, clearance, settlement      |
-| **Projects**            | 93%     | 91%      | 92%     | Tasks, Gantt, calendar, resource conflicts |
-| **Expenses**            | 92%     | 88%      | 90%     | Claims, approval workflow                  |
-| **Loans**               | 92%     | 88%      | 90%     | Application, repayment tracking            |
-| **Travel**              | 92%     | 88%      | 90%     | Requests, approval                         |
-| **Assets**              | 92%     | 88%      | 90%     | Assignment, transfer tracking              |
-| **Settings**            | 92%     | 88%      | 90%     | System config, security settings           |
-| **Onboarding**          | 91%     | 89%      | 90%     | Templates, tasks, preboarding portal       |
-| **Training/LMS**        | 90%     | 86%      | 88%     | Courses, quizzes, certificates, paths      |
+| Module                  | Backend | Frontend | Overall | Notes                                                           |
+|-------------------------|---------|----------|---------|-----------------------------------------------------------------|
+| **Auth & RBAC**         | 97%     | 93%      | 95%     | MFA, Google SSO, data scoping all working                       |
+| **Employee Mgmt**       | 97%     | 93%      | 95%     | 40+ fields, hierarchy, custom fields                            |
+| **Performance + PIP**   | 96%     | 94%      | 95%     | Reviews, 360, OKRs, 9-box, calibration                          |
+| **Dashboard**           | 95%     | 95%      | 95%     | Employee, manager, executive views                              |
+| **Admin Panel**         | 96%     | 94%      | 95%     | Roles, holidays, shifts, custom fields                          |
+| **Leave**               | 95%     | 91%      | 93%     | Accrual, encashment, policies                                   |
+| **Payroll**             | 95%     | 91%      | 93%     | SpEL engine, statutory, bulk processing                         |
+| **Attendance**          | 94%     | 90%      | 92%     | Mobile, shift swap, comp-off, auto-reg                          |
+| **Analytics/Reports**   | 94%     | 90%      | 92%     | Scheduled reports, org health                                   |
+| **Recruitment ATS**     | 98%     | 96%      | 97%     | Kanban, AI parsing, job boards, agencies, scorecards            |
+| **Resource Allocation** | 93%     | 91%      | 92%     | Workload, capacity, conflicts                                   |
+| **FnF/Offboarding**     | 93%     | 91%      | 92%     | Exit interview, clearance, settlement                           |
+| **Projects**            | 93%     | 91%      | 92%     | Tasks, Gantt, calendar, resource conflicts                      |
+| **Expenses**            | 92%     | 88%      | 90%     | Claims, approval workflow                                       |
+| **Loans**               | 92%     | 88%      | 90%     | Application, repayment tracking                                 |
+| **Travel**              | 92%     | 88%      | 90%     | Requests, approval                                              |
+| **Assets**              | 92%     | 88%      | 90%     | Assignment, transfer tracking                                   |
+| **Settings**            | 92%     | 88%      | 90%     | System config, security settings                                |
+| **Onboarding**          | 91%     | 89%      | 90%     | Templates, tasks, preboarding portal                            |
+| **Training/LMS**        | 90%     | 86%      | 88%     | Courses, quizzes, certificates, paths                           |
 | **Fluence/Knowledge**   | 96%     | 90%      | 93%     | Wiki, blogs, templates, inline comments, Drive, AI chat, macros |
-| **Documents**           | 90%     | 86%      | 88%     | Upload, workflow, e-signature              |
-| **Benefits**            | 88%     | 80%      | 84%     | Plans, enrollment, claims, flex allocation |
+| **Documents**           | 90%     | 86%      | 88%     | Upload, workflow, e-signature                                   |
+| **Benefits**            | 88%     | 80%      | 84%     | Plans, enrollment, claims, flex allocation                      |
 
 ---
 

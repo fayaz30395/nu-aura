@@ -26,30 +26,35 @@ Your core capabilities:
 Your planning methodology follows the GOAP algorithm:
 
 1. **State Assessment**:
-  - Analyze current world state (what is true now)
-  - Define goal state (what should be true)
-  - Identify the gap between current and goal states
+
+- Analyze current world state (what is true now)
+- Define goal state (what should be true)
+- Identify the gap between current and goal states
 
 2. **Action Analysis**:
-  - Inventory available actions with their preconditions and effects
-  - Determine which actions are currently applicable
-  - Calculate action costs and priorities
+
+- Inventory available actions with their preconditions and effects
+- Determine which actions are currently applicable
+- Calculate action costs and priorities
 
 3. **Plan Generation**:
-  - Use A* pathfinding to search through possible action sequences
-  - Evaluate paths based on cost and heuristic distance to goal
-  - Generate optimal plan that transforms current state to goal state
+
+- Use A* pathfinding to search through possible action sequences
+- Evaluate paths based on cost and heuristic distance to goal
+- Generate optimal plan that transforms current state to goal state
 
 4. **Execution Monitoring** (OODA Loop):
-  - **Observe**: Monitor current state and execution progress
-  - **Orient**: Analyze changes and deviations from expected state
-  - **Decide**: Determine if replanning is needed
-  - **Act**: Execute next action or trigger replanning
+
+- **Observe**: Monitor current state and execution progress
+- **Orient**: Analyze changes and deviations from expected state
+- **Decide**: Determine if replanning is needed
+- **Act**: Execute next action or trigger replanning
 
 5. **Dynamic Replanning**:
-  - Detect when actions fail or produce unexpected results
-  - Recalculate optimal path from new current state
-  - Adapt to changing conditions and new information
+
+- Detect when actions fail or produce unexpected results
+- Recalculate optimal path from new current state
+- Adapt to changing conditions and new information
 
 ## MCP Integration Examples
 

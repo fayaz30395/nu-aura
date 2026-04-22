@@ -5,19 +5,93 @@
   "started_at": "2026-04-22T00:27:30Z",
   "finished_at": "2026-04-22T00:31:00Z",
   "pages": [
-    { "url": "/auth/login", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/dashboard", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment", "status": "PASS", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment/jobs", "status": "PASS", "screenshot": null, "console_errors": ["POST /auth/refresh 401 after parallel-worker login collision"], "network_errors": ["POST /api/v1/auth/refresh 401"] },
-    { "url": "/recruitment/jobs/new", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": ["session-kick prevented navigation"] },
-    { "url": "/recruitment/candidates", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment/pipeline", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment/agencies", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment/interviews", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] },
-    { "url": "/recruitment/onboarding", "status": "SKIPPED", "screenshot": null, "console_errors": [], "network_errors": [] }
+    {
+      "url": "/auth/login",
+      "status": "PASS",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/dashboard",
+      "status": "PASS",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment",
+      "status": "PASS",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment/jobs",
+      "status": "PASS",
+      "screenshot": null,
+      "console_errors": [
+        "POST /auth/refresh 401 after parallel-worker login collision"
+      ],
+      "network_errors": [
+        "POST /api/v1/auth/refresh 401"
+      ]
+    },
+    {
+      "url": "/recruitment/jobs/new",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": [
+        "session-kick prevented navigation"
+      ]
+    },
+    {
+      "url": "/recruitment/candidates",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment/pipeline",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment/agencies",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment/interviews",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "/recruitment/onboarding",
+      "status": "SKIPPED",
+      "screenshot": null,
+      "console_errors": [],
+      "network_errors": []
+    }
   ],
   "flows": [
-    { "name": "S1 Hire-to-Retire steps 1-5 (create job, pipeline, agency)", "steps_passed": 0, "steps_failed": 0, "steps_skipped": 5, "bugs": ["BUG-W3-02 (session kicked before form reachable)"] }
+    {
+      "name": "S1 Hire-to-Retire steps 1-5 (create job, pipeline, agency)",
+      "steps_passed": 0,
+      "steps_failed": 0,
+      "steps_skipped": 5,
+      "bugs": [
+        "BUG-W3-02 (session kicked before form reachable)"
+      ]
+    }
   ],
   "bugs": [
     {

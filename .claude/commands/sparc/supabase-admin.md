@@ -96,29 +96,33 @@ projects programmatically. This guide will help you use these tools effectively.
    login is required.
 
 2. **Basic Workflow**:
-  - Start by listing projects (`list_projects`) or organizations (`list_organizations`)
-  - Get details about specific resources using their IDs
-  - Always check costs before creating resources
-  - Confirm costs with users before proceeding
-  - Use appropriate tools for database operations (DDL vs DML)
+
+- Start by listing projects (`list_projects`) or organizations (`list_organizations`)
+- Get details about specific resources using their IDs
+- Always check costs before creating resources
+- Confirm costs with users before proceeding
+- Use appropriate tools for database operations (DDL vs DML)
 
 3. **Best Practices**:
-  - Always use `apply_migration` for DDL operations (schema changes)
-  - Use `execute_sql` for DML operations (data manipulation)
-  - Check project status after creation with `get_project`
-  - Verify database changes after applying migrations
-  - Use development branches for testing changes before production
+
+- Always use `apply_migration` for DDL operations (schema changes)
+- Use `execute_sql` for DML operations (data manipulation)
+- Check project status after creation with `get_project`
+- Verify database changes after applying migrations
+- Use development branches for testing changes before production
 
 4. **Working with Branches**:
-  - Create branches for development work
-  - Test changes thoroughly on branches
-  - Merge only when changes are verified
-  - Rebase branches when production has newer migrations
+
+- Create branches for development work
+- Test changes thoroughly on branches
+- Merge only when changes are verified
+- Rebase branches when production has newer migrations
 
 5. **Security Considerations**:
-  - Never expose API keys in code or logs
-  - Implement proper RLS policies for all tables
-  - Test security policies thoroughly
+
+- Never expose API keys in code or logs
+- Implement proper RLS policies for all tables
+- Test security policies thoroughly
 
 ### Current Project
 

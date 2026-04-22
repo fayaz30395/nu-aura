@@ -46,30 +46,31 @@ npx claude-flow auto agent -t "Fix bug in login" -s minimal
 
 1. **Task Analysis**
 
-  - Parses task description
-  - Identifies required skills
-  - Estimates complexity
-  - Determines parallelization opportunities
+- Parses task description
+- Identifies required skills
+- Estimates complexity
+- Determines parallelization opportunities
 
 2. **Agent Selection**
 
-  - Matches skills to agent types
-  - Considers task dependencies
-  - Optimizes for efficiency
-  - Respects constraints
+- Matches skills to agent types
+- Considers task dependencies
+- Optimizes for efficiency
+- Respects constraints
 
 3. **Topology Selection**
 
-  - Chooses optimal swarm structure
-  - Configures communication patterns
-  - Sets up coordination rules
-  - Enables monitoring
+- Chooses optimal swarm structure
+- Configures communication patterns
+- Sets up coordination rules
+- Enables monitoring
 
 4. **Automatic Spawning**
-  - Creates selected agents
-  - Assigns specific roles
-  - Distributes subtasks
-  - Initiates coordination
+
+- Creates selected agents
+- Assigns specific roles
+- Distributes subtasks
+- Initiates coordination
 
 ## Agent Types Selected
 

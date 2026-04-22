@@ -7,21 +7,61 @@
   "session_flipped": false,
   "auth_me": {
     "email": "fayaz.m@nulogic.io",
-    "roles": ["SUPER_ADMIN", "SKIP_LEVEL_MANAGER", "REPORTING_MANAGER"]
+    "roles": [
+      "SUPER_ADMIN",
+      "SKIP_LEVEL_MANAGER",
+      "REPORTING_MANAGER"
+    ]
   },
   "started_at": "2026-04-21T19:26:00Z",
   "ended_at": "2026-04-21T19:36:00Z",
   "results": [
-    {"route": "/leave/apply", "status": "PASS", "notes": "Leave form renders with Leave Type, Start/End Date, Half Day, Reason, Submit CTA"},
-    {"route": "/attendance/my", "status": "FAIL", "notes": "Client 404 'Page not found'; route missing"},
-    {"route": "/fluence/wiki", "status": "PASS", "notes": "Spaces tree + 'New Page' / 'Create Page' CTAs present"},
-    {"route": "/expenses", "status": "PASS", "notes": "Expense Claims page with New Claim CTA, stats cards, 2 existing draft claims"},
-    {"route": "/workflows", "status": "PASS", "notes": "Workflow Builder list with Create Workflow CTA and type filters"},
-    {"route": "/workflows/builder", "status": "FAIL", "notes": "Renders 'Workflow not found' error state; no new-workflow canvas without id query"},
-    {"route": "/admin/tenants", "status": "FAIL", "notes": "Client 404 for SUPER_ADMIN-only tenants console"},
-    {"route": "/admin/audit-logs", "status": "FAIL", "notes": "Client 404 for SUPER_ADMIN-only audit logs"}
+    {
+      "route": "/leave/apply",
+      "status": "PASS",
+      "notes": "Leave form renders with Leave Type, Start/End Date, Half Day, Reason, Submit CTA"
+    },
+    {
+      "route": "/attendance/my",
+      "status": "FAIL",
+      "notes": "Client 404 'Page not found'; route missing"
+    },
+    {
+      "route": "/fluence/wiki",
+      "status": "PASS",
+      "notes": "Spaces tree + 'New Page' / 'Create Page' CTAs present"
+    },
+    {
+      "route": "/expenses",
+      "status": "PASS",
+      "notes": "Expense Claims page with New Claim CTA, stats cards, 2 existing draft claims"
+    },
+    {
+      "route": "/workflows",
+      "status": "PASS",
+      "notes": "Workflow Builder list with Create Workflow CTA and type filters"
+    },
+    {
+      "route": "/workflows/builder",
+      "status": "FAIL",
+      "notes": "Renders 'Workflow not found' error state; no new-workflow canvas without id query"
+    },
+    {
+      "route": "/admin/tenants",
+      "status": "FAIL",
+      "notes": "Client 404 for SUPER_ADMIN-only tenants console"
+    },
+    {
+      "route": "/admin/audit-logs",
+      "status": "FAIL",
+      "notes": "Client 404 for SUPER_ADMIN-only audit logs"
+    }
   ],
-  "totals": {"pass": 4, "pass_empty": 0, "fail": 4},
+  "totals": {
+    "pass": 4,
+    "pass_empty": 0,
+    "fail": 4
+  },
   "bugs_appended": 4,
   "summary": [
     "4/8 workflow pages pass (leave apply, fluence wiki, expenses, workflows list); session integrity held across 3 re-checks.",

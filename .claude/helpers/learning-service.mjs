@@ -17,11 +17,9 @@
  * - Pattern storage: <5ms
  */
 
-import {createRequire} from 'module';
-import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
-import {join, dirname} from 'path';
+import {existsSync, mkdirSync} from 'fs';
+import {dirname, join} from 'path';
 import {fileURLToPath} from 'url';
-import {execSync, spawn} from 'child_process';
 import Database from 'better-sqlite3';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -181,6 +179,24 @@ class HNSWIndex {
     this.layers = [];              // Multi-layer graph
     this.entryPoint = null;
     this.maxLevel = 0;
+  }
+
+  // Deserialize index
+  static deserialize(data, config) {
+    const index = new HNSWIndex(config);
+
+    if (!data) return index;
+
+    index.vectors = new Map(data.vectors?.map(([id, vec]) => [id, new Float32Array(vec)]) || []);
+    index.idToVector = new Map(data.idToVector || []);
+    index.vectorToId = new Map(data.vectorToId || []);
+    index.nextVectorId = data.nextVectorId || 0;
+    index.entryPoint = data.entryPoint;
+    index.layers = (data.layers || []).map(layer =>
+      new Map(layer.map(([k, v]) => [k, new Set(v)]))
+    );
+
+    return index;
   }
 
   // Add vector to index
@@ -422,24 +438,6 @@ class HNSWIndex {
         Array.from(layer.entries()).map(([k, v]) => [k, Array.from(v)])
       ),
     };
-  }
-
-  // Deserialize index
-  static deserialize(data, config) {
-    const index = new HNSWIndex(config);
-
-    if (!data) return index;
-
-    index.vectors = new Map(data.vectors?.map(([id, vec]) => [id, new Float32Array(vec)]) || []);
-    index.idToVector = new Map(data.idToVector || []);
-    index.vectorToId = new Map(data.vectorToId || []);
-    index.nextVectorId = data.nextVectorId || 0;
-    index.entryPoint = data.entryPoint;
-    index.layers = (data.layers || []).map(layer =>
-      new Map(layer.map(([k, v]) => [k, new Set(v)]))
-    );
-
-    return index;
   }
 }
 
@@ -691,7 +689,9 @@ class LearningService {
     // Get full pattern data
     const patterns = deduped.map(r => {
       const table = r.type === 'long_term' ? 'long_term_patterns' : 'short_term_patterns';
-      const row = this.db.prepare(`SELECT * FROM ${table} WHERE id = ?`).get(r.patternId);
+      const row = this.db.prepare(`SELECT *
+                                   FROM ${table}
+                                   WHERE id = ?`).get(r.patternId);
       return {
         ...r,
         strategy: row?.strategy,
@@ -732,7 +732,9 @@ class LearningService {
   // Promote patterns from short-term to long-term
   _checkPromotion(patternId) {
     const row = this.db.prepare(`
-      SELECT * FROM short_term_patterns WHERE id = ?
+      SELECT *
+      FROM short_term_patterns
+      WHERE id = ?
     `).get(patternId);
 
     if (!row) return false;
@@ -787,10 +789,10 @@ class LearningService {
 
     const result = this.db.prepare(`
       UPDATE ${tableName}
-      SET usage_count = usage_count + 1,
+      SET usage_count   = usage_count + 1,
           success_count = success_count + ?,
-          quality = (quality * usage_count + ?) / (usage_count + 1),
-          updated_at = ?
+          quality       = (quality * usage_count + ?) / (usage_count + 1),
+          updated_at    = ?
       WHERE id = ?
     `).run(success ? 1 : 0, success ? 1.0 : 0.0, Date.now(), patternId);
 
@@ -809,8 +811,10 @@ class LearningService {
     // 1. Remove old short-term patterns
     const oldThreshold = Date.now() - CONFIG.patterns.shortTermMaxAge;
     const pruned = this.db.prepare(`
-      DELETE FROM short_term_patterns
-      WHERE created_at < ? AND usage_count < ?
+      DELETE
+      FROM short_term_patterns
+      WHERE created_at < ?
+        AND usage_count < ?
     `).run(oldThreshold, CONFIG.patterns.promotionThreshold);
     stats.patternsProned = pruned.changes;
 
@@ -841,8 +845,10 @@ class LearningService {
     // 4. Prune old long-term patterns
     const pruneAge = Date.now() - CONFIG.consolidation.pruneAge;
     const oldPruned = this.db.prepare(`
-      DELETE FROM long_term_patterns
-      WHERE updated_at < ? AND usage_count < ?
+      DELETE
+      FROM long_term_patterns
+      WHERE updated_at < ?
+        AND usage_count < ?
     `).run(pruneAge, CONFIG.consolidation.minUsageForKeep);
     stats.patternsProned += oldPruned.changes;
 
@@ -860,11 +866,15 @@ class LearningService {
   // Export learning data for session end
   async exportSession() {
     const sessionPatterns = this.db.prepare(`
-      SELECT * FROM short_term_patterns WHERE session_id = ?
+      SELECT *
+      FROM short_term_patterns
+      WHERE session_id = ?
     `).all(this.sessionId);
 
     const trajectories = this.db.prepare(`
-      SELECT * FROM trajectories WHERE session_id = ?
+      SELECT *
+      FROM trajectories
+      WHERE session_id = ?
     `).all(this.sessionId);
 
     return {
@@ -884,11 +894,12 @@ class LearningService {
     const trajectoryCount = this.db.prepare('SELECT COUNT(*) as count FROM trajectories').get().count;
 
     const avgQuality = this.db.prepare(`
-      SELECT AVG(quality) as avg FROM (
+      SELECT AVG(quality) as avg
+      FROM (
         SELECT quality FROM short_term_patterns
         UNION ALL
         SELECT quality FROM long_term_patterns
-      )
+        )
     `).get().avg || 0;
 
     return {
@@ -935,9 +946,9 @@ class LearningService {
     // Remove lowest quality patterns
     const toRemove = count - CONFIG.patterns.maxShortTerm;
     const ids = this.db.prepare(`
-      SELECT id FROM short_term_patterns
-      ORDER BY quality ASC, usage_count ASC
-      LIMIT ?
+      SELECT id
+      FROM short_term_patterns
+      ORDER BY quality ASC, usage_count ASC LIMIT ?
     `).all(toRemove).map(r => r.id);
 
     for (const id of ids) {
@@ -954,7 +965,8 @@ class LearningService {
 
   _setState(key, value) {
     this.db.prepare(`
-      INSERT OR REPLACE INTO session_state (key, value, updated_at)
+      INSERT
+      OR REPLACE INTO session_state (key, value, updated_at)
       VALUES (?, ?, ?)
     `).run(key, value, Date.now());
   }

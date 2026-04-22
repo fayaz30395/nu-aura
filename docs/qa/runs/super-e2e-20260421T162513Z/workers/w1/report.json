@@ -5,23 +5,115 @@
   "started_at": "2026-04-21T16:26:20Z",
   "finished_at": "2026-04-21T16:58:00Z",
   "pages": [
-    {"url": "http://localhost:3000/dashboard", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/employees", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/attendance", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/leave", "status": "PASS", "console_errors": [], "network_errors": [], "note": "Redirected to /leave/my-leaves"},
-    {"url": "http://localhost:3000/leave/approvals", "status": "PASS", "console_errors": [], "network_errors": ["notifications 503 (transient, resolved on retry)"]},
-    {"url": "http://localhost:3000/leave/calendar", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/leave-requests/status/PENDING 403", "GET /api/v1/employees?size=500 403"]},
-    {"url": "http://localhost:3000/payroll", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/payroll/runs", "status": "FAIL", "console_errors": [], "network_errors": ["Main content did not render within 10s, body empty after sidebar load"]},
-    {"url": "http://localhost:3000/payroll/structures", "status": "FAIL", "console_errors": [], "network_errors": ["Main content empty — route renders only sidebar chrome"]},
-    {"url": "http://localhost:3000/payroll/components", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/payroll/salary-structures 403", "Main empty"]},
-    {"url": "http://localhost:3000/payroll/statutory", "status": "FAIL", "console_errors": [], "network_errors": ["GET /api/v1/payroll/components 403", "Main empty"]},
-    {"url": "http://localhost:3000/expenses", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/assets", "status": "PASS", "console_errors": [], "network_errors": []},
-    {"url": "http://localhost:3000/shifts", "status": "PASS", "console_errors": [], "network_errors": []}
+    {
+      "url": "http://localhost:3000/dashboard",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/employees",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/attendance",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/leave",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [],
+      "note": "Redirected to /leave/my-leaves"
+    },
+    {
+      "url": "http://localhost:3000/leave/approvals",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": [
+        "notifications 503 (transient, resolved on retry)"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/leave/calendar",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/leave-requests/status/PENDING 403",
+        "GET /api/v1/employees?size=500 403"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/payroll",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/payroll/runs",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [
+        "Main content did not render within 10s, body empty after sidebar load"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/payroll/structures",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [
+        "Main content empty — route renders only sidebar chrome"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/payroll/components",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/payroll/salary-structures 403",
+        "Main empty"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/payroll/statutory",
+      "status": "FAIL",
+      "console_errors": [],
+      "network_errors": [
+        "GET /api/v1/payroll/components 403",
+        "Main empty"
+      ]
+    },
+    {
+      "url": "http://localhost:3000/expenses",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/assets",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    },
+    {
+      "url": "http://localhost:3000/shifts",
+      "status": "PASS",
+      "console_errors": [],
+      "network_errors": []
+    }
   ],
   "flows": [
-    {"name": "S3-leave-balance", "steps_passed": 1, "steps_failed": 0, "bugs": [], "note": "/leave redirects to /leave/my-leaves which loads list view (balance card not shown on my-leaves; shown on /leave/calendar widgets which rendered 0)"}
+    {
+      "name": "S3-leave-balance",
+      "steps_passed": 1,
+      "steps_failed": 0,
+      "bugs": [],
+      "note": "/leave redirects to /leave/my-leaves which loads list view (balance card not shown on my-leaves; shown on /leave/calendar widgets which rendered 0)"
+    }
   ],
   "bugs": [
     {
@@ -63,5 +155,10 @@
       ]
     }
   ],
-  "summary": {"total": 14, "pass": 9, "fail": 5, "skipped": 0}
+  "summary": {
+    "total": 14,
+    "pass": 9,
+    "fail": 5,
+    "skipped": 0
+  }
 }

@@ -51,14 +51,46 @@
     }
   ],
   "api_probes": [
-    {"url": "/api/v1/payroll/runs", "status": 403, "note": "denied as expected"},
-    {"url": "/api/v1/payroll/structures", "status": 404, "note": "endpoint path not present; salary-structures used instead"},
-    {"url": "/api/v1/payroll/salary-structures", "status": 403, "note": "denied as expected"},
-    {"url": "/api/v1/recruitment/job-openings", "status": 200, "note": "intentional: EMPLOYEE role has RECRUITMENT:VIEW permission (internal job board); endpoint exposes job openings list only"},
-    {"url": "/api/v1/recruitment/candidates", "status": 403, "note": "denied as expected"},
-    {"url": "/api/v1/recruitment/agencies", "status": 403, "note": "denied as expected"},
-    {"url": "/api/v1/employees", "status": 403, "note": "denied as expected"},
-    {"url": "/api/v1/admin/users", "status": 403, "note": "denied as expected"}
+    {
+      "url": "/api/v1/payroll/runs",
+      "status": 403,
+      "note": "denied as expected"
+    },
+    {
+      "url": "/api/v1/payroll/structures",
+      "status": 404,
+      "note": "endpoint path not present; salary-structures used instead"
+    },
+    {
+      "url": "/api/v1/payroll/salary-structures",
+      "status": 403,
+      "note": "denied as expected"
+    },
+    {
+      "url": "/api/v1/recruitment/job-openings",
+      "status": 200,
+      "note": "intentional: EMPLOYEE role has RECRUITMENT:VIEW permission (internal job board); endpoint exposes job openings list only"
+    },
+    {
+      "url": "/api/v1/recruitment/candidates",
+      "status": 403,
+      "note": "denied as expected"
+    },
+    {
+      "url": "/api/v1/recruitment/agencies",
+      "status": 403,
+      "note": "denied as expected"
+    },
+    {
+      "url": "/api/v1/employees",
+      "status": 403,
+      "note": "denied as expected"
+    },
+    {
+      "url": "/api/v1/admin/users",
+      "status": 403,
+      "note": "denied as expected"
+    }
   ],
   "counts": {
     "pass_denied": 7,
@@ -93,9 +125,13 @@
     "payroll_runs_main_innertext_length": 0,
     "users_me_confirmed": {
       "email": "saran@nulogic.io",
-      "roles": ["EMPLOYEE"],
+      "roles": [
+        "EMPLOYEE"
+      ],
       "permission_count": 42,
-      "recruitment_perms": ["RECRUITMENT:VIEW"]
+      "recruitment_perms": [
+        "RECRUITMENT:VIEW"
+      ]
     }
   }
 }

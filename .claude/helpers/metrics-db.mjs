@@ -6,8 +6,8 @@
  */
 
 import initSqlJs from 'sql.js';
-import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync} from 'fs';
-import {dirname, join, basename} from 'path';
+import {existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'fs';
+import {basename, dirname, join} from 'path';
 import {fileURLToPath} from 'url';
 import {execSync} from 'child_process';
 
@@ -41,60 +41,164 @@ async function initDatabase() {
 
   // Create tables if they don't exist
   db.run(`
-    CREATE TABLE IF NOT EXISTS v3_progress (
-      id INTEGER PRIMARY KEY,
-      domains_completed INTEGER DEFAULT 0,
-      domains_total INTEGER DEFAULT 5,
-      ddd_progress INTEGER DEFAULT 0,
-      total_modules INTEGER DEFAULT 0,
-      total_files INTEGER DEFAULT 0,
-      total_lines INTEGER DEFAULT 0,
-      last_updated TEXT
+    CREATE TABLE IF NOT EXISTS v3_progress
+    (
+      id
+      INTEGER
+      PRIMARY
+      KEY,
+      domains_completed
+      INTEGER
+      DEFAULT
+      0,
+      domains_total
+      INTEGER
+      DEFAULT
+      5,
+      ddd_progress
+      INTEGER
+      DEFAULT
+      0,
+      total_modules
+      INTEGER
+      DEFAULT
+      0,
+      total_files
+      INTEGER
+      DEFAULT
+      0,
+      total_lines
+      INTEGER
+      DEFAULT
+      0,
+      last_updated
+      TEXT
     );
 
-    CREATE TABLE IF NOT EXISTS security_audit (
-      id INTEGER PRIMARY KEY,
-      status TEXT DEFAULT 'PENDING',
-      cves_fixed INTEGER DEFAULT 0,
-      total_cves INTEGER DEFAULT 3,
-      last_audit TEXT
+    CREATE TABLE IF NOT EXISTS security_audit
+    (
+      id
+      INTEGER
+      PRIMARY
+      KEY,
+      status
+      TEXT
+      DEFAULT
+      'PENDING',
+      cves_fixed
+      INTEGER
+      DEFAULT
+      0,
+      total_cves
+      INTEGER
+      DEFAULT
+      3,
+      last_audit
+      TEXT
     );
 
-    CREATE TABLE IF NOT EXISTS swarm_activity (
-      id INTEGER PRIMARY KEY,
-      agentic_flow_processes INTEGER DEFAULT 0,
-      mcp_server_processes INTEGER DEFAULT 0,
-      estimated_agents INTEGER DEFAULT 0,
-      swarm_active INTEGER DEFAULT 0,
-      coordination_active INTEGER DEFAULT 0,
-      last_updated TEXT
+    CREATE TABLE IF NOT EXISTS swarm_activity
+    (
+      id
+      INTEGER
+      PRIMARY
+      KEY,
+      agentic_flow_processes
+      INTEGER
+      DEFAULT
+      0,
+      mcp_server_processes
+      INTEGER
+      DEFAULT
+      0,
+      estimated_agents
+      INTEGER
+      DEFAULT
+      0,
+      swarm_active
+      INTEGER
+      DEFAULT
+      0,
+      coordination_active
+      INTEGER
+      DEFAULT
+      0,
+      last_updated
+      TEXT
     );
 
-    CREATE TABLE IF NOT EXISTS performance_metrics (
-      id INTEGER PRIMARY KEY,
-      flash_attention_speedup TEXT DEFAULT '1.0x',
-      memory_reduction TEXT DEFAULT '0%',
-      search_improvement TEXT DEFAULT '1x',
-      last_updated TEXT
+    CREATE TABLE IF NOT EXISTS performance_metrics
+    (
+      id
+      INTEGER
+      PRIMARY
+      KEY,
+      flash_attention_speedup
+      TEXT
+      DEFAULT
+      '1.0x',
+      memory_reduction
+      TEXT
+      DEFAULT
+      '0%',
+      search_improvement
+      TEXT
+      DEFAULT
+      '1x',
+      last_updated
+      TEXT
     );
 
-    CREATE TABLE IF NOT EXISTS module_status (
-      name TEXT PRIMARY KEY,
-      files INTEGER DEFAULT 0,
-      lines INTEGER DEFAULT 0,
-      progress INTEGER DEFAULT 0,
-      has_src INTEGER DEFAULT 0,
-      has_tests INTEGER DEFAULT 0,
-      last_updated TEXT
+    CREATE TABLE IF NOT EXISTS module_status
+    (
+      name
+      TEXT
+      PRIMARY
+      KEY,
+      files
+      INTEGER
+      DEFAULT
+      0,
+      lines
+      INTEGER
+      DEFAULT
+      0,
+      progress
+      INTEGER
+      DEFAULT
+      0,
+      has_src
+      INTEGER
+      DEFAULT
+      0,
+      has_tests
+      INTEGER
+      DEFAULT
+      0,
+      last_updated
+      TEXT
     );
 
-    CREATE TABLE IF NOT EXISTS cve_status (
-      id TEXT PRIMARY KEY,
-      description TEXT,
-      severity TEXT DEFAULT 'critical',
-      status TEXT DEFAULT 'pending',
-      fixed_by TEXT,
-      last_updated TEXT
+    CREATE TABLE IF NOT EXISTS cve_status
+    (
+      id
+      TEXT
+      PRIMARY
+      KEY,
+      description
+      TEXT,
+      severity
+      TEXT
+      DEFAULT
+      'critical',
+      status
+      TEXT
+      DEFAULT
+      'pending',
+      fixed_by
+      TEXT,
+      last_updated
+      TEXT
     );
   `);
 
@@ -122,10 +226,10 @@ async function initDatabase() {
   // Initialize CVE records
   const cveCheck = db.exec("SELECT COUNT(*) FROM cve_status");
   if (cveCheck[0]?.values[0][0] === 0) {
-    db.run(`INSERT INTO cve_status (id, description, fixed_by) VALUES
-      ('CVE-1', 'Input validation bypass', 'input-validator.ts'),
-      ('CVE-2', 'Path traversal vulnerability', 'path-validator.ts'),
-      ('CVE-3', 'Command injection vulnerability', 'safe-executor.ts')
+    db.run(`INSERT INTO cve_status (id, description, fixed_by)
+            VALUES ('CVE-1', 'Input validation bypass', 'input-validator.ts'),
+                   ('CVE-2', 'Path traversal vulnerability', 'path-validator.ts'),
+                   ('CVE-3', 'Command injection vulnerability', 'safe-executor.ts')
     `);
   }
 
@@ -268,7 +372,8 @@ async function syncMetrics() {
 
         // Update module_status table
         db.run(`
-          INSERT OR REPLACE INTO module_status (name, files, lines, progress, has_src, has_tests, last_updated)
+          INSERT
+          OR REPLACE INTO module_status (name, files, lines, progress, has_src, has_tests, last_updated)
           VALUES (?, ?, ?, ?, ?, ?, ?)
         `, [
           entry.name,
@@ -294,13 +399,13 @@ async function syncMetrics() {
 
   // Update v3_progress
   db.run(`
-    UPDATE v3_progress SET
-      domains_completed = ?,
-      ddd_progress = ?,
-      total_modules = ?,
-      total_files = ?,
-      total_lines = ?,
-      last_updated = ?
+    UPDATE v3_progress
+    SET domains_completed = ?,
+        ddd_progress      = ?,
+        total_modules     = ?,
+        total_files       = ?,
+        total_lines       = ?,
+        last_updated      = ?
     WHERE id = 1
   `, [domainsCompleted, avgProgress, modules.length, totalStats.files, totalStats.lines, now]);
 
@@ -315,10 +420,10 @@ async function syncMetrics() {
   else if (cvesFixed > 0) securityStatus = 'IN_PROGRESS';
 
   db.run(`
-    UPDATE security_audit SET
-      status = ?,
-      cves_fixed = ?,
-      last_audit = ?
+    UPDATE security_audit
+    SET status     = ?,
+        cves_fixed = ?,
+        last_audit = ?
     WHERE id = 1
   `, [securityStatus, cvesFixed, now]);
 
@@ -330,13 +435,13 @@ async function syncMetrics() {
   // Update swarm activity
   const processes = countProcesses();
   db.run(`
-    UPDATE swarm_activity SET
-      agentic_flow_processes = ?,
-      mcp_server_processes = ?,
-      estimated_agents = ?,
-      swarm_active = ?,
-      coordination_active = ?,
-      last_updated = ?
+    UPDATE swarm_activity
+    SET agentic_flow_processes = ?,
+        mcp_server_processes   = ?,
+        estimated_agents       = ?,
+        swarm_active           = ?,
+        coordination_active    = ?,
+        last_updated           = ?
     WHERE id = 1
   `, [
     processes.agenticFlow,

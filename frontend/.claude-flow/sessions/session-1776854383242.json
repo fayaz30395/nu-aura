@@ -1,0 +1,23 @@
+{
+  "id": "session-1776854383242",
+  "startedAt": "2026-04-22T10:39:43.243Z",
+  "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend",
+  "context": {
+    "lastMatchedPatterns": [
+      "mem-project_sonar_fixes_2026_03_30-sonar-remediation--phase-2-",
+      "mem-MEMORY-platform-architecture",
+      "mem-project_status-known-remaining-gaps",
+      "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
+      "mem-project_hire_fluence_gaps_2026_04_05-nu-hire-status--as-of-2026-04-"
+    ]
+  },
+  "metrics": {
+    "edits": 15,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "updatedAt": "2026-04-22T10:51:05.229Z",
+  "endedAt": "2026-04-22T10:52:41.808Z",
+  "duration": 778572
+}

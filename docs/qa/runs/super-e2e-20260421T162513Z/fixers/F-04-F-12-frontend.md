@@ -8,6 +8,7 @@ Date: 2026-04-21
 ## F-04 / BUG-010 — `/helpdesk/tickets` ticket-number cell not a real anchor
 
 ### Root cause
+
 `frontend/app/helpdesk/tickets/page.tsx` wrapped every row in a `<tr>` with
 `onClick={onNavigate}` that called `router.push(`/helpdesk/tickets/${id}`)` (line
 365 in the pre-fix file, prop drilled into `TicketRow`). A real `<Link>` was
@@ -25,6 +26,7 @@ In short: navigation was being driven by `router.push`, not by a real anchor,
 which is exactly the regression called out in BUG-010.
 
 ### Fix
+
 File: `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/helpdesk/tickets/page.tsx`
 
 1. Removed `useRouter` import and `router` usage in `TicketListPage`.
@@ -40,6 +42,7 @@ File: `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/helpdesk/tickets
    (no longer needed — row is not clickable).
 
 Before (abridged):
+
 ```tsx
 <tr className="... cursor-pointer" onClick={onNavigate}>
   <td>
@@ -60,6 +63,7 @@ Before (abridged):
 ```
 
 After:
+
 ```tsx
 const detailHref = `/helpdesk/tickets/${ticket.id}`;
 <tr className="h-11 hover:bg-[var(--bg-card-hover)] transition-colors">
@@ -81,6 +85,7 @@ const detailHref = `/helpdesk/tickets/${ticket.id}`;
 ```
 
 ### QA verification
+
 1. Navigate to `/helpdesk/tickets` as SUPER_ADMIN.
 2. Inspect tbody — expect `>= 2 * N` `<a href="/helpdesk/tickets/{id}">` anchors
    (ticket number + subject per row).
@@ -93,6 +98,7 @@ const detailHref = `/helpdesk/tickets/${ticket.id}`;
 ### Confidence: **H**
 
 ### Follow-ups
+
 - Optional: consider a shared `<RowLink>` helper used across helpdesk / contracts
   / employees list pages to prevent future regressions of this exact pattern.
 - Consider adding a Playwright snapshot assertion
@@ -104,6 +110,7 @@ const detailHref = `/helpdesk/tickets/${ticket.id}`;
 ## F-12 — `/employees?page=N` URL param ignored
 
 ### Root cause
+
 `frontend/app/employees/page.tsx` initialised pagination with
 `useState(0)` and never read `useSearchParams()`. It also only updated local
 state when the user clicked Prev/Next, so the URL never reflected the current
@@ -111,6 +118,7 @@ page and direct links to `?page=2` were silently ignored — the API call always
 sent `page=0`.
 
 ### Fix
+
 File: `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/employees/page.tsx`
 
 - Added `useSearchParams`, `usePathname` imports.
@@ -127,12 +135,14 @@ File: `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/employees/page.t
   URL for cleanliness.
 
 Before:
+
 ```tsx
 const [currentPage, setCurrentPage] = useState(0);
 const PAGE_SIZE = 20;
 ```
 
 After:
+
 ```tsx
 const pathname = usePathname();
 const searchParams = useSearchParams();
@@ -157,6 +167,7 @@ const setCurrentPage = (updater: number | ((prev: number) => number)) => {
 ```
 
 ### QA verification
+
 1. Visit `/employees?page=2` directly — Network panel should show
    `GET /api/v1/employees?page=1&size=20&...` (0-based page index on API, which
    corresponds to "page 2" in the URL and UI).
@@ -172,6 +183,7 @@ const setCurrentPage = (updater: number | ((prev: number) => number)) => {
 ### Confidence: **H**
 
 ### Follow-ups
+
 - Consider persisting `search` and `status` filters to the URL too, so QA /
   PM / managers can share deep links like `/employees?page=2&status=ACTIVE`.
 - If a `Back`-button-steps-through-pages UX is desired, switch `router.replace`
@@ -181,10 +193,12 @@ const setCurrentPage = (updater: number | ((prev: number) => number)) => {
 ---
 
 ## Files touched
+
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/helpdesk/tickets/page.tsx`
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/app/employees/page.tsx`
 
 ## Constraint compliance
+
 - [x] No commit performed.
 - [x] No backend changes.
 - [x] TypeScript strict, no `any` introduced.

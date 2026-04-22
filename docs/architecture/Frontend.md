@@ -47,22 +47,22 @@ cookie-based auth, and comprehensive E2E testing.
 
 ### NU-Hire (Recruitment)
 
-| Route                         | Purpose                    |
-|-------------------------------|----------------------------|
-| `/recruitment/[jobId]/kanban` | ATS Kanban board           |
-| `/recruitment/pipeline`       | Recruitment pipeline view  |
-| `/recruitment/interviews`     | Interview scheduling       |
-| `/recruitment/job-boards`     | Job board integration      |
-| `/onboarding/[id]`            | Onboarding process         |
-| `/onboarding/templates/[id]`  | Onboarding template editor |
-| `/offboarding/exit/fnf`       | Full & final settlement    |
-| `/preboarding/portal/[token]` | Public preboarding portal  |
-| `/careers`                    | Public careers page        |
-| `/offer-portal`               | Offer acceptance portal    |
-| `/recruitment/agencies`       | Agency list (CRUD, stats)  |
-| `/recruitment/agencies/[id]`  | Agency detail + submissions|
-| `/recruitment/career-page`    | Career page CMS            |
-| `/recruitment/candidates/[id]`| Candidate detail           |
+| Route                          | Purpose                     |
+|--------------------------------|-----------------------------|
+| `/recruitment/[jobId]/kanban`  | ATS Kanban board            |
+| `/recruitment/pipeline`        | Recruitment pipeline view   |
+| `/recruitment/interviews`      | Interview scheduling        |
+| `/recruitment/job-boards`      | Job board integration       |
+| `/onboarding/[id]`             | Onboarding process          |
+| `/onboarding/templates/[id]`   | Onboarding template editor  |
+| `/offboarding/exit/fnf`        | Full & final settlement     |
+| `/preboarding/portal/[token]`  | Public preboarding portal   |
+| `/careers`                     | Public careers page         |
+| `/offer-portal`                | Offer acceptance portal     |
+| `/recruitment/agencies`        | Agency list (CRUD, stats)   |
+| `/recruitment/agencies/[id]`   | Agency detail + submissions |
+| `/recruitment/career-page`     | Career page CMS             |
+| `/recruitment/candidates/[id]` | Candidate detail            |
 
 ### NU-Grow (Performance & Learning)
 
@@ -83,25 +83,25 @@ cookie-based auth, and comprehensive E2E testing.
 
 ### NU-Fluence (Knowledge)
 
-| Route                       | Purpose                                    |
-|-----------------------------|--------------------------------------------|
-| `/fluence/wiki`             | Wiki spaces + page listing with tree view  |
-| `/fluence/wiki/new`         | Create new wiki page                       |
-| `/fluence/wiki/[slug]`      | Wiki page view (inline comments, export)   |
-| `/fluence/wiki/[slug]/edit` | Wiki page editor (TipTap)                  |
-| `/fluence/blogs`            | Blog listing with categories               |
-| `/fluence/blogs/new`        | Create blog post                           |
-| `/fluence/blogs/[slug]`     | Blog post view                             |
-| `/fluence/blogs/[slug]/edit`| Edit blog post                             |
-| `/fluence/templates`        | Template listing                           |
-| `/fluence/templates/new`    | Create template                            |
-| `/fluence/templates/[id]`   | Template viewer + instantiate              |
-| `/fluence/drive`            | File storage (upload, categorize, search)  |
-| `/fluence/search`           | Full-text search (saved searches, filters) |
-| `/fluence/my-content`       | User's own wiki pages + blog posts         |
-| `/fluence/wall`             | Activity wall (trending + recent activity) |
-| `/fluence/dashboard`        | Fluence overview dashboard                 |
-| `/fluence/analytics`        | Content analytics (KPIs, trends, charts)   |
+| Route                        | Purpose                                    |
+|------------------------------|--------------------------------------------|
+| `/fluence/wiki`              | Wiki spaces + page listing with tree view  |
+| `/fluence/wiki/new`          | Create new wiki page                       |
+| `/fluence/wiki/[slug]`       | Wiki page view (inline comments, export)   |
+| `/fluence/wiki/[slug]/edit`  | Wiki page editor (TipTap)                  |
+| `/fluence/blogs`             | Blog listing with categories               |
+| `/fluence/blogs/new`         | Create blog post                           |
+| `/fluence/blogs/[slug]`      | Blog post view                             |
+| `/fluence/blogs/[slug]/edit` | Edit blog post                             |
+| `/fluence/templates`         | Template listing                           |
+| `/fluence/templates/new`     | Create template                            |
+| `/fluence/templates/[id]`    | Template viewer + instantiate              |
+| `/fluence/drive`             | File storage (upload, categorize, search)  |
+| `/fluence/search`            | Full-text search (saved searches, filters) |
+| `/fluence/my-content`        | User's own wiki pages + blog posts         |
+| `/fluence/wall`              | Activity wall (trending + recent activity) |
+| `/fluence/dashboard`         | Fluence overview dashboard                 |
+| `/fluence/analytics`         | Content analytics (KPIs, trends, charts)   |
 
 ### Platform
 

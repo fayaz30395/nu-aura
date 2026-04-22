@@ -1,3 +1,14 @@
-{"page":"/recruitment","status":"PASS","notes":"Loaded clean under Suresh M (RECRUITMENT ADMIN)"}
-{"page":"/recruitment/jobs","status":"PASS","notes":"API 200: job-openings, departments, employees; then session invalidated (401 on /auth/refresh)"}
-{"observation":"demo-account-collision","detail":"Parallel workers sharing same demo account (no 'HR Admin' card exists in panel — only Fayaz M SuperAdmin, Sumit Kumar MANAGER, Mani/Gokul/Dhanush TEAM LEAD, Saran V EMPLOYEE, Jagadeesh N HR MANAGER, Suresh M RECRUITMENT ADMIN) causes JWT session invalidation when another worker logs in as the same demo persona."}
+{
+  "page": "/recruitment",
+  "status": "PASS",
+  "notes": "Loaded clean under Suresh M (RECRUITMENT ADMIN)"
+}
+{
+  "page": "/recruitment/jobs",
+  "status": "PASS",
+  "notes": "API 200: job-openings, departments, employees; then session invalidated (401 on /auth/refresh)"
+}
+{
+  "observation": "demo-account-collision",
+  "detail": "Parallel workers sharing same demo account (no 'HR Admin' card exists in panel — only Fayaz M SuperAdmin, Sumit Kumar MANAGER, Mani/Gokul/Dhanush TEAM LEAD, Saran V EMPLOYEE, Jagadeesh N HR MANAGER, Suresh M RECRUITMENT ADMIN) causes JWT session invalidation when another worker logs in as the same demo persona."
+}

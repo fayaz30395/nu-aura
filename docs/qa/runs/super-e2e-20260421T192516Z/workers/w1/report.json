@@ -9,7 +9,9 @@
       "url": "/dashboard",
       "status": "PASS",
       "console_errors": [],
-      "network_errors": ["GET /api/v1/analytics/dashboard -> 403"],
+      "network_errors": [
+        "GET /api/v1/analytics/dashboard -> 403"
+      ],
       "note": "Renders but analytics/dashboard API 403 for SuperAdmin"
     },
     {
@@ -23,7 +25,10 @@
       "url": "/attendance",
       "status": "PASS",
       "console_errors": [],
-      "network_errors": ["/ws/ xhr_streaming 503", "/ws/ xhr_send 404"],
+      "network_errors": [
+        "/ws/ xhr_streaming 503",
+        "/ws/ xhr_send 404"
+      ],
       "note": "Main content rendered (attendance widget). WebSocket infra issues observed but non-blocking."
     },
     {
@@ -140,8 +145,22 @@
     "skipped": 0
   },
   "session_checks": [
-    {"at": "start", "email": "fayaz.m@nulogic.io", "roles": ["SUPER_ADMIN","SKIP_LEVEL_MANAGER","REPORTING_MANAGER"]},
-    {"at": "after-6-pages", "email": "fayaz.m@nulogic.io"},
-    {"at": "end", "email": "fayaz.m@nulogic.io"}
+    {
+      "at": "start",
+      "email": "fayaz.m@nulogic.io",
+      "roles": [
+        "SUPER_ADMIN",
+        "SKIP_LEVEL_MANAGER",
+        "REPORTING_MANAGER"
+      ]
+    },
+    {
+      "at": "after-6-pages",
+      "email": "fayaz.m@nulogic.io"
+    },
+    {
+      "at": "end",
+      "email": "fayaz.m@nulogic.io"
+    }
   ]
 }

@@ -8,8 +8,29 @@
   "end_utc": "2026-04-21T19:15:02Z",
   "duration_minutes": 16.5,
   "pages_tested": 14,
-  "pages_attempted": ["assets","assets/allocations","shifts","holidays","statutory","overtime","travel","loans","probation","compensation","benefits","letters","orgchart","announcements","helpdesk","helpdesk/tickets","contracts"],
-  "lifecycles_attempted": ["S6 Loan (aborted — main content empty)","S7 Travel (aborted — main content empty)"],
+  "pages_attempted": [
+    "assets",
+    "assets/allocations",
+    "shifts",
+    "holidays",
+    "statutory",
+    "overtime",
+    "travel",
+    "loans",
+    "probation",
+    "compensation",
+    "benefits",
+    "letters",
+    "orgchart",
+    "announcements",
+    "helpdesk",
+    "helpdesk/tickets",
+    "contracts"
+  ],
+  "lifecycles_attempted": [
+    "S6 Loan (aborted — main content empty)",
+    "S7 Travel (aborted — main content empty)"
+  ],
   "environment_notes": [
     "No 'HR Admin' demo account card exists on /auth/login. 8 roles present: Super Admin, Manager, Team Lead x2, Employee, HR Manager, Recruitment Admin, HR Lead. Using Jagadeesh N (HR MANAGER) as closest match.",
     "Session cookie is shared across all worker tabs — role context flapped between HR Manager and Employee during the run. Multiple pages returned blank main content because an Employee-scoped session was active at probe time rather than HR Manager.",
@@ -99,10 +120,31 @@
       "evidence": "Sidebar content observed shifting between minimal (HR) and full (Executive) sidebars mid-run; user chip text changed from 'JN Jagadeesh N HR MANAGER' to 'U User Employee' between navigations on the same tab."
     }
   ],
-  "pages_passed": ["assets","holidays","benefits","letters","contracts"],
-  "pages_403": ["shifts","helpdesk","helpdesk/tickets"],
-  "pages_404": ["assets/allocations","orgchart"],
-  "pages_empty_main": ["overtime","statutory","travel","loans","probation","compensation","announcements"],
+  "pages_passed": [
+    "assets",
+    "holidays",
+    "benefits",
+    "letters",
+    "contracts"
+  ],
+  "pages_403": [
+    "shifts",
+    "helpdesk",
+    "helpdesk/tickets"
+  ],
+  "pages_404": [
+    "assets/allocations",
+    "orgchart"
+  ],
+  "pages_empty_main": [
+    "overtime",
+    "statutory",
+    "travel",
+    "loans",
+    "probation",
+    "compensation",
+    "announcements"
+  ],
   "lifecycles_completed": [],
   "network_errors_observed": [],
   "console_errors_observed": [],
