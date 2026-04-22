@@ -76,7 +76,6 @@ class RecruitmentScopeIntegrationTest {
     private Candidate reporteeCandidate;
     private Candidate otherCandidate;
     private Interview selfInterview;
-    private Interview reporteeInterview;
     private Interview otherInterview;
 
     @BeforeEach
@@ -93,7 +92,7 @@ class RecruitmentScopeIntegrationTest {
         otherCandidate = createCandidate(otherJobOpening.getId(), OTHER_EMPLOYEE_ID, "CAND-OTHER");
 
         selfInterview = createInterview(selfJobOpening.getId(), selfCandidate.getId(), CURRENT_EMPLOYEE_ID);
-        reporteeInterview = createInterview(reporteeJobOpening.getId(), reporteeCandidate.getId(), REPORTEE_EMPLOYEE_ID);
+        createInterview(reporteeJobOpening.getId(), reporteeCandidate.getId(), REPORTEE_EMPLOYEE_ID);
         otherInterview = createInterview(otherJobOpening.getId(), otherCandidate.getId(), OTHER_EMPLOYEE_ID);
     }
 

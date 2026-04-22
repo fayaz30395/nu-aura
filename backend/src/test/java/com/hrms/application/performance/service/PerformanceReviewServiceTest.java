@@ -48,6 +48,10 @@ class PerformanceReviewServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private ReviewCycleRepository reviewCycleRepository;
+    @Mock
+    private com.hrms.application.event.DomainEventPublisher domainEventPublisher;
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
     @InjectMocks
     private PerformanceReviewService performanceReviewService;
     private UUID tenantId;

@@ -1,6 +1,5 @@
 package com.hrms.api.organization.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.organization.dto.NineBoxDataResponse;
 import com.hrms.api.organization.dto.SuccessionAnalyticsResponse;
 import com.hrms.application.organization.service.OrganizationService;

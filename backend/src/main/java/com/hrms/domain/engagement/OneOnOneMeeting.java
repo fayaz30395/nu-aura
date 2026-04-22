@@ -1,5 +1,6 @@
 package com.hrms.domain.engagement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -126,12 +127,22 @@ public class OneOnOneMeeting extends TenantAware {
     @Column(name = "employee_feedback", columnDefinition = "TEXT")
     private String employeeFeedback;
 
+    @JsonIgnore
+    @Transient
     public boolean isUpcoming() {
+        if (meetingDate == null || startTime == null) {
+            return false;
+        }
         LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
         return meetingDateTime.isAfter(LocalDateTime.now()) && status == MeetingStatus.SCHEDULED;
     }
 
+    @JsonIgnore
+    @Transient
     public boolean isPast() {
+        if (meetingDate == null || startTime == null) {
+            return false;
+        }
         LocalDateTime meetingDateTime = LocalDateTime.of(meetingDate, startTime);
         return meetingDateTime.isBefore(LocalDateTime.now());
     }

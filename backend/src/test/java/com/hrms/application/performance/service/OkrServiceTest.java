@@ -228,7 +228,7 @@ class OkrServiceTest {
     void getCompanyObjectives_Success() {
         when(objectiveRepository.findByLevel(tenantId, ObjectiveLevel.COMPANY))
                 .thenReturn(List.of(testObjective));
-        when(keyResultRepository.findAllByObjectiveId(objectiveId))
+        when(keyResultRepository.findAllByObjectiveIdIn(List.of(objectiveId)))
                 .thenReturn(List.of(testKeyResult));
 
         List<Objective> result = okrService.getCompanyObjectives(tenantId);

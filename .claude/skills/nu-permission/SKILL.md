@@ -11,7 +11,8 @@ description: Use when asked to add a permission, wire RBAC, create a new permiss
   ONE clarifying question only if the permission key is ambiguous.
 - **Halts autonomously** when all 4 layers are wired: backend constant, controller annotation,
   frontend constant, and database seed (Flyway migration appended or new `V{next}__` file written).
-- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-migration`, or `skill-management`.
+- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-migration`, or
+  `skill-management`.
 - **Single concern:** RBAC wiring only. Schema changes go through `nu-migration`; end-to-end RBAC
   verification (URL + DOM + negative API 403) is the job of `nu-chrome-e2e`.
 

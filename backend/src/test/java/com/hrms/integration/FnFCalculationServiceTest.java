@@ -84,9 +84,9 @@ class FnFCalculationServiceTest {
 
     private ExitProcess buildExitProcess(UUID exitId, LocalDate lastWorkingDate) {
         ExitProcess ep = mock(ExitProcess.class);
-        when(ep.getId()).thenReturn(exitId);
-        when(ep.getEmployeeId()).thenReturn(EMPLOYEE_ID);
-        when(ep.getLastWorkingDate()).thenReturn(lastWorkingDate);
+        lenient().when(ep.getId()).thenReturn(exitId);
+        lenient().when(ep.getEmployeeId()).thenReturn(EMPLOYEE_ID);
+        lenient().when(ep.getLastWorkingDate()).thenReturn(lastWorkingDate);
         return ep;
     }
 

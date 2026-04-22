@@ -193,7 +193,7 @@ class PSAProjectControllerTest {
         allocation.put("employeeId", UUID.randomUUID().toString());
         allocation.put("allocationPercentage", 50);
 
-        when(psaService.allocateResources(eq(psaProjectId), org.mockito.ArgumentMatchers.any(Map.class)))
+        when(psaService.allocateResources(eq(psaProjectId), org.mockito.ArgumentMatchers.<Map<String, Object>>any()))
                 .thenReturn(Optional.of(psaProject));
 
         mockMvc.perform(post("/api/v1/psa/projects/{id}/allocate", psaProjectId)
@@ -202,7 +202,7 @@ class PSAProjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(psaProjectId.toString()));
 
-        verify(psaService).allocateResources(eq(psaProjectId), org.mockito.ArgumentMatchers.any(Map.class));
+        verify(psaService).allocateResources(eq(psaProjectId), org.mockito.ArgumentMatchers.<Map<String, Object>>any());
     }
 
     @Configuration

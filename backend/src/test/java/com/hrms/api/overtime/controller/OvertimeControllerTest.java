@@ -214,11 +214,10 @@ class OvertimeControllerTest {
                     .build();
 
             when(overtimeManagementService.approveOrRejectOvertime(
-                    eq(RECORD_ID), eq(APPROVER_ID), any(OvertimeApprovalRequest.class)))
+                    eq(RECORD_ID), nullable(UUID.class), any(OvertimeApprovalRequest.class)))
                     .thenReturn(buildOvertimeResponse("APPROVED"));
 
             mockMvc.perform(post("/api/v1/overtime/{recordId}/approve", RECORD_ID)
-                            .param("approverId", APPROVER_ID.toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                             .accept(MediaType.APPLICATION_JSON))
@@ -226,7 +225,7 @@ class OvertimeControllerTest {
                     .andExpect(jsonPath("$.status").value("APPROVED"));
 
             verify(overtimeManagementService).approveOrRejectOvertime(
-                    eq(RECORD_ID), eq(APPROVER_ID), any(OvertimeApprovalRequest.class));
+                    eq(RECORD_ID), nullable(UUID.class), any(OvertimeApprovalRequest.class));
         }
 
         @Test
@@ -238,11 +237,10 @@ class OvertimeControllerTest {
                     .build();
 
             when(overtimeManagementService.approveOrRejectOvertime(
-                    eq(RECORD_ID), eq(APPROVER_ID), any(OvertimeApprovalRequest.class)))
+                    eq(RECORD_ID), nullable(UUID.class), any(OvertimeApprovalRequest.class)))
                     .thenReturn(buildOvertimeResponse("REJECTED"));
 
             mockMvc.perform(post("/api/v1/overtime/{recordId}/approve", RECORD_ID)
-                            .param("approverId", APPROVER_ID.toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request))
                             .accept(MediaType.APPLICATION_JSON))
@@ -374,7 +372,7 @@ class OvertimeControllerTest {
         @DisplayName("approveOrRejectOvertime requires ATTENDANCE:APPROVE")
         void approveOrRejectOvertime_requiresAttendanceApprove() throws NoSuchMethodException {
             Method method = OvertimeManagementController.class
-                    .getMethod("approveOrRejectOvertime", UUID.class, UUID.class, OvertimeApprovalRequest.class);
+                    .getMethod("approveOrRejectOvertime", UUID.class, OvertimeApprovalRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

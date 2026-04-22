@@ -102,7 +102,7 @@ class PermissionControllerTest {
         @Test
         @DisplayName("getAllPermissions should require PERMISSION_MANAGE")
         void getAllPermissions_shouldRequirePermissionManage() throws NoSuchMethodException {
-            Method method = PermissionController.class.getMethod("getAllPermissions");
+            Method method = PermissionController.class.getMethod("getAllPermissions", org.springframework.data.domain.Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -128,7 +128,7 @@ class PermissionControllerTest {
         @Test
         @DisplayName("Neither endpoint should have revalidate=true (read-only operations)")
         void permissionEndpoints_shouldNotHaveRevalidation() throws NoSuchMethodException {
-            Method listAll = PermissionController.class.getMethod("getAllPermissions");
+            Method listAll = PermissionController.class.getMethod("getAllPermissions", org.springframework.data.domain.Pageable.class);
             Method byResource = PermissionController.class.getMethod("getPermissionsByResource", String.class);
 
             assertThat(listAll.getAnnotation(RequiresPermission.class).revalidate()).isFalse();

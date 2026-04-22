@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -168,7 +169,7 @@ class ApplicantServiceTest {
         try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
             mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
-            when(applicantRepository.findOne(any(Specification.class))).thenReturn(Optional.of(applicant));
+            when(applicantRepository.findOne(ArgumentMatchers.<Specification<Applicant>>any())).thenReturn(Optional.of(applicant));
             when(applicantRepository.save(any(Applicant.class))).thenAnswer(invocation -> invocation.getArgument(0));
             when(candidateRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
             when(jobOpeningRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
@@ -195,7 +196,7 @@ class ApplicantServiceTest {
 
         try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
             mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
-            when(applicantRepository.findOne(any(Specification.class))).thenReturn(Optional.of(applicant));
+            when(applicantRepository.findOne(ArgumentMatchers.<Specification<Applicant>>any())).thenReturn(Optional.of(applicant));
 
             assertThatThrownBy(() -> applicantService.updateStatus(applicantId, request))
                     .isInstanceOf(IllegalStateException.class)
@@ -220,7 +221,7 @@ class ApplicantServiceTest {
             mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
             when(dataScopeService.getScopeSpecification(anyString()))
                     .thenReturn((root, query, cb) -> cb.conjunction());
-            when(applicantRepository.findAll(any(Specification.class)))
+            when(applicantRepository.findAll(ArgumentMatchers.<Specification<Applicant>>any()))
                     .thenReturn(List.of(applicantOne, applicantTwo));
             when(candidateRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
             when(jobOpeningRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
@@ -246,7 +247,7 @@ class ApplicantServiceTest {
 
         try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
             mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
-            when(applicantRepository.findOne(any(Specification.class))).thenReturn(Optional.of(applicant));
+            when(applicantRepository.findOne(ArgumentMatchers.<Specification<Applicant>>any())).thenReturn(Optional.of(applicant));
             when(applicantRepository.save(any(Applicant.class))).thenAnswer(invocation -> invocation.getArgument(0));
             when(candidateRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
             when(jobOpeningRepository.findById(any(UUID.class))).thenReturn(Optional.empty());

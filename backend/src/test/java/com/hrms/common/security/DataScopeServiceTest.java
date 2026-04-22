@@ -40,12 +40,6 @@ class DataScopeServiceTest {
         TenantContext.setCurrentTenant(tenantId);
     }
 
-    private void setupSecurityContextWithRoles(UUID userId, UUID employeeId, UUID tenantId,
-                                               String permission, RoleScope scope, Set<String> roles) {
-        SecurityContext.setCurrentUser(userId, employeeId, roles, Map.of(permission, scope));
-        TenantContext.setCurrentTenant(tenantId);
-    }
-
     @Test
     @DisplayName("ALL scope should return conjunction (no filter)")
     void testAllScope_ReturnsNoFilter() {

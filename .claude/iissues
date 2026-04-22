@@ -1,0 +1,637 @@
+uplicateJsonObjectContextCustomizer@3baf6936, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.reactor.netty.DisableReactorResourceFactoryGlobalResourcesContextCustomizerFactory$DisableReactorResourceFactoryGlobalResourcesContextCustomizerCustomizer@764cba, org.springframework.boot.test.autoconfigure.OnFailureConditionReportContextCustomizerFactory$OnFailureConditionReportContextCustomizer@3872bc37, org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@4ad1bba7, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@4dd233e6, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@459d1f28, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@4c2fb9dd, org.springframework.test.context.bean.override.BeanOverrideContextCustomizer@97b28cfc, org.springframework.test.context.support.DynamicPropertiesContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestAnnotation@1c6d8f63
+], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null
+]
+[ERROR
+]   LeaveRequestControllerTest$UpdateLeaveRequestTests.shouldUpdateLeaveRequest » IllegalState Failed to load ApplicationContext for [WebMergedContextConfiguration@4f14891e testClass = com.hrms.api.leave.controller.LeaveRequestControllerTest, locations = [], classes = [com.hrms.api.leave.controller.LeaveRequestController
+], contextInitializerClasses = [], activeProfiles = [
+"test"
+], propertySourceDescriptors = [], propertySourceProperties = [
+"org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTestContextBootstrapper=true"
+], contextCustomizers = [
+[ImportsContextCustomizer@a737225 key = [org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration, org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration, org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration, org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration, org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration, org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration, org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration, org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration, org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration, org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration
+    ]
+], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7e00ed0f, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3baf6936, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.reactor.netty.DisableReactorResourceFactoryGlobalResourcesContextCustomizerFactory$DisableReactorResourceFactoryGlobalResourcesContextCustomizerCustomizer@764cba, org.springframework.boot.test.autoconfigure.OnFailureConditionReportContextCustomizerFactory$OnFailureConditionReportContextCustomizer@3872bc37, org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@4ad1bba7, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@4dd233e6, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@459d1f28, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@4c2fb9dd, org.springframework.test.context.bean.override.BeanOverrideContextCustomizer@97b28cfc, org.springframework.test.context.support.DynamicPropertiesContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestAnnotation@1c6d8f63
+], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null
+]
+[ERROR
+]   MeetingControllerTest$ScheduleMeetingTests.shouldScheduleMeeting: 96 » JsonMapping date (through reference chain: com.hrms.domain.engagement.OneOnOneMeeting[
+"upcoming"
+])
+[ERROR
+]   MeetingControllerTest$ScheduleMeetingTests.shouldScheduleMeetingWithDescription: 112 » JsonMapping date (through reference chain: com.hrms.domain.engagement.OneOnOneMeeting[
+"upcoming"
+])
+[ERROR
+]   MobileDashboardControllerTest$GetDashboardTests.shouldHandleServiceExceptionGracefully: 226 » Servlet Request processing failed: java.lang.RuntimeException: Service unavailable
+[ERROR
+]   NotificationControllerTest$PermissionAnnotationTests.getMyNotificationsShouldRequireView: 448 » NoSuchMethod com.hrms.api.notification.controller.NotificationController.getMyNotifications(int,int)
+[ERROR
+]   OvertimeControllerTest$ApprovalTests.approveOvertime_returns200: 220 » Servlet Request processing failed: org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'approveOrRejectOvertime' method:
+    overtimeManagementService.approveOrRejectOvertime(
+    3dbf3d7a-b884-4e0d-89ca-bfb8dc574e66,
+null,
+    OvertimeApprovalRequest(action=APPROVE, rejectionReason=null)
+);
+    -> at com.hrms.api.overtime.controller.OvertimeManagementController.approveOrRejectOvertime(OvertimeManagementController.java: 57)
+ - has following stubbing(s) with different arguments:
+    1. overtimeManagementService.approveOrRejectOvertime(
+    null,
+null,
+null
+);
+      -> at com.hrms.api.overtime.controller.OvertimeControllerTest$ApprovalTests.approveOvertime_returns200(OvertimeControllerTest.java: 216)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR
+]   OvertimeControllerTest$ApprovalTests.rejectOvertime_returns200: 244 » Servlet Request processing failed: org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'approveOrRejectOvertime' method:
+    overtimeManagementService.approveOrRejectOvertime(
+    3dbf3d7a-b884-4e0d-89ca-bfb8dc574e66,
+null,
+    OvertimeApprovalRequest(action=REJECT, rejectionReason=Overtime not authorised)
+);
+    -> at com.hrms.api.overtime.controller.OvertimeManagementController.approveOrRejectOvertime(OvertimeManagementController.java: 57)
+ - has following stubbing(s) with different arguments:
+    1. overtimeManagementService.approveOrRejectOvertime(
+    null,
+null,
+null
+);
+      -> at com.hrms.api.overtime.controller.OvertimeControllerTest$ApprovalTests.rejectOvertime_returns200(OvertimeControllerTest.java: 240)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR
+]   OvertimeControllerTest$PermissionAnnotationTests.approveOrRejectOvertime_requiresAttendanceApprove: 377 » NoSuchMethod com.hrms.api.overtime.controller.OvertimeManagementController.approveOrRejectOvertime(java.util.UUID,java.util.UUID,com.hrms.api.overtime.dto.OvertimeApprovalRequest)
+[ERROR
+]   PayrollControllerTest$ProcessPayrollRunTests.shouldProcessPayrollRun: 217 » Servlet Request processing failed: java.lang.RuntimeException: Payroll processing could not be queued — Kafka unavailable. Please retry.
+[ERROR
+]   GoalControllerTest$PermissionAnnotationTests.approveGoalShouldRequireGoalApprove: 409 » NoSuchMethod com.hrms.api.performance.GoalController.approveGoal(java.util.UUID,java.util.UUID)
+[ERROR
+]   TenantControllerTest$TenantRegistrationTests.shouldHandleServiceExceptionDuringRegistration: 238 » Servlet Request processing failed: java.lang.RuntimeException: Company code already exists
+[ERROR
+]   PlatformControllerTest$UserAccessEndpointsTests.shouldGrantAccessSuccessfully: 281 » Servlet Request processing failed: java.lang.NullPointerException: Cannot invoke "com.hrms.domain.user.User.getId()" because the return value of "com.hrms.domain.platform.UserAppAccess.getUser()" is null
+[ERROR
+]   TimesheetControllerTest$PermissionAnnotationTests.approveTimeEntry_requiresTimesheetApprove: 509 » NoSuchMethod com.hrms.api.project.controller.ProjectTimesheetController.approveTimeEntry(java.util.UUID,java.util.UUID)
+[ERROR
+]   TimesheetControllerTest$PermissionAnnotationTests.rejectTimeEntry_requiresTimesheetApprove: 520 » NoSuchMethod com.hrms.api.project.controller.ProjectTimesheetController.rejectTimeEntry(java.util.UUID,java.util.UUID,java.lang.String)
+[ERROR
+]   TimesheetControllerTest$SubmissionApprovalTests.approveTimeEntry_returns200: 283 » Servlet Request processing failed: org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'approveTimeEntry' method:
+    projectTimesheetService.approveTimeEntry(
+    d69938df-e5f4-49c7-acd4-fe7ade59988e,
+null
+);
+    -> at com.hrms.api.project.controller.ProjectTimesheetController.approveTimeEntry(ProjectTimesheetController.java: 67)
+ - has following stubbing(s) with different arguments:
+    1. projectTimesheetService.approveTimeEntry(
+    d69938df-e5f4-49c7-acd4-fe7ade59988e,
+    abe860b7-687d-4ba3-9f67-f5d503f8fb95
+);
+      -> at com.hrms.api.project.controller.TimesheetControllerTest$SubmissionApprovalTests.approveTimeEntry_returns200(TimesheetControllerTest.java: 280)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR
+]   TimesheetControllerTest$SubmissionApprovalTests.rejectTimeEntry_returns200: 298 » Servlet Request processing failed: org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'rejectTimeEntry' method:
+    projectTimesheetService.rejectTimeEntry(
+    d69938df-e5f4-49c7-acd4-fe7ade59988e,
+null,
+"Missing task description"
+);
+    -> at com.hrms.api.project.controller.ProjectTimesheetController.rejectTimeEntry(ProjectTimesheetController.java: 77)
+ - has following stubbing(s) with different arguments:
+    1. projectTimesheetService.rejectTimeEntry(
+    d69938df-e5f4-49c7-acd4-fe7ade59988e,
+    abe860b7-687d-4ba3-9f67-f5d503f8fb95,
+"Missing task description"
+);
+      -> at com.hrms.api.project.controller.TimesheetControllerTest$SubmissionApprovalTests.rejectTimeEntry_returns200(TimesheetControllerTest.java: 295)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR
+]   ProfessionalTaxControllerTest.shouldPropagateExceptionOnCreation: 162 » Servlet Request processing failed: java.lang.RuntimeException: Duplicate slab
+[ERROR
+]   ProvidentFundControllerTest.shouldPropagateExceptionOnEnrollment: 164 » Servlet Request processing failed: java.lang.RuntimeException: Employee already enrolled
+[ERROR
+]   TaxDeclarationControllerTest$AddTaxProofEndpoint.addProofEndpointHasRequiresPermissionAnnotation: 576 » NoSuchMethod com.hrms.api.tax.controller.TaxDeclarationController.addTaxProof(java.util.UUID,com.hrms.api.tax.dto.TaxProofRequest)
+[ERROR
+]   TaxDeclarationControllerTest$ApproveTaxDeclarationEndpoint.approveEndpointHasRequiresPermissionAnnotation: 321 » NoSuchMethod com.hrms.api.tax.controller.TaxDeclarationController.approveTaxDeclaration(java.util.UUID,java.util.UUID)
+[ERROR
+]   TaxDeclarationControllerTest$RejectTaxDeclarationEndpoint.rejectEndpointHasRequiresPermissionAnnotation: 377 » NoSuchMethod com.hrms.api.tax.controller.TaxDeclarationController.rejectTaxDeclaration(java.util.UUID,java.util.UUID,java.lang.String)
+[ERROR
+]   PermissionControllerTest$PermissionAnnotationTests.getAllPermissions_shouldRequirePermissionManage: 105 » NoSuchMethod com.hrms.api.user.controller.PermissionController.getAllPermissions()
+[ERROR
+]   PermissionControllerTest$PermissionAnnotationTests.permissionEndpoints_shouldNotHaveRevalidation: 131 » NoSuchMethod com.hrms.api.user.controller.PermissionController.getAllPermissions()
+[ERROR
+]   RoleControllerTest$PermissionAnnotationTests.getAllRoles_shouldRequireRoleManagePermission: 112 » NoSuchMethod com.hrms.api.user.controller.RoleController.getAllRoles()
+[ERROR
+]   UserControllerTest$PermissionAnnotationTests.getAllUsers_shouldRequireUserViewPermission: 126 » NoSuchMethod com.hrms.api.user.controller.UserController.getAllUsers()
+[ERROR
+]   WebhookControllerTest$ActivateDeactivateTests.shouldReturn404WhenActivatingNonExistent: 294 » Servlet Request processing failed: com.hrms.common.exception.ResourceNotFoundException: Webhook not found with id: '0ac87fd2-223c-43b9-bd3b-b005707a6cad'
+[ERROR
+]   WebhookControllerTest$GetWebhookTests.shouldReturn404WhenWebhookNotFound: 150 » Servlet Request processing failed: com.hrms.common.exception.ResourceNotFoundException: Webhook not found with id: '6adecb6a-131f-4a3b-bfdb-cc97d4509e6a'
+[ERROR
+]   ApprovalEscalationControllerTest$DeleteConfigTests.shouldReturn404WhenDeletingNonExistent: 258 » Servlet Request processing failed: com.hrms.common.exception.ResourceNotFoundException: Escalation config not found for workflow
+[ERROR
+]   ApprovalEscalationControllerTest$GetConfigTests.shouldReturn404WhenConfigNotFound: 147 » Servlet Request processing failed: com.hrms.common.exception.ResourceNotFoundException: Escalation config not found for workflow
+[ERROR
+]   ApprovalEscalationControllerTest$UpsertConfigTests.shouldReturn404WhenWorkflowNotFound: 204 » Servlet Request processing failed: com.hrms.common.exception.ResourceNotFoundException: Workflow definition not found
+[ERROR
+]   ResumeTextExtractorTest.testExtractTextFromInputStream: 82 » Archive No Archiver found for the stream signature
+[ERROR
+]   ResumeTextExtractorTest.testExtractTextFromPlainText: 29 » Archive No Archiver found for the stream signature
+[ERROR
+]   ResumeTextExtractorTest.testTextTruncation: 71 » Archive No Archiver found for the stream signature
+[ERROR
+]   ResumeTextExtractorTest.testWhitespaceNormalization: 52 » Archive No Archiver found for the stream signature
+[ERROR
+]   AssetManagementServiceTest.assignAsset_success: 185 » IllegalArgument Asset not found
+[ERROR
+]   AssetManagementServiceTest.deleteAsset_success: 262 » IllegalArgument Asset not found
+[ERROR
+]   AssetManagementServiceTest.getAssetById_success: 239 » IllegalArgument Asset not found
+[ERROR
+]   AssetManagementServiceTest.returnAsset_success: 224 » IllegalArgument Asset not found
+[ERROR
+]   AssetManagementServiceTest.updateAsset_success: 156 » IllegalArgument Asset not found
+[ERROR
+]   AuthServiceTest$ChangePasswordTests.shouldChangePasswordSuccessfully: 263 » NullPointer Cannot invoke "com.hrms.common.config.PasswordPolicyConfig.getHistoryCount()" because "this.passwordPolicyConfig" is null
+[ERROR
+]   AuthServiceTest$LoginTests.shouldLoginSuccessfully: 137 » NullPointer Cannot invoke "com.hrms.common.security.AccountLockoutService.isAccountLocked(String)" because "this.accountLockoutService" is null
+[ERROR
+]   AuthServiceTest$LoginTests.shouldUseDefaultTenantWhenNotProvided: 195 » NullPointer Cannot invoke "com.hrms.common.security.AccountLockoutService.isAccountLocked(String)" because "this.accountLockoutService" is null
+[ERROR
+]   AuthServiceTest$PasswordResetTests.shouldResetPasswordWithValidToken: 351 » NullPointer Cannot invoke "com.hrms.common.config.PasswordPolicyConfig.getHistoryCount()" because "this.passwordPolicyConfig" is null
+[ERROR
+]   AuthServiceTest$TokenRefreshTests.shouldRefreshTokenSuccessfully: 226 » Authentication Invalid or expired refresh token
+[ERROR
+]   PasswordPolicyServiceTest$CharacterComplexityTests.shouldPassAllComplexityChecksWithValidPassword » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CharacterComplexityTests.shouldThrowWhenMissingDigit » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CharacterComplexityTests.shouldThrowWhenMissingLowercase » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CharacterComplexityTests.shouldThrowWhenMissingSpecialChar » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CharacterComplexityTests.shouldThrowWhenMissingUppercase » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldRejectCommonPasswords(String)[
+1
+] » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldRejectCommonPasswords(String)[
+2
+] » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldRejectCommonPasswords(String)[
+3
+] » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldRejectCommonPasswords(String)[
+4
+] » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldRejectCommonPasswords(String)[
+5
+] » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$CommonPasswordTests.shouldSkipCommonPasswordCheckWhenDisabled » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$ConsecutiveCharTests.shouldAllowExactly3ConsecutiveChars » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$ConsecutiveCharTests.shouldSkipConsecutiveCheckWhenDisabled » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$ConsecutiveCharTests.shouldThrowForExcessiveConsecutiveChars » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$LengthValidationTests.shouldAcceptPasswordAtMinLength » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$LengthValidationTests.shouldThrowWhenPasswordTooLong » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$LengthValidationTests.shouldThrowWhenPasswordTooShort » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$NullAndEmptyTests.shouldThrowForEmptyPassword » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  10. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$NullAndEmptyTests.shouldThrowForNullPassword » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  10. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldCheckOnlyLast5WhenHistoryLonger » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldReturnFalseForEmptyHistory » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  10. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldReturnFalseForNullHistory » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  10. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldReturnFalseWhenHistoryCountIsZero » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldReturnFalseWhenPasswordNotInHistory » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PasswordHistoryTests.shouldReturnTrueWhenPasswordInHistory » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 50)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PolicyDescriptionTests.shouldIncludeAllEnabledRequirements » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$PolicyDescriptionTests.shouldReturnMinLengthFromConfig » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 51)
+  2. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 52)
+  3. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 53)
+  4. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 54)
+  5. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 55)
+  6. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 56)
+  7. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 57)
+  8. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 58)
+  9. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$UserInfoTests.shouldAllowWhenUserInfoCheckDisabled » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$UserInfoTests.shouldIgnoreNullUserEmail » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$UserInfoTests.shouldThrowWhenPasswordContainsEmailPrefix » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PasswordPolicyServiceTest$UserInfoTests.shouldThrowWhenPasswordContainsNameFragment » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.auth.service.PasswordPolicyServiceTest.setUp(PasswordPolicyServiceTest.java: 59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   CompensationServiceTest.getAllCycles_success: 171 » NullPointer Cannot invoke "org.springframework.data.domain.Page.map(java.util.function.Function)" because the return value of "com.hrms.infrastructure.compensation.repository.CompensationReviewCycleRepository.findByTenantIdOrderByCreatedAtDesc(java.util.UUID, org.springframework.data.domain.Pageable)" is null
+[ERROR
+]   ExpenseClaimServiceTest$ApproveExpenseClaimTests.shouldApproveExpenseClaimSuccessfully: 297 » NullPointer Cannot invoke "com.hrms.application.event.DomainEventPublisher.publish(com.hrms.domain.event.DomainEvent)" because "this.domainEventPublisher" is null
+[ERROR
+]   LeaveRequestServiceTest$CancelLeaveRequestTests.shouldCancelApprovedLeaveRequestAndCreditBalance: 321 » AccessDenied Cannot cancel another employee's leave request
+[ERROR
+]   LeaveRequestServiceTest$CancelLeaveRequestTests.shouldCancelPendingLeaveRequestWithoutBalanceCredit: 303 » AccessDenied Cannot cancel another employee's leave request
+[ERROR
+]   GlobalPayrollServiceTest$PayrollRunLifecycleTests.shouldApprovePayrollRunSuccessfully: 540 » ResourceNotFound Payroll run not found: 9dbf6d18-1ef4-4614-8172-ae24f5722b6d
+[ERROR
+]   GlobalPayrollServiceTest$PayrollRunLifecycleTests.shouldProcessPayrollRunAndCalculateTotals: 504 » ResourceNotFound Payroll run not found: 0a9fe4b4-394d-49e3-9d82-354eba27f5a0
+[ERROR
+]   OkrServiceTest.getCompanyObjectives_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.application.performance.service.OkrServiceTest.getCompanyObjectives_Success(OkrServiceTest.java: 231)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   PerformanceReviewServiceTest$CompleteReviewTests.shouldCompleteReviewSuccessfully: 336 » NullPointer Cannot invoke "com.hrms.application.event.DomainEventPublisher.publish(com.hrms.domain.event.DomainEvent)" because "this.domainEventPublisher" is null
+[ERROR
+]   ProjectTimesheetBillingTest.shouldCalculateBilledAmountForExplicitRate: 102 » IllegalArgument Employee not found
+[ERROR
+]   ProjectTimesheetBillingTest.shouldHaveNullBilledAmountForNonBillableEntry: 139 » IllegalArgument Employee not found
+[ERROR
+]   ProjectTimesheetBillingTest.shouldHaveNullBilledAmountWhenNoRateAvailable: 228 » IllegalArgument Employee not found
+[ERROR
+]   ProjectTimesheetBillingTest.shouldInheritBillingRateFromProjectMember: 188 » IllegalArgument Employee not found
+[ERROR
+]   EncryptedStringConverterTest$EncryptionKeyValidationTests.blankKeyThrowsIllegalStateException: 283 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$EncryptionKeyValidationTests.missingKeyThrowsIllegalStateException: 272 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$EncryptionKeyValidationTests.shortKeyThrowsIllegalStateException: 296 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$EncryptionKeyValidationTests.validKeyInitialisesSuccessfully: 307 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$InvalidCiphertextTests.invalidCiphertextThrowsException: 199 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$InvalidCiphertextTests.missingColonThrowsException: 211 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$InvalidCiphertextTests.tamperedCiphertextThrowsException: 224 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$InvalidCiphertextTests.wrongKeyThrowsException: 243 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$NullHandlingTests.decryptNullReturnsNull: 181 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$NullHandlingTests.encryptNullReturnsNull: 172 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$RoundtripTests.emptyStringRoundtrip: 86 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$RoundtripTests.largeStringRoundtrip: 98 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$RoundtripTests.roundtripProducesOriginalValue: 73 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$RoundtripTests.unicodeRoundtrip: 111 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$SemanticSecurityTests.ciphertextHasExpectedFormat: 147 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   EncryptedStringConverterTest$SemanticSecurityTests.differentInputsProduceDifferentCiphertexts: 133 » InaccessibleObject Unable to make field private static final java.util.HashMap java.lang.ProcessEnvironment.theEnvironment accessible: module java.base does not "opens java.lang" to unnamed module @28e8dde3
+[ERROR
+]   AttendanceE2ETest.attendanceService_CheckInFlow: 360 » IllegalArgument Cannot find cache named 'tenantAttendanceConfig' for Builder[public com.hrms.application.attendance.service.TenantAttendanceConfigService$TenantAttendanceConfig com.hrms.application.attendance.service.TenantAttendanceConfigService.getConfig(java.util.UUID)
+] caches=[tenantAttendanceConfig
+] | key='' | keyGenerator='tenantAwareKeyGenerator' | cacheManager='' | cacheResolver='' | condition='' | unless='' | sync='false'
+[ERROR
+]   AuthControllerTest.ucAuth003_mfaVerify_validCode_returns200Verified: 200 » Mockito 
+Only void methods can doNothing()!
+Example of correct use of doNothing():
+    doNothing().
+    doThrow(new RuntimeException())
+    .when(mock).someVoidMethod();
+Above means:
+someVoidMethod() does nothing the 1st time but throws an exception the 2nd time is called
+[ERROR
+]   FnFCalculationServiceTest.ucFnf001_existingSettlement_returnedDirectly » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.hrms.integration.FnFCalculationServiceTest.buildExitProcess(FnFCalculationServiceTest.java: 87)
+  2. -> at com.hrms.integration.FnFCalculationServiceTest.buildExitProcess(FnFCalculationServiceTest.java: 88)
+  3. -> at com.hrms.integration.FnFCalculationServiceTest.buildExitProcess(FnFCalculationServiceTest.java: 89)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR
+]   ResourceManagementAllocationIntegrationTest.updateAllocationPersistsChanges: 87->createAssignment: 173 » JpaSystem Identifier of entity 'com.hrms.domain.project.ProjectEmployee' must be manually assigned before calling 'persist()'
+[ERROR
+]   LeaveApprovalPayrollImpactTest.cancellingApprovedLeaveShouldCreditBalance: 170 » AccessDenied Cannot cancel another employee's leave request
+[ERROR
+]   LeaveApprovalPayrollImpactTest.cancellingPendingLeaveShouldNotCreditBalance: 192 » AccessDenied Cannot cancel another employee's leave request
+[INFO
+] 
+[ERROR
+] Tests run: 4769, Failures: 267, Errors: 157, Skipped: 19
+[INFO
+] 
+[INFO
+] ------------------------------------------------------------------------
+[INFO
+] BUILD FAILURE
+[INFO
+] ------------------------------------------------------------------------
+[INFO
+] Total time: 08: 01 min
+[INFO
+] Finished at: 2026-04-23T02: 24: 28+05: 30
+[INFO
+] ------------------------------------------------------------------------
+[ERROR
+] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin: 3.5.2:test (default-test) on project hrms-backend: There are test failures.
+[ERROR
+] 
+[ERROR
+] See /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/target/surefire-reports for the individual test results.
+[ERROR
+] See dump files (if any exist) [date
+].dump,
+[date
+]-jvmRun[N
+].dump and [date
+].dumpstream.
+[ERROR
+] -> [Help 1
+]
+[ERROR
+] 
+[ERROR
+] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR
+] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR
+] 
+[ERROR
+] For more information about the errors and possible solutions, please read the following articles: [ERROR
+] [Help 1
+] http: //cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

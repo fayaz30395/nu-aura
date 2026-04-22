@@ -38,18 +38,20 @@ public class TestCacheConfig {
 
     @Bean
     @Primary
+    @SuppressWarnings("unchecked")
     public StringRedisTemplate stringRedisTemplate() {
         StringRedisTemplate template = Mockito.mock(StringRedisTemplate.class);
-        ValueOperations<String, String> valueOperations = Mockito.mock(ValueOperations.class);
+        ValueOperations<String, String> valueOperations = (ValueOperations<String, String>) Mockito.mock(ValueOperations.class);
         Mockito.when(template.opsForValue()).thenReturn(valueOperations);
         return template;
     }
 
     @Bean
     @Primary
+    @SuppressWarnings("unchecked")
     public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = Mockito.mock(RedisTemplate.class);
-        ValueOperations<String, Object> valueOperations = Mockito.mock(ValueOperations.class);
+        RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) Mockito.mock(RedisTemplate.class);
+        ValueOperations<String, Object> valueOperations = (ValueOperations<String, Object>) Mockito.mock(ValueOperations.class);
         Mockito.when(template.opsForValue()).thenReturn(valueOperations);
         return template;
     }

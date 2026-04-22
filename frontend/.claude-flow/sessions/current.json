@@ -2,11 +2,20 @@
   "id": "session-1776855296183",
   "startedAt": "2026-04-22T10:54:56.183Z",
   "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend",
-  "context": {},
+  "context": {
+    "lastMatchedPatterns": [
+      "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
+      "mem-project_product_vision-product-vision--corrected-2026",
+      "mem-project_platform_readiness_plan-platform-readiness-plan---lock",
+      "mem-MEMORY-active-state",
+      "mem-MEMORY-platform-architecture"
+    ]
+  },
   "metrics": {
     "edits": 5,
     "commands": 0,
     "tasks": 0,
     "errors": 0
-  }
+  },
+  "updatedAt": "2026-04-22T11:56:01.496Z"
 }

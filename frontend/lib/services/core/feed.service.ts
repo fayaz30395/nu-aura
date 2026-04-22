@@ -1,20 +1,20 @@
-import { homeService } from './home.service';
-import { announcementService } from '../platform/announcement.service';
-import { recognitionService } from '../grow/recognition.service';
-import { linkedinService } from '../platform/linkedin.service';
-import { wallService } from './wall.service';
-import type { WallPostResponse } from './wall.service';
-import type { FeedItem } from '@/lib/types/core/feed';
-import type { Announcement } from '../platform/announcement.service';
-import type { Recognition } from '@/lib/types/grow/recognition';
-import type { LinkedInPost } from '@/lib/types/platform/linkedin';
+import {homeService} from './home.service';
+import {announcementService} from '../platform/announcement.service';
+import {recognitionService} from '../grow/recognition.service';
+import {linkedinService} from '../platform/linkedin.service';
+import {wallService} from './wall.service';
+import type {WallPostResponse} from './wall.service';
+import type {FeedItem} from '@/lib/types/core/feed';
+import type {Announcement} from '../platform/announcement.service';
+import type {Recognition} from '@/lib/types/grow/recognition';
+import type {LinkedInPost} from '@/lib/types/platform/linkedin';
 import type {
   BirthdayResponse,
   WorkAnniversaryResponse,
   NewJoineeResponse,
 } from './home.service';
-import { getQueryClient } from '@/lib/queryClient';
-import { homeKeys } from '@/lib/hooks/queries/useHome';
+import {getQueryClient} from '@/lib/queryClient';
+import {homeKeys} from '@/lib/hooks/queries/useHome';
 
 const CELEBRATION_DAYS = 14;
 const CELEBRATION_STALE_TIME_MS = 60 * 60 * 1000; // mirror useHome.ts

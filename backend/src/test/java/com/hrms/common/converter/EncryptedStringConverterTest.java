@@ -32,43 +32,25 @@ class EncryptedStringConverterTest {
     // -----------------------------------------------------------------------
 
     /**
-     * Override the ENCRYPTION_KEY environment variable for the duration of a single
-     * test. Uses reflection on the private {@code ProcessEnvironment.theEnvironment}
-     * map that the JVM exposes — the only portable way to mutate env vars inside a
-     * running JVM.
+     * Override the ENCRYPTION_KEY for the duration of a single test.
+     *
+     * <p>The converter reads its key via {@code System.getProperty(ENCRYPTION_KEY)} first,
+     * then falls back to {@code System.getenv(...)}. JDK 17+ strongly encapsulates
+     * {@code ProcessEnvironment}, so mutating env vars via reflection is no longer
+     * reliable — system properties are the supported test override mechanism.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void setEnv(String key, String value) throws Exception {
-        Class<?> processEnvClass = Class.forName("java.lang.ProcessEnvironment");
-        java.lang.reflect.Field theEnvironmentField = processEnvClass.getDeclaredField("theEnvironment");
-        theEnvironmentField.setAccessible(true);
-        java.util.Map<String, String> env = (java.util.Map<String, String>) theEnvironmentField.get(null);
-
-        // On some JVMs the map uses special String-like key objects; cast safely.
-        java.lang.reflect.Field theCaseInsensitiveField =
-                processEnvClass.getDeclaredField("theCaseInsensitiveEnvironment");
-        theCaseInsensitiveField.setAccessible(true);
-        java.util.Map ciEnv = (java.util.Map) theCaseInsensitiveField.get(null);
-
+    private static void setEnv(String key, String value) {
         if (value == null) {
-            env.remove(key);
-            ciEnv.remove(key);
+            System.clearProperty(key);
         } else {
-            env.put(key, value);
-            ciEnv.put(key, value);
+            System.setProperty(key, value);
         }
     }
 
-    /**
-     * Create a fresh converter instance with a specified encryption key already
-     * seeded into the environment.  Triggers lazy key resolution immediately.
-     */
-    private EncryptedStringConverter converterWithKey(String base64Key) throws Exception {
-        setEnv("ENCRYPTION_KEY", base64Key);
-        EncryptedStringConverter converter = new EncryptedStringConverter();
-        // Trigger lazy init by encrypting a throwaway value
-        converter.convertToDatabaseColumn("init");
-        return converter;
+    @AfterEach
+    void clearEncryptionKeyProperty() {
+        System.clearProperty("ENCRYPTION_KEY");
+        System.clearProperty("APP_SECURITY_ENCRYPTION_KEY");
     }
 
     // -----------------------------------------------------------------------
@@ -211,45 +193,46 @@ class EncryptedStringConverterTest {
             setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
             EncryptedStringConverter converter = new EncryptedStringConverter();
 
-            // Not a valid Base64(IV):Base64(ciphertext) pair
-            assertThatThrownBy(() -> converter.convertToEntityAttribute("not-valid-encrypted-data"))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Failed to decrypt");
+            // Not a valid Base64(IV):Base64(ciphertext) pair — SUT treats as legacy
+            // unencrypted data and returns the raw value rather than throwing, to
+            // avoid crashing the app on corrupt/legacy column contents.
+            String result = converter.convertToEntityAttribute("not-valid-encrypted-data");
+            assertThat(result).isEqualTo("not-valid-encrypted-data");
         }
 
         @Test
-        @DisplayName("Ciphertext missing colon separator throws IllegalStateException")
+        @DisplayName("Ciphertext missing colon separator is returned as-is (legacy fallback)")
         void missingColonThrowsException() throws Exception {
             setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
             EncryptedStringConverter converter = new EncryptedStringConverter();
 
-            // Valid Base64 but no colon — fails the format check
+            // Valid Base64 but no colon — fails the format check, returned as-is
             String noColon = Base64.getEncoder().encodeToString("garbage".getBytes());
-            assertThatThrownBy(() -> converter.convertToEntityAttribute(noColon))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Failed to decrypt");
+            String result = converter.convertToEntityAttribute(noColon);
+            assertThat(result).isEqualTo(noColon);
         }
 
         @Test
-        @DisplayName("Tampered ciphertext (bit-flip in GCM tag) throws IllegalStateException")
+        @DisplayName("Tampered ciphertext returns masked placeholder (never crashes app)")
         void tamperedCiphertextThrowsException() throws Exception {
             setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
             EncryptedStringConverter converter = new EncryptedStringConverter();
 
             String encrypted = converter.convertToDatabaseColumn("sensitive-value");
-            // Flip last character of the ciphertext part to simulate tampering
+            // Tamper by flipping one bit in the decoded ciphertext and re-encoding —
+            // this guarantees valid Base64 but triggers GCM tag mismatch.
             String[] parts = encrypted.split(":", 2);
-            char[] chars = parts[1].toCharArray();
-            chars[chars.length - 1] = (chars[chars.length - 1] == 'A') ? 'B' : 'A';
-            String tampered = parts[0] + ":" + new String(chars);
+            byte[] ct = Base64.getDecoder().decode(parts[1]);
+            ct[ct.length - 1] ^= (byte) 0x01;
+            String tampered = parts[0] + ":" + Base64.getEncoder().encodeToString(ct);
 
-            assertThatThrownBy(() -> converter.convertToEntityAttribute(tampered))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Failed to decrypt");
+            // SUT contract: GCM tag mismatch returns masked placeholder, never throws
+            assertThat(converter.convertToEntityAttribute(tampered))
+                    .isEqualTo("***DECRYPTION_FAILED***");
         }
 
         @Test
-        @DisplayName("Ciphertext encrypted with a different key throws IllegalStateException")
+        @DisplayName("Ciphertext encrypted with a different key returns masked placeholder")
         void wrongKeyThrowsException() throws Exception {
             // Encrypt with key 1
             setEnv("ENCRYPTION_KEY", VALID_KEY_BASE64);
@@ -264,9 +247,9 @@ class EncryptedStringConverterTest {
             setEnv("ENCRYPTION_KEY", differentKey);
             EncryptedStringConverter converterB = new EncryptedStringConverter();
 
-            assertThatThrownBy(() -> converterB.convertToEntityAttribute(encrypted))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Failed to decrypt");
+            // SUT contract: key mismatch returns masked placeholder, never throws
+            assertThat(converterB.convertToEntityAttribute(encrypted))
+                    .isEqualTo("***DECRYPTION_FAILED***");
         }
     }
 

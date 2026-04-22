@@ -141,7 +141,6 @@ class ValidationAndLoggingE2ETest {
     @Order(11)
     @DisplayName("E2E: InputSanitizer allows safe SQL-like input")
     void inputSanitizer_AllowsSafeSqlLikeInput() {
-        String safeInput = "Union Bank of California"; // Contains 'union' but not an attack
         // This depends on your implementation - adjust based on actual behavior
         // Some sanitizers might flag this, others won't
     }

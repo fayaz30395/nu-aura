@@ -380,7 +380,8 @@ function ModuleItem({
                           : 'hover:bg-[var(--bg-muted)]'
                       }`}
                     >
-                      <span className={`shrink-0 ${isCompleted ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}>
+                      <span
+                        className={`shrink-0 ${isCompleted ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}>
                         {isCompleted ? <CheckCircle className="h-4 w-4"/> : CONTENT_TYPE_ICON[content.contentType]}
                       </span>
                       <span className="flex-1 text-sm text-[var(--text-primary)] truncate">{content.title}</span>

@@ -61,15 +61,11 @@ class ApprovalChainIntegrationTest {
     @Mock
     private WorkflowDefinitionRepository workflowDefinitionRepository;
     @Mock
-    private ApprovalStepRepository approvalStepRepository;
-    @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
     @Mock
     private StepExecutionRepository stepExecutionRepository;
     @Mock
     private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock
-    private WorkflowRuleRepository workflowRuleRepository;
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -126,9 +122,9 @@ class ApprovalChainIntegrationTest {
         List<ApprovalCallbackHandler> handlers = List.of(leaveService);
 
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 handlers);
@@ -254,9 +250,9 @@ class ApprovalChainIntegrationTest {
         };
 
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 List.of(expenseHandler));
@@ -431,9 +427,9 @@ class ApprovalChainIntegrationTest {
                 employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService);
 
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 List.of(leaveService));
@@ -535,9 +531,9 @@ class ApprovalChainIntegrationTest {
         };
 
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 List.of(overtimeHandler));
@@ -618,9 +614,9 @@ class ApprovalChainIntegrationTest {
     @DisplayName("UC-APPR-005: approval inbox returns pending tasks for current user")
     void ucAppr005_approvalInbox_returnsPendingTasks() {
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 Collections.emptyList());

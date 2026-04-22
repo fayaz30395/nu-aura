@@ -337,8 +337,6 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should throw exception when no open check-in found in last 3 days")
         void shouldThrowExceptionWhenNoCheckInFound() {
-            LocalDate checkOutDate = checkOutTime.toLocalDate();
-
             // Mock all 3 days returning empty
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     eq(employeeId), any(LocalDate.class), eq(tenantId)))

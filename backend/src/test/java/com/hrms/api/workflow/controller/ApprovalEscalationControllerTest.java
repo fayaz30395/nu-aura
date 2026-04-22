@@ -2,6 +2,8 @@ package com.hrms.api.workflow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.workflow.dto.EscalationConfigRequest;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.user.EscalationType;
 import com.hrms.domain.workflow.ApprovalEscalationConfig;
@@ -34,7 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ApprovalEscalationController.class)
-@ContextConfiguration(classes = {ApprovalEscalationController.class, ApprovalEscalationControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {ApprovalEscalationController.class, GlobalExceptionHandler.class, ApprovalEscalationControllerTest.TestConfig.class})
+@org.springframework.context.annotation.Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

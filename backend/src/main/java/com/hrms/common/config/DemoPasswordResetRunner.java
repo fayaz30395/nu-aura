@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Resets all demo user passwords on dev startup.
- * TODO: Remove after QA session completes.
+ * Scheduled for removal once QA workstream completes (tracked in docs/qa/).
  */
 @Component
 @Profile("dev")

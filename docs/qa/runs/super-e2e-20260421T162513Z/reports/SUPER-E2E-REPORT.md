@@ -37,6 +37,7 @@ regressions re-checked (3 still broken)
 ## Critical Findings (Consolidated — Tech Lead Lens)
 
 ### F-01 — ROOT CAUSE:
+
 `@RequiresPermission` does not bypass SuperAdmin on several controllers  (P0, cross-cutting)
 
 **Observed by W1, W5, W10 independently.** SuperAdmin receives 403 on multiple endpoints that should
@@ -111,6 +112,7 @@ Reporter: W1. Likely downstream of F-01 (component swallows 403 and renders noth
 boundary). Fix F-01 first; re-test.
 
 ### F-11 — Test fixture mismatch:
+
 `sarankarthick.maran@nulogic.io` seeded as EMPLOYEE not HR_ADMIN  (P3, test infra)
 
 Reporter: W9. Blocks W2 entirely and invalidates HR_ADMIN signal in W3/W5. Fix: seed a distinct

@@ -18,9 +18,10 @@ Two compounding faults:
    `fa1_0.created_by` which PostgreSQL rejected with
    `ERROR: column fa1_0.created_by does not exist`. Stack trace in
    `/tmp/nu-aura-backend.log` lines 24695–24767 confirms.
-  - **Already fixed on disk** by migration `V134__fix_fluence_lms_missing_columns.sql`
-    (adds all missing columns, idempotent `ADD COLUMN IF NOT EXISTS`). Will apply
-    at next backend restart. No change needed here.
+
+- **Already fixed on disk** by migration `V134__fix_fluence_lms_missing_columns.sql`
+  (adds all missing columns, idempotent `ADD COLUMN IF NOT EXISTS`). Will apply
+  at next backend restart. No change needed here.
 
 2. **Transaction-boundary mishandling (secondary, and why the controller's
    try/catch didn't save us):** Both the controller and the service declared
@@ -111,13 +112,14 @@ after the tenant-index hit.
    loop in `getObjectivesByOwnerList` and `getCompanyObjectives`.
 2. **Indexes** — new Flyway migration
    `V138__okr_objective_performance_indexes.sql` adding:
-  - `idx_objectives_tenant_owner` on `objectives(tenant_id, owner_id)` partial (
-    `is_deleted = false`)
-  - `idx_objectives_tenant_level` on `objectives(tenant_id, objective_level)` partial
-  - `idx_objectives_tenant_cycle` on `objectives(tenant_id, cycle_id)` partial
-  - `idx_key_results_objective` on `key_results(objective_id)` partial (supports the new IN query)
-  - `idx_okr_check_ins_objective` on `okr_check_ins(objective_id)`
-  - `idx_okr_check_ins_key_result` on `okr_check_ins(key_result_id)`
+
+- `idx_objectives_tenant_owner` on `objectives(tenant_id, owner_id)` partial (
+  `is_deleted = false`)
+- `idx_objectives_tenant_level` on `objectives(tenant_id, objective_level)` partial
+- `idx_objectives_tenant_cycle` on `objectives(tenant_id, cycle_id)` partial
+- `idx_key_results_objective` on `key_results(objective_id)` partial (supports the new IN query)
+- `idx_okr_check_ins_objective` on `okr_check_ins(objective_id)`
+- `idx_okr_check_ins_key_result` on `okr_check_ins(key_result_id)`
 
 Memory said next Flyway was V129, but repo actually has V129…V137 in place, so
 this migration is **V138** (next-available, as required by the "increment V129"

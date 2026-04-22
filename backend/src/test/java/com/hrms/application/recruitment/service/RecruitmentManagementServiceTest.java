@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -499,13 +500,12 @@ class RecruitmentManagementServiceTest {
 
         @Test
         @DisplayName("Should get all candidates with pagination")
-        @SuppressWarnings("unchecked")
         void shouldGetAllCandidatesWithPagination() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Candidate> page = new PageImpl<>(List.of(candidate));
 
             when(dataScopeService.getScopeSpecification(any())).thenReturn(null);
-            when(candidateRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(candidateRepository.findAll(ArgumentMatchers.<Specification<Candidate>>any(), eq(pageable))).thenReturn(page);
             when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
 
             Page<CandidateResponse> result = recruitmentManagementService.getAllCandidates(pageable);
@@ -521,7 +521,7 @@ class RecruitmentManagementServiceTest {
             Page<Candidate> page = new PageImpl<>(List.of(candidate));
 
             when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
-            when(candidateRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(candidateRepository.findAll(ArgumentMatchers.<Specification<Candidate>>any(), eq(pageable))).thenReturn(page);
             when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
 
             Page<CandidateResponse> result = recruitmentManagementService.getCandidatesByJobOpening(jobOpeningId, pageable);

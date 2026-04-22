@@ -3,6 +3,8 @@ package com.hrms.api.webhook.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.webhook.dto.WebhookRequest;
 import com.hrms.application.webhook.service.WebhookService;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.webhook.*;
 import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
@@ -31,7 +33,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WebhookController.class)
-@ContextConfiguration(classes = {WebhookController.class, WebhookControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {WebhookController.class, GlobalExceptionHandler.class, WebhookControllerTest.TestConfig.class})
+@org.springframework.context.annotation.Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

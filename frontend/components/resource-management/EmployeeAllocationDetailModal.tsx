@@ -170,7 +170,8 @@ export function EmployeeAllocationDetailModal({
               <TrendingUp className='h-4 w-4 text-muted'/>
               <span className='text-xs text-muted'>Available</span>
             </div>
-            <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? "text-status-success-text" : "text-status-danger-text"}`}>
+            <p
+              className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? "text-status-success-text" : "text-status-danger-text"}`}>
               {formatAllocationPercentage(availableCapacity)}
             </p>
           </div>

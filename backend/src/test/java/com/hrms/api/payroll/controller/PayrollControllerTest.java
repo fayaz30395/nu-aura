@@ -207,18 +207,31 @@ class PayrollControllerTest {
         @Test
         @DisplayName("Should process payroll run successfully")
         void shouldProcessPayrollRun() throws Exception {
-            PayrollRun processedRun = new PayrollRun();
-            processedRun.setId(payrollRunId);
-            processedRun.setStatus(PayrollRun.PayrollStatus.PROCESSED);
+            PayrollRun processingRun = new PayrollRun();
+            processingRun.setId(payrollRunId);
+            processingRun.setStatus(PayrollRun.PayrollStatus.PROCESSING);
+            processingRun.setPayPeriodMonth(1);
+            processingRun.setPayPeriodYear(2026);
 
-            when(payrollRunService.processPayrollRun(eq(payrollRunId), any()))
-                    .thenReturn(processedRun);
+            try (MockedStatic<SecurityContext> secCtx = mockStatic(SecurityContext.class);
+                 MockedStatic<com.hrms.common.security.TenantContext> tenantCtx =
+                         mockStatic(com.hrms.common.security.TenantContext.class)) {
+                secCtx.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+                tenantCtx.when(com.hrms.common.security.TenantContext::getCurrentTenant)
+                        .thenReturn(UUID.randomUUID());
 
-            mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("PROCESSED"));
+                when(payrollRunService.initiateProcessing(eq(payrollRunId), any()))
+                        .thenReturn(processingRun);
+                when(eventPublisher.publishPayrollProcessingEvent(
+                        eq(payrollRunId), any(), any(), eq(1), eq(2026)))
+                        .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
 
-            verify(payrollRunService).processPayrollRun(eq(payrollRunId), any());
+                mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId))
+                        .andExpect(status().isAccepted())
+                        .andExpect(jsonPath("$.status").value("PROCESSING"));
+
+                verify(payrollRunService).initiateProcessing(eq(payrollRunId), any());
+            }
         }
 
         @Test

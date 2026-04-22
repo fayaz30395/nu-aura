@@ -124,7 +124,6 @@ public class StepExecution extends TenantAware {
         calculateTimeTaken();
     }
 
-    @SuppressWarnings("unused")
     public void delegate(UUID userId, String userName, UUID delegateToUserId) {
         this.status = StepStatus.DELEGATED;
         this.action = ApprovalAction.DELEGATE;

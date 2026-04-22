@@ -462,7 +462,7 @@ export default function KnowledgeBasePage() {
                       }`}
                     >
                       {category}({count})
-                                          </button>
+                    </button>
                   );
                 })}
               </div>

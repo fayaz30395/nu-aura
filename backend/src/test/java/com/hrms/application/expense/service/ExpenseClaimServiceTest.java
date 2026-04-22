@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +53,18 @@ class ExpenseClaimServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private DataScopeService dataScopeService;
+    @Mock
+    private com.hrms.application.workflow.service.WorkflowService workflowService;
+    @Mock
+    private ExpensePolicyService expensePolicyService;
+    @Mock
+    private com.hrms.application.event.DomainEventPublisher domainEventPublisher;
+    @Mock
+    private com.hrms.application.audit.service.AuditLogService auditLogService;
+    @Mock
+    private com.hrms.application.notification.service.WebSocketNotificationService webSocketNotificationService;
+    @Mock
+    private com.hrms.application.notification.service.NotificationService notificationService;
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
     private UUID tenantId;
@@ -421,7 +434,7 @@ class ExpenseClaimServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(expenseClaimRepository.findAll(ArgumentMatchers.<Specification<ExpenseClaim>>any(), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -454,7 +467,7 @@ class ExpenseClaimServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(expenseClaimRepository.findAll(ArgumentMatchers.<Specification<ExpenseClaim>>any(), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -472,7 +485,7 @@ class ExpenseClaimServiceTest {
             expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(expenseClaimRepository.findAll(ArgumentMatchers.<Specification<ExpenseClaim>>any(), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -490,7 +503,7 @@ class ExpenseClaimServiceTest {
             LocalDate endDate = LocalDate.of(2025, 1, 31);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+            when(expenseClaimRepository.findAll(ArgumentMatchers.<Specification<ExpenseClaim>>any(), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -513,7 +526,7 @@ class ExpenseClaimServiceTest {
             LocalDate endDate = LocalDate.of(2025, 1, 31);
 
             expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
-            when(expenseClaimRepository.findAll(any(Specification.class)))
+            when(expenseClaimRepository.findAll(ArgumentMatchers.<Specification<ExpenseClaim>>any()))
                     .thenReturn(List.of(expenseClaim));
 
             Map<String, Object> result = expenseClaimService.getExpenseSummary(startDate, endDate);

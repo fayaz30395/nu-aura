@@ -206,7 +206,9 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex items-end justify-between">
                 <div className="flex gap-6">
                   <div>
-                    <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check In
+                    <div
+                      className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check
+                      In
                     </div>
                     <div className='text-xl font-bold tabular-nums text-inverse'>
                       {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
@@ -214,7 +216,8 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   </div>
                   {isCheckedOut && todayRecord?.checkOutTime && (
                     <div>
-                      <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check
+                      <div
+                        className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check
                         Out
                       </div>
                       <div
@@ -223,7 +226,8 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   )}
                   {isCheckedIn && (
                     <div>
-                      <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Duration
+                      <div
+                        className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Duration
                       </div>
                       <div
                         className='text-xl font-bold tabular-nums text-inverse'>{formatDuration(currentWorkHours)}</div>

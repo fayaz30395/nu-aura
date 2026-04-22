@@ -313,7 +313,8 @@ export function EmployeeStep({
                         />
                         <Percent className='h-4 w-4 text-muted'/>
                       </div>
-                      <div className={`text-xs ${isAtCapacity ? "text-status-warning-text font-medium" : "text-muted"}`}>
+                      <div
+                        className={`text-xs ${isAtCapacity ? "text-status-warning-text font-medium" : "text-muted"}`}>
                         max: {allocation.availableCapacity}%
                       </div>
                     </div>

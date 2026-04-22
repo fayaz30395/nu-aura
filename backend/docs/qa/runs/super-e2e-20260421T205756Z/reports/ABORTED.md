@@ -10,10 +10,12 @@ Backend cannot start. Flyway chain is wedged on V132.
 ### Root cause chain
 
 1. **V130 duplicate (my fix).** The prior fixer dispatch left two `V130__*.sql` files:
-  - `V130__seed_enable_lms_feature_flag.sql` (already applied, in flyway_schema_history)
-  - `V130__add_helpdesk_ticket_permissions_to_employee.sql` (new, untracked)
-    → Renamed the new one to `V139__add_helpdesk_ticket_permissions_to_employee.sql` and rebuilt the
-    jar. That unblocked resolver.
+
+- `V130__seed_enable_lms_feature_flag.sql` (already applied, in flyway_schema_history)
+- `V130__add_helpdesk_ticket_permissions_to_employee.sql` (new, untracked)
+  → Renamed the new one to `V139__add_helpdesk_ticket_permissions_to_employee.sql` and rebuilt the
+  jar. That unblocked resolver.
+
 2. **V132 column mismatch (pre-existing).** With resolver unblocked, Flyway now attempts V132 →
    V133 → ... for the first time on this environment and fails:
    ```

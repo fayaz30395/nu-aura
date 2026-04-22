@@ -97,65 +97,65 @@ function bucket(
  */
 const surfaceBgBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 50, value: 'bg-base' },
-    { min: 100, max: 100, value: 'bg-surface' },
-    { min: 200, max: 200, value: 'bg-elevated' },
-    { min: 300, max: 500, value: 'bg-card' },
-    { min: 600, max: 950, value: 'bg-inverse' },
+    {min: 0, max: 50, value: 'bg-base'},
+    {min: 100, max: 100, value: 'bg-surface'},
+    {min: 200, max: 200, value: 'bg-elevated'},
+    {min: 300, max: 500, value: 'bg-card'},
+    {min: 600, max: 950, value: 'bg-inverse'},
   ]);
 
 const surfaceTextBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 300, value: 'text-muted' },
-    { min: 400, max: 500, value: 'text-muted' },
-    { min: 600, max: 700, value: 'text-secondary' },
-    { min: 800, max: 950, value: 'text-primary' },
+    {min: 0, max: 300, value: 'text-muted'},
+    {min: 400, max: 500, value: 'text-muted'},
+    {min: 600, max: 700, value: 'text-secondary'},
+    {min: 800, max: 950, value: 'text-primary'},
   ]);
 
 const surfaceBorderBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 300, value: 'border-subtle' },
-    { min: 400, max: 600, value: 'border-default' },
-    { min: 700, max: 950, value: 'border-strong' },
+    {min: 0, max: 300, value: 'border-subtle'},
+    {min: 400, max: 600, value: 'border-default'},
+    {min: 700, max: 950, value: 'border-strong'},
   ]);
 
 // gray/slate maps (similar, slightly different grouping per spec)
 const grayBgBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 100, value: 'bg-base' },
-    { min: 200, max: 300, value: 'bg-surface' },
-    { min: 400, max: 700, value: 'bg-card' },
-    { min: 800, max: 950, value: 'bg-inverse' },
+    {min: 0, max: 100, value: 'bg-base'},
+    {min: 200, max: 300, value: 'bg-surface'},
+    {min: 400, max: 700, value: 'bg-card'},
+    {min: 800, max: 950, value: 'bg-inverse'},
   ]);
 
 const grayTextBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 300, value: 'text-muted' },
-    { min: 400, max: 500, value: 'text-muted' },
-    { min: 600, max: 700, value: 'text-secondary' },
-    { min: 800, max: 950, value: 'text-primary' },
+    {min: 0, max: 300, value: 'text-muted'},
+    {min: 400, max: 500, value: 'text-muted'},
+    {min: 600, max: 700, value: 'text-secondary'},
+    {min: 800, max: 950, value: 'text-primary'},
   ]);
 
 const grayBorderBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 300, value: 'border-subtle' },
-    { min: 400, max: 600, value: 'border-default' },
-    { min: 700, max: 950, value: 'border-strong' },
+    {min: 0, max: 300, value: 'border-subtle'},
+    {min: 400, max: 600, value: 'border-default'},
+    {min: 700, max: 950, value: 'border-strong'},
   ]);
 
 // accent maps
 const accentBgBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 100, value: 'bg-accent-subtle' },
-    { min: 200, max: 400, value: 'bg-accent-subtle' },
-    { min: 500, max: 700, value: 'bg-accent' },
-    { min: 800, max: 950, value: 'bg-accent-hover' },
+    {min: 0, max: 100, value: 'bg-accent-subtle'},
+    {min: 200, max: 400, value: 'bg-accent-subtle'},
+    {min: 500, max: 700, value: 'bg-accent'},
+    {min: 800, max: 950, value: 'bg-accent-hover'},
   ]);
 
 const accentTextBucket = (scale: number): string | undefined =>
   bucket(scale, [
-    { min: 0, max: 500, value: 'text-accent' },
-    { min: 600, max: 950, value: 'text-accent' },
+    {min: 0, max: 500, value: 'text-accent'},
+    {min: 600, max: 950, value: 'text-accent'},
   ]);
 
 const accentBorderBucket = (_scale: number): string | undefined =>
@@ -245,7 +245,7 @@ interface FileSummary {
 const TELEMETRY: {
   unconvertibles: Unconvertible[];
   files: FileSummary[];
-} = { unconvertibles: [], files: [] };
+} = {unconvertibles: [], files: []};
 
 // ---------------------------------------------------------------------------
 // Core: convert one class token (no whitespace) to the new token
@@ -263,7 +263,7 @@ export function convertSingleClass(
   token: string,
   file: string,
 ): { result: string | '__DROP__'; converted: boolean } {
-  if (!token) return { result: token, converted: false };
+  if (!token) return {result: token, converted: false};
 
   // Split state prefixes (hover:, focus:, md:, dark:, etc.)
   const parts = token.split(':');
@@ -281,7 +281,7 @@ export function convertSingleClass(
         basePart,
       );
     if (isColorUtility) {
-      return { result: '__DROP__', converted: true };
+      return {result: '__DROP__', converted: true};
     }
   }
 
@@ -289,25 +289,25 @@ export function convertSingleClass(
   const exact = EXACT_MAP[basePart];
   if (exact) {
     const replaced = [...stateChain, exact].join(':');
-    return { result: replaced, converted: true };
+    return {result: replaced, converted: true};
   }
 
   // 2) Shadow suffixes not in EXACT are left alone.
   if (basePart.startsWith('shadow-')) {
-    return { result: token, converted: false };
+    return {result: token, converted: false};
   }
 
   // 3) Color class parse: e.g. "bg-surface-200", "text-gray-600"
   const match = COLOR_CLASS_PATTERN.exec(basePart);
-  if (!match) return { result: token, converted: false };
+  if (!match) return {result: token, converted: false};
 
   const [, util, rootRaw, scaleStr, opacityRaw] = match;
   const root = rootRaw as string;
   const scale = parseInt(scaleStr as string, 10);
   const opacity = (opacityRaw ?? '') as string; // e.g. "/10" or ""
 
-  if (!KNOWN_COLOR_ROOTS.has(root)) return { result: token, converted: false };
-  if (!UTILITY_PREFIXES.has(util)) return { result: token, converted: false };
+  if (!KNOWN_COLOR_ROOTS.has(root)) return {result: token, converted: false};
+  if (!UTILITY_PREFIXES.has(util)) return {result: token, converted: false};
 
   // Opacity-modified color classes (e.g. `bg-accent-500/10`) cannot be mapped to
   // bridge tokens (which are CSS vars without reliable /opacity support via Tailwind).
@@ -315,7 +315,7 @@ export function convertSingleClass(
   if (opacity) {
     const arbitrary = `${util}-[var(--${root}-${scale})]${opacity}`;
     const replaced = [...stateChain, arbitrary].join(':');
-    return { result: replaced, converted: true };
+    return {result: replaced, converted: true};
   }
 
   // Resolve the new class based on util × root × scale.
@@ -350,12 +350,12 @@ export function convertSingleClass(
       className: token,
       reason: `No mapping for util=${util}, root=${root}, scale=${scale}`,
     });
-    return { result: token, converted: false };
+    return {result: token, converted: false};
   }
 
   // Note: dark:<color-util> was already dropped at the top of this function.
   const replaced = [...stateChain, mapped].join(':');
-  return { result: replaced, converted: true };
+  return {result: replaced, converted: true};
 }
 
 // ---------------------------------------------------------------------------
@@ -393,7 +393,7 @@ function transformClassString(
 
     if (isLegacyClass(chunk)) state.beforeLegacy++;
 
-    const { result, converted } = convertSingleClass(chunk, file);
+    const {result, converted} = convertSingleClass(chunk, file);
     if (result === '__DROP__') {
       state.dropped++;
       // Also remove any preceding whitespace chunk so we don't leave double spaces
@@ -438,11 +438,11 @@ function processFile(
   root: Collection,
   file: string,
 ): FileSummary {
-  const state = { beforeLegacy: 0, afterLegacy: 0, dropped: 0, rewritten: 0 };
+  const state = {beforeLegacy: 0, afterLegacy: 0, dropped: 0, rewritten: 0};
 
   // 1) className="..." on JSX attributes (string literal value)
   root
-    .find(j.JSXAttribute, { name: { name: 'className' } })
+    .find(j.JSXAttribute, {name: {name: 'className'}})
     .forEach((p: any) => {
       const value = p.node.value;
       if (!value) return;
@@ -658,7 +658,7 @@ export default function transformer(
   // contain bare single quotes, and recast's single-quote output escapes them
   // inside JSX attributes, producing invalid JSX. Double-quote output is safe
   // for every Tailwind/cn string we emit.
-  return didChange ? root.toSource({ quote: 'double' }) : undefined;
+  return didChange ? root.toSource({quote: 'double'}) : undefined;
 }
 
 // ---------------------------------------------------------------------------

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -45,7 +44,6 @@ public class SecurityConfig {
      * auth/public/webhook endpoints that cannot supply the token.
      */
 
-    private final Environment environment;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TenantFilter tenantFilter;
     private final RateLimitingFilter rateLimitingFilter;
@@ -56,15 +54,13 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
     private String allowedOriginsStr;
 
-    public SecurityConfig(Environment environment,
-                          @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
+    public SecurityConfig(@Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
                           @Lazy TenantFilter tenantFilter,
                           RateLimitingFilter rateLimitingFilter,
                           CsrfDoubleSubmitFilter csrfDoubleSubmitFilter,
                           @Lazy UserDetailsService userDetailsService,
                           @Lazy RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
                           @Lazy SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
-        this.environment = environment;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.tenantFilter = tenantFilter;
         this.rateLimitingFilter = rateLimitingFilter;

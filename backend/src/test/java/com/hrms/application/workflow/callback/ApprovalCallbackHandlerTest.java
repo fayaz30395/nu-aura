@@ -33,15 +33,11 @@ class ApprovalCallbackHandlerTest {
     @Mock
     private WorkflowDefinitionRepository workflowDefinitionRepository;
     @Mock
-    private ApprovalStepRepository approvalStepRepository;
-    @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
     @Mock
     private StepExecutionRepository stepExecutionRepository;
     @Mock
     private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock
-    private WorkflowRuleRepository workflowRuleRepository;
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -68,9 +64,9 @@ class ApprovalCallbackHandlerTest {
 
         // When: WorkflowService is constructed with the handlers
         WorkflowService workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 handlers);
@@ -84,9 +80,9 @@ class ApprovalCallbackHandlerTest {
     void shouldHandleNullCallbackHandlerList() {
         // When: WorkflowService is constructed with null handlers
         WorkflowService workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 null);
@@ -100,9 +96,9 @@ class ApprovalCallbackHandlerTest {
     void shouldHandleEmptyCallbackHandlerList() {
         // When: WorkflowService is constructed with empty handlers
         WorkflowService workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 Collections.emptyList());
@@ -182,9 +178,9 @@ class ApprovalCallbackHandlerTest {
 
         // When: constructed with duplicate handlers -- should not throw
         WorkflowService workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 handlers);

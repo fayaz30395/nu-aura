@@ -352,7 +352,7 @@ export default function HolidaysPage() {
                 }`}
               >
                 {type ? type.replace('_', ' ') : '-'}({count})
-                              </button>
+              </button>
             );
           })}
         </div>

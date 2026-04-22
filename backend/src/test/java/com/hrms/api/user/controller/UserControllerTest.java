@@ -123,7 +123,7 @@ class UserControllerTest {
         @Test
         @DisplayName("getAllUsers should require USER_VIEW permission")
         void getAllUsers_shouldRequireUserViewPermission() throws NoSuchMethodException {
-            Method method = UserController.class.getMethod("getAllUsers");
+            Method method = UserController.class.getMethod("getAllUsers", org.springframework.data.domain.Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

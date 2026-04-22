@@ -2,6 +2,8 @@ package com.hrms.api.statutory.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.statutory.service.StatutoryService;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import com.hrms.domain.statutory.ProfessionalTaxSlab;
 import org.junit.jupiter.api.*;
@@ -29,7 +31,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProfessionalTaxController.class)
-@ContextConfiguration(classes = {ProfessionalTaxController.class, ProfessionalTaxControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {ProfessionalTaxController.class, GlobalExceptionHandler.class, ProfessionalTaxControllerTest.TestConfig.class})
+@org.springframework.context.annotation.Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

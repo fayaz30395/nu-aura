@@ -127,12 +127,11 @@ class Feedback360ServiceTest {
         Feedback360CycleRequest req = build360CycleRequest("ANON-FB360-" + uuid6());
         req.setIsAnonymous(true);
 
-        MvcResult result = mockMvc.perform(post(BASE + "/cycles")
+        mockMvc.perform(post(BASE + "/cycles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.isAnonymous").value(true))
-                .andReturn();
+                .andExpect(jsonPath("$.isAnonymous").value(true));
     }
 
     @Test

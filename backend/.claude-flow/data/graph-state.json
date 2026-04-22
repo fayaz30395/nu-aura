@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1776807528256,
+  "updatedAt": 1776886981772,
   "nodeCount": 66,
   "nodes": {
     "mem-MEMORY-product-vision": {
@@ -20,15 +20,15 @@
     "mem-MEMORY-active-state": {
       "id": "mem-MEMORY-active-state",
       "category": "core",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776131
     },
     "mem-MEMORY-recent-work": {
       "id": "mem-MEMORY-recent-work",
       "category": "core",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776131
     },
     "mem-MEMORY-platform-architecture": {
@@ -69,8 +69,8 @@
     "mem-project_design_system_overhaul-design-system-overhaul---april": {
       "id": "mem-project_design_system_overhaul-design-system-overhaul---april",
       "category": "project_design_system_overhaul",
-      "confidence": 0.5800000000000001,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776139
     },
     "mem-project_flyway_status----": {
@@ -132,22 +132,22 @@
     "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps": {
       "id": "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
       "category": "project_hire_fluence_gaps_2026_04_05",
-      "confidence": 0.6400000000000001,
-      "accessCount": 4,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776141
     },
     "mem-project_platform_readiness_plan----": {
       "id": "mem-project_platform_readiness_plan----",
       "category": "project_platform_readiness_plan",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776145
     },
     "mem-project_platform_readiness_plan-platform-readiness-plan---lock": {
       "id": "mem-project_platform_readiness_plan-platform-readiness-plan---lock",
       "category": "project_platform_readiness_plan",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776145
     },
     "mem-project_product_vision----": {
@@ -174,8 +174,8 @@
     "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u": {
       "id": "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u",
       "category": "project_production_readiness_2026_04_07",
-      "confidence": 0.6300000000000001,
-      "accessCount": 3,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776147
     },
     "mem-project_qa_test_plan----": {
@@ -195,8 +195,8 @@
     "mem-project_sonar_fixes_2026_03_30----": {
       "id": "mem-project_sonar_fixes_2026_03_30----",
       "category": "project_sonar_fixes_2026_03_30",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776149
     },
     "mem-project_sonar_fixes_2026_03_30-lint-cleanup--phase-1---eslint": {
@@ -216,8 +216,8 @@
     "mem-MEMORY----architecture--project-archi": {
       "id": "mem-MEMORY----architecture--project-archi",
       "category": "core",
-      "confidence": 0.5800000000000001,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776150
     },
     "mem-feedback_patterns----": {
@@ -244,8 +244,8 @@
     "mem-feedback_patterns-key-gotchas": {
       "id": "mem-feedback_patterns-key-gotchas",
       "category": "feedback_patterns",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776151
     },
     "mem-project_architecture----": {
@@ -258,8 +258,8 @@
     "mem-project_architecture-stack": {
       "id": "mem-project_architecture-stack",
       "category": "project_architecture",
-      "confidence": 0.7100000000000002,
-      "accessCount": 5,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776151
     },
     "mem-project_architecture-key-directories": {
@@ -300,8 +300,8 @@
     "mem-project_status-completed-work--2026-03-28-29-": {
       "id": "mem-project_status-completed-work--2026-03-28-29-",
       "category": "project_status",
-      "confidence": 0.56,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776151
     },
     "mem-project_status-environment-keys-required": {
@@ -314,8 +314,8 @@
     "mem-project_status-known-remaining-gaps": {
       "id": "mem-project_status-known-remaining-gaps",
       "category": "project_status",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776151
     },
     "mem-project_status-multiple-orgs-volumes-in-db": {
@@ -328,15 +328,15 @@
     "mem-user_fayaz----": {
       "id": "mem-user_fayaz----",
       "category": "user_fayaz",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776152
     },
     "mem-MEMORY----cart-sync-fix--project-cart": {
       "id": "mem-MEMORY----cart-sync-fix--project-cart",
       "category": "core",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix----": {
@@ -349,15 +349,15 @@
     "mem-project_cart_sync_fix-what-was-done": {
       "id": "mem-project_cart_sync_fix-what-was-done",
       "category": "project_cart_sync_fix",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix-issues-fixed--in-order-": {
       "id": "mem-project_cart_sync_fix-issues-fixed--in-order-",
       "category": "project_cart_sync_fix",
-      "confidence": 0.6300000000000001,
-      "accessCount": 3,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix-files-changed--6-files-": {
@@ -370,8 +370,8 @@
     "mem-project_cart_sync_fix-key-architecture-decisions": {
       "id": "mem-project_cart_sync_fix-key-architecture-decisions",
       "category": "project_cart_sync_fix",
-      "confidence": 0.6300000000000001,
-      "accessCount": 3,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix-known-limitation": {
@@ -391,15 +391,15 @@
     "mem-project_uppababy_architecture-repo-structure": {
       "id": "mem-project_uppababy_architecture-repo-structure",
       "category": "project_uppababy_architecture",
-      "confidence": 0.6300000000000001,
-      "accessCount": 3,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776154
     },
     "mem-project_uppababy_architecture-local-dev-ports": {
       "id": "mem-project_uppababy_architecture-local-dev-ports",
       "category": "project_uppababy_architecture",
-      "confidence": 0.56,
-      "accessCount": 2,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776803776154
     },
     "mem-project_uppababy_architecture-key-environment-variables": {
@@ -419,8 +419,8 @@
     "mem-project_uppababy_architecture-production-deploy": {
       "id": "mem-project_uppababy_architecture-production-deploy",
       "category": "project_uppababy_architecture",
-      "confidence": 0.56,
-      "accessCount": 2,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776803776154
     },
     "mem-MEMORY----orch-promo-enhancements--pr": {
@@ -447,8 +447,8 @@
     "mem-project_pme_coupon_autorelease-pme-1457-1458-1459-1460-1461--": {
       "id": "mem-project_pme_coupon_autorelease-pme-1457-1458-1459-1460-1461--",
       "category": "project_pme_coupon_autorelease",
-      "confidence": 0.55,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1776803776157
     },
     "mem-reference_architecture_diagram----": {

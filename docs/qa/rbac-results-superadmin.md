@@ -74,7 +74,7 @@
 
 2. **`/api/v1/recruitment/jobs`** returned 404 — this endpoint does not exist in the codebase. The
    correct path is `/api/v1/recruitment/job-boards` (mapped in `JobBoardController`), which returns
-  200. This is a test specification issue, not an RBAC issue.
+200. This is a test specification issue, not an RBAC issue.
 
 ### Conclusion
 

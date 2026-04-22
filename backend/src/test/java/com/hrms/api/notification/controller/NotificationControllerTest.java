@@ -2,7 +2,6 @@ package com.hrms.api.notification.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.notification.dto.CreateNotificationRequest;
-import com.hrms.api.notification.dto.NotificationResponse;
 import com.hrms.application.notification.service.NotificationService;
 import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
@@ -447,7 +446,7 @@ class NotificationControllerTest {
         @DisplayName("getMyNotifications should require NOTIFICATIONS_VIEW")
         void getMyNotificationsShouldRequireView() throws Exception {
             var method = NotificationController.class.getMethod(
-                    "getMyNotifications", int.class, int.class);
+                    "getMyNotifications", int.class, int.class, List.class, Boolean.class);
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(

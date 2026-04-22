@@ -794,7 +794,8 @@ export default function ManagerDashboardPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {teamAlerts.slice(0, 3).map((alert) => (
-                      <div key={alert.id} className="p-4 rounded-xl bg-[var(--glass-bg)] border border-[var(--danger-500)]/10">
+                      <div key={alert.id}
+                           className="p-4 rounded-xl bg-[var(--glass-bg)] border border-[var(--danger-500)]/10">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge
                             className='bg-status-danger-bg text-inverse font-black px-1.5 py-0 text-2xs'>CRITICAL</Badge>

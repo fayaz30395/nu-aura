@@ -259,7 +259,6 @@ class SecurityUseCaseTest {
         mockMvc.perform(get("/api/v1/employees/" + EMPLOYEE_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
-                    int status = result.getResponse().getStatus();
                     // Employee may not exist in test DB, but verify response has no sensitive fields
                     String body = result.getResponse().getContentAsString();
                     assertThat(body).doesNotContain("\"password\"");

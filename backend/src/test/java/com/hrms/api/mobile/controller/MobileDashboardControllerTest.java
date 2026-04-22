@@ -2,6 +2,8 @@ package com.hrms.api.mobile.controller;
 
 import com.hrms.api.mobile.dto.MobileDashboardResponse;
 import com.hrms.application.mobile.service.MobileService;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MobileDashboardController.class)
-@ContextConfiguration(classes = {MobileDashboardController.class, MobileDashboardControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {MobileDashboardController.class, GlobalExceptionHandler.class, MobileDashboardControllerTest.TestConfig.class})
+@org.springframework.context.annotation.Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

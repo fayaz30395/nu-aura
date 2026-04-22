@@ -1,12 +1,21 @@
 {
+  "id": "session-1776886981758",
+  "startedAt": "2026-04-22T19:43:01.758Z",
+  "cwd": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend",
   "context": {
     "lastMatchedPatterns": [
-      "mem-project_cart_sync_fix-known-limitation",
-      "mem-user_fayaz----",
-      "mem-project_cart_sync_fix-what-was-done",
-      "mem-project_product_vision-product-vision--corrected-2026",
-      "mem-project_cart_sync_fix-key-architecture-decisions"
+      "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
+      "insight-1776804949080-bdkk",
+      "mem-project_forensic_wave12_status----",
+      "mem-project_status-environment-keys-required",
+      "mem-project_architecture-database-schema--key-tables-"
     ]
   },
-  "updatedAt": "2026-04-22T10:39:54.653Z"
+  "metrics": {
+    "edits": 31,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "updatedAt": "2026-04-22T20:42:01.777Z"
 }

@@ -192,11 +192,13 @@ unchanged.
 3. **Re-run TARGETED super-e2e** for hrms, hire, fluence — should auto-close F-07, F-08, F-10 if
    F-01 root-cause fix holds.
 4. **Commit in logical slices** if verified:
-  - `fix(security): normalize JWT role claim shape for SuperAdmin bypass (F-01)`
-  - `fix(fluence): remove dual @Transactional on activities controller (F-02)`
-  - `perf(okr): batch key-results fetch + V138 composite indexes (F-05)`
-  - `perf(workflow): cache inbox count 30s in Redis (F-03)`
-  - `fix(helpdesk): V130 grant TICKET_VIEW/CREATE to EMPLOYEE+ (F-06)`
-  - `fix(helpdesk): real Link anchors on tickets list (F-04)`
-  - `fix(employees): URL-driven pagination (F-12)`
+
+- `fix(security): normalize JWT role claim shape for SuperAdmin bypass (F-01)`
+- `fix(fluence): remove dual @Transactional on activities controller (F-02)`
+- `perf(okr): batch key-results fetch + V138 composite indexes (F-05)`
+- `perf(workflow): cache inbox count 30s in Redis (F-03)`
+- `fix(helpdesk): V130 grant TICKET_VIEW/CREATE to EMPLOYEE+ (F-06)`
+- `fix(helpdesk): real Link anchors on tickets list (F-04)`
+- `fix(employees): URL-driven pagination (F-12)`
+
 5. Address F-09, F-11 separately.

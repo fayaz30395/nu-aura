@@ -319,7 +319,7 @@ class TaxDeclarationControllerTest {
         @DisplayName("PATCH /{id}/approve has @RequiresPermission(TDS_APPROVE)")
         void approveEndpointHasRequiresPermissionAnnotation() throws Exception {
             Method method = TaxDeclarationController.class.getMethod(
-                    "approveTaxDeclaration", UUID.class, UUID.class);
+                    "approveTaxDeclaration", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -375,7 +375,7 @@ class TaxDeclarationControllerTest {
         @DisplayName("PATCH /{id}/reject has @RequiresPermission(TDS_APPROVE)")
         void rejectEndpointHasRequiresPermissionAnnotation() throws Exception {
             Method method = TaxDeclarationController.class.getMethod(
-                    "rejectTaxDeclaration", UUID.class, UUID.class, String.class);
+                    "rejectTaxDeclaration", UUID.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -574,7 +574,7 @@ class TaxDeclarationControllerTest {
         @DisplayName("POST /proofs has @RequiresPermission(TDS_DECLARE)")
         void addProofEndpointHasRequiresPermissionAnnotation() throws Exception {
             Method method = TaxDeclarationController.class.getMethod(
-                    "addTaxProof", UUID.class, TaxProofRequest.class);
+                    "addTaxProof", TaxProofRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

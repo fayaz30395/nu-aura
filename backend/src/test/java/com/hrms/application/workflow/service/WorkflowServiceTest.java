@@ -49,15 +49,11 @@ class WorkflowServiceTest {
     @Mock
     private WorkflowDefinitionRepository workflowDefinitionRepository;
     @Mock
-    private ApprovalStepRepository approvalStepRepository;
-    @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
     @Mock
     private StepExecutionRepository stepExecutionRepository;
     @Mock
     private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock
-    private WorkflowRuleRepository workflowRuleRepository;
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -87,11 +83,9 @@ class WorkflowServiceTest {
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository,
-                approvalStepRepository,
                 workflowExecutionRepository,
                 stepExecutionRepository,
                 approvalDelegateRepository,
-                workflowRuleRepository,
                 employeeRepository,
                 departmentRepository,
                 userRepository,

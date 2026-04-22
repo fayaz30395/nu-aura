@@ -26,10 +26,26 @@ interface AttritionPrediction {
 }
 
 const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  CRITICAL: {bg: "bg-status-danger-bg border-status-danger-border", text: "text-status-danger-text", bar: "bg-status-danger-bg"},
-  HIGH: {bg: "bg-status-warning-bg border-status-warning-border", text: "text-status-warning-text", bar: "bg-status-warning-bg"},
-  MEDIUM: {bg: "bg-status-warning-bg border-status-warning-border", text: "text-status-warning-text", bar: "bg-status-warning-bg"},
-  LOW: {bg: "bg-status-success-bg border-status-success-border", text: "text-status-success-text", bar: "bg-status-success-bg"},
+  CRITICAL: {
+    bg: "bg-status-danger-bg border-status-danger-border",
+    text: "text-status-danger-text",
+    bar: "bg-status-danger-bg"
+  },
+  HIGH: {
+    bg: "bg-status-warning-bg border-status-warning-border",
+    text: "text-status-warning-text",
+    bar: "bg-status-warning-bg"
+  },
+  MEDIUM: {
+    bg: "bg-status-warning-bg border-status-warning-border",
+    text: "text-status-warning-text",
+    bar: "bg-status-warning-bg"
+  },
+  LOW: {
+    bg: "bg-status-success-bg border-status-success-border",
+    text: "text-status-success-text",
+    bar: "bg-status-success-bg"
+  },
 };
 
 export default function AttritionReportPage() {

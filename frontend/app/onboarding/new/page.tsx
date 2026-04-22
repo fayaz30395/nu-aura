@@ -307,17 +307,20 @@ export default function NewOnboardingPage() {
               className="space-y-8"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
+                <div
+                  className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
                   <User className='h-10 w-10 mx-auto text-accent mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-accent'>Employee</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedEmployee?.name}</p>
                 </div>
-                <div className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
+                <div
+                  className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
                   <Layout className='h-10 w-10 mx-auto text-accent mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-accent'>Checklist</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
                 </div>
-                <div className="p-8 rounded-3xl bg-[var(--success-500)]/10 border border-[var(--success-500)]/20 text-center space-y-2">
+                <div
+                  className="p-8 rounded-3xl bg-[var(--success-500)]/10 border border-[var(--success-500)]/20 text-center space-y-2">
                   <Calendar className='h-10 w-10 mx-auto text-status-success-text mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-status-success-text'>Starts</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{formData.startDate}</p>

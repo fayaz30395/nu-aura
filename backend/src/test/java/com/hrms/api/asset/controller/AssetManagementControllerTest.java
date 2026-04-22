@@ -12,6 +12,7 @@ import com.hrms.domain.asset.Asset;
 import com.hrms.domain.asset.AssetMaintenanceRequest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +130,7 @@ class AssetManagementControllerTest {
 
             when(dataScopeService.getScopeSpecification(anyString()))
                     .thenReturn((root, query, cb) -> cb.conjunction());
-            when(assetService.getAllAssets(any(Specification.class), any(Pageable.class)))
+            when(assetService.getAllAssets(ArgumentMatchers.<Specification<Asset>>any(), any(Pageable.class)))
                     .thenReturn(page);
 
             mockMvc.perform(get("/api/v1/assets")
@@ -138,7 +139,7 @@ class AssetManagementControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1));
 
-            verify(assetService).getAllAssets(any(Specification.class), any(Pageable.class));
+            verify(assetService).getAllAssets(ArgumentMatchers.<Specification<Asset>>any(), any(Pageable.class));
         }
 
         @Test

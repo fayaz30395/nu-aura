@@ -90,7 +90,6 @@ public class ApprovalStep extends TenantAware {
     private boolean commentsRequired;
     private boolean attachmentsAllowed;
 
-    @SuppressWarnings("unused")
     public boolean isApplicable(Object context) {
         if (condition == null || condition.isEmpty()) {
             return true;

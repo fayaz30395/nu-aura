@@ -52,6 +52,7 @@ class ApiKeyServiceTest {
 
         @Test
         @DisplayName("should reject null API key")
+        @SuppressWarnings("deprecation") // Intentional: asserts deprecated cross-tenant findAll() is never invoked
         void validateApiKey_RejectsNull() {
             Optional<ApiKey> result = apiKeyService.validateApiKey(null, "127.0.0.1");
 
@@ -62,6 +63,7 @@ class ApiKeyServiceTest {
 
         @Test
         @DisplayName("should reject API key without prefix")
+        @SuppressWarnings("deprecation") // Intentional: asserts deprecated cross-tenant findAll() is never invoked
         void validateApiKey_RejectsWithoutPrefix() {
             Optional<ApiKey> result = apiKeyService.validateApiKey("invalid_key", "127.0.0.1");
 
@@ -72,6 +74,7 @@ class ApiKeyServiceTest {
 
         @Test
         @DisplayName("should reject API key that is too short")
+        @SuppressWarnings("deprecation") // Intentional: asserts deprecated cross-tenant findAll() is never invoked
         void validateApiKey_RejectsTooShort() {
             // Key after removing prefix is less than 8 chars
             Optional<ApiKey> result = apiKeyService.validateApiKey(API_KEY_PREFIX + "short", "127.0.0.1");
@@ -83,6 +86,7 @@ class ApiKeyServiceTest {
 
         @Test
         @DisplayName("should use prefix-based lookup, not findAll()")
+        @SuppressWarnings("deprecation") // Intentional: asserts deprecated cross-tenant findAll() is never invoked
         void validateApiKey_UsesPrefixLookup_NotFindAll() {
             String rawKey = API_KEY_PREFIX + "12345678abcdefghijklmnop";
             String keyPrefix = "12345678";

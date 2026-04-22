@@ -399,7 +399,7 @@
                     <perCoreThreadCount>false</perCoreThreadCount>
 
                     <!-- Memory Configuration (JaCoCo argLine is automatically prepended) -->
-                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
+                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
                     </argLine>
 
                     <!-- Test Stability -->

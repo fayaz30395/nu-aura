@@ -43,17 +43,18 @@ Three sections reworked:
    `session-poisoned`.
 
 3. **Hard rules 9–14 + SPEED & SAFETY GUARDRAILS** — added ~16 bullets covering:
-  - Status taxonomy `PASS | PASS-EMPTY | PASS-DENIED | FAIL`
-  - IIFE requirement on every `javascript_tool` eval (top-level await is a SyntaxError)
-  - Extension-disconnect retry before failing a shard
-  - No form submissions during page sweeps (sweeps are read-only)
-  - React error boundary → automatic P1 bug
-  - Silent `/auth/login` redirect with `/auth/me` still 200 → `session-poisoned`
-  - Direct-API auth preferred over card-click (citing BUG-W1-01 click flake)
-  - Empty 200 bodies from `/auth/logout` are valid — don't retry
-  - Pass-abort path writes `SKIPPED_PASSES.md` so final report can acknowledge coverage gaps
-  - Tab reuse via `tabs_context_mcp` rather than recreating each run
-  - Fixer-dispatch gate (operator may pause before fixers for triage-first runs like this one)
+
+- Status taxonomy `PASS | PASS-EMPTY | PASS-DENIED | FAIL`
+- IIFE requirement on every `javascript_tool` eval (top-level await is a SyntaxError)
+- Extension-disconnect retry before failing a shard
+- No form submissions during page sweeps (sweeps are read-only)
+- React error boundary → automatic P1 bug
+- Silent `/auth/login` redirect with `/auth/me` still 200 → `session-poisoned`
+- Direct-API auth preferred over card-click (citing BUG-W1-01 click flake)
+- Empty 200 bodies from `/auth/logout` are valid — don't retry
+- Pass-abort path writes `SKIPPED_PASSES.md` so final report can acknowledge coverage gaps
+- Tab reuse via `tabs_context_mcp` rather than recreating each run
+- Fixer-dispatch gate (operator may pause before fixers for triage-first runs like this one)
 
 ## What was NOT changed
 

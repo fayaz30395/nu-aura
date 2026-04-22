@@ -197,7 +197,7 @@ class AuthControllerTest {
                 .enabled(true)
                 .verified(true)
                 .build();
-        doNothing().when(mfaService).verifyAndEnableMfa(any(UUID.class), anyString());
+        when(mfaService.verifyAndEnableMfa(any(UUID.class), anyString())).thenReturn(true);
         when(mfaService.getMfaStatus(any(UUID.class))).thenReturn(statusResp);
 
         mockMvc.perform(post(BASE_URL + "/mfa/verify")

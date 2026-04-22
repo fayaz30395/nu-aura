@@ -109,7 +109,7 @@ class RoleControllerTest {
         @Test
         @DisplayName("getAllRoles should require ROLE_MANAGE permission")
         void getAllRoles_shouldRequireRoleManagePermission() throws NoSuchMethodException {
-            Method method = RoleController.class.getMethod("getAllRoles");
+            Method method = RoleController.class.getMethod("getAllRoles", org.springframework.data.domain.Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

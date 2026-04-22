@@ -6,7 +6,8 @@ description: Use when asked to create, audit, list, rename, or delete a skill un
 # Skill Management
 
 **Purpose**: Create, read, write, and manage skills for NU-AURA
-**Use When**: Need to create new skills or modify existing ones, or audit the skill set for the 4-skill consolidation.
+**Use When**: Need to create new skills or modify existing ones, or audit the skill set for the
+4-skill consolidation.
 
 ## Autonomy Contract
 
@@ -15,7 +16,8 @@ description: Use when asked to create, audit, list, rename, or delete a skill un
   name is ambiguous.
 - **Halts autonomously** when: the requested skill operation completes AND
   `.claude/helpers/check-skills-autonomy.sh` (if present) exits 0.
-- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-migration`, or `nu-permission`.
+- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-migration`, or
+  `nu-permission`.
 - **Single concern:** skill lifecycle only. Refuses to create a 5th top-level NU-AURA skill outside
   the approved 4 (`nu-chrome-e2e`, `nu-migration`, `nu-permission`, `skill-management`) unless the
   user explicitly overrides the consolidation.
@@ -23,6 +25,7 @@ description: Use when asked to create, audit, list, rename, or delete a skill un
 ## Autonomous Audit Mode
 
 When asked to "audit skills" or "check skill autonomy":
+
 1. List `.claude/skills/` — verify only the 4 approved skills remain.
 2. Verify each has YAML frontmatter (`name:` + `description:`) and an `## Autonomy Contract` block.
 3. Run `.claude/helpers/check-skills-autonomy.sh` if present; report its exit code.

@@ -4,6 +4,7 @@ import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.application.leave.service.LeaveRequestService;
 import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.leave.LeaveApprovedEvent;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.*;
 class LeaveApprovalPayrollImpactTest {
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
     @Mock
@@ -63,11 +65,13 @@ class LeaveApprovalPayrollImpactTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @AfterEach

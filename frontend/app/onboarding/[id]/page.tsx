@@ -125,7 +125,8 @@ export default function OnboardingDetailPage() {
     return (
       <AppLayout activeMenuItem="recruitment">
         <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
-          <div className="h-16 w-16 border-4 border-[var(--accent-500)]/20 border-t-accent-500 rounded-full animate-spin"/>
+          <div
+            className="h-16 w-16 border-4 border-[var(--accent-500)]/20 border-t-accent-500 rounded-full animate-spin"/>
           <p className="text-[var(--text-muted)] font-bold animate-pulse">Initializing Dashboard...</p>
         </div>
       </AppLayout>

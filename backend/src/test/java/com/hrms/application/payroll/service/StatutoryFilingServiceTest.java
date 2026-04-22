@@ -16,7 +16,6 @@ import com.hrms.domain.payroll.StatutoryFilingRun;
 import com.hrms.domain.payroll.StatutoryFilingRun.FilingStatus;
 import com.hrms.domain.payroll.StatutoryFilingTemplate.FilingType;
 import com.hrms.infrastructure.payroll.repository.StatutoryFilingRunRepository;
-import com.hrms.infrastructure.payroll.repository.StatutoryFilingTemplateRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -36,8 +35,6 @@ class StatutoryFilingServiceTest {
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID USER_ID = UUID.randomUUID();
     @Mock
-    private StatutoryFilingTemplateRepository templateRepository;
-    @Mock
     private StatutoryFilingRunRepository filingRunRepository;
     @Mock
     private FileStorageService fileStorageService;
@@ -49,7 +46,7 @@ class StatutoryFilingServiceTest {
     void setUp() {
         when(pfEcrGenerator.getFilingType()).thenReturn(FilingType.PF_ECR);
         service = new StatutoryFilingService(
-                templateRepository, filingRunRepository, fileStorageService,
+                filingRunRepository, fileStorageService,
                 List.of(pfEcrGenerator));
     }
 

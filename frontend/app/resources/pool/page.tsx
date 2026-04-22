@@ -12,10 +12,26 @@ import {useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function allocationColor(pct: number): { bar: string; badge: string; text: string } {
-  if (pct >= 100) return {bar: "bg-status-danger-bg", badge: "bg-status-danger-bg text-status-danger-text", text: "text-status-danger-text"};
-  if (pct >= 81) return {bar: "bg-status-warning-bg", badge: "bg-status-warning-bg text-status-warning-text", text: "text-status-warning-text"};
-  if (pct >= 51) return {bar: "bg-status-success-bg", badge: "bg-status-success-bg text-status-success-text", text: "text-status-success-text"};
-  if (pct > 0) return {bar: "bg-status-info-bg", badge: "bg-status-info-bg text-status-info-text", text: "text-status-info-text"};
+  if (pct >= 100) return {
+    bar: "bg-status-danger-bg",
+    badge: "bg-status-danger-bg text-status-danger-text",
+    text: "text-status-danger-text"
+  };
+  if (pct >= 81) return {
+    bar: "bg-status-warning-bg",
+    badge: "bg-status-warning-bg text-status-warning-text",
+    text: "text-status-warning-text"
+  };
+  if (pct >= 51) return {
+    bar: "bg-status-success-bg",
+    badge: "bg-status-success-bg text-status-success-text",
+    text: "text-status-success-text"
+  };
+  if (pct > 0) return {
+    bar: "bg-status-info-bg",
+    badge: "bg-status-info-bg text-status-info-text",
+    text: "text-status-info-text"
+  };
   return {
     bar: 'bg-[var(--bg-secondary)]',
     badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]',

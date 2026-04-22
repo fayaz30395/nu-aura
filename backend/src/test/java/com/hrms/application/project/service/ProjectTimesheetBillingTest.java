@@ -96,7 +96,7 @@ class ProjectTimesheetBillingTest {
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
             TimeEntryResponse response = projectTimesheetService.createTimeEntry(request);
@@ -133,7 +133,7 @@ class ProjectTimesheetBillingTest {
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
             TimeEntryResponse response = projectTimesheetService.createTimeEntry(request);
@@ -180,7 +180,7 @@ class ProjectTimesheetBillingTest {
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
                     tenantId, projectId, employeeId)).thenReturn(Optional.of(member));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -220,7 +220,7 @@ class ProjectTimesheetBillingTest {
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
                     tenantId, projectId, employeeId)).thenReturn(Optional.empty());
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));

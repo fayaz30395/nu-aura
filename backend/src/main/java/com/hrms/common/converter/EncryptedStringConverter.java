@@ -62,7 +62,14 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             if (secretKey != null) {
                 return secretKey;
             }
-            String keyBase64 = System.getenv(ENV_KEY);
+            // Resolution order: System property (test/override) → env ENCRYPTION_KEY → env APP_SECURITY_ENCRYPTION_KEY
+            String keyBase64 = System.getProperty(ENV_KEY);
+            if (keyBase64 == null || keyBase64.isBlank()) {
+                keyBase64 = System.getProperty(ENV_KEY_ALT);
+            }
+            if (keyBase64 == null || keyBase64.isBlank()) {
+                keyBase64 = System.getenv(ENV_KEY);
+            }
             if (keyBase64 == null || keyBase64.isBlank()) {
                 keyBase64 = System.getenv(ENV_KEY_ALT);
             }

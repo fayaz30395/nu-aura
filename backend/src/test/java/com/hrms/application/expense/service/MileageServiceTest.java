@@ -383,6 +383,7 @@ class MileageServiceTest {
 
     @Test
     @DisplayName("Should use vehicle-specific rate when available")
+    @SuppressWarnings("unchecked")
     void createMileageLog_vehicleSpecificRate() throws Exception {
         MileageLogRequest request = new MileageLogRequest(
                 LocalDate.now(), "A", "B", new BigDecimal("10.00"),

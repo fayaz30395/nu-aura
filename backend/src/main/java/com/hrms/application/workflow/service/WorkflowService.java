@@ -48,11 +48,9 @@ public class WorkflowService {
     private static final String AUDIT_ENTITY_WORKFLOW_EXECUTION = "WORKFLOW_EXECUTION";
 
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
-    private final ApprovalStepRepository approvalStepRepository;
     private final WorkflowExecutionRepository workflowExecutionRepository;
     private final StepExecutionRepository stepExecutionRepository;
     private final ApprovalDelegateRepository approvalDelegateRepository;
-    private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
@@ -73,11 +71,9 @@ public class WorkflowService {
 
     public WorkflowService(
             WorkflowDefinitionRepository workflowDefinitionRepository,
-            ApprovalStepRepository approvalStepRepository,
             WorkflowExecutionRepository workflowExecutionRepository,
             StepExecutionRepository stepExecutionRepository,
             ApprovalDelegateRepository approvalDelegateRepository,
-            WorkflowRuleRepository workflowRuleRepository,
             EmployeeRepository employeeRepository,
             DepartmentRepository departmentRepository,
             UserRepository userRepository,
@@ -86,11 +82,9 @@ public class WorkflowService {
             LeaveRequestRepository leaveRequestRepository,
             @org.springframework.context.annotation.Lazy @org.springframework.lang.Nullable List<ApprovalCallbackHandler> callbackHandlers) {
         this.workflowDefinitionRepository = workflowDefinitionRepository;
-        this.approvalStepRepository = approvalStepRepository;
         this.workflowExecutionRepository = workflowExecutionRepository;
         this.stepExecutionRepository = stepExecutionRepository;
         this.approvalDelegateRepository = approvalDelegateRepository;
-        this.workflowRuleRepository = workflowRuleRepository;
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;

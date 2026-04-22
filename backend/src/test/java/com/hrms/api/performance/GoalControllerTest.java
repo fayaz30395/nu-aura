@@ -406,7 +406,7 @@ class GoalControllerTest {
         @Test
         @DisplayName("approveGoal should have GOAL_APPROVE permission")
         void approveGoalShouldRequireGoalApprove() throws Exception {
-            var method = GoalController.class.getMethod("approveGoal", UUID.class, UUID.class);
+            var method = GoalController.class.getMethod("approveGoal", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "approveGoal must have @RequiresPermission");
             Assertions.assertEquals(Permission.GOAL_APPROVE, annotation.value()[0]);

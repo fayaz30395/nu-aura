@@ -860,7 +860,7 @@ export default function RolesPage() {
                           : "bg-accent text-inverse hover:bg-accent"
                       }`}
                     >Save Permissions
-                                          </button>
+                    </button>
                   );
                 })()}
               </div>

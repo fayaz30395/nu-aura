@@ -563,6 +563,7 @@ class LetterControllerTest {
             }
 
             assertThat(bulkGenerateMethod).as("bulkGenerate method must exist").isNotNull();
+            java.util.Objects.requireNonNull(bulkGenerateMethod);
 
             // The controller is annotated with @Validated at class level, and the
             // List<UUID> parameter has @Valid @NotEmpty — verify annotation present

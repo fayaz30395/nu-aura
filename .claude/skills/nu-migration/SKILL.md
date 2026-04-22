@@ -11,7 +11,8 @@ description: Use when asked to add a table, create a new migration, make a schem
   table/column names cannot be inferred from the current request.
 - **Halts autonomously** when the generated SQL is written to
   `backend/src/main/resources/db/migration/V{next}__*.sql` and passes Flyway syntax validation.
-- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-permission`, or `skill-management`.
+- **Never invokes another skill.** Does not call `nu-chrome-e2e`, `nu-permission`, or
+  `skill-management`.
 - **Single concern:** Flyway SQL only. Permission wiring belongs in `nu-permission`; QA belongs in
   `nu-chrome-e2e`.
 

@@ -12,6 +12,7 @@ import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.leave.LeaveRequest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ class LeaveRequestControllerTest {
 
     @MockitoBean
     private EmployeeService employeeService;
+
+    @MockitoBean
+    private com.hrms.infrastructure.employee.repository.EmployeeRepository employeeRepository;
 
     @MockitoBean
     private DataScopeService dataScopeService;
@@ -143,7 +147,7 @@ class LeaveRequestControllerTest {
 
             when(dataScopeService.getScopeSpecification(anyString()))
                     .thenReturn((root, query, cb) -> cb.conjunction());
-            when(leaveRequestService.getAllLeaveRequests(any(Specification.class), any(Pageable.class)))
+            when(leaveRequestService.getAllLeaveRequests(ArgumentMatchers.<Specification<LeaveRequest>>any(), any(Pageable.class)))
                     .thenReturn(page);
 
             try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class);

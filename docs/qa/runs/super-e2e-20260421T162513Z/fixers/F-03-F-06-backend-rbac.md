@@ -55,13 +55,17 @@ under parallel polling, not query plan.
 ### Files touched
 
 -
+
 `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/common/config/CacheConfig.java`
-  - Added `WORKFLOW_INBOX_COUNT` constant + 30s TTL entry.
+
+- Added `WORKFLOW_INBOX_COUNT` constant + 30s TTL entry.
 -
+
 `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/application/workflow/service/WorkflowService.java`
-  - Imported `CacheConfig` + `org.springframework.cache.annotation.Cacheable`.
-  - Added `@Cacheable(value=WORKFLOW_INBOX_COUNT, key=tenantId+':'+userId, condition=non-null)`
-    on `getInboxCounts()`.
+
+- Imported `CacheConfig` + `org.springframework.cache.annotation.Cacheable`.
+- Added `@Cacheable(value=WORKFLOW_INBOX_COUNT, key=tenantId+':'+userId, condition=non-null)`
+  on `getInboxCounts()`.
 
 ### Expected response time
 
@@ -135,6 +139,7 @@ so V130 was used per the brief's guidance.
 ### Files touched
 
 -
+
 `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/resources/db/migration/V130__add_helpdesk_ticket_permissions_to_employee.sql`
 **(new)**
 

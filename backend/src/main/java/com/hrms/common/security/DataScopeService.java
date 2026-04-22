@@ -292,21 +292,4 @@ public class DataScopeService {
         }
     }
 
-    // ==================== Legacy method aliases for backward compatibility ====================
-
-    /**
-     * @deprecated Use getSelfPredicate instead. Will be removed in future version.
-     */
-    @Deprecated(since = "2.0", forRemoval = true)
-    private Predicate getOwnPredicate(Root<?> root, CriteriaBuilder cb) {
-        return getSelfPredicate(root, cb);
-    }
-
-    /**
-     * @deprecated Use getTeamPredicate(root, cb, permission) instead.
-     */
-    @Deprecated(since = "2.0", forRemoval = true)
-    private Predicate getTeamPredicate(Root<?> root, CriteriaBuilder cb) {
-        return getTeamPredicate(root, cb, null);
-    }
 }

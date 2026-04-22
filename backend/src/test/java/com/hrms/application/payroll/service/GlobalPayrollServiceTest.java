@@ -492,11 +492,11 @@ class GlobalPayrollServiceTest {
             record.setId(UUID.randomUUID());
             record.setTenantId(tenantId);
 
-            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(GlobalPayrollRun.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.findByPayrollRun(runId)).thenReturn(List.of(record));
+            when(recordRepository.findByTenantIdAndPayrollRun(tenantId, runId)).thenReturn(List.of(record));
             when(recordRepository.save(any(EmployeePayrollRecord.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.countDistinctLocationsByPayrollRun(runId)).thenReturn(1);
+            when(recordRepository.countDistinctLocationsByTenantIdAndPayrollRun(tenantId, runId)).thenReturn(1);
             when(exchangeRateRepository.findValidRates(any(), any(), any(), any()))
                     .thenReturn(List.of(createTestExchangeRate("USD", "USD", BigDecimal.ONE)));
 
@@ -531,9 +531,9 @@ class GlobalPayrollServiceTest {
             UUID runId = UUID.randomUUID();
             GlobalPayrollRun run = createTestPayrollRun(runId, GlobalPayrollRun.PayrollRunStatus.PENDING_APPROVAL);
 
-            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(GlobalPayrollRun.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.findByPayrollRunAndStatus(runId, EmployeePayrollRecord.RecordStatus.CALCULATED))
+            when(recordRepository.findByTenantIdAndPayrollRunAndStatus(tenantId, runId, EmployeePayrollRecord.RecordStatus.CALCULATED))
                     .thenReturn(Collections.emptyList());
 
             // When

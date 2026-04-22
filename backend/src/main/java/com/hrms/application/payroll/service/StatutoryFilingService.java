@@ -11,7 +11,6 @@ import com.hrms.domain.payroll.StatutoryFilingRun;
 import com.hrms.domain.payroll.StatutoryFilingTemplate.FilingType;
 import com.hrms.domain.payroll.StatutoryFilingTemplate.OutputFormat;
 import com.hrms.infrastructure.payroll.repository.StatutoryFilingRunRepository;
-import com.hrms.infrastructure.payroll.repository.StatutoryFilingTemplateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,17 +36,14 @@ import java.util.UUID;
 public class StatutoryFilingService {
 
     private static final String CATEGORY_STATUTORY = "statutory-filings";
-    private final StatutoryFilingTemplateRepository templateRepository;
     private final StatutoryFilingRunRepository filingRunRepository;
     private final FileStorageService fileStorageService;
     private final Map<FilingType, FilingFormatGenerator> generators;
 
     public StatutoryFilingService(
-            StatutoryFilingTemplateRepository templateRepository,
             StatutoryFilingRunRepository filingRunRepository,
             FileStorageService fileStorageService,
             List<FilingFormatGenerator> generatorList) {
-        this.templateRepository = templateRepository;
         this.filingRunRepository = filingRunRepository;
         this.fileStorageService = fileStorageService;
 

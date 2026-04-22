@@ -27,8 +27,8 @@
     "mem-MEMORY-recent-work": {
       "id": "mem-MEMORY-recent-work",
       "category": "core",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520077
     },
     "mem-MEMORY-platform-architecture": {
@@ -90,8 +90,8 @@
     "mem-project_forensic_wave12_status----": {
       "id": "mem-project_forensic_wave12_status----",
       "category": "project_forensic_wave12_status",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520103
     },
     "mem-project_forensic_wave12_status-wave-12---forensic-analysis---": {
@@ -195,8 +195,8 @@
     "mem-project_sonar_fixes_2026_03_30----": {
       "id": "mem-project_sonar_fixes_2026_03_30----",
       "category": "project_sonar_fixes_2026_03_30",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520127
     },
     "mem-project_sonar_fixes_2026_03_30-lint-cleanup--phase-1---eslint": {
@@ -216,8 +216,8 @@
     "mem-MEMORY----architecture--project-archi": {
       "id": "mem-MEMORY----architecture--project-archi",
       "category": "core",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520129
     },
     "mem-feedback_patterns----": {
@@ -258,8 +258,8 @@
     "mem-project_architecture-stack": {
       "id": "mem-project_architecture-stack",
       "category": "project_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520130
     },
     "mem-project_architecture-key-directories": {
@@ -328,8 +328,8 @@
     "mem-user_fayaz----": {
       "id": "mem-user_fayaz----",
       "category": "user_fayaz",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520132
     },
     "mem-MEMORY----cart-sync-fix--project-cart": {
@@ -398,15 +398,15 @@
     "mem-project_uppababy_architecture-local-dev-ports": {
       "id": "mem-project_uppababy_architecture-local-dev-ports",
       "category": "project_uppababy_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520140
     },
     "mem-project_uppababy_architecture-key-environment-variables": {
       "id": "mem-project_uppababy_architecture-key-environment-variables",
       "category": "project_uppababy_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520140
     },
     "mem-project_uppababy_architecture-communication-architecture": {
@@ -419,8 +419,8 @@
     "mem-project_uppababy_architecture-production-deploy": {
       "id": "mem-project_uppababy_architecture-production-deploy",
       "category": "project_uppababy_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1776852520140
     },
     "mem-MEMORY----orch-promo-enhancements--pr": {

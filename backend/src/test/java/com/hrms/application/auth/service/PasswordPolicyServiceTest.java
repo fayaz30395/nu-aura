@@ -46,17 +46,19 @@ class PasswordPolicyServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Configure default strict policy matching CLAUDE.md specifications
-        when(config.getMinLength()).thenReturn(12);
-        when(config.getMaxLength()).thenReturn(128);
-        when(config.isRequireUppercase()).thenReturn(true);
-        when(config.isRequireLowercase()).thenReturn(true);
-        when(config.isRequireDigit()).thenReturn(true);
-        when(config.isRequireSpecial()).thenReturn(true);
-        when(config.getMaxConsecutiveChars()).thenReturn(3);
-        when(config.isRejectCommonPasswords()).thenReturn(true);
-        when(config.isRejectUserInfo()).thenReturn(true);
-        when(config.getHistoryCount()).thenReturn(5);
+        // Configure default strict policy matching CLAUDE.md specifications.
+        // Use lenient() so tests that short-circuit (e.g. null/empty password) don't
+        // trip Mockito strict-stubbing UnnecessaryStubbingException.
+        lenient().when(config.getMinLength()).thenReturn(12);
+        lenient().when(config.getMaxLength()).thenReturn(128);
+        lenient().when(config.isRequireUppercase()).thenReturn(true);
+        lenient().when(config.isRequireLowercase()).thenReturn(true);
+        lenient().when(config.isRequireDigit()).thenReturn(true);
+        lenient().when(config.isRequireSpecial()).thenReturn(true);
+        lenient().when(config.getMaxConsecutiveChars()).thenReturn(3);
+        lenient().when(config.isRejectCommonPasswords()).thenReturn(true);
+        lenient().when(config.isRejectUserInfo()).thenReturn(true);
+        lenient().when(config.getHistoryCount()).thenReturn(5);
     }
 
     @Nested
@@ -175,7 +177,7 @@ class PasswordPolicyServiceTest {
         @DisplayName("Should collect multiple violations in a single throw")
         void shouldCollectMultipleViolationsInSingleThrow() {
             // Given — too short AND missing uppercase AND missing special
-            String bad = "alllowercase";
+            String bad = "allshort";
 
             // When / Then — single exception with combined violations
             assertThatThrownBy(() -> passwordPolicyService.validatePassword(bad))

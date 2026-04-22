@@ -211,7 +211,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? "text-status-danger-text" : 'text-[var(--text-muted)]'}`}/>
+                <FileText
+                  className={`h-6 w-6 ${format === 'PDF' ? "text-status-danger-text" : 'text-[var(--text-muted)]'}`}/>
                 <div className="text-center">
                   <p
                     className={`font-medium text-sm ${format === 'PDF' ? "text-status-danger-text" : 'text-[var(--text-secondary)]'}`}>

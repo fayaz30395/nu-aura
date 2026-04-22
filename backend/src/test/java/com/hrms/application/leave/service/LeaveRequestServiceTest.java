@@ -1,6 +1,7 @@
 package com.hrms.application.leave.service;
 
 import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.*;
 class LeaveRequestServiceTest {
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private LeaveRequestRepository leaveRequestRepository;
     @Mock
@@ -58,11 +60,13 @@ class LeaveRequestServiceTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @AfterEach

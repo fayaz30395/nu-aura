@@ -67,6 +67,15 @@ class AuthServiceTest {
     @Mock
     private PasswordPolicyService passwordPolicyService;
 
+    @Mock
+    private com.hrms.common.security.AccountLockoutService accountLockoutService;
+
+    @Mock
+    private com.hrms.domain.user.PasswordHistoryRepository passwordHistoryRepository;
+
+    @Mock
+    private com.hrms.common.config.PasswordPolicyConfig passwordPolicyConfig;
+
     @InjectMocks
     private AuthService authService;
 
@@ -206,7 +215,7 @@ class AuthServiceTest {
         @DisplayName("Should refresh token successfully")
         void shouldRefreshTokenSuccessfully() {
             String refreshToken = "valid-refresh-token";
-            when(tokenProvider.validateToken(refreshToken)).thenReturn(true);
+            when(tokenProvider.validateRefreshToken(refreshToken)).thenReturn(true);
             when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn("test@example.com");
             when(tokenProvider.getTenantIdFromToken(refreshToken)).thenReturn(tenantId);
             when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
@@ -234,7 +243,7 @@ class AuthServiceTest {
         @DisplayName("Should throw exception for invalid refresh token")
         void shouldThrowExceptionForInvalidRefreshToken() {
             String invalidToken = "invalid-token";
-            when(tokenProvider.validateToken(invalidToken)).thenReturn(false);
+            when(tokenProvider.validateRefreshToken(invalidToken)).thenReturn(false);
 
             assertThatThrownBy(() -> authService.refresh(invalidToken))
                     .isInstanceOf(AuthenticationException.class)

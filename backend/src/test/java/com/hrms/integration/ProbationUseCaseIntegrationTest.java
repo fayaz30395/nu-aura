@@ -98,10 +98,10 @@ class ProbationUseCaseIntegrationTest {
                 .notes("Standard 6-month probation")
                 .build();
 
-        String createBody = mockMvc.perform(post("/api/v1/probation")
+        mockMvc.perform(post("/api/v1/probation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createReq)))
-                .andReturn().getResponse().getContentAsString();
+                .andReturn();
 
         mockMvc.perform(post("/api/v1/probation")
                         .contentType(MediaType.APPLICATION_JSON)

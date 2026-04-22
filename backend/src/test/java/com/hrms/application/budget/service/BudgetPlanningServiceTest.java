@@ -109,13 +109,13 @@ class BudgetPlanningServiceTest {
         budget.setId(budgetId);
 
         when(budgetRepository.findByIdAndTenantId(budgetId, tenantId)).thenReturn(Optional.of(budget));
-        when(positionRepository.findByBudgetId(budgetId)).thenReturn(List.of());
+        when(positionRepository.findByBudgetIdAndTenantId(budgetId, tenantId)).thenReturn(List.of());
         when(scenarioRepository.findByBudget(budgetId)).thenReturn(List.of());
 
         HeadcountBudgetResponse result = budgetPlanningService.getBudget(budgetId);
 
         assertThat(result).isNotNull();
-        verify(positionRepository).findByBudgetId(budgetId);
+        verify(positionRepository).findByBudgetIdAndTenantId(budgetId, tenantId);
         verify(scenarioRepository).findByBudget(budgetId);
     }
 

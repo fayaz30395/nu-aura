@@ -10,12 +10,14 @@ RUN_DIR: `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/runs/super-e2e-202
 4. Auth rate limit: 5 logins/min. Stagger — sleep `${W_INDEX}*12` seconds before your FIRST
    navigate.
 5. On every page:
-  - `navigate` → wait 1.5s for render
-  - `read_page` to verify DOM rendered (not blank/spinner)
-  - `read_console_messages` with pattern `"Error|Failed|403|500|Uncaught"`
-  - `read_network_requests` filter 4xx/5xx
-  - Screenshot → `workers/w{N}/screenshots/{slug}.png`
-  - Classify: PASS | PASS-EMPTY | FAIL
+
+- `navigate` → wait 1.5s for render
+- `read_page` to verify DOM rendered (not blank/spinner)
+- `read_console_messages` with pattern `"Error|Failed|403|500|Uncaught"`
+- `read_network_requests` filter 4xx/5xx
+- Screenshot → `workers/w{N}/screenshots/{slug}.png`
+- Classify: PASS | PASS-EMPTY | FAIL
+
 6. On each FAIL, append a JSON line to `$RUN_DIR/bugs.jsonl` via:
    ```
    flock $RUN_DIR/bugs.jsonl.lock -c 'echo "{...}" >> $RUN_DIR/bugs.jsonl'

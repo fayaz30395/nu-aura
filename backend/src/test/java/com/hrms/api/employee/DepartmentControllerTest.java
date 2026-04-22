@@ -392,10 +392,6 @@ class DepartmentControllerTest {
         @Test
         @DisplayName("Should activate department successfully")
         void shouldActivateDepartmentSuccessfully() throws Exception {
-            DepartmentResponse inactiveDept = departmentResponse.toBuilder()
-                    .isActive(false)
-                    .build();
-
             DepartmentResponse activatedDept = departmentResponse.toBuilder()
                     .isActive(true)
                     .build();

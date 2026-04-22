@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -291,7 +292,7 @@ class BenefitManagementServiceTest {
         void shouldGetAllPlansWithPagination() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<BenefitPlan> page = new PageImpl<>(List.of(benefitPlan));
-            when(benefitPlanRepository.findAll(any(Specification.class), eq(pageable)))
+            when(benefitPlanRepository.findAll(ArgumentMatchers.<Specification<BenefitPlan>>any(), eq(pageable)))
                     .thenReturn(page);
 
             Page<BenefitPlanResponse> result = benefitManagementService.getAllPlans(pageable);

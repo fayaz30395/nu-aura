@@ -201,9 +201,6 @@ class ExpenseReportControllerTest {
         @Test
         @DisplayName("Should return empty report when no expenses in period")
         void shouldReturnEmptyReportWhenNoExpensesInPeriod() throws Exception {
-            LocalDate startDate = LocalDate.of(2020, 1, 1);
-            LocalDate endDate = LocalDate.of(2020, 1, 31);
-
             Map<String, Object> emptyReport = new HashMap<>();
             emptyReport.put("totalExpenses", 0.00);
             emptyReport.put("totalClaims", 0);

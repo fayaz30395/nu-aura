@@ -133,7 +133,6 @@ public class WorkflowExecution extends TenantAware {
         this.completedAt = LocalDateTime.now();
     }
 
-    @SuppressWarnings("unused")
     public void reject(String reason) {
         this.status = ExecutionStatus.REJECTED;
         this.completedAt = LocalDateTime.now();

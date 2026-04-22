@@ -38,6 +38,13 @@ public class ResumeTextExtractor {
             return "";
         }
 
+        // Plain-text shortcut: Tika's auto-detect can fail on tiny/non-binary streams
+        // with "No Archiver found" errors. Handle .txt files directly.
+        if (fileName != null && fileName.toLowerCase().endsWith(".txt")) {
+            String extractedText = new String(fileBytes, java.nio.charset.StandardCharsets.UTF_8);
+            return normalizeAndTruncate(extractedText, fileName);
+        }
+
         try {
             String extractedText = tika.parseToString(new java.io.ByteArrayInputStream(fileBytes));
 
@@ -82,6 +89,16 @@ public class ResumeTextExtractor {
     public String extractText(InputStream inputStream, String fileName) throws IOException, TikaException {
         log.debug("Extracting text from input stream: {}", fileName);
 
+        // Plain-text shortcut: bypass Tika for .txt files to avoid signature-detection errors
+        if (fileName != null && fileName.toLowerCase().endsWith(".txt")) {
+            byte[] bytes = inputStream.readAllBytes();
+            if (bytes.length == 0) {
+                return "";
+            }
+            String extractedText = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+            return normalizeAndTruncate(extractedText, fileName);
+        }
+
         try {
             String extractedText = tika.parseToString(inputStream);
 
@@ -120,6 +137,20 @@ public class ResumeTextExtractor {
      * @param contentType the MIME type (e.g., "application/pdf")
      * @return true if the content type is supported
      */
+    private String normalizeAndTruncate(String text, String fileName) {
+        if (text == null || text.isBlank()) {
+            log.warn("No text extracted from: {}", fileName);
+            return "";
+        }
+        String normalized = text.replaceAll("\\s+", " ").trim();
+        if (normalized.length() > MAX_TEXT_LENGTH) {
+            log.debug("Truncating extracted text from {} to {} chars for: {}",
+                    normalized.length(), MAX_TEXT_LENGTH, fileName);
+            normalized = normalized.substring(0, MAX_TEXT_LENGTH);
+        }
+        return normalized;
+    }
+
     public boolean isSupportedBinaryFormat(String contentType) {
         if (contentType == null) {
             return false;

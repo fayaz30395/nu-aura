@@ -86,14 +86,24 @@ const statusConfig: Record<SelectionStatus, {
   bgColor: string;
   icon: typeof CheckCircle
 }> = {
-  PENDING: {label: 'Pending', color: "text-status-warning-text", bgColor: "bg-status-warning-bg border-status-warning-border", icon: Clock},
+  PENDING: {
+    label: 'Pending',
+    color: "text-status-warning-text",
+    bgColor: "bg-status-warning-bg border-status-warning-border",
+    icon: Clock
+  },
   APPROVED: {
     label: 'Approved',
     color: "text-status-success-text",
     bgColor: "bg-status-success-bg border-status-success-border",
     icon: CheckCircle
   },
-  REJECTED: {label: 'Rejected', color: "text-status-danger-text", bgColor: "bg-status-danger-bg border-status-danger-border", icon: XCircle},
+  REJECTED: {
+    label: 'Rejected',
+    color: "text-status-danger-text",
+    bgColor: "bg-status-danger-bg border-status-danger-border",
+    icon: XCircle
+  },
   CANCELLED: {label: 'Cancelled', color: "text-muted", bgColor: "bg-base border-subtle", icon: Ban},
 };
 

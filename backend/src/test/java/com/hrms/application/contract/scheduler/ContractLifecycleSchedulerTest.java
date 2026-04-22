@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -75,7 +76,7 @@ class ContractLifecycleSchedulerTest {
     void setUp() {
         TenantContext.setCurrentTenant(TENANT_A);
         // Make loadTenantConfig fall back to defaults (no config row in DB)
-        lenient().when(jdbcTemplate.queryForObject(anyString(), any(org.springframework.jdbc.core.RowMapper.class), any()))
+        lenient().when(jdbcTemplate.queryForObject(anyString(), ArgumentMatchers.<org.springframework.jdbc.core.RowMapper<Object>>any(), any(Object.class)))
                 .thenThrow(new org.springframework.dao.EmptyResultDataAccessException(1));
     }
 

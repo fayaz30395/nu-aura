@@ -91,6 +91,7 @@ class SecurityContextTest {
 
         @Test
         @DisplayName("Should delegate to TenantContext.setCurrentTenant()")
+        @SuppressWarnings("removal") // Intentional: verifies deprecated setter delegates to TenantContext until removal
         void shouldDelegateToTenantContext() {
             // When
             SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

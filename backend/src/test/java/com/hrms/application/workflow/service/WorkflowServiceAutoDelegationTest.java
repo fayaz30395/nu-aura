@@ -45,15 +45,11 @@ class WorkflowServiceAutoDelegationTest {
     @Mock
     private WorkflowDefinitionRepository workflowDefinitionRepository;
     @Mock
-    private ApprovalStepRepository approvalStepRepository;
-    @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
     @Mock
     private StepExecutionRepository stepExecutionRepository;
     @Mock
     private ApprovalDelegateRepository approvalDelegateRepository;
-    @Mock
-    private WorkflowRuleRepository workflowRuleRepository;
     @Mock
     private EmployeeRepository employeeRepository;
     @Mock
@@ -81,9 +77,9 @@ class WorkflowServiceAutoDelegationTest {
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(EMPLOYEE_ID);
 
         workflowService = new WorkflowService(
-                workflowDefinitionRepository, approvalStepRepository,
+                workflowDefinitionRepository,
                 workflowExecutionRepository, stepExecutionRepository,
-                approvalDelegateRepository, workflowRuleRepository,
+                approvalDelegateRepository,
                 employeeRepository, departmentRepository, userRepository,
                 domainEventPublisher, auditLogService, leaveRequestRepository,
                 Collections.emptyList());

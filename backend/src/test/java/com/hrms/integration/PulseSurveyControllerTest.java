@@ -93,15 +93,14 @@ class PulseSurveyControllerTest {
         questionReq.put("isRequired", true);
         questionReq.put("displayOrder", 1);
 
-        MvcResult questionResult = mockMvc.perform(
+        mockMvc.perform(
                         post(BASE + "/{surveyId}/questions", UUID.fromString(surveyId))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(questionReq)))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     assertThat(status).isIn(200, 201);
-                })
-                .andReturn();
+                });
 
         // Submit a response
         Map<String, Object> responseReq = new LinkedHashMap<>();

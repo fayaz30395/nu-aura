@@ -1,12 +1,12 @@
 'use client';
 
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { apiClient, getSharedRefreshPromise, setSharedRefreshPromise, setOnSessionRefreshed } from '../api/client';
-import { authApi } from '../api/auth';
-import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth';
-import { clearGoogleToken } from '../utils/googleToken';
-import { getQueryClient } from '../queryClient';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
+import {apiClient, getSharedRefreshPromise, setSharedRefreshPromise, setOnSessionRefreshed} from '../api/client';
+import {authApi} from '../api/auth';
+import {LoginRequest, GoogleLoginRequest, User, Role} from '../types/core/auth';
+import {clearGoogleToken} from '../utils/googleToken';
+import {getQueryClient} from '../queryClient';
 
 // HIGH-3: User PII (employeeId, tenantId, name, email, roles) is no longer
 // persisted to sessionStorage. Identity is rehydrated via restoreSession()
@@ -15,7 +15,10 @@ const LEGACY_USER_STORAGE_KEY = 'nu-aura-user';
 
 function clearLegacyUserFromStorage(): void {
   if (typeof window === 'undefined') return;
-  try { sessionStorage.removeItem(LEGACY_USER_STORAGE_KEY); } catch { /* ignore */ }
+  try {
+    sessionStorage.removeItem(LEGACY_USER_STORAGE_KEY);
+  } catch { /* ignore */
+  }
 }
 
 // Convert string roles to Role objects
@@ -61,11 +64,11 @@ export const useAuth = create<AuthState>()(
       hasHydrated: false,
 
       setHasHydrated: (hasHydrated: boolean) => {
-        set({ hasHydrated: hasHydrated });
+        set({hasHydrated: hasHydrated});
       },
 
       login: async (credentials: LoginRequest) => {
-        set({ isLoading: true });
+        set({isLoading: true});
         try {
           const response = await authApi.login(credentials);
 
@@ -95,15 +98,15 @@ export const useAuth = create<AuthState>()(
             profilePictureUrl: response.profilePictureUrl,
           };
 
-          set({ user, isAuthenticated: true, isLoading: false });
+          set({user, isAuthenticated: true, isLoading: false});
         } catch (error) {
-          set({ isLoading: false });
+          set({isLoading: false});
           throw error;
         }
       },
 
       googleLogin: async (credentials: GoogleLoginRequest) => {
-        set({ isLoading: true });
+        set({isLoading: true});
         try {
           const response = await authApi.googleLogin(credentials);
 
@@ -132,9 +135,9 @@ export const useAuth = create<AuthState>()(
             profilePictureUrl: response.profilePictureUrl,
           };
 
-          set({ user, isAuthenticated: true, isLoading: false });
+          set({user, isAuthenticated: true, isLoading: false});
         } catch (error) {
-          set({ isLoading: false });
+          set({isLoading: false});
           throw error;
         }
       },
@@ -145,7 +148,7 @@ export const useAuth = create<AuthState>()(
         // then cancel in-flight queries before clearing cache. Previously, auth state
         // was cleared last — background intervals (notifications, workflow) fired 401s
         // between authApi.logout() and set({ user: null }).
-        set({ user: null, isAuthenticated: false });
+        set({user: null, isAuthenticated: false});
         await getQueryClient().cancelQueries();
         getQueryClient().clear();
         apiClient.clearTokens();
@@ -154,16 +157,17 @@ export const useAuth = create<AuthState>()(
           sessionStorage.removeItem('auth-storage');
         }
         // Notify server best-effort — don't block redirect on network failure
-        authApi.logout().catch(() => {});
+        authApi.logout().catch(() => {
+        });
       },
 
       setUser: (user: User | null) => {
-        set({ user, isAuthenticated: !!user });
+        set({user, isAuthenticated: !!user});
       },
 
       restoreSession: async () => {
         try {
-          set({ isLoading: true });
+          set({isLoading: true});
 
           // P0-SESSION-FIX v2: Always issue our own refresh call that returns the
           // full AuthResponse (with user data). Previously we shared the 401
@@ -210,11 +214,11 @@ export const useAuth = create<AuthState>()(
                 profilePictureUrl: response.profilePictureUrl,
               };
 
-              set({ user, isAuthenticated: true, isLoading: false });
+              set({user, isAuthenticated: true, isLoading: false});
               return true;
             })
             .catch(() => {
-              set({ isLoading: false });
+              set({isLoading: false});
               return false;
             })
             .finally(() => {
@@ -224,7 +228,7 @@ export const useAuth = create<AuthState>()(
           setSharedRefreshPromise(refreshPromise);
           return await refreshPromise;
         } catch {
-          set({ isLoading: false });
+          set({isLoading: false});
           return false;
         }
       },

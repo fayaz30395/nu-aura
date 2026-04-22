@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.auth.dto.AuthResponse;
 import com.hrms.api.platform.dto.TenantRegistrationRequest;
 import com.hrms.application.platform.service.TenantProvisioningService;
+import com.hrms.common.config.TestMeterRegistryConfig;
+import com.hrms.common.exception.GlobalExceptionHandler;
 import com.hrms.common.security.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +31,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TenantController.class)
-@ContextConfiguration(classes = {TenantController.class, TenantControllerTest.TestConfig.class})
+@ContextConfiguration(classes = {TenantController.class, GlobalExceptionHandler.class, TenantControllerTest.TestConfig.class})
+@org.springframework.context.annotation.Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")

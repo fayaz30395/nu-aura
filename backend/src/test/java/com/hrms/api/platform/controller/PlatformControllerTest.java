@@ -268,8 +268,21 @@ class PlatformControllerTest {
                     .roleCodes(Set.of("HR_ADMIN"))
                     .build();
 
+            com.hrms.domain.user.User mockUser = new com.hrms.domain.user.User();
+            mockUser.setId(userId);
+            mockUser.setEmail("test@company.com");
+            mockUser.setFirstName("Test");
+            mockUser.setLastName("User");
+
+            NuApplication app = new NuApplication();
+            app.setId(UUID.randomUUID());
+            app.setCode("HRMS");
+            app.setName("NU-HRMS");
+
             UserAppAccess access = new UserAppAccess();
             access.setId(UUID.randomUUID());
+            access.setUser(mockUser);
+            access.setApplication(app);
 
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 UUID grantedBy = UUID.randomUUID();
