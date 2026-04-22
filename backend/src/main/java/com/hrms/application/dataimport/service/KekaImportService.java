@@ -109,7 +109,7 @@ public class KekaImportService {
     public KekaImportResult executeKekaImport(KekaImportExecuteRequest request) {
         log.info("Executing KEKA import with file ID: {}", request.getFileId());
 
-        TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -200,7 +200,7 @@ public class KekaImportService {
      */
     @Transactional(readOnly = true)
     public Page<KekaImportHistoryEntry> getImportHistory(Pageable pageable) {
-        TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
 
         return historyRepository.findByTenantIdOrderByUploadedAtDesc(tenantId, pageable)
                 .map(this::toHistoryEntry);

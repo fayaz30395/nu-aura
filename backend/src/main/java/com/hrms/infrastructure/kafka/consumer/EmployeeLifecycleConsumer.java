@@ -187,8 +187,9 @@ public class EmployeeLifecycleConsumer {
             if (metadata != null) {
                 Object mgr = metadata.get("onboardingManagerId");
                 Object mentor = metadata.get("mentorId");
-                if (mgr instanceof UUID) onboardingManagerId = (UUID) mgr;
-                if (mentor instanceof UUID) mentorId = (UUID) mentor;
+                UUID onboardingManagerId = mgr instanceof UUID ? (UUID) mgr : null;
+                UUID mentorId = mentor instanceof UUID ? (UUID) mentor : null;
+                log.debug("Onboarding manager: {}, mentor: {}", onboardingManagerId, mentorId);
             }
             try {
                 // Create onboarding process with default template

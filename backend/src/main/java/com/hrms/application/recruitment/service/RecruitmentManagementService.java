@@ -19,7 +19,6 @@ import com.hrms.domain.user.RoleScope;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
-import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

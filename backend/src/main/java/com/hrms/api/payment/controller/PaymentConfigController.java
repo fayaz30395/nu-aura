@@ -32,7 +32,7 @@ public class PaymentConfigController {
             @Valid @RequestBody PaymentConfigDto request) {
 
         paymentFeatureGuard.requirePaymentsEnabled();
-        request.toEntity();
+        PaymentConfig config = request.toEntity();
         PaymentConfig saved = paymentService.savePaymentConfig(config);
 
         return ResponseEntity.status(HttpStatus.CREATED)

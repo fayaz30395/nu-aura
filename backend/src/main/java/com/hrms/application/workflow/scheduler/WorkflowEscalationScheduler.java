@@ -9,7 +9,6 @@ import com.hrms.domain.workflow.WorkflowExecution;
 import com.hrms.application.notification.service.NotificationService;
 import com.hrms.infrastructure.workflow.repository.StepExecutionRepository;
 import com.hrms.infrastructure.workflow.repository.ApprovalStepRepository;
-import com.hrms.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;

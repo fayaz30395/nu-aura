@@ -1,6 +1,5 @@
 package com.hrms.api.audit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.audit.dto.AuditLogResponse;
 import com.hrms.api.audit.dto.AuditStatisticsResponse;
 import com.hrms.application.audit.service.AuditLogService;

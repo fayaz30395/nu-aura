@@ -143,7 +143,7 @@ public class WikiInlineCommentController {
         String avatarUrl = null;
 
         if (comment.getCreatedBy() != null) {
-            TenantContext.getCurrentTenant();
+            UUID tenantId = TenantContext.getCurrentTenant();
             Employee author = employeeRepository.findByUserIdWithUser(comment.getCreatedBy(), tenantId)
                     .orElse(null);
             if (author != null) {

@@ -1,6 +1,5 @@
 package com.hrms.api.admin.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.admin.dto.*;
 import com.hrms.application.admin.service.SystemAdminService;
 import com.hrms.common.exception.GlobalExceptionHandler;

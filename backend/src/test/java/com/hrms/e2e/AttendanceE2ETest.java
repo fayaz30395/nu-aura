@@ -10,7 +10,6 @@ import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
-import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;

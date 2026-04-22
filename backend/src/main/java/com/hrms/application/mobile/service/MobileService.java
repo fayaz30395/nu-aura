@@ -6,7 +6,6 @@ import com.hrms.application.announcement.service.AnnouncementService;
 import com.hrms.application.attendance.service.HolidayService;
 import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.application.leave.service.LeaveBalanceService;
-import com.hrms.application.leave.service.LeaveRequestService;
 import com.hrms.application.workflow.service.ApprovalService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;

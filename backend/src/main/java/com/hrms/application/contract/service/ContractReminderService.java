@@ -4,7 +4,6 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.ContractReminder;
 import com.hrms.domain.contract.ReminderType;
 import com.hrms.infrastructure.contract.repository.ContractReminderRepository;
-import com.hrms.infrastructure.contract.repository.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

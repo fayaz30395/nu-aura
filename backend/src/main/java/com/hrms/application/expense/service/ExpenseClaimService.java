@@ -83,7 +83,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse createExpenseClaim(UUID employeeId, ExpenseClaimRequest request) {
-        TenantContext.requireCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Validate employee exists
         if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
@@ -119,7 +119,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     @Transactional
     public ExpenseClaimResponse updateExpenseClaim(UUID claimId, ExpenseClaimRequest request) {
-        TenantContext.requireCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));

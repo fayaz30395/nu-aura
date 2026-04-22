@@ -70,7 +70,7 @@ public class ManagerDashboardService {
      */
     @Transactional(readOnly = true)
     public ManagerDashboardResponse getManagerDashboard(UUID managerId) {
-        TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
 
         // Get manager details

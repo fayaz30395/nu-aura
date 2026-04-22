@@ -48,9 +48,11 @@ public class WorkflowService {
     private static final String AUDIT_ENTITY_WORKFLOW_EXECUTION = "WORKFLOW_EXECUTION";
 
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
+    private final ApprovalStepRepository approvalStepRepository;
     private final WorkflowExecutionRepository workflowExecutionRepository;
     private final StepExecutionRepository stepExecutionRepository;
     private final ApprovalDelegateRepository approvalDelegateRepository;
+    private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;

@@ -59,7 +59,7 @@ public class AuditLogService {
             String ipAddress = request != null ? getClientIp(request) : null;
             String userAgent = request != null ? request.getHeader("User-Agent") : null;
 
-            SecurityContext.getCurrentTenantId();
+            UUID tenantId = SecurityContext.getCurrentTenantId();
 
             AuditLog auditLog = AuditLog.builder()
                     .entityType(entityType)
@@ -97,7 +97,7 @@ public class AuditLogService {
 
     @Transactional(readOnly = true)
     public Page<AuditLogResponse> getAllAuditLogs(Pageable pageable) {
-        TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.getCurrentTenant();
         return auditLogRepository.findAllByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
                 .map(this::enrichResponse);
     }

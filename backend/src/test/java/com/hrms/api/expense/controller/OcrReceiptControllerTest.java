@@ -1,6 +1,5 @@
 package com.hrms.api.expense.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.expense.dto.OcrResult;
 import com.hrms.application.expense.service.OcrReceiptService;
 import com.hrms.common.security.*;

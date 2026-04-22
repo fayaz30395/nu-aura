@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.hrms.api.analytics.dto.ScheduledReportRequest;
-import com.hrms.api.analytics.dto.ScheduledReportResponse;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.analytics.ReportDefinition;

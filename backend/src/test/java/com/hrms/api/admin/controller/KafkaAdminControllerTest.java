@@ -1,6 +1,5 @@
 package com.hrms.api.admin.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.*;
 import com.hrms.domain.kafka.FailedKafkaEvent;
 import com.hrms.domain.kafka.FailedKafkaEvent.FailedEventStatus;

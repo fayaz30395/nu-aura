@@ -1,6 +1,5 @@
 package com.hrms.api.publicapi.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.publicapi.service.PublicCareerService;
 import com.hrms.common.security.*;
 import org.junit.jupiter.api.*;

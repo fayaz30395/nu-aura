@@ -25,7 +25,7 @@ public class MobileNotificationService {
     @Transactional
     public void registerDevice(MobileNotificationDto.DeviceRegistrationRequest request) {
         TenantContext.getCurrentTenant();
-        SecurityContext.getCurrentUserId();
+        UUID userId = SecurityContext.getCurrentUserId();
 
         log.info("Registering device for user={}, deviceType={}, appVersion={}",
                 userId, request.getDeviceType(), request.getAppVersion());

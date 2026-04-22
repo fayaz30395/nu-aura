@@ -6,7 +6,6 @@ import com.hrms.domain.knowledge.BlogPost;
 import com.hrms.domain.knowledge.KnowledgeSearch;
 import com.hrms.domain.knowledge.WikiPage;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
-import com.hrms.infrastructure.knowledge.repository.DocumentTemplateRepository;
 import com.hrms.infrastructure.knowledge.repository.KnowledgeSearchRepository;
 import com.hrms.infrastructure.knowledge.repository.WikiPageRepository;
 import lombok.RequiredArgsConstructor;

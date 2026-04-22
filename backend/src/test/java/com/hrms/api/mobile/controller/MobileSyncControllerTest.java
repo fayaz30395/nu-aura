@@ -1,6 +1,5 @@
 package com.hrms.api.mobile.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.mobile.dto.MobileSyncDto;
 import com.hrms.application.mobile.service.MobileSyncService;
 import com.hrms.common.security.*;

@@ -3,7 +3,6 @@ package com.hrms.api.integration.controller;
 import com.hrms.api.integration.dto.*;
 import com.hrms.application.integration.service.ConnectorRegistry;
 import com.hrms.application.integration.service.IntegrationConnectorConfigService;
-import com.hrms.application.integration.service.IntegrationEventLogService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;

@@ -3,7 +3,6 @@ package com.hrms.application.expense.service;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
-import com.hrms.infrastructure.expense.repository.ExpenseItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

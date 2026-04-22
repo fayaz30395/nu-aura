@@ -7,7 +7,6 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

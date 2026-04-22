@@ -1,7 +1,6 @@
 package com.hrms.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrms.application.auth.service.AuthService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;

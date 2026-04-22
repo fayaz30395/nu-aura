@@ -13,7 +13,6 @@ import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.common.config.CacheConfig;
-import com.hrms.infrastructure.user.repository.CustomScopeTargetRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;

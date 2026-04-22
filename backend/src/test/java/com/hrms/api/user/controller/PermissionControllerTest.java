@@ -1,6 +1,5 @@
 package com.hrms.api.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.user.dto.PermissionResponse;
 import com.hrms.application.user.service.PermissionService;
 import com.hrms.common.exception.GlobalExceptionHandler;

@@ -1,6 +1,5 @@
 package com.hrms.api.monitoring.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.monitoring.dto.MetricsResponse;
 import com.hrms.api.monitoring.dto.SystemHealthResponse;
 import com.hrms.api.monitoring.service.MonitoringService;

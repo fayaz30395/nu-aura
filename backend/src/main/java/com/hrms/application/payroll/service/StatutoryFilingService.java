@@ -37,6 +37,7 @@ import java.util.UUID;
 public class StatutoryFilingService {
 
     private static final String CATEGORY_STATUTORY = "statutory-filings";
+    private final StatutoryFilingTemplateRepository templateRepository;
     private final StatutoryFilingRunRepository filingRunRepository;
     private final FileStorageService fileStorageService;
     private final Map<FilingType, FilingFormatGenerator> generators;

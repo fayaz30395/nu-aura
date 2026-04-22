@@ -1,6 +1,5 @@
 package com.hrms.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
