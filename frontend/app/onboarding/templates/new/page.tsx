@@ -129,7 +129,7 @@ export default function NewTemplatePage() {
         </motion.div>
 
         {/* Info Card */}
-        <Card className='border-0 bg-accent-500/5 border-l-4 border-[var(--accent-primary)] rounded-lg'>
+        <Card className="border-0 bg-[var(--accent-500)]/5 border-l-4 border-[var(--accent-primary)] rounded-lg">
           <CardContent className="p-6 flex gap-4">
             <CheckCircle2 className='h-6 w-6 text-accent shrink-0 mt-1'/>
             <div>

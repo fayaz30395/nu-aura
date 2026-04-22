@@ -867,7 +867,7 @@ export default function ExpenseClaims() {
                     key={claim.id}
                     className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
                       selectedClaims.has(claim.id)
-                        ? "border-[var(--accent-primary)] bg-accent-50/50"
+                        ? "border-[var(--accent-primary)] bg-[var(--accent-50)]/50"
                         : 'border-[var(--border-main)]'
                     }`}
                   >

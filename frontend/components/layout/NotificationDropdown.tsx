@@ -407,7 +407,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             Google
             {googleNotifications.length > 0 && (
               <span
-                className='ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/15 text-accent rounded-full'>
+                className="ml-1.5 px-1.5 py-0.5 text-xs bg-[var(--accent-500)]/15 text-accent rounded-full">
                 {googleNotifications.length}
               </span>
             )}
@@ -423,7 +423,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
           >
             System
             {systemUnreadCount > 0 && (
-              <span className='ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/20 text-accent rounded-full'>
+              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-[var(--accent-500)]/20 text-accent rounded-full">
                 {systemUnreadCount}
               </span>
             )}
@@ -558,7 +558,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         onClose();
                         router.push(getNotificationRoute(notification));
                       }}
-                      className='flex gap-2 p-4 hover:bg-base transition-colors cursor-pointer bg-accent-50/50'
+                      className="flex gap-2 p-4 hover:bg-base transition-colors cursor-pointer bg-[var(--accent-50)]/50"
                     >
                       <div
                         className='flex-shrink-0 w-8 h-8 rounded-lg bg-accent-subtle flex items-center justify-center'>
@@ -585,7 +585,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                       }}
                       className={cn(
                         'flex gap-2 p-4 hover:bg-base transition-colors cursor-pointer',
-                        !notification.isRead && 'bg-accent-50/50'
+                        !notification.isRead && "bg-[var(--accent-50)]/50"
                       )}
                     >
                       <div className={cn(

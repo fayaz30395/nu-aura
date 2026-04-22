@@ -125,7 +125,7 @@ export default function OnboardingDetailPage() {
     return (
       <AppLayout activeMenuItem="recruitment">
         <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
-          <div className="h-16 w-16 border-4 border-accent-500/20 border-t-accent-500 rounded-full animate-spin"/>
+          <div className="h-16 w-16 border-4 border-[var(--accent-500)]/20 border-t-accent-500 rounded-full animate-spin"/>
           <p className="text-[var(--text-muted)] font-bold animate-pulse">Initializing Dashboard...</p>
         </div>
       </AppLayout>
@@ -166,7 +166,7 @@ export default function OnboardingDetailPage() {
                 size="sm"
                 onClick={() => router.back()}
                 leftIcon={<ArrowLeft className="h-4 w-4"/>}
-                className='hover:bg-accent-500/10 text-accent font-bold'
+                className="hover:bg-[var(--accent-500)]/10 text-accent font-bold"
               >
                 Back to List
               </Button>
@@ -235,7 +235,7 @@ export default function OnboardingDetailPage() {
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className='h-10 w-10 rounded-lg bg-accent-500/10 text-accent flex items-center justify-center font-bold'>
+                          className="h-10 w-10 rounded-lg bg-[var(--accent-500)]/10 text-accent flex items-center justify-center font-bold">
                           {idx + 1}
                         </div>
                         <div>
@@ -260,7 +260,7 @@ export default function OnboardingDetailPage() {
                             {catTasks.map((task) => (
                               <div
                                 key={task.id}
-                                className={`row-between p-4 rounded-lg group transition-all ${task.status === 'COMPLETED' ? 'bg-success-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
+                                className={`row-between p-4 rounded-lg group transition-all ${task.status === 'COMPLETED' ? "bg-[var(--success-500)]/5" : 'hover:bg-[var(--bg-secondary)]/5'
                                 }`}
                               >
                                 <div className="flex items-center gap-4 flex-1">
@@ -282,7 +282,7 @@ export default function OnboardingDetailPage() {
                                       }`}>
                                       {task.taskName}
                                       {task.isMandatory && <span
-                                        className='ml-2 text-xs text-status-danger-text bg-danger-500/10 px-1.5 rounded uppercase font-black'>Required</span>}
+                                        className="ml-2 text-xs text-status-danger-text bg-[var(--danger-500)]/10 px-1.5 rounded uppercase font-black">Required</span>}
                                     </p>
                                     {task.description && (
                                       <p className="text-body-muted font-medium">{task.description}</p>
@@ -361,7 +361,7 @@ export default function OnboardingDetailPage() {
                   ) : (
                     <div className="space-y-4">
                       <div
-                        className="p-4 rounded-lg bg-success-500/10 border border-success-500/20 flex items-center gap-4">
+                        className="p-4 rounded-lg bg-[var(--success-500)]/10 border border-[var(--success-500)]/20 flex items-center gap-4">
                         <ShieldCheck className='h-5 w-5 text-status-success-text'/>
                         <span className='text-xs font-bold text-status-success-text'>Drive Connected</span>
                       </div>

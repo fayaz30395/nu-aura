@@ -172,7 +172,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 <div className="space-y-1">
                   <div
                     className={`inline-flex items-center gap-1.5 px-4 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
-                      dayComplete ? "bg-success-500/25 text-status-success-text" : isCheckedIn ? "bg-success-400/25 text-status-success-text" : 'bg-white/15 text-white/80'
+                      dayComplete ? "bg-[var(--success-500)]/25 text-status-success-text" : isCheckedIn ? "bg-[var(--success-400)]/25 text-status-success-text" : 'bg-white/15 text-white/80'
                     }`}>
                     <div
                       className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? "bg-status-success-bg animate-pulse" : dayComplete ? "bg-status-success-bg" : 'bg-white/50'}`}/>
@@ -183,7 +183,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   </div>
                   {isLateToday && (
                     <div
-                      className='inline-flex items-center gap-1 px-2 py-0.5 bg-danger-500/30 rounded-full text-xs font-medium text-status-danger-text'>
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--danger-500)]/30 rounded-full text-xs font-medium text-status-danger-text">
                       <AlertTriangle className="h-3 w-3"/>
                       Late by {lateByMinutes}m
                     </div>
@@ -194,7 +194,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                     className="text-4xl lg:text-5xl font-extrabold font-mono tracking-tight tabular-nums drop-shadow-[var(--shadow-elevated)]">
                     {currentTime.toLocaleTimeString('en-US', {hour12: true, hour: '2-digit', minute: '2-digit'})}
                   </div>
-                  <div className="flex items-center gap-2 text-accent-200/80 justify-end mt-1.5">
+                  <div className="flex items-center gap-2 text-[var(--accent-200)]/80 justify-end mt-1.5">
                     <MapPin className="h-3.5 w-3.5"/>
                     <span
                       className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location unavailable'}</span>
@@ -206,7 +206,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex items-end justify-between">
                 <div className="flex gap-6">
                   <div>
-                    <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Check In
+                    <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check In
                     </div>
                     <div className='text-xl font-bold tabular-nums text-inverse'>
                       {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
@@ -214,7 +214,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   </div>
                   {isCheckedOut && todayRecord?.checkOutTime && (
                     <div>
-                      <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Check
+                      <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Check
                         Out
                       </div>
                       <div
@@ -223,7 +223,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   )}
                   {isCheckedIn && (
                     <div>
-                      <div className="text-xs font-semibold text-accent-200/70 uppercase tracking-wider mb-1">Duration
+                      <div className="text-xs font-semibold text-[var(--accent-200)]/70 uppercase tracking-wider mb-1">Duration
                       </div>
                       <div
                         className='text-xl font-bold tabular-nums text-inverse'>{formatDuration(currentWorkHours)}</div>
@@ -232,7 +232,7 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                   {isOvertime && (
                     <div>
                       <div
-                        className="text-xs font-semibold text-warning-300/80 uppercase tracking-wider mb-1">Overtime
+                        className="text-xs font-semibold text-[var(--warning-300)]/80 uppercase tracking-wider mb-1">Overtime
                       </div>
                       <div
                         className='text-xl font-bold tabular-nums text-status-warning-text'>+{formatDuration(overtimeHours)}</div>

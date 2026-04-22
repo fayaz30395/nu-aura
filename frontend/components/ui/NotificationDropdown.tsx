@@ -140,7 +140,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                     'hover:bg-[var(--bg-secondary)] transition-colors duration-150',
                     'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-700',
                     'border-b border-[var(--border-main)] last:border-b-0',
-                    !notification.isRead && 'bg-accent-50/50'
+                    !notification.isRead && "bg-[var(--accent-50)]/50"
                   )}
                 >
                   {/* Unread indicator dot */}

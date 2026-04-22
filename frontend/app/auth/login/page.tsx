@@ -218,7 +218,7 @@ function LoginPageLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
+        <div className="w-12 h-12 border-2 border-[var(--accent-300)]/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
     </div>
@@ -260,7 +260,7 @@ function DemoLoginPanel({
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4"/>
           <span>Demo Accounts</span>
-          <span className='text-xs px-1.5 py-0.5 rounded bg-warning-200/60 text-status-warning-text'>
+          <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--warning-200)]/60 text-status-warning-text">
             {DEMO_ACCOUNTS.length} roles
           </span>
         </div>
@@ -565,7 +565,7 @@ function LoginPage() {
           >
             {/* Platform badge */}
             <div
-              className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 border border-[var(--accent-primary)] mb-8'>
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--accent-100)]/60 border border-[var(--accent-primary)] mb-8">
               <div className='w-2 h-2 rounded-full bg-status-success-bg animate-pulse'/>
               <span className='text-accent text-xs font-medium tracking-wider uppercase' style={{letterSpacing: '3px'}}>
                 Infinite Innovation
@@ -631,7 +631,7 @@ function LoginPage() {
             <div className="flex justify-center mb-10 lg:mb-8">
               <div className="relative">
                 <div
-                  className="absolute -inset-4 rounded-full bg-accent-500/10 blur-xl"
+                  className="absolute -inset-4 rounded-full bg-[var(--accent-500)]/10 blur-xl"
                   style={{animation: 'pulse-ring 4s ease-in-out infinite'}}
                 />
                 {/* Light mode: navy text + gradient "g" */}

@@ -28,7 +28,7 @@ export function Loading({size = 'md', text, fullScreen = false, variant = 'orbit
       <div className="fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
         <div className="relative">
           {/* Glow effect behind spinner */}
-          <div className="absolute inset-0 blur-3xl bg-accent-500/20 rounded-full scale-150"/>
+          <div className="absolute inset-0 blur-3xl bg-[var(--accent-500)]/20 rounded-full scale-150"/>
           {spinner}
         </div>
       </div>
@@ -227,7 +227,7 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: NuAuraLoad
 
           {/* Radial glow behind logo */}
           <div
-            className='absolute inset-6 rounded-full bg-accent-500/12 blur-2xl nuaura-breathe'/>
+            className="absolute inset-6 rounded-full bg-[var(--accent-500)]/12 blur-2xl nuaura-breathe"/>
 
           {/* Floating particles */}
           {PARTICLES.map((p, i) => (

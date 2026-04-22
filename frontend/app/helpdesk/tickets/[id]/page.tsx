@@ -334,7 +334,7 @@ export default function TicketDetailPage() {
 
             {/* Escalations */}
             {escalations.length > 0 && (
-              <Card className='p-6 border-status-warning-border bg-warning-50/50'>
+              <Card className="p-6 border-status-warning-border bg-[var(--warning-50)]/50">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle className='h-4 w-4 text-status-warning-text'/>
                   <h3 className='text-sm font-semibold text-status-warning-text'>
@@ -580,7 +580,7 @@ function CommentItem({comment, currentUserId, onDelete, formatDate}: CommentItem
 
   return (
     <div
-      className={`flex gap-4 ${comment.isInternal ? "bg-warning-50/50 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50" : ''}`}>
+      className={`flex gap-4 ${comment.isInternal ? "bg-[var(--warning-50)]/50 -mx-2 px-2 py-2 rounded-lg border border-[var(--warning-200)]/50" : ''}`}>
       <div
         className='h-8 w-8 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
         <User className='h-4 w-4 text-accent'/>

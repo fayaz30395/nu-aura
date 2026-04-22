@@ -244,7 +244,7 @@ export default function ShiftDashboardPage() {
                       return (
                         <td
                           key={dateStr}
-                          className={`p-2 text-center ${isToday ? "bg-accent-50/50" : ''}`}
+                          className={`p-2 text-center ${isToday ? "bg-[var(--accent-50)]/50" : ''}`}
                         >
                           {entry ? (
                             <div

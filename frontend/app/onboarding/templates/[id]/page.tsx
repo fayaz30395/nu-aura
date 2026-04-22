@@ -196,7 +196,7 @@ export default function TemplateEditorPage() {
                   className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
                   Blueprint <span className='text-accent'>Editor</span>
                   <Badge variant="outline"
-                         className='rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent'>
+                         className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-[var(--accent-500)]/20 text-accent">
                     V1.0
                   </Badge>
                 </h1>
@@ -251,7 +251,7 @@ export default function TemplateEditorPage() {
               </Card>
 
               <Card
-                className='border-0 bg-accent-600/5 border-l-4 border-[var(--accent-primary)] rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10'>
+                className="border-0 bg-[var(--accent-600)]/5 border-l-4 border-[var(--accent-primary)] rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10">
                 <CardContent className="p-8 space-y-4">
                   <div className='flex items-center gap-2 text-accent font-black uppercase tracking-widest text-xs'>
                     <AlertCircle className="h-4 w-4"/>
@@ -279,7 +279,7 @@ export default function TemplateEditorPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className='rounded-xl font-black tracking-widest uppercase text-xs border-accent-500/20 text-accent hover:bg-accent hover:text-inverse transition-all transform hover:scale-105'
+                    className="rounded-xl font-black tracking-widest uppercase text-xs border-[var(--accent-500)]/20 text-accent hover:bg-accent hover:text-inverse transition-all transform hover:scale-105"
                     leftIcon={<Plus className="h-3.5 w-3.5"/>}
                     onClick={handleAddTask}
                   >

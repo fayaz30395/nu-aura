@@ -64,8 +64,8 @@ export function CalendarGridView({
           <div
             key={day.toISOString()}
             className={`min-h-[120px] p-2 bg-[var(--bg-card)] ${
-              !isCurrentMonth ? "bg-surface-50/50 text-muted" : ''
-            } ${isToday(day) ? "bg-accent-50/30" : ''}`}
+              !isCurrentMonth ? "bg-[var(--surface-50)]/50 text-muted" : ''
+            } ${isToday(day) ? "bg-[var(--accent-50)]/30" : ''}`}
             onClick={() => onDateChange(day)}
           >
             <div className="row-between mb-2">

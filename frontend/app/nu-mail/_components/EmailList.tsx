@@ -101,7 +101,7 @@ export function EmailList({
               key={email.id}
               onClick={() => onEmailClick(email.id)}
               className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
-                !email.isRead ? 'bg-accent-50/50' : ''
+                !email.isRead ? "bg-[var(--accent-50)]/50" : ''
               }`}
             >
               <button

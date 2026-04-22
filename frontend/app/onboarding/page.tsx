@@ -68,23 +68,23 @@ export default function OnboardingPage() {
       value: processes.filter(p => p.status === 'IN_PROGRESS').length,
       icon: Zap,
       color: "text-status-warning-text",
-      bg: 'bg-warning-500/10'
+      bg: "bg-[var(--warning-500)]/10"
     },
     {
       label: 'Upcoming',
       value: processes.filter(p => p.status === 'NOT_STARTED').length,
       icon: Calendar,
       color: "text-accent",
-      bg: 'bg-accent-500/10'
+      bg: "bg-[var(--accent-500)]/10"
     },
     {
       label: 'Completed',
       value: processes.filter(p => p.status === 'COMPLETED').length,
       icon: ShieldCheck,
       color: "text-status-success-text",
-      bg: 'bg-success-500/10'
+      bg: "bg-[var(--success-500)]/10"
     },
-    {label: 'Avg. Days', value: '12', icon: Clock, color: "text-accent", bg: 'bg-accent-500/10'}
+    {label: 'Avg. Days', value: '12', icon: Clock, color: "text-accent", bg: "bg-[var(--accent-500)]/10"}
   ];
 
   return (

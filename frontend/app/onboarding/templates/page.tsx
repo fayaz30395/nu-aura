@@ -37,7 +37,7 @@ export default function TemplatesPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-accent-500/10 rounded-xl">
+              <div className="p-2 bg-[var(--accent-500)]/10 rounded-xl">
                 <Layout className='h-6 w-6 text-accent'/>
               </div>
               <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
@@ -108,11 +108,11 @@ export default function TemplatesPage() {
                       >
                         <CardContent className="p-6 h-full flex flex-col">
                           <div className="flex justify-between items-start mb-4">
-                            <div className="p-4 bg-accent-500/10 rounded-lg">
+                            <div className="p-4 bg-[var(--accent-500)]/10 rounded-lg">
                               <ClipboardList className='h-6 w-6 text-accent'/>
                             </div>
                             <Badge variant="outline"
-                                   className='rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent'>
+                                   className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-[var(--accent-500)]/20 text-accent">
                               Blueprint
                             </Badge>
                           </div>
@@ -145,7 +145,7 @@ export default function TemplatesPage() {
                               </PermissionGate>
                               <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                                 <Button size="sm" variant="outline"
-                                        className='h-8 w-8 p-0 rounded-xl text-status-danger-text border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all'>
+                                        className="h-8 w-8 p-0 rounded-xl text-status-danger-text border-[var(--danger-500)]/20 opacity-0 group-hover:opacity-100 transition-all">
                                   <Trash2 className="h-3.5 w-3.5"/>
                                 </Button>
                               </PermissionGate>

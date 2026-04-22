@@ -18,7 +18,7 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }
     badge: "bg-accent-subtle text-accent"
   },
   SVP: {
-    bg: "bg-accent-50/80",
+    bg: "bg-[var(--accent-50)]/80",
     border: "border-[var(--accent-primary)]",
     badge: "bg-accent-subtle text-accent"
   },
@@ -28,7 +28,7 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }
     badge: "bg-accent-subtle text-accent"
   },
   DIRECTOR: {
-    bg: "bg-accent-50/80",
+    bg: "bg-[var(--accent-50)]/80",
     border: "border-[var(--accent-primary)]",
     badge: "bg-accent-subtle text-accent"
   },
@@ -38,7 +38,7 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }
     badge: "bg-status-success-bg text-status-success-text"
   },
   MANAGER: {
-    bg: "bg-success-50/80",
+    bg: "bg-[var(--success-50)]/80",
     border: "border-status-success-border",
     badge: "bg-status-success-bg text-status-success-text"
   },
@@ -53,12 +53,12 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }
     badge: "bg-surface text-secondary"
   },
   MID: {
-    bg: "bg-surface-50/60",
+    bg: "bg-[var(--surface-50)]/60",
     border: "border-subtle",
     badge: "bg-surface text-secondary"
   },
   ENTRY: {
-    bg: "bg-surface-50/40",
+    bg: "bg-[var(--surface-50)]/40",
     border: "border-subtle",
     badge: "bg-surface text-secondary"
   },

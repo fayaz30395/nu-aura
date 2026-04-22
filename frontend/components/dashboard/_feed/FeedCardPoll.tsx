@@ -32,7 +32,7 @@ export function FeedCardPoll({options, hasVoted, votedOptionId, isVoting, onVote
               'relative w-full text-left rounded-lg border px-4 py-2.5 text-sm transition-all overflow-hidden',
               hasVoted
                 ? 'cursor-default border-[var(--border-main)]'
-                : 'cursor-pointer border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-accent-50/50'
+                : "cursor-pointer border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--accent-50)]/50"
             )}
           >
             {hasVoted && (

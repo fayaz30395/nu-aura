@@ -395,7 +395,7 @@ export default function EmployeeDetailPage() {
                   width={80}
                   height={80}
                   unoptimized
-                  className="h-20 w-20 rounded-full object-cover border-2 border-accent-500/30"
+                  className="h-20 w-20 rounded-full object-cover border-2 border-[var(--accent-500)]/30"
                 />
               ) : (
                 <AvatarInitials name={employee.fullName} size="xl"/>
@@ -706,7 +706,7 @@ export default function EmployeeDetailPage() {
                     <InfoField label="IFSC / Routing" value={employee.bankIfscCode}/>
                     <InfoField label="Tax ID / SSN" value={employee.taxId}/>
                   </div>
-                  <div className='mt-4 bg-accent-subtle border border-accent-500/30 rounded-md p-4'>
+                  <div className="mt-4 bg-accent-subtle border border-[var(--accent-500)]/30 rounded-md p-4">
                     <p className='text-xs text-accent'>
                       Banking and tax information is encrypted and stored securely.
                     </p>
@@ -940,7 +940,7 @@ export default function EmployeeDetailPage() {
                       whileHover={{y: -2}}
                       transition={{type: 'spring', stiffness: 400, damping: 25}}
                     >
-                      <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
+                      <Card className="cursor-pointer hover:border-[var(--accent-500)]/30 transition-colors">
                         <CardContent className="p-6 text-center">
                           <div
                             className='h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-subtle flex items-center justify-center'>

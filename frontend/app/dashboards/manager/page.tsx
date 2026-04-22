@@ -84,11 +84,11 @@ const priorityDotColor: Record<string, string> = {
 
 // Utility: status badge styles
 const statusBadgeStyles: Record<string, string> = {
-  IN_PROGRESS: "bg-accent-500/10 text-accent border-accent-500/20",
-  PLANNED: "bg-surface-500/10 text-secondary border-surface-500/20",
+  IN_PROGRESS: "bg-[var(--accent-500)]/10 text-accent border-[var(--accent-500)]/20",
+  PLANNED: "bg-[var(--surface-500)]/10 text-secondary border-[var(--surface-500)]/20",
   DRAFT: "bg-transparent text-muted border-subtle",
-  COMPLETED: "bg-success-500/10 text-status-success-text border-success-500/20",
-  ON_HOLD: "bg-warning-500/10 text-status-warning-text border-warning-500/20",
+  COMPLETED: "bg-[var(--success-500)]/10 text-status-success-text border-[var(--success-500)]/20",
+  ON_HOLD: "bg-[var(--warning-500)]/10 text-status-warning-text border-[var(--warning-500)]/20",
 };
 
 
@@ -243,8 +243,8 @@ export default function ManagerDashboardPage() {
           <div className="flex items-center gap-4">
             <div
               className={`px-4 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-[var(--shadow-card)] transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
-                ? "bg-success-500/10 border-success-500/20 text-status-success-text"
-                : "bg-warning-500/10 border-warning-500/20 text-status-warning-text"
+                ? "bg-[var(--success-500)]/10 border-[var(--success-500)]/20 text-status-success-text"
+                : "bg-[var(--warning-500)]/10 border-[var(--warning-500)]/20 text-status-warning-text"
               }`}>
               <Activity className="h-4 w-4"/>
               <span
@@ -377,7 +377,7 @@ export default function ManagerDashboardPage() {
               <CardContent className="p-4">
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="p-2.5 bg-accent-500/5 rounded-xl border border-accent-500/10">
+                    <div className="p-2.5 bg-[var(--accent-500)]/5 rounded-xl border border-[var(--accent-500)]/10">
                       <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly
                         Rate</p>
                       <span
@@ -385,7 +385,7 @@ export default function ManagerDashboardPage() {
                         {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="p-2.5 bg-success-500/5 rounded-xl border border-success-500/10">
+                    <div className="p-2.5 bg-[var(--success-500)]/5 rounded-xl border border-[var(--success-500)]/10">
                       <p
                         className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Stability</p>
                       <div className="flex items-center gap-2">
@@ -480,7 +480,7 @@ export default function ManagerDashboardPage() {
                     <span className="text-sm">Approval Pipeline</span>
                   </div>
                   <Badge
-                    className='bg-accent-500/10 text-accent border-accent-500/20 text-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
+                    className="bg-[var(--accent-500)]/10 text-accent border-[var(--accent-500)]/20 text-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                     {teamLeave.pendingLeaveRequests.length} Active
                   </Badge>
                 </CardTitle>
@@ -522,7 +522,7 @@ export default function ManagerDashboardPage() {
                   {teamLeave.pendingLeaveRequests.length === 0 && (
                     <div className="p-6 text-center">
                       <div
-                        className="h-10 w-10 rounded-full bg-success-500/10 flex items-center justify-center mx-auto mb-2">
+                        className="h-10 w-10 rounded-full bg-[var(--success-500)]/10 flex items-center justify-center mx-auto mb-2">
                         <CheckCircle
                           className='h-5 w-5 text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                       </div>
@@ -554,28 +554,28 @@ export default function ManagerDashboardPage() {
                       count: actionItems.leaveApprovals,
                       icon: Calendar,
                       color: "text-status-warning-text",
-                      bg: 'bg-warning-500/10'
+                      bg: "bg-[var(--warning-500)]/10"
                     },
                     {
                       label: 'Timesheets',
                       count: actionItems.timesheetApprovals,
                       icon: Clock,
                       color: "text-accent",
-                      bg: 'bg-accent-500/10'
+                      bg: "bg-[var(--accent-500)]/10"
                     },
                     {
                       label: 'Performance',
                       count: actionItems.performanceReviewsDue,
                       icon: Target,
                       color: "text-accent",
-                      bg: 'bg-accent-700/10'
+                      bg: "bg-[var(--accent-700)]/10"
                     },
                     {
                       label: 'One-on-Ones',
                       count: actionItems.oneOnOnesDue,
                       icon: Users,
                       color: "text-status-success-text",
-                      bg: 'bg-success-500/10'
+                      bg: "bg-[var(--success-500)]/10"
                     }
                   ].map((item, idx) => (
                     <div key={idx}
@@ -593,7 +593,7 @@ export default function ManagerDashboardPage() {
 
                   {(actionItems.overdueApprovals > 0 || actionItems.overdueReviews > 0) && (
                     <div
-                      className='mt-2 p-2 rounded-xl bg-danger-500/10 border border-danger-500/20 text-status-danger-text flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
+                      className="mt-2 p-2 rounded-xl bg-[var(--danger-500)]/10 border border-[var(--danger-500)]/20 text-status-danger-text flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                       <AlertCircle className="h-4 w-4 animate-bounce"/>
                       <div>
                         <p
@@ -647,7 +647,7 @@ export default function ManagerDashboardPage() {
               {!teamProjectsLoading && teamProjectsError && (
                 <div className="p-8 text-center">
                   <div
-                    className="h-14 w-14 rounded-full bg-accent-500/10 flex items-center justify-center mx-auto mb-4">
+                    className="h-14 w-14 rounded-full bg-[var(--accent-500)]/10 flex items-center justify-center mx-auto mb-4">
                     <Briefcase
                       className='h-7 w-7 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                   </div>
@@ -662,7 +662,7 @@ export default function ManagerDashboardPage() {
               {!teamProjectsLoading && !teamProjectsError && teamProjectsData && teamProjectsData.teamMembers.length === 0 && (
                 <div className="p-8 text-center">
                   <div
-                    className="h-14 w-14 rounded-full bg-surface-500/10 flex items-center justify-center mx-auto mb-4">
+                    className="h-14 w-14 rounded-full bg-[var(--surface-500)]/10 flex items-center justify-center mx-auto mb-4">
                     <FolderKanban className='h-7 w-7 text-muted'/>
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">No Project Data</p>
@@ -703,7 +703,7 @@ export default function ManagerDashboardPage() {
                         <div className="flex items-center gap-4">
                           {member.isOverAllocated && (
                             <div
-                              className='flex items-center gap-1 text-xs font-black text-status-danger-text bg-danger-500/10 px-2.5 py-1 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
+                              className="flex items-center gap-1 text-xs font-black text-status-danger-text bg-[var(--danger-500)]/10 px-2.5 py-1 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                               <AlertTriangle className="h-3.5 w-3.5"/>
                               Over-allocated
                             </div>
@@ -794,7 +794,7 @@ export default function ManagerDashboardPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {teamAlerts.slice(0, 3).map((alert) => (
-                      <div key={alert.id} className="p-4 rounded-xl bg-[var(--glass-bg)] border border-danger-500/10">
+                      <div key={alert.id} className="p-4 rounded-xl bg-[var(--glass-bg)] border border-[var(--danger-500)]/10">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge
                             className='bg-status-danger-bg text-inverse font-black px-1.5 py-0 text-2xs'>CRITICAL</Badge>

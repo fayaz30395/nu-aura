@@ -75,61 +75,61 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
     col: 'border-t-accent-500',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.SCREENING]: {
     col: 'border-t-accent-500',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.PHONE_SCREEN]: {
     col: 'border-t-accent-500',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.INTERVIEW]: {
     col: 'border-t-accent-700',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.TECHNICAL_ROUND]: {
     col: 'border-t-accent-700',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.HR_ROUND]: {
     col: 'border-t-accent-800',
     header: "bg-accent-subtle",
     badge: "bg-accent-subtle text-accent",
-    bg: 'bg-accent-50/50'
+    bg: "bg-[var(--accent-50)]/50"
   },
   [ApplicationStatus.OFFER_PENDING]: {
     col: 'border-t-warning-500',
     header: "bg-status-warning-bg",
     badge: "bg-status-warning-bg text-status-warning-text",
-    bg: 'bg-warning-50/50'
+    bg: "bg-[var(--warning-50)]/50"
   },
   [ApplicationStatus.OFFERED]: {
     col: 'border-t-success-500',
     header: "bg-status-success-bg",
     badge: "bg-status-success-bg text-status-success-text",
-    bg: 'bg-success-50/50'
+    bg: "bg-[var(--success-50)]/50"
   },
   [ApplicationStatus.ACCEPTED]: {
     col: 'border-t-success-600',
     header: "bg-status-success-bg",
     badge: "bg-status-success-bg text-status-success-text",
-    bg: 'bg-success-50/50'
+    bg: "bg-[var(--success-50)]/50"
   },
   [ApplicationStatus.REJECTED]: {
     col: 'border-t-danger-500',
     header: "bg-status-danger-bg",
     badge: "bg-status-danger-bg text-status-danger-text",
-    bg: 'bg-danger-50/50'
+    bg: "bg-[var(--danger-50)]/50"
   },
   [ApplicationStatus.WITHDRAWN]: {
     col: 'border-t-[var(--border-main)]',

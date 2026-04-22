@@ -746,7 +746,7 @@ export default function OneOnOnePage() {
                               key={item.id}
                               className={`flex items-start gap-4 p-4 rounded-lg border transition-colors ${
                                 item.isDiscussed
-                                  ? "bg-success-50/50 border-status-success-border"
+                                  ? "bg-[var(--success-50)]/50 border-status-success-border"
                                   : 'bg-[var(--bg-card)] border-[var(--border-main)]'
                               }`}
                             >

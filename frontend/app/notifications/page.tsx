@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                   className={cn(
                     'flex items-start gap-4 px-4 py-4 transition-colors cursor-pointer',
                     !notification.isRead
-                      ? 'bg-accent-50/50 hover:bg-accent-subtle'
+                      ? "bg-[var(--accent-50)]/50 hover:bg-accent-subtle"
                       : 'hover:bg-[var(--bg-surface)]',
                     getPriorityStyles(notification.priority, notification.isRead)
                   )}

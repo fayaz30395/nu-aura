@@ -83,7 +83,7 @@ export const ChildrenFlyover: React.FC<ChildrenFlyoverProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-accent-500/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-[var(--accent-500)]/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             aria-label="Close"
           >
             <X className="h-4 w-4"/>
@@ -95,8 +95,8 @@ export const ChildrenFlyover: React.FC<ChildrenFlyoverProps> = ({
             const childClasses = cn(
               'w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
-                ? 'bg-accent-500/10 text-accent font-medium'
-                : 'text-secondary hover:bg-accent-500/10 hover:text-primary'
+                ? "bg-[var(--accent-500)]/10 text-accent font-medium"
+                : "text-secondary hover:bg-[var(--accent-500)]/10 hover:text-primary"
             );
 
             const childContent = (

@@ -122,7 +122,7 @@ export function FileUploader({onUpload, isUploading = false, className}: FileUpl
           'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
           isDragging
             ? 'border-[var(--accent-primary)] bg-accent-subtle'
-            : 'border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-accent-50/50',
+            : "border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--accent-50)]/50",
           isUploading && 'pointer-events-none opacity-60'
         )}
         onClick={() => fileInputRef.current?.click()}

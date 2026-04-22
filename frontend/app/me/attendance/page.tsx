@@ -396,7 +396,7 @@ export default function MyAttendancePage() {
                 )}
                 {attendanceComplete && (
                   <div
-                    className="flex items-center gap-2 px-6 py-4 rounded-lg border border-success-600/30 bg-success-600/10">
+                    className="flex items-center gap-2 px-6 py-4 rounded-lg border border-[var(--success-600)]/30 bg-[var(--success-600)]/10">
                     <CheckCircle className='h-5 w-5 text-status-success-text'/>
                     <span className='text-sm font-semibold text-status-success-text'>Attendance Completed</span>
                   </div>

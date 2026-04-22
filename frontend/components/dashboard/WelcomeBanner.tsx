@@ -51,14 +51,14 @@ export function WelcomeBanner({
         style={{backgroundImage: 'var(--skeuo-noise)'}}
       />
       <div className="relative z-10">
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-accent-200/70 mb-1">
+        <p className="text-xs font-medium uppercase tracking-[0.15em] text-[var(--accent-200)]/70 mb-1">
           {today}
         </p>
         <h1 className='text-xl sm:text-2xl font-bold text-inverse tracking-tight leading-tight'>
           {greeting}, {firstName}
         </h1>
         {(designation || department) && (
-          <p className="mt-1.5 text-sm text-accent-100/60 font-medium">
+          <p className="mt-1.5 text-sm text-[var(--accent-100)]/60 font-medium">
             {designation}{designation && department ? ' \u00B7 ' : ''}{department}
           </p>
         )}

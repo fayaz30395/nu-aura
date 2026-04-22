@@ -237,7 +237,7 @@ export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
         <h3 className='text-lg font-bold text-accent'>
           Happy birthday, {displayName}!
         </h3>
-        <p className='text-sm text-accent-700/70 mt-1 max-w-xs mx-auto'>
+        <p className="text-sm text-[var(--accent-700)]/70 mt-1 max-w-xs mx-auto">
           May this year bring you joy, success, and wonderful memories with the team!
         </p>
 

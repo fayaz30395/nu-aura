@@ -325,7 +325,7 @@ export default function CreateTemplatePage() {
                       }
                       className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-all ${
                         selectedIcon === icon
-                          ? 'bg-accent-500/10 ring-1 ring-accent-500/30 scale-110'
+                          ? "bg-[var(--accent-500)]/10 ring-1 ring-accent-500/30 scale-110"
                           : 'hover:bg-[var(--bg-secondary)]'
                       }`}
                     >

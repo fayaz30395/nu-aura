@@ -19,7 +19,7 @@ export function FeedCardPraise({item}: FeedCardPraiseProps) {
   return (
     <div className="px-4 pb-2">
       <div
-        className='flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 border border-warning-200/50'>
+        className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-warning-50 to-warning-50 border border-[var(--warning-200)]/50">
         <div
           className='w-12 h-12 rounded-full bg-status-warning-bg flex items-center justify-center text-lg font-bold text-status-warning-text overflow-hidden shrink-0'>
           {item.praiseRecipientAvatar ? (

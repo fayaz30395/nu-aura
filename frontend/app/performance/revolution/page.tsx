@@ -109,8 +109,8 @@ export default function PerformanceRevolutionPage() {
                     >
                       <div className={`
                        relative w-16 h-16 rounded-full flex items-center justify-center border-2
-                       ${node.type === 'COMPANY' ? "bg-accent-700/20 border-[var(--accent-primary)] h-24 w-24 shadow-[0_0_20px_rgba(59,130,246,0.5)]" :
-                        node.type === 'TEAM' ? "bg-accent-600/20 border-[var(--accent-primary)]" : 'bg-[var(--bg-secondary)] border-[var(--border-main)]'}
+                       ${node.type === 'COMPANY' ? "bg-[var(--accent-700)]/20 border-[var(--accent-primary)] h-24 w-24 shadow-[0_0_20px_rgba(59,130,246,0.5)]" :
+                        node.type === 'TEAM' ? "bg-[var(--accent-600)]/20 border-[var(--accent-primary)]" : 'bg-[var(--bg-secondary)] border-[var(--border-main)]'}
                      `}>
                         <div className="text-center">
                           <div className="text-xs font-black">{Math.round(node.progress)}%</div>

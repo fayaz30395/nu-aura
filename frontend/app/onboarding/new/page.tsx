@@ -184,7 +184,7 @@ export default function NewOnboardingPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
-                  <div className="bg-accent-500/5 p-6 rounded-3xl border border-accent-500/10">
+                  <div className="bg-[var(--accent-500)]/5 p-6 rounded-3xl border border-[var(--accent-500)]/10">
                     <label
                       className='block text-sm font-bold uppercase tracking-widest text-accent mb-4'>
                       Find Employee
@@ -201,7 +201,7 @@ export default function NewOnboardingPage() {
 
                   {selectedEmployee && (
                     <div
-                      className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
+                      className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-[var(--accent-500)]/10 animate-in fade-in slide-in-from-bottom-2">
                       <div
                         className='h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-inverse flex items-center justify-center font-black text-3xl shadow-[var(--shadow-dropdown)]'>
                         {selectedEmployee.name.charAt(0)}
@@ -239,7 +239,7 @@ export default function NewOnboardingPage() {
                         key={temp.id}
                         onClick={() => setSelectedTemplate(temp)}
                         className={`p-6 rounded-3xl border-2 transition-all cursor-pointer row-between group ${selectedTemplate?.id === temp.id
-                          ? "bg-accent-500/10 border-[var(--accent-primary)] shadow-[var(--shadow-dropdown)]"
+                          ? "bg-[var(--accent-500)]/10 border-[var(--accent-primary)] shadow-[var(--shadow-dropdown)]"
                           : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                         }`}
                       >
@@ -307,17 +307,17 @@ export default function NewOnboardingPage() {
               className="space-y-8"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
+                <div className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
                   <User className='h-10 w-10 mx-auto text-accent mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-accent'>Employee</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedEmployee?.name}</p>
                 </div>
-                <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
+                <div className="p-8 rounded-3xl bg-[var(--accent-500)]/10 border border-[var(--accent-500)]/20 text-center space-y-2">
                   <Layout className='h-10 w-10 mx-auto text-accent mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-accent'>Checklist</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
                 </div>
-                <div className="p-8 rounded-3xl bg-success-500/10 border border-success-500/20 text-center space-y-2">
+                <div className="p-8 rounded-3xl bg-[var(--success-500)]/10 border border-[var(--success-500)]/20 text-center space-y-2">
                   <Calendar className='h-10 w-10 mx-auto text-status-success-text mb-2'/>
                   <p className='text-xs font-black uppercase tracking-widest text-status-success-text'>Starts</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{formData.startDate}</p>
