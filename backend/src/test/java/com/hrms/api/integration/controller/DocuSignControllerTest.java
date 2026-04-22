@@ -86,7 +86,6 @@ class DocuSignControllerTest {
     private ScopeContextService scopeContextService;
     private MockedStatic<TenantContext> tenantContextMock;
     private DocuSignEnvelope sampleEnvelope;
-    private DocuSignEnvelopeResponse sampleEnvelopeResponse;
 
     /**
      * Computes HMAC-SHA256 for test verification.

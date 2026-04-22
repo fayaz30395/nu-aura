@@ -36,7 +36,6 @@ public class MobileService {
 
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
-    private final LeaveRequestService leaveRequestService;
     private final ApprovalService approvalService;
     private final AnnouncementService announcementService;
     private final HolidayService holidayService;

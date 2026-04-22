@@ -7,7 +7,6 @@ import com.hrms.api.overtime.dto.OvertimeRecordResponse;
 import com.hrms.application.overtime.service.OvertimeManagementService;
 import com.hrms.common.security.*;
 import com.hrms.domain.overtime.CompTimeBalance;
-import com.hrms.domain.overtime.CompTimeTransaction;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;

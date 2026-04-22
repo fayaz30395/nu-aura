@@ -4,7 +4,6 @@ import com.hrms.domain.auth.SamlIdentityProvider;
 import com.hrms.infrastructure.auth.repository.SamlIdentityProviderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.saml2.core.Saml2X509Credential;
-import org.springframework.security.saml2.provider.service.registration.InMemoryRelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrations;

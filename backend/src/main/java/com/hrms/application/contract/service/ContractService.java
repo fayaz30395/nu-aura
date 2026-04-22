@@ -4,7 +4,6 @@ import com.hrms.api.contract.dto.*;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.security.SecurityContext;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.contract.repository.*;
@@ -36,7 +35,6 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final ContractVersionRepository versionRepository;
     private final ContractSignatureRepository signatureRepository;
-    private final ContractReminderRepository reminderRepository;
     private final EmployeeService employeeService;
     private final MetricsService metricsService;
 

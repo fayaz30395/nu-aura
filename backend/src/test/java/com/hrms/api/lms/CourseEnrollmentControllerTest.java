@@ -2,7 +2,6 @@ package com.hrms.api.lms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.lms.dto.CompletionStatsResponse;
-import com.hrms.api.lms.dto.EnrollmentResponse;
 import com.hrms.api.lms.dto.UpdateProgressRequest;
 import com.hrms.application.lms.service.CourseEnrollmentService;
 import com.hrms.common.exception.GlobalExceptionHandler;

@@ -15,7 +15,6 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
 import com.hrms.domain.leave.LeaveRequest;
-import com.hrms.domain.leave.LeaveType;
 import com.hrms.domain.workflow.*;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;

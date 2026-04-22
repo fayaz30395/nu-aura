@@ -2,7 +2,6 @@ package com.hrms.application.statutory.service;
 
 import com.hrms.api.statutory.dto.LWFCalculationRequest;
 import com.hrms.api.statutory.dto.LWFConfigurationDto;
-import com.hrms.api.statutory.dto.LWFDeductionDto;
 import com.hrms.api.statutory.dto.LWFRemittanceReportDto;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;

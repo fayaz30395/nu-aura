@@ -3,13 +3,10 @@ package com.hrms.application.resourcemanagement.service;
 import com.hrms.api.resourcemanagement.dto.AllocationDTOs.*;
 import com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
 import com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
-import com.hrms.common.exception.ResourceNotFoundException;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.project.Project;
 import com.hrms.domain.project.ProjectEmployee;
-import com.hrms.domain.resourcemanagement.AllocationApprovalRequest;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
@@ -24,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -81,7 +77,6 @@ class ResourceManagementServiceTest {
     private UUID tenantId;
     private UUID employeeId;
     private UUID projectId;
-    private UUID managerId;
     private Employee employee;
     private Project project;
 

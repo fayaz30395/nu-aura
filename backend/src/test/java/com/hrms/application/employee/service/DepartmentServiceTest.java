@@ -7,7 +7,6 @@ import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Department;
-import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
@@ -45,7 +44,6 @@ class DepartmentServiceTest {
     private DepartmentService departmentService;
     private UUID tenantId;
     private UUID departmentId;
-    private UUID parentDepartmentId;
     private UUID managerId;
     private Department testDepartment;
 

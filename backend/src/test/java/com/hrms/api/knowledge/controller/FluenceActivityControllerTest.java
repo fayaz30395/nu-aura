@@ -1,6 +1,5 @@
 package com.hrms.api.knowledge.controller;
 
-import com.hrms.api.knowledge.dto.FluenceActivityDto;
 import com.hrms.application.knowledge.service.FluenceActivityService;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.SecurityContext;

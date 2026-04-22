@@ -22,11 +22,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -64,10 +62,8 @@ class ComplianceControllerTest {
     private TenantFilter tenantFilter;
 
     private UUID policyId;
-    private UUID employeeId;
     private UUID alertId;
     private CompliancePolicy policy;
-    private CompliancePolicyResponse policyResponse;
 
     @BeforeEach
     void setUp() {

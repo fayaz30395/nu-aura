@@ -20,7 +20,6 @@ import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.WorkflowExecutionRepository;
-import com.hrms.domain.workflow.WorkflowExecution;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

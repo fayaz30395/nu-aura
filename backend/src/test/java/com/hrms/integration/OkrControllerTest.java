@@ -3,7 +3,6 @@ package com.hrms.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.performance.dto.CheckInRequest;
 import com.hrms.domain.performance.OkrCheckIn.CheckInType;
-import com.hrms.api.performance.dto.KeyResultRequest;
 import com.hrms.api.performance.dto.ObjectiveRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

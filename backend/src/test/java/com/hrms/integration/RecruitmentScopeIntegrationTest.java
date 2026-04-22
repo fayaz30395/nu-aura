@@ -76,7 +76,6 @@ class RecruitmentScopeIntegrationTest {
     private Candidate reporteeCandidate;
     private Candidate otherCandidate;
     private Interview selfInterview;
-    private Interview reporteeInterview;
     private Interview otherInterview;
 
     @BeforeEach

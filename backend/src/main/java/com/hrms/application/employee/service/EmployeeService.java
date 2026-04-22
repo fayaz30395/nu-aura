@@ -466,7 +466,9 @@ public class EmployeeService {
         return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
     }
 
-    /** B-0005: pick the narrowest VIEW permission the caller actually holds so DataScope applies the right filter. */
+    /**
+     * B-0005: pick the narrowest VIEW permission the caller actually holds so DataScope applies the right filter.
+     */
     private String resolveEmployeeViewPermission() {
         if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) return Permission.EMPLOYEE_VIEW_ALL;
         if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_DEPARTMENT)) return Permission.EMPLOYEE_VIEW_DEPARTMENT;

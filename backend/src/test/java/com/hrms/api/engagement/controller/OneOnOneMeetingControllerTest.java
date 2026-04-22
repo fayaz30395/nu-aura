@@ -2,11 +2,9 @@ package com.hrms.api.engagement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.engagement.dto.OneOnOneMeetingRequest;
-import com.hrms.api.engagement.dto.OneOnOneMeetingResponse;
 import com.hrms.application.engagement.service.OneOnOneMeetingService;
 import com.hrms.common.security.*;
 import com.hrms.domain.engagement.MeetingActionItem;
-import com.hrms.domain.engagement.MeetingAgendaItem;
 import com.hrms.domain.engagement.OneOnOneMeeting;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

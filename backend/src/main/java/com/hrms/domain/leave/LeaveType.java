@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Where(clause = "is_deleted = false")
 @Entity

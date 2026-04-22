@@ -7,7 +7,6 @@ import com.hrms.application.integration.service.IntegrationEventLogService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.integration.ConnectorCapabilities;
 import com.hrms.domain.integration.ConnectorConfig;
 import com.hrms.domain.integration.ConnectionTestResult;
 import com.hrms.domain.integration.IntegrationConnector;
@@ -51,7 +50,6 @@ public class IntegrationConnectorController {
 
     private final ConnectorRegistry connectorRegistry;
     private final IntegrationConnectorConfigService configService;
-    private final IntegrationEventLogService eventLogService;
     private final IntegrationConnectorConfigRepository configRepository;
     private final IntegrationEventLogRepository eventLogRepository;
 

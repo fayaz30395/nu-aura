@@ -4,7 +4,6 @@ import com.hrms.domain.employee.Employee;
 import lombok.Getter;
 
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Event raised when a new employee is created/hired.

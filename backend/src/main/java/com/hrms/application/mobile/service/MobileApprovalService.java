@@ -18,7 +18,6 @@ import java.util.UUID;
 @Transactional
 public class MobileApprovalService {
 
-    private final ApprovalService approvalService;
 
     /**
      * Get pending approvals with count breakdown

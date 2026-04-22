@@ -7,7 +7,6 @@ import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 
 @Where(clause = "is_deleted = false")
 @Entity

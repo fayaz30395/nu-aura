@@ -17,7 +17,6 @@ import com.hrms.application.workflow.callback.ApprovalCallbackHandler;
 import com.hrms.domain.event.workflow.ApprovalDecisionEvent;
 import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
 import com.hrms.domain.audit.AuditLog.AuditAction;
-import com.hrms.domain.leave.LeaveRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -49,11 +48,9 @@ public class WorkflowService {
     private static final String AUDIT_ENTITY_WORKFLOW_EXECUTION = "WORKFLOW_EXECUTION";
 
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
-    private final ApprovalStepRepository approvalStepRepository;
     private final WorkflowExecutionRepository workflowExecutionRepository;
     private final StepExecutionRepository stepExecutionRepository;
     private final ApprovalDelegateRepository approvalDelegateRepository;
-    private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;

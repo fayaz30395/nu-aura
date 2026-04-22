@@ -32,7 +32,6 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     private static final String MDC_REQUEST_ID = "requestId";
     private static final String MDC_CORRELATION_ID = "correlationId";
     private static final String MDC_TENANT_ID = "tenantId";
-    private static final String MDC_USER_ID = "userId";
     private static final String MDC_REQUEST_URI = "requestUri";
     private static final String MDC_REQUEST_METHOD = "requestMethod";
     private static final String MDC_CLIENT_IP = "clientIp";

@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RazorpayAdapter implements PaymentGatewayAdapter {
 
-    private PaymentConfig config;
 
     @Override
     public void initialize(PaymentConfig config) {

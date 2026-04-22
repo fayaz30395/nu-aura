@@ -19,7 +19,6 @@ public class ResumeTextExtractor {
     // Maximum text length to return (10,000 chars aligns with URL parsing limit)
     private static final int MAX_TEXT_LENGTH = 10_000;
     // Text extraction timeout in seconds
-    private static final int EXTRACTION_TIMEOUT_SECONDS = 30;
     private final Tika tika = new Tika();
 
     /**

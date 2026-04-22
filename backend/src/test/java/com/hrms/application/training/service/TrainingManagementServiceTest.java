@@ -2,10 +2,7 @@ package com.hrms.application.training.service;
 
 import com.hrms.api.training.dto.TrainingProgramRequest;
 import com.hrms.api.training.dto.TrainingProgramResponse;
-import com.hrms.api.training.dto.TrainingEnrollmentRequest;
-import com.hrms.api.training.dto.TrainingEnrollmentResponse;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.training.TrainingEnrollment;
 import com.hrms.domain.training.TrainingProgram;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.training.repository.TrainingEnrollmentRepository;

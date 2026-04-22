@@ -42,8 +42,6 @@ class ApprovalsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private WorkflowService workflowService;
     @MockitoBean

@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Where(clause = "is_deleted = false")
 @Entity

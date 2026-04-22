@@ -7,7 +7,6 @@ import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.compensation.CompensationReviewCycle;
-import com.hrms.domain.compensation.CompensationReviewCycle.CycleStatus;
 import com.hrms.domain.compensation.CompensationReviewCycle.CycleType;
 import com.hrms.domain.compensation.SalaryRevision;
 import com.hrms.domain.compensation.SalaryRevision.RevisionStatus;

@@ -39,7 +39,6 @@ public class ExecutiveDashboardService {
     private final EmployeeRepository employeeRepository;
     private final PayslipRepository payslipRepository;
     private final AttritionPredictionRepository attritionRepository;
-    private final WorkforceTrendRepository trendRepository;
 
     /**
      * Get comprehensive executive dashboard

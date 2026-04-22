@@ -1,11 +1,8 @@
 package com.hrms.api.webhook.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrms.api.webhook.dto.WebhookDeliveryResponse;
 import com.hrms.api.webhook.dto.WebhookRequest;
-import com.hrms.api.webhook.dto.WebhookResponse;
 import com.hrms.application.webhook.service.WebhookService;
-import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.*;
 import com.hrms.domain.webhook.*;
 import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
@@ -19,14 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;

@@ -42,8 +42,6 @@ class AnalyticsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private AnalyticsService analyticsService;
     @MockitoBean

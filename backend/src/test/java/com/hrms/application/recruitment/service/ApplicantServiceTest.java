@@ -5,7 +5,6 @@ import com.hrms.api.recruitment.dto.ApplicantRequest;
 import com.hrms.api.recruitment.dto.ApplicantResponse;
 import com.hrms.api.recruitment.dto.ApplicantStatusUpdateRequest;
 import com.hrms.common.security.DataScopeService;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.recruitment.Applicant;
 import com.hrms.domain.recruitment.ApplicationSource;

@@ -59,7 +59,6 @@ class NotificationControllerTest {
     private TenantFilter tenantFilter;
     private UUID notificationId;
     private UUID userId;
-    private NotificationResponse notificationResponse;
     private Notification notification;
 
     @BeforeEach

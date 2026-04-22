@@ -7,7 +7,6 @@ import com.hrms.application.contract.service.ContractSignatureService;
 import com.hrms.domain.contract.ContractStatus;
 import com.hrms.domain.contract.ContractType;
 import com.hrms.domain.contract.SignatureStatus;
-import com.hrms.domain.contract.SignerRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -6,8 +6,6 @@ import com.hrms.api.admin.dto.UpdateUserRoleRequest;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.SecurityContext;
-import com.hrms.domain.employee.Department;
-import com.hrms.domain.employee.Employee;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.User;
@@ -30,7 +28,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;

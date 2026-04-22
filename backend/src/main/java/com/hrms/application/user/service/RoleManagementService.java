@@ -26,7 +26,6 @@ import com.hrms.common.security.RoleHierarchy;
 import org.springframework.security.access.AccessDeniedException;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashMap;
@@ -59,7 +58,6 @@ public class RoleManagementService {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
-    private final CustomScopeTargetRepository customScopeTargetRepository;
     private final com.hrms.infrastructure.user.repository.UserRepository userRepository;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
     private final EmployeeRepository employeeRepository;

@@ -7,7 +7,6 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
-import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +48,6 @@ class AnalyticsE2ETest {
     private ObjectMapper objectMapper;
     @Autowired
     private AnalyticsService analyticsService;
-    @Autowired
-    private EmployeeRepository employeeRepository;
 
     @BeforeEach
     void setUp() {

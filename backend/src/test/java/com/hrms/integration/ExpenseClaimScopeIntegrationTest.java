@@ -61,8 +61,6 @@ class ExpenseClaimScopeIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private ExpenseClaimRepository expenseClaimRepository;
     @Autowired
     private EmployeeRepository employeeRepository;

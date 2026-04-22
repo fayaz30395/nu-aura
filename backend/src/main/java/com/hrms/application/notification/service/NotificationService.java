@@ -1,7 +1,6 @@
 package com.hrms.application.notification.service;
 
 import com.hrms.common.exception.ResourceNotFoundException;
-import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.notification.Notification;
 import com.hrms.infrastructure.notification.repository.NotificationRepository;

@@ -4,7 +4,6 @@ import com.hrms.api.recruitment.dto.*;
 import com.hrms.application.recruitment.service.RecruitmentManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,6 @@ package com.hrms.domain.integration;
 
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;

@@ -37,8 +37,6 @@ class PublicCareerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private PublicCareerService publicCareerService;
     @MockitoBean

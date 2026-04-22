@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.user.dto.*;
 import com.hrms.application.user.service.ImplicitRoleEngine;
 import com.hrms.common.exception.GlobalExceptionHandler;
-import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;

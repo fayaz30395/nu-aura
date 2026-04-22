@@ -1,7 +1,6 @@
 package com.hrms.integration.crossmodule;
 
 import com.hrms.application.event.DomainEventPublisher;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.DomainEvent;
 import com.hrms.domain.event.employee.EmployeeCreatedEvent;

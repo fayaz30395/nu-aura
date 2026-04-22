@@ -16,7 +16,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.*;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,8 +39,6 @@ class OrganizationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private OrganizationService organizationService;
     @MockitoBean
@@ -62,9 +59,7 @@ class OrganizationControllerTest {
     private TenantFilter tenantFilter;
 
     private UUID unitId;
-    private UUID positionId;
     private UUID planId;
-    private UUID poolId;
 
     @BeforeEach
     void setUp() {

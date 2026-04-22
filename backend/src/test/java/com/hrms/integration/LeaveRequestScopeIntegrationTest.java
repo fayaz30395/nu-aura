@@ -54,8 +54,6 @@ class LeaveRequestScopeIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private LeaveRequestRepository leaveRequestRepository;
     @Autowired
     private LeaveTypeRepository leaveTypeRepository;

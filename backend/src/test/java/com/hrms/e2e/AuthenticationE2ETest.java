@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.*;
 import java.util.Set;
 
-import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -45,8 +44,6 @@ class AuthenticationE2ETest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private AuthService authService;
     @Autowired
     private UserRepository userRepository;
     @Autowired

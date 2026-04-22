@@ -2,7 +2,6 @@ package com.hrms.api.engagement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.engagement.dto.PulseSurveyRequest;
-import com.hrms.api.engagement.dto.PulseSurveyResponse;
 import com.hrms.api.engagement.dto.SurveySubmissionRequest;
 import com.hrms.application.engagement.service.PulseSurveyService;
 import com.hrms.common.exception.GlobalExceptionHandler;

@@ -1,7 +1,6 @@
 package com.hrms.application.performance.service;
 
 import com.hrms.application.performance.dto.ActivateCycleRequest;
-import com.hrms.application.performance.dto.CalibrationRatingRequest;
 import com.hrms.application.performance.dto.CalibrationResponse;
 import com.hrms.application.performance.dto.ManagerReviewRequest;
 import com.hrms.application.performance.dto.ReviewCycleRequest;

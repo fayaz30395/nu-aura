@@ -5,7 +5,6 @@ import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.knowledge.WikiPage;
-import com.hrms.infrastructure.search.document.FluenceDocument;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;

@@ -7,8 +7,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.UUID;
 
 @Where(clause = "is_deleted = false")

@@ -1,6 +1,5 @@
 package com.hrms.application.payroll.service;
 
-import com.hrms.api.payroll.dto.StatutoryFilingDto;
 import com.hrms.api.payroll.dto.StatutoryFilingDto.*;
 import com.hrms.application.document.service.FileStorageService;
 import com.hrms.application.payroll.service.filing.FilingFormatGenerator;
@@ -9,8 +8,6 @@ import com.hrms.common.exception.BusinessException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.StatutoryFilingRun;
-import com.hrms.domain.payroll.StatutoryFilingRun.FilingStatus;
-import com.hrms.domain.payroll.StatutoryFilingTemplate;
 import com.hrms.domain.payroll.StatutoryFilingTemplate.FilingType;
 import com.hrms.domain.payroll.StatutoryFilingTemplate.OutputFormat;
 import com.hrms.infrastructure.payroll.repository.StatutoryFilingRunRepository;
@@ -40,7 +37,6 @@ import java.util.UUID;
 public class StatutoryFilingService {
 
     private static final String CATEGORY_STATUTORY = "statutory-filings";
-    private final StatutoryFilingTemplateRepository templateRepository;
     private final StatutoryFilingRunRepository filingRunRepository;
     private final FileStorageService fileStorageService;
     private final Map<FilingType, FilingFormatGenerator> generators;

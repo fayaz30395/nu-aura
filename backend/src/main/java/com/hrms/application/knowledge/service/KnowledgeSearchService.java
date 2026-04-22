@@ -3,7 +3,6 @@ package com.hrms.application.knowledge.service;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
-import com.hrms.domain.knowledge.DocumentTemplate;
 import com.hrms.domain.knowledge.KnowledgeSearch;
 import com.hrms.domain.knowledge.WikiPage;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
@@ -27,7 +26,6 @@ public class KnowledgeSearchService {
 
     private final WikiPageRepository wikiPageRepository;
     private final BlogPostRepository blogPostRepository;
-    private final DocumentTemplateRepository documentTemplateRepository;
     private final KnowledgeSearchRepository knowledgeSearchRepository;
 
     @Transactional(readOnly = true)

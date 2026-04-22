@@ -3,8 +3,6 @@ package com.hrms.application.contract.service;
 import com.hrms.api.contract.dto.ContractSignatureDto;
 import com.hrms.api.contract.dto.SendForSigningRequest;
 import com.hrms.common.exception.ResourceNotFoundException;
-import com.hrms.common.security.SecurityContext;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.ContractSignature;
 import com.hrms.domain.contract.SignatureStatus;
 import com.hrms.domain.contract.SignerRole;

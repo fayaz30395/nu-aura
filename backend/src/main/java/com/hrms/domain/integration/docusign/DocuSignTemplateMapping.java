@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
-import java.util.UUID;
 
 /**
  * JPA entity representing a mapping between a document type and a DocuSign template.

@@ -5,7 +5,6 @@ import com.hrms.api.expense.dto.ExpenseItemResponse;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.expense.ExpenseClaim;
-import com.hrms.domain.expense.ExpenseCategoryEntity;
 import com.hrms.domain.expense.ExpenseItem;
 import com.hrms.infrastructure.expense.repository.ExpenseCategoryRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;

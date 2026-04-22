@@ -1,7 +1,6 @@
 package com.hrms.common.security;
 
 import com.hrms.domain.user.RoleScope;
-import com.hrms.common.security.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

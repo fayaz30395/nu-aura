@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -43,7 +42,6 @@ public class BiometricIntegrationService {
     private final BiometricDeviceRepository deviceRepository;
     private final BiometricPunchLogRepository punchLogRepository;
     private final BiometricApiKeyRepository apiKeyRepository;
-    private final AttendanceRecordRepository attendanceRecordRepository;
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordService attendanceRecordService;
     private final EventPublisher eventPublisher;

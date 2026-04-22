@@ -50,7 +50,6 @@ public class WorkflowEscalationScheduler {
     private final StepExecutionRepository stepExecutionRepository;
     private final ApprovalStepRepository approvalStepRepository;
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
 
     /**

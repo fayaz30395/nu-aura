@@ -3,7 +3,6 @@ package com.hrms.application.analytics.service;
 import com.hrms.application.analytics.dto.*;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.domain.workflow.StepExecution;

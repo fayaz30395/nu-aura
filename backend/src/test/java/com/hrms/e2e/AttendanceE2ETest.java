@@ -7,7 +7,6 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.attendance.AttendanceRecord;
-import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
@@ -59,8 +58,6 @@ class AttendanceE2ETest {
     private AttendanceRecordService attendanceRecordService;
     @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
-    @Autowired
-    private AttendanceTimeEntryRepository timeEntryRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired

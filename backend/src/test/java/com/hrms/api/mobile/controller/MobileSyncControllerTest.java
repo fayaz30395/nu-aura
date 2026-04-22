@@ -38,8 +38,6 @@ class MobileSyncControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private MobileSyncService mobileSyncService;
     @MockitoBean

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,6 @@ public class SurveyAnalyticsService {
     private final SurveyRepository surveyRepository;
     private final SurveyQuestionRepository questionRepository;
     private final SurveyResponseRepository responseRepository;
-    private final SurveyAnswerRepository answerRepository;
     private final EngagementScoreRepository engagementScoreRepository;
     private final SurveyInsightRepository insightRepository;
     private final UserRepository userRepository;

@@ -1,17 +1,14 @@
 package com.hrms.api.lms.controller;
 
 import com.hrms.api.lms.dto.CourseCatalogResponse;
-import com.hrms.api.lms.dto.CourseRequest;
 import com.hrms.api.lms.dto.SkillGapReport;
 import com.hrms.application.lms.service.LmsService;
 import com.hrms.application.lms.service.SkillGapAnalysisService;
 import com.hrms.application.lms.service.QuizManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
-import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.lms.Certificate;
 import com.hrms.domain.lms.ContentProgress;
 import com.hrms.domain.lms.Course;

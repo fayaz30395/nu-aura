@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StripeAdapter implements PaymentGatewayAdapter {
 
-    private PaymentConfig config;
 
     @Override
     public void initialize(PaymentConfig config) {

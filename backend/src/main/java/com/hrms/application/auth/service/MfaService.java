@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 public class MfaService {
 
     private static final String TOTP_ALGORITHM = "HmacSHA1";
-    private static final int TOTP_LENGTH = 6;
     private static final long TIME_WINDOW = 30L;
     private static final String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 

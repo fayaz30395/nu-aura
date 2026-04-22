@@ -14,7 +14,6 @@ import com.hrms.domain.shift.Shift;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.overtime.repository.OvertimePolicyRepository;
 import com.hrms.infrastructure.overtime.repository.OvertimeRecordRepository;
-import com.hrms.infrastructure.overtime.repository.OvertimeRequestRepository;
 import com.hrms.infrastructure.overtime.repository.CompTimeBalanceRepository;
 import com.hrms.infrastructure.overtime.repository.CompTimeTransactionRepository;
 import com.hrms.infrastructure.shift.repository.ShiftRepository;

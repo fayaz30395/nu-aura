@@ -1,6 +1,5 @@
 package com.hrms.application.shift.service;
 
-import com.hrms.domain.shift.ShiftAssignment;
 import com.hrms.domain.shift.ShiftSwapRequest;
 import com.hrms.infrastructure.shift.repository.ShiftSwapRequestRepository;
 import com.hrms.common.security.TenantContext;

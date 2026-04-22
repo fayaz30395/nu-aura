@@ -2,7 +2,6 @@ package com.hrms.application.workflow.callback;
 
 import com.hrms.application.workflow.service.WorkflowService;
 import com.hrms.domain.workflow.WorkflowDefinition;
-import com.hrms.domain.workflow.WorkflowExecution;
 import com.hrms.infrastructure.workflow.repository.*;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the ApprovalCallbackHandler interface contract and WorkflowService

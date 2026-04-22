@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class ScorecardService {
 
     private static final String TEMPLATE_NOT_FOUND = "Scorecard template not found";
-    private static final String SCORECARD_NOT_FOUND = "Scorecard not found";
 
     private final ScorecardTemplateRepository templateRepository;
     private final ScorecardTemplateCriterionRepository criterionRepository;

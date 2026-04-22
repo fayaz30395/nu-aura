@@ -37,8 +37,6 @@ class MobileDashboardControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private MobileService mobileService;
     @MockitoBean

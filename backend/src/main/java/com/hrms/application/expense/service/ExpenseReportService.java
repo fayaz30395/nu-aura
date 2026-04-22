@@ -24,7 +24,6 @@ import java.util.UUID;
 public class ExpenseReportService {
 
     private final ExpenseClaimRepository claimRepository;
-    private final ExpenseItemRepository itemRepository;
 
     /**
      * Generates a comprehensive expense report for the given date range.

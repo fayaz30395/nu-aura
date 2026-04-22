@@ -4,7 +4,6 @@ import com.hrms.api.contract.dto.ContractTemplateDto;
 import com.hrms.api.contract.dto.CreateContractTemplateRequest;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.ContractTemplate;
 import com.hrms.domain.contract.ContractType;
 import com.hrms.infrastructure.contract.repository.ContractTemplateRepository;

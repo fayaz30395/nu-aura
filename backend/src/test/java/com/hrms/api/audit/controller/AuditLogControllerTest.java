@@ -79,8 +79,6 @@ class AuditLogControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private AuditLogResponse sampleLog;
     private Page<AuditLogResponse> singleItemPage;

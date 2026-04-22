@@ -7,7 +7,6 @@ import com.hrms.application.attendance.service.BiometricIntegrationService;
 import com.hrms.domain.attendance.BiometricApiKey;
 import com.hrms.domain.attendance.BiometricDevice;
 import com.hrms.domain.attendance.BiometricPunchLog;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +28,6 @@ class BiometricDeviceControllerTest {
 
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID DEVICE_ID = UUID.randomUUID();
-    private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
     @Mock
     private BiometricIntegrationService biometricService;

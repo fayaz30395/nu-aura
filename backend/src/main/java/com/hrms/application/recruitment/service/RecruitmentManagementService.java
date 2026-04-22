@@ -45,14 +45,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
     private final JobOpeningRepository jobOpeningRepository;
     private final CandidateRepository candidateRepository;
-    private final InterviewRepository interviewRepository;
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
     @org.springframework.context.annotation.Lazy
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
     private final DomainEventPublisher eventPublisher;
-    private final GoogleMeetService googleMeetService;
 
     // Focused sub-services (facade delegation)
     private final JobOpeningService jobOpeningService;

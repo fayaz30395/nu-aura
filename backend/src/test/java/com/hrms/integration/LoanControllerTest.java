@@ -1,9 +1,7 @@
 package com.hrms.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrms.api.loan.dto.ApproveLoanRequest;
 import com.hrms.api.loan.dto.CreateLoanRequest;
-import com.hrms.api.loan.dto.RejectLoanRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;

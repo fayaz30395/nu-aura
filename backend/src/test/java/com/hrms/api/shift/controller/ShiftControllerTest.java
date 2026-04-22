@@ -8,7 +8,6 @@ import com.hrms.application.shift.service.ShiftPatternService;
 import com.hrms.application.shift.service.ShiftScheduleService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.domain.shift.ShiftSwapRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

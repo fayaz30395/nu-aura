@@ -5,7 +5,6 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.tax.TaxDeclaration;
 import com.hrms.domain.tax.TaxProof;
-import com.hrms.domain.tax.TaxRegimeComparison;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tax.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ public class TaxDeclarationService {
 
     private final TaxDeclarationRepository taxDeclarationRepository;
     private final TaxProofRepository taxProofRepository;
-    private final TaxRegimeComparisonRepository taxRegimeComparisonRepository;
     private final EmployeeRepository employeeRepository;
 
     // ==================== Tax Declaration Operations ====================

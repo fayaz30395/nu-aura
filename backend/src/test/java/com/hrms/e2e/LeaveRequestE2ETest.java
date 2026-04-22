@@ -62,8 +62,6 @@ class LeaveRequestE2ETest {
     @Autowired
     private LeaveRequestService leaveRequestService;
     @Autowired
-    private LeaveBalanceService leaveBalanceService;
-    @Autowired
     private LeaveRequestRepository leaveRequestRepository;
     @Autowired
     private LeaveTypeRepository leaveTypeRepository;

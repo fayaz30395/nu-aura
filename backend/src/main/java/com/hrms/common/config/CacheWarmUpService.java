@@ -26,7 +26,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CacheWarmUpService {
 
-    private final TenantCacheManager tenantCacheManager;
 
     // Services are injected lazily via ApplicationContext to avoid circular deps.
     // Each warm method uses try/catch so one failure doesn't block the rest.

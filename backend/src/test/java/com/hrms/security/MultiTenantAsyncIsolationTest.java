@@ -34,10 +34,6 @@ public class MultiTenantAsyncIsolationTest {
 
     private UUID tenantA;
     private UUID tenantB;
-    private UUID userA1;
-    private UUID userA2;
-    private UUID userB1;
-    private UUID userB2;
 
     @BeforeEach
     void setUp() {

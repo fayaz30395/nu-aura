@@ -40,8 +40,6 @@ class KafkaAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private DeadLetterHandler deadLetterHandler;
     @MockitoBean

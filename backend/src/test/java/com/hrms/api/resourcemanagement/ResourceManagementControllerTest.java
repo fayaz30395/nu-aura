@@ -25,7 +25,6 @@ import java.util.*;
 import static com.hrms.api.resourcemanagement.dto.AllocationDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.ApprovalDTOs.*;
 import static com.hrms.api.resourcemanagement.dto.WorkloadDTOs.*;
-import static com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;

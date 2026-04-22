@@ -45,7 +45,6 @@ public class SecurityConfig {
      * auth/public/webhook endpoints that cannot supply the token.
      */
 
-    private final Environment environment;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TenantFilter tenantFilter;
     private final RateLimitingFilter rateLimitingFilter;

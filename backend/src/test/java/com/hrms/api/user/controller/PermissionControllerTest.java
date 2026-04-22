@@ -67,8 +67,6 @@ class PermissionControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private PermissionResponse employeeReadPerm;
     private PermissionResponse employeeCreatePerm;
