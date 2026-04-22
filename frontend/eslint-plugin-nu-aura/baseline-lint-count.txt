@@ -1,0 +1,45 @@
+ESLint design-system baseline — generated 2026-04-22T10:34:53.285Z
+Command: npm run lint:design
+================================================================
+
+Files scanned:         1413
+Files with issues:     808
+Total errors:          9308
+Total warnings:        3
+
+Errors by rule:
+  no-restricted-syntax 9308
+  nu-aura/no-ad-hoc-page-header 0 (warnings, separate tally below)
+
+no-restricted-syntax errors by message (category):
+   8729  Use bridge tokens: bg-card/surface/elevated, text-primary/secondary/muted/accent
+    540  Use design-system tokens: bg-card / text-inverse / border-[var(--border-main)]. 
+     28  Use design-system tokens — see CLAUDE.md.
+      9  Use semantic shadows: shadow-card, shadow-card-hover, shadow-elevated, shadow-dr
+      1  ⚠ Design system: space-y-3 (12px) is off the 8px grid. Use space-y-4 (16px) or s
+      1  ⚠ Design system: p-3 (12px) is off the 8px grid. Use p-4 (16px) or p-2 (8px).
+
+Top 20 files by error count:
+   113  app/expenses/mileage/page.tsx
+   103  app/restricted-holidays/page.tsx
+    93  components/payroll/BulkProcessingWizard.tsx
+    87  app/dashboards/manager/page.tsx
+    87  app/import-export/page.tsx
+    87  components/layout/NotificationDropdown.tsx
+    83  app/expenses/[id]/page.tsx
+    76  app/one-on-one/page.tsx
+    70  components/resource-management/EmployeeAllocationDetailModal.tsx
+    67  app/employees/import/page.tsx
+    65  app/predictive-analytics/page.tsx
+    61  app/expenses/settings/page.tsx
+    59  app/shifts/definitions/page.tsx
+    57  app/performance/cycles/page.tsx
+    57  app/recruitment/pipeline/page.tsx
+    55  components/resources/EmployeeStep.tsx
+    54  app/employees/[id]/edit/page.tsx
+    54  components/projects/TaskDetailsModal.tsx
+    53  app/admin/import-keka/page.tsx
+    53  app/announcements/page.tsx
+
+nu-aura/no-ad-hoc-page-header (warnings): 0 on current tree.
+Baseline expected to drop to 0 as the Phase 6 refactor migrates tokens.

@@ -3,6 +3,9 @@
     "next/core-web-vitals",
     "next/typescript"
   ],
+  "plugins": [
+    "nu-aura"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": [
@@ -13,6 +16,7 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
+    "nu-aura/no-ad-hoc-page-header": "warn",
     "no-restricted-syntax": [
       "warn",
       {
@@ -30,6 +34,30 @@
       {
         "selector": "Literal[value=/\\bm-3\\b/]",
         "message": "⚠ Design system: m-3 (12px) is off the 8px grid. Use m-4 (16px) or m-2 (8px)."
+      },
+      {
+        "selector": "Literal[value=/(^|\\s)(bg-white|text-white|border-white)(\\s|$)/]",
+        "message": "Use design-system tokens: bg-card / text-inverse / border-[var(--border-main)]. See CLAUDE.md."
+      },
+      {
+        "selector": "Literal[value=/(^|\\s)(bg|text|border|ring|fill|stroke|from|to|via)-(gray|slate|zinc|neutral|stone)-[0-9]/]",
+        "message": "Use design-system tokens: bg-base/surface/card, text-primary/secondary/muted, border-subtle/default/strong. See CLAUDE.md."
+      },
+      {
+        "selector": "Literal[value=/(^|\\s)(bg|text|border)-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]/]",
+        "message": "Use status tokens: bg-status-*-bg, text-status-*-text, border-status-*-border. See CLAUDE.md."
+      },
+      {
+        "selector": "Literal[value=/(^|\\s)(bg|text|border)-(surface|accent|success|danger|warning|info)-[0-9]/]",
+        "message": "Use bridge tokens: bg-card/surface/elevated, text-primary/secondary/muted/accent, bg-status-*, border-default/subtle/strong. See CLAUDE.md."
+      },
+      {
+        "selector": "Literal[value=/(^|\\s)shadow-(sm|md|lg|xl|2xl)(\\s|$)/]",
+        "message": "Use semantic shadows: shadow-card, shadow-card-hover, shadow-elevated, shadow-dropdown, or shadow-skeuo-*. See CLAUDE.md."
+      },
+      {
+        "selector": "TemplateElement[value.raw=/(^|\\s)(bg-white|text-white|border-white|bg-gray-[0-9]|text-gray-[0-9]|shadow-sm\\b|shadow-md\\b)/]",
+        "message": "Use design-system tokens — see CLAUDE.md."
       }
     ]
   },

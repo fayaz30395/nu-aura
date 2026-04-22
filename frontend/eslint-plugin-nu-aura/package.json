@@ -1,0 +1,10 @@
+{
+  "name": "eslint-plugin-nu-aura",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Internal ESLint plugin for NU-AURA design-system and architecture enforcement.",
+  "main": "index.js",
+  "peerDependencies": {
+    "eslint": ">=8"
+  }
+}

@@ -1,0 +1,15 @@
+
+/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/eslint-plugin-nu-aura/fixtures/app/fixture/page.tsx
+   8:19  error    Use design-system tokens: bg-card / text-inverse / border-[var(--border-main)]. See CLAUDE.md                                no-restricted-syntax
+   8:19  error    Use design-system tokens: bg-base/surface/card, text-primary/secondary/muted, border-subtle/default/strong. See CLAUDE.md    no-restricted-syntax
+   8:19  error    Use semantic shadows: shadow-card, shadow-card-hover, shadow-elevated, shadow-dropdown, or shadow-skeuo-*. See CLAUDE.md     no-restricted-syntax
+  13:20  error    Use design-system tokens: bg-card / text-inverse / border-[var(--border-main)]. See CLAUDE.md                                no-restricted-syntax
+  14:7   warning  Use <PageHeader title={...} actions={...} /> instead of a hand-rolled header div. See components/layout/page/PageHeader.tsx  nu-aura/no-ad-hoc-page-header
+  15:23  error    Use design-system tokens: bg-base/surface/card, text-primary/secondary/muted, border-subtle/default/strong. See CLAUDE.md    no-restricted-syntax
+  16:27  error    Use design-system tokens: bg-card / text-inverse / border-[var(--border-main)]. See CLAUDE.md                                no-restricted-syntax
+  16:27  error    Use status tokens: bg-status-*-bg, text-status-*-text, border-status-*-border. See CLAUDE.md                                 no-restricted-syntax
+  16:27  error    Use semantic shadows: shadow-card, shadow-card-hover, shadow-elevated, shadow-dropdown, or shadow-skeuo-*. See CLAUDE.md     no-restricted-syntax
+  22:22  error    Use design-system tokens: bg-base/surface/card, text-primary/secondary/muted, border-subtle/default/strong. See CLAUDE.md    no-restricted-syntax
+
+✖ 10 problems (9 errors, 1 warning)
+
