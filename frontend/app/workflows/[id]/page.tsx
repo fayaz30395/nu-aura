@@ -427,7 +427,7 @@ export default function WorkflowDetailPage() {
               <InfoCard
                 label="Status"
                 value={workflow.isActive ? 'Active' : 'Inactive'}
-                valueClassName={workflow.isActive ? 'text-success-600 dark:text-success-400' : 'text-surface-500'}
+                valueClassName={workflow.isActive ? "text-status-success-text" : "text-muted"}
               />
               <InfoCard label="Version" value={`v${workflow.version}`}/>
             </div>

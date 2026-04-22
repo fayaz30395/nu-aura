@@ -206,8 +206,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-success-100 text-success-700 cursor-default'
-                    : 'bg-accent-600 text-white hover:bg-accent-700'
+                    ? "bg-status-success-bg text-status-success-text cursor-default"
+                    : "bg-accent text-inverse hover:bg-accent"
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? <><Check
@@ -233,8 +233,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-success-100 text-success-700 cursor-default'
-                    : 'bg-accent-600 text-white hover:bg-accent-700'
+                    ? "bg-status-success-bg text-status-success-text cursor-default"
+                    : "bg-accent text-inverse hover:bg-accent"
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? <><Check
@@ -280,8 +280,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-success-100 text-success-700 cursor-default'
-                    : 'bg-accent-600 text-white hover:bg-accent-700'
+                    ? "bg-status-success-bg text-status-success-text cursor-default"
+                    : "bg-accent text-inverse hover:bg-accent"
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? <><Check
@@ -307,8 +307,8 @@ export default function CoursePlayerPage() {
               disabled={contentStatus[activeContent.id] === 'completed'}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 contentStatus[activeContent.id] === 'completed'
-                  ? 'bg-success-100 text-success-700 cursor-default'
-                  : 'bg-accent-800 text-white hover:bg-accent-900'
+                  ? "bg-status-success-bg text-status-success-text cursor-default"
+                  : "bg-accent-hover text-inverse hover:bg-accent-hover"
               }`}
             >
               {contentStatus[activeContent.id] === 'completed' ? <><Check
@@ -339,8 +339,8 @@ export default function CoursePlayerPage() {
                 disabled={contentStatus[activeContent.id] === 'completed'}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   contentStatus[activeContent.id] === 'completed'
-                    ? 'bg-success-100 text-success-700 cursor-default'
-                    : 'bg-accent-600 text-white hover:bg-accent-700'
+                    ? "bg-status-success-bg text-status-success-text cursor-default"
+                    : "bg-accent text-inverse hover:bg-accent"
                 }`}
               >
                 {contentStatus[activeContent.id] === 'completed' ? <><Check
@@ -475,7 +475,7 @@ export default function CoursePlayerPage() {
                           onClick={() => navigateTo(content.id)}
                           className={`w-full flex items-start gap-4 px-4 py-4 text-left transition-colors border-b border-[var(--border-main)] ${
                             isActive
-                              ? 'bg-accent-50 border-l-2 border-l-accent-600'
+                              ? "bg-accent-subtle border-l-2 border-l-accent-600"
                               : 'hover:bg-[var(--bg-surface)]'
                           }`}
                         >
@@ -491,7 +491,7 @@ export default function CoursePlayerPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p
-                              className={`text-xs font-medium truncate ${isActive ? 'text-accent-700' : 'text-[var(--text-primary)]'}`}>
+                              className={`text-xs font-medium truncate ${isActive ? "text-accent" : 'text-[var(--text-primary)]'}`}>
                               {contentIdx + 1}. {content.title}
                             </p>
                             <div className="flex items-center gap-1 mt-0.5">

@@ -87,12 +87,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({article, onView}) => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'HR Policies': 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
-      'IT Support': 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500',
-      'Payroll': 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300',
-      'Leave & Attendance': 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300',
-      'Benefits': 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500',
-      'Company Policies': 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
+      'HR Policies': "bg-accent-subtle text-accent",
+      'IT Support': "bg-accent-subtle text-accent",
+      'Payroll': "bg-status-success-bg text-status-success-text",
+      'Leave & Attendance': "bg-status-warning-bg text-status-warning-text",
+      'Benefits': "bg-accent-subtle text-accent",
+      'Company Policies': "bg-accent-subtle text-accent",
     };
     return colors[category] || 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   };
@@ -440,7 +440,7 @@ export default function KnowledgeBasePage() {
                   }}
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategory === ''
-                      ? 'bg-accent-700 text-white'
+                      ? "bg-accent text-inverse"
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -457,12 +457,12 @@ export default function KnowledgeBasePage() {
                       }}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         selectedCategory === category
-                          ? 'bg-accent-700 text-white'
+                          ? "bg-accent text-inverse"
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
-                      {category} ({count})
-                    </button>
+                      {category}({count})
+                                          </button>
                   );
                 })}
               </div>

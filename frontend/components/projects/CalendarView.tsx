@@ -176,16 +176,16 @@ export function CalendarView({
             className={`min-h-[100px] p-1 border-r border-b border-subtle cursor-pointer transition-colors ${
               isCurrentMonth
                 ? 'bg-[var(--bg-card)]'
-                : 'bg-surface-50 dark:bg-surface-800/50'
+                : "bg-base"
             } hover:bg-surface`}
           >
             <div
               className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
                 isSelected
-                  ? 'bg-accent-500 text-white'
+                  ? "bg-accent text-inverse"
                   : isCurrentMonth
-                    ? 'text-surface-900 dark:text-surface-100'
-                    : 'text-surface-400 dark:text-surface-600'
+                    ? "text-primary"
+                    : "text-muted"
               }`}
             >
               {format(day, 'd')}
@@ -224,8 +224,8 @@ export function CalendarView({
             <div
               className={`text-lg font-medium mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
                 isToday(day)
-                  ? 'bg-accent-500 text-white'
-                  : 'text-surface-900 dark:text-surface-100'
+                  ? "bg-accent text-inverse"
+                  : "text-primary"
               }`}
             >
               {format(day, 'd')}
@@ -454,8 +454,8 @@ export function CalendarView({
               onClick={() => setViewType(type)}
               className={`px-4 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
-                  ? 'bg-[var(--bg-surface)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  ? "bg-[var(--bg-surface)] text-accent shadow-[var(--shadow-card)]"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               {type}

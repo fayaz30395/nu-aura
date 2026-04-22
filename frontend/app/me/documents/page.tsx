@@ -54,28 +54,28 @@ function formatDocumentTypeLabel(value: string): string {
 const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; color: string; bgColor: string }> = {
   PENDING: {
     icon: <Clock className="h-4 w-4"/>,
-    color: 'text-warning-600',
-    bgColor: 'bg-warning-100 dark:bg-warning-900/30'
+    color: "text-status-warning-text",
+    bgColor: "bg-status-warning-bg"
   },
   IN_PROGRESS: {
     icon: <AlertCircle className="h-4 w-4"/>,
-    color: 'text-info-600',
-    bgColor: 'bg-info-100 dark:bg-info-900/30'
+    color: "text-status-info-text",
+    bgColor: "bg-status-info-bg"
   },
   GENERATED: {
     icon: <CheckCircle className="h-4 w-4"/>,
-    color: 'text-success-600',
-    bgColor: 'bg-success-100 dark:bg-success-900/30'
+    color: "text-status-success-text",
+    bgColor: "bg-status-success-bg"
   },
   DELIVERED: {
     icon: <Truck className="h-4 w-4"/>,
-    color: 'text-accent-700',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30'
+    color: "text-accent",
+    bgColor: "bg-accent-subtle"
   },
   REJECTED: {
     icon: <XCircle className="h-4 w-4"/>,
-    color: 'text-danger-600',
-    bgColor: 'bg-danger-100 dark:bg-danger-900/30'
+    color: "text-status-danger-text",
+    bgColor: "bg-status-danger-bg"
   },
   CANCELLED: {icon: <X className="h-4 w-4"/>, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]'},
 };
@@ -424,7 +424,7 @@ export default function MyDocumentsPage() {
                   {...register('purpose')}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.purpose ? 'border-danger-500' : ''}`}
+                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.purpose ? "border-status-danger-border" : ''}`}
                 />
                 {errors.purpose && (
                   <p className='mt-1 text-xs text-status-danger-text'>{errors.purpose.message}</p>
@@ -453,7 +453,7 @@ export default function MyDocumentsPage() {
                   type="date"
                   {...register('requiredByDate')}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.requiredByDate ? 'border-danger-500' : ''}`}
+                  className={`input-aura w-full px-4 py-2 rounded-lg ${errors.requiredByDate ? "border-status-danger-border" : ''}`}
                 />
                 {errors.requiredByDate && (
                   <p className='mt-1 text-xs text-status-danger-text'>{errors.requiredByDate.message}</p>

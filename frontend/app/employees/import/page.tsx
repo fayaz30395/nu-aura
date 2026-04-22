@@ -162,11 +162,11 @@ export default function EmployeeImportPage() {
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'PARTIAL_SUCCESS':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'FAILED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200';
     }
@@ -199,8 +199,8 @@ export default function EmployeeImportPage() {
               <div
                 className={`flex items-center justify-center w-10 h-10 rounded-full ${
                   step === 'upload'
-                    ? 'bg-accent-500 text-white'
-                    : 'bg-success-600 text-white'
+                    ? "bg-accent text-inverse"
+                    : "bg-status-success-bg text-inverse"
                 }`}
               >
                 {step === 'upload' ? '1' : <CheckCircle className="w-5 h-5"/>}
@@ -211,16 +211,16 @@ export default function EmployeeImportPage() {
             </div>
             <div
               className={`w-24 h-1 mx-4 ${
-                step !== 'upload' ? 'bg-success-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
+                step !== 'upload' ? "bg-status-success-bg" : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
               }`}
             />
             <div className="flex items-center">
               <div
                 className={`flex items-center justify-center w-10 h-10 rounded-full ${
                   step === 'preview'
-                    ? 'bg-accent-500 text-white'
+                    ? "bg-accent text-inverse"
                     : step === 'result'
-                      ? 'bg-success-600 text-white'
+                      ? "bg-status-success-bg text-inverse"
                       : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -238,14 +238,14 @@ export default function EmployeeImportPage() {
             </div>
             <div
               className={`w-24 h-1 mx-4 ${
-                step === 'result' ? 'bg-success-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
+                step === 'result' ? "bg-status-success-bg" : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
               }`}
             />
             <div className="flex items-center">
               <div
                 className={`flex items-center justify-center w-10 h-10 rounded-full ${
                   step === 'result'
-                    ? 'bg-success-600 text-white'
+                    ? "bg-status-success-bg text-inverse"
                     : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                 }`}
               >
@@ -319,9 +319,9 @@ export default function EmployeeImportPage() {
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
-                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
+                      ? "border-[var(--accent-primary)] bg-accent-subtle"
                       : selectedFile
-                        ? 'border-success-500 bg-success-50 dark:bg-success-900/20'
+                        ? "border-status-success-border bg-status-success-bg"
                         : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                   }`}
                   onDragEnter={handleDrag}

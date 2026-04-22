@@ -221,7 +221,7 @@ export function EmployeeSearchAutocomplete({
                   onClick={() => handleSelect(employee)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-base transition-colors ${highlightedIndex === index
-                    ? 'bg-surface-50 dark:bg-surface-700'
+                    ? "bg-base"
                     : ''
                   }`}
                 >

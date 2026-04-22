@@ -129,7 +129,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
               onClick={handleLikeComment}
               aria-label={liked ? 'Unlike comment' : 'Like comment'}
               className={`inline-flex items-center gap-0.5 text-2xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                liked ? "text-status-danger-text" : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               }`}
             >
               <Heart className={`h-2.5 w-2.5 ${liked ? 'fill-danger-500' : ''}`}/>

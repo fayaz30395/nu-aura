@@ -354,7 +354,7 @@ export default function LeaveTypesManagementPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'}`}>
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? "bg-status-success-bg text-status-success-text" : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'}`}>
                         {leaveType.isPaid ? 'Paid' : 'Unpaid'}
                       </span>
                   </td>
@@ -380,7 +380,7 @@ export default function LeaveTypesManagementPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isActive ? 'bg-success-100 text-success-800' : 'bg-danger-100 text-danger-800'}`}>
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isActive ? "bg-status-success-bg text-status-success-text" : "bg-status-danger-bg text-status-danger-text"}`}>
                         {leaveType.isActive ? 'Active' : 'Inactive'}
                       </span>
                   </td>

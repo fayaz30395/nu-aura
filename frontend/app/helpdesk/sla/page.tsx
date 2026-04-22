@@ -177,11 +177,11 @@ export default function HelpdeskSLAPage() {
   const getEscalationLevelColor = (level: string) => {
     switch (level) {
       case 'FIRST':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'SECOND':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'THIRD':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -257,19 +257,19 @@ export default function HelpdeskSLAPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'dashboard' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'slas' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'slas' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('slas')}
           >
             SLA Policies
           </button>
           <button
-            className={`px-6 py-4 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium ${activeTab === 'escalations' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('escalations')}
           >
             Pending Escalations
@@ -452,8 +452,8 @@ export default function HelpdeskSLAPage() {
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-4">
                       <div
                         className={`h-4 rounded-full ${
-                          (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-success-500' :
-                            (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-warning-500' : 'bg-danger-500'
+                          (dashboardData.slaComplianceRate || 0) >= 90 ? "bg-status-success-bg" :
+                            (dashboardData.slaComplianceRate || 0) >= 70 ? "bg-status-warning-bg" : "bg-status-danger-bg"
                         }`}
                         style={{width: `${dashboardData.slaComplianceRate || 0}%`}}
                       />
@@ -541,7 +541,7 @@ export default function HelpdeskSLAPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            sla.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
+                            sla.isActive ? "bg-status-success-bg text-status-success-text" : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                           }`}>
                             {sla.isActive ? 'Active' : 'Inactive'}
                           </span>

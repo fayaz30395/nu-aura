@@ -167,7 +167,7 @@ export default function AdminLeaveRequestsPage() {
               onClick={() => setSelectedStatus(status)}
               className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 selectedStatus === status
-                  ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400'
+                  ? "border-b-2 border-[var(--accent-primary)] text-accent"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
               }`}
             >

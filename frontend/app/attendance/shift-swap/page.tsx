@@ -42,13 +42,13 @@ interface ApiError {
 }
 
 const statusColors: Record<string, string> = {
-  PENDING: 'tint-warning text-warning-700',
-  TARGET_ACCEPTED: 'tint-info text-accent-700',
-  TARGET_DECLINED: 'tint-danger text-danger-700',
-  PENDING_APPROVAL: 'tint-orange text-warning-700',
-  APPROVED: 'tint-success text-success-700',
-  REJECTED: 'tint-danger text-danger-700',
-  COMPLETED: 'tint-success text-success-800',
+  PENDING: "tint-warning text-status-warning-text",
+  TARGET_ACCEPTED: "tint-info text-accent",
+  TARGET_DECLINED: "tint-danger text-status-danger-text",
+  PENDING_APPROVAL: "tint-orange text-status-warning-text",
+  APPROVED: "tint-success text-status-success-text",
+  REJECTED: "tint-danger text-status-danger-text",
+  COMPLETED: "tint-success text-status-success-text",
   CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
@@ -244,7 +244,7 @@ export default function ShiftSwapPage() {
               }}
               className={`cursor-pointer pb-2 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 activeTab === tab.key
-                  ? 'border-accent-600 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -400,7 +400,7 @@ export default function ShiftSwapPage() {
               <input
                 type="date"
                 {...register('requesterShiftDate')}
-                className={`input-aura ${errors.requesterShiftDate ? 'border-danger-500' : ''}`}
+                className={`input-aura ${errors.requesterShiftDate ? "border-status-danger-border" : ''}`}
               />
               {errors.requesterShiftDate && (
                 <p className='mt-1 text-xs text-status-danger-text'>{errors.requesterShiftDate.message}</p>
@@ -421,7 +421,7 @@ export default function ShiftSwapPage() {
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Assignment *</label>
             <select
               {...register('requesterAssignmentId')}
-              className={`input-aura ${errors.requesterAssignmentId ? 'border-danger-500' : ''}`}
+              className={`input-aura ${errors.requesterAssignmentId ? "border-status-danger-border" : ''}`}
             >
               <option value="">Select your shift assignment</option>
               {activeAssignments.map((a: ShiftAssignment) => (

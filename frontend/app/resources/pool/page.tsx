@@ -12,10 +12,10 @@ import {useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function allocationColor(pct: number): { bar: string; badge: string; text: string } {
-  if (pct >= 100) return {bar: 'bg-danger-500', badge: 'bg-danger-50 text-danger-700', text: 'text-danger-700'};
-  if (pct >= 81) return {bar: 'bg-warning-400', badge: 'bg-warning-100 text-warning-700', text: 'text-warning-700'};
-  if (pct >= 51) return {bar: 'bg-success-500', badge: 'bg-success-50 text-success-700', text: 'text-success-700'};
-  if (pct > 0) return {bar: 'bg-info-400', badge: 'bg-info-50 text-info-700', text: 'text-info-700'};
+  if (pct >= 100) return {bar: "bg-status-danger-bg", badge: "bg-status-danger-bg text-status-danger-text", text: "text-status-danger-text"};
+  if (pct >= 81) return {bar: "bg-status-warning-bg", badge: "bg-status-warning-bg text-status-warning-text", text: "text-status-warning-text"};
+  if (pct >= 51) return {bar: "bg-status-success-bg", badge: "bg-status-success-bg text-status-success-text", text: "text-status-success-text"};
+  if (pct > 0) return {bar: "bg-status-info-bg", badge: "bg-status-info-bg text-status-info-text", text: "text-status-info-text"};
   return {
     bar: 'bg-[var(--bg-secondary)]',
     badge: 'bg-[var(--bg-secondary)] text-[var(--text-muted)]',
@@ -199,13 +199,13 @@ export default function ResourcePoolPage() {
               {
                 label: 'Over-Allocated',
                 value: summary.overAllocated,
-                color: 'bg-danger-50 text-danger-700',
+                color: "bg-status-danger-bg text-status-danger-text",
                 filter: 'OVER_ALLOCATED' as StatusFilter
               },
               {
                 label: 'Optimal',
                 value: summary.optimal,
-                color: 'bg-success-50 text-success-700',
+                color: "bg-status-success-bg text-status-success-text",
                 filter: 'OPTIMAL' as StatusFilter
               },
               {
@@ -220,7 +220,7 @@ export default function ResourcePoolPage() {
                 onClick={() => setStatusFilter(statusFilter === stat.filter ? 'ALL' : stat.filter)}
                 className={`rounded-xl border p-4 text-left transition-all hover:shadow-[var(--shadow-card)] ${
                   statusFilter === stat.filter
-                    ? 'border-accent-400 ring-2 ring-accent-200 bg-accent-50'
+                    ? "border-[var(--accent-primary)] ring-2 ring-accent-200 bg-accent-subtle"
                     : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                 }`}
               >
@@ -382,9 +382,9 @@ export default function ResourcePoolPage() {
               <span>Showing {filtered.length} of {employees.length} employees</span>
               <div className="flex items-center gap-4">
                 {[
-                  {label: '≤80%', color: 'bg-success-500'},
-                  {label: '81–99%', color: 'bg-warning-400'},
-                  {label: '≥100%', color: 'bg-danger-500'},
+                  {label: '≤80%', color: "bg-status-success-bg"},
+                  {label: '81–99%', color: "bg-status-warning-bg"},
+                  {label: '≥100%', color: "bg-status-danger-bg"},
                   {label: 'Unassigned', color: 'bg-[var(--bg-secondary)]'},
                 ].map(l => (
                   <span key={l.label} className="flex items-center gap-1">

@@ -82,15 +82,15 @@ const MODULE_TABS: ModuleTab[] = [
     key: 'LEAVE',
     label: 'Leave',
     entityType: 'LEAVE_REQUEST',
-    color: 'bg-accent-100 dark:bg-accent-900/40',
-    textColor: 'text-accent-700 dark:text-accent-300'
+    color: "bg-accent-subtle",
+    textColor: "text-accent"
   },
   {
     key: 'EXPENSE',
     label: 'Expense',
     entityType: 'EXPENSE_CLAIM',
-    color: 'bg-warning-100 dark:bg-warning-900/40',
-    textColor: 'text-warning-700 dark:text-warning-300'
+    color: "bg-status-warning-bg",
+    textColor: "text-status-warning-text"
   },
   {
     key: 'ASSET',
@@ -103,34 +103,34 @@ const MODULE_TABS: ModuleTab[] = [
     key: 'TRAVEL',
     label: 'Travel',
     entityType: 'TRAVEL_REQUEST',
-    color: 'bg-success-100 dark:bg-success-900/40',
-    textColor: 'text-success-700 dark:text-success-300'
+    color: "bg-status-success-bg",
+    textColor: "text-status-success-text"
   },
   {
     key: 'RECRUITMENT',
     label: 'Recruitment',
     entityType: 'RECRUITMENT_OFFER',
-    color: 'bg-accent-100 dark:bg-accent-900/40',
-    textColor: 'text-accent-700 dark:text-accent-300'
+    color: "bg-accent-subtle",
+    textColor: "text-accent"
   },
   {
     key: 'OTHERS',
     label: 'Others',
-    color: 'bg-accent-300 dark:bg-accent-900/40',
-    textColor: 'text-accent-900 dark:text-accent-500'
+    color: "bg-accent-subtle",
+    textColor: "text-accent"
   },
 ];
 
 // Color lookup for module badges in the list
 const MODULE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  Leave: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
-  Expense: {bg: 'bg-warning-100 dark:bg-warning-900/30', text: 'text-warning-700 dark:text-warning-300'},
+  Leave: {bg: "bg-accent-subtle", text: "text-accent"},
+  Expense: {bg: "bg-status-warning-bg", text: "text-status-warning-text"},
   Asset: {bg: 'bg-[var(--bg-surface)]', text: 'text-[var(--text-secondary)]'},
-  Travel: {bg: 'bg-success-100 dark:bg-success-900/30', text: 'text-success-700 dark:text-success-300'},
-  Recruitment: {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-300'},
+  Travel: {bg: "bg-status-success-bg", text: "text-status-success-text"},
+  Recruitment: {bg: "bg-accent-subtle", text: "text-accent"},
 };
 
-const DEFAULT_BADGE = {bg: 'bg-accent-300 dark:bg-accent-900/30', text: 'text-accent-900 dark:text-accent-500'};
+const DEFAULT_BADGE = {bg: "bg-accent-subtle", text: "text-accent"};
 
 function getModuleBadgeColors(module: string) {
   return MODULE_BADGE_COLORS[module] ?? DEFAULT_BADGE;
@@ -392,22 +392,22 @@ export default function ApprovalInboxPage() {
           <SummaryCard
             label="Pending"
             value={counts?.pending ?? 0}
-            color="bg-warning-50 dark:bg-warning-900/20"
-            textColor="text-warning-700 dark:text-warning-300"
+            color="bg-status-warning-bg"
+            textColor="text-status-warning-text"
             icon={<Clock className="h-5 w-5"/>}
           />
           <SummaryCard
             label="Approved Today"
             value={counts?.approvedToday ?? 0}
-            color="bg-success-50 dark:bg-success-900/20"
-            textColor="text-success-700 dark:text-success-300"
+            color="bg-status-success-bg"
+            textColor="text-status-success-text"
             icon={<CheckCircle className="h-5 w-5"/>}
           />
           <SummaryCard
             label="Rejected Today"
             value={counts?.rejectedToday ?? 0}
-            color="bg-danger-50 dark:bg-danger-900/20"
-            textColor="text-danger-700 dark:text-danger-300"
+            color="bg-status-danger-bg"
+            textColor="text-status-danger-text"
             icon={<XCircle className="h-5 w-5"/>}
           />
         </div>
@@ -424,7 +424,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('PENDING')}
                 className={`rounded-full px-4 py-1 font-medium transition-colors ${
                   statusFilter === 'PENDING'
-                    ? 'bg-accent-700 text-white'
+                    ? "bg-accent text-inverse"
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -435,7 +435,7 @@ export default function ApprovalInboxPage() {
                 onClick={() => handleStatusChange('ALL')}
                 className={`rounded-full px-4 py-1 font-medium transition-colors ${
                   statusFilter === 'ALL'
-                    ? 'bg-accent-700 text-white'
+                    ? "bg-accent text-inverse"
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >

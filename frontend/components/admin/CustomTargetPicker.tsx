@@ -203,11 +203,11 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
   const getTargetTypeBadgeColor = (type: TargetType) => {
     switch (type) {
       case 'EMPLOYEE':
-        return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'DEPARTMENT':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       case 'LOCATION':
-        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-500';
+        return "bg-accent-subtle text-accent";
     }
   };
 
@@ -271,7 +271,7 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
             className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               targetType === type
                 ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-card)]'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-white'
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             {getTargetTypeIcon(type)}

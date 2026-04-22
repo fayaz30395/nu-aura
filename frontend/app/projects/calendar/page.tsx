@@ -440,7 +440,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
-                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
+                  ? "bg-[var(--bg-surface)] text-accent shadow-[var(--shadow-card)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -450,7 +450,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('calendar')}
                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
-                  ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
+                  ? "bg-[var(--bg-surface)] text-accent shadow-[var(--shadow-card)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -541,7 +541,7 @@ export default function ProjectCalendarPage() {
                         key={level}
                         onClick={() => setZoomLevel(level)}
                         className={`px-4 py-1.5 text-sm rounded capitalize ${zoomLevel === level
-                          ? 'bg-[var(--bg-surface)] shadow text-accent-700 dark:text-accent-400'
+                          ? "bg-[var(--bg-surface)] shadow text-accent"
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                         }`}
                       >
@@ -598,7 +598,7 @@ export default function ProjectCalendarPage() {
                       {timelineColumns.map((col, idx) => (
                         <div
                           key={idx}
-                          className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'
+                          className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? "bg-accent-subtle text-accent" : 'text-[var(--text-secondary)]'
                           }`}
                         >
                           {col.label}

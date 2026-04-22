@@ -48,68 +48,68 @@ const getStatusConfig = (status: ReferralStatus) => {
   switch (status) {
     case 'SUBMITTED':
       return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         label: 'Submitted'
       };
     case 'SCREENING':
       return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         label: 'Screening'
       };
     case 'INTERVIEW_SCHEDULED':
       return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         label: 'Interview Scheduled'
       };
     case 'INTERVIEW_COMPLETED':
       return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         label: 'Interview Done'
       };
     case 'OFFER_MADE':
       return {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         label: 'Offer Made'
       };
     case 'OFFER_ACCEPTED':
       return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         label: 'Offer Accepted'
       };
     case 'JOINED':
       return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         label: 'Joined'
       };
     case 'REJECTED':
       return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         label: 'Rejected'
       };
     case 'WITHDRAWN':
       return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
+        bg: "bg-surface",
+        text: "text-secondary",
         label: 'Withdrawn'
       };
     case 'ON_HOLD':
       return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         label: 'On Hold'
       };
     default:
       return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
+        bg: "bg-surface",
+        text: "text-secondary",
         label: status
       };
   }
@@ -308,7 +308,7 @@ export default function ReferralsPage() {
                       onClick={() => setActiveTab(tab.key)}
                       className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         activeTab === tab.key
-                          ? 'border-accent-700 text-accent-700 dark:text-accent-400'
+                          ? "border-[var(--accent-primary)] text-accent"
                           : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                       }`}
                     >
@@ -323,7 +323,7 @@ export default function ReferralsPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeTab === tab.key
-                      ? 'border-accent-700 text-accent-700 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -619,8 +619,8 @@ export default function ReferralsPage() {
                       <span
                         className={`text-xs font-medium px-2 py-1 rounded-full ${
                           policy.isActive
-                            ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                            : 'bg-surface-100 text-surface-600 dark:bg-surface-900/30 dark:text-surface-400'
+                            ? "bg-status-success-bg text-status-success-text"
+                            : "bg-surface text-secondary"
                         }`}
                       >
                         {policy.isActive ? 'Active' : 'Inactive'}

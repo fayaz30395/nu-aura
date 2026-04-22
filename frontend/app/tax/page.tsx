@@ -48,22 +48,22 @@ export default function TaxOverviewPage() {
       label: 'Total Declarations',
       value: safeDeclarations.length,
       icon: FileSpreadsheet,
-      color: 'text-accent-600 dark:text-accent-400',
-      bg: 'bg-accent-50 dark:bg-accent-900/20',
+      color: "text-accent",
+      bg: "bg-accent-subtle",
     },
     {
       label: 'Approved',
       value: approvedCount,
       icon: FileCheck,
-      color: 'text-success-600 dark:text-success-400',
-      bg: 'bg-success-50 dark:bg-success-900/20',
+      color: "text-status-success-text",
+      bg: "bg-status-success-bg",
     },
     {
       label: 'Pending Review',
       value: pendingCount,
       icon: Clock,
-      color: 'text-warning-600 dark:text-warning-400',
-      bg: 'bg-warning-50 dark:bg-warning-900/20',
+      color: "text-status-warning-text",
+      bg: "bg-status-warning-bg",
     },
   ];
 

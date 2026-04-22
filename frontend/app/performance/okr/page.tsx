@@ -83,15 +83,15 @@ const getStatusColor = (status: string) => {
     case 'DRAFT':
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     case 'ACTIVE':
-      return 'bg-accent-100 text-accent-800';
+      return "bg-accent-subtle text-accent";
     case 'ON_TRACK':
-      return 'bg-success-100 text-success-800';
+      return "bg-status-success-bg text-status-success-text";
     case 'AT_RISK':
-      return 'bg-warning-100 text-warning-800';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'BEHIND':
-      return 'bg-danger-100 text-danger-800';
+      return "bg-status-danger-bg text-status-danger-text";
     case 'COMPLETED':
-      return 'bg-success-100 text-success-800';
+      return "bg-status-success-bg text-status-success-text";
     case 'CANCELLED':
       return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
@@ -100,10 +100,10 @@ const getStatusColor = (status: string) => {
 };
 
 const getProgressColor = (progress: number) => {
-  if (progress >= 80) return 'bg-success-500';
-  if (progress >= 50) return 'bg-accent-500';
-  if (progress >= 25) return 'bg-warning-500';
-  return 'bg-danger-500';
+  if (progress >= 80) return "bg-status-success-bg";
+  if (progress >= 50) return "bg-accent";
+  if (progress >= 25) return "bg-status-warning-bg";
+  return "bg-status-danger-bg";
 };
 
 const getKeyResultStatusIcon = (status: string) => {
@@ -315,7 +315,7 @@ export default function OKRPage() {
               onClick={() => setActiveTab('my')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'my'
-                  ? 'border-accent-500 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
               }`}
             >
@@ -325,7 +325,7 @@ export default function OKRPage() {
               onClick={() => setActiveTab('company')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'company'
-                  ? 'border-accent-500 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
               }`}
             >

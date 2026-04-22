@@ -45,17 +45,17 @@ const toastIcons = {
 };
 
 const toastColors = {
-  success: 'bg-success-50 border-success-500 text-success-800 dark:bg-success-900/30 dark:border-success-400 dark:text-success-200',
-  error: 'bg-danger-50 border-danger-500 text-danger-800 dark:bg-danger-900/30 dark:border-danger-400 dark:text-danger-200',
-  info: 'bg-accent-50 border-accent-500 text-accent-800 dark:bg-accent-900/30 dark:border-accent-400 dark:text-accent-200',
-  warning: 'bg-warning-50 border-warning-500 text-warning-800 dark:bg-warning-900/30 dark:border-warning-400 dark:text-warning-200',
+  success: "bg-status-success-bg border-status-success-border text-status-success-text",
+  error: "bg-status-danger-bg border-status-danger-border text-status-danger-text",
+  info: "bg-accent-subtle border-[var(--accent-primary)] text-accent",
+  warning: "bg-status-warning-bg border-status-warning-border text-status-warning-text",
 };
 
 const iconColors = {
-  success: 'text-success-500 dark:text-success-400',
-  error: 'text-danger-500 dark:text-danger-400',
-  info: 'text-accent-500 dark:text-accent-400',
-  warning: 'text-warning-500 dark:text-warning-400',
+  success: "text-status-success-text",
+  error: "text-status-danger-text",
+  info: "text-accent",
+  warning: "text-status-warning-text",
 };
 
 const ToastItem: React.FC<{ toast: Toast; onRemove: () => void }> = ({toast, onRemove}) => {

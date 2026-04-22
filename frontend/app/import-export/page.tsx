@@ -91,24 +91,24 @@ type ActiveTab = 'import' | 'export' | 'keka' | 'history';
 function StatusBadge({status}: { status: string }) {
   const config: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
     SUCCESS: {
-      bg: 'bg-success-100 dark:bg-success-900/30',
-      text: 'text-success-700 dark:text-success-400',
+      bg: "bg-status-success-bg",
+      text: "text-status-success-text",
       icon: CheckCircle2
     },
     COMPLETED: {
-      bg: 'bg-success-100 dark:bg-success-900/30',
-      text: 'text-success-700 dark:text-success-400',
+      bg: "bg-status-success-bg",
+      text: "text-status-success-text",
       icon: CheckCircle2
     },
     PARTIAL_SUCCESS: {
-      bg: 'bg-warning-100 dark:bg-warning-900/30',
-      text: 'text-warning-700 dark:text-warning-400',
+      bg: "bg-status-warning-bg",
+      text: "text-status-warning-text",
       icon: AlertTriangle
     },
-    FAILED: {bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', icon: XCircle},
+    FAILED: {bg: "bg-status-danger-bg", text: "text-status-danger-text", icon: XCircle},
     IN_PROGRESS: {
-      bg: 'bg-accent-100 dark:bg-accent-900/30',
-      text: 'text-accent-700 dark:text-accent-400',
+      bg: "bg-accent-subtle",
+      text: "text-accent",
       icon: RefreshCw
     },
     CANCELLED: {bg: 'bg-[var(--bg-secondary)]', text: 'text-[var(--text-secondary)]', icon: XCircle},
@@ -239,8 +239,8 @@ function FileDropZone({
       className={`
         flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed cursor-pointer transition-all
         ${isDragActive
-        ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-        : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+        ? "border-[var(--accent-primary)] bg-accent-subtle"
+        : "border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
       }
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
@@ -371,7 +371,7 @@ function ImportSection() {
               {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
-                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
+                  ? "bg-accent-subtle text-accent"
                   : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
               }`}>
                 {label}
@@ -396,16 +396,16 @@ function ImportSection() {
             className={`
               flex items-center gap-4 p-4 rounded-lg border text-left transition-all
               ${selectedType === value
-              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-              : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+              ? "border-[var(--accent-primary)] bg-accent-subtle ring-1 ring-accent-500"
+              : "border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
             }
             `}
           >
             <Icon
-              className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)]'}`}/>
+              className={`h-5 w-5 flex-shrink-0 ${selectedType === value ? "text-accent" : 'text-[var(--text-muted)]'}`}/>
             <div>
               <p
-                className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
+                className={`text-sm font-medium ${selectedType === value ? "text-accent" : 'text-[var(--text-primary)]'}`}>{label}</p>
               <p className="text-caption">{description}</p>
             </div>
           </button>
@@ -666,13 +666,13 @@ function ExportSection() {
               className={`
                 p-4 rounded-lg border text-left transition-all
                 ${selectedType === value
-                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 ring-1 ring-accent-500'
-                : 'border-[var(--border-main)] hover:border-accent-300 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                ? "border-[var(--accent-primary)] bg-accent-subtle ring-1 ring-accent-500"
+                : "border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               }
               `}
             >
               <p
-                className={`text-sm font-medium ${selectedType === value ? 'text-accent-700 dark:text-accent-300' : 'text-[var(--text-primary)]'}`}>{label}</p>
+                className={`text-sm font-medium ${selectedType === value ? "text-accent" : 'text-[var(--text-primary)]'}`}>{label}</p>
               <p className="text-caption">{description}</p>
             </button>
           ))}
@@ -692,8 +692,8 @@ function ExportSection() {
               className={`
                 px-4 py-2 rounded-lg border text-sm font-medium transition-all
                 ${selectedFormat === value
-                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300 ring-1 ring-accent-500'
-                : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-accent-300'
+                ? "border-[var(--accent-primary)] bg-accent-subtle text-accent ring-1 ring-accent-500"
+                : "border-[var(--border-main)] text-[var(--text-secondary)] hover:border-[var(--accent-primary)]"
               }
               `}
             >
@@ -836,7 +836,7 @@ function KekaMigrationSection() {
               {i > 0 && <ChevronRight className="h-4 w-4 text-[var(--text-muted)]"/>}
               <span className={`px-4 py-1 rounded-full text-xs font-medium transition-colors ${
                 isActive
-                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
+                  ? "bg-accent-subtle text-accent"
                   : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
               }`}>
                 {label}
@@ -1194,7 +1194,7 @@ export default function ImportExportPage() {
                 className={`
                   inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${activeTab === key
-                  ? 'bg-[var(--bg-card)] text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]'
+                  ? "bg-[var(--bg-card)] text-accent shadow-[var(--shadow-card)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }
                 `}

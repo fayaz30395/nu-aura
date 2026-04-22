@@ -11,11 +11,11 @@ import type {Employee} from '@/lib/types/hrms/employee';
 const getStatusBadgeColor = (status: string): string => {
   switch (status) {
     case 'ACTIVE':
-      return 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300';
+      return "bg-status-success-bg text-status-success-text";
     case 'ON_LEAVE':
-      return 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'TERMINATED':
-      return 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300';
+      return "bg-status-danger-bg text-status-danger-text";
     default:
       return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
   }

@@ -33,37 +33,37 @@ import type {
 const getStatusConfig = (status: ProbationStatus) => {
   switch (status) {
     case 'ACTIVE':
-      return {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: 'Active'};
+      return {bg: "bg-accent-subtle", text: "text-accent", label: 'Active'};
     case 'EXTENDED':
       return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         label: 'Extended'
       };
     case 'CONFIRMED':
       return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         label: 'Confirmed'
       };
     case 'FAILED':
-      return {bg: 'bg-danger-100 dark:bg-danger-900/30', text: 'text-danger-700 dark:text-danger-400', label: 'Failed'};
+      return {bg: "bg-status-danger-bg", text: "text-status-danger-text", label: 'Failed'};
     case 'TERMINATED':
       return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         label: 'Terminated'
       };
     case 'ON_HOLD':
       return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         label: 'On Hold'
       };
     default:
       return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
+        bg: "bg-surface",
+        text: "text-secondary",
         label: status
       };
   }
@@ -321,9 +321,9 @@ export default function ProbationPage() {
                     <span
                       className={`text-sm font-medium ${
                         probation.daysRemaining <= 7
-                          ? 'text-danger-600 dark:text-danger-400'
+                          ? "text-status-danger-text"
                           : probation.daysRemaining <= 30
-                            ? 'text-warning-600 dark:text-warning-400'
+                            ? "text-status-warning-text"
                             : 'text-[var(--text-primary)]'
                       }`}
                     >
@@ -501,7 +501,7 @@ export default function ProbationPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab.key
-                    ? 'border-accent-700 text-accent-700 dark:text-accent-400'
+                    ? "border-[var(--accent-primary)] text-accent"
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                 }`}
               >
@@ -513,7 +513,7 @@ export default function ProbationPage() {
                 onClick={() => setActiveTab('evaluate')}
                 className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === 'evaluate'
-                    ? 'border-accent-700 text-accent-700 dark:text-accent-400'
+                    ? "border-[var(--accent-primary)] text-accent"
                     : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >

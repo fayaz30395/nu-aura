@@ -94,54 +94,54 @@ export default function OrgHierarchyPage() {
   const getLevelColor = (level?: string) => {
     const colors: Record<string, { bg: string; border: string; text: string }> = {
       'CXO': {
-        bg: 'bg-accent-50 dark:bg-accent-950/40',
-        border: 'border-accent-500',
-        text: 'text-accent-900 dark:text-accent-200'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
       'SVP': {
-        bg: 'bg-accent-50 dark:bg-accent-950/30',
-        border: 'border-accent-300 dark:border-accent-700',
-        text: 'text-accent-700 dark:text-accent-300'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
       'VP': {
-        bg: 'bg-accent-50 dark:bg-accent-950/30',
-        border: 'border-accent-300 dark:border-accent-700',
-        text: 'text-accent-700 dark:text-accent-300'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
       'DIRECTOR': {
-        bg: 'bg-accent-50 dark:bg-accent-950/30',
-        border: 'border-accent-300 dark:border-accent-700',
-        text: 'text-accent-700 dark:text-accent-300'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
       'SENIOR_MANAGER': {
-        bg: 'bg-accent-50 dark:bg-accent-950/30',
-        border: 'border-accent-300 dark:border-accent-700',
-        text: 'text-accent-700 dark:text-accent-300'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
       'MANAGER': {
-        bg: 'bg-success-50 dark:bg-success-950/30',
-        border: 'border-success-300 dark:border-success-700',
-        text: 'text-success-700 dark:text-success-300'
+        bg: "bg-status-success-bg",
+        border: "border-status-success-border",
+        text: "text-status-success-text"
       },
       'LEAD': {
-        bg: 'bg-warning-50 dark:bg-warning-950/30',
-        border: 'border-warning-300 dark:border-warning-700',
-        text: 'text-warning-700 dark:text-warning-300'
+        bg: "bg-status-warning-bg",
+        border: "border-status-warning-border",
+        text: "text-status-warning-text"
       },
       'SENIOR': {
-        bg: 'bg-warning-50 dark:bg-warning-950/30',
-        border: 'border-warning-300 dark:border-warning-700',
-        text: 'text-warning-700 dark:text-warning-300'
+        bg: "bg-status-warning-bg",
+        border: "border-status-warning-border",
+        text: "text-status-warning-text"
       },
       'MID': {
-        bg: 'bg-danger-50 dark:bg-danger-950/30',
-        border: 'border-danger-300 dark:border-danger-700',
-        text: 'text-danger-700 dark:text-danger-300'
+        bg: "bg-status-danger-bg",
+        border: "border-status-danger-border",
+        text: "text-status-danger-text"
       },
       'ENTRY': {
-        bg: 'bg-accent-50 dark:bg-accent-950/40',
-        border: 'border-accent-500',
-        text: 'text-accent-900 dark:text-accent-200'
+        bg: "bg-accent-subtle",
+        border: "border-[var(--accent-primary)]",
+        text: "text-accent"
       },
     };
     return level && colors[level] ? colors[level] : {
@@ -240,10 +240,10 @@ export default function OrgHierarchyPage() {
                 )}
                 {employee.status && (
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' :
-                      employee.status === 'ON_LEAVE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
-                        employee.status === 'ON_NOTICE' ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300' :
-                          'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300'
+                    className={`px-2 py-1 text-xs font-medium rounded-md ${employee.status === 'ACTIVE' ? "bg-status-success-bg text-status-success-text" :
+                      employee.status === 'ON_LEAVE' ? "bg-status-warning-bg text-status-warning-text" :
+                        employee.status === 'ON_NOTICE' ? "bg-status-warning-bg text-status-warning-text" :
+                          "bg-status-danger-bg text-status-danger-text"
                     }`}>
                     {employee.status.replace(/_/g, ' ')}
                   </span>

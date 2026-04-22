@@ -36,108 +36,108 @@ const ENTITY_TYPE_CONFIG: Record<
 > = {
   LEAVE_REQUEST: {
     label: 'Leave',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   EXPENSE_CLAIM: {
     label: 'Expense',
-    bg: 'bg-warning-100 dark:bg-warning-900/30',
-    text: 'text-warning-700 dark:text-warning-300'
+    bg: "bg-status-warning-bg",
+    text: "text-status-warning-text"
   },
   TRAVEL_REQUEST: {
     label: 'Travel',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    text: "text-status-success-text"
   },
   LOAN_REQUEST: {
     label: 'Loan',
-    bg: 'bg-warning-100 dark:bg-warning-900/30',
-    text: 'text-warning-700 dark:text-warning-300'
+    bg: "bg-status-warning-bg",
+    text: "text-status-warning-text"
   },
   ASSET_REQUEST: {
     label: 'Asset',
-    bg: 'bg-surface-100 dark:bg-surface-800/30',
-    text: 'text-surface-700 dark:text-surface-300'
+    bg: "bg-surface",
+    text: "text-secondary"
   },
   TIMESHEET: {
     label: 'Timesheet',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   RESIGNATION: {
     label: 'Resignation',
-    bg: 'bg-danger-100 dark:bg-danger-900/30',
-    text: 'text-danger-700 dark:text-danger-300'
+    bg: "bg-status-danger-bg",
+    text: "text-status-danger-text"
   },
   SALARY_REVISION: {
     label: 'Salary Revision',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   PROMOTION: {
     label: 'Promotion',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    text: "text-status-success-text"
   },
   TRANSFER: {
     label: 'Transfer',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   ONBOARDING: {
     label: 'Onboarding',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    text: "text-status-success-text"
   },
   OFFBOARDING: {
     label: 'Offboarding',
-    bg: 'bg-danger-100 dark:bg-danger-900/30',
-    text: 'text-danger-700 dark:text-danger-300'
+    bg: "bg-status-danger-bg",
+    text: "text-status-danger-text"
   },
   DOCUMENT_REQUEST: {
     label: 'Document',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   POLICY_ACKNOWLEDGMENT: {
     label: 'Policy',
-    bg: 'bg-accent-300 dark:bg-accent-900/30',
-    text: 'text-accent-900 dark:text-accent-500'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   TRAINING_REQUEST: {
     label: 'Training',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    text: "text-status-success-text"
   },
   REIMBURSEMENT: {
     label: 'Reimbursement',
-    bg: 'bg-warning-100 dark:bg-warning-900/30',
-    text: 'text-warning-700 dark:text-warning-300'
+    bg: "bg-status-warning-bg",
+    text: "text-status-warning-text"
   },
   OVERTIME: {
     label: 'Overtime',
-    bg: 'bg-nu-purple-100 dark:bg-nu-purple-900/30',
-    text: 'text-nu-purple-700 dark:text-nu-purple-300'
+    bg: "bg-nu-purple-100",
+    text: "text-nu-purple-700"
   },
   SHIFT_CHANGE: {
     label: 'Shift Change',
-    bg: 'bg-accent-300 dark:bg-accent-900/30',
-    text: 'text-accent-900 dark:text-accent-500'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   WORK_FROM_HOME: {
     label: 'WFH',
-    bg: 'bg-success-100 dark:bg-success-900/30',
-    text: 'text-success-700 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    text: "text-status-success-text"
   },
   RECRUITMENT_OFFER: {
     label: 'Recruitment',
-    bg: 'bg-accent-100 dark:bg-accent-900/30',
-    text: 'text-accent-700 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    text: "text-accent"
   },
   CUSTOM: {
     label: 'Custom',
-    bg: 'bg-surface-100 dark:bg-surface-800/30',
-    text: 'text-surface-700 dark:text-surface-300'
+    bg: "bg-surface",
+    text: "text-secondary"
   },
 };
 
@@ -260,7 +260,7 @@ export default function WorkflowListPage() {
                   }}
                   className={`rounded-full px-4 py-1 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     statusFilter === s
-                      ? 'bg-accent-700 text-white'
+                      ? "bg-accent text-inverse"
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:text-[var(--text-muted)]'
                   }`}
                 >
@@ -374,12 +374,12 @@ export default function WorkflowListPage() {
                           <span
                             className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold justify-center ${
                               wf.isActive
-                                ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300'
-                                : 'bg-surface-100 text-surface-600 dark:bg-surface-800/30 dark:text-surface-400'
+                                ? "bg-status-success-bg text-status-success-text"
+                                : "bg-surface text-secondary"
                             }`}
                           >
                             <span
-                              className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? 'bg-success-500' : 'bg-surface-400'}`}/>
+                              className={`h-1.5 w-1.5 rounded-full ${wf.isActive ? "bg-status-success-bg" : "bg-card"}`}/>
                             {wf.isActive ? 'Active' : 'Inactive'}
                           </span>
                         {wf.isDefault && (

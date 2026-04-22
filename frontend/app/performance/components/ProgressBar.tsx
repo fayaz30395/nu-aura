@@ -14,19 +14,19 @@ export default function ProgressBar({
   const percentage = Math.min(Math.max(progress, 0), 100);
 
   const colorClasses = {
-    blue: 'bg-accent-500',
-    green: 'bg-success-600',
-    yellow: 'bg-warning-600',
-    red: 'bg-danger-600',
-    primary: 'bg-accent-500',
+    blue: "bg-accent",
+    green: "bg-status-success-bg",
+    yellow: "bg-status-warning-bg",
+    red: "bg-status-danger-bg",
+    primary: "bg-accent",
   };
 
   const getColorByProgress = () => {
     if (color !== 'primary') return colorClasses[color];
-    if (percentage >= 80) return 'bg-success-600';
-    if (percentage >= 50) return 'bg-accent-500';
-    if (percentage >= 30) return 'bg-warning-600';
-    return 'bg-danger-600';
+    if (percentage >= 80) return "bg-status-success-bg";
+    if (percentage >= 50) return "bg-accent";
+    if (percentage >= 30) return "bg-status-warning-bg";
+    return "bg-status-danger-bg";
   };
 
   return (

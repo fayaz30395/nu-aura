@@ -120,18 +120,18 @@ const getBenefitIcon = (type: string) => {
 const getBenefitColor = (type: string) => {
   switch (type) {
     case 'HEALTH':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case 'DENTAL':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case 'LIFE':
-      return 'bg-accent-300 text-accent-700 dark:bg-accent-900 dark:text-accent-600';
+      return "bg-accent-subtle text-accent";
     case 'RETIREMENT':
-      return 'bg-success-100 text-success-600 dark:bg-success-900 dark:text-success-400';
+      return "bg-status-success-bg text-status-success-text";
     case 'FSA':
     case 'HSA':
-      return 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'VISION':
-      return 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }
@@ -145,12 +145,12 @@ const coverageLevelLabels: Record<CoverageLevel, string> = {
 };
 
 const _claimStatusColors: Record<string, string> = {
-  'SUBMITTED': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-  'UNDER_REVIEW': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
-  'APPROVED': 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
-  'REJECTED': 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
-  'PAID': 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-  'APPEALED': 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
+  'SUBMITTED': "bg-accent-subtle text-accent",
+  'UNDER_REVIEW': "bg-status-warning-bg text-status-warning-text",
+  'APPROVED': "bg-status-success-bg text-status-success-text",
+  'REJECTED': "bg-status-danger-bg text-status-danger-text",
+  'PAID': "bg-accent-subtle text-accent",
+  'APPEALED': "bg-status-warning-bg text-status-warning-text",
 };
 
 export default function BenefitsPage() {
@@ -509,7 +509,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('plans')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'plans'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                ? "text-accent border-b-2 border-[var(--accent-primary)]"
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -519,7 +519,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('enrollments')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'enrollments'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                ? "text-accent border-b-2 border-[var(--accent-primary)]"
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -529,7 +529,7 @@ export default function BenefitsPage() {
             <button
               onClick={() => setActiveTab('claims')}
               className={`px-6 py-4 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-md ${activeTab === 'claims'
-                ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                ? "text-accent border-b-2 border-[var(--accent-primary)]"
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >

@@ -65,7 +65,7 @@ export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
         ) : teamRequests.length === 0 ? (
           <EmptyState
             icon={<ClipboardCheck className="h-6 w-6"/>}
-            iconColor="bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400"
+            iconColor="bg-accent-subtle text-accent"
             title="No pending requests"
             description="All regularization requests from your team have been processed"
           />

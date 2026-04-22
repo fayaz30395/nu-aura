@@ -237,7 +237,7 @@ export default function CapacityTimelinePage() {
                 onClick={() => setViewMode('week')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'week'
-                    ? 'bg-accent-500 text-white'
+                    ? "bg-accent text-inverse"
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -247,7 +247,7 @@ export default function CapacityTimelinePage() {
                 onClick={() => setViewMode('month')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   viewMode === 'month'
-                    ? 'bg-accent-500 text-white'
+                    ? "bg-accent text-inverse"
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -285,13 +285,13 @@ export default function CapacityTimelinePage() {
               <p className="text-caption mt-0.5">Avg allocation</p>
             </div>
             <div
-              className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? 'bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800' : 'bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800'}`}>
+              className={`border rounded-xl px-4 py-4 ${overAllocated > 0 ? "bg-status-danger-bg border-status-danger-border" : "bg-status-success-bg border-status-success-border"}`}>
               <p
-                className={`text-xl font-bold ${overAllocated > 0 ? 'text-danger-700 dark:text-danger-300' : 'text-success-700 dark:text-success-300'}`}>
+                className={`text-xl font-bold ${overAllocated > 0 ? "text-status-danger-text" : "text-status-success-text"}`}>
                 {overAllocated}
               </p>
               <p
-                className={`text-xs mt-0.5 ${overAllocated > 0 ? 'text-danger-600 dark:text-danger-300' : 'text-success-600 dark:text-success-300'}`}>
+                className={`text-xs mt-0.5 ${overAllocated > 0 ? "text-status-danger-text" : "text-status-success-text"}`}>
                 Over-allocated
               </p>
             </div>

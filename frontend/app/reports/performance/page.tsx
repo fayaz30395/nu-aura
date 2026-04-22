@@ -135,12 +135,12 @@ export default function PerformanceReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/20'
+                          ? "border-[var(--accent-primary)] bg-accent-subtle"
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
                       <p
-                        className={`font-medium text-sm ${format === fmt ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
+                        className={`font-medium text-sm ${format === fmt ? "text-accent" : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-caption">

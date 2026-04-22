@@ -66,15 +66,15 @@ const getStatusIcon = (status: ProgramStatus) => {
 const getCategoryColor = (category: TrainingCategory): string => {
   switch (category) {
     case TrainingCategory.TECHNICAL:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return "bg-accent-subtle text-accent";
     case TrainingCategory.SOFT_SKILLS:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case TrainingCategory.LEADERSHIP:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
+      return "bg-status-warning-bg text-status-warning-text";
     case TrainingCategory.COMPLIANCE:
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200';
+      return "bg-status-danger-bg text-status-danger-text";
     case TrainingCategory.SAFETY:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
+      return "bg-status-warning-bg text-status-warning-text";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }

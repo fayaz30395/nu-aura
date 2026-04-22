@@ -163,12 +163,12 @@ export default function LeaveReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-warning-500 bg-warning-50 dark:bg-warning-950/20'
+                          ? "border-status-warning-border bg-status-warning-bg"
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
                       <p
-                        className={`font-medium text-sm ${format === fmt ? 'text-warning-700' : 'text-[var(--text-secondary)]'}`}>
+                        className={`font-medium text-sm ${format === fmt ? "text-status-warning-text" : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-caption">

@@ -34,12 +34,12 @@ const holidayFormSchema = z.object({
 type HolidayFormData = z.infer<typeof holidayFormSchema>;
 
 const HOLIDAY_TYPE_COLORS: Record<HolidayType, string> = {
-  NATIONAL: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-300',
-  REGIONAL: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300',
-  OPTIONAL: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300',
-  RESTRICTED: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300',
-  FESTIVAL: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-500',
-  COMPANY_EVENT: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300',
+  NATIONAL: "bg-status-danger-bg text-status-danger-text",
+  REGIONAL: "bg-accent-subtle text-accent",
+  OPTIONAL: "bg-status-warning-bg text-status-warning-text",
+  RESTRICTED: "bg-status-warning-bg text-status-warning-text",
+  FESTIVAL: "bg-accent-subtle text-accent",
+  COMPANY_EVENT: "bg-status-success-bg text-status-success-text",
 };
 
 const HOLIDAY_TYPES: HolidayType[] = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'];
@@ -332,7 +332,7 @@ export default function HolidaysPage() {
             onClick={() => setFilterType('ALL')}
             className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               filterType === 'ALL'
-                ? 'bg-accent-500 text-white'
+                ? "bg-accent text-inverse"
                 : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
             }`}
           >
@@ -347,12 +347,12 @@ export default function HolidaysPage() {
                 onClick={() => setFilterType(type)}
                 className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   filterType === type
-                    ? 'bg-accent-500 text-white'
+                    ? "bg-accent text-inverse"
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                 }`}
               >
-                {type ? type.replace('_', ' ') : '-'} ({count})
-              </button>
+                {type ? type.replace('_', ' ') : '-'}({count})
+                              </button>
             );
           })}
         </div>

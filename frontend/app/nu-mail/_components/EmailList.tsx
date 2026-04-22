@@ -111,8 +111,8 @@ export function EmailList({
                 }}
                 className={`flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   email.isStarred
-                    ? 'text-warning-500'
-                    : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-warning-500'
+                    ? "text-status-warning-text"
+                    : "text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-status-warning-text"
                 }`}
                 aria-label={email.isStarred ? 'Remove star' : 'Add star'}
               >

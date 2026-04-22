@@ -75,18 +75,18 @@ export default function TimeEntryDetailPage() {
         icon: FileText,
       },
       SUBMITTED: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         icon: XCircle,
       },
     };

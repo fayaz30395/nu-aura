@@ -62,17 +62,17 @@ export function ScreeningSummaryModal({
 
             <div className="flex gap-4 items-center">
               <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
-                screeningSummary.fitLevel === 'HIGH' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
-                  screeningSummary.fitLevel === 'MEDIUM' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
-                    'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
+                screeningSummary.fitLevel === 'HIGH' ? "bg-status-success-bg text-status-success-text" :
+                  screeningSummary.fitLevel === 'MEDIUM' ? "bg-status-warning-bg text-status-warning-text" :
+                    "bg-status-danger-bg text-status-danger-text"
               }`}>
                 Fit Level: {screeningSummary.fitLevel}
               </span>
 
               <span className={`px-4 py-1.5 text-sm font-medium rounded-full whitespace-nowrap ${
-                screeningSummary.recommendation === 'ADVANCE' ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300' :
-                  screeningSummary.recommendation === 'HOLD' ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300' :
-                    'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300'
+                screeningSummary.recommendation === 'ADVANCE' ? "bg-status-success-bg text-status-success-text" :
+                  screeningSummary.recommendation === 'HOLD' ? "bg-status-warning-bg text-status-warning-text" :
+                    "bg-status-danger-bg text-status-danger-text"
               }`}>
                 {screeningSummary.recommendation}
               </span>

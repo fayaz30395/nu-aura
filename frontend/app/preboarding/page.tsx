@@ -128,15 +128,15 @@ export default function PreboardingPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+        return "bg-status-success-bg text-status-success-text";
       case 'IN_PROGRESS':
-        return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'INVITED':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'CONVERTED':
-        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
+        return "bg-accent-subtle text-accent";
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }

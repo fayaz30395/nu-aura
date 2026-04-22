@@ -434,7 +434,7 @@ export default function ImplicitRolesPage() {
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         rule.isActive
-                          ? 'bg-success-100 text-success-700 dark:bg-success-900/20 dark:text-success-400'
+                          ? "bg-status-success-bg text-status-success-text"
                           : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                       }`}
                     >
@@ -787,7 +787,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
                       <span
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           userRole.isActive
-                            ? 'bg-success-100 text-success-700 dark:bg-success-900/20 dark:text-success-400'
+                            ? "bg-status-success-bg text-status-success-text"
                             : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                         }`}
                       >

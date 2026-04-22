@@ -423,7 +423,7 @@ export default function FeaturesPage() {
                 onClick={() => setActiveTab(module.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === module.id
-                    ? 'bg-accent-500 text-white shadow-[var(--shadow-dropdown)]'
+                    ? "bg-accent text-inverse shadow-[var(--shadow-dropdown)]"
                     : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-main)]'
                 }`}
               >

@@ -240,9 +240,9 @@ export default function PreboardingPortalPage() {
                 aria-label={`Go to step ${idx + 1}: ${step.label}`}>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors ${
                   step.complete
-                    ? 'bg-success-500 text-white'
+                    ? "bg-status-success-bg text-inverse"
                     : idx === activeStep
-                      ? 'bg-accent-500 text-white'
+                      ? "bg-accent text-inverse"
                       : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}>
                   {step.complete ? <CheckCircle2 className="h-5 w-5"/> : <step.icon className="h-5 w-5"/>}
@@ -252,7 +252,7 @@ export default function PreboardingPortalPage() {
               {idx < steps.length - 1 && (
                 <div
                   className="flex-1 h-0.5 mx-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] relative top-[-12px]">
-                  <div className={`h-full transition-all ${step.complete ? 'bg-success-500 w-full' : 'w-0'}`}/>
+                  <div className={`h-full transition-all ${step.complete ? "bg-status-success-bg w-full" : 'w-0'}`}/>
                 </div>
               )}
             </div>
@@ -381,7 +381,7 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-xl font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card
-                    className={`p-4 border-2 ${data.photoUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                    className={`p-4 border-2 ${data.photoUploaded ? "border-status-success-border" : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.photoUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -392,7 +392,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card
-                    className={`p-4 border-2 ${data.idProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                    className={`p-4 border-2 ${data.idProofUploaded ? "border-status-success-border" : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.idProofUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -403,7 +403,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card
-                    className={`p-4 border-2 ${data.addressProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                    className={`p-4 border-2 ${data.addressProofUploaded ? "border-status-success-border" : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.addressProofUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
@@ -414,7 +414,7 @@ export default function PreboardingPortalPage() {
                     </div>
                   </Card>
                   <Card
-                    className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
+                    className={`p-4 border-2 ${data.educationDocsUploaded ? "border-status-success-border" : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
                       {data.educationDocsUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}

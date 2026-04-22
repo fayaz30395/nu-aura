@@ -227,7 +227,7 @@ export default function PermissionsPage() {
           <button
             onClick={() => setActiveTab('roles')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'roles'
-              ? 'border-accent-500 text-accent-700'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
@@ -239,7 +239,7 @@ export default function PermissionsPage() {
           <button
             onClick={() => setActiveTab('users')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'users'
-              ? 'border-accent-500 text-accent-700'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
@@ -297,12 +297,12 @@ export default function PermissionsPage() {
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${role.isSystemRole
-                            ? 'bg-accent-300 dark:bg-accent-900/30'
-                            : 'bg-accent-100 dark:bg-accent-900/30'
+                            ? "bg-accent-subtle"
+                            : "bg-accent-subtle"
                           }`}>
                             <ShieldCheck className={`w-5 h-5 ${role.isSystemRole
-                              ? 'text-accent-800 dark:text-accent-600'
-                              : 'text-accent-700 dark:text-accent-400'
+                              ? "text-accent"
+                              : "text-accent"
                             }`}/>
                           </div>
                           <div>
@@ -672,10 +672,10 @@ function EditRoleModal({
                               key={perm.code}
                               type="button"
                               onClick={toggle}
-                              className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'}`}
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? "bg-accent-subtle border-[var(--accent-primary)]" : "bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--accent-primary)]"}`}
                             >
                               <div
-                                className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                                className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? "bg-accent text-inverse" : 'bg-[var(--bg-surface)]'}`}>
                                 {isChecked && <Check className="w-3 h-3"/>}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -838,10 +838,10 @@ function CreateRoleModal({
                                 key={perm.code}
                                 type="button"
                                 onClick={toggle}
-                                className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'}`}
+                                className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${isChecked ? "bg-accent-subtle border-[var(--accent-primary)]" : "bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--accent-primary)]"}`}
                               >
                                 <div
-                                  className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? 'bg-accent-500 text-white' : 'bg-[var(--bg-surface)]'}`}>
+                                  className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked ? "bg-accent text-inverse" : 'bg-[var(--bg-surface)]'}`}>
                                   {isChecked && <Check className="w-3 h-3"/>}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -961,12 +961,12 @@ function EditUserModal({
                         type="button"
                         onClick={toggle}
                         className={`flex items-center gap-4 p-4 rounded-lg border text-left transition-colors ${isChecked
-                          ? 'bg-accent-50 border-accent-300 dark:bg-accent-900/30 dark:border-accent-700'
-                          : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-accent-300'
+                          ? "bg-accent-subtle border-[var(--accent-primary)]"
+                          : "bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--accent-primary)]"
                         }`}
                       >
                         <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${isChecked
-                          ? 'bg-accent-500 text-white'
+                          ? "bg-accent text-inverse"
                           : 'bg-[var(--bg-surface)]'
                         }`}>
                           {isChecked && <Check className="w-3 h-3"/>}

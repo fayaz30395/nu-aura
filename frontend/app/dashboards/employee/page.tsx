@@ -48,18 +48,18 @@ export default function EmployeeDashboardPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PRESENT':
-        return 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400';
+        return "bg-status-success-bg text-status-success-text";
       case 'ABSENT':
-        return 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'LATE':
-        return 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'LEAVE':
       case 'ON_LEAVE':
-        return 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'WEEKLY_OFF':
-        return 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600';
+        return "bg-accent-subtle text-accent";
       case 'HOLIDAY':
-        return 'bg-accent-300 dark:bg-accent-950/30 text-accent-900 dark:text-accent-600';
+        return "bg-accent-subtle text-accent";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
@@ -85,15 +85,15 @@ export default function EmployeeDashboardPage() {
   const getEventColor = (type: string) => {
     switch (type) {
       case 'HOLIDAY':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'BIRTHDAY':
-        return 'bg-accent-250 dark:bg-accent-950/30 text-accent-800 dark:text-accent-600';
+        return "bg-accent-subtle text-accent";
       case 'ANNIVERSARY':
-        return 'bg-accent-250 dark:bg-accent-900/30 text-accent-800 dark:text-accent-600';
+        return "bg-accent-subtle text-accent";
       case 'MEETING':
-        return 'bg-warning-50 dark:bg-warning-950/30 text-warning-600 dark:text-warning-400';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'TRAINING':
-        return 'bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400';
+        return "bg-status-success-bg text-status-success-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
@@ -478,9 +478,9 @@ export default function EmployeeDashboardPage() {
                           <span
                             className={`px-2 py-0.5 text-xs rounded-full ${
                               goal.status === 'COMPLETED'
-                                ? 'bg-success-100 text-success-700 dark:bg-success-950/30 dark:text-success-400'
+                                ? "bg-status-success-bg text-status-success-text"
                                 : goal.status === 'IN_PROGRESS'
-                                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-950/30 dark:text-accent-400'
+                                  ? "bg-accent-subtle text-accent"
                                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                             }`}
                           >

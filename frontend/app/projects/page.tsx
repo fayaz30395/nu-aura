@@ -878,7 +878,7 @@ export default function ProjectsPage() {
               onClick={() => handleTabChange(tab.key)}
               className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.key
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
               }`}
             >

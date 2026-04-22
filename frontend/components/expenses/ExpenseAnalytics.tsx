@@ -203,8 +203,8 @@ export function ExpenseAnalytics({claims, className = ''}: ExpenseAnalyticsProps
               onClick={() => setTimeRange(range)}
               className={`px-4 py-1.5 text-sm rounded-lg transition-colors ${
                 timeRange === range
-                  ? 'bg-accent-500 text-white'
-                  : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600'
+                  ? "bg-accent text-inverse"
+                  : "bg-surface text-secondary hover:bg-elevated"
               }`}
             >
               {range === '3m' ? '3 Months' : range === '6m' ? '6 Months' : '12 Months'}
@@ -229,7 +229,7 @@ export function ExpenseAnalytics({claims, className = ''}: ExpenseAnalyticsProps
               <TrendingDown className='w-4 h-4 text-status-danger-text'/>
             )}
             <span
-              className={`text-sm ${summary.percentChange >= 0 ? 'text-success-600' : 'text-danger-600'}`}
+              className={`text-sm ${summary.percentChange >= 0 ? "text-status-success-text" : "text-status-danger-text"}`}
             >
               {Math.abs(summary.percentChange).toFixed(1)}% vs prev period
             </span>
@@ -387,12 +387,12 @@ export function ExpenseAnalytics({claims, className = ''}: ExpenseAnalyticsProps
                       <span
                         className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                           index === 0
-                            ? 'bg-warning-100 text-warning-700'
+                            ? "bg-status-warning-bg text-status-warning-text"
                             : index === 1
                               ? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'
                               : index === 2
-                                ? 'bg-warning-100 text-warning-700'
-                                : 'bg-surface-100 text-surface-600'
+                                ? "bg-status-warning-bg text-status-warning-text"
+                                : "bg-surface text-secondary"
                         }`}
                       >
                         {index + 1}

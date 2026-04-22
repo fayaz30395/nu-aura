@@ -64,7 +64,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
               initial={{opacity: 0, scale: 0.9}}
               animate={{opacity: 1, scale: 1}}
               transition={{delay: idx * 0.05}}
-              className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-[var(--shadow-card)] ${skill.verified ? 'bg-accent-50 border-accent-100 dark:bg-accent-950/20 dark:border-accent-900/50' : 'bg-surface-50 border-surface-200 dark:bg-surface-800 dark:border-surface-700'
+              className={`px-4 py-2 rounded-lg border flex items-center gap-2 shadow-[var(--shadow-card)] ${skill.verified ? "bg-accent-subtle border-[var(--accent-primary)]" : "bg-base border-subtle"
               }`}
             >
               <span className="font-semibold text-sm">{skill.name}</span>
@@ -72,7 +72,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? 'bg-accent-500' : 'bg-surface-200 dark:bg-surface-700'}`}
+                    className={`h-1.5 w-1.5 rounded-full ${i < skill.level ? "bg-accent" : "bg-elevated"}`}
                   />
                 ))}
               </div>
@@ -99,7 +99,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                 className="relative"
               >
                 <div
-                  className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-[var(--bg-card)] z-10 ${milestone.status === 'COMPLETED' ? 'border-success-500' : 'border-accent-500 border-dashed animate-pulse'
+                  className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-[var(--bg-card)] z-10 ${milestone.status === 'COMPLETED' ? "border-status-success-border" : "border-[var(--accent-primary)] border-dashed animate-pulse"
                   }`}>
                   {getMilestoneIcon(milestone.type)}
                 </div>
@@ -176,7 +176,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i}
-                              className={`h-3 w-3 ${i < feedback.rating ? 'text-warning-400 fill-warning-400' : 'text-surface-200 dark:text-surface-700'}`}/>
+                              className={`h-3 w-3 ${i < feedback.rating ? "text-status-warning-text fill-warning-400" : "text-muted"}`}/>
                       ))}
                     </div>
                   </div>

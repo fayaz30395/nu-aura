@@ -192,11 +192,11 @@ export default function BlogPostDetailPage() {
 
   const getAvatarColor = (initial: string): string => {
     const colors = [
-      'bg-accent-100 dark:bg-accent-900/30 text-accent-700',
-      'bg-accent-300 dark:bg-accent-900/30 text-accent-900',
-      'bg-accent-300 dark:bg-accent-900/30 text-accent-900',
-      'bg-success-100 dark:bg-success-900/30 text-success-700',
-      'bg-warning-100 dark:bg-warning-900/30 text-warning-700',
+      "bg-accent-subtle text-accent",
+      "bg-accent-subtle text-accent",
+      "bg-accent-subtle text-accent",
+      "bg-status-success-bg text-status-success-text",
+      "bg-status-warning-bg text-status-warning-text",
     ];
     const index = initial.charCodeAt(0) % colors.length;
     return colors[index];
@@ -404,8 +404,8 @@ export default function BlogPostDetailPage() {
                   disabled={likeMutation.isPending || unlikeMutation.isPending}
                   className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isLiked
-                      ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-600 dark:text-danger-300'
-                      : 'bg-[var(--bg-secondary)] hover:bg-danger-100 dark:hover:bg-danger-900/30 text-[var(--text-secondary)] hover:text-danger-600 dark:hover:text-danger-300'
+                      ? "bg-status-danger-bg text-status-danger-text"
+                      : "bg-[var(--bg-secondary)] hover:bg-status-danger-bg text-[var(--text-secondary)] hover:text-status-danger-text"
                   }`}
                   title={isLiked ? 'Unlike' : 'Like'}
                   aria-label={isLiked ? 'Unlike' : 'Like'}
@@ -421,8 +421,8 @@ export default function BlogPostDetailPage() {
                   disabled={addFavorite.isPending || removeFavorite.isPending}
                   className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isFavorited
-                      ? 'bg-warning-100 dark:bg-warning-900/30 text-warning-600 dark:text-warning-300'
-                      : 'bg-[var(--bg-secondary)] hover:bg-warning-100 dark:hover:bg-warning-900/30 text-[var(--text-secondary)] hover:text-warning-600 dark:hover:text-warning-300'
+                      ? "bg-status-warning-bg text-status-warning-text"
+                      : "bg-[var(--bg-secondary)] hover:bg-status-warning-bg text-[var(--text-secondary)] hover:text-status-warning-text"
                   }`}
                   title={isFavorited ? 'Remove favorite' : 'Add to favorites'}
                   aria-label={isFavorited ? 'Remove favorite' : 'Add to favorites'}

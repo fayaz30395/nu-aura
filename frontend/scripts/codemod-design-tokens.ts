@@ -222,7 +222,7 @@ const UTILITY_PREFIXES = new Set<string>(['bg', 'text', 'border']);
 // "hover:", "focus:", "md:", "dark:". We parse the state prefix chain separately.
 const STATE_PREFIX_CHARS = /^[a-zA-Z0-9:\-\[\]\/]+$/;
 const COLOR_CLASS_PATTERN =
-  /^(bg|text|border|ring|fill|stroke|from|to|via)-([a-zA-Z]+)-(\d+)$/;
+  /^(bg|text|border|ring|fill|stroke|from|to|via)-([a-zA-Z]+)-(\d+)(\/\d+)?$/;
 
 // ---------------------------------------------------------------------------
 // Telemetry: track what we couldn't convert (per-run aggregate)
@@ -301,12 +301,22 @@ export function convertSingleClass(
   const match = COLOR_CLASS_PATTERN.exec(basePart);
   if (!match) return { result: token, converted: false };
 
-  const [, util, rootRaw, scaleStr] = match;
+  const [, util, rootRaw, scaleStr, opacityRaw] = match;
   const root = rootRaw as string;
   const scale = parseInt(scaleStr as string, 10);
+  const opacity = (opacityRaw ?? '') as string; // e.g. "/10" or ""
 
   if (!KNOWN_COLOR_ROOTS.has(root)) return { result: token, converted: false };
   if (!UTILITY_PREFIXES.has(util)) return { result: token, converted: false };
+
+  // Opacity-modified color classes (e.g. `bg-accent-500/10`) cannot be mapped to
+  // bridge tokens (which are CSS vars without reliable /opacity support via Tailwind).
+  // Rewrite as an arbitrary-value CSS var reference that preserves the opacity.
+  if (opacity) {
+    const arbitrary = `${util}-[var(--${root}-${scale})]${opacity}`;
+    const replaced = [...stateChain, arbitrary].join(':');
+    return { result: replaced, converted: true };
+  }
 
   // Resolve the new class based on util × root × scale.
   let mapped: string | undefined;
@@ -466,6 +476,52 @@ function processFile(
     .forEach((p: any) => {
       for (const arg of p.node.arguments) {
         processExpression(j, arg, file, state);
+      }
+    });
+
+  // 3) Any other string literal that *looks like* a Tailwind class list —
+  //    strings stored in data maps, theme objects, etc. transformClassString
+  //    is a no-op for strings whose tokens aren't recognized Tailwind utilities,
+  //    so this pass is safe for non-class strings.
+  const looksLikeClassList = (s: string): boolean => {
+    if (!s || s.length > 500) return false;
+    // Must contain at least one dash-separated token whose first segment is a
+    // Tailwind utility root (bg/text/border/shadow/ring/fill/stroke/from/to/via).
+    // Also accept legacy palette scales on their own.
+    return /(?:^|\s)(?:(?:dark|hover|focus|active|disabled|group-hover|peer|sm|md|lg|xl|2xl):)*(?:bg|text|border|ring|fill|stroke|from|to|via|shadow)-[A-Za-z0-9[_/\-]/.test(s);
+  };
+
+  root
+    .find(j.Literal)
+    .forEach((p: any) => {
+      const node = p.node;
+      if (typeof node.value !== 'string') return;
+      // Already handled by pass #1 and #2 — skip if parent is className JSX attr
+      // (value already mutated) or inside a helper call (already walked).
+      const parent = p.parent?.node;
+      if (!parent) return;
+      // Skip JSXAttribute with name "className" (already done)
+      if (parent.type === 'JSXAttribute' && parent.name?.name === 'className') return;
+      if (!looksLikeClassList(node.value)) return;
+      const next = transformClassString(node.value, file, state);
+      if (next !== node.value) {
+        node.value = next;
+        if ('raw' in node) node.raw = JSON.stringify(next);
+      }
+    });
+
+  root
+    .find(j.StringLiteral)
+    .forEach((p: any) => {
+      const node = p.node;
+      if (typeof node.value !== 'string') return;
+      const parent = p.parent?.node;
+      if (!parent) return;
+      if (parent.type === 'JSXAttribute' && parent.name?.name === 'className') return;
+      if (!looksLikeClassList(node.value)) return;
+      const next = transformClassString(node.value, file, state);
+      if (next !== node.value) {
+        node.value = next;
       }
     });
 

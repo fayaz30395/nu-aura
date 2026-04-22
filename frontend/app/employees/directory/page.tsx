@@ -97,7 +97,7 @@ const statusOptions = [
   {
     value: 'ACTIVE',
     label: 'Active',
-    color: 'bg-success-100 dark:bg-success-950/30 text-success-800 dark:text-success-400'
+    color: "bg-status-success-bg text-status-success-text"
   },
   {
     value: 'INACTIVE',
@@ -107,17 +107,17 @@ const statusOptions = [
   {
     value: 'ON_LEAVE',
     label: 'On Leave',
-    color: 'bg-warning-100 dark:bg-warning-950/30 text-warning-800 dark:text-warning-400'
+    color: "bg-status-warning-bg text-status-warning-text"
   },
   {
     value: 'PROBATION',
     label: 'Probation',
-    color: 'bg-accent-100 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400'
+    color: "bg-accent-subtle text-accent"
   },
   {
     value: 'TERMINATED',
     label: 'Terminated',
-    color: 'bg-danger-100 dark:bg-danger-950/30 text-danger-800 dark:text-danger-400'
+    color: "bg-status-danger-bg text-status-danger-text"
   },
 ];
 
@@ -220,14 +220,14 @@ export default function TeamDirectory() {
 
   const getRandomColor = (name: string) => {
     const colors = [
-      'bg-accent-500',
-      'bg-success-500',
-      'bg-accent-700',
-      'bg-accent-700',
-      'bg-accent-500',
-      'bg-accent-500',
-      'bg-warning-500',
-      'bg-accent-500',
+      "bg-accent",
+      "bg-status-success-bg",
+      "bg-accent",
+      "bg-accent",
+      "bg-accent",
+      "bg-accent",
+      "bg-status-warning-bg",
+      "bg-accent",
     ];
     const index = name?.charCodeAt(0) % colors.length || 0;
     return colors[index];
@@ -256,7 +256,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('grid')}
                 aria-label="Grid view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'grid'
-                  ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                  ? "bg-accent-subtle text-accent"
                   : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -266,7 +266,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('list')}
                 aria-label="List view"
                 className={`p-2 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 ${viewMode === 'list'
-                  ? 'bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                  ? "bg-accent-subtle text-accent"
                   : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -306,7 +306,7 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-4 py-4 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
-                    ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400'
+                    ? "border-[var(--accent-primary)] bg-accent-subtle text-accent"
                     : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                   }`}
                 >
@@ -690,7 +690,7 @@ export default function TeamDirectory() {
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`w-10 h-10 rounded-xl font-medium transition-colors ${filters.page === pageNum
-                        ? 'bg-accent-500 text-white'
+                        ? "bg-accent text-inverse"
                         : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                       }`}
                     >

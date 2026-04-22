@@ -51,9 +51,9 @@ export function ContentGrid({
   const getTypeColor = (type: ContentItem['type']): string => {
     switch (type) {
       case 'WIKI':
-        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'BLOG':
-        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       default:
         return 'bg-[var(--bg-surface)]';
     }

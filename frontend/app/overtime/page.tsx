@@ -39,30 +39,30 @@ const getStatusConfig = (status: string) => {
   switch (status) {
     case 'APPROVED':
       return {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         label: 'Approved'
       };
     case 'PENDING':
       return {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         label: 'Pending'
       };
     case 'REJECTED':
       return {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         label: 'Rejected'
       };
     case 'CANCELLED':
       return {
-        bg: 'bg-surface-100 dark:bg-surface-900/30',
-        text: 'text-surface-700 dark:text-surface-400',
+        bg: "bg-surface",
+        text: "text-secondary",
         label: 'Cancelled'
       };
     default:
-      return {bg: 'bg-accent-100 dark:bg-accent-900/30', text: 'text-accent-700 dark:text-accent-400', label: status};
+      return {bg: "bg-accent-subtle", text: "text-accent", label: status};
   }
 };
 
@@ -448,7 +448,7 @@ export default function OvertimePage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`pb-4 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.key
-                      ? 'border-accent-700 text-accent-700 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-main)]'
                   }`}
                 >

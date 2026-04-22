@@ -146,15 +146,15 @@ export default function GoalsPage() {
       case 'DRAFT':
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       case 'ACTIVE':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'ON_HOLD':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -163,17 +163,17 @@ export default function GoalsPage() {
   const getTypeColor = (type: GoalType) => {
     switch (type) {
       case 'OKR':
-        return 'bg-accent-300 text-accent-900';
+        return "bg-accent-subtle text-accent";
       case 'KPI':
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
       case 'PERSONAL':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'TEAM':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'DEPARTMENT':
-        return 'bg-accent-300 text-accent-900';
+        return "bg-accent-subtle text-accent";
       case 'ORGANIZATION':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }

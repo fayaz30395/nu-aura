@@ -232,11 +232,11 @@ const departmentOptions = [
 ];
 
 const HEATMAP_COLORS = [
-  'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300',
-  'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300',
-  'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300',
-  'bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-300',
-  'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300',
+  "bg-status-danger-bg text-status-danger-text",
+  "bg-status-warning-bg text-status-warning-text",
+  "bg-status-warning-bg text-status-warning-text",
+  "bg-accent-subtle text-accent",
+  "bg-status-success-bg text-status-success-text",
 ];
 
 function getHeatmapClass(level: number): string {
@@ -598,10 +598,10 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
                       <AlertTriangle
                         className={`h-4 w-4 ${
                           gap.gapLevel === 'CRITICAL'
-                            ? 'text-danger-500'
+                            ? "text-status-danger-text"
                             : gap.gapLevel === 'MODERATE'
-                              ? 'text-warning-500'
-                              : 'text-warning-500'
+                              ? "text-status-warning-text"
+                              : "text-status-warning-text"
                         }`}
                       />
                       <Text size="sm" fw={500}>{gap.skillName}</Text>

@@ -64,16 +64,16 @@ export function CalendarGridView({
           <div
             key={day.toISOString()}
             className={`min-h-[120px] p-2 bg-[var(--bg-card)] ${
-              !isCurrentMonth ? 'bg-surface-50/50 dark:bg-surface-900/50 text-surface-400' : ''
-            } ${isToday(day) ? 'bg-accent-50/30 dark:bg-accent-900/10' : ''}`}
+              !isCurrentMonth ? "bg-surface-50/50 text-muted" : ''
+            } ${isToday(day) ? "bg-accent-50/30" : ''}`}
             onClick={() => onDateChange(day)}
           >
             <div className="row-between mb-2">
               <span
                 className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${
                   isToday(day)
-                    ? 'bg-accent-500 text-white'
-                    : 'text-surface-700 dark:text-surface-300'
+                    ? "bg-accent text-inverse"
+                    : "text-secondary"
                 }`}
               >
                 {format(day, 'd')}

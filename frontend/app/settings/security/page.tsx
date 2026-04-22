@@ -139,14 +139,14 @@ export default function SecuritySettingsPage() {
               {!isMfaLoading && !isMfaError && mfaStatusData && (
                 <div className={`p-4 rounded-lg border-2 ${
                   mfaStatusData.enabled
-                    ? 'bg-success-50 dark:bg-success-950/20 border-success-200 dark:border-success-800'
-                    : 'bg-warning-50 dark:bg-warning-950/20 border-warning-200 dark:border-warning-800'
+                    ? "bg-status-success-bg border-status-success-border"
+                    : "bg-status-warning-bg border-status-warning-border"
                 }`}>
                   <div className="flex items-start gap-4">
                     <div className={`p-2 rounded-full ${
                       mfaStatusData.enabled
-                        ? 'bg-success-100 dark:bg-success-900/30'
-                        : 'bg-warning-100 dark:bg-warning-900/30'
+                        ? "bg-status-success-bg"
+                        : "bg-status-warning-bg"
                     }`}>
                       {mfaStatusData.enabled ? (
                         <Check className='h-5 w-5 text-status-success-text'/>
@@ -157,16 +157,16 @@ export default function SecuritySettingsPage() {
                     <div className="flex-1">
                       <p className={`font-medium ${
                         mfaStatusData.enabled
-                          ? 'text-success-900 dark:text-success-100'
-                          : 'text-warning-900 dark:text-warning-100'
+                          ? "text-status-success-text"
+                          : "text-status-warning-text"
                       }`}>
                         {mfaStatusData.enabled ? 'Two-Factor Authentication Enabled' : 'Two-Factor Authentication Disabled'}
                       </p>
                       {mfaStatusData.enabled && mfaStatusData.setupAt && (
                         <p className={`text-sm mt-1 ${
                           mfaStatusData.enabled
-                            ? 'text-success-700 dark:text-success-300'
-                            : 'text-warning-700 dark:text-warning-300'
+                            ? "text-status-success-text"
+                            : "text-status-warning-text"
                         }`}>
                           Enabled on {formatDate(mfaStatusData.setupAt)}
                         </p>

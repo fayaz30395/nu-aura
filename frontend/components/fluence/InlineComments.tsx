@@ -388,7 +388,7 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
                 onClick={() => setShowResolved(!showResolved)}
                 className={`text-2xs px-2 py-0.5 rounded cursor-pointer ${
                   showResolved
-                    ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400'
+                    ? "bg-accent-subtle text-accent"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >

@@ -160,7 +160,7 @@ export default function BlogsPage() {
                 onClick={() => setSelectedCategoryId(undefined)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   selectedCategoryId === undefined
-                    ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
+                    ? "bg-gradient-to-r from-warning-600 to-warning-600 text-inverse shadow-[var(--shadow-elevated)]"
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                 }`}
                 whileHover={{scale: 1.05}}
@@ -182,7 +182,7 @@ export default function BlogsPage() {
                   onClick={() => setSelectedCategoryId(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategoryId === category.id
-                      ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
+                      ? "bg-gradient-to-r from-warning-600 to-warning-600 text-inverse shadow-[var(--shadow-elevated)]"
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                   }`}
                   whileHover={{scale: 1.05}}

@@ -49,11 +49,11 @@ const getStatusColor = (status: string) => {
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     case 'ACTIVE':
     case 'IN_PROGRESS':
-      return 'bg-accent-100 text-accent-800';
+      return "bg-accent-subtle text-accent";
     case 'NOMINATION':
-      return 'bg-warning-100 text-warning-800';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'COMPLETED':
-      return 'bg-success-100 text-success-800';
+      return "bg-status-success-bg text-status-success-text";
     case 'CLOSED':
       return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
@@ -87,7 +87,7 @@ const RatingStars = ({rating, onChange}: { rating: number; onChange?: (r: number
         >
           <Star
             className={`h-5 w-5 ${
-              star <= rating ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'
+              star <= rating ? "fill-warning-400 text-status-warning-text" : 'text-[var(--text-muted)]'
             }`}
           />
         </button>
@@ -309,7 +309,7 @@ export default function Feedback360Page() {
               onClick={() => setActiveTab('cycles')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                 activeTab === 'cycles'
-                  ? 'border-accent-500 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
               }`}
             >
@@ -320,7 +320,7 @@ export default function Feedback360Page() {
               onClick={() => setActiveTab('pending')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                 activeTab === 'pending'
-                  ? 'border-accent-500 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
               }`}
             >
@@ -337,7 +337,7 @@ export default function Feedback360Page() {
               onClick={() => setActiveTab('summaries')}
               className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
                 activeTab === 'summaries'
-                  ? 'border-accent-500 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
               }`}
             >

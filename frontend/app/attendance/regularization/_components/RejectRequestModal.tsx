@@ -95,9 +95,9 @@ export function RejectRequestModal({
                         <p
                           className={`text-xs ml-auto font-medium ${
                             rejectReasonValue.length > 450
-                              ? 'text-danger-500'
+                              ? "text-status-danger-text"
                               : rejectReasonValue.length > 400
-                                ? 'text-warning-600 dark:text-warning-400'
+                                ? "text-status-warning-text"
                                 : 'text-[var(--text-muted)]'
                           }`}
                         >

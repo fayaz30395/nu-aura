@@ -135,13 +135,13 @@ export default function FeedbackPage() {
   const getTypeColor = (type: FeedbackType) => {
     switch (type) {
       case 'PRAISE':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'CONSTRUCTIVE':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'GENERAL':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'REQUEST':
-        return 'bg-accent-300 text-accent-900';
+        return "bg-accent-subtle text-accent";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }

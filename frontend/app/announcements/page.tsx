@@ -60,33 +60,33 @@ import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 
 /** Maps each announcement category to a background class for the icon container. */
 const categoryIconBgColors: Record<AnnouncementCategory, string> = {
-  GENERAL: 'bg-accent-100 dark:bg-accent-900/30',
-  POLICY_UPDATE: 'bg-accent-300 dark:bg-accent-900/30',
-  EVENT: 'bg-success-100 dark:bg-success-900/30',
-  HOLIDAY: 'bg-warning-100 dark:bg-warning-900/30',
-  ACHIEVEMENT: 'bg-accent-300 dark:bg-accent-900/30',
-  URGENT: 'bg-danger-100 dark:bg-danger-900/30',
-  BENEFIT: 'bg-accent-100 dark:bg-accent-900/30',
-  TRAINING: 'bg-accent-100 dark:bg-accent-900/30',
-  SOCIAL: 'bg-warning-100 dark:bg-warning-900/30',
+  GENERAL: "bg-accent-subtle",
+  POLICY_UPDATE: "bg-accent-subtle",
+  EVENT: "bg-status-success-bg",
+  HOLIDAY: "bg-status-warning-bg",
+  ACHIEVEMENT: "bg-accent-subtle",
+  URGENT: "bg-status-danger-bg",
+  BENEFIT: "bg-accent-subtle",
+  TRAINING: "bg-accent-subtle",
+  SOCIAL: "bg-status-warning-bg",
   IT_MAINTENANCE: 'bg-[var(--bg-surface)]',
-  HEALTH_SAFETY: 'bg-success-100 dark:bg-success-900/30',
+  HEALTH_SAFETY: "bg-status-success-bg",
   OTHER: 'bg-[var(--bg-surface)]',
 };
 
 /** Maps each announcement category to a text color class for the icon. */
 const categoryIconTextColors: Record<AnnouncementCategory, string> = {
-  GENERAL: 'text-accent-800 dark:text-accent-400',
-  POLICY_UPDATE: 'text-accent-900 dark:text-accent-600',
-  EVENT: 'text-success-800 dark:text-success-400',
-  HOLIDAY: 'text-warning-800 dark:text-warning-400',
-  ACHIEVEMENT: 'text-accent-900 dark:text-accent-600',
-  URGENT: 'text-danger-800 dark:text-danger-400',
-  BENEFIT: 'text-accent-800 dark:text-accent-400',
-  TRAINING: 'text-accent-800 dark:text-accent-400',
-  SOCIAL: 'text-warning-800 dark:text-warning-400',
+  GENERAL: "text-accent",
+  POLICY_UPDATE: "text-accent",
+  EVENT: "text-status-success-text",
+  HOLIDAY: "text-status-warning-text",
+  ACHIEVEMENT: "text-accent",
+  URGENT: "text-status-danger-text",
+  BENEFIT: "text-accent",
+  TRAINING: "text-accent",
+  SOCIAL: "text-status-warning-text",
   IT_MAINTENANCE: 'text-[var(--text-secondary)]',
-  HEALTH_SAFETY: 'text-success-800 dark:text-success-400',
+  HEALTH_SAFETY: "text-status-success-text",
   OTHER: 'text-[var(--text-secondary)]',
 };
 
@@ -942,7 +942,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                         key={dept.id}
                         className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
                           targetDepartmentIds.includes(dept.id)
-                            ? 'bg-accent-100 dark:bg-accent-900/30 border border-accent-300 dark:border-accent-700'
+                            ? "bg-accent-subtle border border-[var(--accent-primary)]"
                             : 'hover:bg-[var(--bg-surface)] border border-transparent'
                         }`}
                       >

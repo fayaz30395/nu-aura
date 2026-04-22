@@ -520,14 +520,14 @@ export default function MyAttendancePage() {
                       onClick={() => handleDateSelect(day)}
                       className={`aspect-square p-1 rounded-md border transition-all ${
                         isSelected
-                          ? 'border-accent-500 bg-accent-50 shadow-[var(--shadow-card)]'
+                          ? "border-[var(--accent-primary)] bg-accent-subtle shadow-[var(--shadow-card)]"
                           : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
                       } ${isToday ? 'ring-2 ring-accent-300' : ''}`}
                     >
                       <div className="flex flex-col items-center justify-center h-full gap-0.5">
                         <span
                           className={`text-xs font-medium ${
-                            isToday ? 'text-accent-700' : 'text-[var(--text-secondary)]'
+                            isToday ? "text-accent" : 'text-[var(--text-secondary)]'
                           }`}
                         >
                           {day.getDate()}
@@ -635,7 +635,7 @@ export default function MyAttendancePage() {
                             key={entry.id}
                             className={`p-2 rounded-lg border text-sm ${
                               entry.open
-                                ? 'bg-success-50 border-success-200'
+                                ? "bg-status-success-bg border-status-success-border"
                                 : 'bg-[var(--bg-surface)] border-[var(--border-main)]'
                             }`}
                           >
@@ -643,7 +643,7 @@ export default function MyAttendancePage() {
                               <div className="flex items-center gap-2">
                                 <span
                                   className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                    entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
+                                    entry.open ? "bg-status-success-bg text-inverse" : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
                                   }`}>
                                   {entry.sequenceNumber}
                                 </span>

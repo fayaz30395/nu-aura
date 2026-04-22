@@ -267,7 +267,7 @@ export default function OnboardingDetailPage() {
                                   <button
                                     onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
                                     aria-label={`Mark task ${task.taskName} as ${task.status === 'COMPLETED' ? 'incomplete' : 'complete'}`}
-                                    className={`flex-shrink-0 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${task.status === 'COMPLETED' ? 'text-success-500' : 'text-[var(--text-muted)] group-hover:text-accent-400'
+                                    className={`flex-shrink-0 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${task.status === 'COMPLETED' ? "text-status-success-text" : "text-[var(--text-muted)] group-hover:text-accent"
                                     }`}
                                   >
                                     {task.status === 'COMPLETED' ? (

@@ -110,7 +110,7 @@ export function EmployeeStep({
           <div className='w-full bg-accent-subtle rounded-full h-2.5'>
             <div
               className={`h-2.5 rounded-full transition-all ${
-                isOverAllocated ? 'bg-warning-500' : isComplete ? 'bg-success-500' : 'bg-accent-700'
+                isOverAllocated ? "bg-status-warning-bg" : isComplete ? "bg-status-success-bg" : "bg-accent"
               }`}
               style={{width: `${Math.min(100, allocationProgress)}%`}}
             />
@@ -205,8 +205,8 @@ export function EmployeeStep({
                     disabled={isLoading || isFullyAllocated}
                     className={`w-full px-4 py-2.5 text-left text-sm row-between ${
                       isFullyAllocated
-                        ? 'bg-surface-50 dark:bg-surface-900 opacity-60 cursor-not-allowed'
-                        : 'hover:bg-surface-100 dark:hover:bg-surface-700'
+                        ? "bg-base opacity-60 cursor-not-allowed"
+                        : "hover:bg-surface"
                     }`}
                   >
                     <div>
@@ -221,10 +221,10 @@ export function EmployeeStep({
                       ) : availableCapacity !== null ? (
                         <div className={`text-xs font-medium ${
                           isFullyAllocated
-                            ? 'text-danger-500'
+                            ? "text-status-danger-text"
                             : availableCapacity <= 25
-                              ? 'text-warning-500'
-                              : 'text-success-500'
+                              ? "text-status-warning-text"
+                              : "text-status-success-text"
                         }`}>
                           {isFullyAllocated ? (
                             <span className="flex items-center gap-1">
@@ -276,13 +276,13 @@ export function EmployeeStep({
                           <div className='h-full bg-card'
                                style={{width: `${allocation.existingAllocations}%`}}/>
                           <div
-                            className={`h-full ${isAtCapacity ? 'bg-warning-500' : isNearCapacity ? 'bg-warning-500' : 'bg-accent-500'}`}
+                            className={`h-full ${isAtCapacity ? "bg-status-warning-bg" : isNearCapacity ? "bg-status-warning-bg" : "bg-accent"}`}
                             style={{width: `${allocation.allocationPercentage}%`}}
                           />
                         </div>
                       </div>
                       <span
-                        className={`text-xs font-medium whitespace-nowrap ${isAtCapacity ? 'text-warning-600' : 'text-surface-500'}`}>
+                        className={`text-xs font-medium whitespace-nowrap ${isAtCapacity ? "text-status-warning-text" : "text-muted"}`}>
                           {totalWithThis}%
                         </span>
                     </div>
@@ -309,11 +309,11 @@ export function EmployeeStep({
                           max={allocation.availableCapacity}
                           value={allocation.allocationPercentage}
                           onChange={(e) => onAllocationChange(allocation.employeeId, 'allocationPercentage', parseInt(e.target.value) || 0)}
-                          className={`w-20 text-center text-sm ${isAtCapacity ? 'border-warning-400 bg-warning-50 dark:bg-warning-900/20' : ''}`}
+                          className={`w-20 text-center text-sm ${isAtCapacity ? "border-status-warning-border bg-status-warning-bg" : ''}`}
                         />
                         <Percent className='h-4 w-4 text-muted'/>
                       </div>
-                      <div className={`text-xs ${isAtCapacity ? 'text-warning-600 font-medium' : 'text-surface-400'}`}>
+                      <div className={`text-xs ${isAtCapacity ? "text-status-warning-text font-medium" : "text-muted"}`}>
                         max: {allocation.availableCapacity}%
                       </div>
                     </div>

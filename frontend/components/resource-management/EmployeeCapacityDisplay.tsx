@@ -242,10 +242,10 @@ interface StatusBadgeProps {
 
 function StatusBadge({status, label}: StatusBadgeProps) {
   const bgColors: Record<string, string> = {
-    OVER_ALLOCATED: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
-    OPTIMAL: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
-    UNDER_UTILIZED: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
-    UNASSIGNED: 'bg-surface-100 text-surface-700 dark:bg-surface-800 dark:text-surface-400',
+    OVER_ALLOCATED: "bg-status-danger-bg text-status-danger-text",
+    OPTIMAL: "bg-status-success-bg text-status-success-text",
+    UNDER_UTILIZED: "bg-status-warning-bg text-status-warning-text",
+    UNASSIGNED: "bg-surface text-secondary",
   };
 
   const icons: Record<string, React.ReactNode> = {

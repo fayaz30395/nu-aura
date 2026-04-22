@@ -266,7 +266,7 @@ export function OfferESignModal({
   if (!open || !candidate) return null;
 
   const inputCls =
-    'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm';
+    "w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] text-sm";
 
   const handleCreate = async (data: CreateESignFormData) => {
     const expiresAt = new Date();

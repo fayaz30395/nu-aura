@@ -349,17 +349,17 @@ interface StatCardProps {
 
 function StatCard({icon: IconComponent, label, value, color}: StatCardProps) {
   const colorMap = {
-    violet: 'from-accent-700 to-accent-800 bg-accent-100 dark:bg-accent-900/30',
-    amber: 'from-warning-500 to-warning-600 bg-warning-100 dark:bg-warning-900/30',
-    emerald: 'from-success-500 to-success-600 bg-success-100 dark:bg-success-900/30',
-    blue: 'from-accent-500 to-accent-600 bg-accent-100 dark:bg-accent-900/30',
+    violet: "from-accent-700 to-accent-800 bg-accent-subtle",
+    amber: "from-warning-500 to-warning-600 bg-status-warning-bg",
+    emerald: "from-success-500 to-success-600 bg-status-success-bg",
+    blue: "from-accent-500 to-accent-600 bg-accent-subtle",
   };
 
   const textColorMap = {
-    violet: 'text-accent-700 dark:text-accent-300',
-    amber: 'text-warning-700 dark:text-warning-300',
-    emerald: 'text-success-700 dark:text-success-300',
-    blue: 'text-accent-700 dark:text-accent-300',
+    violet: "text-accent",
+    amber: "text-status-warning-text",
+    emerald: "text-status-success-text",
+    blue: "text-accent",
   };
 
   return (

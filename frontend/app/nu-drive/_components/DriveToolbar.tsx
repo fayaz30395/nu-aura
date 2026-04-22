@@ -62,7 +62,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('my-drive')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'my-drive'
-              ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -73,7 +73,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('shared')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'shared'
-              ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -84,7 +84,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('starred')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'starred'
-              ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -95,7 +95,7 @@ export function DriveToolbar({
           onClick={() => onTabChange('recent')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'recent'
-              ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+              ? "border-[var(--accent-primary)] text-accent"
               : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
           }`}
         >
@@ -118,14 +118,14 @@ export function DriveToolbar({
           <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
             <button
               onClick={() => onViewModeChange('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
+              className={`p-2 ${viewMode === 'grid' ? "bg-accent-subtle text-accent" : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <Grid
                 className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
             </button>
             <button
               onClick={() => onViewModeChange('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
+              className={`p-2 ${viewMode === 'list' ? "bg-accent-subtle text-accent" : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <List
                 className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>

@@ -166,26 +166,26 @@ export const TASK_STATUS_OPTIONS: { value: TaskStatus; label: string; color: str
   {
     value: 'IN_PROGRESS',
     label: 'In Progress',
-    color: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300'
+    color: "bg-accent-subtle text-accent"
   },
   {
     value: 'IN_REVIEW',
     label: 'In Review',
-    color: 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500'
+    color: "bg-accent-subtle text-accent"
   },
-  {value: 'BLOCKED', label: 'Blocked', color: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300'},
-  {value: 'DONE', label: 'Done', color: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300'},
+  {value: 'BLOCKED', label: 'Blocked', color: "bg-status-danger-bg text-status-danger-text"},
+  {value: 'DONE', label: 'Done', color: "bg-status-success-bg text-status-success-text"},
   {value: 'CANCELLED', label: 'Cancelled', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]'},
 ];
 
 export const TASK_PRIORITY_OPTIONS: { value: TaskPriority; label: string; color: string }[] = [
   {value: 'LOW', label: 'Low', color: 'bg-[var(--bg-surface)] text-[var(--text-muted)]'},
-  {value: 'MEDIUM', label: 'Medium', color: 'bg-accent-100 text-accent-600 dark:bg-accent-900 dark:text-accent-400'},
-  {value: 'HIGH', label: 'High', color: 'bg-warning-100 text-warning-600 dark:bg-warning-900 dark:text-warning-400'},
+  {value: 'MEDIUM', label: 'Medium', color: "bg-accent-subtle text-accent"},
+  {value: 'HIGH', label: 'High', color: "bg-status-warning-bg text-status-warning-text"},
   {
     value: 'CRITICAL',
     label: 'Critical',
-    color: 'bg-danger-100 text-danger-600 dark:bg-danger-900 dark:text-danger-400'
+    color: "bg-status-danger-bg text-status-danger-text"
   },
 ];
 

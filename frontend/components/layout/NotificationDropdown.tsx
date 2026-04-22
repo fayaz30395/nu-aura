@@ -115,11 +115,11 @@ function getNotificationIcon(type: 'email' | 'drive' | 'calendar'): React.ReactN
 function getNotificationBg(type: 'email' | 'drive' | 'calendar'): string {
   switch (type) {
     case 'email':
-      return 'bg-danger-50 dark:bg-danger-950/30';
+      return "bg-status-danger-bg";
     case 'drive':
-      return 'bg-warning-50 dark:bg-warning-950/30';
+      return "bg-status-warning-bg";
     case 'calendar':
-      return 'bg-accent-50 dark:bg-accent-950/30';
+      return "bg-accent-subtle";
   }
 }
 

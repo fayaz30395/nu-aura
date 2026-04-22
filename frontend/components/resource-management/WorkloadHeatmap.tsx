@@ -177,7 +177,7 @@ interface HeatmapCellProps {
 
 function HeatmapCell({cell, onClick}: HeatmapCellProps) {
   const backgroundColor = getCellColor(cell.allocation);
-  const textColor = cell.allocation > 60 ? 'text-white' : 'text-surface-700 dark:text-surface-300';
+  const textColor = cell.allocation > 60 ? "text-inverse" : "text-secondary";
 
   return (
     <td

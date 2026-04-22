@@ -21,22 +21,22 @@ import {ArrowLeftRight, Check, ChevronLeft, Inbox, Send, Shield, X,} from 'lucid
 import {useRouter} from 'next/navigation';
 
 const STATUS_CONFIG: Record<SwapStatus, { label: string; color: string; bgColor: string }> = {
-  PENDING: {label: 'Pending', color: 'text-warning-700', bgColor: 'bg-warning-100 dark:bg-warning-900/30'},
+  PENDING: {label: 'Pending', color: "text-status-warning-text", bgColor: "bg-status-warning-bg"},
   TARGET_ACCEPTED: {
     label: 'Accepted by Target',
-    color: 'text-accent-700',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30'
+    color: "text-accent",
+    bgColor: "bg-accent-subtle"
   },
-  TARGET_DECLINED: {label: 'Declined', color: 'text-danger-700', bgColor: 'bg-danger-100 dark:bg-danger-900/30'},
+  TARGET_DECLINED: {label: 'Declined', color: "text-status-danger-text", bgColor: "bg-status-danger-bg"},
   PENDING_APPROVAL: {
     label: 'Pending Approval',
-    color: 'text-warning-700',
-    bgColor: 'bg-warning-100 dark:bg-warning-900/30'
+    color: "text-status-warning-text",
+    bgColor: "bg-status-warning-bg"
   },
-  APPROVED: {label: 'Approved', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30'},
-  REJECTED: {label: 'Rejected', color: 'text-danger-700', bgColor: 'bg-danger-100 dark:bg-danger-900/30'},
-  COMPLETED: {label: 'Completed', color: 'text-success-700', bgColor: 'bg-success-100 dark:bg-success-900/30'},
-  CANCELLED: {label: 'Cancelled', color: 'text-surface-600', bgColor: 'bg-surface-100 dark:bg-surface-700'},
+  APPROVED: {label: 'Approved', color: "text-status-success-text", bgColor: "bg-status-success-bg"},
+  REJECTED: {label: 'Rejected', color: "text-status-danger-text", bgColor: "bg-status-danger-bg"},
+  COMPLETED: {label: 'Completed', color: "text-status-success-text", bgColor: "bg-status-success-bg"},
+  CANCELLED: {label: 'Cancelled', color: "text-secondary", bgColor: "bg-surface"},
 };
 
 function SwapCard({
@@ -178,8 +178,8 @@ export default function ShiftSwapsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-[var(--bg-card)] text-surface-900 dark:text-white shadow-[var(--shadow-card)]'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
+                  ? "bg-[var(--bg-card)] text-primary shadow-[var(--shadow-card)]"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <tab.icon className="w-4 h-4"/>

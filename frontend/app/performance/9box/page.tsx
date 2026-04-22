@@ -22,65 +22,65 @@ const BOX_CONFIG: Record<string, { label: string; sublabel: string; bg: string; 
   '1-1': {
     label: 'Deadwood',
     sublabel: 'Low Performance • Low Potential',
-    bg: 'bg-danger-50 dark:bg-danger-900/10',
-    border: 'border-danger-200 dark:border-danger-800',
-    text: 'text-danger-700 dark:text-danger-400'
+    bg: "bg-status-danger-bg",
+    border: "border-status-danger-border",
+    text: "text-status-danger-text"
   },
   '2-1': {
     label: 'Dilemma',
     sublabel: 'Medium Performance • Low Potential',
-    bg: 'bg-warning-50 dark:bg-warning-900/10',
-    border: 'border-warning-200 dark:border-warning-800',
-    text: 'text-warning-700 dark:text-warning-400'
+    bg: "bg-status-warning-bg",
+    border: "border-status-warning-border",
+    text: "text-status-warning-text"
   },
   '3-1': {
     label: 'Highly Skilled',
     sublabel: 'High Performance • Low Potential',
-    bg: 'bg-warning-50 dark:bg-warning-900/10',
-    border: 'border-warning-200 dark:border-warning-800',
-    text: 'text-warning-700 dark:text-warning-400'
+    bg: "bg-status-warning-bg",
+    border: "border-status-warning-border",
+    text: "text-status-warning-text"
   },
   '1-2': {
     label: 'Inconsistent Player',
     sublabel: 'Low Performance • Medium Potential',
-    bg: 'bg-warning-50 dark:bg-warning-900/10',
-    border: 'border-warning-200 dark:border-warning-800',
-    text: 'text-warning-700 dark:text-warning-400'
+    bg: "bg-status-warning-bg",
+    border: "border-status-warning-border",
+    text: "text-status-warning-text"
   },
   '2-2': {
     label: 'Core Player',
     sublabel: 'Medium Performance • Medium Potential',
-    bg: 'bg-accent-50 dark:bg-accent-900/10',
-    border: 'border-accent-200 dark:border-accent-800',
-    text: 'text-accent-700 dark:text-accent-400'
+    bg: "bg-accent-subtle",
+    border: "border-[var(--accent-primary)]",
+    text: "text-accent"
   },
   '3-2': {
     label: 'High Performer',
     sublabel: 'High Performance • Medium Potential',
-    bg: 'bg-accent-50 dark:bg-accent-900/10',
-    border: 'border-accent-200 dark:border-accent-800',
-    text: 'text-accent-700 dark:text-accent-400'
+    bg: "bg-accent-subtle",
+    border: "border-[var(--accent-primary)]",
+    text: "text-accent"
   },
   '1-3': {
     label: 'Growth Employee',
     sublabel: 'Low Performance • High Potential',
-    bg: 'bg-accent-50 dark:bg-accent-900/10',
-    border: 'border-accent-200 dark:border-accent-800',
-    text: 'text-accent-700 dark:text-accent-400'
+    bg: "bg-accent-subtle",
+    border: "border-[var(--accent-primary)]",
+    text: "text-accent"
   },
   '2-3': {
     label: 'Future Star',
     sublabel: 'Medium Performance • High Potential',
-    bg: 'bg-success-50 dark:bg-success-900/10',
-    border: 'border-success-200 dark:border-success-800',
-    text: 'text-success-700 dark:text-success-400'
+    bg: "bg-status-success-bg",
+    border: "border-status-success-border",
+    text: "text-status-success-text"
   },
   '3-3': {
     label: 'Star',
     sublabel: 'High Performance • High Potential',
-    bg: 'bg-success-50 dark:bg-success-900/10',
-    border: 'border-success-200 dark:border-success-800',
-    text: 'text-success-700 dark:text-success-400'
+    bg: "bg-status-success-bg",
+    border: "border-status-success-border",
+    text: "text-status-success-text"
   },
 };
 
@@ -153,7 +153,7 @@ function NineBoxGrid({
                     onClick={() => onSelectBox(isSelected ? null : key)}
                     className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-[var(--shadow-dropdown)] ${meta.bg} ${meta.border} ${
                       isSelected
-                        ? 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-800'
+                        ? "ring-2 ring-accent-500 ring-offset-2"
                         : ''
                     }`}
                   >

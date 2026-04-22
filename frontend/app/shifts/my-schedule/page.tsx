@@ -168,15 +168,15 @@ export default function MySchedulePage() {
                         key={dateStr}
                         className={`h-20 rounded-lg border p-1.5 ${
                           isToday
-                            ? 'border-accent-700 bg-accent-50 dark:bg-accent-900/20'
+                            ? "border-[var(--accent-primary)] bg-accent-subtle"
                             : isPast
-                              ? 'border-surface-100 dark:border-surface-700/50 opacity-60'
-                              : 'border-surface-100 dark:border-surface-700/50'
+                              ? "border-subtle opacity-60"
+                              : "border-subtle"
                         }`}
                       >
                         <p
                           className={`text-xs font-medium mb-1 ${
-                            isToday ? 'text-accent-700 dark:text-accent-400' : 'text-surface-500 dark:text-surface-400'
+                            isToday ? "text-accent" : "text-muted"
                           }`}
                         >
                           {date.getDate()}
@@ -224,8 +224,8 @@ export default function MySchedulePage() {
                         animate={{opacity: 1, x: 0}}
                         className={`flex items-center gap-4 p-4 rounded-lg ${
                           isToday
-                            ? 'bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800'
-                            : 'bg-surface-50 dark:bg-surface-700/30'
+                            ? "bg-accent-subtle border border-[var(--accent-primary)]"
+                            : "bg-base"
                         }`}
                       >
                         <div

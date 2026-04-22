@@ -16,9 +16,9 @@ interface ConnectorCardProps {
 export function ConnectorCard({connector, status, onConfigure, isLoading}: ConnectorCardProps) {
   const statusColors = {
     ACTIVE: {
-      bg: 'bg-success-50 dark:bg-success-900/20',
-      text: 'text-success-700 dark:text-success-300',
-      icon: 'text-success-600 dark:text-success-400',
+      bg: "bg-status-success-bg",
+      text: "text-status-success-text",
+      icon: "text-status-success-text",
     },
     INACTIVE: {
       bg: 'bg-[var(--bg-surface)]',
@@ -26,9 +26,9 @@ export function ConnectorCard({connector, status, onConfigure, isLoading}: Conne
       icon: 'text-[var(--text-muted)]',
     },
     ERROR: {
-      bg: 'bg-danger-50 dark:bg-danger-900/20',
-      text: 'text-danger-700 dark:text-danger-300',
-      icon: 'text-danger-600 dark:text-danger-400',
+      bg: "bg-status-danger-bg",
+      text: "text-status-danger-text",
+      icon: "text-status-danger-text",
     },
   };
 

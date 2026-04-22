@@ -355,10 +355,10 @@ export default function ExpenseClaims() {
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]',
-      SUBMITTED: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-      APPROVED: 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
-      REJECTED: 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
-      PAID: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300'
+      SUBMITTED: "bg-accent-subtle text-accent",
+      APPROVED: "bg-status-success-bg text-status-success-text",
+      REJECTED: "bg-status-danger-bg text-status-danger-text",
+      PAID: "bg-accent-subtle text-accent"
     };
     return styles[status] || 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]';
   };
@@ -493,7 +493,7 @@ export default function ExpenseClaims() {
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
                 showFilters
-                  ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
+                  ? "border-[var(--accent-primary)] text-accent bg-accent-subtle"
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -756,7 +756,7 @@ export default function ExpenseClaims() {
               }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'my-claims'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -769,7 +769,7 @@ export default function ExpenseClaims() {
               }}
               className={`px-6 py-4 font-medium transition-colors relative ${
                 activeTab === 'pending'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -788,7 +788,7 @@ export default function ExpenseClaims() {
               }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -801,7 +801,7 @@ export default function ExpenseClaims() {
               }}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'analytics'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -867,7 +867,7 @@ export default function ExpenseClaims() {
                     key={claim.id}
                     className={`border rounded-lg p-4 hover:shadow-[var(--shadow-elevated)] transition-shadow ${
                       selectedClaims.has(claim.id)
-                        ? 'border-accent-400 bg-accent-50/50 dark:bg-accent-900/20'
+                        ? "border-[var(--accent-primary)] bg-accent-50/50"
                         : 'border-[var(--border-main)]'
                     }`}
                   >

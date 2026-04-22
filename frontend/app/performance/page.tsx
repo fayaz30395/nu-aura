@@ -50,9 +50,9 @@ const performanceModules = [
     description: 'Set and track individual, team, and organizational goals',
     href: '/performance/goals',
     icon: Flag,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
   {
     id: 'okr',
@@ -60,9 +60,9 @@ const performanceModules = [
     description: 'Objectives and Key Results for strategic alignment',
     href: '/performance/okr',
     icon: SlidersHorizontal,
-    color: 'bg-accent-700',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
   {
     id: 'reviews',
@@ -70,9 +70,9 @@ const performanceModules = [
     description: 'Conduct and manage employee performance reviews',
     href: '/performance/reviews',
     icon: ClipboardCheck,
-    color: 'bg-success-500',
-    lightColor: 'bg-success-50',
-    textColor: 'text-success-600',
+    color: "bg-status-success-bg",
+    lightColor: "bg-status-success-bg",
+    textColor: "text-status-success-text",
   },
   {
     id: '360-feedback',
@@ -80,9 +80,9 @@ const performanceModules = [
     description: 'Multi-rater feedback from peers, managers, and direct reports',
     href: '/performance/360-feedback',
     icon: Users,
-    color: 'bg-warning-500',
-    lightColor: 'bg-warning-50',
-    textColor: 'text-warning-600',
+    color: "bg-status-warning-bg",
+    lightColor: "bg-status-warning-bg",
+    textColor: "text-status-warning-text",
   },
   {
     id: 'feedback',
@@ -90,9 +90,9 @@ const performanceModules = [
     description: 'Give and receive ongoing feedback throughout the year',
     href: '/performance/feedback',
     icon: MessageSquare,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-700',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
   {
     id: 'cycles',
@@ -100,9 +100,9 @@ const performanceModules = [
     description: 'Manage review periods and deadlines',
     href: '/performance/cycles',
     icon: CalendarDays,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
   {
     id: 'pip',
@@ -110,9 +110,9 @@ const performanceModules = [
     description: 'Create and track Performance Improvement Plans with check-ins',
     href: '/performance/pip',
     icon: AlertCircle,
-    color: 'bg-danger-500',
-    lightColor: 'bg-danger-50',
-    textColor: 'text-danger-600',
+    color: "bg-status-danger-bg",
+    lightColor: "bg-status-danger-bg",
+    textColor: "text-status-danger-text",
   },
   {
     id: 'calibration',
@@ -120,9 +120,9 @@ const performanceModules = [
     description: 'Finalize ratings with distribution view and bell-curve check',
     href: '/performance/calibration',
     icon: Sliders,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-600',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
   {
     id: '9box',
@@ -130,9 +130,9 @@ const performanceModules = [
     description: 'Talent segmentation by performance and potential',
     href: '/performance/9box',
     icon: Grid3X3,
-    color: 'bg-danger-500',
-    lightColor: 'bg-danger-50',
-    textColor: 'text-danger-600',
+    color: "bg-status-danger-bg",
+    lightColor: "bg-status-danger-bg",
+    textColor: "text-status-danger-text",
   },
   {
     id: 'competency-matrix',
@@ -140,9 +140,9 @@ const performanceModules = [
     description: 'Manage competency frameworks, assess skills, and identify gaps',
     href: '/performance/competency-matrix',
     icon: BarChart3,
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-50',
-    textColor: 'text-accent-700',
+    color: "bg-accent",
+    lightColor: "bg-accent-subtle",
+    textColor: "text-accent",
   },
 ];
 
@@ -285,28 +285,28 @@ export default function PerformancePage() {
                 value={stats.activeGoals}
                 subtitle={`${stats.completedGoals} completed`}
                 icon={Flag}
-                color="bg-accent-500"
+                color="bg-accent"
               />
               <StatCard
                 title="Goal Progress"
                 value={`${stats.averageProgress}%`}
                 subtitle="Average across all goals"
                 icon={TrendingUp}
-                color="bg-success-500"
+                color="bg-status-success-bg"
               />
               <StatCard
                 title="OKR Objectives"
                 value={stats.okrObjectives}
                 subtitle={`${stats.okrProgress}% progress`}
                 icon={SlidersHorizontal}
-                color="bg-accent-700"
+                color="bg-accent"
               />
               <StatCard
                 title="Pending Reviews"
                 value={stats.pending360Reviews}
                 subtitle="360 feedback requests"
                 icon={Clock}
-                color="bg-warning-500"
+                color="bg-status-warning-bg"
               />
             </>
           )}

@@ -38,17 +38,17 @@ const statusFilterOptions: { key: AllocationStatus; label: string; color: string
   {
     key: 'OVER_ALLOCATED',
     label: 'Over Allocated',
-    color: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+    color: "bg-status-danger-bg text-status-danger-text"
   },
   {
     key: 'OPTIMAL',
     label: 'Optimal',
-    color: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+    color: "bg-status-success-bg text-status-success-text"
   },
   {
     key: 'UNDER_UTILIZED',
     label: 'Under Utilized',
-    color: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
+    color: "bg-status-warning-bg text-status-warning-text"
   },
   {
     key: 'UNASSIGNED',
@@ -651,7 +651,7 @@ function DepartmentCard({
   expanded?: boolean;
 }) {
   const avgAllocation = Math.round(department.averageAllocation);
-  const allocationColor = avgAllocation > 100 ? 'text-danger-600' : avgAllocation >= 70 ? 'text-success-600' : 'text-warning-600';
+  const allocationColor = avgAllocation > 100 ? "text-status-danger-text" : avgAllocation >= 70 ? "text-status-success-text" : "text-status-warning-text";
 
   return (
     <div

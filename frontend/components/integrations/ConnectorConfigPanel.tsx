@@ -105,7 +105,7 @@ export function ConnectorConfigPanel({
   const renderField = (field: ConnectorConfigField) => {
     const baseClasses =
       'w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)]';
-    const errorClasses = errors[field.name as keyof FormData] ? 'border-danger-500' : '';
+    const errorClasses = errors[field.name as keyof FormData] ? "border-status-danger-border" : '';
 
     switch (field.type) {
       case 'boolean':

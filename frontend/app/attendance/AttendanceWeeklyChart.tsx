@@ -71,9 +71,9 @@ function CustomTooltip({active, payload}: { active?: boolean; payload?: Array<{ 
           )}
           <div className="pt-1 border-t border-[var(--border-subtle)]">
             <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded ${
-              d.hours >= STANDARD_WORK_HOURS ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
-                d.hours >= STANDARD_WORK_HOURS / 2 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
-                  'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+              d.hours >= STANDARD_WORK_HOURS ? "bg-status-success-bg text-status-success-text" :
+                d.hours >= STANDARD_WORK_HOURS / 2 ? "bg-status-warning-bg text-status-warning-text" :
+                  "bg-status-danger-bg text-status-danger-text"
             }`}>
               {d.hours >= STANDARD_WORK_HOURS ? 'Full Day' : d.hours >= STANDARD_WORK_HOURS / 2 ? 'Half Day' : 'Short Day'}
             </span>
@@ -118,9 +118,9 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
             </span>
             {attendanceRate > 0 && (
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                attendanceRate >= 95 ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' :
-                  attendanceRate >= 80 ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400' :
-                    'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                attendanceRate >= 95 ? "bg-status-success-bg text-status-success-text" :
+                  attendanceRate >= 80 ? "bg-status-warning-bg text-status-warning-text" :
+                    "bg-status-danger-bg text-status-danger-text"
               }`}>
                 {attendanceRate}% this month
               </span>
@@ -159,10 +159,10 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
         {/* Legend */}
         <div className="flex items-center justify-center gap-6 mt-2 text-xs">
           {[
-            {color: 'bg-success-500', label: `Full Day (${STANDARD_WORK_HOURS}h+)`},
-            {color: 'bg-accent-500', label: 'Today'},
-            {color: 'bg-warning-500', label: 'Partial'},
-            {color: 'bg-accent-500', label: 'Holiday'},
+            {color: "bg-status-success-bg", label: `Full Day (${STANDARD_WORK_HOURS}h+)`},
+            {color: "bg-accent", label: 'Today'},
+            {color: "bg-status-warning-bg", label: 'Partial'},
+            {color: "bg-accent", label: 'Holiday'},
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
               <div className={`h-3 w-3 rounded-md ${l.color} shadow-[var(--shadow-card)]`}/>

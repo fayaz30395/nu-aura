@@ -730,7 +730,7 @@ export default function WikiPageDetailPage() {
                     aria-label={isLiked ? 'Unlike' : 'Like'}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                       isLiked
-                        ? 'bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400'
+                        ? "bg-status-danger-bg border-status-danger-border text-status-danger-text"
                         : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-main)]'
                     } disabled:opacity-50`}
                   >
@@ -750,7 +750,7 @@ export default function WikiPageDetailPage() {
                     aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                       isFavorited
-                        ? 'bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800 text-warning-600 dark:text-warning-400'
+                        ? "bg-status-warning-bg border-status-warning-border text-status-warning-text"
                         : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                     } disabled:opacity-50`}
                   >
@@ -939,7 +939,7 @@ export default function WikiPageDetailPage() {
                     <div className="flex items-center gap-2">
                       <Heart
                         className={`h-4 w-4 ${
-                          isLiked ? 'fill-danger-500 text-danger-500' : 'text-[var(--text-muted)]'
+                          isLiked ? "fill-danger-500 text-status-danger-text" : 'text-[var(--text-muted)]'
                         }`}
                       />
                       <span className={typography.bodySecondary}>Likes</span>

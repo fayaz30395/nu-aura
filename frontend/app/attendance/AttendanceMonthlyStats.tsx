@@ -32,7 +32,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
       total: monthStats.businessDays,
       icon: CheckCircle,
       color: 'from-success-500 to-success-600',
-      textColor: 'text-success-600 dark:text-success-400',
+      textColor: "text-status-success-text",
       tintClass: 'tint-success'
     },
     {
@@ -41,7 +41,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
       total: monthStats.businessDays,
       icon: AlertCircle,
       color: 'from-danger-500 to-danger-600',
-      textColor: 'text-danger-600 dark:text-danger-400',
+      textColor: "text-status-danger-text",
       tintClass: 'tint-danger'
     },
     {
@@ -50,7 +50,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
       total: monthStats.present,
       icon: AlertTriangle,
       color: 'from-warning-500 to-warning-600',
-      textColor: 'text-warning-600 dark:text-warning-400',
+      textColor: "text-status-warning-text",
       tintClass: 'tint-warning'
     },
     {
@@ -59,7 +59,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
       total: null,
       icon: Zap,
       color: 'from-accent-500 to-accent-600',
-      textColor: 'text-accent-600 dark:text-accent-400',
+      textColor: "text-accent",
       tintClass: 'tint-info'
     },
   ];

@@ -69,10 +69,10 @@ interface PIPFilter {
 type PIPTab = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 
 const STATUS_CONFIG: Record<PIPStatus, { label: string; color: string; bg: string; border: string }> = {
-  ACTIVE: {label: 'Active', color: 'text-accent-700', bg: 'bg-accent-100', border: 'border-accent-200'},
-  COMPLETED: {label: 'Completed', color: 'text-success-700', bg: 'bg-success-100', border: 'border-success-200'},
-  EXTENDED: {label: 'Extended', color: 'text-warning-700', bg: 'bg-warning-100', border: 'border-warning-200'},
-  TERMINATED: {label: 'Terminated', color: 'text-danger-700', bg: 'bg-danger-100', border: 'border-danger-200'},
+  ACTIVE: {label: 'Active', color: "text-accent", bg: "bg-accent-subtle", border: "border-[var(--accent-primary)]"},
+  COMPLETED: {label: 'Completed', color: "text-status-success-text", bg: "bg-status-success-bg", border: "border-status-success-border"},
+  EXTENDED: {label: 'Extended', color: "text-status-warning-text", bg: "bg-status-warning-bg", border: "border-status-warning-border"},
+  TERMINATED: {label: 'Terminated', color: "text-status-danger-text", bg: "bg-status-danger-bg", border: "border-status-danger-border"},
 };
 
 const PIP_REASONS = [
@@ -816,7 +816,7 @@ export default function PIPPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     activeTab === tab
-                      ? 'bg-accent-700 text-white'
+                      ? "bg-accent text-inverse"
                       : 'bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >

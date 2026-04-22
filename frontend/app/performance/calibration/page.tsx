@@ -25,11 +25,11 @@ type SortField = 'name' | 'rating' | 'department';
 type SortOrder = 'asc' | 'desc';
 
 const RATING_LABELS: Record<number, { label: string; color: string; bg: string }> = {
-  1: {label: 'Needs Improvement', color: 'text-danger-700', bg: 'bg-danger-100'},
-  2: {label: 'Below Expectations', color: 'text-warning-700', bg: 'bg-warning-100'},
-  3: {label: 'Meets Expectations', color: 'text-warning-700', bg: 'bg-warning-100'},
-  4: {label: 'Exceeds Expectations', color: 'text-accent-700', bg: 'bg-accent-100'},
-  5: {label: 'Outstanding', color: 'text-success-700', bg: 'bg-success-100'},
+  1: {label: 'Needs Improvement', color: "text-status-danger-text", bg: "bg-status-danger-bg"},
+  2: {label: 'Below Expectations', color: "text-status-warning-text", bg: "bg-status-warning-bg"},
+  3: {label: 'Meets Expectations', color: "text-status-warning-text", bg: "bg-status-warning-bg"},
+  4: {label: 'Exceeds Expectations', color: "text-accent", bg: "bg-accent-subtle"},
+  5: {label: 'Outstanding', color: "text-status-success-text", bg: "bg-status-success-bg"},
 };
 
 // ─── Components ────────────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ function DistributionChart({
   label?: string;
 }) {
   const ratings = [1, 2, 3, 4, 5];
-  const colors = ['bg-danger-400', 'bg-warning-400', 'bg-warning-400', 'bg-accent-400', 'bg-success-400'];
+  const colors = ["bg-status-danger-bg", "bg-status-warning-bg", "bg-status-warning-bg", "bg-accent-subtle", "bg-status-success-bg"];
 
   return (
     <div className="space-y-2">
@@ -392,9 +392,9 @@ export default function CalibrationPage() {
                 <span
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
                     selectedCycle.status === 'ACTIVE'
-                      ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
+                      ? "bg-status-success-bg text-status-success-text"
                       : selectedCycle.status === 'CALIBRATION'
-                        ? 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600'
+                        ? "bg-accent-subtle text-accent"
                         : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                   }`}
                 >
@@ -627,8 +627,8 @@ export default function CalibrationPage() {
                             <tr
                               key={row.employeeId}
                               className={`hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors ${
-                                isDirty ? 'bg-warning-50 dark:bg-warning-900/10' : ''
-                              } ${differsFromManager ? 'border-l-2 border-warning-400' : ''}`}
+                                isDirty ? "bg-status-warning-bg" : ''
+                              } ${differsFromManager ? "border-l-2 border-status-warning-border" : ''}`}
                             >
                               <td className="px-4 py-4 font-medium text-[var(--text-primary)]">
                                 {row.employeeName}

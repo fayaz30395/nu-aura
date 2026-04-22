@@ -397,8 +397,8 @@ export default function CompensationPage() {
                   onClick={() => setActiveTab('cycles')}
                   className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === 'cycles'
-                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                      ? "border-[var(--accent-primary)] text-accent"
+                      : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)]"
                   }`}
                 >
                   Review Cycles
@@ -407,8 +407,8 @@ export default function CompensationPage() {
                   onClick={() => setActiveTab('revisions')}
                   className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === 'revisions'
-                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                      ? "border-[var(--accent-primary)] text-accent"
+                      : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)]"
                   }`}
                 >
                   All Revisions
@@ -417,8 +417,8 @@ export default function CompensationPage() {
                   onClick={() => setActiveTab('pending')}
                   className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
                     activeTab === 'pending'
-                      ? 'border-accent-500 text-accent-700 dark:text-accent-400'
-                      : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
+                      ? "border-[var(--accent-primary)] text-accent"
+                      : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)]"
                   }`}
                 >
                   Pending Approvals

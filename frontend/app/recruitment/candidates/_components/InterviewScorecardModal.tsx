@@ -39,7 +39,7 @@ function StarRating({rating}: { rating: number | null | undefined }) {
           key={i}
           className={`h-3 w-3 ${
             i < filled
-              ? 'fill-warning-400 text-warning-400'
+              ? "fill-warning-400 text-status-warning-text"
               : 'fill-transparent text-[var(--border-main)]'
           }`}
         />

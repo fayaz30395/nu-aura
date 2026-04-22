@@ -196,7 +196,7 @@ export default function SlackIntegrationPage() {
           {configQuery.data && (
             <span className={`ml-auto px-2 py-1 rounded-full text-xs font-medium ${
               configQuery.data.isEnabled
-                ? 'bg-success-100 text-success-800'
+                ? "bg-status-success-bg text-status-success-text"
                 : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
             }`}>
               {configQuery.data.isEnabled ? 'Connected' : 'Disconnected'}
@@ -441,7 +441,7 @@ export default function SlackIntegrationPage() {
               <div key={feature.title} className="flex items-start gap-2 p-2 rounded-lg bg-[var(--bg-secondary)]">
                 <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
                   feature.status === 'active'
-                    ? 'bg-success-100 text-success-600'
+                    ? "bg-status-success-bg text-status-success-text"
                     : 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
                 }`}>
                   {feature.status === 'active' ? (

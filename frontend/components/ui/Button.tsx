@@ -14,7 +14,7 @@ const buttonVariants = cva(
       variant: {
         // Primary - Main CTA (skeuomorphic depth)
         primary:
-          'bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          "bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-inverse hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px",
         // Secondary - Neutral actions (embossed surface)
         secondary:
           'bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
@@ -26,13 +26,13 @@ const buttonVariants = cva(
           'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)]',
         // Danger / Destructive (skeuomorphic depth)
         danger:
-          'bg-gradient-to-b from-danger-500 to-danger-600 text-white hover:brightness-110 focus-visible:ring-danger-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          "bg-gradient-to-b from-danger-500 to-danger-600 text-inverse hover:brightness-110 focus-visible:ring-danger-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px",
         // Success - Positive actions (skeuomorphic depth)
         success:
-          'bg-gradient-to-b from-success-500 to-success-600 text-white hover:brightness-110 focus-visible:ring-success-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          "bg-gradient-to-b from-success-500 to-success-600 text-inverse hover:brightness-110 focus-visible:ring-success-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px",
         // Warning - Caution actions (skeuomorphic depth)
         warning:
-          'bg-gradient-to-b from-warning-500 to-warning-600 text-white hover:brightness-110 focus-visible:ring-warning-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          "bg-gradient-to-b from-warning-500 to-warning-600 text-inverse hover:brightness-110 focus-visible:ring-warning-500/50 skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px",
         // Link - Text button
         link:
           'text-[var(--accent-primary)] underline-offset-4 hover:underline focus-visible:ring-[var(--ring-primary)]',
@@ -40,15 +40,15 @@ const buttonVariants = cva(
         soft:
           'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] hover:brightness-95 focus-visible:ring-[var(--ring-primary)]',
         'soft-danger':
-          'bg-danger-50 text-danger-700 hover:bg-danger-100 dark:bg-danger-950 dark:text-danger-300 dark:hover:bg-danger-900 focus-visible:ring-danger-500/50',
+          "bg-status-danger-bg text-status-danger-text hover:bg-status-danger-bg focus-visible:ring-danger-500/50",
         'soft-success':
-          'bg-success-50 text-success-700 hover:bg-success-100 dark:bg-success-950 dark:text-success-300 dark:hover:bg-success-900 focus-visible:ring-success-500/50',
+          "bg-status-success-bg text-status-success-text hover:bg-status-success-bg focus-visible:ring-success-500/50",
         // Default - dark button (skeuomorphic depth)
         default:
           'bg-gradient-to-b from-[var(--text-primary)] to-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
         // CTA - Special call-to-action (skeuomorphic depth)
         cta:
-          'bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-white hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px',
+          "bg-gradient-to-b from-[var(--accent-primary)] to-[var(--accent-primary-hover)] text-inverse hover:brightness-110 focus-visible:ring-[var(--ring-primary)] skeuo-button active:shadow-[var(--shadow-skeuo-pressed)] active:translate-y-px",
       },
       size: {
         xs: 'h-7 px-2 text-xs rounded-md',

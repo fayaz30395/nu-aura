@@ -202,25 +202,25 @@ export default function AvailabilityCalendarPage() {
               label="Total Employees"
               value={summaryStats.totalEmployees}
               icon={Users}
-              color="text-accent-700"
+              color="text-accent"
             />
             <SummaryCard
               label="Available Today"
               value={summaryStats.availableToday}
               icon={Users}
-              color="text-success-600"
+              color="text-status-success-text"
             />
             <SummaryCard
               label="Partial Today"
               value={summaryStats.partialToday}
               icon={Users}
-              color="text-warning-600"
+              color="text-status-warning-text"
             />
             <SummaryCard
               label="On Leave Today"
               value={summaryStats.onLeaveToday}
               icon={Calendar}
-              color="text-accent-800"
+              color="text-accent"
             />
           </div>
         )}
@@ -250,7 +250,7 @@ export default function AvailabilityCalendarPage() {
                 onClick={() => setViewMode('week')}
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'week'
-                    ? 'bg-accent-700 text-white'
+                    ? "bg-accent text-inverse"
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-l-lg`}
               >
@@ -260,7 +260,7 @@ export default function AvailabilityCalendarPage() {
                 onClick={() => setViewMode('month')}
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'month'
-                    ? 'bg-accent-700 text-white'
+                    ? "bg-accent text-inverse"
                     : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-r-lg`}
               >

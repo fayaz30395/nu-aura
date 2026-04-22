@@ -428,7 +428,7 @@ export default function EditEmployeePage() {
                   onClick={() => setCurrentTab('basic')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     currentTab === 'basic'
-                      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -438,7 +438,7 @@ export default function EditEmployeePage() {
                   onClick={() => setCurrentTab('personal')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     currentTab === 'personal'
-                      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -448,7 +448,7 @@ export default function EditEmployeePage() {
                   onClick={() => setCurrentTab('employment')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     currentTab === 'employment'
-                      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -458,7 +458,7 @@ export default function EditEmployeePage() {
                   onClick={() => setCurrentTab('bank')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     currentTab === 'bank'
-                      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                   }`}
                 >
@@ -468,7 +468,7 @@ export default function EditEmployeePage() {
                   onClick={() => setCurrentTab('custom')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     currentTab === 'custom'
-                      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                   }`}
                 >

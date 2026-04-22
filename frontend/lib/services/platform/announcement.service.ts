@@ -125,17 +125,17 @@ export const announcementService = new AnnouncementService();
 // Helper functions
 export function getCategoryColor(category: AnnouncementCategory): string {
   const colors: Record<AnnouncementCategory, string> = {
-    GENERAL: 'bg-accent-100 text-accent-800',
-    POLICY_UPDATE: 'bg-accent-100 text-accent-800',
-    EVENT: 'bg-success-100 text-success-800',
-    HOLIDAY: 'bg-warning-100 text-warning-800',
-    ACHIEVEMENT: 'bg-accent-100 text-accent-800',
-    URGENT: 'bg-danger-100 text-danger-800',
-    BENEFIT: 'bg-accent-100 text-accent-800',
-    TRAINING: 'bg-accent-100 text-accent-800',
-    SOCIAL: 'bg-warning-100 text-warning-800',
+    GENERAL: "bg-accent-subtle text-accent",
+    POLICY_UPDATE: "bg-accent-subtle text-accent",
+    EVENT: "bg-status-success-bg text-status-success-text",
+    HOLIDAY: "bg-status-warning-bg text-status-warning-text",
+    ACHIEVEMENT: "bg-accent-subtle text-accent",
+    URGENT: "bg-status-danger-bg text-status-danger-text",
+    BENEFIT: "bg-accent-subtle text-accent",
+    TRAINING: "bg-accent-subtle text-accent",
+    SOCIAL: "bg-status-warning-bg text-status-warning-text",
     IT_MAINTENANCE: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
-    HEALTH_SAFETY: 'bg-success-100 text-success-800',
+    HEALTH_SAFETY: "bg-status-success-bg text-status-success-text",
     OTHER: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
   };
   return colors[category] || colors.OTHER;
@@ -144,9 +144,9 @@ export function getCategoryColor(category: AnnouncementCategory): string {
 export function getPriorityColor(priority: AnnouncementPriority): string {
   const colors: Record<AnnouncementPriority, string> = {
     LOW: 'bg-[var(--bg-surface)] text-[var(--text-primary)]',
-    MEDIUM: 'bg-accent-100 text-accent-800',
-    HIGH: 'bg-warning-100 text-warning-800',
-    CRITICAL: 'bg-danger-100 text-danger-800',
+    MEDIUM: "bg-accent-subtle text-accent",
+    HIGH: "bg-status-warning-bg text-status-warning-text",
+    CRITICAL: "bg-status-danger-bg text-status-danger-text",
   };
   return colors[priority] || colors.MEDIUM;
 }

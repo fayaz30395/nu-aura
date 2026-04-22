@@ -537,7 +537,7 @@ export default function RolesPage() {
                                     // Not part of the create form
                                   }}
                                   className={`px-4 py-2 cursor-pointer hover:bg-[var(--bg-surface)] ${
-                                    isSelected ? 'bg-accent-50' : ''
+                                    isSelected ? "bg-accent-subtle" : ''
                                   }`}
                                 >
                                   <div className="row-between">
@@ -753,7 +753,7 @@ export default function RolesPage() {
                             key={permission.id}
                             className={`p-4 rounded-lg border transition-colors ${
                               isSelected
-                                ? 'border-accent-300 bg-accent-50'
+                                ? "border-[var(--accent-primary)] bg-accent-subtle"
                                 : 'border-[var(--border-main)] hover:border-[var(--border-focus)]'
                             }`}
                           >
@@ -857,11 +857,10 @@ export default function RolesPage() {
                       className={`px-4 py-2 rounded-lg ${
                         hasInvalidCustomScopes
                           ? 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
-                          : 'bg-accent-500 text-white hover:bg-accent-700'
+                          : "bg-accent text-inverse hover:bg-accent"
                       }`}
-                    >
-                      Save Permissions
-                    </button>
+                    >Save Permissions
+                                          </button>
                   );
                 })()}
               </div>

@@ -33,11 +33,11 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       case 'FAILED':
-        return 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'SKIPPED':
-        return 'bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }

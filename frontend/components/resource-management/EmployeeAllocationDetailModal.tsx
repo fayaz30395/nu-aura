@@ -125,8 +125,8 @@ export function EmployeeAllocationDetailModal({
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-full ${
               isOverAllocated
-                ? 'bg-danger-100 text-danger-600 dark:bg-danger-900/30 dark:text-danger-400'
-                : 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400'
+                ? "bg-status-danger-bg text-status-danger-text"
+                : "bg-accent-subtle text-accent"
             }`}
           >
             <User className="h-6 w-6"/>
@@ -170,7 +170,7 @@ export function EmployeeAllocationDetailModal({
               <TrendingUp className='h-4 w-4 text-muted'/>
               <span className='text-xs text-muted'>Available</span>
             </div>
-            <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? 'text-success-600' : 'text-danger-600'}`}>
+            <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? "text-status-success-text" : "text-status-danger-text"}`}>
               {formatAllocationPercentage(availableCapacity)}
             </p>
           </div>
@@ -210,7 +210,7 @@ export function EmployeeAllocationDetailModal({
             {/* Active allocation */}
             <div
               className={`absolute left-0 top-0 h-full transition-all ${
-                isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
+                isOverAllocated ? "bg-status-danger-bg" : "bg-status-success-bg"
               }`}
               style={{width: `${Math.min((activeAllocation / 150) * 100, 100)}%`}}
             />
@@ -251,8 +251,8 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('current')}
               className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                 activeTab === 'current'
-                  ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
-                  : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
+                  ? "border-[var(--accent-primary)] text-accent"
+                  : "border-transparent text-muted hover:text-secondary"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -264,8 +264,8 @@ export function EmployeeAllocationDetailModal({
               onClick={() => setActiveTab('history')}
               className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                 activeTab === 'history'
-                  ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
-                  : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
+                  ? "border-[var(--accent-primary)] text-accent"
+                  : "border-transparent text-muted hover:text-secondary"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -394,18 +394,18 @@ function AllocationCard({
     switch (allocationStatus) {
       case 'ACTIVE':
         return {
-          badge: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
-          icon: 'bg-accent-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400',
+          badge: "bg-status-success-bg text-status-success-text",
+          icon: "bg-accent-subtle text-accent",
         };
       case 'PLANNED':
         return {
-          badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
-          icon: 'bg-accent-100 text-accent-600 dark:bg-accent-900/30 dark:text-accent-400',
+          badge: "bg-accent-subtle text-accent",
+          icon: "bg-accent-subtle text-accent",
         };
       case 'INACTIVE':
         return {
-          badge: 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400',
-          icon: 'bg-surface-100 text-surface-500 dark:bg-surface-700',
+          badge: "bg-surface text-secondary",
+          icon: "bg-surface text-muted",
         };
     }
   };
@@ -516,7 +516,7 @@ function AllocationCard({
                   max={maxAllowedPercentage}
                   value={editPercentage}
                   onChange={(e) => handlePercentageChange(Number(e.target.value))}
-                  className={`text-sm ${validationError ? 'border-danger-500' : ''}`}
+                  className={`text-sm ${validationError ? "border-status-danger-border" : ''}`}
                 />
               </div>
             </div>
@@ -549,11 +549,11 @@ function AllocationCard({
   return (
     <div
       className={`rounded-lg border p-4 transition-all ${
-        onClick ? 'cursor-pointer hover:border-accent-300 hover:shadow-[var(--shadow-card)] dark:hover:border-accent-700' : ''
+        onClick ? "cursor-pointer hover:border-[var(--accent-primary)] hover:shadow-[var(--shadow-card)]" : ''
       } ${
         allocation.isPendingApproval
-          ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
-          : 'border-surface-200 bg-[var(--bg-card)] dark:border-surface-700'
+          ? "border-status-warning-border bg-status-warning-bg"
+          : "border-subtle bg-[var(--bg-card)]"
       }`}
       onClick={onClick}
     >
@@ -627,13 +627,13 @@ function HistoryCard({request}: HistoryCardProps) {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400';
+        return "bg-status-success-bg text-status-success-text";
       case 'REJECTED':
-        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'PENDING':
-        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400';
+        return "bg-status-warning-bg text-status-warning-text";
       default:
-        return 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400';
+        return "bg-surface text-secondary";
     }
   };
 

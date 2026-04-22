@@ -155,7 +155,7 @@ export default function SettingsPage() {
       <button
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-          enabled ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+          enabled ? "bg-accent" : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
         }`}
       >
         <span
@@ -248,7 +248,7 @@ export default function SettingsPage() {
                 <button
                   onClick={toggleDarkMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                    isDark ? 'bg-accent-700' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
+                    isDark ? "bg-accent" : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
                   }`}
                 >
                   <span
@@ -358,7 +358,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('channels')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeNotificationTab === 'channels'
-                      ? 'border-accent-700 text-accent-700'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -371,7 +371,7 @@ export default function SettingsPage() {
                   onClick={() => setActiveNotificationTab('categories')}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeNotificationTab === 'categories'
-                      ? 'border-accent-700 text-accent-700'
+                      ? "border-[var(--accent-primary)] text-accent"
                       : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >

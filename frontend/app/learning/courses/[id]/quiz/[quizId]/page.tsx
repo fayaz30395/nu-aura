@@ -365,12 +365,12 @@ export default function QuizPage() {
                 </div>
                 {quiz.timeLimit && (
                   <div className={`flex items-center gap-2 px-4 py-1 rounded-lg ${
-                    showTimeWarning ? 'bg-danger-50 border border-danger-200' : 'bg-[var(--bg-surface)]'
+                    showTimeWarning ? "bg-status-danger-bg border border-status-danger-border" : 'bg-[var(--bg-surface)]'
                   }`}>
                     <Clock
-                      className={`h-4 w-4 ${showTimeWarning ? 'text-danger-600' : 'text-[var(--text-secondary)]'}`}/>
+                      className={`h-4 w-4 ${showTimeWarning ? "text-status-danger-text" : 'text-[var(--text-secondary)]'}`}/>
                     <span
-                      className={`text-sm font-medium ${showTimeWarning ? 'text-danger-600' : 'text-[var(--text-secondary)]'}`}>
+                      className={`text-sm font-medium ${showTimeWarning ? "text-status-danger-text" : 'text-[var(--text-secondary)]'}`}>
                     {formatTime(timeRemaining)}
                   </span>
                   </div>
@@ -496,9 +496,9 @@ export default function QuizPage() {
                         onClick={() => setCurrentQuestionIdx(idx)}
                         className={`w-full h-10 rounded-lg font-medium text-sm transition-colors ${
                           idx === currentQuestionIdx
-                            ? 'bg-accent-600 text-white'
+                            ? "bg-accent text-inverse"
                             : qAnswered
-                              ? 'bg-success-100 text-success-700 hover:bg-success-200'
+                              ? "bg-status-success-bg text-status-success-text hover:bg-status-success-bg"
                               : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                         }`}
                       >
@@ -615,7 +615,7 @@ export default function QuizPage() {
                     <div className="space-y-4">
                       {result.details.map((detail: QuizResultDetail, idx: number) => (
                         <div key={idx}
-                             className={`border rounded-lg p-4 ${detail.isCorrect ? 'border-success-200 bg-success-50' : 'border-danger-200 bg-danger-50'}`}>
+                             className={`border rounded-lg p-4 ${detail.isCorrect ? "border-status-success-border bg-status-success-bg" : "border-status-danger-border bg-status-danger-bg"}`}>
                           <div className="flex items-start gap-4">
                             {detail.isCorrect ? (
                               <CheckCircle2 className='h-5 w-5 text-status-success-text flex-shrink-0 mt-0.5'/>

@@ -266,11 +266,11 @@ export default function AdminDashboardPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`badge-status inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                         user.userStatus === 'ACTIVE'
-                          ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
+                          ? "bg-status-success-bg text-status-success-text"
                           : user.userStatus === 'INACTIVE'
                             ? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                             : user.userStatus === 'SUSPENDED'
-                              ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300'
+                              ? "bg-status-danger-bg text-status-danger-text"
                               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                       }`}>
                         {user.userStatus}
@@ -416,24 +416,24 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
     switch (status?.toUpperCase()) {
       case 'UP':
         return {
-          color: 'bg-success-100 dark:bg-success-900/30',
-          badge: 'bg-success-500',
+          color: "bg-status-success-bg",
+          badge: "bg-status-success-bg",
           text: 'System UP',
-          textColor: 'text-success-700 dark:text-success-300',
+          textColor: "text-status-success-text",
         };
       case 'DEGRADED':
         return {
-          color: 'bg-warning-100 dark:bg-warning-900/30',
-          badge: 'bg-warning-500',
+          color: "bg-status-warning-bg",
+          badge: "bg-status-warning-bg",
           text: 'System Degraded',
-          textColor: 'text-warning-700 dark:text-warning-300',
+          textColor: "text-status-warning-text",
         };
       default:
         return {
-          color: 'bg-danger-100 dark:bg-danger-900/30',
-          badge: 'bg-danger-500',
+          color: "bg-status-danger-bg",
+          badge: "bg-status-danger-bg",
           text: 'System Down',
-          textColor: 'text-danger-700 dark:text-danger-300',
+          textColor: "text-status-danger-text",
         };
     }
   };
@@ -514,25 +514,25 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
             const isUnavailable = status === 'UNAVAILABLE';
             const isDegraded = status === 'DEGRADED';
 
-            let componentColor = 'bg-danger-50 dark:bg-danger-900/20';
-            let dotColor = 'bg-danger-500';
-            let textColor = 'text-danger-700 dark:text-danger-300';
+            let componentColor = "bg-status-danger-bg";
+            let dotColor = "bg-status-danger-bg";
+            let textColor = "text-status-danger-text";
             let statusLabel = 'Down';
 
             if (isUp) {
-              componentColor = 'bg-success-50 dark:bg-success-900/20';
-              dotColor = 'bg-success-500';
-              textColor = 'text-success-700 dark:text-success-300';
+              componentColor = "bg-status-success-bg";
+              dotColor = "bg-status-success-bg";
+              textColor = "text-status-success-text";
               statusLabel = 'Operational';
             } else if (isDegraded) {
-              componentColor = 'bg-warning-50 dark:bg-warning-900/20';
-              dotColor = 'bg-warning-500';
-              textColor = 'text-warning-700 dark:text-warning-300';
+              componentColor = "bg-status-warning-bg";
+              dotColor = "bg-status-warning-bg";
+              textColor = "text-status-warning-text";
               statusLabel = 'Degraded';
             } else if (isUnavailable) {
-              componentColor = 'bg-danger-50 dark:bg-danger-900/20';
-              dotColor = 'bg-danger-500';
-              textColor = 'text-danger-700 dark:text-danger-300';
+              componentColor = "bg-status-danger-bg";
+              dotColor = "bg-status-danger-bg";
+              textColor = "text-status-danger-text";
               statusLabel = 'Unavailable';
             }
 

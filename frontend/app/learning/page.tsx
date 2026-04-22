@@ -51,11 +51,11 @@ export default function LearningPage() {
   const getDifficultyColor = (level: string | undefined): string => {
     switch (level) {
       case 'BEGINNER':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       case 'INTERMEDIATE':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'ADVANCED':
-        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -64,11 +64,11 @@ export default function LearningPage() {
   const getStatusColor = (status: string | undefined): string => {
     switch (status) {
       case 'ENROLLED':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       case 'DROPPED':
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       default:
@@ -77,9 +77,9 @@ export default function LearningPage() {
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 70) return 'bg-success-500';
-    if (progress >= 40) return 'bg-warning-500';
-    return 'bg-accent-500';
+    if (progress >= 70) return "bg-status-success-bg";
+    if (progress >= 40) return "bg-status-warning-bg";
+    return "bg-accent";
   };
 
   return (
@@ -135,19 +135,19 @@ export default function LearningPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'catalog' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'catalog' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('catalog')}
           >
             Course Catalog
           </button>
           <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'my-courses' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'my-courses' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('my-courses')}
           >
             My Courses
           </button>
           <button
-            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'certificates' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)]'}`}
+            className={`px-6 py-4 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${activeTab === 'certificates' ? "border-b-2 border-[var(--accent-primary)] text-accent" : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('certificates')}
           >
             Certificates
@@ -336,7 +336,7 @@ export default function LearningPage() {
                           </div>
                         </div>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          cert.isActive ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+                          cert.isActive ? "bg-status-success-bg text-status-success-text" : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                         }`} aria-label={`Certificate status: ${cert.isActive ? 'Active' : 'Expired'}`}>
                           {cert.isActive ? 'Active' : 'Expired'}
                         </span>

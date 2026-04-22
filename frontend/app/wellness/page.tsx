@@ -80,15 +80,15 @@ const getCategoryIcon = (category: ProgramCategory) => {
 const getCategoryColor = (category: ProgramCategory) => {
   switch (category) {
     case ProgramCategory.PHYSICAL_FITNESS:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return "bg-accent-subtle text-accent";
     case ProgramCategory.MENTAL_HEALTH:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case ProgramCategory.NUTRITION:
-      return 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200';
+      return "bg-status-success-bg text-status-success-text";
     case ProgramCategory.SLEEP:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return "bg-accent-subtle text-accent";
     case ProgramCategory.STRESS_MANAGEMENT:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
   }
@@ -470,9 +470,9 @@ export default function WellnessPage() {
                         className="flex items-center gap-4 p-2 rounded-lg bg-[var(--bg-secondary)]"
                       >
                         <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-warning-500 text-white' :
-                            index === 1 ? 'bg-[var(--text-muted)] text-white' :
-                              index === 2 ? 'bg-warning-600 text-white' :
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? "bg-status-warning-bg text-inverse" :
+                            index === 1 ? "bg-[var(--text-muted)] text-inverse" :
+                              index === 2 ? "bg-status-warning-bg text-inverse" :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
                           {index === 0 ? <Crown className="h-4 w-4"/> :

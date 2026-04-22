@@ -62,33 +62,33 @@ const formatRole = (role: string) =>
 
 // Utility: get allocation bar color class based on percentage
 const getAllocationColor = (pct: number) => {
-  if (pct > 100) return 'bg-danger-500';
-  if (pct >= 75) return 'bg-accent-600';
-  return 'bg-success-500';
+  if (pct > 100) return "bg-status-danger-bg";
+  if (pct >= 75) return "bg-accent";
+  return "bg-status-success-bg";
 };
 
 // Utility: get allocation text color class
 const getAllocationTextColor = (pct: number) => {
-  if (pct > 100) return 'text-danger-600 dark:text-danger-400';
-  if (pct >= 75) return 'text-accent-700 dark:text-accent-400';
-  return 'text-success-600 dark:text-success-400';
+  if (pct > 100) return "text-status-danger-text";
+  if (pct >= 75) return "text-accent";
+  return "text-status-success-text";
 };
 
 // Utility: priority dot color
 const priorityDotColor: Record<string, string> = {
-  CRITICAL: 'bg-danger-500',
-  HIGH: 'bg-warning-500',
-  MEDIUM: 'bg-warning-500',
-  LOW: 'bg-success-500',
+  CRITICAL: "bg-status-danger-bg",
+  HIGH: "bg-status-warning-bg",
+  MEDIUM: "bg-status-warning-bg",
+  LOW: "bg-status-success-bg",
 };
 
 // Utility: status badge styles
 const statusBadgeStyles: Record<string, string> = {
-  IN_PROGRESS: 'bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20',
-  PLANNED: 'bg-surface-500/10 text-surface-600 dark:text-surface-400 border-surface-500/20',
-  DRAFT: 'bg-transparent text-surface-500 dark:text-surface-500 border-surface-300 dark:border-surface-600',
-  COMPLETED: 'bg-success-500/10 text-success-700 dark:text-success-400 border-success-500/20',
-  ON_HOLD: 'bg-warning-500/10 text-warning-700 dark:text-warning-400 border-warning-500/20',
+  IN_PROGRESS: "bg-accent-500/10 text-accent border-accent-500/20",
+  PLANNED: "bg-surface-500/10 text-secondary border-surface-500/20",
+  DRAFT: "bg-transparent text-muted border-subtle",
+  COMPLETED: "bg-success-500/10 text-status-success-text border-success-500/20",
+  ON_HOLD: "bg-warning-500/10 text-status-warning-text border-warning-500/20",
 };
 
 
@@ -243,8 +243,8 @@ export default function ManagerDashboardPage() {
           <div className="flex items-center gap-4">
             <div
               className={`px-4 py-1.5 rounded-xl flex items-center gap-1.5 border shadow-[var(--shadow-card)] transition-all duration-200 text-xs ${teamOverview.teamHealthStatus === 'EXCELLENT'
-                ? 'bg-success-500/10 border-success-500/20 text-success-700 dark:text-success-400'
-                : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
+                ? "bg-success-500/10 border-success-500/20 text-status-success-text"
+                : "bg-warning-500/10 border-warning-500/20 text-status-warning-text"
               }`}>
               <Activity className="h-4 w-4"/>
               <span
@@ -395,7 +395,7 @@ export default function ManagerDashboardPage() {
                         </span>
                         {teamAttendance.monthlyAttendanceChange !== 0 && (
                           <div
-                            className={`p-1 rounded-full ${teamAttendance.monthlyAttendanceChange > 0 ? 'bg-success-500' : 'bg-danger-500'}`}>
+                            className={`p-1 rounded-full ${teamAttendance.monthlyAttendanceChange > 0 ? "bg-status-success-bg" : "bg-status-danger-bg"}`}>
                             {teamAttendance.monthlyAttendanceChange > 0 ?
                               <TrendingUp className='h-3 w-3 text-inverse'/> :
                               <TrendingDown className='h-3 w-3 text-inverse'/>}
@@ -553,28 +553,28 @@ export default function ManagerDashboardPage() {
                       label: 'Leaves',
                       count: actionItems.leaveApprovals,
                       icon: Calendar,
-                      color: 'text-warning-500',
+                      color: "text-status-warning-text",
                       bg: 'bg-warning-500/10'
                     },
                     {
                       label: 'Timesheets',
                       count: actionItems.timesheetApprovals,
                       icon: Clock,
-                      color: 'text-accent-500',
+                      color: "text-accent",
                       bg: 'bg-accent-500/10'
                     },
                     {
                       label: 'Performance',
                       count: actionItems.performanceReviewsDue,
                       icon: Target,
-                      color: 'text-accent-700',
+                      color: "text-accent",
                       bg: 'bg-accent-700/10'
                     },
                     {
                       label: 'One-on-Ones',
                       count: actionItems.oneOnOnesDue,
                       icon: Users,
-                      color: 'text-success-500',
+                      color: "text-status-success-text",
                       bg: 'bg-success-500/10'
                     }
                   ].map((item, idx) => (
@@ -734,7 +734,7 @@ export default function ManagerDashboardPage() {
                             >
                               <div className="flex items-center gap-4">
                                 <span
-                                  className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-surface-400'}`}/>
+                                  className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || "bg-card"}`}/>
                                 <button
                                   onClick={() => router.push(`/projects/${project.projectId}`)}
                                   className='font-bold text-sm text-[var(--text-primary)] hover:text-accent transition-colors flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'

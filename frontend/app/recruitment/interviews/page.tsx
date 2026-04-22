@@ -153,7 +153,7 @@ function SearchableSelect({
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                  option.value === value ? 'bg-accent-50 text-accent-700' : 'text-[var(--text-primary)]'
+                  option.value === value ? "bg-accent-subtle text-accent" : 'text-[var(--text-primary)]'
                 }`}
               >
                 <div className="font-medium">{option.label}</div>
@@ -546,13 +546,13 @@ function InterviewsPage() {
   const getStatusColor = (status: InterviewStatus): string => {
     switch (status) {
       case 'SCHEDULED':
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
       case 'RESCHEDULED':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'NO_SHOW':
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
       default:
@@ -563,11 +563,11 @@ function InterviewsPage() {
   const getResultColor = (result?: InterviewResult): string => {
     switch (result) {
       case 'SELECTED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'REJECTED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'ON_HOLD':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'PENDING':
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
       default:
@@ -1039,7 +1039,7 @@ function InterviewsPage() {
                           }
                         }}
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                          createMeetToggle ? 'bg-accent-500' : 'bg-[var(--bg-secondary)]'
+                          createMeetToggle ? "bg-accent" : 'bg-[var(--bg-secondary)]'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
                       >
@@ -1176,8 +1176,8 @@ function InterviewsPage() {
                           onClick={() => setValueFeedback('rating', rating)}
                           className={`p-2 rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                             watchFeedback('rating') === rating
-                              ? 'bg-warning-100 text-warning-600'
-                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-warning-500'
+                              ? "bg-status-warning-bg text-status-warning-text"
+                              : "bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-status-warning-text"
                           }`}
                         >
                           <Star
@@ -1294,9 +1294,9 @@ function InterviewsPage() {
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
-                                q.difficulty === 'easy' ? 'bg-success-100 text-success-700' :
-                                  q.difficulty === 'medium' ? 'bg-warning-100 text-warning-700' :
-                                    'bg-danger-100 text-danger-700'
+                                q.difficulty === 'easy' ? "bg-status-success-bg text-status-success-text" :
+                                  q.difficulty === 'medium' ? "bg-status-warning-bg text-status-warning-text" :
+                                    "bg-status-danger-bg text-status-danger-text"
                               }`}>
                                 {q.difficulty}
                               </span>

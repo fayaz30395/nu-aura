@@ -48,10 +48,10 @@ const pollSchema = z.object({
 });
 
 const CELEBRATION_TYPES = [
-  {id: 'STAR', label: 'Star Performer', icon: Star, color: 'text-warning-500'},
-  {id: 'HEART', label: 'Team Player', icon: Heart, color: 'text-danger-500'},
-  {id: 'TROPHY', label: 'Achievement', icon: Trophy, color: 'text-warning-600'},
-  {id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: 'text-accent-600'},
+  {id: 'STAR', label: 'Star Performer', icon: Star, color: "text-status-warning-text"},
+  {id: 'HEART', label: 'Team Player', icon: Heart, color: "text-status-danger-text"},
+  {id: 'TROPHY', label: 'Achievement', icon: Trophy, color: "text-status-warning-text"},
+  {id: 'THUMBSUP', label: 'Great Work', icon: ThumbsUp, color: "text-accent"},
 ] as const;
 
 const praiseSchema = z.object({

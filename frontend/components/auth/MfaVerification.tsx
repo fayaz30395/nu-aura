@@ -132,8 +132,8 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
               disabled={isVerifying}
               className={`w-full px-4 py-4 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all disabled:opacity-50 ${
                 error
-                  ? 'border-danger-500 dark:border-danger-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100'
-                  : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500'
+                  ? "border-status-danger-border bg-[var(--bg-input)] text-primary"
+                  : "border-subtle bg-[var(--bg-input)] text-primary placeholder-surface-400"
               }`}
               autoComplete="off"
             />

@@ -287,7 +287,7 @@ export default function ProjectDetailPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >

@@ -433,9 +433,9 @@ export default function KekaImportPage() {
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                     dragActive
-                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
+                      ? "border-[var(--accent-primary)] bg-accent-subtle"
                       : selectedFile
-                        ? 'border-success-500 bg-success-50 dark:bg-success-900/20'
+                        ? "border-status-success-border bg-status-success-bg"
                         : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                   }`}
                   onDragEnter={handleDrag}

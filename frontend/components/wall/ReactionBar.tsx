@@ -88,7 +88,7 @@ export function ReactionBar({
           }}
           className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
             hasReacted
-              ? 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200'
+              ? "bg-accent-subtle text-accent"
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -117,7 +117,7 @@ export function ReactionBar({
                   onClick={() => handleReactionClick(type)}
                   className={`flex items-center justify-center w-8 h-8 rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     userReactionType === type
-                      ? 'bg-accent-100 dark:bg-accent-900'
+                      ? "bg-accent-subtle"
                       : 'hover:bg-[var(--bg-secondary)]'
                   }`}
                   aria-label={reactionEmojis[type].label}
@@ -130,7 +130,6 @@ export function ReactionBar({
           )}
         </AnimatePresence>
       </div>
-
       <motion.button
         whileHover={{scale: 1.05}}
         whileTap={{scale: 0.95}}

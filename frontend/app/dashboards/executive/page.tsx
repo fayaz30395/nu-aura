@@ -106,12 +106,12 @@ export default function ExecutiveDashboardPage() {
   const getAlertBgColor = (severity: StrategicAlert['severity']) => {
     switch (severity) {
       case 'CRITICAL':
-        return 'bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800';
+        return "bg-status-danger-bg border-status-danger-border";
       case 'WARNING':
-        return 'bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800';
+        return "bg-status-warning-bg border-status-warning-border";
       case 'INFO':
       default:
-        return 'bg-accent-50 dark:bg-accent-950/30 border-accent-200 dark:border-accent-800';
+        return "bg-accent-subtle border-[var(--accent-primary)]";
     }
   };
 
@@ -127,11 +127,11 @@ export default function ExecutiveDashboardPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'GOOD':
-        return 'text-success-600 bg-success-50 dark:bg-success-900/30';
+        return "text-status-success-text bg-status-success-bg";
       case 'WARNING':
-        return 'text-warning-600 bg-warning-50 dark:bg-warning-900/30';
+        return "text-status-warning-text bg-status-warning-bg";
       case 'CRITICAL':
-        return 'text-danger-600 bg-danger-50 dark:bg-danger-900/30';
+        return "text-status-danger-text bg-status-danger-bg";
       default:
         return 'text-[var(--text-secondary)] bg-[var(--bg-secondary)]';
     }
@@ -267,7 +267,7 @@ export default function ExecutiveDashboardPage() {
                       <div className="flex items-center gap-2 mt-2">
                         {getTrendIcon(kpi.trend)}
                         <span
-                          className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-success-600' : kpi.trend === 'DOWN' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}>
+                          className={`text-sm font-medium ${kpi.trend === 'UP' ? "text-status-success-text" : kpi.trend === 'DOWN' ? "text-status-danger-text" : 'text-[var(--text-muted)]'}`}>
                           {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
                         </span>
                         <span className="text-caption">{kpi.changeDescription || ''}</span>
@@ -363,10 +363,10 @@ export default function ExecutiveDashboardPage() {
                           <span
                             className={`text-xs px-2 py-1 rounded-full ${
                               alert.impact === 'HIGH'
-                                ? 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                                ? "bg-status-danger-bg text-status-danger-text"
                                 : alert.impact === 'MEDIUM'
-                                  ? 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
-                                  : 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
+                                  ? "bg-status-warning-bg text-status-warning-text"
+                                  : "bg-accent-subtle text-accent"
                             }`}
                           >
                             {alert.impact} impact
@@ -521,7 +521,7 @@ export default function ExecutiveDashboardPage() {
                       <ArrowDownRight className='h-4 w-4 text-status-success-text'/>
                     )}
                     <span
-                      className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? 'text-danger-600' : 'text-success-600'}`}>
+                      className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? "text-status-danger-text" : "text-status-success-text"}`}>
                       {formatPercentage(data.financialSummary.payrollCostChangePercent)}
                     </span>
                   </div>

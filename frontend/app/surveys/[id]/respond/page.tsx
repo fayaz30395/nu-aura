@@ -58,7 +58,7 @@ function SingleChoiceQuestion({
           key={opt}
           className={`flex items-center gap-4 rounded-lg border p-4 cursor-pointer transition-colors ${
             answer.selectedOptions?.[0] === opt
-              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+              ? "border-[var(--accent-primary)] bg-accent-subtle"
               : 'border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -103,7 +103,7 @@ function MultipleChoiceQuestion({
           key={opt}
           className={`flex items-center gap-4 rounded-lg border p-4 cursor-pointer transition-colors ${
             selected.includes(opt)
-              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+              ? "border-[var(--accent-primary)] bg-accent-subtle"
               : 'border-[var(--border-main)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
@@ -138,7 +138,7 @@ function LikertQuestion({
           onClick={() => onChange({ratingValue: val})}
           className={`flex flex-col items-center gap-1 rounded-lg border p-4 min-w-[80px] transition-colors ${
             answer.ratingValue === val
-              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300'
+              ? "border-[var(--accent-primary)] bg-accent-subtle text-accent"
               : 'border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)]'
           }`}
         >
@@ -168,7 +168,7 @@ function NpsQuestion({
             onClick={() => onChange({ratingValue: val})}
             className={`flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition-colors ${
               answer.ratingValue === val
-                ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300'
+                ? "border-[var(--accent-primary)] bg-accent-subtle text-accent"
                 : 'border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)]'
             }`}
           >
@@ -204,7 +204,7 @@ function RatingQuestion({
           <svg
             className={`h-8 w-8 ${
               (answer.ratingValue ?? 0) >= val
-                ? 'text-warning-400 fill-warning-400'
+                ? "text-status-warning-text fill-warning-400"
                 : 'text-[var(--text-muted)] fill-none'
             }`}
             viewBox="0 0 24 24"

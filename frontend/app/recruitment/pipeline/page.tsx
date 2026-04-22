@@ -73,62 +73,62 @@ const STAGE_LABELS: Record<ApplicationStatus, string> = {
 const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string; bg: string }> = {
   [ApplicationStatus.APPLIED]: {
     col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.SCREENING]: {
     col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.PHONE_SCREEN]: {
     col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.INTERVIEW]: {
     col: 'border-t-accent-700',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.TECHNICAL_ROUND]: {
     col: 'border-t-accent-700',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.HR_ROUND]: {
     col: 'border-t-accent-800',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
+    header: "bg-accent-subtle",
+    badge: "bg-accent-subtle text-accent",
     bg: 'bg-accent-50/50'
   },
   [ApplicationStatus.OFFER_PENDING]: {
     col: 'border-t-warning-500',
-    header: 'bg-warning-50',
-    badge: 'bg-warning-100 text-warning-700',
+    header: "bg-status-warning-bg",
+    badge: "bg-status-warning-bg text-status-warning-text",
     bg: 'bg-warning-50/50'
   },
   [ApplicationStatus.OFFERED]: {
     col: 'border-t-success-500',
-    header: 'bg-success-50',
-    badge: 'bg-success-100 text-success-700',
+    header: "bg-status-success-bg",
+    badge: "bg-status-success-bg text-status-success-text",
     bg: 'bg-success-50/50'
   },
   [ApplicationStatus.ACCEPTED]: {
     col: 'border-t-success-600',
-    header: 'bg-success-50',
-    badge: 'bg-success-100 text-success-700',
+    header: "bg-status-success-bg",
+    badge: "bg-status-success-bg text-status-success-text",
     bg: 'bg-success-50/50'
   },
   [ApplicationStatus.REJECTED]: {
     col: 'border-t-danger-500',
-    header: 'bg-danger-50',
-    badge: 'bg-danger-100 text-danger-700',
+    header: "bg-status-danger-bg",
+    badge: "bg-status-danger-bg text-status-danger-text",
     bg: 'bg-danger-50/50'
   },
   [ApplicationStatus.WITHDRAWN]: {
@@ -140,12 +140,12 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
 };
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
-  [ApplicationSource.WEBSITE]: 'tint-info text-accent-600',
-  [ApplicationSource.REFERRAL]: 'tint-success text-success-700',
-  [ApplicationSource.JOB_BOARD]: 'tint-info text-accent-600',
-  [ApplicationSource.LINKEDIN]: 'tint-info text-accent-600',
-  [ApplicationSource.CAMPUS]: 'tint-accent text-accent-600',
-  [ApplicationSource.AGENCY]: 'tint-warning text-warning-600',
+  [ApplicationSource.WEBSITE]: "tint-info text-accent",
+  [ApplicationSource.REFERRAL]: "tint-success text-status-success-text",
+  [ApplicationSource.JOB_BOARD]: "tint-info text-accent",
+  [ApplicationSource.LINKEDIN]: "tint-info text-accent",
+  [ApplicationSource.CAMPUS]: "tint-accent text-accent",
+  [ApplicationSource.AGENCY]: "tint-warning text-status-warning-text",
   [ApplicationSource.OTHER]: 'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
@@ -1006,7 +1006,7 @@ export default function ApplicantPipelinePage() {
                   onClick={() => setShowFilters(v => !v)}
                   className={`flex items-center gap-1.5 px-4 py-2 text-sm border rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     hasActiveFilters
-                      ? 'border-accent-300 bg-accent-50 text-accent-700'
+                      ? "border-[var(--accent-primary)] bg-accent-subtle text-accent"
                       : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
@@ -1127,7 +1127,7 @@ export default function ApplicantPipelinePage() {
                                             {...dragProvided.draggableProps}
                                             className={`bg-[var(--bg-card)] border rounded-lg p-4 transition-all cursor-pointer group ${
                                               dragSnapshot.isDragging
-                                                ? 'shadow-[var(--shadow-dropdown)] border-accent-300 ring-2 ring-accent-200 rotate-1'
+                                                ? "shadow-[var(--shadow-dropdown)] border-[var(--accent-primary)] ring-2 ring-accent-200 rotate-1"
                                                 : 'border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-[var(--border-main)]'
                                             } ${isMoving ? 'opacity-50' : ''}`}
                                             onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}

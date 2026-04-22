@@ -295,8 +295,8 @@ export default function ShiftsManagementPage() {
                     <span
                       className={`px-4 py-1 text-xs font-semibold rounded-full ${
                         shift.isActive
-                          ? 'bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-400'
-                          : 'bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-400'
+                          ? "bg-status-success-bg text-status-success-text"
+                          : "bg-status-danger-bg text-status-danger-text"
                       }`}
                     >
                         {shift.isActive ? 'Active' : 'Inactive'}

@@ -105,13 +105,13 @@ class LoanService {
   // Helpers
   getStatusColor(status: LoanStatus): string {
     const colors: Record<LoanStatus, string> = {
-      PENDING: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
-      APPROVED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
-      REJECTED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
-      DISBURSED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
-      ACTIVE: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-      CLOSED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-      DEFAULTED: 'bg-danger-200 text-danger-800 dark:bg-danger-900 dark:text-danger-200',
+      PENDING: "bg-status-warning-bg text-status-warning-text",
+      APPROVED: "bg-accent-subtle text-accent",
+      REJECTED: "bg-status-danger-bg text-status-danger-text",
+      DISBURSED: "bg-accent-subtle text-accent",
+      ACTIVE: "bg-status-success-bg text-status-success-text",
+      CLOSED: "bg-status-success-bg text-status-success-text",
+      DEFAULTED: "bg-status-danger-bg text-status-danger-text",
       CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || colors.PENDING;

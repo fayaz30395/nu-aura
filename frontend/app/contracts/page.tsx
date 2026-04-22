@@ -33,26 +33,26 @@ export default function ContractsPage() {
     {
       label: 'Active Contracts',
       value: activeData?.length || 0,
-      color: 'bg-success-100',
-      textColor: 'text-success-700',
+      color: "bg-status-success-bg",
+      textColor: "text-status-success-text",
     },
     {
       label: 'Expiring Soon',
       value: expiringData?.length || 0,
-      color: 'bg-warning-100',
-      textColor: 'text-warning-700',
+      color: "bg-status-warning-bg",
+      textColor: "text-status-warning-text",
     },
     {
       label: 'Expired',
       value: expiredData?.length || 0,
-      color: 'bg-danger-100',
-      textColor: 'text-danger-700',
+      color: "bg-status-danger-bg",
+      textColor: "text-status-danger-text",
     },
     {
       label: 'Total Contracts',
       value: contractsData?.totalElements || 0,
-      color: 'bg-accent-100',
-      textColor: 'text-accent-700',
+      color: "bg-accent-subtle",
+      textColor: "text-accent",
     },
   ];
 

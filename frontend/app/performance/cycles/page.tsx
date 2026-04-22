@@ -203,13 +203,13 @@ export default function ReviewCyclesPage() {
       case 'PLANNING':
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       case 'ACTIVE':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'IN_PROGRESS':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'COMPLETED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -218,17 +218,17 @@ export default function ReviewCyclesPage() {
   const getTypeColor = (type: CycleType) => {
     switch (type) {
       case 'ANNUAL':
-        return 'bg-accent-300 text-accent-900';
+        return "bg-accent-subtle text-accent";
       case 'SEMI_ANNUAL':
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
       case 'QUARTERLY':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
+        return "bg-accent-subtle text-accent";
       case 'MONTHLY':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'PROBATION':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'PROJECT_END':
-        return 'bg-accent-300 text-accent-900';
+        return "bg-accent-subtle text-accent";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
@@ -651,14 +651,14 @@ export default function ReviewCyclesPage() {
                         })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'ALL'
-                            ? 'border-success-500 tint-success'
+                            ? "border-status-success-border tint-success"
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
                         <Users
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}/>
                         <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? "text-status-success-text" : ''}`}>
                           All Employees
                         </span>
                       </button>
@@ -671,14 +671,14 @@ export default function ReviewCyclesPage() {
                         })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'DEPARTMENT'
-                            ? 'border-success-500 tint-success'
+                            ? "border-status-success-border tint-success"
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
                         <Building2
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}/>
                         <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? "text-status-success-text" : ''}`}>
                           By Department
                         </span>
                       </button>
@@ -691,14 +691,14 @@ export default function ReviewCyclesPage() {
                         })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'LOCATION'
-                            ? 'border-success-500 tint-success'
+                            ? "border-status-success-border tint-success"
                             : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
                         <MapPin
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
+                          className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}/>
                         <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-success-700 dark:text-success-400' : ''}`}>
+                          className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? "text-status-success-text" : ''}`}>
                           By Location
                         </span>
                       </button>

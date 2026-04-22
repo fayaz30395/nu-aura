@@ -414,7 +414,7 @@ function CalendarContent() {
       '10': 'bg-basil-500',
       '11': 'bg-tomato-500',
     };
-    return colors[event.colorId || ''] || 'bg-accent-500';
+    return colors[event.colorId || ''] || "bg-accent";
   };
 
   const handleConnectClick = () => {
@@ -579,7 +579,7 @@ function CalendarContent() {
                         onClick={() => setViewMode(mode)}
                         className={`px-4 py-1.5 text-sm font-medium capitalize transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                           viewMode === mode
-                            ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-400'
+                            ? "bg-accent-subtle text-accent"
                             : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                       >
@@ -625,7 +625,7 @@ function CalendarContent() {
                           <div
                             className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1 ${
                               isToday
-                                ? 'bg-accent-500 text-white'
+                                ? "bg-accent text-inverse"
                                 : isCurrentMonth
                                   ? 'text-[var(--text-primary)]'
                                   : 'text-[var(--text-muted)]'
@@ -855,9 +855,9 @@ function CalendarContent() {
                           </p>
                           {attendee.responseStatus && (
                             <p className={`text-xs ${
-                              attendee.responseStatus === 'accepted' ? 'text-success-500' :
-                                attendee.responseStatus === 'declined' ? 'text-danger-500' :
-                                  'text-warning-500'
+                              attendee.responseStatus === 'accepted' ? "text-status-success-text" :
+                                attendee.responseStatus === 'declined' ? "text-status-danger-text" :
+                                  "text-status-warning-text"
                             }`}>
                               {attendee.responseStatus}
                             </p>

@@ -119,31 +119,31 @@ type FeedbackFormData = z.infer<typeof feedbackSchema>;
 function getStatusBadge(status: MeetingStatus | undefined) {
   switch (status) {
     case 'SCHEDULED':
-      return {label: 'Scheduled', classes: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400'};
+      return {label: 'Scheduled', classes: "bg-accent-subtle text-accent"};
     case 'IN_PROGRESS':
       return {
         label: 'In Progress',
-        classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
+        classes: "bg-status-success-bg text-status-success-text"
       };
     case 'COMPLETED':
       return {
         label: 'Completed',
-        classes: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
+        classes: "bg-status-success-bg text-status-success-text"
       };
     case 'CANCELLED':
-      return {label: 'Cancelled', classes: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400'};
+      return {label: 'Cancelled', classes: "bg-status-danger-bg text-status-danger-text"};
     case 'RESCHEDULED':
       return {
         label: 'Rescheduled',
-        classes: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400'
+        classes: "bg-status-warning-bg text-status-warning-text"
       };
     case 'NO_SHOW':
       return {
         label: 'No Show',
-        classes: 'bg-surface-100 text-surface-800 dark:bg-surface-900/30 dark:text-surface-400'
+        classes: "bg-surface text-primary"
       };
     default:
-      return {label: 'Unknown', classes: 'bg-surface-100 text-surface-800'};
+      return {label: 'Unknown', classes: "bg-surface text-primary"};
   }
 }
 
@@ -164,32 +164,32 @@ function getMeetingTypeLabel(type: MeetingType | undefined): string {
 function getPriorityColor(priority: MeetingAgendaPriority | MeetingActionPriority | undefined): string {
   switch (priority) {
     case 'URGENT':
-      return 'text-danger-600 dark:text-danger-400';
+      return "text-status-danger-text";
     case 'HIGH':
-      return 'text-warning-600 dark:text-warning-400';
+      return "text-status-warning-text";
     case 'MEDIUM':
-      return 'text-warning-600 dark:text-warning-400';
+      return "text-status-warning-text";
     case 'LOW':
-      return 'text-surface-500 dark:text-surface-400';
+      return "text-muted";
     default:
-      return 'text-surface-500';
+      return "text-muted";
   }
 }
 
 function getActionStatusColor(status: MeetingActionStatus): string {
   switch (status) {
     case 'OPEN':
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case 'IN_PROGRESS':
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'COMPLETED':
-      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+      return "bg-status-success-bg text-status-success-text";
     case 'CANCELLED':
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+      return "bg-status-danger-bg text-status-danger-text";
     case 'CARRIED_OVER':
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600';
+      return "bg-accent-subtle text-accent";
     default:
-      return 'bg-surface-100 text-surface-800';
+      return "bg-surface text-primary";
   }
 }
 
@@ -640,7 +640,7 @@ export default function OneOnOnePage() {
                       onClick={() => setDetailTab(tab)}
                       className={`flex-1 px-4 py-4 text-sm font-medium transition-colors capitalize ${
                         detailTab === tab
-                          ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
+                          ? "border-b-2 border-[var(--accent-primary)] text-accent"
                           : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                       }`}
                     >
@@ -746,7 +746,7 @@ export default function OneOnOnePage() {
                               key={item.id}
                               className={`flex items-start gap-4 p-4 rounded-lg border transition-colors ${
                                 item.isDiscussed
-                                  ? 'bg-success-50/50 dark:bg-success-900/10 border-success-200 dark:border-success-800'
+                                  ? "bg-success-50/50 border-status-success-border"
                                   : 'bg-[var(--bg-card)] border-[var(--border-main)]'
                               }`}
                             >
@@ -1032,7 +1032,7 @@ export default function OneOnOnePage() {
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star
                                 key={s}
-                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? 'text-warning-400 fill-warning-400' : 'text-surface-300'}`}
+                                className={`h-5 w-5 ${s <= (meeting.employeeRating || 0) ? "text-status-warning-text fill-warning-400" : "text-muted"}`}
                               />
                             ))}
                           </div>
@@ -1061,7 +1061,7 @@ export default function OneOnOnePage() {
                                         >
                                           <Star
                                             className={`h-7 w-7 transition-colors ${
-                                              s <= field.value ? 'text-warning-400 fill-warning-400' : 'text-surface-300 hover:text-warning-300'
+                                              s <= field.value ? "text-status-warning-text fill-warning-400" : "text-muted hover:text-status-warning-text"
                                             }`}
                                           />
                                         </button>
@@ -1505,28 +1505,28 @@ export default function OneOnOnePage() {
                 value={dashboard?.upcomingMeetings ?? 0}
                 subtitle="Scheduled meetings"
                 icon={Calendar}
-                color="bg-accent-600"
+                color="bg-accent"
               />
               <StatCard
                 title="Pending Actions"
                 value={pendingActionsQuery.data?.length ?? 0}
                 subtitle="Items to complete"
                 icon={ListChecks}
-                color="bg-warning-500"
+                color="bg-status-warning-bg"
               />
               <StatCard
                 title="Overdue Actions"
                 value={overdueActionsQuery.data?.length ?? 0}
                 subtitle="Past due date"
                 icon={AlertCircle}
-                color="bg-danger-500"
+                color="bg-status-danger-bg"
               />
               <StatCard
                 title="Completion Rate"
                 value={`${Math.round((dashboard?.actionItemCompletionRate as number) || 0)}%`}
                 subtitle="Action items completed"
                 icon={CheckCircle2}
-                color="bg-success-500"
+                color="bg-status-success-bg"
               />
             </>
           )}
@@ -1567,7 +1567,7 @@ export default function OneOnOnePage() {
                 }}
                 className={`flex-1 px-4 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.key
-                    ? 'border-b-2 border-accent-700 text-accent-700 dark:text-accent-400'
+                    ? "border-b-2 border-[var(--accent-primary)] text-accent"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >

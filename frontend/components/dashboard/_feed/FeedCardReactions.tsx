@@ -42,16 +42,16 @@ export function FeedCardReactions({
         <button
           onClick={onLike}
           className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-            liked ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+            liked ? "text-accent" : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
           }`}
         >
-          <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-accent-700 dark:fill-accent-400' : ''}`}/>
+          <ThumbsUp className={`h-4 w-4 ${liked ? "fill-accent-700" : ''}`}/>
           Like
         </button>
         <button
           onClick={onToggleComments}
           className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-            showComments ? 'text-accent-700 dark:text-accent-400' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+            showComments ? "text-accent" : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
           }`}
         >
           <MessageCircle className="h-4 w-4"/>

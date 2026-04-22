@@ -65,8 +65,8 @@ export function ConfirmDialog({
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
       ),
-      buttonClass: 'bg-danger-600 hover:bg-danger-700 focus:ring-danger-500',
-      bgClass: 'bg-danger-100 dark:bg-danger-900/30',
+      buttonClass: "bg-status-danger-bg hover:bg-status-danger-bg focus:ring-danger-500",
+      bgClass: "bg-status-danger-bg",
     },
     warning: {
       icon: (
@@ -76,8 +76,8 @@ export function ConfirmDialog({
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
         </svg>
       ),
-      buttonClass: 'bg-warning-600 hover:bg-warning-700 focus:ring-warning-500',
-      bgClass: 'bg-warning-100 dark:bg-warning-900/30',
+      buttonClass: "bg-status-warning-bg hover:bg-status-warning-bg focus:ring-warning-500",
+      bgClass: "bg-status-warning-bg",
     },
     info: {
       icon: (
@@ -87,8 +87,8 @@ export function ConfirmDialog({
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       ),
-      buttonClass: 'bg-accent-600 hover:bg-accent-700 focus:ring-accent-500',
-      bgClass: 'bg-accent-100 dark:bg-accent-900/30',
+      buttonClass: "bg-accent hover:bg-accent focus:ring-accent-500",
+      bgClass: "bg-accent-subtle",
     },
   };
 

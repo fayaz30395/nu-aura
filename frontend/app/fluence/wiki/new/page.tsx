@@ -341,10 +341,10 @@ export default function CreateWikiPage() {
                                 : 'hover:bg-[var(--bg-secondary)]'
                             }`}
                           >
-                            <Icon className={`w-4 h-4 ${isSelected ? 'text-accent-500' : 'text-[var(--text-muted)]'}`}/>
+                            <Icon className={`w-4 h-4 ${isSelected ? "text-accent" : 'text-[var(--text-muted)]'}`}/>
                             <div className="flex-1">
                               <div
-                                className={`text-sm font-medium ${isSelected ? 'text-accent-500' : 'text-[var(--text-primary)]'}`}>
+                                className={`text-sm font-medium ${isSelected ? "text-accent" : 'text-[var(--text-primary)]'}`}>
                                 {opt.label}
                               </div>
                               <div className="text-caption">{opt.desc}</div>

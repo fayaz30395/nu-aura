@@ -182,12 +182,12 @@ export default function HolidayCalendarManagementPage() {
 
   const getHolidayTypeColor = (type: HolidayType) => {
     const colors: Record<HolidayType, string> = {
-      NATIONAL: 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300',
-      REGIONAL: 'bg-accent-100 text-accent-800 dark:bg-accent-900/50 dark:text-accent-300',
-      OPTIONAL: 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
-      RESTRICTED: 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300',
-      FESTIVAL: 'bg-accent-300 text-accent-900 dark:bg-accent-900/50 dark:text-accent-500',
-      COMPANY_EVENT: 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300',
+      NATIONAL: "bg-status-danger-bg text-status-danger-text",
+      REGIONAL: "bg-accent-subtle text-accent",
+      OPTIONAL: "bg-status-warning-bg text-status-warning-text",
+      RESTRICTED: "bg-status-warning-bg text-status-warning-text",
+      FESTIVAL: "bg-accent-subtle text-accent",
+      COMPANY_EVENT: "bg-status-success-bg text-status-success-text",
     };
     return colors[type];
   };

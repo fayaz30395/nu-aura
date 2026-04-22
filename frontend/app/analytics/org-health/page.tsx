@@ -319,9 +319,9 @@ export default function OrganizationHealthPage() {
                     <td className="py-4 text-[var(--text-secondary)]">{count}</td>
                     <td className="py-4">
                                                 <span
-                                                  className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${idx === 0 ? 'bg-success-100 text-success-700 dark:bg-success-950/30' :
-                                                    idx === 4 ? 'bg-warning-100 text-warning-700 dark:bg-warning-950/30' :
-                                                      'bg-accent-100 text-accent-700 dark:bg-accent-950/30'
+                                                  className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${idx === 0 ? "bg-status-success-bg text-status-success-text" :
+                                                    idx === 4 ? "bg-status-warning-bg text-status-warning-text" :
+                                                      "bg-accent-subtle text-accent"
                                                   }`}>
                                                     {idx === 0 ? 'Peak' : idx === 4 ? 'Monitor' : 'Stable'}
                                                 </span>

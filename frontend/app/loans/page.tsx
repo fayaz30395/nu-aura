@@ -69,38 +69,38 @@ export default function LoansPage() {
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
       PENDING: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         icon: XCircle,
       },
       DISBURSED: {
-        bg: 'bg-accent-300 dark:bg-accent-900/30',
-        text: 'text-accent-900 dark:text-accent-600',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: Banknote,
       },
       ACTIVE: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: TrendingUp,
       },
       CLOSED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: CheckCircle,
       },
       DEFAULTED: {
-        bg: 'bg-danger-200 dark:bg-danger-900/50',
-        text: 'text-danger-800 dark:text-danger-300',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         icon: AlertCircle,
       },
       CANCELLED: {

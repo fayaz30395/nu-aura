@@ -86,15 +86,15 @@ const statusConfig: Record<SelectionStatus, {
   bgColor: string;
   icon: typeof CheckCircle
 }> = {
-  PENDING: {label: 'Pending', color: 'text-warning-600', bgColor: 'bg-warning-50 border-warning-200', icon: Clock},
+  PENDING: {label: 'Pending', color: "text-status-warning-text", bgColor: "bg-status-warning-bg border-status-warning-border", icon: Clock},
   APPROVED: {
     label: 'Approved',
-    color: 'text-success-600',
-    bgColor: 'bg-success-50 border-success-200',
+    color: "text-status-success-text",
+    bgColor: "bg-status-success-bg border-status-success-border",
     icon: CheckCircle
   },
-  REJECTED: {label: 'Rejected', color: 'text-danger-600', bgColor: 'bg-danger-50 border-danger-200', icon: XCircle},
-  CANCELLED: {label: 'Cancelled', color: 'text-surface-500', bgColor: 'bg-surface-50 border-surface-200', icon: Ban},
+  REJECTED: {label: 'Rejected', color: "text-status-danger-text", bgColor: "bg-status-danger-bg border-status-danger-border", icon: XCircle},
+  CANCELLED: {label: 'Cancelled', color: "text-muted", bgColor: "bg-base border-subtle", icon: Ban},
 };
 
 const categoryLabels: Record<HolidayCategory, string> = {
@@ -106,11 +106,11 @@ const categoryLabels: Record<HolidayCategory, string> = {
 };
 
 const categoryColors: Record<HolidayCategory, string> = {
-  RELIGIOUS: 'bg-accent-300 text-accent-900',
-  REGIONAL: 'bg-accent-100 text-accent-700',
-  CULTURAL: 'bg-accent-300 text-accent-900',
-  NATIONAL: 'bg-success-100 text-success-700',
-  OTHER: 'bg-surface-100 text-surface-700',
+  RELIGIOUS: "bg-accent-subtle text-accent",
+  REGIONAL: "bg-accent-subtle text-accent",
+  CULTURAL: "bg-accent-subtle text-accent",
+  NATIONAL: "bg-status-success-bg text-status-success-text",
+  OTHER: "bg-surface text-secondary",
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -235,8 +235,8 @@ export default function RestrictedHolidaysPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     activeTab === tab.id
-                      ? 'border-accent-700 text-accent-700'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300'
+                      ? "border-[var(--accent-primary)] text-accent"
+                      : "border-transparent text-muted hover:text-secondary hover:border-subtle"
                   }`}
                 >
                   <TabIcon className="w-4 h-4"/>
@@ -419,8 +419,8 @@ function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, sum
               animate={{opacity: 1, y: 0}}
               className={`rounded-xl border p-6 transition-shadow hover:shadow-[var(--shadow-elevated)] ${
                 isSelected
-                  ? 'border-accent-300 bg-accent-50 dark:bg-accent-900/20'
-                  : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-card)]'
+                  ? "border-[var(--accent-primary)] bg-accent-subtle"
+                  : "border-subtle bg-[var(--bg-card)]"
               }`}
             >
               <div className="flex items-start justify-between mb-4">
@@ -736,8 +736,8 @@ function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProp
                 <td className="px-4 py-4">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                       holiday.isActive
-                        ? 'bg-success-100 text-success-700'
-                        : 'bg-surface-100 text-surface-500'
+                        ? "bg-status-success-bg text-status-success-text"
+                        : "bg-surface text-muted"
                     }`}>
                       {holiday.isActive ? 'Active' : 'Inactive'}
                     </span>
@@ -855,7 +855,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
                   type="button"
                   onClick={() => field.onChange(!field.value)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    field.value ? 'bg-accent-700' : 'bg-surface-300'
+                    field.value ? "bg-accent" : "bg-card"
                   }`}
                   role="switch"
                   aria-checked={field.value}
@@ -1012,7 +1012,7 @@ function HolidayFormModal({holiday, onClose, onSubmit, isSubmitting}: HolidayFor
                   type="button"
                   onClick={() => field.onChange(!field.value)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    field.value ? 'bg-accent-700' : 'bg-surface-300'
+                    field.value ? "bg-accent" : "bg-card"
                   }`}
                   role="switch"
                   aria-checked={field.value}

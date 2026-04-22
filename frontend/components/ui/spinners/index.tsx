@@ -51,15 +51,15 @@ const RING_STROKE: Record<SpinnerSize, { outer: number; inner: number; stroke: n
 };
 
 const TONE_FILL: Record<SpinnerTone, string> = {
-  primary: 'bg-accent-700 dark:bg-accent-400',
+  primary: "bg-accent",
   secondary: 'bg-[var(--text-secondary)]',
   white: 'bg-[var(--bg-card)]',
 };
 
 const TONE_RING: Record<SpinnerTone, { outer: string; inner: string }> = {
   primary: {
-    outer: 'stroke-accent-200 dark:stroke-accent-900',
-    inner: 'stroke-accent-700 dark:stroke-accent-400',
+    outer: "stroke-accent-200",
+    inner: "stroke-accent-700",
   },
   secondary: {
     outer: 'stroke-[var(--border-main)]',

@@ -65,23 +65,23 @@ export default function CalendarPage() {
   const getStatusConfig = (status: EventStatus) => {
     const configs: Record<EventStatus, { bg: string; text: string; icon: typeof Clock }> = {
       SCHEDULED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: Clock,
       },
       CONFIRMED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: CheckCircle,
       },
       TENTATIVE: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         icon: AlertCircle,
       },
       CANCELLED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         icon: XCircle,
       },
       COMPLETED: {

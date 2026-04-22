@@ -165,7 +165,7 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
     x: '14%',
     y: '12%',
     anim: 'nuaura-float-1 4s ease-in-out infinite',
-    color: 'bg-accent-600 dark:bg-accent-400'
+    color: "bg-accent"
   },
   {size: 4, x: '78%', y: '8%', anim: 'nuaura-float-2 5s ease-in-out infinite', color: 'bg-[var(--nu-purple)]'},
   {
@@ -173,21 +173,21 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
     x: '8%',
     y: '72%',
     anim: 'nuaura-float-3 4.5s ease-in-out infinite',
-    color: 'bg-accent-400 dark:bg-accent-300'
+    color: "bg-accent-subtle"
   },
   {
     size: 3,
     x: '82%',
     y: '76%',
     anim: 'nuaura-float-1 3.5s ease-in-out 0.5s infinite',
-    color: 'bg-accent-300 dark:bg-accent-200'
+    color: "bg-accent-subtle"
   },
   {
     size: 4,
     x: '6%',
     y: '42%',
     anim: 'nuaura-float-2 5.5s ease-in-out 1s infinite',
-    color: 'bg-accent-500 dark:bg-accent-400'
+    color: "bg-accent"
   },
   {size: 5, x: '88%', y: '38%', anim: 'nuaura-float-3 4s ease-in-out 0.8s infinite', color: 'bg-[var(--nu-purple)]'},
   {
@@ -195,14 +195,14 @@ const PARTICLES: Array<{ size: number; x: string; y: string; anim: string; color
     x: '28%',
     y: '4%',
     anim: 'nuaura-float-1 6s ease-in-out 0.3s infinite',
-    color: 'bg-accent-400 dark:bg-accent-300'
+    color: "bg-accent-subtle"
   },
   {
     size: 3,
     x: '68%',
     y: '86%',
     anim: 'nuaura-float-2 5s ease-in-out 1.2s infinite',
-    color: 'bg-accent-500 dark:bg-accent-400'
+    color: "bg-accent"
   },
 ];
 

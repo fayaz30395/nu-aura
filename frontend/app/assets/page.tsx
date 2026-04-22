@@ -97,21 +97,21 @@ const getCategoryIcon = (category: AssetCategory) => {
 const getCategoryColor = (category: AssetCategory) => {
   switch (category) {
     case AssetCategory.LAPTOP:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     case AssetCategory.DESKTOP:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500';
+      return "bg-accent-subtle text-accent";
     case AssetCategory.MONITOR:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     case AssetCategory.PHONE:
-      return 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300';
+      return "bg-status-success-bg text-status-success-text";
     case AssetCategory.TABLET:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     case AssetCategory.FURNITURE:
-      return 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
+      return "bg-status-warning-bg text-status-warning-text";
     case AssetCategory.VEHICLE:
-      return 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
+      return "bg-status-danger-bg text-status-danger-text";
     case AssetCategory.SOFTWARE_LICENSE:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
   }

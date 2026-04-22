@@ -379,7 +379,7 @@ export default function OfficeLocationsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        location.isActive ? 'bg-success-100 text-success-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
+                        location.isActive ? "bg-status-success-bg text-status-success-text" : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                       }`}>
                         {location.isActive ? 'Active' : 'Inactive'}
                       </span>

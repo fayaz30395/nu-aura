@@ -283,7 +283,7 @@ export default function ContactPage() {
                     rows={5}
                     placeholder="Tell us more about your inquiry..."
                     className={`input-aura w-full px-4 py-2 rounded-lg bg-[var(--bg-input)] border ${
-                      errors.message ? 'border-danger-500' : 'border-[var(--border-main)]'
+                      errors.message ? "border-status-danger-border" : 'border-[var(--border-main)]'
                     } text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                     {...register('message')}
                   />

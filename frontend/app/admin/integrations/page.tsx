@@ -410,8 +410,8 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   smsTestResult.success
-                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
-                    : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
+                    ? "bg-status-success-bg text-status-success-text"
+                    : "bg-status-danger-bg text-status-danger-text"
                 }`}
               >
                 {smsTestResult.success ? (
@@ -487,8 +487,8 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   smsSendResult.success
-                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
-                    : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
+                    ? "bg-status-success-bg text-status-success-text"
+                    : "bg-status-danger-bg text-status-danger-text"
                 }`}
               >
                 {smsSendResult.success ? (
@@ -591,8 +591,8 @@ export default function AdminIntegrationsPage() {
               <div
                 className={`mt-4 p-4 rounded-lg flex items-start gap-2 ${
                   paymentTestResult.success
-                    ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300'
-                    : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300'
+                    ? "bg-status-success-bg text-status-success-text"
+                    : "bg-status-danger-bg text-status-danger-text"
                 }`}
               >
                 {paymentTestResult.success ? (

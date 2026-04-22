@@ -364,7 +364,7 @@ export default function CustomFieldsPage() {
                       onClick={() => handleToggleActive(definition)}
                       className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         definition.isActive
-                          ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
+                          ? "bg-status-success-bg text-status-success-text"
                           : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                       }`}
                       aria-label={`Toggle ${definition.fieldName} status`}

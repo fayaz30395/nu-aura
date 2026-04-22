@@ -194,7 +194,7 @@ export function FeedCardDefault({
               <button
                 onClick={onLike}
                 className={`inline-flex items-center gap-1 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                  liked ? 'text-danger-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
+                  liked ? "text-status-danger-text" : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] '
                 }`}
               >
                 <Heart className={`h-3 w-3 ${liked ? 'fill-danger-500' : ''}`}/>

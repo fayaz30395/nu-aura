@@ -212,9 +212,9 @@ interface StatCardProps {
 
 function StatCard({icon: Icon, label, value, iconColor}: StatCardProps) {
   const colorMap = {
-    violet: 'bg-accent-100 dark:bg-accent-950 text-accent-600 dark:text-accent-400',
-    amber: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
-    yellow: 'bg-warning-100 dark:bg-warning-950 text-warning-600 dark:text-warning-400',
+    violet: "bg-accent-subtle text-accent",
+    amber: "bg-status-warning-bg text-status-warning-text",
+    yellow: "bg-status-warning-bg text-status-warning-text",
   };
 
   return (
@@ -431,8 +431,8 @@ function ContentCard({
                        onClick,
                      }: ContentCardProps) {
   const colorMap = {
-    violet: 'text-accent-600 dark:text-accent-400',
-    amber: 'text-warning-600 dark:text-warning-400',
+    violet: "text-accent",
+    amber: "text-status-warning-text",
   };
 
   const getStatusClass = (st: string): string => {
@@ -502,9 +502,9 @@ function FavoriteCard({
                         onClick,
                       }: FavoriteCardProps) {
   const colorMap = {
-    violet: 'text-accent-600 dark:text-accent-400',
-    amber: 'text-warning-600 dark:text-warning-400',
-    yellow: 'text-warning-600 dark:text-warning-400',
+    violet: "text-accent",
+    amber: "text-status-warning-text",
+    yellow: "text-status-warning-text",
   };
 
   const typeLabel = contentType.replace(/_/g, ' ').toLowerCase();

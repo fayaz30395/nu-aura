@@ -37,10 +37,10 @@ interface HeadcountData {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  EXCELLENT: 'text-success-600 bg-success-50',
-  GOOD: 'text-accent-600 bg-accent-50',
-  WARNING: 'text-warning-600 bg-warning-50',
-  CRITICAL: 'text-danger-600 bg-danger-50',
+  EXCELLENT: "text-status-success-text bg-status-success-bg",
+  GOOD: "text-accent bg-accent-subtle",
+  WARNING: "text-status-warning-text bg-status-warning-bg",
+  CRITICAL: "text-status-danger-text bg-status-danger-bg",
 };
 
 export default function HeadcountReportPage() {

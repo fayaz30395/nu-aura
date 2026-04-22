@@ -115,7 +115,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           step.completed
                             ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
                             : step.active
-                              ? 'bg-accent-500 text-white ring-4 ring-accent-500/30'
+                              ? "bg-accent text-inverse ring-4 ring-accent-500/30"
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                         }`}
                         animate={step.active ? {scale: [1, 1.08, 1]} : {}}
@@ -127,7 +127,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         <p
                           className={`text-xs font-semibold ${
                             step.active
-                              ? 'text-accent-700 dark:text-accent-400'
+                              ? "text-accent"
                               : step.completed
                                 ? 'text-[var(--status-success-text)]'
                                 : 'text-[var(--text-muted)]'
@@ -300,9 +300,9 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             <p
                               className={`text-xs ml-auto font-medium ${
                                 reasonValue.length > 450
-                                  ? 'text-danger-500'
+                                  ? "text-status-danger-text"
                                   : reasonValue.length > 400
-                                    ? 'text-warning-600 dark:text-warning-400'
+                                    ? "text-status-warning-text"
                                     : 'text-[var(--text-muted)]'
                               }`}
                             >

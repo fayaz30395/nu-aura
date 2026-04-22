@@ -26,64 +26,64 @@ const PAYROLL_LINKS = [
     label: 'Payroll Runs',
     description: 'Create and process payroll for each pay cycle',
     icon: Banknote,
-    accent: 'text-accent-500',
-    bg: 'bg-accent-50 dark:bg-accent-950/20',
+    accent: "text-accent",
+    bg: "bg-accent-subtle",
   },
   {
     href: '/payroll/payslips',
     label: 'Payslips',
     description: 'View and download employee payslips',
     icon: FileText,
-    accent: 'text-accent-500',
-    bg: 'bg-accent-50 dark:bg-accent-950/20',
+    accent: "text-accent",
+    bg: "bg-accent-subtle",
   },
   {
     href: '/payroll/structures',
     label: 'Salary Structures',
     description: 'Manage components, allowances and deductions',
     icon: Layers,
-    accent: 'text-accent-500',
-    bg: 'bg-accent-50 dark:bg-accent-950/20',
+    accent: "text-accent",
+    bg: "bg-accent-subtle",
   },
   {
     href: '/payroll/bulk-processing',
     label: 'Bulk Processing',
     description: 'Process multiple employees in a single run',
     icon: Settings,
-    accent: 'text-warning-500',
-    bg: 'bg-warning-50 dark:bg-warning-950/20',
+    accent: "text-status-warning-text",
+    bg: "bg-status-warning-bg",
   },
   {
     href: '/payroll/components',
     label: 'Pay Components',
     description: 'Configure reimbursement and deduction types',
     icon: Package,
-    accent: 'text-accent-500',
-    bg: 'bg-accent-50 dark:bg-accent-950/20',
+    accent: "text-accent",
+    bg: "bg-accent-subtle",
   },
   {
     href: '/payroll/statutory',
     label: 'Statutory Config',
     description: 'PF, ESI, PT, TDS and LWF configurations',
     icon: Scale,
-    accent: 'text-success-500',
-    bg: 'bg-success-50 dark:bg-success-950/20',
+    accent: "text-status-success-text",
+    bg: "bg-status-success-bg",
   },
   {
     href: '/statutory-filings',
     label: 'Statutory Filings',
     description: 'Generate and submit government compliance filings',
     icon: BarChart2,
-    accent: 'text-info-500',
-    bg: 'bg-info-50 dark:bg-info-950/20',
+    accent: "text-status-info-text",
+    bg: "bg-status-info-bg",
   },
   {
     href: '/reports/payroll',
     label: 'Payroll Reports',
     description: 'Download payroll and CTC reports',
     icon: FileText,
-    accent: 'text-accent-500',
-    bg: 'bg-accent-50 dark:bg-accent-950/20',
+    accent: "text-accent",
+    bg: "bg-accent-subtle",
   },
 ] as const;
 
@@ -109,7 +109,7 @@ function statusBadgeClass(status: PayrollRunStatus): string {
     case 'APPROVED':
       return 'badge-success';
     case 'PROCESSED':
-      return 'bg-accent-50 dark:bg-accent-950/20 text-accent-700 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     case 'PROCESSING':
       return 'badge-warning';
     default:
@@ -149,10 +149,10 @@ export default function AdminPayrollPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          {label: 'Total Runs', value: totalRuns, loading: runsLoading, color: 'text-accent-500'},
-          {label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, color: 'text-warning-500'},
-          {label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, color: 'text-success-500'},
-          {label: 'Salary Structures', value: totalStructures, loading: structuresLoading, color: 'text-accent-500'},
+          {label: 'Total Runs', value: totalRuns, loading: runsLoading, color: "text-accent"},
+          {label: 'Pending / Processing', value: pendingRuns, loading: runsLoading, color: "text-status-warning-text"},
+          {label: 'Approved / Locked', value: approvedRuns, loading: runsLoading, color: "text-status-success-text"},
+          {label: 'Salary Structures', value: totalStructures, loading: structuresLoading, color: "text-accent"},
         ].map(({label, value, loading, color}) => (
           <div
             key={label}

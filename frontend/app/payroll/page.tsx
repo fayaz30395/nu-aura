@@ -15,8 +15,8 @@ const SUB_PAGES = [
     description: 'Create and manage payroll processing runs for each pay period',
     icon: Banknote,
     gradient: 'from-accent-500 to-accent-700',
-    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
-    hoverText: 'group-hover:text-accent-500',
+    hoverBorder: "hover:border-[var(--accent-primary)]",
+    hoverText: "group-hover:text-accent",
   },
   {
     href: '/payroll/payslips',
@@ -24,8 +24,8 @@ const SUB_PAGES = [
     description: 'View and download employee payslips with salary breakdowns',
     icon: FileText,
     gradient: 'from-accent-500 to-accent-600',
-    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
-    hoverText: 'group-hover:text-accent-500',
+    hoverBorder: "hover:border-[var(--accent-primary)]",
+    hoverText: "group-hover:text-accent",
   },
   {
     href: '/payroll/structures',
@@ -33,8 +33,8 @@ const SUB_PAGES = [
     description: 'Define salary structures with configurable allowances and deductions',
     icon: Layers,
     gradient: 'from-accent-500 to-accent-600',
-    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
-    hoverText: 'group-hover:text-accent-500',
+    hoverBorder: "hover:border-[var(--accent-primary)]",
+    hoverText: "group-hover:text-accent",
   },
   {
     href: '/payroll/bulk-processing',
@@ -42,8 +42,8 @@ const SUB_PAGES = [
     description: 'Process payroll for multiple employees at once with a guided wizard',
     icon: Settings,
     gradient: 'from-warning-500 to-warning-600',
-    hoverBorder: 'hover:border-warning-300 dark:hover:border-warning-700',
-    hoverText: 'group-hover:text-warning-500',
+    hoverBorder: "hover:border-status-warning-border",
+    hoverText: "group-hover:text-status-warning-text",
   },
   {
     href: '/payroll/components',
@@ -51,8 +51,8 @@ const SUB_PAGES = [
     description: 'Manage payroll components like allowances, deductions, and reimbursements',
     icon: Package,
     gradient: 'from-accent-400 to-accent-600',
-    hoverBorder: 'hover:border-accent-300 dark:hover:border-accent-700',
-    hoverText: 'group-hover:text-accent-500',
+    hoverBorder: "hover:border-[var(--accent-primary)]",
+    hoverText: "group-hover:text-accent",
   },
   {
     href: '/payroll/statutory',
@@ -60,8 +60,8 @@ const SUB_PAGES = [
     description: 'Configure statutory compliance — PF, ESI, PT, TDS, and LWF',
     icon: Scale,
     gradient: 'from-success-500 to-success-600',
-    hoverBorder: 'hover:border-success-300 dark:hover:border-success-700',
-    hoverText: 'group-hover:text-success-500',
+    hoverBorder: "hover:border-status-success-border",
+    hoverText: "group-hover:text-status-success-text",
   },
 ] as const;
 

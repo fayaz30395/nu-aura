@@ -198,7 +198,7 @@ export default function NewEventPage() {
               {...register('title')}
               placeholder="Enter event title"
               className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
-                errors.title ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.title ? "border-status-danger-border" : 'border-[var(--border-main)]'
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.title && (
@@ -231,7 +231,7 @@ export default function NewEventPage() {
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('startTime')}
                   className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                    errors.startTime ? 'border-danger-500' : 'border-[var(--border-main)]'
+                    errors.startTime ? "border-status-danger-border" : 'border-[var(--border-main)]'
                   } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                 />
               </div>
@@ -250,7 +250,7 @@ export default function NewEventPage() {
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('endTime')}
                   className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                    errors.endTime ? 'border-danger-500' : 'border-[var(--border-main)]'
+                    errors.endTime ? "border-status-danger-border" : 'border-[var(--border-main)]'
                   } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
                 />
               </div>
@@ -306,7 +306,7 @@ export default function NewEventPage() {
                 {...register('meetingLink')}
                 placeholder="https://meet.google.com/..."
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                  errors.meetingLink ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.meetingLink ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
             </div>

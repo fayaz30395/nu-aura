@@ -235,15 +235,15 @@ export default function JobOpeningsPage() {
   const getStatusColor = (status: JobStatus) => {
     switch (status) {
       case 'OPEN':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'DRAFT':
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
       case 'ON_HOLD':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'CLOSED':
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
       case 'CANCELLED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
     }
@@ -252,11 +252,11 @@ export default function JobOpeningsPage() {
   const getPriorityColor = (priority?: Priority) => {
     switch (priority) {
       case 'URGENT':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'HIGH':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'MEDIUM':
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
       case 'LOW':
         return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
       default:

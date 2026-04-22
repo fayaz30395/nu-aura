@@ -136,7 +136,7 @@ export default function UtilizationReportsPage() {
                   <ArrowDownRight className='h-4 w-4 text-status-danger-text'/>
                 )}
                 <span
-                  className={`text-sm font-medium ${trendDirection === 'up' ? 'text-success-500' : 'text-danger-500'
+                  className={`text-sm font-medium ${trendDirection === 'up' ? "text-status-success-text" : "text-status-danger-text"
                   }`}
                 >
                   {trend}
@@ -157,10 +157,10 @@ export default function UtilizationReportsPage() {
     <div className="flex items-center gap-4">
       <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${rate >= 90 ? 'bg-success-500' :
-            rate >= 75 ? 'bg-accent-500' :
-              rate >= 50 ? 'bg-warning-500' :
-                'bg-danger-500'
+          className={`h-full rounded-full transition-all ${rate >= 90 ? "bg-status-success-bg" :
+            rate >= 75 ? "bg-accent" :
+              rate >= 50 ? "bg-status-warning-bg" :
+                "bg-status-danger-bg"
           }`}
           style={{width: `${Math.min(rate, 100)}%`}}
         />
@@ -376,7 +376,7 @@ export default function UtilizationReportsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-1 py-4 border-b-2 transition-colors ${activeTab === tab.id
-                  ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                 }`}
               >

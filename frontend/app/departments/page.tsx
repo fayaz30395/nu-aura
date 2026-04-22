@@ -452,8 +452,8 @@ export default function DepartmentsPage() {
                       <td className="px-6 py-4 text-center">
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                             dept.isActive
-                              ? 'bg-success-100 dark:bg-success-950/30 text-success-700 dark:text-success-400'
-                              : 'bg-danger-100 dark:bg-danger-950/30 text-danger-700 dark:text-danger-400'
+                              ? "bg-status-success-bg text-status-success-text"
+                              : "bg-status-danger-bg text-status-danger-text"
                           }`}>
                             {dept.isActive ? 'Active' : 'Inactive'}
                           </span>

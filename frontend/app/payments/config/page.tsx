@@ -241,8 +241,8 @@ export default function PaymentConfigPage() {
                   onClick={() => setSelectedProvider(provider)}
                   className={`p-4 rounded-lg border-2 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     isSelected
-                      ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-                      : 'border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700'
+                      ? "border-[var(--accent-primary)] bg-accent-subtle"
+                      : "border-[var(--border-main)] hover:border-[var(--accent-primary)]"
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -379,8 +379,8 @@ export default function PaymentConfigPage() {
             <div
               className={`mt-4 p-4 rounded-lg border ${
                 testResult.success
-                  ? 'bg-success-50 dark:bg-success-900/20 border-success-300 dark:border-success-700'
-                  : 'bg-danger-50 dark:bg-danger-900/20 border-danger-300 dark:border-danger-700'
+                  ? "bg-status-success-bg border-status-success-border"
+                  : "bg-status-danger-bg border-status-danger-border"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -392,8 +392,8 @@ export default function PaymentConfigPage() {
                 <p
                   className={`text-sm font-medium ${
                     testResult.success
-                      ? 'text-success-800 dark:text-success-300'
-                      : 'text-danger-800 dark:text-danger-300'
+                      ? "text-status-success-text"
+                      : "text-status-danger-text"
                   }`}
                 >
                   {testResult.message}

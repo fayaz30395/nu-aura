@@ -52,15 +52,15 @@ const itemSchema = z.object({
 type ItemFormData = z.infer<typeof itemSchema>;
 
 const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; label: string }> = {
-  DRAFT: {color: 'bg-surface-100 text-surface-700', icon: FileText, label: 'Draft'},
-  SUBMITTED: {color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Submitted'},
-  PENDING_APPROVAL: {color: 'bg-warning-100 text-warning-700', icon: Clock, label: 'Pending Approval'},
-  APPROVED: {color: 'bg-success-100 text-success-700', icon: CheckCircle, label: 'Approved'},
-  REJECTED: {color: 'bg-danger-100 text-danger-700', icon: XCircle, label: 'Rejected'},
-  PROCESSING: {color: 'bg-accent-100 text-accent-700', icon: Clock, label: 'Processing'},
-  REIMBURSED: {color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Reimbursed'},
-  PAID: {color: 'bg-success-100 text-success-700', icon: DollarSign, label: 'Paid'},
-  CANCELLED: {color: 'bg-surface-100 text-surface-500', icon: XCircle, label: 'Cancelled'},
+  DRAFT: {color: "bg-surface text-secondary", icon: FileText, label: 'Draft'},
+  SUBMITTED: {color: "bg-accent-subtle text-accent", icon: Clock, label: 'Submitted'},
+  PENDING_APPROVAL: {color: "bg-status-warning-bg text-status-warning-text", icon: Clock, label: 'Pending Approval'},
+  APPROVED: {color: "bg-status-success-bg text-status-success-text", icon: CheckCircle, label: 'Approved'},
+  REJECTED: {color: "bg-status-danger-bg text-status-danger-text", icon: XCircle, label: 'Rejected'},
+  PROCESSING: {color: "bg-accent-subtle text-accent", icon: Clock, label: 'Processing'},
+  REIMBURSED: {color: "bg-status-success-bg text-status-success-text", icon: DollarSign, label: 'Reimbursed'},
+  PAID: {color: "bg-status-success-bg text-status-success-text", icon: DollarSign, label: 'Paid'},
+  CANCELLED: {color: "bg-surface text-muted", icon: XCircle, label: 'Cancelled'},
 };
 
 export default function ExpenseDetailPage() {

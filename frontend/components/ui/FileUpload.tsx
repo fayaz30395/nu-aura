@@ -191,8 +191,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           flex flex-col items-center justify-center
           transition-all cursor-pointer
           ${isDragging
-          ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-          : 'border-[var(--border-main)] dark:border-surface-600 hover:border-accent-400 dark:hover:border-accent-500'
+          ? "border-[var(--accent-primary)] bg-accent-subtle"
+          : "border-[var(--border-main)] hover:border-[var(--accent-primary)]"
         }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${uploading ? 'pointer-events-none' : ''}

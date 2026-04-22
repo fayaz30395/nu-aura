@@ -10,33 +10,33 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-200',
+          "bg-surface text-secondary",
         primary:
-          'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300',
+          "bg-accent-subtle text-accent",
         secondary:
-          'bg-surface-200 text-surface-700 dark:bg-surface-600 dark:text-surface-200',
+          "bg-elevated text-secondary",
         success:
-          'bg-success-50 text-success-700 dark:bg-success-950 dark:text-success-300',
+          "bg-status-success-bg text-status-success-text",
         warning:
-          'bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300',
+          "bg-status-warning-bg text-status-warning-text",
         danger:
-          'bg-danger-50 text-danger-700 dark:bg-danger-950 dark:text-danger-300',
+          "bg-status-danger-bg text-status-danger-text",
         destructive:
-          'bg-danger-50 text-danger-700 dark:bg-danger-950 dark:text-danger-300',
+          "bg-status-danger-bg text-status-danger-text",
         info:
-          'bg-info-50 text-info-700 dark:bg-info-950 dark:text-info-300',
+          "bg-status-info-bg text-status-info-text",
         neutral:
           'bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)]',
         accent:
           'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] border border-[var(--border-subtle)]',
         outline:
-          'bg-transparent border border-surface-300 text-surface-700 dark:border-surface-600 dark:text-surface-200',
+          "bg-transparent border border-subtle text-secondary",
         'outline-primary':
-          'bg-transparent border border-accent-300 text-accent-700 dark:border-accent-700 dark:text-accent-300',
+          "bg-transparent border border-[var(--accent-primary)] text-accent",
         'outline-success':
-          'bg-transparent border border-success-300 text-success-700 dark:border-success-700 dark:text-success-300',
+          "bg-transparent border border-status-success-border text-status-success-text",
         'outline-danger':
-          'bg-transparent border border-danger-300 text-danger-700 dark:border-danger-700 dark:text-danger-300',
+          "bg-transparent border border-status-danger-border text-status-danger-text",
       },
       size: {
         sm: 'text-xs px-2 py-0.5 rounded-md',
@@ -60,11 +60,11 @@ export interface BadgeProps
 }
 
 const DOT_COLOR: Record<NonNullable<BadgeProps['dotColor']>, string> = {
-  default: 'bg-surface-500',
-  success: 'bg-success-500',
-  warning: 'bg-warning-500',
-  danger: 'bg-danger-500',
-  info: 'bg-info-500',
+  default: "bg-card",
+  success: "bg-status-success-bg",
+  warning: "bg-status-warning-bg",
+  danger: "bg-status-danger-bg",
+  info: "bg-status-info-bg",
 };
 
 const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(

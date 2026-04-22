@@ -84,10 +84,10 @@ interface ToastItemProps {
 
 function ToastItem({toast, onClose}: ToastItemProps) {
   const styles = {
-    success: 'bg-success-50 border-success-200 text-success-800',
-    error: 'bg-danger-50 border-danger-200 text-danger-800',
-    warning: 'bg-warning-50 border-warning-200 text-warning-800',
-    info: 'bg-accent-50 border-accent-200 text-accent-800',
+    success: "bg-status-success-bg border-status-success-border text-status-success-text",
+    error: "bg-status-danger-bg border-status-danger-border text-status-danger-text",
+    warning: "bg-status-warning-bg border-status-warning-border text-status-warning-text",
+    info: "bg-accent-subtle border-[var(--accent-primary)] text-accent",
   };
 
   const icons = {

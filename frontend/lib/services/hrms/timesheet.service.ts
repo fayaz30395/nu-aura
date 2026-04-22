@@ -109,11 +109,11 @@ export const timesheetService = {
 
   getStatusColor(status: string): string {
     const colors: Record<string, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-surface-800 dark:text-[var(--text-secondary)]',
-      SUBMITTED: 'bg-info-50 text-info-700 dark:bg-info-900/30 dark:text-info-300',
-      UNDER_REVIEW: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300',
-      APPROVED: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300',
-      REJECTED: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300',
+      DRAFT: "bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]",
+      SUBMITTED: "bg-status-info-bg text-status-info-text",
+      UNDER_REVIEW: "bg-status-warning-bg text-status-warning-text",
+      APPROVED: "bg-status-success-bg text-status-success-text",
+      REJECTED: "bg-status-danger-bg text-status-danger-text",
     };
     return colors[status] || colors.DRAFT;
   },

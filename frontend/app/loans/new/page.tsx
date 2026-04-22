@@ -183,7 +183,7 @@ export default function NewLoanPage() {
                 {...register('requestedAmount', {valueAsNumber: true})}
                 placeholder="Enter loan amount"
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                  errors.requestedAmount ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.requestedAmount ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
             </div>
@@ -203,7 +203,7 @@ export default function NewLoanPage() {
               {...register('interestRate', {valueAsNumber: true})}
               placeholder="8.5"
               className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
-                errors.interestRate ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.interestRate ? "border-status-danger-border" : 'border-[var(--border-main)]'
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.interestRate && (
@@ -223,7 +223,7 @@ export default function NewLoanPage() {
                 {...register('termMonths', {valueAsNumber: true})}
                 placeholder="12"
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                  errors.termMonths ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.termMonths ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
             </div>
@@ -264,7 +264,7 @@ export default function NewLoanPage() {
                 placeholder="Describe the purpose of this loan..."
                 rows={4}
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                  errors.purpose ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.purpose ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none`}
               />
             </div>

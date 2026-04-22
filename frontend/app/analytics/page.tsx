@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
                   onClick={() => setTimeRange(range)}
                   className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                     timeRange === range
-                      ? 'bg-accent-700 text-white'
+                      ? "bg-accent text-inverse"
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
                   }`}
                 >
@@ -278,7 +278,7 @@ export default function AnalyticsPage() {
                     )}
                     <span
                       className={`text-sm font-medium ${
-                        analytics.headcount.growthPercentage >= 0 ? 'text-success-600' : 'text-danger-600'
+                        analytics.headcount.growthPercentage >= 0 ? "text-status-success-text" : "text-status-danger-text"
                       }`}
                     >
                       {Math.abs(analytics.headcount.growthPercentage)}%

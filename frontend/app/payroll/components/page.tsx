@@ -63,9 +63,9 @@ const TYPE_LABELS: Record<ComponentType, string> = {
 };
 
 const TYPE_COLORS: Record<ComponentType, string> = {
-  EARNING: 'text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-950/20',
-  DEDUCTION: 'text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-950/20',
-  EMPLOYER_CONTRIBUTION: 'text-info-600 dark:text-info-400 bg-info-50 dark:bg-info-950/20',
+  EARNING: "text-status-success-text bg-status-success-bg",
+  DEDUCTION: "text-status-danger-text bg-status-danger-bg",
+  EMPLOYER_CONTRIBUTION: "text-status-info-text bg-status-info-bg",
 };
 
 function TypeIcon({type}: { type: ComponentType }) {
@@ -318,7 +318,7 @@ function ComponentsTable({
                 <span
                   className={`text-xs font-medium ${
                     c.isTaxable
-                      ? 'text-warning-600 dark:text-warning-400'
+                      ? "text-status-warning-text"
                       : 'text-[var(--text-muted)]'
                   }`}
                 >

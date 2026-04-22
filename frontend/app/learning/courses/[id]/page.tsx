@@ -27,9 +27,9 @@ import {useToast} from '@/components/notifications/ToastProvider';
 import {useCourseDetail, useEnrollCourse, useMyEnrollments} from '@/lib/hooks/queries/useLearning';
 
 const DIFFICULTY_COLOR = {
-  BEGINNER: 'bg-success-100 text-success-700',
-  INTERMEDIATE: 'bg-warning-100 text-warning-700',
-  ADVANCED: 'bg-danger-100 text-danger-700',
+  BEGINNER: "bg-status-success-bg text-status-success-text",
+  INTERMEDIATE: "bg-status-warning-bg text-status-warning-text",
+  ADVANCED: "bg-status-danger-bg text-status-danger-text",
 };
 
 interface Quiz {
@@ -309,7 +309,7 @@ export default function CourseDetailPage() {
                             disabled={!isAvailable && !isPassed && !isFailed}
                             className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                               isAvailable || isPassed || isFailed
-                                ? 'bg-accent-600 text-white hover:bg-accent-700'
+                                ? "bg-accent text-inverse hover:bg-accent"
                                 : 'bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed'
                             }`}
                           >

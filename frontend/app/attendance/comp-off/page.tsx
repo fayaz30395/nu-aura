@@ -51,10 +51,10 @@ type CompOffFormData = z.infer<typeof compOffSchema>;
 // ─── Status config ──────────────────────────────────────────────────────────────
 
 const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-  PENDING: {color: 'text-warning-600 tint-warning', icon: AlertCircle, label: 'Pending'},
-  APPROVED: {color: 'text-accent-600 tint-info', icon: CheckCircle, label: 'Approved'},
-  REJECTED: {color: 'text-danger-600 tint-danger', icon: XCircle, label: 'Rejected'},
-  CREDITED: {color: 'text-success-600 tint-success', icon: CheckCircle, label: 'Credited'},
+  PENDING: {color: "text-status-warning-text tint-warning", icon: AlertCircle, label: 'Pending'},
+  APPROVED: {color: "text-accent tint-info", icon: CheckCircle, label: 'Approved'},
+  REJECTED: {color: "text-status-danger-text tint-danger", icon: XCircle, label: 'Rejected'},
+  CREDITED: {color: "text-status-success-text tint-success", icon: CheckCircle, label: 'Credited'},
 };
 
 export default function CompOffPage() {
@@ -191,7 +191,7 @@ export default function CompOffPage() {
               }}
               className={`cursor-pointer pb-2 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 activeTab === tab
-                  ? 'border-accent-600 text-accent-600'
+                  ? "border-[var(--accent-primary)] text-accent"
                   : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -306,7 +306,7 @@ export default function CompOffPage() {
             <input
               type="date"
               {...register('attendanceDate')}
-              className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
+              className={`input-aura ${errors.attendanceDate ? "border-status-danger-border" : ''}`}
             />
             {errors.attendanceDate && (
               <p className='mt-1 text-xs text-status-danger-text'>{errors.attendanceDate.message}</p>

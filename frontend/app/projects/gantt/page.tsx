@@ -362,7 +362,7 @@ export default function GanttChartPage() {
                     <div
                       key={idx}
                       className={`flex-1 min-w-[80px] p-2 text-center text-sm border-r border-[var(--border-main)] ${
-                        col.isToday ? 'bg-info-50 dark:bg-info-900/20' : 'bg-[var(--bg-secondary)]'
+                        col.isToday ? "bg-status-info-bg" : 'bg-[var(--bg-secondary)]'
                       }`}
                     >
                       {col.label}

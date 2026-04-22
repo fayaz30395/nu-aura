@@ -52,11 +52,11 @@ export function RelatedContent({
   const getTypeColor = (type: RelatedItem['type']): string => {
     switch (type) {
       case 'WIKI':
-        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'BLOG':
-        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'TEMPLATE':
-        return 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       default:
         return 'bg-[var(--bg-surface)]';
     }

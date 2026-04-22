@@ -153,12 +153,12 @@ export default function PayrollReportsPage() {
                       onClick={() => setFormat(fmt)}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
-                          ? 'border-accent-700 bg-accent-250 dark:bg-accent-900/20'
+                          ? "border-[var(--accent-primary)] bg-accent-subtle"
                           : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                       }`}
                     >
                       <p
-                        className={`font-medium text-sm ${format === fmt ? 'text-accent-900' : 'text-[var(--text-secondary)]'}`}>
+                        className={`font-medium text-sm ${format === fmt ? "text-accent" : 'text-[var(--text-secondary)]'}`}>
                         {fmt}
                       </p>
                       <p className="text-caption">

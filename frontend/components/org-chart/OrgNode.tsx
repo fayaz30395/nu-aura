@@ -13,54 +13,54 @@ import {cn} from '@/lib/utils';
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; badge: string }> = {
   CXO: {
-    bg: 'bg-accent-50 dark:bg-accent-950/40',
-    border: 'border-accent-400 dark:border-accent-600',
-    badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    border: "border-[var(--accent-primary)]",
+    badge: "bg-accent-subtle text-accent"
   },
   SVP: {
-    bg: 'bg-accent-50/80 dark:bg-accent-950/30',
-    border: 'border-accent-300 dark:border-accent-700',
-    badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300'
+    bg: "bg-accent-50/80",
+    border: "border-[var(--accent-primary)]",
+    badge: "bg-accent-subtle text-accent"
   },
   VP: {
-    bg: 'bg-accent-50 dark:bg-accent-950/40',
-    border: 'border-accent-400 dark:border-accent-600',
-    badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-300'
+    bg: "bg-accent-subtle",
+    border: "border-[var(--accent-primary)]",
+    badge: "bg-accent-subtle text-accent"
   },
   DIRECTOR: {
-    bg: 'bg-accent-50/80 dark:bg-accent-950/30',
-    border: 'border-accent-300 dark:border-accent-700',
-    badge: 'bg-accent-100 text-accent-700 dark:bg-accent-900/80 dark:text-accent-300'
+    bg: "bg-accent-50/80",
+    border: "border-[var(--accent-primary)]",
+    badge: "bg-accent-subtle text-accent"
   },
   SENIOR_MANAGER: {
-    bg: 'bg-success-50 dark:bg-success-950/40',
-    border: 'border-success-400 dark:border-success-600',
-    badge: 'bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-300'
+    bg: "bg-status-success-bg",
+    border: "border-status-success-border",
+    badge: "bg-status-success-bg text-status-success-text"
   },
   MANAGER: {
-    bg: 'bg-success-50/80 dark:bg-success-950/30',
-    border: 'border-success-300 dark:border-success-700',
-    badge: 'bg-success-100 text-success-700 dark:bg-success-900/80 dark:text-success-300'
+    bg: "bg-success-50/80",
+    border: "border-status-success-border",
+    badge: "bg-status-success-bg text-status-success-text"
   },
   LEAD: {
-    bg: 'bg-warning-50 dark:bg-warning-950/40',
-    border: 'border-warning-400 dark:border-warning-600',
-    badge: 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-300'
+    bg: "bg-status-warning-bg",
+    border: "border-status-warning-border",
+    badge: "bg-status-warning-bg text-status-warning-text"
   },
   SENIOR: {
-    bg: 'bg-surface-50 dark:bg-surface-800/60',
-    border: 'border-surface-300 dark:border-surface-600',
-    badge: 'bg-surface-100 text-surface-700 dark:bg-surface-800 dark:text-surface-300'
+    bg: "bg-base",
+    border: "border-subtle",
+    badge: "bg-surface text-secondary"
   },
   MID: {
-    bg: 'bg-surface-50/60 dark:bg-surface-800/40',
-    border: 'border-surface-200 dark:border-surface-700',
-    badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400'
+    bg: "bg-surface-50/60",
+    border: "border-subtle",
+    badge: "bg-surface text-secondary"
   },
   ENTRY: {
-    bg: 'bg-surface-50/40 dark:bg-surface-800/30',
-    border: 'border-surface-200 dark:border-surface-700',
-    badge: 'bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-400'
+    bg: "bg-surface-50/40",
+    border: "border-subtle",
+    badge: "bg-surface text-secondary"
   },
 };
 

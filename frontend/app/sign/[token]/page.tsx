@@ -469,7 +469,7 @@ export default function SignPage() {
                   placeholder="Enter your email address"
                   className={`w-full px-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors ${
                     emailError
-                      ? 'border-danger-400 bg-danger-50'
+                      ? "border-status-danger-border bg-status-danger-bg"
                       : 'border-[var(--border-main)] bg-[var(--bg-card)]'
                   }`}
                 />
@@ -512,7 +512,7 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'DRAWN'
-                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-[var(--shadow-card)]'
+                    ? "bg-[var(--bg-card)] text-accent shadow-[var(--shadow-card)]"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
@@ -526,7 +526,7 @@ export default function SignPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   signatureMethod === 'TYPED'
-                    ? 'bg-[var(--bg-card)] text-accent-600 shadow-[var(--shadow-card)]'
+                    ? "bg-[var(--bg-card)] text-accent shadow-[var(--shadow-card)]"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >

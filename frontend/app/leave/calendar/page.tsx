@@ -147,7 +147,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('my')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'my'
-                  ? 'bg-accent-500 text-white'
+                  ? "bg-accent text-inverse"
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -157,7 +157,7 @@ export default function LeaveCalendarPage() {
               onClick={() => setViewMode('team')}
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'team'
-                  ? 'bg-accent-500 text-white'
+                  ? "bg-accent text-inverse"
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
@@ -256,16 +256,16 @@ export default function LeaveCalendarPage() {
                     key={index}
                     className={`min-h-24 border rounded-lg p-2 ${
                       day.isToday
-                        ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/30'
+                        ? "border-[var(--accent-primary)] bg-accent-subtle"
                         : day.isCurrentMonth
                           ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
                           : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
-                    } ${day.holiday ? 'bg-danger-50 dark:bg-danger-900/20' : ''}`}
+                    } ${day.holiday ? "bg-status-danger-bg" : ''}`}
                   >
                     <div
                       className={`text-sm font-medium mb-1 ${
                         day.isToday
-                          ? 'text-accent-700 dark:text-accent-400'
+                          ? "text-accent"
                           : day.isCurrentMonth
                             ? 'text-[var(--text-primary)]'
                             : 'text-[var(--text-muted)]'

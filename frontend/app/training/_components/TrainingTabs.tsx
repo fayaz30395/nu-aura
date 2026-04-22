@@ -12,7 +12,7 @@ interface TrainingTabsProps {
 
 export function TrainingTabs({activeTab, onTabChange}: TrainingTabsProps) {
   const activeClass =
-    'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500';
+    "text-accent border-b-2 border-[var(--accent-primary)]";
   const inactiveClass =
     'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]';
 

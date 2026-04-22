@@ -46,11 +46,11 @@ const VEHICLE_LABELS: Record<VehicleType, string> = {
 };
 
 const STATUS_COLORS: Record<MileageStatus, string> = {
-  DRAFT: 'bg-surface-100 text-surface-700',
-  SUBMITTED: 'bg-accent-100 text-accent-700',
-  APPROVED: 'bg-success-100 text-success-700',
-  REJECTED: 'bg-danger-100 text-danger-700',
-  PAID: 'bg-success-100 text-success-700',
+  DRAFT: "bg-surface text-secondary",
+  SUBMITTED: "bg-accent-subtle text-accent",
+  APPROVED: "bg-status-success-bg text-status-success-text",
+  REJECTED: "bg-status-danger-bg text-status-danger-text",
+  PAID: "bg-status-success-bg text-status-success-text",
 };
 
 export default function MileagePage() {
@@ -276,8 +276,8 @@ export default function MileagePage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`pb-4 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab.key
-                    ? 'border-accent-700 text-accent-700'
-                    : 'border-transparent text-surface-500 hover:text-surface-700'
+                    ? "border-[var(--accent-primary)] text-accent"
+                    : "border-transparent text-muted hover:text-secondary"
                 }`}
               >
                 {tab.label}
@@ -303,8 +303,8 @@ export default function MileagePage() {
                     onClick={() => setStatusFilter(status)}
                     className={`px-2 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                       statusFilter === status
-                        ? 'bg-accent-700 text-white'
-                        : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200'
+                        ? "bg-accent text-inverse"
+                        : "bg-surface text-secondary hover:bg-elevated"
                     }`}
                   >
                     {status === 'ALL' ? 'All' : status.charAt(0) + status.slice(1).toLowerCase()}
@@ -476,8 +476,8 @@ export default function MileagePage() {
                       <span
                         className={`px-2 py-0.5 text-xs rounded-full ${
                           policy.isActive
-                            ? 'bg-success-100 text-success-700'
-                            : 'bg-surface-100 text-surface-500'
+                            ? "bg-status-success-bg text-status-success-text"
+                            : "bg-surface text-muted"
                         }`}
                       >
                         {policy.isActive ? 'Active' : 'Inactive'}

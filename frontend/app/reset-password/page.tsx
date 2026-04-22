@@ -212,7 +212,7 @@ function ResetPasswordForm() {
                     placeholder="Enter new password"
                     className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.newPassword
-                        ? 'border-danger-500 dark:border-danger-500'
+                        ? "border-status-danger-border"
                         : 'border-[var(--border-main)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
@@ -254,7 +254,7 @@ function ResetPasswordForm() {
                     placeholder="Confirm new password"
                     className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.confirmPassword
-                        ? 'border-danger-500 dark:border-danger-500'
+                        ? "border-status-danger-border"
                         : 'border-[var(--border-main)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />

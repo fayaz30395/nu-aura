@@ -205,7 +205,7 @@ export default function SignupPage() {
                     placeholder="Acme Corporation"
                     className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.companyName
-                        ? 'border-danger-500 dark:border-danger-500'
+                        ? "border-status-danger-border"
                         : 'border-[var(--border-main)]'
                     }`}
                   />
@@ -230,7 +230,7 @@ export default function SignupPage() {
                       placeholder="acme-corp"
                       className={`input-aura block w-full pl-9 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
-                          ? 'border-danger-500 dark:border-danger-500'
+                          ? "border-status-danger-border"
                           : 'border-[var(--border-main)]'
                       }`}
                     />
@@ -261,7 +261,7 @@ export default function SignupPage() {
                       placeholder="John"
                       className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
-                          ? 'border-danger-500 dark:border-danger-500'
+                          ? "border-status-danger-border"
                           : 'border-[var(--border-main)]'
                       }`}
                     />
@@ -279,7 +279,7 @@ export default function SignupPage() {
                       placeholder="Doe"
                       className={`input-aura block w-full px-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminLastName
-                          ? 'border-danger-500 dark:border-danger-500'
+                          ? "border-status-danger-border"
                           : 'border-[var(--border-main)]'
                       }`}
                     />
@@ -305,7 +305,7 @@ export default function SignupPage() {
                       placeholder="john@acmecorp.com"
                       className={`input-aura block w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.adminEmail
-                          ? 'border-danger-500 dark:border-danger-500'
+                          ? "border-status-danger-border"
                           : 'border-[var(--border-main)]'
                       }`}
                     />
@@ -332,7 +332,7 @@ export default function SignupPage() {
                       placeholder="Create a strong password"
                       className={`input-aura block w-full pl-10 pr-12 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                         errors.password
-                          ? 'border-danger-500 dark:border-danger-500'
+                          ? "border-status-danger-border"
                           : 'border-[var(--border-main)]'
                       }`}
                     />

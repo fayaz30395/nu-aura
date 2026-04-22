@@ -71,16 +71,16 @@ function formatRevisionType(type: RevisionType): string {
 function getStatusColor(status: RevisionStatus): string {
   switch (status) {
     case RevisionStatus.APPLIED:
-      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+      return "bg-status-success-bg text-status-success-text";
     case RevisionStatus.APPROVED:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case RevisionStatus.PENDING_REVIEW:
     case RevisionStatus.PENDING_APPROVAL:
     case RevisionStatus.REVIEWED:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      return "bg-status-warning-bg text-status-warning-text";
     case RevisionStatus.REJECTED:
     case RevisionStatus.CANCELLED:
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+      return "bg-status-danger-bg text-status-danger-text";
     default:
       return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
@@ -150,7 +150,7 @@ function RevisionCard({revision, isFirst}: { revision: SalaryRevision; isFirst: 
               <div
                 className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                   isFirst
-                    ? 'bg-accent-100 dark:bg-accent-900/30'
+                    ? "bg-accent-subtle"
                     : 'bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -219,8 +219,8 @@ function RevisionCard({revision, isFirst}: { revision: SalaryRevision; isFirst: 
                     <span
                       className={`text-sm font-semibold ${
                         isPositive
-                          ? 'text-success-700 dark:text-success-400'
-                          : 'text-danger-700 dark:text-danger-400'
+                          ? "text-status-success-text"
+                          : "text-status-danger-text"
                       }`}
                     >
                       {formatPercentage(revision.incrementPercentage)}

@@ -67,8 +67,8 @@ export function ConnectionTestButton({connectorId, isDisabled}: ConnectionTestBu
         <div
           className={`flex items-start gap-4 p-4 rounded-lg ${
             testResult.success
-              ? 'bg-success-50 dark:bg-success-900/20'
-              : 'bg-danger-50 dark:bg-danger-900/20'
+              ? "bg-status-success-bg"
+              : "bg-status-danger-bg"
           }`}
         >
           {testResult.success ? (

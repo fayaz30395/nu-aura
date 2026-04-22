@@ -93,15 +93,15 @@ const getCategoryLabel = (category: LetterCategory): string => {
 
 const getCategoryColor = (category: LetterCategory): string => {
   const colors: Partial<Record<LetterCategory, string>> = {
-    [LetterCategory.OFFER]: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-    [LetterCategory.APPOINTMENT]: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
-    [LetterCategory.EXPERIENCE]: 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500',
-    [LetterCategory.RELIEVING]: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
-    [LetterCategory.SALARY_REVISION]: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
-    [LetterCategory.WARNING]: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
-    [LetterCategory.TERMINATION]: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+    [LetterCategory.OFFER]: "bg-status-success-bg text-status-success-text",
+    [LetterCategory.APPOINTMENT]: "bg-accent-subtle text-accent",
+    [LetterCategory.EXPERIENCE]: "bg-accent-subtle text-accent",
+    [LetterCategory.RELIEVING]: "bg-accent-subtle text-accent",
+    [LetterCategory.SALARY_REVISION]: "bg-status-warning-bg text-status-warning-text",
+    [LetterCategory.WARNING]: "bg-status-danger-bg text-status-danger-text",
+    [LetterCategory.TERMINATION]: "bg-status-danger-bg text-status-danger-text",
   };
-  return colors[category] || 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+  return colors[category] || "bg-accent-subtle text-accent";
 };
 
 const formatDate = (date: string | undefined): string => {

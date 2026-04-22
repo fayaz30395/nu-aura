@@ -25,26 +25,26 @@ export const CandidateStats = memo(function CandidateStats({
     {
       label: 'Total Candidates',
       value: total,
-      bg: 'bg-accent-50 dark:bg-accent-950/30',
-      text: 'text-accent-700 dark:text-accent-400'
+      bg: "bg-accent-subtle",
+      text: "text-accent"
     },
     {
       label: 'New',
       value: newCount,
-      bg: 'bg-accent-50 dark:bg-accent-950/30',
-      text: 'text-accent-600 dark:text-accent-400'
+      bg: "bg-accent-subtle",
+      text: "text-accent"
     },
     {
       label: 'In Interview',
       value: interview,
-      bg: 'bg-warning-50 dark:bg-warning-950/30',
-      text: 'text-warning-600 dark:text-warning-400'
+      bg: "bg-status-warning-bg",
+      text: "text-status-warning-text"
     },
     {
       label: 'Selected',
       value: selected,
-      bg: 'bg-success-50 dark:bg-success-950/30',
-      text: 'text-success-600 dark:text-success-400'
+      bg: "bg-status-success-bg",
+      text: "text-status-success-text"
     },
   ];
 

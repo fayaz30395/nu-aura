@@ -202,7 +202,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'email')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                        pref.email ? 'bg-accent-700' : 'bg-[var(--border-main)]'
+                        pref.email ? "bg-accent" : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -217,7 +217,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'push')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                        pref.push ? 'bg-accent-700' : 'bg-[var(--border-main)]'
+                        pref.push ? "bg-accent" : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span
@@ -232,7 +232,7 @@ export default function NotificationSettingsPage() {
                       onClick={() => togglePreference(pref.key, 'inApp')}
                       disabled={saving}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                        pref.inApp ? 'bg-accent-700' : 'bg-[var(--border-main)]'
+                        pref.inApp ? "bg-accent" : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
                     >
                       <span

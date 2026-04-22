@@ -165,7 +165,7 @@ export default function NewTimeEntryPage() {
                 type="date"
                 {...register('entryDate')}
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
-                  errors.entryDate ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.entryDate ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
               />
             </div>
@@ -215,7 +215,7 @@ export default function NewTimeEntryPage() {
               {...register('hoursWorked', {valueAsNumber: true})}
               placeholder="8"
               className={`w-full px-4 py-4 bg-[var(--bg-secondary)] border ${
-                errors.hoursWorked ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.hoursWorked ? "border-status-danger-border" : 'border-[var(--border-main)]'
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.hoursWorked && (

@@ -84,13 +84,13 @@ const DOCUMENT_CATEGORIES = [
 function getStatusBadgeColor(status: string) {
   switch (status) {
     case 'ACTIVE':
-      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
+      return "bg-status-success-bg text-status-success-text";
     case 'ON_LEAVE':
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'ON_NOTICE':
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
+      return "bg-status-warning-bg text-status-warning-text";
     case 'TERMINATED':
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
+      return "bg-status-danger-bg text-status-danger-text";
     default:
       return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
   }
@@ -175,7 +175,7 @@ function AvatarInitials({
 function tabClass(active: boolean) {
   return `py-4 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-t-sm ${
     active
-      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+      ? "border-[var(--accent-primary)] text-accent"
       : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
   }`;
 }
@@ -1038,7 +1038,7 @@ export default function EmployeeDetailPage() {
                                 <span
                                   className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
                                     asset.status === 'ASSIGNED'
-                                      ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
+                                      ? "bg-status-success-bg text-status-success-text"
                                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                                   }`}
                                 >

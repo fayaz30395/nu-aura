@@ -247,7 +247,7 @@ export default function ReportBuilderPage() {
                     onClick={() => changeModule(m.value)}
                     className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                       module === m.value
-                        ? 'bg-accent-600 text-white border-accent-600'
+                        ? "bg-accent text-inverse border-[var(--accent-primary)]"
                         : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
                     }`}
                   >

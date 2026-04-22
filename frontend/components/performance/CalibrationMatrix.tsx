@@ -16,47 +16,47 @@ const matrixLabels: Record<string, { title: string; description: string; color: 
   '3-3': {
     title: 'Stars / Top Talent',
     description: 'High performers with high potential - future leaders',
-    color: 'bg-success-500',
+    color: "bg-status-success-bg",
   },
   '3-2': {
     title: 'Core Contributors',
     description: 'High performers - backbone of the organization',
-    color: 'bg-success-400',
+    color: "bg-status-success-bg",
   },
   '3-1': {
     title: 'Solid Performers',
     description: 'Consistent performers in current role',
-    color: 'bg-success-300',
+    color: "bg-status-success-bg",
   },
   '2-3': {
     title: 'High Potential',
     description: 'Strong potential - need development',
-    color: 'bg-warning-400',
+    color: "bg-status-warning-bg",
   },
   '2-2': {
     title: 'Solid Contributors',
     description: 'Meeting expectations consistently',
-    color: 'bg-warning-300',
+    color: "bg-status-warning-bg",
   },
   '2-1': {
     title: 'Underperformers',
     description: 'Need improvement in current role',
-    color: 'bg-warning-200',
+    color: "bg-status-warning-bg",
   },
   '1-3': {
     title: 'Enigmas / Rough Diamonds',
     description: 'High potential but underperforming - need support',
-    color: 'bg-danger-400',
+    color: "bg-status-danger-bg",
   },
   '1-2': {
     title: 'Inconsistent Performers',
     description: 'Variable performance - coaching needed',
-    color: 'bg-danger-300',
+    color: "bg-status-danger-bg",
   },
   '1-1': {
     title: 'Low Performers',
     description: 'Significant performance concerns',
-    color: 'bg-danger-500',
+    color: "bg-status-danger-bg",
   },
 };
 
@@ -82,7 +82,7 @@ function EmployeeCard({
       onClick={onClick}
       className={`p-2 bg-[var(--bg-card)] rounded border border-[var(--border-main)] shadow-[var(--shadow-card)] cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-all text-xs ${
         isDragging ? 'opacity-50' : ''
-      } ${!readOnly ? 'hover:border-accent-400' : ''}`}
+      } ${!readOnly ? "hover:border-[var(--accent-primary)]" : ''}`}
     >
       <div className="flex items-start justify-between gap-1">
         <div className="flex-1 min-w-0">
@@ -99,10 +99,10 @@ function EmployeeCard({
           <span
             className={`text-xs ${
               employee.retentionRisk === 'HIGH'
-                ? 'text-danger-600'
+                ? "text-status-danger-text"
                 : employee.retentionRisk === 'MEDIUM'
-                  ? 'text-warning-600'
-                  : 'text-success-600'
+                  ? "text-status-warning-text"
+                  : "text-status-success-text"
             }`}
           >
             {employee.retentionRisk === 'HIGH' ? 'Flight Risk' : ''}
@@ -161,7 +161,7 @@ function MatrixCell({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`border border-[var(--border-strong)] p-2 rounded-lg min-h-[180px] transition-all ${
-        isDragOver ? 'bg-accent-50 border-accent-400 border-2' : 'bg-[var(--bg-surface)]'
+        isDragOver ? "bg-accent-subtle border-[var(--accent-primary)] border-2" : 'bg-[var(--bg-surface)]'
       } ${cellInfo.color} bg-opacity-10`}
     >
       <div className="mb-2 pb-2 border-b border-[var(--border-main)]">

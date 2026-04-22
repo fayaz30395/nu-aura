@@ -227,7 +227,7 @@ export const NotificationBell: React.FC = () => {
                     key={notification.id}
                     className={`p-4 border-b transition-colors ${
                       !notification.isRead
-                        ? 'bg-accent-50 dark:bg-accent-900/20'
+                        ? "bg-accent-subtle"
                         : 'hover:bg-[var(--bg-surface)] '
                     } ${hasRoute ? 'cursor-pointer' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}

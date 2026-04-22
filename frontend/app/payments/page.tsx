@@ -241,7 +241,7 @@ export default function PaymentsPage() {
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 showFilters
-                  ? 'border-accent-500 text-accent-700 bg-accent-50 dark:bg-accent-900/20'
+                  ? "border-[var(--accent-primary)] text-accent bg-accent-subtle"
                   : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
@@ -384,7 +384,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('all')}
               className={`px-6 py-4 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 activeTab === 'all'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -394,7 +394,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('completed')}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'completed'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -404,7 +404,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('pending')}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'pending'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
@@ -414,7 +414,7 @@ export default function PaymentsPage() {
               onClick={() => setActiveTab('failed')}
               className={`px-6 py-4 font-medium transition-colors ${
                 activeTab === 'failed'
-                  ? 'text-accent-700 dark:text-accent-400 border-b-2 border-accent-500'
+                  ? "text-accent border-b-2 border-[var(--accent-primary)]"
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >

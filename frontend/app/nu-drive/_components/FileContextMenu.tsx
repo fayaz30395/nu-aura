@@ -77,7 +77,7 @@ export function FileContextMenu({
         onClick={() => onToggleStar(file)}
         className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
-        <Star className={`h-4 w-4 ${file.starred ? 'fill-warning-500 text-warning-500' : ''}`}/>
+        <Star className={`h-4 w-4 ${file.starred ? "fill-warning-500 text-status-warning-text" : ''}`}/>
         {file.starred ? 'Remove star' : 'Add star'}
       </button>
       <button

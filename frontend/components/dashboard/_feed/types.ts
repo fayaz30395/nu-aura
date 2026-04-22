@@ -69,8 +69,8 @@ export const FEED_COLORS: Record<FeedItemType, FeedStyleToken> = {
   WALL_POST: {
     bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-accent-400',
-    icon: 'text-accent-500',
-    badge: 'bg-accent-50 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
+    icon: "text-accent",
+    badge: "bg-accent-subtle text-accent",
   },
 };
 

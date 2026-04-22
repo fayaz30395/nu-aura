@@ -281,7 +281,7 @@ export default function SsoSettingsPage() {
         type="button"
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-          checked ? 'bg-accent-700' : 'bg-[var(--bg-secondary)]'
+          checked ? "bg-accent" : 'bg-[var(--bg-secondary)]'
         }`}
       >
         <span
@@ -645,8 +645,8 @@ export default function SsoSettingsPage() {
                   <div className="space-y-4">
                     <div className={`flex items-center gap-2 p-4 rounded-lg ${
                       testMutation.data.success
-                        ? 'bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800'
-                        : 'bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800'
+                        ? "bg-status-success-bg border border-status-success-border"
+                        : "bg-status-danger-bg border border-status-danger-border"
                     }`}>
                       {testMutation.data.success ? (
                         <CheckCircle className='h-5 w-5 text-status-success-text'/>
@@ -655,8 +655,8 @@ export default function SsoSettingsPage() {
                       )}
                       <p className={`font-medium ${
                         testMutation.data.success
-                          ? 'text-success-800 dark:text-success-200'
-                          : 'text-danger-800 dark:text-danger-200'
+                          ? "text-status-success-text"
+                          : "text-status-danger-text"
                       }`}>
                         {testMutation.data.message}
                       </p>

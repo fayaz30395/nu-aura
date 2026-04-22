@@ -84,15 +84,15 @@ export default function MyLeavesPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-success-100 text-success-800';
+        return "bg-status-success-bg text-status-success-text";
       case 'PENDING':
-        return 'bg-warning-100 text-warning-800';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'REJECTED':
-        return 'bg-danger-100 text-danger-800';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'CANCELLED':
         return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
       default:
-        return 'bg-accent-100 text-accent-800';
+        return "bg-accent-subtle text-accent";
     }
   };
 

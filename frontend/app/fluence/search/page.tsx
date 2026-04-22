@@ -332,7 +332,7 @@ export default function SearchPage() {
                 whileTap={{scale: 0.95}}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
                   selectedType === type
-                    ? 'bg-[var(--accent-700)] text-white shadow-[var(--shadow-elevated)]'
+                    ? "bg-[var(--accent-700)] text-inverse shadow-[var(--shadow-elevated)]"
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                 }`}
               >
@@ -405,7 +405,7 @@ export default function SearchPage() {
                           onClick={() => setSelectedVisibility(value)}
                           className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                             selectedVisibility === value
-                              ? 'bg-[var(--accent-700)] text-white'
+                              ? "bg-[var(--accent-700)] text-inverse"
                               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                           }`}
                         >

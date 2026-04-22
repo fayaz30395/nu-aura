@@ -114,15 +114,15 @@ const getStatusColor = (status: LetterStatus) => {
     case LetterStatus.DRAFT:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
     case LetterStatus.PENDING_APPROVAL:
-      return 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300';
+      return "bg-status-warning-bg text-status-warning-text";
     case LetterStatus.APPROVED:
-      return 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300';
+      return "bg-accent-subtle text-accent";
     case LetterStatus.ISSUED:
-      return 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300';
+      return "bg-status-success-bg text-status-success-text";
     case LetterStatus.REVOKED:
-      return 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300';
+      return "bg-status-danger-bg text-status-danger-text";
     case LetterStatus.EXPIRED:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-500';
+      return "bg-accent-subtle text-accent";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-secondary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
@@ -545,7 +545,7 @@ export default function LettersPage() {
             onClick={() => setActiveTab('letters')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               activeTab === 'letters'
-                ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                ? "border-[var(--accent-primary)] text-accent"
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
             }`}
           >
@@ -555,7 +555,7 @@ export default function LettersPage() {
             onClick={() => setActiveTab('templates')}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               activeTab === 'templates'
-                ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+                ? "border-[var(--accent-primary)] text-accent"
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
             }`}
           >
@@ -655,7 +655,7 @@ export default function LettersPage() {
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               <div
-                                className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-accent-100 dark:bg-accent-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
+                                className={`rounded-full p-1.5 ${letter.candidateId ? "bg-accent-subtle" : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
                                 {letter.candidateId ? (
                                   <UserPlus className='h-4 w-4 text-accent'/>
                                 ) : (

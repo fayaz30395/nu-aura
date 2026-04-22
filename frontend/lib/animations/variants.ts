@@ -267,25 +267,25 @@ export const glassPresets = {
   /** Solid sidebar background */
   sidebar: 'bg-[var(--bg-sidebar)]',
   /** Solid floating toolbar */
-  toolbar: 'bg-[var(--bg-elevated)] border border-[var(--border-main)] shadow-lg',
+  toolbar: "bg-[var(--bg-elevated)] border border-[var(--border-main)] shadow-[var(--shadow-elevated)]",
 } as const;
 
 // ==================== Shadow Presets ====================
 
 export const shadowPresets = {
   /** Default resting state */
-  sm: 'shadow-sm',
+  sm: "shadow-[var(--shadow-card)]",
   /** Hover state */
-  md: 'shadow-md',
+  md: "shadow-[var(--shadow-card-hover)]",
   /** Elevated / floating */
-  lg: 'shadow-lg',
+  lg: "shadow-[var(--shadow-elevated)]",
   /** Modal / dialog */
   xl: 'shadow-xl',
   /** Colored shadows */
-  primary: 'shadow-lg shadow-accent-500/20',
-  success: 'shadow-lg shadow-success-500/20',
-  danger: 'shadow-lg shadow-danger-500/20',
-  warning: 'shadow-lg shadow-warning-500/20',
+  primary: "shadow-[var(--shadow-elevated)] shadow-accent-500/20",
+  success: "shadow-[var(--shadow-elevated)] shadow-success-500/20",
+  danger: "shadow-[var(--shadow-elevated)] shadow-danger-500/20",
+  warning: "shadow-[var(--shadow-elevated)] shadow-warning-500/20",
 } as const;
 
 // ==================== Gradient Presets ====================
@@ -306,5 +306,5 @@ export const gradientPresets = {
   /** Hero section gradient */
   hero: 'bg-gradient-to-r from-accent-900 via-accent-800 to-accent-900',
   /** Subtle surface gradient */
-  surface: 'bg-gradient-to-br from-surface-50 to-surface-100 dark:from-surface-900 dark:to-surface-800',
+  surface: "bg-gradient-to-br from-surface-50 to-surface-100",
 } as const;

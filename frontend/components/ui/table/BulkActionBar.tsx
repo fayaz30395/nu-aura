@@ -7,9 +7,9 @@ import type {BulkActionBarProps} from './types';
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-accent-700 hover:bg-accent-800 text-white focus-visible:ring-accent-700',
+    "bg-accent hover:bg-accent-hover text-inverse focus-visible:ring-accent-700",
   danger:
-    'bg-danger-600 hover:bg-danger-700 text-white focus-visible:ring-danger-600',
+    "bg-status-danger-bg hover:bg-status-danger-bg text-inverse focus-visible:ring-danger-600",
   secondary:
     'border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] focus-visible:ring-accent-700',
 };

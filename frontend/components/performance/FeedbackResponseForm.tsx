@@ -85,7 +85,7 @@ function RatingStars({rating, onChange, disabled = false}: RatingStarsProps) {
         >
           <Star
             className={`h-6 w-6 ${
-              star <= rating ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'
+              star <= rating ? "fill-warning-400 text-status-warning-text" : 'text-[var(--text-muted)]'
             }`}
           />
         </button>
@@ -227,7 +227,7 @@ export default function FeedbackResponseForm({
             onClick={() => setActiveSection('ratings')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'ratings'
-                ? 'border-accent-500 text-accent-600'
+                ? "border-[var(--accent-primary)] text-accent"
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
@@ -238,7 +238,7 @@ export default function FeedbackResponseForm({
             onClick={() => setActiveSection('feedback')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'feedback'
-                ? 'border-accent-500 text-accent-600'
+                ? "border-[var(--accent-primary)] text-accent"
                 : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >

@@ -191,12 +191,12 @@ class PaymentService {
 
   getStatusColor(status: PaymentStatus): string {
     const colors: Record<PaymentStatus, string> = {
-      INITIATED: 'bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-300',
-      PROCESSING: 'bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300',
-      COMPLETED: 'bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300',
-      FAILED: 'bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300',
-      REFUNDED: 'bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300',
-      PARTIAL_REFUND: 'bg-accent-300 text-accent-900 dark:bg-accent-900/50 dark:text-accent-500',
+      INITIATED: "bg-accent-subtle text-accent",
+      PROCESSING: "bg-status-warning-bg text-status-warning-text",
+      COMPLETED: "bg-status-success-bg text-status-success-text",
+      FAILED: "bg-status-danger-bg text-status-danger-text",
+      REFUNDED: "bg-status-warning-bg text-status-warning-text",
+      PARTIAL_REFUND: "bg-accent-subtle text-accent",
       REVERSED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';

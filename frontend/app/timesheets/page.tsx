@@ -43,10 +43,10 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
     DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]',
-    SUBMITTED: 'bg-info-100 text-info-700 dark:bg-info-900 dark:text-info-300',
-    UNDER_REVIEW: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
-    APPROVED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-    REJECTED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+    SUBMITTED: "bg-status-info-bg text-status-info-text",
+    UNDER_REVIEW: "bg-status-warning-bg text-status-warning-text",
+    APPROVED: "bg-status-success-bg text-status-success-text",
+    REJECTED: "bg-status-danger-bg text-status-danger-text",
   };
   return colors[status] || colors.DRAFT;
 };

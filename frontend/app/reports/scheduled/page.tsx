@@ -52,12 +52,12 @@ const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
 };
 
 const REPORT_TYPE_COLORS: Record<ReportType, string> = {
-  EMPLOYEE_DIRECTORY: 'text-accent-600 bg-accent-50 dark:bg-accent-950/20',
-  ATTENDANCE: 'text-success-600 bg-success-50 dark:bg-success-950/20',
-  LEAVE: 'text-warning-600 bg-warning-50 dark:bg-warning-950/20',
-  PAYROLL: 'text-accent-800 bg-accent-250 dark:bg-accent-900/20',
-  PERFORMANCE: 'text-accent-600 bg-accent-50 dark:bg-accent-950/20',
-  DEPARTMENT_HEADCOUNT: 'text-accent-800 bg-accent-250 dark:bg-accent-950/20',
+  EMPLOYEE_DIRECTORY: "text-accent bg-accent-subtle",
+  ATTENDANCE: "text-status-success-text bg-status-success-bg",
+  LEAVE: "text-status-warning-text bg-status-warning-bg",
+  PAYROLL: "text-accent bg-accent-subtle",
+  PERFORMANCE: "text-accent bg-accent-subtle",
+  DEPARTMENT_HEADCOUNT: "text-accent bg-accent-subtle",
 };
 
 // Zod schema for scheduled report form
@@ -287,7 +287,7 @@ export default function ScheduledReportsPage() {
                   onClick={() => setFilterActive(status)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     filterActive === status
-                      ? 'bg-accent-700 text-white'
+                      ? "bg-accent text-inverse"
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
@@ -352,7 +352,7 @@ export default function ScheduledReportsPage() {
                       onClick={() => handleToggleStatus(report)}
                       className={`p-2 rounded-lg transition-colors ${
                         report.isActive
-                          ? 'bg-success-50 dark:bg-success-950/20 text-success-600 hover:bg-success-100'
+                          ? "bg-status-success-bg text-status-success-text hover:bg-status-success-bg"
                           : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]'
                       }`}
                       title={report.isActive ? 'Pause schedule' : 'Activate schedule'}

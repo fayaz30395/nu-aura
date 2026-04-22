@@ -134,9 +134,9 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
   };
 
   const confidenceColor = (confidence: number): string => {
-    if (confidence >= 0.7) return 'text-success-600 dark:text-success-400';
-    if (confidence >= 0.4) return 'text-warning-600 dark:text-warning-400';
-    return 'text-danger-600 dark:text-danger-400';
+    if (confidence >= 0.7) return "text-status-success-text";
+    if (confidence >= 0.4) return "text-status-warning-text";
+    return "text-status-danger-text";
   };
 
   const confidenceLabel = (confidence: number): string => {
@@ -167,15 +167,15 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
               flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed rounded-xl
               cursor-pointer transition-all duration-200
               ${isDragOver
-              ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-              : 'border-surface-300 dark:border-surface-600 hover:border-accent-400 hover:bg-surface-50 dark:hover:bg-surface-800'
+              ? "border-[var(--accent-primary)] bg-accent-subtle"
+              : "border-subtle hover:border-[var(--accent-primary)] hover:bg-base"
             }
             `}
             aria-label="Upload receipt image"
           >
             <div
-              className={`p-4 rounded-full ${isDragOver ? 'bg-accent-100 dark:bg-accent-900/40' : 'bg-surface-100 dark:bg-surface-700'}`}>
-              <Upload className={`w-8 h-8 ${isDragOver ? 'text-accent-600' : 'text-surface-400'}`}/>
+              className={`p-4 rounded-full ${isDragOver ? "bg-accent-subtle" : "bg-surface"}`}>
+              <Upload className={`w-8 h-8 ${isDragOver ? "text-accent" : "text-muted"}`}/>
             </div>
             <div className="text-center">
               <p className='text-sm font-medium text-secondary'>

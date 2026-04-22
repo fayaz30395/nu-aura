@@ -152,14 +152,14 @@ export default function NewOnboardingPage() {
               <div key={step.id} className="flex items-center">
                 <div
                   className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
-                    ? 'bg-accent-700 border-accent-700 text-white shadow-[var(--shadow-dropdown)]'
+                    ? "bg-accent border-[var(--accent-primary)] text-inverse shadow-[var(--shadow-dropdown)]"
                     : 'bg-[var(--bg-card)] border-[var(--border-main)] text-[var(--text-muted)]'
                   }`}>
                   <step.icon className="h-5 w-5"/>
                 </div>
                 {idx < steps.length - 1 && (
                   <div
-                    className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? 'bg-accent-700' : 'bg-[var(--bg-secondary)]'
+                    className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? "bg-accent" : 'bg-[var(--bg-secondary)]'
                     }`}/>
                 )}
               </div>
@@ -239,13 +239,13 @@ export default function NewOnboardingPage() {
                         key={temp.id}
                         onClick={() => setSelectedTemplate(temp)}
                         className={`p-6 rounded-3xl border-2 transition-all cursor-pointer row-between group ${selectedTemplate?.id === temp.id
-                          ? 'bg-accent-500/10 border-accent-500 shadow-[var(--shadow-dropdown)]'
+                          ? "bg-accent-500/10 border-[var(--accent-primary)] shadow-[var(--shadow-dropdown)]"
                           : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                         }`}
                       >
                         <div className="flex items-center gap-4">
                           <div
-                            className={`p-4 rounded-lg ${selectedTemplate?.id === temp.id ? 'bg-accent-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
+                            className={`p-4 rounded-lg ${selectedTemplate?.id === temp.id ? "bg-accent text-inverse" : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                             }`}>
                             <Layout className="h-6 w-6"/>
                           </div>

@@ -46,19 +46,19 @@ interface JobOpening {
 }
 
 const boardConfig: Record<string, { color: string; logo: string }> = {
-  NAUKRI: {color: 'bg-accent-600', logo: '🇮🇳 Naukri'},
-  INDEED: {color: 'bg-accent-700', logo: '🌐 Indeed'},
-  LINKEDIN: {color: 'bg-accent-600', logo: '💼 LinkedIn'},
-  SHINE: {color: 'bg-success-600', logo: '✨ Shine'},
-  MONSTER: {color: 'bg-warning-600', logo: '👾 Monster'},
+  NAUKRI: {color: "bg-accent", logo: '🇮🇳 Naukri'},
+  INDEED: {color: "bg-accent", logo: '🌐 Indeed'},
+  LINKEDIN: {color: "bg-accent", logo: '💼 LinkedIn'},
+  SHINE: {color: "bg-status-success-bg", logo: '✨ Shine'},
+  MONSTER: {color: "bg-status-warning-bg", logo: '👾 Monster'},
 };
 
 const statusIcon: Record<string, { icon: typeof Clock; color: string }> = {
-  PENDING: {icon: Clock, color: 'text-warning-500'},
-  ACTIVE: {icon: CheckCircle, color: 'text-success-600'},
-  PAUSED: {icon: AlertCircle, color: 'text-warning-500'},
+  PENDING: {icon: Clock, color: "text-status-warning-text"},
+  ACTIVE: {icon: CheckCircle, color: "text-status-success-text"},
+  PAUSED: {icon: AlertCircle, color: "text-status-warning-text"},
   EXPIRED: {icon: XCircle, color: 'text-[var(--text-muted)]'},
-  FAILED: {icon: XCircle, color: 'text-danger-500'},
+  FAILED: {icon: XCircle, color: "text-status-danger-text"},
 };
 
 const ALL_BOARDS: JobBoardPosting['boardName'][] = ['NAUKRI', 'INDEED', 'LINKEDIN', 'SHINE', 'MONSTER'];
@@ -155,18 +155,18 @@ export default function JobBoardsPage() {
             {
               label: 'Active Postings',
               value: postings.filter(p => p.status === 'ACTIVE').length,
-              color: 'text-success-600'
+              color: "text-status-success-text"
             },
             {
               label: 'Total Applications',
               value: postings.reduce((s, p) => s + p.applicationsCount, 0),
-              color: 'text-accent-600'
+              color: "text-accent"
             },
-            {label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-accent-700'},
+            {label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: "text-accent"},
             {
               label: 'Failed Postings',
               value: postings.filter(p => p.status === 'FAILED').length,
-              color: 'text-danger-600'
+              color: "text-status-danger-text"
             },
           ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
@@ -186,8 +186,8 @@ export default function JobBoardsPage() {
               onClick={() => setFilterStatus(s)}
               className={`px-4 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                 filterStatus === s
-                  ? 'bg-accent-600 text-white border-accent-600'
-                  : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-accent-400'
+                  ? "bg-accent text-inverse border-[var(--accent-primary)]"
+                  : "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-[var(--accent-primary)]"
               }`}
             >
               {s}

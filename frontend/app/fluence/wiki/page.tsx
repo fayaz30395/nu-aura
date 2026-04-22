@@ -329,7 +329,7 @@ export default function WikiPage() {
                       onClick={() => setSelectedSpaceId(undefined)}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         selectedSpaceId === undefined
-                          ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium'
+                          ? "bg-accent-subtle text-accent font-medium"
                           : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                       }`}
                       whileHover={{x: 4}}
@@ -353,7 +353,7 @@ export default function WikiPage() {
                           onClick={() => setSelectedSpaceId(space.id)}
                           className={`w-full text-left px-4 py-2.5 rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                             selectedSpaceId === space.id
-                              ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
+                              ? "bg-accent-subtle text-accent"
                               : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                           }`}
                         >

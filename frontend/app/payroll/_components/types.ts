@@ -67,15 +67,15 @@ export function formatDate(dateString: string | null | undefined) {
 export function getStatusColor(status: string) {
   const colors: { [key: string]: string } = {
     DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-primary)]',
-    PROCESSING: 'bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400',
-    PROCESSED: 'bg-accent-100 text-accent-800',
-    APPROVED: 'bg-success-100 text-success-800',
-    LOCKED: 'bg-danger-100 text-danger-800',
-    ACTIVE: 'bg-success-100 text-success-800',
+    PROCESSING: "bg-accent-subtle text-accent",
+    PROCESSED: "bg-accent-subtle text-accent",
+    APPROVED: "bg-status-success-bg text-status-success-text",
+    LOCKED: "bg-status-danger-bg text-status-danger-text",
+    ACTIVE: "bg-status-success-bg text-status-success-text",
     INACTIVE: 'bg-[var(--bg-secondary)] text-[var(--text-primary)]',
-    PENDING: 'bg-warning-100 text-warning-800',
-    FINALIZED: 'bg-accent-100 text-accent-800',
-    PAID: 'bg-success-100 text-success-800',
+    PENDING: "bg-status-warning-bg text-status-warning-text",
+    FINALIZED: "bg-accent-subtle text-accent",
+    PAID: "bg-status-success-bg text-status-success-text",
   };
   return colors[status] || 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
 }

@@ -26,10 +26,10 @@ interface AttritionPrediction {
 }
 
 const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  CRITICAL: {bg: 'bg-danger-50 border-danger-200', text: 'text-danger-700', bar: 'bg-danger-500'},
-  HIGH: {bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-500'},
-  MEDIUM: {bg: 'bg-warning-50 border-warning-200', text: 'text-warning-700', bar: 'bg-warning-400'},
-  LOW: {bg: 'bg-success-50 border-success-200', text: 'text-success-700', bar: 'bg-success-400'},
+  CRITICAL: {bg: "bg-status-danger-bg border-status-danger-border", text: "text-status-danger-text", bar: "bg-status-danger-bg"},
+  HIGH: {bg: "bg-status-warning-bg border-status-warning-border", text: "text-status-warning-text", bar: "bg-status-warning-bg"},
+  MEDIUM: {bg: "bg-status-warning-bg border-status-warning-border", text: "text-status-warning-text", bar: "bg-status-warning-bg"},
+  LOW: {bg: "bg-status-success-bg border-status-success-border", text: "text-status-success-text", bar: "bg-status-success-bg"},
 };
 
 export default function AttritionReportPage() {
@@ -264,7 +264,7 @@ export default function AttritionReportPage() {
                                     <span className="text-xs text-[var(--text-secondary)] w-28 shrink-0">{f.name}</span>
                                     <div className="flex-1 h-1.5 bg-[var(--border-main)] rounded-full overflow-hidden">
                                       <div
-                                        className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-danger-500' : f.impact === 'MEDIUM' ? 'bg-warning-400' : 'bg-success-400'}`}
+                                        className={`h-full rounded-full ${f.impact === 'HIGH' ? "bg-status-danger-bg" : f.impact === 'MEDIUM' ? "bg-status-warning-bg" : "bg-status-success-bg"}`}
                                         style={{width: `${f.score}%`}}
                                       />
                                     </div>

@@ -162,38 +162,38 @@ export default function TravelRequestDetailsPage() {
         icon: Clock,
       },
       SUBMITTED: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: Clock,
       },
       PENDING_APPROVAL: {
-        bg: 'bg-warning-100 dark:bg-warning-900/30',
-        text: 'text-warning-700 dark:text-warning-400',
+        bg: "bg-status-warning-bg",
+        text: "text-status-warning-text",
         icon: Clock,
       },
       APPROVED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: CheckCircle,
       },
       REJECTED: {
-        bg: 'bg-danger-100 dark:bg-danger-900/30',
-        text: 'text-danger-700 dark:text-danger-400',
+        bg: "bg-status-danger-bg",
+        text: "text-status-danger-text",
         icon: XCircle,
       },
       BOOKED: {
-        bg: 'bg-accent-300 dark:bg-accent-900/30',
-        text: 'text-accent-900 dark:text-accent-600',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: CheckCircle,
       },
       IN_PROGRESS: {
-        bg: 'bg-accent-100 dark:bg-accent-900/30',
-        text: 'text-accent-700 dark:text-accent-400',
+        bg: "bg-accent-subtle",
+        text: "text-accent",
         icon: Plane,
       },
       COMPLETED: {
-        bg: 'bg-success-100 dark:bg-success-900/30',
-        text: 'text-success-700 dark:text-success-400',
+        bg: "bg-status-success-bg",
+        text: "text-status-success-text",
         icon: CheckCircle,
       },
       CANCELLED: {
@@ -572,10 +572,10 @@ export default function TravelRequestDetailsPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded ${
                                 expense.status === 'APPROVED'
-                                  ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
+                                  ? "bg-status-success-bg text-status-success-text"
                                   : expense.status === 'REJECTED'
-                                    ? 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400'
-                                    : 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-400'
+                                    ? "bg-status-danger-bg text-status-danger-text"
+                                    : "bg-status-warning-bg text-status-warning-text"
                               }`}
                             >
                               {expense.status}

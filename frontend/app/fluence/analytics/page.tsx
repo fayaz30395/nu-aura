@@ -167,17 +167,17 @@ export default function FluenceAnalyticsPage() {
   const getActionColor = (action: string) => {
     switch (action) {
       case 'CREATED':
-        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       case 'UPDATED':
-        return 'bg-info-100 text-info-700 dark:bg-info-900/30 dark:text-info-300';
+        return "bg-status-info-bg text-status-info-text";
       case 'PUBLISHED':
-        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'COMMENTED':
-        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'LIKED':
-        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300';
+        return "bg-status-danger-bg text-status-danger-text";
       default:
-        return 'bg-surface-100 text-surface-700 dark:bg-surface-900/30 dark:text-surface-300';
+        return "bg-surface text-secondary";
     }
   };
 
@@ -420,8 +420,8 @@ export default function FluenceAnalyticsPage() {
                             <span
                               className={`inline-block px-2.5 py-1 rounded text-xs font-medium ${
                                 item.type === 'Wiki'
-                                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300'
-                                  : 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300'
+                                  ? "bg-accent-subtle text-accent"
+                                  : "bg-status-warning-bg text-status-warning-text"
                               }`}
                             >
                               {item.type}
@@ -533,17 +533,17 @@ function KpiCard({icon: IconComponent, label, value, color}: KpiCardProps) {
   };
 
   const bgMap = {
-    primary: 'bg-accent-100 dark:bg-accent-900/30',
-    secondary: 'bg-info-100 dark:bg-info-900/30',
-    warning: 'bg-warning-100 dark:bg-warning-900/30',
-    success: 'bg-success-100 dark:bg-success-900/30',
+    primary: "bg-accent-subtle",
+    secondary: "bg-status-info-bg",
+    warning: "bg-status-warning-bg",
+    success: "bg-status-success-bg",
   };
 
   const textMap = {
-    primary: 'text-accent-700 dark:text-accent-300',
-    secondary: 'text-info-700 dark:text-info-300',
-    warning: 'text-warning-700 dark:text-warning-300',
-    success: 'text-success-700 dark:text-success-300',
+    primary: "text-accent",
+    secondary: "text-status-info-text",
+    warning: "text-status-warning-text",
+    success: "text-status-success-text",
   };
 
   return (

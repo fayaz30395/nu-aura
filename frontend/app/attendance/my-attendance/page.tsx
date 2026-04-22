@@ -122,12 +122,12 @@ function AttendanceTimelineBar({record}: { record: AttendanceRecord }) {
 // ─── Status dot component ──────────────────────────────────────────
 function getStatusDotColor(hours: number): string {
   if (hours >= 8) {
-    return 'bg-success-500';
+    return "bg-status-success-bg";
   }
   if (hours >= 4) {
-    return 'bg-warning-500';
+    return "bg-status-warning-bg";
   }
-  return 'bg-danger-500';
+  return "bg-status-danger-bg";
 }
 
 function StatusDot({hours}: { hours: number }) {
@@ -358,16 +358,16 @@ export default function MyAttendancePage() {
   // ── Calendar cell color ─────────────────────────────────────────
   const getCalCellColor = (record?: AttendanceRecord, isWeekend?: boolean) => {
     if (!record) {
-      if (isWeekend) return 'bg-surface-100 dark:bg-surface-800/50';
+      if (isWeekend) return "bg-surface";
       return 'bg-[var(--bg-card)]';
     }
-    if (record.status === 'WEEKLY_OFF' || record.status === 'HOLIDAY') return 'bg-surface-100 dark:bg-surface-800/50';
-    if (record.status === 'ABSENT') return 'bg-danger-50 dark:bg-danger-950/30';
-    if (record.status === 'ON_LEAVE' || record.status === 'LEAVE') return 'bg-info-50 dark:bg-info-950/30';
+    if (record.status === 'WEEKLY_OFF' || record.status === 'HOLIDAY') return "bg-surface";
+    if (record.status === 'ABSENT') return "bg-status-danger-bg";
+    if (record.status === 'ON_LEAVE' || record.status === 'LEAVE') return "bg-status-info-bg";
     const hours = record.totalWorkHours || (record.workDurationMinutes ? record.workDurationMinutes / 60 : 0);
-    if (hours >= 8) return 'bg-success-50 dark:bg-success-950/30';
-    if (hours >= 6) return 'bg-warning-50 dark:bg-warning-950/30';
-    return 'bg-warning-50 dark:bg-warning-950/30';
+    if (hours >= 8) return "bg-status-success-bg";
+    if (hours >= 6) return "bg-status-warning-bg";
+    return "bg-status-warning-bg";
   };
 
   // ── Export CSV ──────────────────────────────────────────────────
@@ -483,7 +483,7 @@ export default function MyAttendancePage() {
                     className={`
                       w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all
                       ${day.isToday
-                      ? 'bg-accent-500 text-white ring-2 ring-accent-200 dark:ring-accent-800'
+                      ? "bg-accent text-inverse ring-2 ring-accent-200"
                       : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                     }
                     `}
@@ -576,7 +576,7 @@ export default function MyAttendancePage() {
                   onClick={() => setUse24h(!use24h)}
                   className={`
                     cursor-pointer relative w-10 h-5 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
-                    ${use24h ? 'bg-accent-700' : 'bg-[var(--border-main)]'}
+                    ${use24h ? "bg-accent" : 'bg-[var(--border-main)]'}
                   `}
                   aria-label={`Toggle 24 hour format (currently ${use24h ? 'on' : 'off'})`}
                 >
@@ -603,7 +603,7 @@ export default function MyAttendancePage() {
                   className={`
                     cursor-pointer px-4 py-2 text-sm font-medium transition-colors relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                     ${activeTab === tab.key
-                    ? 'text-accent-700 dark:text-accent-400'
+                    ? "text-accent"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                   }
                   `}
@@ -642,7 +642,7 @@ export default function MyAttendancePage() {
                         className={`
                           cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                           ${periodFilter === '30days'
-                          ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
+                          ? "bg-accent text-inverse shadow-[var(--shadow-elevated)]"
                           : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                         }
                         `}
@@ -662,7 +662,7 @@ export default function MyAttendancePage() {
                             className={`
                               cursor-pointer px-4 py-1.5 rounded-lg text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2
                               ${periodFilter === key
-                              ? 'bg-accent-500 text-white shadow-[var(--shadow-elevated)]'
+                              ? "bg-accent text-inverse shadow-[var(--shadow-elevated)]"
                               : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]/80'
                             }
                             `}
@@ -733,7 +733,7 @@ export default function MyAttendancePage() {
                               animate={{opacity: 1}}
                               className={`
                                   divider-b transition-colors
-                                  ${isNonWork ? 'bg-surface-50 dark:bg-surface-900/30' : 'hover:bg-[var(--bg-card-hover)]'}
+                                  ${isNonWork ? "bg-base" : 'hover:bg-[var(--bg-card-hover)]'}
                                 `}
                             >
                               {/* Date */}
@@ -874,7 +874,7 @@ export default function MyAttendancePage() {
                         `}
                       >
                         <span
-                          className={`text-xs ${day.isToday ? 'font-bold text-accent-700 dark:text-accent-400' : 'text-[var(--text-primary)]'}`}>
+                          className={`text-xs ${day.isToday ? "font-bold text-accent" : 'text-[var(--text-primary)]'}`}>
                           {day.date}
                         </span>
                         {day.record && day.isCurrentMonth && day.record.totalWorkHours ? (

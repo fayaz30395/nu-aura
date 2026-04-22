@@ -145,7 +145,7 @@ export default function ApprovalsPage() {
                 onClick={() => setActiveTab(tab.key as TabKey)}
                 className={`flex items-center gap-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.key
-                    ? 'border-accent-700 text-accent-700 dark:border-accent-400 dark:text-accent-400'
+                    ? "border-[var(--accent-primary)] text-accent"
                     : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
@@ -154,10 +154,10 @@ export default function ApprovalsPage() {
                   <span
                     className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                       tab.key === 'pending'
-                        ? 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400'
+                        ? "bg-status-warning-bg text-status-warning-text"
                         : tab.key === 'approved'
-                          ? 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                          : 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400'
+                          ? "bg-status-success-bg text-status-success-text"
+                          : "bg-status-danger-bg text-status-danger-text"
                     }`}
                   >
                     {tab.count}
@@ -399,9 +399,9 @@ function RequestCard({
   onReject?: () => void;
 }) {
   const statusColors = {
-    PENDING: 'border-warning-200 dark:border-warning-800',
-    APPROVED: 'border-success-200 dark:border-success-800',
-    REJECTED: 'border-danger-200 dark:border-danger-800',
+    PENDING: "border-status-warning-border",
+    APPROVED: "border-status-success-border",
+    REJECTED: "border-status-danger-border",
   };
 
   return (
@@ -459,9 +459,9 @@ function RequestCard({
 
 function StatusBadge({status}: { status: AllocationApprovalRequest['status'] }) {
   const styles = {
-    PENDING: 'bg-warning-50 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
-    APPROVED: 'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-400',
-    REJECTED: 'bg-danger-50 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
+    PENDING: "bg-status-warning-bg text-status-warning-text",
+    APPROVED: "bg-status-success-bg text-status-success-text",
+    REJECTED: "bg-status-danger-bg text-status-danger-text",
   };
 
   const icons = {

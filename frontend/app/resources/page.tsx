@@ -68,35 +68,35 @@ export default function ResourcesPage() {
       description: 'View employee allocation heatmaps and utilization metrics',
       icon: BarChart3,
       href: '/resources/workload',
-      color: 'bg-info-100 text-info-600 dark:bg-info-900/30 dark:text-info-400',
+      color: "bg-status-info-bg text-status-info-text",
     },
     {
       title: 'Resource Pool',
       description: 'All employees with allocation bars — filter by department or status',
       icon: Users,
       href: '/resources/pool',
-      color: 'bg-info-100 text-info-600 dark:bg-info-900/30 dark:text-info-400',
+      color: "bg-status-info-bg text-status-info-text",
     },
     {
       title: 'Capacity Timeline',
       description: 'Horizontal allocation bars per employee, sorted by utilization',
       icon: TrendingUp,
       href: '/resources/capacity',
-      color: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
+      color: "bg-accent-subtle text-accent",
     },
     {
       title: 'Availability Calendar',
       description: 'See team availability with leaves and holidays',
       icon: Calendar,
       href: '/resources/availability',
-      color: 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400',
+      color: "bg-status-success-bg text-status-success-text",
     },
     {
       title: 'Pending Approvals',
       description: 'Review and approve over-allocation requests',
       icon: Clock,
       href: '/resources/approvals',
-      color: 'bg-warning-100 text-warning-600 dark:bg-warning-900/30 dark:text-warning-400',
+      color: "bg-status-warning-bg text-status-warning-text",
       badge: pendingApprovals.length > 0 ? pendingApprovals.length : undefined,
     },
   ];
@@ -240,26 +240,26 @@ export default function ResourcesPage() {
               label="Total Employees"
               value={summary.totalEmployees}
               icon={Users}
-              color="text-accent-700 dark:text-accent-400"
+              color="text-accent"
             />
             <QuickStatCard
               label="Avg Allocation"
               value={`${Math.round(summary.averageAllocation)}%`}
               icon={TrendingUp}
-              color="text-info-600 dark:text-info-400"
+              color="text-status-info-text"
             />
             <QuickStatCard
               label="Over-Allocated"
               value={summary.overAllocatedCount}
               icon={AlertTriangle}
-              color="text-danger-600 dark:text-danger-400"
+              color="text-status-danger-text"
               highlight={summary.overAllocatedCount > 0}
             />
             <QuickStatCard
               label="Pending Approvals"
               value={summary.pendingApprovals}
               icon={Clock}
-              color="text-warning-600 dark:text-warning-400"
+              color="text-status-warning-text"
               highlight={summary.pendingApprovals > 0}
             />
           </div>

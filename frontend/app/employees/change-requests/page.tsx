@@ -127,14 +127,14 @@ export default function EmploymentChangeRequestsPage() {
 
   const getChangeTypeBadge = (type: ChangeType) => {
     const colors: Record<ChangeType, string> = {
-      PROMOTION: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600',
-      DEMOTION: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
-      TRANSFER: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
-      ROLE_CHANGE: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
-      MANAGER_CHANGE: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
-      STATUS_CHANGE: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
-      CONFIRMATION: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
-      MULTIPLE: 'bg-accent-300 text-accent-900 dark:bg-accent-900/30 dark:text-accent-600',
+      PROMOTION: "bg-accent-subtle text-accent",
+      DEMOTION: "bg-status-warning-bg text-status-warning-text",
+      TRANSFER: "bg-accent-subtle text-accent",
+      ROLE_CHANGE: "bg-accent-subtle text-accent",
+      MANAGER_CHANGE: "bg-accent-subtle text-accent",
+      STATUS_CHANGE: "bg-status-warning-bg text-status-warning-text",
+      CONFIRMATION: "bg-accent-subtle text-accent",
+      MULTIPLE: "bg-accent-subtle text-accent",
     };
 
     return (
@@ -206,7 +206,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('pending')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'pending'
-                  ? 'bg-accent-700 text-white'
+                  ? "bg-accent text-inverse"
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
@@ -216,7 +216,7 @@ export default function EmploymentChangeRequestsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-accent-700 text-white'
+                  ? "bg-accent text-inverse"
                   : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >

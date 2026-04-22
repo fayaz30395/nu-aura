@@ -107,15 +107,15 @@ const getTypeIcon = (type: RecognitionType) => {
 const getTypeColor = (type: RecognitionType) => {
   switch (type) {
     case RecognitionType.KUDOS:
-      return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
+      return "bg-accent-subtle text-accent";
     case RecognitionType.APPRECIATION:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     case RecognitionType.ACHIEVEMENT:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
+      return "bg-status-warning-bg text-status-warning-text";
     case RecognitionType.SPOT_AWARD:
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200';
+      return "bg-status-warning-bg text-status-warning-text";
     case RecognitionType.PEER_NOMINATION:
-      return 'bg-accent-300 text-accent-900 dark:bg-accent-900 dark:text-accent-400';
+      return "bg-accent-subtle text-accent";
     default:
       return 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-[var(--bg-primary)] dark:text-[var(--text-secondary)]';
   }
@@ -456,7 +456,7 @@ export default function RecognitionPage() {
                             {/* Reaction button with picker */}
                             <div className="relative">
                               <button
-                                className={`flex items-center gap-1 transition-colors ${recognition.hasReacted ? 'text-danger-500 dark:text-danger-400' : 'hover:text-danger-500 dark:hover:text-danger-400'}`}
+                                className={`flex items-center gap-1 transition-colors ${recognition.hasReacted ? "text-status-danger-text" : "hover:text-status-danger-text"}`}
                                 aria-label={`React to recognition (${recognition.likesCount} reactions)`}
                                 onClick={() => {
                                   if (recognition.hasReacted) {
@@ -568,9 +568,9 @@ export default function RecognitionPage() {
                         className="flex items-center gap-4 p-2 rounded-lg card-aura transition-colors"
                       >
                         <div
-                          className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-warning-500 text-white' :
-                            index === 1 ? 'bg-[var(--text-muted)] text-white' :
-                              index === 2 ? 'bg-warning-600 text-white' :
+                          className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? "bg-status-warning-bg text-inverse" :
+                            index === 1 ? "bg-[var(--text-muted)] text-inverse" :
+                              index === 2 ? "bg-status-warning-bg text-inverse" :
                                 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
                           {index === 0 ? <Crown className="h-4 w-4"/> :

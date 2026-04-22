@@ -67,17 +67,17 @@ type ApiKeyFormData = z.infer<typeof apiKeySchema>;
 // ─── Device Type Config ─────────────────────────────────────────────────────
 
 const DEVICE_TYPES: Record<string, { label: string; color: string }> = {
-  FINGERPRINT: {label: 'Fingerprint', color: 'bg-accent-100 text-accent-700'},
-  FACE: {label: 'Face Recognition', color: 'bg-accent-300 text-accent-900'},
-  IRIS: {label: 'Iris Scanner', color: 'bg-success-100 text-success-700'},
-  CARD: {label: 'Card Reader', color: 'bg-warning-100 text-warning-700'},
-  MULTI_MODAL: {label: 'Multi-Modal', color: 'bg-accent-100 text-accent-700'},
+  FINGERPRINT: {label: 'Fingerprint', color: "bg-accent-subtle text-accent"},
+  FACE: {label: 'Face Recognition', color: "bg-accent-subtle text-accent"},
+  IRIS: {label: 'Iris Scanner', color: "bg-status-success-bg text-status-success-text"},
+  CARD: {label: 'Card Reader', color: "bg-status-warning-bg text-status-warning-text"},
+  MULTI_MODAL: {label: 'Multi-Modal', color: "bg-accent-subtle text-accent"},
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  PENDING: {bg: 'bg-warning-50', text: 'text-warning-700', dot: 'bg-warning-500'},
-  PROCESSED: {bg: 'bg-success-50', text: 'text-success-700', dot: 'bg-success-500'},
-  FAILED: {bg: 'bg-danger-50', text: 'text-danger-700', dot: 'bg-danger-500'},
+  PENDING: {bg: "bg-status-warning-bg", text: "text-status-warning-text", dot: "bg-status-warning-bg"},
+  PROCESSED: {bg: "bg-status-success-bg", text: "text-status-success-text", dot: "bg-status-success-bg"},
+  FAILED: {bg: "bg-status-danger-bg", text: "text-status-danger-text", dot: "bg-status-danger-bg"},
   DUPLICATE: {bg: 'bg-[var(--bg-card)]', text: 'text-[var(--text-muted)]', dot: 'bg-[var(--text-muted)]'},
 };
 
@@ -122,7 +122,7 @@ export default function BiometricDevicesPage() {
                 }}
                 className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === key
-                    ? 'bg-[var(--bg-surface)] text-accent-700 shadow-[var(--shadow-card)]'
+                    ? "bg-[var(--bg-surface)] text-accent shadow-[var(--shadow-card)]"
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
@@ -665,7 +665,7 @@ function PunchLogRow({log}: { log: BiometricPunchLog }) {
             <p className="text-sm font-medium text-[var(--text-primary)]">
               {log.employeeIdentifier}
               <span className={`ml-2 inline-flex items-center rounded px-1.5 py-0.5 text-2xs font-semibold ${
-                log.punchType === 'IN' ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
+                log.punchType === 'IN' ? "bg-status-success-bg text-status-success-text" : "bg-status-warning-bg text-status-warning-text"
               }`}>
                 {log.punchType}
               </span>

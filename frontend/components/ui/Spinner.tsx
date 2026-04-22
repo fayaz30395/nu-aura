@@ -43,7 +43,7 @@ export function PulseRing({size = 'md', variant = 'primary', className}: Spinner
     xl: 'w-24 h-24',
   };
   const ringColors: Record<SpinnerTone, string> = {
-    primary: 'border-accent-700/20 dark:border-accent-400/20',
+    primary: "border-accent-700/20",
     secondary: 'border-[var(--border-main)]',
     white: 'border-white/20',
   };

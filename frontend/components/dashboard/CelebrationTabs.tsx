@@ -86,7 +86,7 @@ export function CelebrationTabs() {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2.5 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded ${
                 activeTab === tab.key
-                  ? 'border-b-2 border-accent-500 text-[var(--text-primary)]'
+                  ? "border-b-2 border-[var(--accent-primary)] text-[var(--text-primary)]"
                   : 'border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
               }`}
             >

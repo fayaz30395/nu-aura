@@ -42,8 +42,8 @@ const reports: ReportConfig[] = [
     title: 'Employee Directory Report',
     description: 'Complete employee details with contact information, department, and employment status',
     icon: Users,
-    color: 'text-accent-600',
-    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
     category: 'HR',
     endpoint: 'employee-directory',
     requiresDateRange: false,
@@ -54,8 +54,8 @@ const reports: ReportConfig[] = [
     title: 'Attendance Report',
     description: 'Daily attendance records with check-in/check-out times and work hours',
     icon: Calendar,
-    color: 'text-success-600',
-    bgColor: 'bg-success-50 dark:bg-success-950/20',
+    color: "text-status-success-text",
+    bgColor: "bg-status-success-bg",
     category: 'Attendance',
     endpoint: 'attendance',
     requiresDateRange: true,
@@ -66,8 +66,8 @@ const reports: ReportConfig[] = [
     title: 'Department Headcount Report',
     description: 'Department-wise employee distribution, active/inactive counts, and headcount analysis',
     icon: BarChart3,
-    color: 'text-accent-800',
-    bgColor: 'bg-accent-250 dark:bg-accent-950/20',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
     category: 'Analytics',
     endpoint: 'department-headcount',
     requiresDateRange: false,
@@ -77,8 +77,8 @@ const reports: ReportConfig[] = [
     title: 'Leave Report',
     description: 'Leave requests, balances, and utilization by employee and department',
     icon: FileText,
-    color: 'text-warning-600',
-    bgColor: 'bg-warning-50 dark:bg-warning-950/20',
+    color: "text-status-warning-text",
+    bgColor: "bg-status-warning-bg",
     category: 'Leave',
     endpoint: 'leave',
     requiresDateRange: true,
@@ -89,8 +89,8 @@ const reports: ReportConfig[] = [
     title: 'Payroll Report',
     description: 'Monthly payroll summary with earnings, deductions, and net salary',
     icon: DollarSign,
-    color: 'text-accent-800',
-    bgColor: 'bg-accent-250 dark:bg-accent-900/20',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
     category: 'Payroll',
     endpoint: 'payroll',
     requiresDateRange: true,
@@ -101,8 +101,8 @@ const reports: ReportConfig[] = [
     title: 'Performance Report',
     description: 'Employee performance reviews, ratings, and goal achievements',
     icon: TrendingUp,
-    color: 'text-accent-600',
-    bgColor: 'bg-accent-50 dark:bg-accent-950/20',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
     category: 'Performance',
     endpoint: 'performance',
     requiresDateRange: false,
@@ -186,16 +186,16 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 onClick={() => setFormat('EXCEL')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
                   format === 'EXCEL'
-                    ? 'border-success-500 bg-success-50 dark:bg-success-950/20'
+                    ? "border-status-success-border bg-status-success-bg"
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'EXCEL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}
+                  className={`h-6 w-6 ${format === 'EXCEL' ? "text-status-success-text" : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
                   <p
-                    className={`font-medium text-sm ${format === 'EXCEL' ? 'text-success-700' : 'text-[var(--text-secondary)]'}`}>
+                    className={`font-medium text-sm ${format === 'EXCEL' ? "text-status-success-text" : 'text-[var(--text-secondary)]'}`}>
                     Excel
                   </p>
                   <p className="text-caption">.xlsx</p>
@@ -207,14 +207,14 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 onClick={() => setFormat('PDF')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'PDF'
-                    ? 'border-danger-500 bg-danger-50 dark:bg-danger-950/20'
+                    ? "border-status-danger-border bg-status-danger-bg"
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
-                <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-danger-600' : 'text-[var(--text-muted)]'}`}/>
+                <FileText className={`h-6 w-6 ${format === 'PDF' ? "text-status-danger-text" : 'text-[var(--text-muted)]'}`}/>
                 <div className="text-center">
                   <p
-                    className={`font-medium text-sm ${format === 'PDF' ? 'text-danger-700' : 'text-[var(--text-secondary)]'}`}>
+                    className={`font-medium text-sm ${format === 'PDF' ? "text-status-danger-text" : 'text-[var(--text-secondary)]'}`}>
                     PDF
                   </p>
                   <p className="text-caption">.pdf</p>
@@ -226,16 +226,16 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 onClick={() => setFormat('CSV')}
                 className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'CSV'
-                    ? 'border-accent-500 bg-accent-50 dark:bg-accent-950/20'
+                    ? "border-[var(--accent-primary)] bg-accent-subtle"
                     : 'border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
               >
                 <FileSpreadsheet
-                  className={`h-6 w-6 ${format === 'CSV' ? 'text-accent-600' : 'text-[var(--text-muted)]'}`}
+                  className={`h-6 w-6 ${format === 'CSV' ? "text-accent" : 'text-[var(--text-muted)]'}`}
                 />
                 <div className="text-center">
                   <p
-                    className={`font-medium text-sm ${format === 'CSV' ? 'text-accent-700' : 'text-[var(--text-secondary)]'}`}>
+                    className={`font-medium text-sm ${format === 'CSV' ? "text-accent" : 'text-[var(--text-secondary)]'}`}>
                     CSV
                   </p>
                   <p className="text-caption">.csv</p>

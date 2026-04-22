@@ -38,11 +38,11 @@ const CATEGORY_OPTIONS: { value: CompetencyCategory; label: string; icon: React.
 ];
 
 const CATEGORY_COLORS: Record<CompetencyCategory, string> = {
-  TECHNICAL: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300',
-  BEHAVIORAL: 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300',
-  LEADERSHIP: 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300',
-  DOMAIN: 'bg-accent-200 text-accent-900 dark:bg-accent-900/30 dark:text-accent-400',
-  PROBLEM_SOLVING: 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-300',
+  TECHNICAL: "bg-accent-subtle text-accent",
+  BEHAVIORAL: "bg-status-success-bg text-status-success-text",
+  LEADERSHIP: "bg-status-warning-bg text-status-warning-text",
+  DOMAIN: "bg-accent-subtle text-accent",
+  PROBLEM_SOLVING: "bg-status-danger-bg text-status-danger-text",
 };
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
@@ -542,7 +542,7 @@ export default function CompetencyFrameworkPage() {
                   <span
                     className={`px-4 py-1 rounded-full text-xs font-semibold ${
                       selectedCycle.status === 'ACTIVE'
-                        ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
+                        ? "bg-status-success-bg text-status-success-text"
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                     }`}
                   >

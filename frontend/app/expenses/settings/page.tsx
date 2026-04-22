@@ -178,7 +178,7 @@ export default function ExpenseSettingsPage() {
   const categories = categoriesData?.content || [];
   const policies = policiesData?.content || [];
 
-  const inputClass = 'w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2';
+  const inputClass = "w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-input)] text-primary focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2";
 
   return (
     <AppLayout>
@@ -204,8 +204,8 @@ export default function ExpenseSettingsPage() {
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors capitalize cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   activeTab === tab
-                    ? 'bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 shadow-[var(--shadow-card)]'
-                    : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    ? "bg-[var(--bg-card)] text-primary shadow-[var(--shadow-card)]"
+                    : "text-muted hover:text-secondary"
                 }`}
               >
                 {tab === 'categories' ? 'Categories' : 'Policies'}

@@ -152,15 +152,15 @@ export function TaskDetailsModal({
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'project':
-        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'task':
-        return 'bg-accent-300 text-accent-900 dark:bg-accent-900/50 dark:text-accent-500';
+        return "bg-accent-subtle text-accent";
       case 'milestone':
-        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'deadline':
-        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300';
+        return "bg-status-danger-bg text-status-danger-text";
       case 'phase':
-        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -393,8 +393,8 @@ export function TaskDetailsModal({
                       <span
                         className={`ml-2 text-sm ${
                           normalizedTask.actualHours > normalizedTask.estimatedHours
-                            ? 'text-danger-600'
-                            : 'text-success-600'
+                            ? "text-status-danger-text"
+                            : "text-status-success-text"
                         }`}
                       >
                         (

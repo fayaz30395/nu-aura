@@ -216,12 +216,12 @@ export default function NewTravelRequestPage() {
 
   const inputClass = (hasError: boolean) =>
     `w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
-      hasError ? 'border-danger-500' : 'border-[var(--border-main)]'
+      hasError ? "border-status-danger-border" : 'border-[var(--border-main)]'
     } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all`;
 
   const cardInputClass = (hasError: boolean) =>
     `w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
-      hasError ? 'border-danger-500' : 'border-[var(--border-main)]'
+      hasError ? "border-status-danger-border" : 'border-[var(--border-main)]'
     } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all`;
 
   return (

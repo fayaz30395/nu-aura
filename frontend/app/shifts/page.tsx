@@ -99,8 +99,8 @@ export default function ShiftDashboardPage() {
                 onClick={() => setViewMode('week')}
                 className={`p-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   viewMode === 'week'
-                    ? 'bg-accent-700 text-white'
-                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
+                    ? "bg-accent text-inverse"
+                    : "bg-surface text-secondary hover:bg-elevated"
                 }`}
                 aria-label="Week view"
               >
@@ -110,8 +110,8 @@ export default function ShiftDashboardPage() {
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   viewMode === 'list'
-                    ? 'bg-accent-700 text-white'
-                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-300'
+                    ? "bg-accent text-inverse"
+                    : "bg-surface text-secondary hover:bg-elevated"
                 }`}
                 aria-label="List view"
               >
@@ -215,8 +215,8 @@ export default function ShiftDashboardPage() {
                         key={d.toISOString()}
                         className={`text-center p-4 text-sm font-medium ${
                           isToday
-                            ? 'text-accent-700 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20'
-                            : 'text-surface-500 dark:text-surface-400'
+                            ? "text-accent bg-accent-subtle"
+                            : "text-muted"
                         }`}
                       >
                         <div>{d.toLocaleDateString('en-US', {weekday: 'short'})}</div>
@@ -244,7 +244,7 @@ export default function ShiftDashboardPage() {
                       return (
                         <td
                           key={dateStr}
-                          className={`p-2 text-center ${isToday ? 'bg-accent-50/50 dark:bg-accent-900/10' : ''}`}
+                          className={`p-2 text-center ${isToday ? "bg-accent-50/50" : ''}`}
                         >
                           {entry ? (
                             <div

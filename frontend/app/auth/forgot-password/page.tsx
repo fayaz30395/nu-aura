@@ -232,7 +232,7 @@ export default function ForgotPasswordPage() {
                     placeholder="Enter your email"
                     className={`input-aura block w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all ${
                       errors.email
-                        ? 'border-danger-500 dark:border-danger-500'
+                        ? "border-status-danger-border"
                         : 'border-[var(--border-main)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />

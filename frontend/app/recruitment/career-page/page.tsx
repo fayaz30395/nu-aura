@@ -236,8 +236,8 @@ function JobPostingsPanel() {
                       }
                       className={`p-2 rounded-md transition-colors disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] cursor-pointer ${
                         job.status === 'OPEN'
-                          ? 'text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20'
-                          : 'text-[var(--text-muted)] hover:text-accent-700 hover:bg-[var(--bg-secondary)]'
+                          ? "text-status-success-text hover:bg-status-success-bg"
+                          : "text-[var(--text-muted)] hover:text-accent hover:bg-[var(--bg-secondary)]"
                       }`}
                       title={job.status === 'OPEN' ? 'Unpublish (move to Draft)' : 'Publish to career page'}
                     >
@@ -274,9 +274,9 @@ function CareerContentEditor() {
   });
 
   const textareaCls =
-    'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm resize-none';
+    "w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] text-sm resize-none";
   const inputCls =
-    'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm';
+    "w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] text-sm";
 
   const onSave = (data: CareerContentFormData) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -475,7 +475,7 @@ export default function CareerPageCMS() {
               onClick={() => setActiveTab(key)}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 activeTab === key
-                  ? 'bg-accent-600 text-white'
+                  ? "bg-accent text-inverse"
                   : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >

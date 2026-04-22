@@ -159,10 +159,10 @@ function TrendIcon({trend}: { trend: 'UP' | 'DOWN' | 'STABLE' }) {
 
 function RiskBadge({level}: { level: string }) {
   const colors: Record<string, string> = {
-    CRITICAL: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
-    HIGH: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
-    MEDIUM: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
-    LOW: 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400',
+    CRITICAL: "bg-status-danger-bg text-status-danger-text",
+    HIGH: "bg-status-warning-bg text-status-warning-text",
+    MEDIUM: "bg-status-warning-bg text-status-warning-text",
+    LOW: "bg-status-success-bg text-status-success-text",
   };
   return (
     <span
@@ -174,9 +174,9 @@ function RiskBadge({level}: { level: string }) {
 
 function SeverityBadge({severity}: { severity: string }) {
   const colors: Record<string, string> = {
-    CRITICAL: 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400',
-    WARNING: 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400',
-    INFO: 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400',
+    CRITICAL: "bg-status-danger-bg text-status-danger-text",
+    WARNING: "bg-status-warning-bg text-status-warning-text",
+    INFO: "bg-accent-subtle text-accent",
   };
   return (
     <span
@@ -193,29 +193,29 @@ function AttritionRiskCards({summary}: { summary: PredictiveAnalyticsDashboard['
     {
       label: 'Critical Risk',
       count: summary.criticalRiskCount,
-      color: 'text-danger-600',
-      bg: 'bg-danger-50 dark:bg-danger-950/30',
+      color: "text-status-danger-text",
+      bg: "bg-status-danger-bg",
       icon: <ShieldAlert className='h-5 w-5 text-status-danger-text'/>
     },
     {
       label: 'High Risk',
       count: summary.highRiskCount,
-      color: 'text-warning-600',
-      bg: 'bg-warning-50 dark:bg-warning-950/30',
+      color: "text-status-warning-text",
+      bg: "bg-status-warning-bg",
       icon: <AlertTriangle className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Medium Risk',
       count: summary.mediumRiskCount,
-      color: 'text-warning-600',
-      bg: 'bg-warning-50 dark:bg-warning-950/30',
+      color: "text-status-warning-text",
+      bg: "bg-status-warning-bg",
       icon: <AlertCircle className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Low Risk',
       count: summary.lowRiskCount,
-      color: 'text-success-600',
-      bg: 'bg-success-50 dark:bg-success-950/30',
+      color: "text-status-success-text",
+      bg: "bg-status-success-bg",
       icon: <UserCheck className='h-5 w-5 text-status-success-text'/>
     },
   ];
@@ -347,10 +347,10 @@ function KeyMetricsRow({metrics}: { metrics: KeyMetric[] }) {
                 <span
                   className={`text-xs font-medium ${
                     metric.status === 'GOOD'
-                      ? 'text-success-600'
+                      ? "text-status-success-text"
                       : metric.status === 'WARNING'
-                        ? 'text-warning-600'
-                        : 'text-danger-600'
+                        ? "text-status-warning-text"
+                        : "text-status-danger-text"
                   }`}
                 >
                   {pct > 0 ? '+' : ''}{pct.toFixed(1)}%
@@ -690,7 +690,7 @@ export default function PredictiveAnalyticsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-accent-700 text-white'
+                  ? "bg-accent text-inverse"
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
               }`}
             >

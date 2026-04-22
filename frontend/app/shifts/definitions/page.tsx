@@ -256,8 +256,8 @@ export default function ShiftDefinitionsPage() {
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           shift.isActive
-                            ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400'
-                            : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400'
+                            ? "bg-status-success-bg text-status-success-text"
+                            : "bg-surface text-secondary"
                         }`}
                       >
                         {shift.isActive ? 'Active' : 'Inactive'}
@@ -503,8 +503,8 @@ export default function ShiftDefinitionsPage() {
                                     }}
                                     className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                                       isSelected
-                                        ? 'bg-accent-700 text-white'
-                                        : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300 hover:bg-surface-200'
+                                        ? "bg-accent text-inverse"
+                                        : "bg-surface text-secondary hover:bg-elevated"
                                     }`}
                                   >
                                     {day}
@@ -569,8 +569,8 @@ export default function ShiftDefinitionsPage() {
                               onClick={() => field.onChange(!field.value)}
                               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
                                 field.value
-                                  ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400'
-                                  : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400'
+                                  ? "bg-accent-subtle text-accent"
+                                  : "bg-surface text-secondary"
                               }`}
                             >
                               <Icon className="w-3.5 h-3.5"/>

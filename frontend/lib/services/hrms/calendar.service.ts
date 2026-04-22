@@ -143,10 +143,10 @@ class CalendarService {
 
   getStatusColor(status: EventStatus): string {
     const colors: Record<EventStatus, string> = {
-      SCHEDULED: 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300',
-      CONFIRMED: 'bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300',
-      TENTATIVE: 'bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300',
-      CANCELLED: 'bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300',
+      SCHEDULED: "bg-accent-subtle text-accent",
+      CONFIRMED: "bg-status-success-bg text-status-success-text",
+      TENTATIVE: "bg-status-warning-bg text-status-warning-text",
+      CANCELLED: "bg-status-danger-bg text-status-danger-text",
       COMPLETED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
     };
     return colors[status] || colors.SCHEDULED;
@@ -154,15 +154,15 @@ class CalendarService {
 
   getEventColor(eventType: EventType): string {
     const colors: Record<EventType, string> = {
-      MEETING: 'bg-accent-500',
-      APPOINTMENT: 'bg-accent-700',
-      TASK: 'bg-warning-500',
-      REMINDER: 'bg-warning-500',
+      MEETING: "bg-accent",
+      APPOINTMENT: "bg-accent",
+      TASK: "bg-status-warning-bg",
+      REMINDER: "bg-status-warning-bg",
       OUT_OF_OFFICE: 'bg-[var(--text-muted)]',
-      HOLIDAY: 'bg-success-500',
-      TRAINING: 'bg-accent-500',
-      INTERVIEW: 'bg-accent-500',
-      REVIEW: 'bg-accent-500',
+      HOLIDAY: "bg-status-success-bg",
+      TRAINING: "bg-accent",
+      INTERVIEW: "bg-accent",
+      REVIEW: "bg-accent",
       OTHER: 'bg-[var(--text-muted)]',
     };
     return colors[eventType] || colors.OTHER;

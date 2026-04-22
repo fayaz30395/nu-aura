@@ -162,7 +162,7 @@ export function EmployeeCreateModal({
   const tabButtonClass = (tab: TabKey) =>
     `pb-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 rounded-t-sm ${
       currentTab === tab
-        ? 'border-accent-500 text-accent-700 dark:text-accent-400'
+        ? "border-[var(--accent-primary)] text-accent"
         : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
     }`;
 

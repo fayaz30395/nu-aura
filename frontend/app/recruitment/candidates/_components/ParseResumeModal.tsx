@@ -88,7 +88,7 @@ export function ParseResumeModal({
 
   if (!open) return null;
 
-  const inputCls = 'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500';
+  const inputCls = "w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]";
 
   const tabs: { key: InputMethod; label: string; Icon: React.ElementType }[] = [
     {key: 'file', label: 'Upload File', Icon: Upload},
@@ -128,7 +128,7 @@ export function ParseResumeModal({
                     onClick={() => setInputMethod(key)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors cursor-pointer ${
                       inputMethod === key
-                        ? 'bg-accent-600 text-white'
+                        ? "bg-accent text-inverse"
                         : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                     }`}
                   >
@@ -154,8 +154,8 @@ export function ParseResumeModal({
                     onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
                     className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-4 cursor-pointer transition-colors ${
                       dragOver
-                        ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-                        : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-[var(--bg-secondary)]'
+                        ? "border-[var(--accent-primary)] bg-accent-subtle"
+                        : "border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-[var(--bg-secondary)]"
                     }`}
                   >
                     <input

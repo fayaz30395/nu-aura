@@ -172,10 +172,10 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 <div className="space-y-1">
                   <div
                     className={`inline-flex items-center gap-1.5 px-4 py-1 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider ${
-                      dayComplete ? 'bg-success-500/25 text-success-200' : isCheckedIn ? 'bg-success-400/25 text-success-200' : 'bg-white/15 text-white/80'
+                      dayComplete ? "bg-success-500/25 text-status-success-text" : isCheckedIn ? "bg-success-400/25 text-status-success-text" : 'bg-white/15 text-white/80'
                     }`}>
                     <div
-                      className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? 'bg-success-400 animate-pulse' : dayComplete ? 'bg-success-400' : 'bg-white/50'}`}/>
+                      className={`h-2 w-2 rounded-full ${isCheckedIn && !isCheckedOut ? "bg-status-success-bg animate-pulse" : dayComplete ? "bg-status-success-bg" : 'bg-white/50'}`}/>
                     {dayComplete ? 'Day Complete' : isCheckedIn ? 'Currently Working' : 'Not Started'}
                   </div>
                   <div className='text-2xl lg:text-3xl font-extrabold text-inverse drop-shadow-[var(--shadow-card)]'>
@@ -302,10 +302,10 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
               <div className="flex-1 space-y-2 relative z-10">
                 <h3 className="text-card-title text-[var(--text-primary)]">Work Progress</h3>
                 <div className={`text-sm font-medium ${
-                  dayComplete ? 'text-success-600 dark:text-success-400' :
-                    isOvertime ? 'text-warning-600 dark:text-warning-400' :
+                  dayComplete ? "text-status-success-text" :
+                    isOvertime ? "text-status-warning-text" :
                       isCheckedIn ? 'text-[var(--text-secondary)]' :
-                        'text-accent-700 dark:text-accent-400'
+                        "text-accent"
                 }`}>
                   {dayComplete
                     ? 'Great work today!'
@@ -318,9 +318,9 @@ export const AttendanceClockWidget = memo(function AttendanceClockWidget({
                 {isCheckedIn && (
                   <div className="flex items-center gap-1.5">
                     <div
-                      className={`h-2 w-2 rounded-full ${isOvertime ? 'bg-warning-500' : workProgress >= 100 ? 'bg-success-500' : 'bg-accent-500'} animate-pulse`}/>
+                      className={`h-2 w-2 rounded-full ${isOvertime ? "bg-status-warning-bg" : workProgress >= 100 ? "bg-status-success-bg" : "bg-accent"} animate-pulse`}/>
                     <span
-                      className={`text-xs font-bold ${isOvertime ? 'text-warning-600 dark:text-warning-400' : workProgress >= 100 ? 'text-success-600 dark:text-success-400' : 'text-accent-700 dark:text-accent-400'}`}>
+                      className={`text-xs font-bold ${isOvertime ? "text-status-warning-text" : workProgress >= 100 ? "text-status-success-text" : "text-accent"}`}>
                       {Math.round(workProgress)}% complete
                     </span>
                   </div>

@@ -99,7 +99,7 @@ function RatingStars({rating}: { rating?: number }) {
           key={i}
           className={`h-3.5 w-3.5 ${
             i < rating
-              ? 'fill-warning-500 text-warning-500'
+              ? "fill-warning-500 text-status-warning-text"
               : 'text-[var(--text-muted)]'
           }`}
         />

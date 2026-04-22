@@ -9,17 +9,17 @@ export default function StatusBadge({status, type = 'goal'}: StatusBadgeProps) {
     if (type === 'goal') {
       switch (status) {
         case 'ACTIVE':
-          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         case 'COMPLETED':
-          return 'bg-success-100 text-success-800 border-success-200';
+          return "bg-status-success-bg text-status-success-text border-status-success-border";
         case 'DRAFT':
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
         case 'CANCELLED':
-          return 'bg-danger-100 text-danger-800 border-danger-200';
+          return "bg-status-danger-bg text-status-danger-text border-status-danger-border";
         case 'ON_HOLD':
-          return 'bg-warning-100 text-warning-800 border-warning-200';
+          return "bg-status-warning-bg text-status-warning-text border-status-warning-border";
         default:
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
       }
     }
 
@@ -27,17 +27,17 @@ export default function StatusBadge({status, type = 'goal'}: StatusBadgeProps) {
     if (type === 'review') {
       switch (status) {
         case 'DRAFT':
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
         case 'SUBMITTED':
-          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         case 'IN_REVIEW':
-          return 'bg-warning-100 text-warning-800 border-warning-200';
+          return "bg-status-warning-bg text-status-warning-text border-status-warning-border";
         case 'COMPLETED':
-          return 'bg-success-100 text-success-800 border-success-200';
+          return "bg-status-success-bg text-status-success-text border-status-success-border";
         case 'ACKNOWLEDGED':
-          return 'bg-accent-100 text-accent-800 border-accent-200';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         default:
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
       }
     }
 
@@ -45,15 +45,15 @@ export default function StatusBadge({status, type = 'goal'}: StatusBadgeProps) {
     if (type === 'cycle') {
       switch (status) {
         case 'PLANNING':
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
         case 'ACTIVE':
-          return 'bg-success-100 text-success-800 border-success-200';
+          return "bg-status-success-bg text-status-success-text border-status-success-border";
         case 'COMPLETED':
-          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         case 'CANCELLED':
-          return 'bg-danger-100 text-danger-800 border-danger-200';
+          return "bg-status-danger-bg text-status-danger-text border-status-danger-border";
         default:
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
       }
     }
 
@@ -61,19 +61,19 @@ export default function StatusBadge({status, type = 'goal'}: StatusBadgeProps) {
     if (type === 'feedback') {
       switch (status) {
         case 'PRAISE':
-          return 'bg-success-100 text-success-800 border-success-200';
+          return "bg-status-success-bg text-status-success-text border-status-success-border";
         case 'CONSTRUCTIVE':
-          return 'bg-warning-100 text-warning-800 border-warning-200';
+          return "bg-status-warning-bg text-status-warning-text border-status-warning-border";
         case 'GENERAL':
-          return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400 border-accent-200 dark:border-accent-500';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         case 'REQUEST':
-          return 'bg-accent-100 text-accent-800 border-accent-200';
+          return "bg-accent-subtle text-accent border-[var(--accent-primary)]";
         default:
-          return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+          return "bg-surface text-primary border-subtle";
       }
     }
 
-    return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 border-surface-200 dark:border-surface-700';
+    return "bg-surface text-primary border-subtle";
   };
 
   const formatStatus = (status: string) => {

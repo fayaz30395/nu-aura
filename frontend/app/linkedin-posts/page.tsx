@@ -494,7 +494,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               type="url"
               {...register('postUrl')}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                errors.postUrl ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.postUrl ? "border-status-danger-border" : 'border-[var(--border-main)]'
               }`}
               placeholder="https://www.linkedin.com/feed/update/..."
             />
@@ -513,7 +513,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                 type="text"
                 {...register('authorName')}
                 className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                  errors.authorName ? 'border-danger-500' : 'border-[var(--border-main)]'
+                  errors.authorName ? "border-status-danger-border" : 'border-[var(--border-main)]'
                 }`}
                 placeholder="John Doe"
               />
@@ -543,7 +543,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               {...register('contentSnippet')}
               rows={4}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] resize-none ${
-                errors.contentSnippet ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.contentSnippet ? "border-status-danger-border" : 'border-[var(--border-main)]'
               }`}
               placeholder="Paste the post content or a snippet..."
             />
@@ -561,7 +561,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               type="url"
               {...register('imageUrl')}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                errors.imageUrl ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.imageUrl ? "border-status-danger-border" : 'border-[var(--border-main)]'
               }`}
               placeholder="https://..."
             />
@@ -579,7 +579,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               type="date"
               {...register('postedAt')}
               className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                errors.postedAt ? 'border-danger-500' : 'border-[var(--border-main)]'
+                errors.postedAt ? "border-status-danger-border" : 'border-[var(--border-main)]'
               }`}
             />
             {errors.postedAt && (
@@ -624,7 +624,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                          errors.likes ? 'border-danger-500' : 'border-[var(--border-main)]'
+                          errors.likes ? "border-status-danger-border" : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.likes && (
@@ -649,7 +649,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                          errors.comments ? 'border-danger-500' : 'border-[var(--border-main)]'
+                          errors.comments ? "border-status-danger-border" : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.comments && (
@@ -674,7 +674,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
-                          errors.shares ? 'border-danger-500' : 'border-[var(--border-main)]'
+                          errors.shares ? "border-status-danger-border" : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.shares && (

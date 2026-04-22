@@ -17,7 +17,7 @@ const QUICK_ACTIONS = [
     title: 'Attendance History',
     desc: 'View complete records & calendar',
     gradient: 'from-accent-500 to-accent-600',
-    hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
+    hoverColor: "group-hover:text-accent"
   },
   {
     href: '/attendance/regularization',
@@ -25,7 +25,7 @@ const QUICK_ACTIONS = [
     title: 'Regularization',
     desc: 'Request corrections',
     gradient: 'from-accent-500 to-accent-600',
-    hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
+    hoverColor: "group-hover:text-accent"
   },
   {
     href: '/attendance/team',
@@ -33,7 +33,7 @@ const QUICK_ACTIONS = [
     title: 'Team Attendance',
     desc: 'Monitor your team',
     gradient: 'from-accent-500 to-accent-600',
-    hoverColor: 'group-hover:text-accent-600 dark:group-hover:text-accent-400'
+    hoverColor: "group-hover:text-accent"
   },
 ] as const;
 
@@ -109,7 +109,7 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
                   </div>
                 </div>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  daysAway === 0 ? 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400' :
+                  daysAway === 0 ? "bg-accent-subtle text-accent" :
                     'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                 }`}>
                   {daysAway === 0 ? 'Today' : daysAway === 1 ? 'Tomorrow' : `${daysAway}d away`}

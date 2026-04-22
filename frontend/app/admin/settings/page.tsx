@@ -38,8 +38,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage user roles and access permissions',
     icon: Shield,
     href: '/admin/roles',
-    color: 'text-accent-700 dark:text-accent-400',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
   },
   {
     id: 'permissions',
@@ -47,8 +47,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure granular permissions for each module',
     icon: UserCog,
     href: '/admin/permissions',
-    color: 'text-accent-600 dark:text-accent-400',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
   },
   {
     id: 'leave-types',
@@ -56,8 +56,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure leave types and policies',
     icon: Calendar,
     href: '/admin/leave-types',
-    color: 'text-success-600 dark:text-success-400',
-    bgColor: 'bg-success-100 dark:bg-success-900/30',
+    color: "text-status-success-text",
+    bgColor: "bg-status-success-bg",
   },
   {
     id: 'holidays',
@@ -65,8 +65,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage company holidays and calendar',
     icon: Palmtree,
     href: '/admin/holidays',
-    color: 'text-warning-600 dark:text-warning-400',
-    bgColor: 'bg-warning-100 dark:bg-warning-900/30',
+    color: "text-status-warning-text",
+    bgColor: "bg-status-warning-bg",
   },
   {
     id: 'shifts',
@@ -74,8 +74,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure work shifts and schedules',
     icon: Clock,
     href: '/admin/shifts',
-    color: 'text-accent-600 dark:text-accent-400',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
   },
   {
     id: 'office-locations',
@@ -83,8 +83,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Manage office locations and geofencing',
     icon: MapPin,
     href: '/admin/office-locations',
-    color: 'text-danger-600 dark:text-danger-400',
-    bgColor: 'bg-danger-100 dark:bg-danger-900/30',
+    color: "text-status-danger-text",
+    bgColor: "bg-status-danger-bg",
   },
   {
     id: 'org-hierarchy',
@@ -92,8 +92,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Configure org structure and reporting lines',
     icon: Building2,
     href: '/admin/org-hierarchy',
-    color: 'text-accent-600 dark:text-accent-400',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
   },
   {
     id: 'custom-fields',
@@ -101,8 +101,8 @@ const settingsCards: SettingsCard[] = [
     description: 'Add custom fields to employee profiles',
     icon: Layers,
     href: '/admin/custom-fields',
-    color: 'text-accent-600 dark:text-accent-400',
-    bgColor: 'bg-accent-100 dark:bg-accent-900/30',
+    color: "text-accent",
+    bgColor: "bg-accent-subtle",
   },
 ];
 

@@ -73,13 +73,13 @@ const JobCard: React.FC<JobCardProps> = ({job, onViewDetails}) => {
   const getEmploymentTypeBg = (type: string) => {
     switch (type) {
       case 'Full-time':
-        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300';
+        return "bg-accent-subtle text-accent";
       case 'Part-time':
-        return 'bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500';
+        return "bg-accent-subtle text-accent";
       case 'Contract':
-        return 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300';
+        return "bg-status-warning-bg text-status-warning-text";
       case 'Internship':
-        return 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300';
+        return "bg-status-success-bg text-status-success-text";
       default:
         return 'bg-[var(--bg-surface)] text-[var(--text-secondary)]';
     }
@@ -322,8 +322,8 @@ const ApplicationModal: React.FC<{
         {submitStatus !== 'idle' && (
           <div className={`p-4 rounded-lg mb-4 flex gap-4 ${
             submitStatus === 'success'
-              ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
-              : 'bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300'
+              ? "bg-status-success-bg text-status-success-text"
+              : "bg-status-danger-bg text-status-danger-text"
           }`}>
             <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5"/>
             <p className="text-sm">{submitMessage}</p>
