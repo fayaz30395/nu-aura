@@ -347,7 +347,7 @@ export default function StatutoryPage() {
               )}
 
               {reportLoading && (
-                <div className="py-4 space-y-3" aria-hidden="true">
+                <div className="py-4 space-y-2" aria-hidden="true">
                   {Array.from({length: 4}).map((_, i) => (
                     <div key={i} className="flex gap-4">
                       {Array.from({length: 5}).map((_, j) => (

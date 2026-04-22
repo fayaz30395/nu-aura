@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
     if (authChecked && !canAccessAdmin) {
       router.replace('/me/dashboard');
     }
-  }, [authChecked, isAdmin, router]);
+  }, [authChecked, canAccessAdmin, router]);
 
   const {data: stats, isLoading: statsLoading} = useAdminStats();
   const {data: usersPage, isLoading: usersLoading} = useAdminUsers(page, PAGE_SIZE, search);

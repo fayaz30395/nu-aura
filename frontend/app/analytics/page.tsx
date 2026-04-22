@@ -100,7 +100,7 @@ function getRangeLabel(range: '7d' | '30d' | '90d' | 'custom'): string {
 export default function AnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, hasAnyPermission, isReady: permReady} = usePermissions();
+  const {hasAnyPermission, isReady: permReady} = usePermissions();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | 'custom'>('30d');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');

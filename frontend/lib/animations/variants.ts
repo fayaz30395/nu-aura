@@ -280,7 +280,7 @@ export const shadowPresets = {
   /** Elevated / floating */
   lg: "shadow-[var(--shadow-elevated)]",
   /** Modal / dialog */
-  xl: 'shadow-xl',
+  xl: "shadow-[var(--shadow-dropdown)]",
   /** Colored shadows */
   primary: "shadow-[var(--shadow-elevated)] shadow-accent-500/20",
   success: "shadow-[var(--shadow-elevated)] shadow-success-500/20",

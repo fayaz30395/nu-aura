@@ -716,7 +716,7 @@ export default function PIPPage() {
   };
 
   // Stats
-  const pipList = Array.isArray(pips) ? pips : [];
+  const pipList = useMemo(() => (Array.isArray(pips) ? pips : []), [pips]);
   const stats = useMemo(() => {
     return {
       active: pipList.filter(p => p.status === 'ACTIVE').length,

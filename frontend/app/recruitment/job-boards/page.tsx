@@ -322,7 +322,7 @@ export default function JobBoardsPage() {
                                 );
                               }}
                               className={`flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                                isSelected ? `${bc.color} text-white border-transparent` : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
+                                isSelected ? `${bc.color} text-inverse border-transparent` : 'bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-strong)] hover:border-[var(--border-main)]'
                               }`}
                             >
                               <Globe className="w-4 h-4"/>

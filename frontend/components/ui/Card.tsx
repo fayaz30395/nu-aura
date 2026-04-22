@@ -21,7 +21,7 @@ const cardVariants = cva(
       },
       padding: {
         none: '',
-        sm: 'p-3',
+        sm: 'p-2',
         md: 'p-4',
         lg: 'p-6',
       },
