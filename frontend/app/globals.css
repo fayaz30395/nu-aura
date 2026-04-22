@@ -181,6 +181,14 @@
     --chart-tooltip-bg: #ffffff;
     --chart-tooltip-border: #dfe2ed;
     --chart-tooltip-text: #1c2033;
+
+    /* ── Motion Tokens (shared with Framer Motion via lib/design-system) ─── */
+    --motion-fast: 120ms;
+    --motion-base: 180ms;
+    --motion-slow: 280ms;
+    --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --stagger-step: 60ms;
   }
 
   .dark {

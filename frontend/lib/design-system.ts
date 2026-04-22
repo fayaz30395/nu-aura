@@ -126,6 +126,48 @@ export const motion = {
   },
 } as const;
 
+/**
+ * Canonical motion tokens — mirror CSS variables in globals.css (--motion-*).
+ * Use these for Framer Motion `transition.duration` (in seconds) instead of
+ * hand-rolled values. Keeps CSS animations and JS animations in lockstep.
+ */
+export const motionTokens = {
+  duration: {
+    fast: 0.12,
+    base: 0.18,
+    slow: 0.28,
+  },
+  ease: [0.4, 0, 0.2, 1] as [number, number, number, number],
+  easeSoft: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+  stagger: 0.06,
+} as const;
+
+/**
+ * Desktop-first density presets — see CLAUDE.md "UI Sizing & Density".
+ * Use these instead of ad-hoc h-11 / h-12 / p-3 classes on primitives.
+ */
+export const density = {
+  button: {
+    sm: 'h-8 px-3 text-xs',       // 32px
+    md: 'h-9 px-4 text-sm',       // 36px — default
+    lg: 'h-10 px-5 text-sm',      // 40px — rare
+  },
+  input: {
+    sm: 'h-8 px-3 text-xs',
+    md: 'h-9 px-4 text-sm',       // default
+    lg: 'h-10 px-4 text-sm',
+  },
+  iconButton: {
+    sm: 'p-1.5',
+    md: 'p-2',                    // default — 32px tap area with 16px icon
+  },
+  row: {
+    dense: 'px-4 py-2',           // table rows default
+    comfy: 'px-6 py-4',
+  },
+  badge: 'px-2 py-0.5 text-xs',
+} as const;
+
 // ── Status Badge Classes ───────────────────────────────
 // Use these for status indicators — auto dark mode via CSS vars
 export const status = {
