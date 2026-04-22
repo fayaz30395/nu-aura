@@ -14,17 +14,17 @@ interface WorkloadSummaryStatsProps {
  */
 export function WorkloadSummaryStats({summary, className}: WorkloadSummaryStatsProps) {
   return (
-    <div className={cn('flex items-center gap-6 border-b border-surface-200 pb-4 dark:border-surface-700', className)}>
+    <div className={cn('flex items-center gap-6 border-b border-subtle pb-4', className)}>
       <StatItem
         label="Total"
         value={summary.totalEmployees}
       />
-      <div className="h-8 w-px bg-surface-200 dark:bg-surface-700"/>
+      <div className='h-8 w-px bg-elevated'/>
       <StatItem
         label="Avg"
         value={`${Math.round(summary.averageAllocation)}%`}
       />
-      <div className="h-8 w-px bg-surface-200 dark:bg-surface-700"/>
+      <div className='h-8 w-px bg-elevated'/>
       <StatItem
         label="Over"
         value={summary.overAllocatedCount}
@@ -48,7 +48,7 @@ export function WorkloadSummaryStats({summary, className}: WorkloadSummaryStatsP
       />
       {summary.pendingApprovals > 0 && (
         <>
-          <div className="h-8 w-px bg-surface-200 dark:bg-surface-700"/>
+          <div className='h-8 w-px bg-elevated'/>
           <StatItem
             label="Pending"
             value={summary.pendingApprovals}
@@ -73,12 +73,12 @@ function StatItem({label, value, color, highlight}: StatItemProps) {
     <div className="flex items-baseline gap-1.5">
       <span className={cn(
         'text-xl font-semibold tabular-nums',
-        color || 'text-surface-900 dark:text-surface-50',
+        color || 'text-primary',
         highlight && 'animate-pulse'
       )}>
         {value}
       </span>
-      <span className="text-xs text-surface-500 dark:text-surface-400">
+      <span className='text-xs text-muted'>
         {label}
       </span>
     </div>

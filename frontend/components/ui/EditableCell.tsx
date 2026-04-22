@@ -212,15 +212,15 @@ function EditableCell<T = string | number>({
               placeholder={placeholder}
               disabled={isLoading}
               autoFocus
-              className={cn(error && 'border-danger-500')}
+              className={cn(error && 'border-status-danger-border')}
               classNames={{
                 input: cn(
                   'px-3 py-1.5 text-sm rounded-md',
                   'border border-[var(--border-main)]',
                   'bg-[var(--bg-surface)]',
                   'text-[var(--text-primary)]',
-                  'focus:border-accent-700 focus:ring-1 focus:ring-accent-700',
-                  error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-500'
+                  'focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-700',
+                  error && 'border-status-danger-border focus:border-status-danger-border focus:ring-danger-500'
                 ),
               }}
               style={{
@@ -244,8 +244,8 @@ function EditableCell<T = string | number>({
                   'border border-[var(--border-main)]',
                   'bg-[var(--bg-surface)]',
                   'text-[var(--text-primary)]',
-                  'focus:border-accent-700 focus:ring-1 focus:ring-accent-700',
-                  error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-500'
+                  'focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-700',
+                  error && 'border-status-danger-border focus:border-status-danger-border focus:ring-danger-500'
                 ),
               }}
               style={{
@@ -271,8 +271,8 @@ function EditableCell<T = string | number>({
                   'border border-[var(--border-main)]',
                   'bg-[var(--bg-surface)]',
                   'text-[var(--text-primary)]',
-                  'focus:border-accent-700 focus:ring-1 focus:ring-accent-700',
-                  error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-500'
+                  'focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-700',
+                  error && 'border-status-danger-border focus:border-status-danger-border focus:ring-danger-500'
                 ),
               }}
               style={{
@@ -300,9 +300,9 @@ function EditableCell<T = string | number>({
                 'border border-[var(--border-main)]',
                 'bg-[var(--bg-surface)]',
                 'text-[var(--text-primary)]',
-                'focus:border-accent-700 focus:ring-1 focus:ring-accent-700',
+                'focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-700',
                 'w-full',
-                error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-500'
+                error && 'border-status-danger-border focus:border-status-danger-border focus:ring-danger-500'
               )}
               style={{
                 height: '32px',
@@ -316,7 +316,7 @@ function EditableCell<T = string | number>({
               initial={{opacity: 0, y: -4}}
               animate={{opacity: 1, y: 0}}
               exit={{opacity: 0, y: -4}}
-              className="absolute top-full left-0 mt-1 text-xs text-danger-600 whitespace-nowrap"
+              className='absolute top-full left-0 mt-1 text-xs text-status-danger-text whitespace-nowrap'
             >
               {error}
             </motion.div>
@@ -336,7 +336,7 @@ function EditableCell<T = string | number>({
               'min-h-[32px] min-w-[32px]',
               isLoading
                 ? 'text-[var(--text-muted)] cursor-not-allowed opacity-50'
-                : 'text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20'
+                : 'text-status-success-text hover:bg-status-success-bg'
             )}
             aria-label="Save changes"
             initial={{scale: 0.8, opacity: 0}}
@@ -373,7 +373,7 @@ function EditableCell<T = string | number>({
               'min-h-[32px] min-w-[32px]',
               isLoading
                 ? 'cursor-not-allowed opacity-50'
-                : 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20'
+                : 'text-status-danger-text hover:bg-status-danger-bg'
             )}
             aria-label="Cancel editing"
             initial={{scale: 0.8, opacity: 0}}

@@ -264,7 +264,7 @@ export default function ReviewCyclesPage() {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
+              className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
             >
               Create Cycle
             </button>
@@ -326,7 +326,7 @@ export default function ReviewCyclesPage() {
                   resetFormHandler();
                   setShowModal(true);
                 }}
-                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
+                className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
               >
                 Create Your First Cycle
               </button>
@@ -365,7 +365,7 @@ export default function ReviewCyclesPage() {
                   <div className="text-sm">
                     <span className="text-[var(--text-secondary)]">Review Deadline:</span>
                     <div
-                      className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
+                      className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-status-danger-text' : isDeadlineNear(cycle.reviewDeadline) ? 'text-status-warning-text' : '')}>
                       {cycle.reviewDeadline ? new Date(cycle.reviewDeadline).toLocaleDateString() : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
                       {isDeadlineNear(cycle.reviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline) && ' (Soon)'}
@@ -376,7 +376,7 @@ export default function ReviewCyclesPage() {
                     <div className="text-sm">
                       <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
                       <div
-                        className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
+                        className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-status-danger-text' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-status-warning-text' : '')}>
                         {new Date(cycle.selfReviewDeadline).toLocaleDateString()}
                         {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
                         {isDeadlineNear(cycle.selfReviewDeadline) && !isDeadlinePassed(cycle.selfReviewDeadline) && ' (Soon)'}
@@ -390,7 +390,7 @@ export default function ReviewCyclesPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openActivateModal(cycle)}
-                        className="flex-1 px-4 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                        className='flex-1 px-4 py-2 tint-success text-status-success-text rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1'
                       >
                         <Play className="h-4 w-4"/>
                         Activate
@@ -400,7 +400,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                     <button
                       onClick={() => openEditModal(cycle)}
-                      className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
+                      className='flex-1 px-4 py-2 tint-info text-accent rounded hover:opacity-80 text-sm font-medium'
                     >
                       Edit
                     </button>
@@ -408,7 +408,7 @@ export default function ReviewCyclesPage() {
                   <PermissionGate permission={Permissions.REVIEW_DELETE}>
                     <button
                       onClick={() => openDeleteConfirm(cycle)}
-                      className="flex-1 px-4 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
+                      className='flex-1 px-4 py-2 tint-danger text-status-danger-text rounded hover:opacity-80 text-sm font-medium'
                     >
                       Delete
                     </button>
@@ -440,7 +440,7 @@ export default function ReviewCyclesPage() {
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.name && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.name.message}</p>
                       )}
                     </div>
 
@@ -454,7 +454,7 @@ export default function ReviewCyclesPage() {
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.description && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.description.message}</p>
                       )}
                     </div>
 
@@ -475,7 +475,7 @@ export default function ReviewCyclesPage() {
                           <option value="PROJECT_END">Project End</option>
                         </select>
                         {errors.cycleType && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.cycleType.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.cycleType.message}</p>
                         )}
                       </div>
 
@@ -494,7 +494,7 @@ export default function ReviewCyclesPage() {
                           <option value="CANCELLED">Cancelled</option>
                         </select>
                         {errors.status && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.status.message}</p>
                         )}
                       </div>
                     </div>
@@ -510,7 +510,7 @@ export default function ReviewCyclesPage() {
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.startDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.startDate.message}</p>
                         )}
                       </div>
 
@@ -524,7 +524,7 @@ export default function ReviewCyclesPage() {
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.endDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.endDate.message}</p>
                         )}
                       </div>
                     </div>
@@ -540,7 +540,7 @@ export default function ReviewCyclesPage() {
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.reviewDeadline && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.reviewDeadline.message}</p>
                         )}
                       </div>
 
@@ -554,7 +554,7 @@ export default function ReviewCyclesPage() {
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                         {errors.selfReviewDeadline && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.selfReviewDeadline.message}</p>
                         )}
                       </div>
                     </div>
@@ -575,7 +575,7 @@ export default function ReviewCyclesPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex-1 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
                       </button>
@@ -608,7 +608,7 @@ export default function ReviewCyclesPage() {
                   <button
                     onClick={handleDelete}
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='flex-1 px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {loading ? 'Deleting...' : 'Delete'}
                   </button>
@@ -625,8 +625,8 @@ export default function ReviewCyclesPage() {
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                    <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  <div className='p-2 bg-status-success-bg rounded-lg'>
+                    <Play className='h-6 w-6 text-status-success-text'/>
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Activate Review Cycle</h2>
@@ -725,7 +725,7 @@ export default function ReviewCyclesPage() {
                                 type="checkbox"
                                 checked={activateFormData.departmentIds?.includes(dept.id) || false}
                                 onChange={() => handleDepartmentToggle(dept.id)}
-                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
+                                className='h-4 w-4 text-status-success-text focus:ring-success-500 border-[var(--border-main)] rounded'
                               />
                               <span className="text-sm">{dept.name}</span>
                             </label>
@@ -760,7 +760,7 @@ export default function ReviewCyclesPage() {
                                 type="checkbox"
                                 checked={activateFormData.locationIds?.includes(loc.id) || false}
                                 onChange={() => handleLocationToggle(loc.id)}
-                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
+                                className='h-4 w-4 text-status-success-text focus:ring-success-500 border-[var(--border-main)] rounded'
                               />
                               <div>
                                 <span className="text-sm font-medium">{loc.name}</span>
@@ -792,7 +792,7 @@ export default function ReviewCyclesPage() {
                             ...activateFormData,
                             createSelfReviews: e.target.checked
                           })}
-                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
+                          className='h-4 w-4 text-status-success-text focus:ring-success-500 border-[var(--border-main)] rounded'
                         />
                         <div>
                           <span className="text-sm font-medium">Self Reviews</span>
@@ -807,7 +807,7 @@ export default function ReviewCyclesPage() {
                             ...activateFormData,
                             createManagerReviews: e.target.checked
                           })}
-                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
+                          className='h-4 w-4 text-status-success-text focus:ring-success-500 border-[var(--border-main)] rounded'
                         />
                         <div>
                           <span className="text-sm font-medium">Manager Reviews</span>
@@ -833,12 +833,12 @@ export default function ReviewCyclesPage() {
                     type="button"
                     onClick={handleActivate}
                     disabled={loading || (activateFormData.scopeType === 'DEPARTMENT' && (!activateFormData.departmentIds || activateFormData.departmentIds.length === 0)) || (activateFormData.scopeType === 'LOCATION' && (!activateFormData.locationIds || activateFormData.locationIds.length === 0))}
-                    className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='flex-1 px-4 py-2 bg-status-success-bg text-inverse rounded-lg hover:bg-status-success-bg disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {loading ? (
                       <>
                         <span
-                          className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          className='h-4 w-4 border-2 border-[var(--bg-card)] border-t-transparent rounded-full animate-spin'></span>
                         Activating...
                       </>
                     ) : (
@@ -859,8 +859,8 @@ export default function ReviewCyclesPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex flex-col items-center text-center">
-                <div className="p-4 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                  <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400"/>
+                <div className='p-4 bg-status-success-bg rounded-full mb-4'>
+                  <CheckCircle className='h-12 w-12 text-status-success-text'/>
                 </div>
                 <h2 className="text-xl font-bold mb-2">Cycle Activated!</h2>
                 <p className="text-[var(--text-secondary)] mb-6">
@@ -870,11 +870,12 @@ export default function ReviewCyclesPage() {
                 <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-accent-700">{activationResult.employeesInScope}</div>
+                      <div className='text-3xl font-bold text-accent'>{activationResult.employeesInScope}</div>
                       <div className="text-body-secondary">Employees in Scope</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-success-600">{activationResult.reviewsCreated}</div>
+                      <div
+                        className='text-3xl font-bold text-status-success-text'>{activationResult.reviewsCreated}</div>
                       <div className="text-body-secondary">Reviews Created</div>
                     </div>
                   </div>
@@ -886,7 +887,7 @@ export default function ReviewCyclesPage() {
                     setActivationResult(null);
                     setSelectedCycle(null);
                   }}
-                  className="w-full px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
+                  className='w-full px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
                 >
                   Done
                 </button>

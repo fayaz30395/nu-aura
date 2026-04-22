@@ -155,7 +155,7 @@ function PoliciesTab() {
   return (
     <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
       <Table striped highlightOnHover>
-        <Table.Thead className="bg-surface-100 dark:bg-surface-800">
+        <Table.Thead className='bg-surface'>
           <Table.Tr>
             <Table.Th>Policy</Table.Th>
             <Table.Th>Category</Table.Th>
@@ -364,7 +364,7 @@ function AlertsTab() {
   return (
     <Paper withBorder radius="md" style={{overflow: 'hidden'}}>
       <Table striped highlightOnHover>
-        <Table.Thead className="bg-surface-100 dark:bg-surface-800">
+        <Table.Thead className='bg-surface'>
           <Table.Tr>
             <Table.Th>Alert</Table.Th>
             <Table.Th>Type</Table.Th>

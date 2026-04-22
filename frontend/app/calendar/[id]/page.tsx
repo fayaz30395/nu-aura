@@ -105,7 +105,7 @@ export default function EventDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2
-              className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              className='h-8 w-8 animate-spin text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
@@ -123,13 +123,13 @@ export default function EventDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle
-              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              className='h-12 w-12 text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Event not found'}
             </p>
             <button
               onClick={() => router.push('/calendar')}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors'
             >
               Back to Calendar
             </button>
@@ -177,7 +177,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Time Card */}
-        <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
+        <div className='bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-inverse'>
           <div className="flex items-center gap-4 mb-4">
             <Calendar className="h-6 w-6"/>
             <h2 className="text-xl font-semibold">Event Time</h2>
@@ -234,7 +234,7 @@ export default function EventDetailPage() {
                   href={event.meetingLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='text-accent font-medium hover:underline flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   Join Meeting
                   <ExternalLink className="h-4 w-4"/>
@@ -384,7 +384,7 @@ export default function EventDetailPage() {
                 <button
                   onClick={handleSyncToGoogle}
                   disabled={syncToGoogleMutation.isPending}
-                  className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-xl font-medium hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='flex items-center justify-center gap-2 px-6 py-4 bg-accent-subtle text-accent rounded-xl font-medium hover:bg-accent-subtle transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {syncToGoogleMutation.isPending ? (
                     <Loader2 className="h-5 w-5 animate-spin"/>
@@ -398,7 +398,7 @@ export default function EventDetailPage() {
               <PermissionGate permission={Permissions.CALENDAR_DELETE}>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center gap-2 px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='flex items-center justify-center gap-2 px-6 py-4 bg-status-danger-bg text-status-danger-text rounded-xl font-medium hover:bg-status-danger-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   <Trash2 className="h-5 w-5"/>
                   Delete
@@ -408,7 +408,6 @@ export default function EventDetailPage() {
           )}
         </div>
       </div>
-
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}

@@ -56,7 +56,6 @@ export function DriveToolbar({
           </CardContent>
         </Card>
       )}
-
       {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-[var(--border-main)]">
         <button
@@ -104,7 +103,6 @@ export function DriveToolbar({
           Recent
         </button>
       </div>
-
       {/* Search + View Mode */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative flex-1">
@@ -135,7 +133,6 @@ export function DriveToolbar({
           </div>
         </div>
       </div>
-
       {/* Breadcrumbs */}
       {activeTab === 'my-drive' && breadcrumbs.length > 1 && (
         <div className="flex items-center gap-2 text-sm">
@@ -144,7 +141,7 @@ export function DriveToolbar({
               {index > 0 && <span className="text-[var(--text-muted)]">/</span>}
               <button
                 onClick={() => onNavigateToFolder(crumb.id, crumb.name)}
-                className={`hover:text-accent-700 ${index === breadcrumbs.length - 1
+                className={`hover:text-accent ${index === breadcrumbs.length - 1
                   ? 'text-[var(--text-primary)] font-medium'
                   : 'text-[var(--text-muted)]'
                 }`}
@@ -155,7 +152,6 @@ export function DriveToolbar({
           ))}
         </div>
       )}
-
       {/* Empty state actions for my-drive */}
       {activeTab === 'my-drive' && !searchQuery && (
         <div className="hidden">
@@ -171,14 +167,13 @@ export function DriveToolbar({
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={onFileSelect}/>
             <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+              className='inline-flex items-center gap-2 px-4 py-1.5 bg-accent hover:bg-accent text-inverse text-sm font-medium rounded-lg transition-colors'>
               <UploadCloud className="h-4 w-4"/>
               Upload File
             </span>
           </label>
         </div>
       )}
-
       {/* Placeholder for empty state (unused; kept for parity) */}
       <style jsx>{`
         .drive-empty-folder { display: none; }
@@ -233,7 +228,7 @@ export function DriveEmptyState({
               <label className="cursor-pointer">
                 <input type="file" className="hidden" onChange={onFileSelect}/>
                 <span
-                  className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-700 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  className='inline-flex items-center gap-2 px-4 py-1.5 bg-accent hover:bg-accent text-inverse text-sm font-medium rounded-lg transition-colors'>
                   <UploadCloud className="h-4 w-4"/>
                   Upload File
                 </span>

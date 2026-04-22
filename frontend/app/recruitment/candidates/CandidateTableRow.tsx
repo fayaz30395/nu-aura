@@ -71,8 +71,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       <td className="px-6 py-4">
         <div className="flex items-center">
           <div
-            className="flex-shrink-0 h-10 w-10 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-accent-700 dark:text-accent-300">
+            className='flex-shrink-0 h-10 w-10 bg-accent-subtle rounded-xl flex items-center justify-center'>
+            <span className='text-sm font-medium text-accent'>
               {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
             </span>
           </div>
@@ -82,18 +82,15 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           </div>
         </div>
       </td>
-
       {/* Job */}
       <td className="px-6 py-4">
         <div className="text-sm text-[var(--text-primary)]">{candidate.jobTitle || '-'}</div>
         <div className="text-caption">{candidate.candidateCode}</div>
       </td>
-
       {/* Experience */}
       <td className="px-6 py-4 text-body-secondary">
         {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
       </td>
-
       {/* Stage */}
       <td className="px-6 py-4 text-center">
         {candidate.currentStage && (
@@ -102,19 +99,16 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           </span>
         )}
       </td>
-
       {/* Status */}
       <td className="px-6 py-4 text-center">
         <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
           {candidate.status?.replace(/_/g, ' ') ?? '-'}
         </span>
       </td>
-
       {/* Source */}
       <td className="px-6 py-4 text-body-secondary">
         {candidate.source?.replace(/_/g, ' ') || '-'}
       </td>
-
       {/* Actions */}
       <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-end gap-1">
@@ -122,7 +116,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onView(candidate)}
             aria-label={`View ${candidate.fullName}`}
-            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+            className='p-1.5 text-[var(--text-muted)] hover:text-accent transition-colors rounded-md cursor-pointer'
             title="View"
           >
             <Eye className="h-4 w-4"/>
@@ -132,7 +126,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <button
             onClick={() => onEdit(candidate)}
             aria-label={`Edit ${candidate.fullName}`}
-            className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+            className='p-1.5 text-[var(--text-muted)] hover:text-accent transition-colors rounded-md cursor-pointer'
             title="Edit"
           >
             <Edit2 className="h-4 w-4"/>
@@ -150,21 +144,27 @@ export const CandidateTableRow = memo(function CandidateTableRow({
           <div className="relative group">
             <button
               aria-label={`More actions for ${candidate.fullName}`}
-              className="p-1.5 text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors rounded-md cursor-pointer"
+              className='p-1.5 text-[var(--text-muted)] hover:text-accent transition-colors rounded-md cursor-pointer'
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+                <circle cx="12" cy="5" r="1"/>
+                <circle cx="12" cy="12" r="1"/>
+                <circle cx="12" cy="19" r="1"/>
               </svg>
             </button>
-            <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+            <div
+              className="absolute right-0 top-full mt-1 w-48 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
               {/* AI Actions */}
-              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI Actions</div>
+              <div className="px-2 py-1 text-2xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">AI
+                Actions
+              </div>
               <button
                 onClick={() => onCalculateMatch(candidate)}
                 disabled={aiLoadingState === `match-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Brain className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `match-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <Brain className="h-3.5 w-3.5"/>}
                 Match Score
               </button>
               <button
@@ -172,7 +172,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 disabled={aiLoadingState === `screening-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <FileText className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `screening-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <FileText className="h-3.5 w-3.5"/>}
                 Screening Summary
               </button>
               <button
@@ -180,7 +181,8 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 disabled={aiLoadingState === `feedback-${candidate.id}`}
                 className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <MessageSquare className="h-3.5 w-3.5"/>}
+                {aiLoadingState === `feedback-${candidate.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> :
+                  <MessageSquare className="h-3.5 w-3.5"/>}
                 Synthesize Feedback
               </button>
 
@@ -207,7 +209,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                   <div className="border-t border-[var(--border-subtle)] my-1"/>
                   <button
                     onClick={() => onOffer(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className='w-full px-4 py-2 text-left text-sm text-status-success-text hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer'
                   >
                     <Send className="h-3.5 w-3.5"/>
                     Generate Offer
@@ -226,14 +228,14 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                   </button>
                   <button
                     onClick={() => onAccept(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-success-700 dark:text-success-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className='w-full px-4 py-2 text-left text-sm text-status-success-text hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer'
                   >
                     <CheckCircle className="h-3.5 w-3.5"/>
                     Accept Offer
                   </button>
                   <button
                     onClick={() => onDecline(candidate)}
-                    className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer"
+                    className='w-full px-4 py-2 text-left text-sm text-status-danger-text hover:bg-[var(--bg-secondary)] flex items-center gap-2 cursor-pointer'
                   >
                     <XCircle className="h-3.5 w-3.5"/>
                     Decline Offer
@@ -246,7 +248,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
                 <div className="border-t border-[var(--border-subtle)] my-1"/>
                 <button
                   onClick={() => onDelete(candidate)}
-                  className="w-full px-4 py-2 text-left text-sm text-danger-700 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/20 flex items-center gap-2 cursor-pointer rounded-b-lg"
+                  className='w-full px-4 py-2 text-left text-sm text-status-danger-text hover:bg-status-danger-bg flex items-center gap-2 cursor-pointer rounded-b-lg'
                 >
                   <Trash2 className="h-3.5 w-3.5"/>
                   Delete

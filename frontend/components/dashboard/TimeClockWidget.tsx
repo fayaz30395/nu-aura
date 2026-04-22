@@ -105,7 +105,6 @@ export function TimeClockWidget({
           View All
         </a>
       </div>
-
       {/* Time Display — large monospace with accent period */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1.5">
@@ -120,14 +119,13 @@ export function TimeClockWidget({
         {elapsedTime && (
           <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
                style={{background: 'var(--status-success-bg)', border: '1px solid var(--status-success-border)'}}>
-            <div className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"/>
+            <div className='w-1.5 h-1.5 rounded-full bg-status-success-bg animate-pulse'/>
             <span className="text-xs font-medium" style={{color: 'var(--status-success-text)'}}>
               Working: {elapsedTime}
             </span>
           </div>
         )}
       </div>
-
       {/* Check In/Out Button or Completed State */}
       {isCompleted ? (
         <div

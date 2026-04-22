@@ -255,7 +255,7 @@ export default function CoursePlayerPage() {
                     href={activeContent.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-800"
+                    className='flex items-center gap-1 text-xs text-accent hover:text-accent'
                   >
                     <ExternalLink className="h-3 w-3"/>
                     Open in new tab
@@ -294,11 +294,11 @@ export default function CoursePlayerPage() {
       case 'QUIZ':
         return (
           <div
-            className="flex flex-col items-center justify-center h-64 bg-accent-250 rounded-lg border border-accent-400 gap-4">
-            <HelpCircle className="h-12 w-12 text-accent-600"/>
+            className='flex flex-col items-center justify-center h-64 bg-accent-subtle rounded-lg border border-[var(--accent-primary)] gap-4'>
+            <HelpCircle className='h-12 w-12 text-accent'/>
             <div className="text-center">
-              <p className="font-semibold text-accent-900">Quiz: {activeContent.title}</p>
-              <p className="text-sm text-accent-800 mt-1">
+              <p className='font-semibold text-accent'>Quiz: {activeContent.title}</p>
+              <p className='text-sm text-accent mt-1'>
                 Quiz engine coming soon. Mark as complete to proceed.
               </p>
             </div>
@@ -328,7 +328,7 @@ export default function CoursePlayerPage() {
                 href={activeContent.videoUrl || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-accent-600 text-white rounded-md text-sm font-medium hover:bg-accent-700"
+                className='px-4 py-2 bg-accent text-inverse rounded-md text-sm font-medium hover:bg-accent'
               >
                 Open Link
               </a>
@@ -364,7 +364,7 @@ export default function CoursePlayerPage() {
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
           <div
-            className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+            className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full mx-auto mb-4'/>
           <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>
@@ -379,8 +379,8 @@ export default function CoursePlayerPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[var(--bg-secondary)]">
         <div className="text-center">
-          <p className="text-danger-600 mb-4">{error || 'Course not found'}</p>
-          <Link href="/learning" className="text-accent-600 hover:underline text-sm">
+          <p className='text-status-danger-text mb-4'>{error || 'Course not found'}</p>
+          <Link href="/learning" className='text-accent hover:underline text-sm'>
             ← Back to Learning
           </Link>
         </div>
@@ -419,7 +419,7 @@ export default function CoursePlayerPage() {
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-accent-600 rounded-full transition-all duration-500"
+                  className='h-full bg-accent rounded-full transition-all duration-500'
                   style={{width: `${overallProgress}%`}}
                 />
               </div>
@@ -481,9 +481,10 @@ export default function CoursePlayerPage() {
                         >
                           <div className="shrink-0 mt-0.5">
                             {status === 'completed' ? (
-                              <CheckCircle2 className="h-4 w-4 text-success-500"/>
+                              <CheckCircle2 className='h-4 w-4 text-status-success-text'/>
                             ) : status === 'in_progress' ? (
-                              <div className="h-4 w-4 rounded-full border-2 border-accent-500 bg-accent-100"/>
+                              <div
+                                className='h-4 w-4 rounded-full border-2 border-[var(--accent-primary)] bg-accent-subtle'/>
                             ) : (
                               <Circle className="h-4 w-4 text-[var(--text-muted)]"/>
                             )}
@@ -526,7 +527,7 @@ export default function CoursePlayerPage() {
                       {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
                   </span>
                     {contentStatus[activeContent.id] === 'completed' && (
-                      <span className="flex items-center gap-1 text-xs text-success-600 font-medium ml-2">
+                      <span className='flex items-center gap-1 text-xs text-status-success-text font-medium ml-2'>
                       <CheckCircle2 className="h-3.5 w-3.5"/> Completed
                     </span>
                     )}
@@ -547,7 +548,7 @@ export default function CoursePlayerPage() {
                   <button
                     onClick={goNext}
                     disabled={activeContentIdx >= allContents.length - 1}
-                    className="flex items-center gap-1 px-4 py-2 bg-accent-600 text-white text-sm rounded-md hover:bg-accent-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className='flex items-center gap-1 px-4 py-2 bg-accent text-inverse text-sm rounded-md hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed'
                   >
                     Next <ChevronRight className="h-4 w-4"/>
                   </button>
@@ -567,8 +568,8 @@ export default function CoursePlayerPage() {
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
             <div className="skeuo-card p-8 max-w-sm w-full mx-4 text-center">
               <div className="flex justify-center mb-4">
-                <div className="p-4 bg-success-100 rounded-full">
-                  <Award className="h-12 w-12 text-success-600"/>
+                <div className='p-4 bg-status-success-bg rounded-full'>
+                  <Award className='h-12 w-12 text-status-success-text'/>
                 </div>
               </div>
               <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Course Complete!</h2>
@@ -579,7 +580,7 @@ export default function CoursePlayerPage() {
               <div className="flex flex-col gap-2">
                 {enrollment?.certificateId && (
                   <button
-                    className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    className='w-full px-4 py-2 bg-status-success-bg text-inverse rounded-md font-medium hover:bg-status-success-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                     Download Certificate
                   </button>
                 )}

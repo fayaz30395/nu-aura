@@ -223,7 +223,7 @@ export default function TravelRequestDetailsPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading travel request...</p>
           </div>
         </div>
@@ -240,11 +240,11 @@ export default function TravelRequestDetailsPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text'/>
             <p className="text-[var(--text-secondary)]">{error || 'Travel request not found'}</p>
             <button
               onClick={() => router.push('/travel')}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors'
             >
               Back to Travel Requests
             </button>
@@ -312,7 +312,7 @@ export default function TravelRequestDetailsPage() {
               <button
                 onClick={() => setShowCancelReasonModal(true)}
                 disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400 rounded-xl hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors disabled:opacity-50"
+                className='flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-status-danger-border text-status-danger-text rounded-xl hover:bg-status-danger-bg transition-colors disabled:opacity-50'
               >
                 <XCircle className="h-4 w-4"/>
                 Cancel Request
@@ -322,7 +322,7 @@ export default function TravelRequestDetailsPage() {
               <button
                 onClick={handleComplete}
                 disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-success-500 to-success-600 text-white rounded-xl hover:from-success-600 hover:to-success-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-success-500 to-success-600 text-inverse rounded-xl hover:from-success-600 hover:to-success-700 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 <CheckCircle className="h-4 w-4"/>
                 Mark Completed
@@ -339,8 +339,8 @@ export default function TravelRequestDetailsPage() {
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                    <Plane className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                  <div className='p-2 bg-accent-subtle rounded-lg'>
+                    <Plane className='h-5 w-5 text-accent'/>
                   </div>
                   <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                     Travel Information
@@ -366,8 +366,8 @@ export default function TravelRequestDetailsPage() {
                     </div>
                     <div className="flex-shrink-0">
                       <div
-                        className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        <ArrowLeft className="h-4 w-4 text-accent-700 dark:text-accent-400 rotate-180"/>
+                        className='w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center'>
+                        <ArrowLeft className='h-4 w-4 text-accent rotate-180'/>
                       </div>
                     </div>
                     <div className="flex-1">
@@ -380,12 +380,12 @@ export default function TravelRequestDetailsPage() {
                   {travelRequest.isInternational && (
                     <div className="mt-4 flex items-center gap-2">
                       <span
-                        className="inline-block text-xs px-2 py-1 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
+                        className='inline-block text-xs px-2 py-1 bg-accent-subtle text-accent rounded'>
                         International Travel
                       </span>
                       {travelRequest.visaRequired && (
                         <span
-                          className="inline-block text-xs px-2 py-1 bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-400 rounded">
+                          className='inline-block text-xs px-2 py-1 bg-status-warning-bg text-status-warning-text rounded'>
                           Visa Required
                         </span>
                       )}
@@ -529,8 +529,8 @@ export default function TravelRequestDetailsPage() {
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] overflow-hidden">
               <div className="p-6 border-b border-[var(--border-main)] row-between">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                    <Receipt className="h-5 w-5 text-success-600 dark:text-success-400"/>
+                  <div className='p-2 bg-status-success-bg rounded-lg'>
+                    <Receipt className='h-5 w-5 text-status-success-text'/>
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -544,7 +544,7 @@ export default function TravelRequestDetailsPage() {
                 {isOwner && travelRequest.status === 'COMPLETED' && (
                   <button
                     onClick={() => router.push(`/travel/${travelRequest.id}/expenses/new`)}
-                    className="flex items-center gap-2 px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+                    className='flex items-center gap-2 px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors'
                   >
                     <Plus className="h-4 w-4"/>
                     Add Expense
@@ -559,7 +559,7 @@ export default function TravelRequestDetailsPage() {
                   <p className="text-[var(--text-muted)]">No expenses added yet</p>
                 </div>
               ) : (
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                <div className='divide-y divide-surface-100'>
                   {expenses.map((expense) => (
                     <div key={expense.id}
                          className="p-6 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
@@ -593,7 +593,7 @@ export default function TravelRequestDetailsPage() {
                             {formatCurrency(expense.amount)}
                           </p>
                           {expense.approvedAmount && expense.approvedAmount !== expense.amount && (
-                            <p className="text-sm text-success-600 dark:text-success-400">
+                            <p className='text-sm text-status-success-text'>
                               Approved: {formatCurrency(expense.approvedAmount)}
                             </p>
                           )}
@@ -611,8 +611,8 @@ export default function TravelRequestDetailsPage() {
             {/* Budget Summary */}
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-                <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                  <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+                <div className='p-2 bg-status-warning-bg rounded-lg'>
+                  <DollarSign className='h-5 w-5 text-status-warning-text'/>
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Budget Summary
@@ -635,7 +635,7 @@ export default function TravelRequestDetailsPage() {
                       <span className="text-body-secondary">
                         Advance Required
                       </span>
-                      <span className="font-medium text-warning-600 dark:text-warning-400">
+                      <span className='font-medium text-status-warning-text'>
                         {formatCurrency(travelRequest.advanceRequired)}
                       </span>
                     </div>
@@ -643,7 +643,7 @@ export default function TravelRequestDetailsPage() {
                       <span className="text-body-secondary">
                         Advance Approved
                       </span>
-                      <span className="font-medium text-success-600 dark:text-success-400">
+                      <span className='font-medium text-status-success-text'>
                         {formatCurrency(travelRequest.advanceApproved)}
                       </span>
                     </div>
@@ -665,7 +665,7 @@ export default function TravelRequestDetailsPage() {
                       <span className="text-body-secondary">
                         Approved Expenses
                       </span>
-                      <span className="font-medium text-success-600 dark:text-success-400">
+                      <span className='font-medium text-status-success-text'>
                         {formatCurrency(approvedExpenses)}
                       </span>
                     </div>
@@ -677,8 +677,8 @@ export default function TravelRequestDetailsPage() {
             {/* Status Timeline */}
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-                <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                  <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+                <div className='p-2 bg-accent-subtle rounded-lg'>
+                  <Clock className='h-5 w-5 text-accent'/>
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Status Information
@@ -711,11 +711,11 @@ export default function TravelRequestDetailsPage() {
 
                 {travelRequest.rejectionReason && (
                   <div
-                    className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-                    <p className="text-sm font-medium text-danger-900 dark:text-danger-100 mb-1">
+                    className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+                    <p className='text-sm font-medium text-status-danger-text mb-1'>
                       Rejection Reason
                     </p>
-                    <p className="text-sm text-danger-700 dark:text-danger-300">
+                    <p className='text-sm text-status-danger-text'>
                       {travelRequest.rejectionReason}
                     </p>
                   </div>
@@ -726,8 +726,8 @@ export default function TravelRequestDetailsPage() {
             {/* Employee Info */}
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-                <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                  <User className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                <div className='p-2 bg-accent-subtle rounded-lg'>
+                  <User className='h-5 w-5 text-accent'/>
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Employee Details
@@ -744,7 +744,6 @@ export default function TravelRequestDetailsPage() {
           </div>
         </div>
       </div>
-
       {/* Reject Reason Modal */}
       <Modal isOpen={showRejectReasonModal} onClose={() => setShowRejectReasonModal(false)} size="sm">
         <ModalHeader onClose={() => setShowRejectReasonModal(false)}>
@@ -781,7 +780,6 @@ export default function TravelRequestDetailsPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Cancel Reason Modal */}
       <Modal isOpen={showCancelReasonModal} onClose={() => setShowCancelReasonModal(false)} size="sm">
         <ModalHeader onClose={() => setShowCancelReasonModal(false)}>
@@ -818,7 +816,6 @@ export default function TravelRequestDetailsPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Complete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showCompleteConfirm}

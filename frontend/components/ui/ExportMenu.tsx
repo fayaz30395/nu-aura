@@ -129,7 +129,6 @@ function ExportMenu<T extends Record<string, unknown>>({
         Export
         <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')}/>
       </button>
-
       {/* Dropdown menu */}
       {open && (
         <div
@@ -148,12 +147,12 @@ function ExportMenu<T extends Record<string, unknown>>({
               onClick={handleCsv}
               className={cn(
                 'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
-                'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                'text-[var(--text-primary)] hover:bg-accent-subtle',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
               )}
             >
-              <FileText className="h-4 w-4 text-accent-700"/>
+              <FileText className='h-4 w-4 text-accent'/>
               Export as CSV
             </button>
 
@@ -163,12 +162,12 @@ function ExportMenu<T extends Record<string, unknown>>({
               onClick={handleExcel}
               className={cn(
                 'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
-                'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                'text-[var(--text-primary)] hover:bg-accent-subtle',
                 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 'min-h-[44px]'
               )}
             >
-              <FileSpreadsheet className="h-4 w-4 text-success-600"/>
+              <FileSpreadsheet className='h-4 w-4 text-status-success-text'/>
               Export as Excel
             </button>
 
@@ -180,13 +179,13 @@ function ExportMenu<T extends Record<string, unknown>>({
                 disabled={!onExportPdf}
                 className={cn(
                   'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors',
-                  'text-[var(--text-primary)] hover:bg-accent-50 dark:hover:bg-accent-900/20',
+                  'text-[var(--text-primary)] hover:bg-accent-subtle',
                   'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   'min-h-[44px]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
-                <FileDown className="h-4 w-4 text-danger-600"/>
+                <FileDown className='h-4 w-4 text-status-danger-text'/>
                 Export as PDF
               </button>
             )}

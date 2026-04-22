@@ -59,12 +59,12 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
+        <div className='min-h-screen flex items-center justify-center bg-base'>
           <div className="max-w-md w-full bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-dropdown)] p-8">
             <div
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-danger-100 dark:bg-danger-900/30 mx-auto mb-4">
+              className='flex items-center justify-center w-12 h-12 rounded-full bg-status-danger-bg mx-auto mb-4'>
               <svg
-                className="w-6 h-6 text-danger-600 dark:text-danger-400"
+                className='w-6 h-6 text-status-danger-text'
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -87,12 +87,12 @@ export class ErrorBoundary extends Component<Props, State> {
             {/* Development: Show full error details */}
             {isDevelopment && this.state.error && (
               <div
-                className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded p-4 mb-6">
-                <p className="text-sm text-danger-800 dark:text-danger-300 font-mono break-all mb-2">
+                className='bg-status-danger-bg border border-status-danger-border rounded p-4 mb-6'>
+                <p className='text-sm text-status-danger-text font-mono break-all mb-2'>
                   <strong>Error:</strong> {this.state.error.message}
                 </p>
                 <p
-                  className="text-xs text-danger-600 dark:text-danger-400 font-mono break-all whitespace-pre-wrap max-h-40 overflow-auto">
+                  className='text-xs text-status-danger-text font-mono break-all whitespace-pre-wrap max-h-40 overflow-auto'>
                   {this.state.error.stack}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Production: Show only error ID for support reference */}
             {!isDevelopment && this.state.errorId && (
-              <div className="bg-[var(--bg-surface)] dark:bg-surface-700 rounded p-4 mb-6 text-center">
+              <div className='bg-[var(--bg-surface)] rounded p-4 mb-6 text-center'>
                 <p className="text-caption mb-1">
                   Error Reference
                 </p>
@@ -113,7 +113,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-2">
               <button
                 onClick={() => this.setState({hasError: false, error: undefined, errorId: undefined})}
-                className="flex-1 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex-1 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent-hover font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Try Again
               </button>

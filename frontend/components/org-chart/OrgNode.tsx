@@ -100,12 +100,12 @@ function ProfilePopover({employee, directReportsCount}: ProfilePopoverProps) {
             width={48}
             height={48}
             unoptimized
-            className="h-12 w-12 rounded-full object-cover border-2 border-accent-200 dark:border-accent-700"
+            className='h-12 w-12 rounded-full object-cover border-2 border-[var(--accent-primary)]'
           />
         ) : (
           <div
-            className="h-12 w-12 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center border-2 border-accent-200 dark:border-accent-700">
-            <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
+            className='h-12 w-12 rounded-full bg-accent-subtle flex items-center justify-center border-2 border-[var(--accent-primary)]'>
+            <span className='text-sm font-semibold text-accent'>
               {getInitials(employee)}
             </span>
           </div>
@@ -118,31 +118,29 @@ function ProfilePopover({employee, directReportsCount}: ProfilePopoverProps) {
           )}
         </div>
       </div>
-
       {/* Details */}
       <div className="space-y-2 text-xs border-t border-[var(--border-subtle)] pt-2">
         {employee.workEmail && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Mail className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
+            <Mail className='h-3.5 w-3.5 text-accent flex-shrink-0'/>
             <span className="truncate">{employee.workEmail}</span>
           </div>
         )}
         {employee.phoneNumber && (
           <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-            <Phone className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
+            <Phone className='h-3.5 w-3.5 text-accent flex-shrink-0'/>
             <span>{employee.phoneNumber}</span>
           </div>
         )}
         <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-          <Users className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400 flex-shrink-0"/>
+          <Users className='h-3.5 w-3.5 text-accent flex-shrink-0'/>
           <span>{directReportsCount} direct report{directReportsCount !== 1 ? 's' : ''}</span>
         </div>
       </div>
-
       {/* Link to full profile */}
       <Link
         href={`/employees/${employee.id}`}
-        className="mt-2 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-xs font-medium py-2 transition-colors"
+        className='mt-2 flex items-center justify-center gap-1.5 w-full rounded-lg bg-accent hover:bg-accent-hover text-inverse text-xs font-medium py-2 transition-colors'
       >
         View Full Profile
         <ExternalLink className="h-3 w-3"/>
@@ -186,7 +184,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
           'min-w-[220px] max-w-[220px] p-4',
           style.bg,
           style.border,
-          isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 dark:ring-offset-surface-900 shadow-[var(--shadow-dropdown)] scale-105',
+          isHighlighted && 'ring-2 ring-accent-500 ring-offset-2 shadow-[var(--shadow-dropdown)] scale-105',
           !isHighlighted && 'hover:shadow-[var(--shadow-elevated)] hover:-translate-y-0.5',
         )}
         onClick={togglePopover}
@@ -209,11 +207,11 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
               width={36}
               height={36}
               unoptimized
-              className="h-9 w-9 rounded-full object-cover border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0"
+              className='h-9 w-9 rounded-full object-cover border border-[var(--border-subtle)] flex-shrink-0'
             />
           ) : (
             <div
-              className="h-9 w-9 rounded-full bg-[var(--bg-card)] flex items-center justify-center border border-[var(--border-subtle)] dark:border-surface-600 flex-shrink-0">
+              className='h-9 w-9 rounded-full bg-[var(--bg-card)] flex items-center justify-center border border-[var(--border-subtle)] flex-shrink-0'>
               <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {getInitials(employee)}
               </span>
@@ -247,13 +245,13 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
         {hasChildren && (
           <button
             onClick={toggleExpand}
-            className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-card)] flex items-center justify-center hover:bg-accent-50 dark:hover:bg-accent-900/30 transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className='absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-[var(--shadow-card)] flex items-center justify-center hover:bg-accent-subtle transition-colors z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? (
               <ChevronDown className="h-3.5 w-3.5 text-[var(--text-secondary)]"/>
             ) : (
-              <span className="text-2xs font-semibold text-accent-700 dark:text-accent-400">
+              <span className='text-2xs font-semibold text-accent'>
                 {children.length}
               </span>
             )}
@@ -267,16 +265,15 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
           )}
         </AnimatePresence>
       </div>
-
       {/* ── Children ─────────────────────────────────────────────── */}
       {hasChildren && expanded && (
         <div className="relative mt-8">
           {/* Vertical connector from parent */}
-          <div className="absolute left-1/2 -top-5 w-px h-5 bg-surface-300 dark:bg-surface-600 -translate-x-1/2"/>
+          <div className='absolute left-1/2 -top-5 w-px h-5 bg-card -translate-x-1/2'/>
 
           {/* Horizontal connector spanning children */}
           {children.length > 1 && (
-            <div className="absolute top-0 h-px bg-surface-300 dark:bg-surface-600" style={{
+            <div className='absolute top-0 h-px bg-card' style={{
               left: `calc(50% - ${(children.length - 1) * 130}px)`,
               width: `${(children.length - 1) * 260}px`,
             }}/>
@@ -287,7 +284,7 @@ export function OrgNode({node, isHighlighted, highlightedId, defaultExpanded = t
               <div key={child.employee.id} className="relative flex flex-col items-center">
                 {/* Vertical connector to child */}
                 <div
-                  className="absolute left-1/2 -top-0 w-px h-5 bg-surface-300 dark:bg-surface-600 -translate-x-1/2"/>
+                  className='absolute left-1/2 -top-0 w-px h-5 bg-card -translate-x-1/2'/>
                 <div className="pt-6">
                   <OrgNode
                     node={child}
@@ -325,8 +322,8 @@ export function OrgListNode({node, isHighlighted, highlightedId}: OrgListNodePro
         className={cn(
           'flex items-center gap-4 py-2 px-4 rounded-lg transition-colors cursor-pointer',
           isHighlighted
-            ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
-            : 'hover:bg-surface-50 dark:hover:bg-surface-800/50',
+            ? 'bg-accent-subtle ring-1 ring-accent-400'
+            : 'hover:bg-base',
         )}
         style={{paddingLeft: `${node.depth * 24 + 12}px`}}
         onClick={() => hasChildren && setExpanded(p => !p)}
@@ -348,7 +345,7 @@ export function OrgListNode({node, isHighlighted, highlightedId}: OrgListNodePro
               <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
             )
           ) : (
-            <div className="h-1.5 w-1.5 rounded-full bg-surface-300 dark:bg-surface-600"/>
+            <div className='h-1.5 w-1.5 rounded-full bg-card'/>
           )}
         </div>
 
@@ -360,12 +357,12 @@ export function OrgListNode({node, isHighlighted, highlightedId}: OrgListNodePro
             width={32}
             height={32}
             unoptimized
-            className="h-8 w-8 rounded-full object-cover border border-surface-200 dark:border-surface-600 flex-shrink-0"
+            className='h-8 w-8 rounded-full object-cover border border-subtle flex-shrink-0'
           />
         ) : (
           <div
-            className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-semibold text-accent-700 dark:text-accent-300">
+            className='h-8 w-8 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+            <span className='text-xs font-semibold text-accent'>
               {getInitials(employee)}
             </span>
           </div>
@@ -400,13 +397,12 @@ export function OrgListNode({node, isHighlighted, highlightedId}: OrgListNodePro
         <Link
           href={`/employees/${employee.id}`}
           onClick={e => e.stopPropagation()}
-          className="text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex-shrink-0"
+          className='text-accent hover:text-accent flex-shrink-0'
           aria-label={`View ${employee.fullName}'s profile`}
         >
           <ExternalLink className="h-3.5 w-3.5"/>
         </Link>
       </div>
-
       {/* Children */}
       {hasChildren && expanded && (
         <div>

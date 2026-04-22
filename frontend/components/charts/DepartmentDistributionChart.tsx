@@ -26,7 +26,7 @@ export const DepartmentDistributionChart: React.FC<DepartmentDistributionChartPr
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data} layout="vertical" margin={{top: 5, right: 30, left: 100, bottom: 5}}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
+              <CartesianGrid strokeDasharray="3 3" className='stroke-surface-200'/>
               <XAxis
                 type="number"
                 className="text-caption"

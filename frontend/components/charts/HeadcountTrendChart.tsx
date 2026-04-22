@@ -29,7 +29,7 @@ export const HeadcountTrendChart: React.FC<HeadcountTrendChartProps> = ({data, c
                   <stop offset="95%" stopColor="var(--chart-primary)" stopOpacity={0.1}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
+              <CartesianGrid strokeDasharray="3 3" className='stroke-surface-200'/>
               <XAxis
                 dataKey="date"
                 className="text-caption"

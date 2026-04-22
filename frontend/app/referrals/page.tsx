@@ -185,7 +185,8 @@ export default function ReferralsPage() {
     return (
       <AppLayout activeMenuItem="referrals">
         <div className="flex items-center justify-center h-64">
-          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div
+            className='h-8 w-8 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
         </div>
       </AppLayout>
     );
@@ -240,7 +241,7 @@ export default function ReferralsPage() {
           </div>
           <button
             onClick={() => setActiveTab('submit')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             <Plus className="h-5 w-5"/>
             Submit Referral
@@ -282,7 +283,7 @@ export default function ReferralsPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                    <stat.icon className="h-5 w-5 text-white"/>
+                    <stat.icon className='h-5 w-5 text-inverse'/>
                   </div>
                   <div>
                     <p className="text-body-secondary">{stat.label}</p>
@@ -339,7 +340,7 @@ export default function ReferralsPage() {
         {activeTab === 'my-referrals' && (
           <div>
             {isMyLoading ? (
-              <SkeletonTable rows={5} columns={4} />
+              <SkeletonTable rows={5} columns={4}/>
             ) : myReferrals.length === 0 ? (
               <EmptyState
                 title="No referrals yet"
@@ -427,12 +428,12 @@ export default function ReferralsPage() {
           <div className="max-w-2xl">
             {submitSuccess ? (
               <div
-                className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4"/>
-                <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
+                className='bg-status-success-bg border border-status-success-border rounded-xl p-6 text-center'>
+                <CheckCircle className='h-12 w-12 text-status-success-text mx-auto mb-4'/>
+                <h3 className='text-xl font-semibold text-status-success-text'>
                   Referral Submitted Successfully!
                 </h3>
-                <p className="text-sm text-success-600 dark:text-success-400 mt-1">
+                <p className='text-sm text-status-success-text mt-1'>
                   You can track its progress in the My Referrals tab.
                 </p>
               </div>
@@ -457,7 +458,7 @@ export default function ReferralsPage() {
                       placeholder="Full name"
                     />
                     {errors.candidateName && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.candidateName.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.candidateName.message}</p>
                     )}
                   </div>
 
@@ -473,7 +474,7 @@ export default function ReferralsPage() {
                       placeholder="candidate@email.com"
                     />
                     {errors.candidateEmail && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.candidateEmail.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.candidateEmail.message}</p>
                     )}
                   </div>
 
@@ -512,7 +513,7 @@ export default function ReferralsPage() {
                       placeholder="e.g., Senior Software Engineer"
                     />
                     {errors.jobTitle && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.jobTitle.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.jobTitle.message}</p>
                     )}
                   </div>
 
@@ -534,7 +535,7 @@ export default function ReferralsPage() {
                       )}
                     </select>
                     {errors.relationship && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.relationship.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.relationship.message}</p>
                     )}
                   </div>
                 </div>
@@ -566,14 +567,14 @@ export default function ReferralsPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || submitReferral.isPending}
-                    className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='px-6 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {submitReferral.isPending ? 'Submitting...' : 'Submit Referral'}
                   </button>
                 </div>
 
                 {submitReferral.isError && (
-                  <p className="text-sm text-danger-500 mt-2">
+                  <p className='text-sm text-status-danger-text mt-2'>
                     Failed to submit referral. Please try again.
                   </p>
                 )}
@@ -588,7 +589,7 @@ export default function ReferralsPage() {
             {isPoliciesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({length: 4}).map((_, i) => (
-                  <SkeletonCard key={i} />
+                  <SkeletonCard key={i}/>
                 ))}
               </div>
             ) : policies.length === 0 ? (
@@ -671,7 +672,7 @@ export default function ReferralsPage() {
           <PermissionGate permission={Permissions.REFERRAL_MANAGE}>
             <div>
               {isAllLoading ? (
-                <SkeletonTable rows={8} columns={5} />
+                <SkeletonTable rows={8} columns={5}/>
               ) : !allReferralsData || allReferralsData.content.length === 0 ? (
                 <EmptyState
                   title="No referrals found"
@@ -756,7 +757,7 @@ export default function ReferralsPage() {
                                           status: 'SCREENING',
                                         })
                                       }
-                                      className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                      className='text-xs px-2.5 py-1 rounded-lg bg-accent-subtle text-accent hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                     >
                                       Screen
                                     </button>

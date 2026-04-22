@@ -173,7 +173,7 @@ export function TaskDetailsModal({
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(normalizedTask.type)}`}>
             {getTypeLabel(normalizedTask.type)}
           </span>
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className='text-xl font-semibold text-primary'>
             {normalizedTask.name}
           </h2>
         </div>
@@ -184,7 +184,7 @@ export function TaskDetailsModal({
           <div className="flex flex-wrap gap-4">
             {/* Status */}
             <div className="flex-1 min-w-[150px]">
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+              <label className='block text-sm font-medium text-secondary mb-2'>
                 Status
               </label>
               {readonly || !onUpdateStatus ? (
@@ -206,7 +206,7 @@ export function TaskDetailsModal({
                   value={normalizedTask.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   disabled={isSaving}
-                  className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className='w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-card)] text-primary'
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -220,7 +220,7 @@ export function TaskDetailsModal({
             {/* Priority */}
             {normalizedTask.priority && (
               <div className="flex-1 min-w-[150px]">
-                <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+                <label className='block text-sm font-medium text-secondary mb-2'>
                   Priority
                 </label>
                 <span
@@ -242,14 +242,14 @@ export function TaskDetailsModal({
             <div className="flex flex-wrap gap-2">
               {isDelayed && (
                 <span
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300">
+                  className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-status-danger-bg text-status-danger-text'>
                   <AlertCircle className="w-4 h-4"/>
                   Delayed
                 </span>
               )}
               {isAtRisk && !isDelayed && (
                 <span
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
+                  className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-status-warning-bg text-status-warning-text'>
                   <AlertCircle className="w-4 h-4"/>
                   At Risk
                 </span>
@@ -260,11 +260,11 @@ export function TaskDetailsModal({
           {/* Description */}
           {normalizedTask.description && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+              <label className='block text-sm font-medium text-secondary mb-2'>
                 <FileText className="w-4 h-4 inline mr-1"/>
                 Description
               </label>
-              <p className="text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
+              <p className='text-secondary bg-base rounded-lg p-4'>
                 {normalizedTask.description}
               </p>
             </div>
@@ -272,30 +272,30 @@ export function TaskDetailsModal({
 
           {/* Date Information */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-surface-500 mb-1">
+            <div className='bg-base rounded-lg p-4'>
+              <div className='flex items-center gap-2 text-muted mb-1'>
                 <Calendar className="w-4 h-4"/>
                 <span className="text-sm">Start Date</span>
               </div>
-              <p className="font-semibold text-surface-900 dark:text-surface-50">
+              <p className='font-semibold text-primary'>
                 {format(normalizedTask.startDate, 'MMM d, yyyy')}
               </p>
             </div>
-            <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-surface-500 mb-1">
+            <div className='bg-base rounded-lg p-4'>
+              <div className='flex items-center gap-2 text-muted mb-1'>
                 <Calendar className="w-4 h-4"/>
                 <span className="text-sm">End Date</span>
               </div>
-              <p className="font-semibold text-surface-900 dark:text-surface-50">
+              <p className='font-semibold text-primary'>
                 {format(normalizedTask.endDate, 'MMM d, yyyy')}
               </p>
             </div>
-            <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-surface-500 mb-1">
+            <div className='bg-base rounded-lg p-4'>
+              <div className='flex items-center gap-2 text-muted mb-1'>
                 <Clock className="w-4 h-4"/>
                 <span className="text-sm">Duration</span>
               </div>
-              <p className="font-semibold text-surface-900 dark:text-surface-50">
+              <p className='font-semibold text-primary'>
                 {duration} day{duration !== 1 ? 's' : ''}
               </p>
             </div>
@@ -305,7 +305,7 @@ export function TaskDetailsModal({
           {normalizedTask.progress !== undefined && (
             <div>
               <div className="row-between mb-2">
-                <label className="text-sm font-medium text-surface-600 dark:text-surface-400 flex items-center gap-2">
+                <label className='text-sm font-medium text-secondary flex items-center gap-2'>
                   <TrendingUp className="w-4 h-4"/>
                   Progress
                 </label>
@@ -313,7 +313,7 @@ export function TaskDetailsModal({
                   <button
                     onClick={isEditingProgress ? handleSaveProgress : handleStartEditProgress}
                     disabled={isSaving}
-                    className="text-sm text-accent-700 hover:text-accent-700 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                    className='text-sm text-accent hover:text-accent flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
                   >
                     {isEditingProgress ? (
                       <>
@@ -339,24 +339,24 @@ export function TaskDetailsModal({
                     onChange={(e) => setEditProgress(parseInt(e.target.value))}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-sm text-surface-500">
+                  <div className='flex justify-between text-sm text-muted'>
                     <span>0%</span>
-                    <span className="font-medium text-accent-700">{editProgress}%</span>
+                    <span className='font-medium text-accent'>{editProgress}%</span>
                     <span>100%</span>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                  <div className='h-3 bg-elevated rounded-full overflow-hidden'>
                     <div
-                      className="h-full bg-accent-500 rounded-full transition-all duration-300"
+                      className='h-full bg-accent rounded-full transition-all duration-300'
                       style={{width: `${normalizedTask.progress}%`}}
                     />
                   </div>
-                  <div className="flex justify-between text-sm text-surface-500">
+                  <div className='flex justify-between text-sm text-muted'>
                     <span>{normalizedTask.progress}% complete</span>
                     {normalizedTask.progress === 100 && (
-                      <span className="flex items-center gap-1 text-success-600">
+                      <span className='flex items-center gap-1 text-status-success-text'>
                         <CheckCircle className="w-4 h-4"/>
                         Completed
                       </span>
@@ -371,23 +371,23 @@ export function TaskDetailsModal({
           {(normalizedTask.estimatedHours || normalizedTask.actualHours) && (
             <div className="grid grid-cols-2 gap-4">
               {normalizedTask.estimatedHours && (
-                <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-surface-500 mb-1">
+                <div className='bg-base rounded-lg p-4'>
+                  <div className='flex items-center gap-2 text-muted mb-1'>
                     <Timer className="w-4 h-4"/>
                     <span className="text-sm">Estimated</span>
                   </div>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className='font-semibold text-primary'>
                     {normalizedTask.estimatedHours} hours
                   </p>
                 </div>
               )}
               {normalizedTask.actualHours !== undefined && (
-                <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-surface-500 mb-1">
+                <div className='bg-base rounded-lg p-4'>
+                  <div className='flex items-center gap-2 text-muted mb-1'>
                     <BarChart2 className="w-4 h-4"/>
                     <span className="text-sm">Actual</span>
                   </div>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className='font-semibold text-primary'>
                     {normalizedTask.actualHours} hours
                     {normalizedTask.estimatedHours && (
                       <span
@@ -413,7 +413,7 @@ export function TaskDetailsModal({
           {normalizedTask.assignees && normalizedTask.assignees.length > 0 && (
             <div>
               <label
-                className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
+                className='block text-sm font-medium text-secondary mb-4 flex items-center gap-2'>
                 <Users className="w-4 h-4"/>
                 Assigned To ({normalizedTask.assignees.length})
               </label>
@@ -421,11 +421,11 @@ export function TaskDetailsModal({
                 {normalizedTask.assignees.map((assignee) => (
                   <div
                     key={assignee.id}
-                    className="row-between p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
+                    className='row-between p-4 bg-base rounded-lg'
                   >
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center text-accent-700 font-medium">
+                        className='w-10 h-10 rounded-full bg-accent-subtle flex items-center justify-center text-accent font-medium'>
                         {assignee.employeeName
                           .split(' ')
                           .map((n) => n[0])
@@ -434,19 +434,19 @@ export function TaskDetailsModal({
                           .slice(0, 2)}
                       </div>
                       <div>
-                        <p className="font-medium text-surface-900 dark:text-surface-50">
+                        <p className='font-medium text-primary'>
                           {assignee.employeeName}
                         </p>
                         {assignee.role && (
-                          <p className="text-sm text-surface-500">{assignee.role}</p>
+                          <p className='text-sm text-muted'>{assignee.role}</p>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      <span className='text-sm font-medium text-secondary'>
                         {assignee.allocationPercentage}%
                       </span>
-                      <p className="text-xs text-surface-500">Allocation</p>
+                      <p className='text-xs text-muted'>Allocation</p>
                     </div>
                   </div>
                 ))}
@@ -458,7 +458,7 @@ export function TaskDetailsModal({
           {normalizedTask.dependencies && normalizedTask.dependencies.length > 0 && (
             <div>
               <label
-                className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
+                className='block text-sm font-medium text-secondary mb-4 flex items-center gap-2'>
                 <Link2 className="w-4 h-4"/>
                 Dependencies ({normalizedTask.dependencies.length})
               </label>
@@ -466,14 +466,14 @@ export function TaskDetailsModal({
                 {normalizedTask.dependencies.map((dep) => (
                   <div
                     key={dep.id}
-                    className="flex items-center gap-2 p-4 bg-surface-50 dark:bg-surface-900 rounded-lg"
+                    className='flex items-center gap-2 p-4 bg-base rounded-lg'
                   >
-                    <ArrowRight className="w-4 h-4 text-surface-400"/>
-                    <span className="text-surface-700 dark:text-surface-300">
+                    <ArrowRight className='w-4 h-4 text-muted'/>
+                    <span className='text-secondary'>
                       {dep.type.replace(/-/g, ' ')}
                     </span>
                     {dep.lag && (
-                      <span className="text-sm text-surface-500">
+                      <span className='text-sm text-muted'>
                         ({dep.lag > 0 ? '+' : ''}{dep.lag} days)
                       </span>
                     )}
@@ -485,12 +485,12 @@ export function TaskDetailsModal({
 
           {/* Project Reference */}
           {normalizedTask.projectName && (
-            <div className="bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-surface-500 mb-1">
+            <div className='bg-base rounded-lg p-4'>
+              <div className='flex items-center gap-2 text-muted mb-1'>
                 <Target className="w-4 h-4"/>
                 <span className="text-sm">Project</span>
               </div>
-              <p className="font-medium text-surface-900 dark:text-surface-50">
+              <p className='font-medium text-primary'>
                 {normalizedTask.projectName}
               </p>
             </div>
@@ -500,7 +500,7 @@ export function TaskDetailsModal({
       <ModalFooter>
         <button
           onClick={onClose}
-          className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+          className='px-4 py-2 border border-subtle rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
         >
           Close
         </button>

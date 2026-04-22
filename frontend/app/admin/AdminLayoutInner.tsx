@@ -364,14 +364,14 @@ export default function AdminLayoutInner({
           <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
             {!isReady ? (
               <div className="p-6">
-                <SkeletonDashboard />
+                <SkeletonDashboard/>
               </div>
             ) : !hasAdminAccess ? (
               <div className="flex h-full items-center justify-center">
                 <div className="space-y-4 text-center">
                   <div
-                    className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center mx-auto">
-                    <span className="text-danger-600 dark:text-danger-400 text-lg">✕</span>
+                    className='h-12 w-12 rounded-full bg-status-danger-bg flex items-center justify-center mx-auto'>
+                    <span className='text-status-danger-text text-lg'>✕</span>
                   </div>
                   <h1 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h1>
                   <p className="text-[var(--text-secondary)]">You do not have permission to access the admin

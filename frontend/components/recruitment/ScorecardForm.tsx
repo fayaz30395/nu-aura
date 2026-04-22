@@ -193,7 +193,6 @@ export function ScorecardForm({
       <h3 className="text-sm font-semibold text-[var(--text-heading)] mb-4">
         Interview Scorecard
       </h3>
-
       {/* Template selector */}
       <div className="mb-4">
         <Controller
@@ -222,7 +221,6 @@ export function ScorecardForm({
           )}
         />
       </div>
-
       {/* Criteria by category */}
       <div className="space-y-4 mb-4">
         {Object.entries(groupedCategories).map(([category, indices]) => (
@@ -283,7 +281,6 @@ export function ScorecardForm({
           </div>
         ))}
       </div>
-
       {/* Overall rating */}
       <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-4 mb-4">
         <div>
@@ -330,7 +327,6 @@ export function ScorecardForm({
           />
         </div>
       </div>
-
       {/* Overall notes */}
       <div className="mb-4">
         <Controller
@@ -353,7 +349,6 @@ export function ScorecardForm({
           )}
         />
       </div>
-
       {/* Action buttons */}
       <div className="flex items-center justify-end gap-2 border-t border-[var(--border-subtle)] pt-4">
         <button
@@ -369,7 +364,7 @@ export function ScorecardForm({
           type="button"
           onClick={handleSubmitScorecard}
           disabled={isSaving}
-          className="skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-white cursor-pointer hover:bg-[var(--accent-primary-hover)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+          className='skeuo-button flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-inverse cursor-pointer hover:bg-[var(--accent-primary-hover)] active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
         >
           <Send size={14}/>
           Submit

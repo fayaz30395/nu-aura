@@ -93,11 +93,11 @@ function StatusIcon({status}: { status: PayrollRunStatus }) {
   switch (status) {
     case 'LOCKED':
     case 'APPROVED':
-      return <CheckCircle className="h-4 w-4 text-success-500"/>;
+      return <CheckCircle className='h-4 w-4 text-status-success-text'/>;
     case 'PROCESSED':
-      return <CheckCircle className="h-4 w-4 text-accent-500"/>;
+      return <CheckCircle className='h-4 w-4 text-accent'/>;
     case 'PROCESSING':
-      return <Clock className="h-4 w-4 text-warning-500"/>;
+      return <Clock className='h-4 w-4 text-status-warning-text'/>;
     default:
       return <AlertCircle className="h-4 w-4 text-[var(--text-muted)]"/>;
   }
@@ -146,7 +146,6 @@ export default function AdminPayrollPage() {
           Manage payroll runs, salary structures, and statutory configurations
         </p>
       </div>
-
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
@@ -168,7 +167,6 @@ export default function AdminPayrollPage() {
           </div>
         ))}
       </div>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left: recent data tables */}
         <div className="xl:col-span-2 space-y-4">
@@ -179,7 +177,7 @@ export default function AdminPayrollPage() {
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Recent Payroll Runs</h2>
               <Link
                 href="/payroll/runs"
-                className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
+                className='text-xs text-accent hover:underline flex items-center gap-1 cursor-pointer'
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -200,7 +198,7 @@ export default function AdminPayrollPage() {
                 <p className="text-body-muted">No payroll runs yet</p>
                 <Link
                   href="/payroll/runs"
-                  className="mt-2 inline-block text-xs text-accent-500 hover:underline cursor-pointer"
+                  className='mt-2 inline-block text-xs text-accent hover:underline cursor-pointer'
                 >
                   Create first run →
                 </Link>
@@ -242,7 +240,7 @@ export default function AdminPayrollPage() {
               </h2>
               <Link
                 href="/payroll/structures"
-                className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
+                className='text-xs text-accent hover:underline flex items-center gap-1 cursor-pointer'
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -264,7 +262,7 @@ export default function AdminPayrollPage() {
               <div className="divide-y divide-[var(--border-subtle)]">
                 {structures.map((s) => (
                   <div key={s.id} className="flex items-center gap-2 px-4 py-2">
-                    <Layers className="h-4 w-4 text-accent-500 shrink-0"/>
+                    <Layers className='h-4 w-4 text-accent shrink-0'/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {s.employeeName ?? `Employee ${s.employeeId.substring(0, 8)}`}
@@ -309,7 +307,7 @@ export default function AdminPayrollPage() {
                   <p className="text-caption truncate">{description}</p>
                 </div>
                 <ChevronRight
-                  className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0"/>
+                  className='h-4 w-4 text-[var(--text-muted)] group-hover:text-accent transition-colors shrink-0'/>
               </Link>
             ))}
           </div>

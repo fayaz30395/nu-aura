@@ -16,13 +16,12 @@ export default function Loading() {
           <Skeleton height={36} width={110}/>
         </div>
       </div>
-
       {/* Stat cards skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {Array.from({length: 3}).map((_, i) => (
           <div
             key={i}
-            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4"
+            className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4'
           >
             <div className="flex items-start gap-4">
               <Skeleton height={48} width={48} radius="md"/>
@@ -34,14 +33,12 @@ export default function Loading() {
           </div>
         ))}
       </div>
-
       {/* Tab bar skeleton */}
-      <div className="flex gap-4 border-b border-surface-200 dark:border-surface-800">
+      <div className='flex gap-4 border-b border-subtle'>
         {Array.from({length: 3}).map((_, i) => (
           <Skeleton key={i} height={40} width={100}/>
         ))}
       </div>
-
       {/* Content list skeleton */}
       <div className="space-y-2">
         {Array.from({length: 5}).map((_, i) => (

@@ -223,12 +223,14 @@ export default function ReportBuilderPage() {
         </div>
 
         {error && (
-          <div className="rounded-md bg-danger-50 border border-danger-200 p-4 text-sm text-danger-700">
+          <div
+            className='rounded-md bg-status-danger-bg border border-status-danger-border p-4 text-sm text-status-danger-text'>
             {error}
           </div>
         )}
         {savedMsg && (
-          <div className="rounded-md bg-success-50 border border-success-200 p-4 text-sm text-success-700">
+          <div
+            className='rounded-md bg-status-success-bg border border-status-success-border p-4 text-sm text-status-success-text'>
             {savedMsg}
           </div>
         )}
@@ -264,7 +266,7 @@ export default function ReportBuilderPage() {
                       type="checkbox"
                       checked={selectedCols.includes(col.key)}
                       onChange={() => toggleColumn(col.key)}
-                      className="rounded border-[var(--border-strong)] text-accent-600"
+                      className='rounded border-[var(--border-strong)] text-accent'
                     />
                     <span className="text-sm text-[var(--text-primary)]">{col.label}</span>
                   </label>
@@ -281,7 +283,7 @@ export default function ReportBuilderPage() {
                 {filters.length < 5 && (
                   <button
                     onClick={addFilter}
-                    className="text-xs text-accent-600 hover:text-accent-800 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='text-xs text-accent hover:text-accent font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     + Add Filter
                   </button>
@@ -316,7 +318,7 @@ export default function ReportBuilderPage() {
                       </select>
                       <button
                         onClick={() => removeFilter(i)}
-                        className="text-danger-400 hover:text-danger-600 text-xs px-1"
+                        className='text-status-danger-text hover:text-status-danger-text text-xs px-1'
                       >
                         ✕
                       </button>
@@ -389,7 +391,7 @@ export default function ReportBuilderPage() {
                   <button
                     onClick={handlePreview}
                     disabled={loading || selectedCols.length === 0}
-                    className="w-full bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium py-2 rounded disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='w-full bg-accent hover:bg-accent text-inverse text-sm font-medium py-2 rounded disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {loading ? 'Loading…' : 'Preview Results'}
                   </button>

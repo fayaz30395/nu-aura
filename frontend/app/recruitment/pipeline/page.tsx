@@ -192,14 +192,7 @@ const getTimeInStage = (dateStr?: string | null): string => {
   return weeks === 1 ? '1 week' : `${weeks} weeks`;
 };
 
-const getErrorMessage = (error: unknown, fallback: string): string => {
-  if (error && typeof error === 'object' && 'response' in error) {
-    const r = (error as { response?: { data?: { message?: string } } }).response;
-    return r?.data?.message || fallback;
-  }
-  if (error instanceof Error) return error.message;
-  return fallback;
-};
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -223,7 +216,7 @@ const StarRating: React.FC<StarRatingProps> = ({value, readOnly = false, size = 
       >
         <Star
           size={size}
-          className={i < value ? 'fill-warning-400 text-warning-400' : 'text-[var(--text-muted)]'}
+          className={i < value ? 'fill-warning-400 text-status-warning-text' : 'text-[var(--text-muted)]'}
         />
       </button>
     ))}
@@ -308,7 +301,7 @@ const CardMenu: React.FC<CardMenuProps> = ({applicant, onViewDetails, onMoveToNe
           {applicant.status !== ApplicationStatus.REJECTED && (
             <button
               type="button"
-              className="w-full text-left px-4 py-2 hover:bg-danger-50 text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='w-full text-left px-4 py-2 hover:bg-status-danger-bg text-status-danger-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               onClick={() => {
                 setOpen(false);
                 onReject();
@@ -380,38 +373,35 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({pipelineData}) => {
       {/* Total Active */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <User size={14} className="text-accent-500"/>
+          <User size={14} className='text-accent'/>
           <span className="text-caption font-medium">Active Pipeline</span>
         </div>
         <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{totalActive}</p>
         <p className="text-caption mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
       </div>
-
       {/* Conversion Rate */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={14} className="text-success-500"/>
+          <TrendingUp size={14} className='text-status-success-text'/>
           <span className="text-caption font-medium">Conversion Rate</span>
         </div>
         <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{conversionRate}%</p>
         <p className="text-caption mt-0.5">Applied → Accepted</p>
       </div>
-
       {/* Avg Time in Stage */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <Clock size={14} className="text-warning-500"/>
+          <Clock size={14} className='text-status-warning-text'/>
           <span className="text-caption font-medium">Avg. Time in Stage</span>
         </div>
         <p
           className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
         <p className="text-caption mt-0.5">Across all stages</p>
       </div>
-
       {/* Top Sources */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <BarChart3 size={14} className="text-accent-500"/>
+          <BarChart3 size={14} className='text-accent'/>
           <span className="text-caption font-medium">Top Sources</span>
         </div>
         {sourceBreakdown.length > 0 ? (
@@ -451,7 +441,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({pipelineData}) => 
   return (
     <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl p-4">
       <p className="text-xs font-semibold text-[var(--text-secondary)] mb-4 flex items-center gap-1.5">
-        <TrendingUp size={13} className="text-accent-500"/>
+        <TrendingUp size={13} className='text-accent'/>
         Hiring Funnel
       </p>
       <div className="flex items-end gap-1.5 h-14">
@@ -919,7 +909,8 @@ export default function ApplicantPipelinePage() {
 
           {/* ── Errors ────────────────────────────────────────────────────── */}
           {jobsError && (
-            <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
+            <div
+              className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4'>
               {jobsError}
             </div>
           )}
@@ -927,11 +918,11 @@ export default function ApplicantPipelinePage() {
           {/* ── Drag Error Toast ───────────────────────────────────────────── */}
           {dragError && (
             <div
-              className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+              className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4 flex items-center gap-2 animate-in fade-in slide-in-from-top-2'>
               <AlertCircle size={16} className="flex-shrink-0"/>
               <span className="flex-1">{dragError}</span>
               <button onClick={() => setDragError(null)} aria-label="Close error message"
-                      className="p-1 hover:bg-danger-100 rounded cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className='p-1 hover:bg-status-danger-bg rounded cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                 <X size={14}/>
               </button>
             </div>
@@ -950,13 +941,14 @@ export default function ApplicantPipelinePage() {
             </div>
           ) : pipelineLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 size={32} className="animate-spin text-accent-500"/>
+              <Loader2 size={32} className='animate-spin text-accent'/>
               <span className="ml-4 text-[var(--text-muted)]">
               Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
             </span>
             </div>
           ) : pipelineError ? (
-            <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
+            <div
+              className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4'>
               {pipelineError}
             </div>
           ) : (
@@ -997,7 +989,7 @@ export default function ApplicantPipelinePage() {
                     placeholder="Search by candidate name..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
+                    className='w-full pl-9 pr-4 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]'
                   />
                   {searchQuery && (
                     <button
@@ -1021,7 +1013,7 @@ export default function ApplicantPipelinePage() {
                   <Filter size={14}/>
                   Filters
                   {hasActiveFilters && (
-                    <span className="bg-accent-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                    <span className='bg-accent text-inverse text-xs font-bold px-1.5 py-0.5 rounded-full'>
                     {(sourceFilter ? 1 : 0) + (minRating > 0 ? 1 : 0)}
                   </span>
                   )}
@@ -1035,7 +1027,7 @@ export default function ApplicantPipelinePage() {
                       setSourceFilter('');
                       setMinRating(0);
                     }}
-                    className="text-xs text-accent-700 hover:text-accent-800 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='text-xs text-accent hover:text-accent font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     Clear all
                   </button>
@@ -1229,7 +1221,7 @@ export default function ApplicantPipelinePage() {
                                                   e.stopPropagation();
                                                   handleMoveToNextStage(applicant);
                                                 }}
-                                                className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-accent-50 text-[var(--text-muted)] hover:text-accent-700 border border-[var(--border-main)] hover:border-accent-200 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                                className='w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-accent-subtle text-[var(--text-muted)] hover:text-accent border border-[var(--border-main)] hover:border-[var(--accent-primary)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                               >
                                                 {isMoving ? (
                                                   <Loader2 size={10} className="animate-spin"/>
@@ -1269,7 +1261,8 @@ export default function ApplicantPipelinePage() {
           <ModalBody>
             <div className="space-y-4">
               {addError && (
-                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
+                <div
+                  className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4'>
                   {addError}
                 </div>
               )}
@@ -1358,7 +1351,8 @@ export default function ApplicantPipelinePage() {
             {activeApplicant && (
               <div className="space-y-4">
                 {detailError && (
-                  <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
+                  <div
+                    className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4'>
                     {detailError}
                   </div>
                 )}
@@ -1506,13 +1500,14 @@ export default function ApplicantPipelinePage() {
           <ModalBody>
             <div className="space-y-4">
               {offerError && (
-                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
+                <div
+                  className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4'>
                   {offerError}
                 </div>
               )}
               {offerSuccess && (
                 <div
-                  className="bg-success-50 border border-success-200 text-success-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
+                  className='bg-status-success-bg border border-status-success-border text-status-success-text text-sm rounded-lg px-4 py-4 flex items-center gap-2'>
                   <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -1576,7 +1571,7 @@ export default function ApplicantPipelinePage() {
                   onChange={e => setOfferForm(prev => ({...prev, proposedJoiningDate: e.target.value}))}
                   min={new Date().toISOString().split('T')[0]}
                   disabled={offerLoading}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
+                  className='w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-input)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]'
                 />
               </div>
 
@@ -1593,7 +1588,8 @@ export default function ApplicantPipelinePage() {
                 />
               </div>
 
-              <div className="bg-accent-50 border border-accent-200 rounded-lg p-4 text-xs text-accent-700">
+              <div
+                className='bg-accent-subtle border border-[var(--accent-primary)] rounded-lg p-4 text-xs text-accent'>
                 The offer letter will be generated, a PDF created, and a signing link sent to the candidate&apos;s
                 email.
                 The applicant will be moved to <strong>Offered</strong> stage automatically.

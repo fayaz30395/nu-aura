@@ -60,7 +60,7 @@ export const UserMenu = React.memo(function UserMenu({
           />
         ) : (
           <div
-            className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-accent-200 dark:ring-accent-800">
+            className='h-9 w-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-inverse text-sm font-semibold ring-2 ring-accent-200'>
             {initials}
           </div>
         )}
@@ -79,7 +79,6 @@ export const UserMenu = React.memo(function UserMenu({
           )}
         />
       </button>
-
       {/* Dropdown Menu */}
       {isOpen && (
         <div
@@ -125,9 +124,9 @@ export const UserMenu = React.memo(function UserMenu({
                 onClose();
                 onLogout?.();
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
+              className='flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-status-danger-text hover:bg-status-danger-bg transition-all duration-150'
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-50 dark:bg-danger-950/30">
+              <div className='flex items-center justify-center w-8 h-8 rounded-lg bg-status-danger-bg'>
                 <LogOut className="h-4 w-4"/>
               </div>
               <span>Sign out</span>

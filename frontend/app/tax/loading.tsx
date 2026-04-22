@@ -16,13 +16,12 @@ export default function TaxLoading() {
           <Skeleton height={36} width={90}/>
         </div>
       </div>
-
       {/* Stat cards skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({length: 3}).map((_, index) => (
           <div
             key={index}
-            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
+            className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4 sm:p-6'
           >
             <Skeleton height={16} width="60%" className="mb-4"/>
             <Skeleton height={32} width="80%" className="mb-4"/>
@@ -30,7 +29,6 @@ export default function TaxLoading() {
           </div>
         ))}
       </div>
-
       {/* Search and filters skeleton */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <div className="flex-1 flex gap-2">
@@ -39,10 +37,9 @@ export default function TaxLoading() {
         </div>
         <Skeleton height={40} width={160}/>
       </div>
-
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
-        <div className="border-b border-surface-200 dark:border-surface-800">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
+        <div className='border-b border-subtle'>
           <Skeleton height={44}/>
         </div>
         <div className="space-y-2 p-4 sm:p-4">

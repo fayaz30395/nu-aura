@@ -110,7 +110,7 @@ function AttendanceTimelineBar({record}: { record: AttendanceRecord }) {
       {segments.map((seg, i) => (
         <div
           key={i}
-          className="absolute top-0 h-full rounded-full bg-accent-400"
+          className='absolute top-0 h-full rounded-full bg-accent-subtle'
           style={{left: `${seg.left}%`, width: `${seg.width}%`}}
         />
       ))}
@@ -424,8 +424,8 @@ export default function MyAttendancePage() {
                   <div className="flex items-center py-4 divider-b">
                     <div className="flex items-center gap-4">
                       <div
-                        className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-accent-500"/>
+                        className='w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center'>
+                        <Users className='h-4 w-4 text-accent'/>
                       </div>
                       <span className="text-sm font-medium text-[var(--text-primary)]">Me</span>
                     </div>
@@ -448,8 +448,8 @@ export default function MyAttendancePage() {
                   <div className="flex items-center py-4">
                     <div className="flex items-center gap-4">
                       <div
-                        className="w-8 h-8 rounded-full bg-info-100 dark:bg-info-900/30 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-info-500"/>
+                        className='w-8 h-8 rounded-full bg-status-info-bg flex items-center justify-center'>
+                        <Users className='h-4 w-4 text-status-info-text'/>
                       </div>
                       <span className="text-sm font-medium text-[var(--text-secondary)]">My Team</span>
                     </div>
@@ -548,12 +548,12 @@ export default function MyAttendancePage() {
               {/* Action links */}
               <div className="space-y-2">
                 <button
-                  className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
+                  className='cursor-pointer flex items-center gap-2 text-sm text-accent hover:text-accent transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md'>
                   <LogIn className="h-4 w-4"/>
                   <span>Remote Clock-In</span>
                 </button>
                 <button
-                  className="cursor-pointer flex items-center gap-2 text-sm text-accent-500 hover:text-accent-700 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md">
+                  className='cursor-pointer flex items-center gap-2 text-sm text-accent hover:text-accent transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-md'>
                   <FileText className="h-4 w-4"/>
                   <span>Attendance Policy</span>
                 </button>
@@ -612,7 +612,7 @@ export default function MyAttendancePage() {
                   {activeTab === tab.key && (
                     <motion.div
                       layoutId="tab-underline"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-500"
+                      className='absolute bottom-0 left-0 right-0 h-0.5 bg-accent'
                     />
                   )}
                 </button>
@@ -745,7 +745,6 @@ export default function MyAttendancePage() {
                                   {getStatusBadge(record)}
                                 </div>
                               </td>
-
                               {/* Attendance Visual */}
                               <td className="py-4 px-2">
                                 {isNonWork || record.status === 'ABSENT' ? (
@@ -761,7 +760,6 @@ export default function MyAttendancePage() {
                                   </div>
                                 )}
                               </td>
-
                               {/* Effective Hours */}
                               <td className="py-4 px-2">
                                 {!isNonWork && effectiveMin > 0 ? (
@@ -775,7 +773,6 @@ export default function MyAttendancePage() {
                                   <span className="text-body-muted">--</span>
                                 )}
                               </td>
-
                               {/* Gross Hours */}
                               <td className="py-4 px-2">
                                   <span className="text-body-secondary tabular-nums">
@@ -785,7 +782,6 @@ export default function MyAttendancePage() {
                                     }
                                   </span>
                               </td>
-
                               {/* Log action */}
                               <td className="py-4 px-2 text-center">
                                 {!isNonWork && record.checkInTime ? (
@@ -794,7 +790,7 @@ export default function MyAttendancePage() {
                                     className="cursor-pointer inline-flex items-center justify-center w-7 h-7 rounded-full hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                                     aria-label={isExpanded ? 'Hide time entries' : 'View time entries'}
                                   >
-                                    <Eye className="h-4 w-4 text-accent-500"/>
+                                    <Eye className='h-4 w-4 text-accent'/>
                                   </button>
                                 ) : (
                                   <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)] mx-auto"/>
@@ -894,27 +890,27 @@ export default function MyAttendancePage() {
                   <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-3 h-3 rounded-md bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800"/>
+                        className='w-3 h-3 rounded-md bg-status-success-bg border border-status-success-border'/>
                       <span className="text-caption">Full day</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-3 h-3 rounded-md bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800"/>
+                        className='w-3 h-3 rounded-md bg-status-warning-bg border border-status-warning-border'/>
                       <span className="text-caption">Partial</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-3 h-3 rounded-md bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800"/>
+                        className='w-3 h-3 rounded-md bg-status-danger-bg border border-status-danger-border'/>
                       <span className="text-caption">Absent</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-3 h-3 rounded-md bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800"/>
+                        className='w-3 h-3 rounded-md bg-status-info-bg border border-status-info-border'/>
                       <span className="text-caption">Leave</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-3 h-3 rounded-md bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700"/>
+                        className='w-3 h-3 rounded-md bg-surface border border-subtle'/>
                       <span className="text-caption">Off / Holiday</span>
                     </div>
                   </div>

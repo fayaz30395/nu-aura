@@ -228,7 +228,7 @@ export default function AdminDashboardPage() {
                 <Th>Roles</Th>
               </tr>
               </thead>
-              <tbody className="bg-[var(--bg-card)] divide-y divide-surface-100 dark:divide-surface-800">
+              <tbody className='bg-[var(--bg-card)] divide-y divide-surface-100'>
               {usersLoading ? (
                 <tr>
                   <td
@@ -249,7 +249,7 @@ export default function AdminDashboardPage() {
                 filteredByEmail.map((user) => (
                   <tr
                     key={user.id}
-                    className="hover:bg-[var(--bg-card-hover)] transition-colors border-l-2 border-transparent hover:border-accent-400"
+                    className='hover:bg-[var(--bg-card-hover)] transition-colors border-l-2 border-transparent hover:border-[var(--accent-primary)]'
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {user.firstName && (user.firstName + (user.lastName ? ' ' + user.lastName : '')) || user.email?.split('@')[0] || '—'}
@@ -341,7 +341,7 @@ export default function AdminDashboardPage() {
                 className="input-aura w-full px-4 py-2 text-sm rounded-xl"
               />
               {roleErrors.email && (
-                <p className="text-xs text-danger-500 mt-1">{roleErrors.email.message}</p>
+                <p className='text-xs text-status-danger-text mt-1'>{roleErrors.email.message}</p>
               )}
             </div>
             <div>
@@ -360,7 +360,7 @@ export default function AdminDashboardPage() {
                 ))}
               </select>
               {roleErrors.role && (
-                <p className="text-xs text-danger-500 mt-1">{roleErrors.role.message}</p>
+                <p className='text-xs text-status-danger-text mt-1'>{roleErrors.role.message}</p>
               )}
             </div>
           </div>
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
             <button
               type="submit"
               disabled={updateRoleMutation.isPending}
-              className="skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-accent-700 text-white hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className='skeuo-button px-4 py-2 text-sm font-medium rounded-xl bg-accent text-inverse hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-all'
             >
               {updateRoleMutation.isPending ? 'Updating...' : 'Assign / Update Role'}
             </button>
@@ -500,7 +500,6 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           )}
         </div>
       </div>
-
       {/* Component Status Grid */}
       {!isLoading && health?.components && (
         <motion.div
@@ -566,12 +565,11 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
           })}
         </motion.div>
       )}
-
       {/* Helper message for unavailable services */}
       {!isLoading && health?.status === 'DEGRADED' && (
         <div
-          className="mt-6 p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-          <p className="text-sm text-warning-800 dark:text-warning-300">
+          className='mt-6 p-4 bg-status-warning-bg border border-status-warning-border rounded-lg'>
+          <p className='text-sm text-status-warning-text'>
             <span className="font-medium">⚠️ System Degraded:</span> Some services may be temporarily unavailable. Try
             refreshing the status or contact your system administrator if the issue persists.
           </p>

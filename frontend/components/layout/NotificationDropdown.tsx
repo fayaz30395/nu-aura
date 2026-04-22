@@ -104,11 +104,11 @@ function formatRelativeTime(date: Date): string {
 function getNotificationIcon(type: 'email' | 'drive' | 'calendar'): React.ReactNode {
   switch (type) {
     case 'email':
-      return <Mail className="h-4 w-4 text-danger-500"/>;
+      return <Mail className='h-4 w-4 text-status-danger-text'/>;
     case 'drive':
-      return <HardDrive className="h-4 w-4 text-warning-500"/>;
+      return <HardDrive className='h-4 w-4 text-status-warning-text'/>;
     case 'calendar':
-      return <Calendar className="h-4 w-4 text-accent-500"/>;
+      return <Calendar className='h-4 w-4 text-accent'/>;
   }
 }
 
@@ -128,28 +128,28 @@ function getSystemNotificationIcon(type: string): React.ReactNode {
     case 'LEAVE_APPROVED':
     case 'LEAVE_REJECTED':
     case 'LEAVE_PENDING':
-      return <FileText className="h-4 w-4 text-accent-500"/>;
+      return <FileText className='h-4 w-4 text-accent'/>;
     case 'EXPENSE_APPROVED':
     case 'EXPENSE_REJECTED':
-      return <DollarSign className="h-4 w-4 text-success-500"/>;
+      return <DollarSign className='h-4 w-4 text-status-success-text'/>;
     case 'ATTENDANCE_MARKED':
     case 'ATTENDANCE_ALERT':
-      return <Clock className="h-4 w-4 text-warning-500"/>;
+      return <Clock className='h-4 w-4 text-status-warning-text'/>;
     case 'PAYROLL_GENERATED':
-      return <DollarSign className="h-4 w-4 text-success-600"/>;
+      return <DollarSign className='h-4 w-4 text-status-success-text'/>;
     case 'ANNOUNCEMENT':
-      return <Megaphone className="h-4 w-4 text-accent-700"/>;
+      return <Megaphone className='h-4 w-4 text-accent'/>;
     case 'BIRTHDAY':
     case 'ANNIVERSARY':
-      return <Gift className="h-4 w-4 text-accent-700"/>;
+      return <Gift className='h-4 w-4 text-accent'/>;
     case 'PERFORMANCE_REVIEW_DUE':
-      return <Award className="h-4 w-4 text-warning-500"/>;
+      return <Award className='h-4 w-4 text-status-warning-text'/>;
     case 'ROLE_UPDATED':
-      return <Shield className="h-4 w-4 text-accent-500"/>;
+      return <Shield className='h-4 w-4 text-accent'/>;
     case 'SYSTEM_ALERT':
-      return <Info className="h-4 w-4 text-danger-500"/>;
+      return <Info className='h-4 w-4 text-status-danger-text'/>;
     default:
-      return <ClipboardCheck className="h-4 w-4 text-accent-500"/>;
+      return <ClipboardCheck className='h-4 w-4 text-accent'/>;
   }
 }
 
@@ -400,14 +400,14 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             className={cn(
               "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
               notificationTab === 'google'
-                ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
+                ? 'text-accent border-b-2 border-[var(--accent-primary)]'
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             Google
             {googleNotifications.length > 0 && (
               <span
-                className="ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/15 text-accent-700 dark:text-accent-300 rounded-full">
+                className='ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/15 text-accent rounded-full'>
                 {googleNotifications.length}
               </span>
             )}
@@ -417,13 +417,13 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             className={cn(
               "flex-1 px-4 py-4 text-sm font-medium transition-all duration-200",
               notificationTab === 'system'
-                ? "text-accent-500 dark:text-accent-400 border-b-2 border-accent-500"
+                ? 'text-accent border-b-2 border-[var(--accent-primary)]'
                 : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
             )}
           >
             System
             {systemUnreadCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/20 text-accent-300 rounded-full">
+              <span className='ml-1.5 px-1.5 py-0.5 text-xs bg-accent-500/20 text-accent rounded-full'>
                 {systemUnreadCount}
               </span>
             )}
@@ -436,10 +436,10 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               {!hasGoogleToken ? (
                 <div className="p-6 text-center">
                   <div
-                    className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-4">
-                    <Bell className="h-6 w-6 text-surface-400"/>
+                    className='w-12 h-12 rounded-full bg-surface flex items-center justify-center mx-auto mb-4'>
+                    <Bell className='h-6 w-6 text-muted'/>
                   </div>
-                  <p className="text-sm text-surface-500 mb-4">Connect Google to see emails, drive files & events</p>
+                  <p className='text-sm text-muted mb-4'>Connect Google to see emails, drive files & events</p>
                   <Button variant="outline" size="sm" onClick={() => {
                     onClose();
                     router.push('/nu-mail');
@@ -449,21 +449,21 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                 </div>
               ) : googleNotificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+                  <Loader2 className='h-6 w-6 animate-spin text-accent'/>
                 </div>
               ) : googleNotifications.length === 0 ? (
-                <div className="p-8 text-center text-surface-500 dark:text-surface-300">
-                  <CheckCircle className="h-10 w-10 mx-auto mb-4 text-success-500"/>
+                <div className='p-8 text-center text-muted'>
+                  <CheckCircle className='h-10 w-10 mx-auto mb-4 text-status-success-text'/>
                   <p>All caught up!</p>
                 </div>
               ) : (
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                <div className='divide-y divide-surface-100'>
                   {googleNotifications.map((notification) => (
                     <div
                       key={notification.id}
                       onClick={() => handleGoogleNotificationClick(notification)}
                       className={cn(
-                        "flex gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
+                        'flex gap-4 p-4 hover:bg-base transition-colors cursor-pointer',
                         getNotificationBg(notification.type)
                       )}
                     >
@@ -472,31 +472,31 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         {getNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-100 truncate">
+                        <p className='text-sm font-medium text-primary truncate'>
                           {notification.title}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <p className="text-xs text-surface-500 dark:text-surface-300 truncate">
+                          <p className='text-xs text-muted truncate'>
                             {notification.subtitle}
                           </p>
                           {notification.hasVideo && (
-                            <Video className="h-3 w-3 text-accent-500 flex-shrink-0"/>
+                            <Video className='h-3 w-3 text-accent flex-shrink-0'/>
                           )}
                         </div>
                       </div>
-                      <span className="text-xs text-surface-400 flex-shrink-0">
+                      <span className='text-xs text-muted flex-shrink-0'>
                         {notification.type === 'calendar' ? notification.subtitle : formatRelativeTime(notification.timestamp)}
                       </span>
                     </div>
                   ))}
                   {/* Quick Links */}
-                  <div className="flex gap-2 p-4 bg-surface-50 dark:bg-surface-800/50">
+                  <div className='flex gap-2 p-4 bg-base'>
                     <button
                       onClick={() => {
                         onClose();
                         router.push('/nu-mail');
                       }}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                      className='flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-secondary hover:bg-surface rounded-lg transition-colors'
                     >
                       <Mail className="h-3 w-3"/> Mail
                     </button>
@@ -505,7 +505,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         onClose();
                         router.push('/nu-drive');
                       }}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                      className='flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-secondary hover:bg-surface rounded-lg transition-colors'
                     >
                       <HardDrive className="h-3 w-3"/> Drive
                     </button>
@@ -514,7 +514,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         onClose();
                         router.push('/nu-calendar');
                       }}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                      className='flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs text-secondary hover:bg-surface rounded-lg transition-colors'
                     >
                       <Calendar className="h-3 w-3"/> Calendar
                     </button>
@@ -524,16 +524,16 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             </>
           ) : (
             // System Notifications
-            <>
-              <div className="row-between p-4 border-b border-surface-100 dark:border-surface-800">
-                <span className="text-xs text-surface-500">System Alerts</span>
+            (<>
+              <div className='row-between p-4 border-b border-subtle'>
+                <span className='text-xs text-muted'>System Alerts</span>
                 {systemUnreadCount > 0 && (
                   <button
                     onClick={() => {
                       markAllReadMutation.mutate();
                       wsMarkAllAsRead();
                     }}
-                    className="text-xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400"
+                    className='text-xs font-medium text-accent hover:text-accent'
                   >
                     Mark all read
                   </button>
@@ -541,15 +541,15 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               </div>
               {notificationsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+                  <Loader2 className='h-6 w-6 animate-spin text-accent'/>
                 </div>
               ) : persistedNotifications.length === 0 && wsNotifications.length === 0 ? (
-                <div className="p-8 text-center text-surface-500 dark:text-surface-300">
+                <div className='p-8 text-center text-muted'>
                   <Bell className="h-10 w-10 mx-auto mb-4 opacity-20"/>
                   <p>No system notifications</p>
                 </div>
               ) : (
-                <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                <div className='divide-y divide-surface-100'>
                   {wsNotifications.filter(n => !n.read).map((notification, index) => (
                     <div
                       key={`ws-${index}`}
@@ -558,18 +558,18 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         onClose();
                         router.push(getNotificationRoute(notification));
                       }}
-                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-accent-50/50 dark:bg-accent-900/10"
+                      className='flex gap-2 p-4 hover:bg-base transition-colors cursor-pointer bg-accent-50/50'
                     >
                       <div
-                        className="flex-shrink-0 w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                        className='flex-shrink-0 w-8 h-8 rounded-lg bg-accent-subtle flex items-center justify-center'>
                         {getSystemNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
-                          className="text-sm font-semibold text-surface-900 dark:text-surface-50 truncate">{notification.title}</p>
+                          className='text-sm font-semibold text-primary truncate'>{notification.title}</p>
                         <p
-                          className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
-                        <p className="text-xs text-surface-500 mt-1">
+                          className='text-sm text-secondary mt-0.5 line-clamp-2'>{notification.message}</p>
+                        <p className='text-xs text-muted mt-1'>
                           {formatDistanceToNow(notification.timestamp, {addSuffix: true})}
                         </p>
                       </div>
@@ -584,26 +584,26 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                         if (notification.actionUrl) router.push(notification.actionUrl);
                       }}
                       className={cn(
-                        "flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                        !notification.isRead && "bg-accent-50/50 dark:bg-accent-900/10"
+                        'flex gap-2 p-4 hover:bg-base transition-colors cursor-pointer',
+                        !notification.isRead && 'bg-accent-50/50'
                       )}
                     >
                       <div className={cn(
                         "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
-                        !notification.isRead ? "bg-accent-100 dark:bg-accent-900/30" : "bg-surface-100 dark:bg-surface-800"
+                        !notification.isRead ? 'bg-accent-subtle' : 'bg-surface'
                       )}>
                         {getSystemNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={cn(
-                          "text-sm font-medium text-surface-900 dark:text-surface-50 truncate",
+                          'text-sm font-medium text-primary truncate',
                           !notification.isRead && "font-semibold"
                         )}>
                           {notification.title}
                         </p>
                         <p
-                          className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
-                        <p className="text-xs text-surface-500 mt-1">
+                          className='text-sm text-secondary mt-0.5 line-clamp-2'>{notification.message}</p>
+                        <p className='text-xs text-muted mt-1'>
                           {formatDistanceToNow(new Date(notification.createdAt), {addSuffix: true})}
                         </p>
                       </div>
@@ -612,22 +612,21 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                 </div>
               )}
               {/* View All footer */}
-              <div className="border-t border-surface-100 dark:border-surface-800 p-2">
+              <div className='border-t border-subtle p-2'>
                 <button
                   onClick={() => {
                     onClose();
                     router.push('/notifications');
                   }}
-                  className="w-full text-center text-xs font-medium text-accent-600 hover:text-accent-800 dark:text-accent-400 py-2 rounded hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                  className='w-full text-center text-xs font-medium text-accent hover:text-accent py-2 rounded hover:bg-base transition-colors cursor-pointer'
                 >
                   View all notifications
                 </button>
               </div>
-            </>
+            </>)
           )}
         </div>
       </div>
-
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -638,20 +637,20 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             <div className="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-6 w-6 text-white"/>
-                  <h3 className="text-xl font-semibold text-white">{selectedEvent.calendarEvent.summary}</h3>
+                  <Calendar className='h-6 w-6 text-inverse'/>
+                  <h3 className='text-xl font-semibold text-inverse'>{selectedEvent.calendarEvent.summary}</h3>
                 </div>
                 <button onClick={() => setSelectedEvent(null)}
                         className="p-1 hover:bg-white/20 rounded-lg transition-colors">
-                  <X className="h-5 w-5 text-white"/>
+                  <X className='h-5 w-5 text-inverse'/>
                 </button>
               </div>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
               <div className="flex items-start gap-2">
-                <Clock className="h-5 w-5 text-surface-400 mt-0.5"/>
+                <Clock className='h-5 w-5 text-muted mt-0.5'/>
                 <div>
-                  <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                  <p className='text-sm font-medium text-primary'>
                     {selectedEvent.calendarEvent.start.dateTime
                       ? new Date(selectedEvent.calendarEvent.start.dateTime).toLocaleString('en-US', {
                         weekday: 'long',
@@ -667,7 +666,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                       })}
                   </p>
                   {selectedEvent.calendarEvent.end.dateTime && (
-                    <p className="text-xs text-surface-500 mt-0.5">
+                    <p className='text-xs text-muted mt-0.5'>
                       to {new Date(selectedEvent.calendarEvent.end.dateTime).toLocaleTimeString('en-US', {
                       hour: 'numeric',
                       minute: '2-digit'
@@ -678,31 +677,31 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               </div>
               {selectedEvent.calendarEvent.location && (
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-5 w-5 text-surface-400 mt-0.5"/>
+                  <MapPin className='h-5 w-5 text-muted mt-0.5'/>
                   <p
-                    className="text-sm text-surface-600 dark:text-surface-300">{selectedEvent.calendarEvent.location}</p>
+                    className='text-sm text-secondary'>{selectedEvent.calendarEvent.location}</p>
                 </div>
               )}
               {selectedEvent.calendarEvent.hangoutLink && (
                 <div className="flex items-start gap-2">
-                  <Video className="h-5 w-5 text-accent-500 mt-0.5"/>
+                  <Video className='h-5 w-5 text-accent mt-0.5'/>
                   <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer"
-                     className="text-sm text-accent-600 hover:text-accent-700 dark:text-accent-400 hover:underline">
+                     className='text-sm text-accent hover:text-accent hover:underline'>
                     Join Google Meet
                   </a>
                 </div>
               )}
               {selectedEvent.calendarEvent.description && (
-                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
+                <div className='pt-4 border-t border-subtle'>
                   <p
-                    className="text-sm text-surface-600 dark:text-surface-300 whitespace-pre-wrap">{selectedEvent.calendarEvent.description}</p>
+                    className='text-sm text-secondary whitespace-pre-wrap'>{selectedEvent.calendarEvent.description}</p>
                 </div>
               )}
               {selectedEvent.calendarEvent.attendees && selectedEvent.calendarEvent.attendees.length > 0 && (
-                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
+                <div className='pt-4 border-t border-subtle'>
                   <div className="flex items-center gap-2 mb-2">
-                    <UsersIcon className="h-4 w-4 text-surface-400"/>
-                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    <UsersIcon className='h-4 w-4 text-muted'/>
+                    <span className='text-sm font-medium text-secondary'>
                       Attendees ({selectedEvent.calendarEvent.attendees.length})
                     </span>
                   </div>
@@ -710,13 +709,13 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                     {selectedEvent.calendarEvent.attendees.slice(0, 5).map((attendee, idx) => (
                       <div key={idx} className="row-between text-xs">
                         <span
-                          className="text-surface-600 dark:text-surface-300">{attendee.displayName || attendee.email}</span>
+                          className='text-secondary'>{attendee.displayName || attendee.email}</span>
                         <span className={cn(
                           "px-2 py-0.5 rounded-full text-xs",
-                          attendee.responseStatus === 'accepted' && "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400",
-                          attendee.responseStatus === 'declined' && "bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400",
-                          attendee.responseStatus === 'tentative' && "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400",
-                          attendee.responseStatus === 'needsAction' && "bg-surface-100 text-surface-600 dark:bg-surface-800 dark:text-surface-300"
+                          attendee.responseStatus === 'accepted' && 'bg-status-success-bg text-status-success-text',
+                          attendee.responseStatus === 'declined' && 'bg-status-danger-bg text-status-danger-text',
+                          attendee.responseStatus === 'tentative' && 'bg-status-warning-bg text-status-warning-text',
+                          attendee.responseStatus === 'needsAction' && 'bg-surface text-secondary'
                         )}>
                           {attendee.responseStatus === 'needsAction' ? 'Pending' : attendee.responseStatus}
                         </span>
@@ -724,17 +723,17 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                     ))}
                     {selectedEvent.calendarEvent.attendees.length > 5 && (
                       <p
-                        className="text-xs text-surface-500">+{selectedEvent.calendarEvent.attendees.length - 5} more</p>
+                        className='text-xs text-muted'>+{selectedEvent.calendarEvent.attendees.length - 5} more</p>
                     )}
                   </div>
                 </div>
               )}
             </div>
             <div
-              className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
+              className='px-6 py-4 bg-base border-t border-subtle flex gap-4'>
               {selectedEvent.calendarEvent.hangoutLink && (
                 <Button onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
-                        className="flex-1 bg-accent-600 hover:bg-accent-700 text-white">
+                        className='flex-1 bg-accent hover:bg-accent text-inverse'>
                   <Video className="h-4 w-4 mr-2"/> Join Meeting
                 </Button>
               )}
@@ -746,7 +745,6 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
           </div>
         </div>
       )}
-
       {/* Email Preview Modal */}
       {selectedEmail && selectedEmail.emailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -759,9 +757,10 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             <div className="bg-gradient-to-r from-danger-500 to-danger-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <Mail className="h-6 w-6 text-white"/>
+                  <Mail className='h-6 w-6 text-inverse'/>
                   <div>
-                    <h3 className="text-xl font-semibold text-white line-clamp-1">{selectedEmail.emailData.subject}</h3>
+                    <h3
+                      className='text-xl font-semibold text-inverse line-clamp-1'>{selectedEmail.emailData.subject}</h3>
                     <p className="text-sm text-white/80 mt-0.5">From: {selectedEmail.emailData.from}</p>
                   </div>
                 </div>
@@ -769,26 +768,26 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                   setSelectedEmail(null);
                   setEmailContent('');
                 }} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
-                  <X className="h-5 w-5 text-white"/>
+                  <X className='h-5 w-5 text-inverse'/>
                 </button>
               </div>
             </div>
             <div className="p-6 overflow-y-auto max-h-[50vh]">
               {emailLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+                  <Loader2 className='h-8 w-8 animate-spin text-accent'/>
                 </div>
               ) : emailContent.includes('<') ? (
                 <div className="prose dark:prose-invert prose-sm max-w-none"
                      dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailContent)}}/>
               ) : (
-                <p className="text-sm text-surface-600 dark:text-surface-300 whitespace-pre-wrap">
+                <p className='text-sm text-secondary whitespace-pre-wrap'>
                   {emailContent || selectedEmail.emailData.snippet}
                 </p>
               )}
             </div>
             <div
-              className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
+              className='px-6 py-4 bg-base border-t border-subtle flex gap-4'>
               <Button
                 onClick={() => safeWindowOpen(`https://mail.google.com/mail/u/0/#inbox/${selectedEmail.emailData!.threadId}`, '_blank')}
                 className="flex-1">
@@ -799,7 +798,6 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
           </div>
         </div>
       )}
-
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -810,16 +808,16 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             <div className="bg-gradient-to-r from-warning-500 to-warning-600 px-6 py-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <HardDrive className="h-6 w-6 text-white"/>
-                  <h3 className="text-xl font-semibold text-white line-clamp-1">{selectedFile.driveFile.name}</h3>
+                  <HardDrive className='h-6 w-6 text-inverse'/>
+                  <h3 className='text-xl font-semibold text-inverse line-clamp-1'>{selectedFile.driveFile.name}</h3>
                 </div>
                 <button onClick={() => setSelectedFile(null)}
                         className="p-1 hover:bg-white/20 rounded-lg transition-colors">
-                  <X className="h-5 w-5 text-white"/>
+                  <X className='h-5 w-5 text-inverse'/>
                 </button>
               </div>
             </div>
-            <div className="bg-surface-100 dark:bg-surface-800">
+            <div className='bg-surface'>
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
                 <div className="flex items-center justify-center p-4 max-h-[60vh] overflow-hidden">
                   <Image
@@ -841,7 +839,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               )}
             </div>
             <div
-              className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700 flex gap-4">
+              className='px-6 py-4 bg-base border-t border-subtle flex gap-4'>
               <Button onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')} className="flex-1">
                 <ExternalLink className="h-4 w-4 mr-2"/> Open in Drive
               </Button>

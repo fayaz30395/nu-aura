@@ -132,7 +132,7 @@ export function CalendarView({
           e.stopPropagation();
           onEventClick?.(event);
         }}
-        className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-white truncate hover:opacity-80 transition-opacity ${
+        className={`cursor-pointer rounded px-1.5 py-0.5 text-xs text-inverse truncate hover:opacity-80 transition-opacity ${
           compact ? 'mb-0.5' : 'mb-1'
         }`}
         style={{backgroundColor}}
@@ -148,12 +148,12 @@ export function CalendarView({
 
   // Month View
   const renderMonthView = () => (
-    <div className="grid grid-cols-7 border-t border-l border-surface-200 dark:border-surface-700">
+    <div className='grid grid-cols-7 border-t border-l border-subtle'>
       {/* Header */}
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
         <div
           key={day}
-          className="py-2 text-center text-sm font-medium text-surface-600 dark:text-surface-400 border-r border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800"
+          className='py-2 text-center text-sm font-medium text-secondary border-r border-b border-subtle bg-base'
         >
           {day}
         </div>
@@ -173,11 +173,11 @@ export function CalendarView({
               setCurrentDate(day);
               setViewType('day');
             }}
-            className={`min-h-[100px] p-1 border-r border-b border-surface-200 dark:border-surface-700 cursor-pointer transition-colors ${
+            className={`min-h-[100px] p-1 border-r border-b border-subtle cursor-pointer transition-colors ${
               isCurrentMonth
                 ? 'bg-[var(--bg-card)]'
                 : 'bg-surface-50 dark:bg-surface-800/50'
-            } hover:bg-surface-100 dark:hover:bg-surface-800`}
+            } hover:bg-surface`}
           >
             <div
               className={`text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full ${
@@ -193,7 +193,7 @@ export function CalendarView({
             <div className="space-y-0.5">
               {dayEvents.slice(0, 3).map((event) => renderEventBadge(event, true))}
               {dayEvents.length > 3 && (
-                <div className="text-xs text-surface-500 px-1.5">
+                <div className='text-xs text-muted px-1.5'>
                   +{dayEvents.length - 3} more
                 </div>
               )}
@@ -208,8 +208,8 @@ export function CalendarView({
   const renderWeekView = () => (
     <div className="flex flex-col">
       {/* Header */}
-      <div className="flex border-b border-surface-200 dark:border-surface-700">
-        <div className="w-16 border-r border-surface-200 dark:border-surface-700"/>
+      <div className='flex border-b border-subtle'>
+        <div className='w-16 border-r border-subtle'/>
         {weekDays.map((day) => (
           <div
             key={day.toISOString()}
@@ -218,9 +218,9 @@ export function CalendarView({
               setCurrentDate(day);
               setViewType('day');
             }}
-            className="flex-1 py-2 text-center border-r border-surface-200 dark:border-surface-700 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800"
+            className='flex-1 py-2 text-center border-r border-subtle cursor-pointer hover:bg-base'
           >
-            <div className="text-xs text-surface-500 uppercase">{format(day, 'EEE')}</div>
+            <div className='text-xs text-muted uppercase'>{format(day, 'EEE')}</div>
             <div
               className={`text-lg font-medium mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
                 isToday(day)
@@ -235,8 +235,8 @@ export function CalendarView({
       </div>
 
       {/* All-day events */}
-      <div className="flex border-b border-surface-200 dark:border-surface-700 min-h-[40px]">
-        <div className="w-16 p-1 text-xs text-surface-500 border-r border-surface-200 dark:border-surface-700">
+      <div className='flex border-b border-subtle min-h-[40px]'>
+        <div className='w-16 p-1 text-xs text-muted border-r border-subtle'>
           All-day
         </div>
         {weekDays.map((day) => {
@@ -244,7 +244,7 @@ export function CalendarView({
           return (
             <div
               key={day.toISOString()}
-              className="flex-1 p-1 border-r border-surface-200 dark:border-surface-700"
+              className='flex-1 p-1 border-r border-subtle'
             >
               {allDayEvents.map((event) => renderEventBadge(event, true))}
             </div>
@@ -255,11 +255,11 @@ export function CalendarView({
       {/* Time grid */}
       <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
         {/* Time column */}
-        <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
+        <div className='w-16 flex-shrink-0 border-r border-subtle'>
           {HOURS.map((hour) => (
             <div
               key={hour}
-              className="h-[60px] px-2 text-xs text-surface-500 text-right border-b border-surface-100 dark:border-surface-800"
+              className='h-[60px] px-2 text-xs text-muted text-right border-b border-subtle'
             >
               {format(new Date().setHours(hour, 0), 'HH:mm')}
             </div>
@@ -273,16 +273,15 @@ export function CalendarView({
           return (
             <div
               key={day.toISOString()}
-              className="flex-1 relative border-r border-surface-200 dark:border-surface-700"
+              className='flex-1 relative border-r border-subtle'
             >
               {/* Hour lines */}
               {HOURS.map((hour) => (
                 <div
                   key={hour}
-                  className="h-[60px] border-b border-surface-100 dark:border-surface-800"
+                  className='h-[60px] border-b border-subtle'
                 />
               ))}
-
               {/* Events */}
               {dayEvents.map((event) => {
                 const startHour = getHours(event.startDate) + getMinutes(event.startDate) / 60;
@@ -296,7 +295,7 @@ export function CalendarView({
                       e.stopPropagation();
                       onEventClick?.(event);
                     }}
-                    className="absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-white cursor-pointer hover:opacity-80 overflow-hidden"
+                    className='absolute left-1 right-1 rounded px-1 py-0.5 text-xs text-inverse cursor-pointer hover:opacity-80 overflow-hidden'
                     style={{
                       top: `${startHour * HOUR_HEIGHT}px`,
                       height: `${Math.max(duration * HOUR_HEIGHT - 2, 20)}px`,
@@ -310,16 +309,15 @@ export function CalendarView({
                   </div>
                 );
               })}
-
               {/* Current time indicator */}
               {isToday(day) && (
                 <div
-                  className="absolute left-0 right-0 h-0.5 bg-danger-500 z-10 pointer-events-none"
+                  className='absolute left-0 right-0 h-0.5 bg-status-danger-bg z-10 pointer-events-none'
                   style={{
                     top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                   }}
                 >
-                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                  <div className='absolute -left-1 -top-1 w-2 h-2 bg-status-danger-bg rounded-full'/>
                 </div>
               )}
             </div>
@@ -338,8 +336,8 @@ export function CalendarView({
       <div className="flex flex-col">
         {/* All-day events */}
         {allDayEvents.length > 0 && (
-          <div className="flex border-b border-surface-200 dark:border-surface-700 min-h-[40px]">
-            <div className="w-16 p-2 text-xs text-surface-500 border-r border-surface-200 dark:border-surface-700">
+          <div className='flex border-b border-subtle min-h-[40px]'>
+            <div className='w-16 p-2 text-xs text-muted border-r border-subtle'>
               All-day
             </div>
             <div className="flex-1 p-2 space-y-1">
@@ -347,15 +345,14 @@ export function CalendarView({
             </div>
           </div>
         )}
-
         {/* Time grid */}
         <div className="flex overflow-y-auto" style={{height: 'calc(100vh - 400px)'}}>
           {/* Time column */}
-          <div className="w-16 flex-shrink-0 border-r border-surface-200 dark:border-surface-700">
+          <div className='w-16 flex-shrink-0 border-r border-subtle'>
             {HOURS.map((hour) => (
               <div
                 key={hour}
-                className="h-[60px] px-2 text-xs text-surface-500 text-right border-b border-surface-100 dark:border-surface-800"
+                className='h-[60px] px-2 text-xs text-muted text-right border-b border-subtle'
               >
                 {format(new Date().setHours(hour, 0), 'HH:mm')}
               </div>
@@ -368,7 +365,7 @@ export function CalendarView({
             {HOURS.map((hour) => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-surface-100 dark:border-surface-800"
+                className='h-[60px] border-b border-subtle'
               />
             ))}
 
@@ -385,7 +382,7 @@ export function CalendarView({
                     e.stopPropagation();
                     onEventClick?.(event);
                   }}
-                  className="absolute left-2 right-2 rounded p-2 text-white cursor-pointer hover:opacity-80 overflow-hidden"
+                  className='absolute left-2 right-2 rounded p-2 text-inverse cursor-pointer hover:opacity-80 overflow-hidden'
                   style={{
                     top: `${startHour * HOUR_HEIGHT}px`,
                     height: `${Math.max(duration * HOUR_HEIGHT - 4, 30)}px`,
@@ -406,12 +403,12 @@ export function CalendarView({
             {/* Current time indicator */}
             {isToday(currentDate) && (
               <div
-                className="absolute left-0 right-0 h-0.5 bg-danger-500 z-10 pointer-events-none"
+                className='absolute left-0 right-0 h-0.5 bg-status-danger-bg z-10 pointer-events-none'
                 style={{
                   top: `${(getHours(new Date()) + getMinutes(new Date()) / 60) * HOUR_HEIGHT}px`,
                 }}
               >
-                <div className="absolute -left-1 -top-1 w-2 h-2 bg-danger-500 rounded-full"/>
+                <div className='absolute -left-1 -top-1 w-2 h-2 bg-status-danger-bg rounded-full'/>
               </div>
             )}
           </div>
@@ -421,36 +418,36 @@ export function CalendarView({
   };
 
   return (
-    <div className={`bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
+    <div className={`bg-[var(--bg-card)] rounded-lg border border-subtle ${className}`}>
       {/* Header */}
       <div
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
+        className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-subtle'>
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className='p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
           >
-            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
+            <ChevronLeft className='w-5 h-5 text-secondary'/>
           </button>
           <button
             onClick={handleNext}
-            className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className='p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
           >
-            <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400"/>
+            <ChevronRight className='w-5 h-5 text-secondary'/>
           </button>
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className='text-xl font-semibold text-primary'>
             {getTitle()}
           </h2>
           <button
             onClick={handleToday}
-            className="px-4 py-1.5 text-sm border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className='px-4 py-1.5 text-sm border border-subtle rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
           >
             Today
           </button>
         </div>
 
         {/* View Type Switcher */}
-        <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg">
+        <div className='flex items-center gap-1 p-1 bg-surface rounded-lg'>
           {(['day', 'week', 'month'] as CalendarViewType[]).map((type) => (
             <button
               key={type}
@@ -466,31 +463,29 @@ export function CalendarView({
           ))}
         </div>
       </div>
-
       {/* Calendar Content */}
       <div className="overflow-hidden">
         {viewType === 'month' && renderMonthView()}
         {viewType === 'week' && renderWeekView()}
         {viewType === 'day' && renderDayView()}
       </div>
-
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 p-4 border-t border-surface-200 dark:border-surface-700 text-sm">
+      <div className='flex flex-wrap gap-4 p-4 border-t border-subtle text-sm'>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.project}}/>
-          <span className="text-surface-600 dark:text-surface-400">Project</span>
+          <span className='text-secondary'>Project</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.task}}/>
-          <span className="text-surface-600 dark:text-surface-400">Task</span>
+          <span className='text-secondary'>Task</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.milestone}}/>
-          <span className="text-surface-600 dark:text-surface-400">Milestone</span>
+          <span className='text-secondary'>Milestone</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded" style={{backgroundColor: CALENDAR_EVENT_COLORS.deadline}}/>
-          <span className="text-surface-600 dark:text-surface-400">Deadline</span>
+          <span className='text-secondary'>Deadline</span>
         </div>
       </div>
     </div>

@@ -97,7 +97,7 @@ export default function OnboardingPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-              Talent <span className="text-accent-700">Onboarding</span>
+              Talent <span className='text-accent'>Onboarding</span>
             </h1>
             <p className="text-[var(--text-muted)] font-bold max-w-md skeuo-deboss">
               Orchestrate the first 90 days of your new joiners with precision and care.
@@ -143,7 +143,7 @@ export default function OnboardingPage() {
                     <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color}`}>
                       <stat.icon className="h-5 w-5"/>
                     </div>
-                    <TrendingUp className="h-3.5 w-3.5 text-success-500"/>
+                    <TrendingUp className='h-3.5 w-3.5 text-status-success-text'/>
                   </div>
                   <p
                     className="text-2xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5 skeuo-deboss">{stat.label}</p>
@@ -156,11 +156,11 @@ export default function OnboardingPage() {
 
         {/* Error State */}
         {isError && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-6 row-between">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
-                <p className="text-sm text-danger-600 dark:text-danger-400">
+                <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
+                <p className='text-sm text-status-danger-text'>
                   {error instanceof Error ? error.message : 'Failed to load onboarding data'}
                 </p>
               </div>
@@ -241,12 +241,12 @@ export default function OnboardingPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-6">
                           <div
-                            className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center text-accent-700 dark:text-accent-400 font-black text-2xl shadow-inner border border-white/20">
+                            className='w-16 h-16 rounded-3xl bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center text-accent font-black text-2xl shadow-inner border border-white/20'>
                             {process.employeeName?.charAt(0) || 'U'}
                           </div>
                           <div>
                             <h3
-                              className="text-xl font-black text-[var(--text-primary)] group-hover:text-accent-700 transition-colors">
+                              className='text-xl font-black text-[var(--text-primary)] group-hover:text-accent transition-colors'>
                               {process.employeeName || `Employee ${process.employeeId.substring(0, 8)}`}
                             </h3>
                             <div
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                                                                 Starts {new Date(process.startDate).toLocaleDateString()}
                                                             </span>
                               {process.assignedBuddyName && (
-                                <span className="flex items-center gap-1.5 text-accent-500">
+                                <span className='flex items-center gap-1.5 text-accent'>
                                                                     <Users className="h-3.5 w-3.5"/>
                                                                     Buddy: {process.assignedBuddyName}
                                                                 </span>
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
                                 />
                               </div>
                               <span
-                                className="text-sm font-black text-accent-700">{process.completionPercentage}%</span>
+                                className='text-sm font-black text-accent'>{process.completionPercentage}%</span>
                             </div>
                           </div>
 
@@ -292,7 +292,7 @@ export default function OnboardingPage() {
 
                           <div
                             className="h-10 w-10 flex items-center justify-center rounded-lg bg-[var(--bg-input)] shadow-[var(--shadow-card)] border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                            <ChevronRight className="h-5 w-5 text-accent-700"/>
+                            <ChevronRight className='h-5 w-5 text-accent'/>
                           </div>
                         </div>
                       </div>

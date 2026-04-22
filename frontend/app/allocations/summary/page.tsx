@@ -305,15 +305,15 @@ export default function AllocationSummaryPage() {
         </Card>
 
         {(error || queryError) && (
-          <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-danger-500"/>
+              <XCircle className='h-4 w-4 text-status-danger-text'/>
               <div>
-                <p className="text-sm text-danger-700 dark:text-danger-300">
+                <p className='text-sm text-status-danger-text'>
                   {error || (queryError instanceof Error ? queryError.message : 'Failed to load data')}
                 </p>
                 {errorDetails.length ? (
-                  <p className="text-xs text-danger-600 dark:text-danger-300">
+                  <p className='text-xs text-status-danger-text'>
                     {errorDetails.join(' ')}
                   </p>
                 ) : null}

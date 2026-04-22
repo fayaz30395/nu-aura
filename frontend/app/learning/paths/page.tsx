@@ -132,7 +132,7 @@ export default function LearningPathsPage() {
         {/* Header */}
         <div className="mb-8">
           <Link href="/learning"
-                className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
+                className='flex items-center gap-1 text-accent hover:text-accent mb-4 w-fit text-sm'>
             <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
           <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">Learning Paths</h1>
@@ -151,7 +151,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className='input-aura w-full pl-10 pr-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-[var(--accent-primary)] bg-[var(--bg-secondary)] text-[var(--text-primary)]'
               />
             </div>
 
@@ -161,7 +161,7 @@ export default function LearningPathsPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-accent-600 bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                className='flex-1 px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:border-[var(--accent-primary)] bg-[var(--bg-secondary)] text-[var(--text-primary)]'
               >
                 <option value="ALL">All Difficulty Levels</option>
                 <option value="BEGINNER">Beginner</option>
@@ -177,7 +177,7 @@ export default function LearningPathsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div
-                className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+                className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full mx-auto mb-4'/>
               <p className="text-[var(--text-muted)]">Loading learning paths...</p>
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function LearningPathsPage() {
                 ) : (
                   <div
                     className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center">
-                    <Zap className="h-12 w-12 text-white opacity-50"/>
+                    <Zap className='h-12 w-12 text-inverse opacity-50'/>
                   </div>
                 )}
 
@@ -259,7 +259,7 @@ export default function LearningPathsPage() {
                       </div>
                       <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-accent-600 transition-all duration-300"
+                          className='h-full bg-accent transition-all duration-300'
                           style={{width: `${path.progressPercentage}%`}}
                         />
                       </div>
@@ -270,7 +270,7 @@ export default function LearningPathsPage() {
                   {path.isEnrolled ? (
                     <button
                       onClick={() => router.push(`/learning/paths/${path.id}`)}
-                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='btn-primary w-full px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent font-medium text-sm flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {path.status === 'COMPLETED' ? (
                         <>
@@ -286,12 +286,12 @@ export default function LearningPathsPage() {
                     <button
                       onClick={() => handleEnrollPath(path.id)}
                       disabled={enrollPathMutation.isPending}
-                      className="btn-primary w-full px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='btn-primary w-full px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {enrollPathMutation.isPending ? (
                         <>
                           <div
-                            className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"/>
+                            className='animate-spin h-4 w-4 border-2 border-[var(--bg-card)] border-t-transparent rounded-full'/>
                           Enrolling...
                         </>
                       ) : (
@@ -322,7 +322,7 @@ export default function LearningPathsPage() {
                   setSearchQuery('');
                   setSelectedDifficulty('ALL');
                 }}
-                className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-medium text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent font-medium text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Clear Filters
               </button>

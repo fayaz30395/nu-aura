@@ -121,8 +121,8 @@ export function FileUploader({onUpload, isUploading = false, className}: FileUpl
         className={cn(
           'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
           isDragging
-            ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
-            : 'border-[var(--border-main)] hover:border-accent-400 hover:bg-accent-50/50 dark:hover:bg-accent-900/10',
+            ? 'border-[var(--accent-primary)] bg-accent-subtle'
+            : 'border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:bg-accent-50/50',
           isUploading && 'pointer-events-none opacity-60'
         )}
         onClick={() => fileInputRef.current?.click()}
@@ -143,8 +143,8 @@ export function FileUploader({onUpload, isUploading = false, className}: FileUpl
         />
 
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-            <Upload className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+          <div className='w-12 h-12 rounded-full bg-accent-subtle flex items-center justify-center'>
+            <Upload className='h-6 w-6 text-accent'/>
           </div>
 
           {selectedFile ? (
@@ -171,12 +171,11 @@ export function FileUploader({onUpload, isUploading = false, className}: FileUpl
           )}
         </div>
       </div>
-
       {error && (
         <div
-          className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-          <AlertCircle className="h-4 w-4 text-danger-600 dark:text-danger-400 flex-shrink-0"/>
-          <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
+          className='flex items-center gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+          <AlertCircle className='h-4 w-4 text-status-danger-text flex-shrink-0'/>
+          <p className='text-sm text-status-danger-text'>{error}</p>
           <Button
             variant="ghost"
             size="sm"

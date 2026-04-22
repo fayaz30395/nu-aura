@@ -162,7 +162,6 @@ export default function PricingPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -214,7 +213,6 @@ export default function PricingPage() {
           </motion.div>
         </div>
       </section>
-
       {/* Pricing Cards */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -249,7 +247,7 @@ export default function PricingPage() {
                           : 'from-surface-600 to-surface-700'
                       } flex items-center justify-center mb-4`}
                     >
-                      <plan.icon className="h-6 w-6 text-white"/>
+                      <plan.icon className='h-6 w-6 text-inverse'/>
                     </div>
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
                     <p className="text-body-muted">{plan.description}</p>
@@ -265,7 +263,7 @@ export default function PricingPage() {
                             <span className="text-[var(--text-muted)]">/user/month</span>
                           </div>
                           {billingCycle === 'annual' && (
-                            <p className="text-sm text-success-600 dark:text-success-400 mt-1">
+                            <p className='text-sm text-status-success-text mt-1'>
                               Billed annually
                             </p>
                           )}
@@ -291,7 +289,7 @@ export default function PricingPage() {
                     <div className="space-y-4 pt-4">
                       {plan.features.map((feature, i) => (
                         <div key={i} className="flex items-start gap-4">
-                          <Check className="h-5 w-5 text-success-500 flex-shrink-0 mt-0.5"/>
+                          <Check className='h-5 w-5 text-status-success-text flex-shrink-0 mt-0.5'/>
                           <span className="text-body-secondary">{feature}</span>
                         </div>
                       ))}
@@ -309,7 +307,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-
       {/* Add-ons */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
@@ -358,7 +355,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-
       {/* FAQs */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-3xl mx-auto">
@@ -379,7 +375,7 @@ export default function PricingPage() {
                   className="w-full px-6 py-4 row-between text-left hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0"/>
+                    <HelpCircle className='h-5 w-5 text-accent flex-shrink-0'/>
                     <span className="font-medium text-[var(--text-primary)]">
                       {faq.question}
                     </span>
@@ -402,7 +398,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

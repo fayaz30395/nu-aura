@@ -22,7 +22,7 @@ export function ViewTabs({activeTab, onTabChange, canApprove}: ViewTabsProps) {
         <span
           className={
             activeTab === 'my-requests'
-              ? 'text-accent-700 dark:text-accent-400'
+              ? 'text-accent'
               : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
           }
         >
@@ -31,7 +31,7 @@ export function ViewTabs({activeTab, onTabChange, canApprove}: ViewTabsProps) {
         {activeTab === 'my-requests' && (
           <motion.div
             layoutId="viewTabUnderline"
-            className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
+            className='absolute bottom-0 left-0 right-0 h-0.5 bg-accent'
             transition={{type: 'spring', stiffness: 380, damping: 30}}
           />
         )}
@@ -46,7 +46,7 @@ export function ViewTabs({activeTab, onTabChange, canApprove}: ViewTabsProps) {
           <span
             className={
               activeTab === 'team-requests'
-                ? 'text-accent-700 dark:text-accent-400'
+                ? 'text-accent'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
             }
           >
@@ -55,7 +55,7 @@ export function ViewTabs({activeTab, onTabChange, canApprove}: ViewTabsProps) {
           {activeTab === 'team-requests' && (
             <motion.div
               layoutId="viewTabUnderline"
-              className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
+              className='absolute bottom-0 left-0 right-0 h-0.5 bg-accent'
               transition={{type: 'spring', stiffness: 380, damping: 30}}
             />
           )}

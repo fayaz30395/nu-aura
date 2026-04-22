@@ -218,7 +218,6 @@ export default function IntegrationsPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -233,7 +232,6 @@ export default function IntegrationsPage() {
           </p>
         </div>
       </section>
-
       {/* Category Filters */}
       <section className="px-4 sm:px-6 lg:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
@@ -271,7 +269,7 @@ export default function IntegrationsPage() {
                   <div
                     className={`w-14 h-14 rounded-xl bg-gradient-to-br ${integration.color} flex items-center justify-center mb-4`}
                   >
-                    <integration.icon className="h-7 w-7 text-white"/>
+                    <integration.icon className='h-7 w-7 text-inverse'/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {integration.name}
@@ -285,7 +283,7 @@ export default function IntegrationsPage() {
                         key={i}
                         className="flex items-center gap-2 text-body-secondary"
                       >
-                        <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                        <Check className='h-4 w-4 text-status-success-text flex-shrink-0'/>
                         {feature}
                       </li>
                     ))}
@@ -296,7 +294,6 @@ export default function IntegrationsPage() {
           </div>
         </div>
       </section>
-
       {/* API Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-5xl mx-auto">
@@ -331,7 +328,7 @@ export default function IntegrationsPage() {
               },
             ].map((feature, index) => (
               <Card key={index} padding="lg">
-                <feature.icon className="h-8 w-8 text-accent-700 dark:text-accent-400 mb-4"/>
+                <feature.icon className='h-8 w-8 text-accent mb-4'/>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   {feature.title}
                 </h3>
@@ -348,7 +345,6 @@ export default function IntegrationsPage() {
           </div>
         </div>
       </section>
-
       {/* Request Integration */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

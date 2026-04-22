@@ -22,7 +22,7 @@ export default function WellnessError({error, reset}: ErrorProps) {
   const userMessage = getUserMessage(category, error.message);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
+    <div className='min-h-screen flex items-center justify-center bg-base p-4'>
       <motion.div
         initial={{opacity: 0, y: 20}}
         animate={{opacity: 1, y: 0}}
@@ -31,24 +31,24 @@ export default function WellnessError({error, reset}: ErrorProps) {
         <Card className="w-full max-w-md bg-[var(--bg-card)]">
           <CardHeader className="text-center">
             <div
-              className="mx-auto mb-4 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-              <Grid className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
+              className='mx-auto mb-4 h-12 w-12 rounded-full bg-status-danger-bg flex items-center justify-center'>
+              <Grid className='h-6 w-6 text-status-danger-text'/>
             </div>
-            <CardTitle className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+            <CardTitle className='text-xl font-semibold text-primary'>
               App Error
             </CardTitle>
-            <CardDescription className="text-surface-600 dark:text-surface-400">
+            <CardDescription className='text-secondary'>
               {userMessage}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isDevelopment && (
-              <div className="rounded-md bg-surface-100 dark:bg-surface-800 p-4">
-                <p className="text-sm font-mono text-surface-700 dark:text-surface-300 break-all">
+              <div className='rounded-md bg-surface p-4'>
+                <p className='text-sm font-mono text-secondary break-all'>
                   {error.message}
                 </p>
                 {error.digest && (
-                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                  <p className='text-xs text-muted mt-1'>
                     Error ID: {error.digest}
                   </p>
                 )}

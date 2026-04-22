@@ -95,7 +95,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
           </h3>
           {unreadCount > 0 && (
             <span
-              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+              className='inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-subtle text-accent'>
               {unreadCount}
             </span>
           )}
@@ -106,7 +106,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
             onClick={onMarkAllAsRead}
             className={cn(
               'flex items-center gap-1 text-xs font-medium min-h-[44px] px-2 rounded-md',
-              'text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950/30',
+              'text-accent hover:bg-accent-subtle',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
               'transition-colors duration-150'
             )}
@@ -116,12 +116,12 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
           </button>
         )}
       </div>
-
       {/* Notification list */}
       <div className="max-h-[400px] overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-700 border-t-transparent"/>
+            <div
+              className='h-5 w-5 animate-spin rounded-full border-2 border-[var(--accent-primary)] border-t-transparent'/>
           </div>
         ) : displayed.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -140,13 +140,13 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
                     'hover:bg-[var(--bg-secondary)] transition-colors duration-150',
                     'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-700',
                     'border-b border-[var(--border-main)] last:border-b-0',
-                    !notification.isRead && 'bg-accent-50/50 dark:bg-accent-950/10'
+                    !notification.isRead && 'bg-accent-50/50'
                   )}
                 >
                   {/* Unread indicator dot */}
                   <div className="mt-1.5 shrink-0">
                     {!notification.isRead ? (
-                      <span className="block h-2 w-2 rounded-full bg-accent-700"/>
+                      <span className='block h-2 w-2 rounded-full bg-accent'/>
                     ) : (
                       <Check className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     )}
@@ -178,7 +178,6 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
           </ul>
         )}
       </div>
-
       {/* Footer */}
       <div className="border-t border-[var(--border-main)] px-4 py-2">
         <button
@@ -189,7 +188,7 @@ export const SimpleNotificationDropdown: React.FC<SimpleNotificationDropdownProp
           }}
           className={cn(
             'w-full text-center text-sm font-medium py-2 rounded-md min-h-[44px]',
-            'text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950/30',
+            'text-accent hover:bg-accent-subtle',
             'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
             'transition-colors duration-150'
           )}

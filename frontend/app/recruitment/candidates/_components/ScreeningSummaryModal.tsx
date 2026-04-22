@@ -26,11 +26,11 @@ export function ScreeningSummaryModal({
           {/* Demo Mode Banner */}
           {screeningSummary.aiModelVersion === 'mock-v1' && (
             <div
-              className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-700 flex items-start gap-4">
-              <Sparkles className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
+              className='mb-4 p-4 bg-status-warning-bg rounded-lg border border-status-warning-border flex items-start gap-4'>
+              <Sparkles className='h-5 w-5 text-status-warning-text flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="text-sm font-medium text-warning-800 dark:text-warning-300">Demo Mode</p>
-                <p className="text-xs text-warning-700 dark:text-warning-400">Connect OpenAI for real AI scoring</p>
+                <p className='text-sm font-medium text-status-warning-text'>Demo Mode</p>
+                <p className='text-xs text-status-warning-text'>Connect OpenAI for real AI scoring</p>
               </div>
             </div>
           )}
@@ -38,7 +38,7 @@ export function ScreeningSummaryModal({
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Brain className="h-6 w-6 text-accent-700"/>
+              <Brain className='h-6 w-6 text-accent'/>
               AI Screening Summary
             </h2>
             <button onClick={onClose} aria-label="Close modal"
@@ -85,15 +85,15 @@ export function ScreeningSummaryModal({
             <div className="space-y-4">
               {screeningSummary.strengths && screeningSummary.strengths.length > 0 && (
                 <div
-                  className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800">
+                  className='p-4 bg-status-success-bg rounded-xl border border-status-success-border'>
                   <p
-                    className="text-sm font-medium text-success-800 dark:text-success-300 mb-4 flex items-center gap-2">
+                    className='text-sm font-medium text-status-success-text mb-4 flex items-center gap-2'>
                     <CheckCircle className="h-4 w-4"/>
                     Strengths
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.strengths.map((strength, idx) => (
-                      <li key={idx} className="text-sm text-success-700 dark:text-success-400 flex items-start gap-2">
+                      <li key={idx} className='text-sm text-status-success-text flex items-start gap-2'>
                         <CheckCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{strength}</span>
                       </li>
@@ -104,14 +104,14 @@ export function ScreeningSummaryModal({
 
               {screeningSummary.followUpQuestions && screeningSummary.followUpQuestions.length > 0 && (
                 <div
-                  className="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-xl border border-accent-200 dark:border-accent-800">
-                  <p className="text-sm font-medium text-accent-800 dark:text-accent-300 mb-4 flex items-center gap-2">
+                  className='p-4 bg-accent-subtle rounded-xl border border-[var(--accent-primary)]'>
+                  <p className='text-sm font-medium text-accent mb-4 flex items-center gap-2'>
                     <MessageSquare className="h-4 w-4"/>
                     Follow-up Questions
                   </p>
                   <ol className="space-y-2 list-inside">
                     {screeningSummary.followUpQuestions.map((q, idx) => (
-                      <li key={idx} className="text-sm text-accent-700 dark:text-accent-400 flex gap-2">
+                      <li key={idx} className='text-sm text-accent flex gap-2'>
                         <span className="flex-shrink-0 font-medium">{idx + 1}.</span>
                         <span>{q}</span>
                       </li>
@@ -125,15 +125,15 @@ export function ScreeningSummaryModal({
             <div className="space-y-4">
               {screeningSummary.gaps && screeningSummary.gaps.length > 0 && (
                 <div
-                  className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl border border-warning-200 dark:border-warning-800">
+                  className='p-4 bg-status-warning-bg rounded-xl border border-status-warning-border'>
                   <p
-                    className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-4 flex items-center gap-2">
+                    className='text-sm font-medium text-status-warning-text mb-4 flex items-center gap-2'>
                     <AlertTriangle className="h-4 w-4"/>
                     Gaps
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.gaps.map((gap, idx) => (
-                      <li key={idx} className="text-sm text-warning-700 dark:text-warning-400 flex items-start gap-2">
+                      <li key={idx} className='text-sm text-status-warning-text flex items-start gap-2'>
                         <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{gap}</span>
                       </li>
@@ -144,14 +144,14 @@ export function ScreeningSummaryModal({
 
               {screeningSummary.riskFlags && screeningSummary.riskFlags.length > 0 && (
                 <div
-                  className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-xl border border-danger-200 dark:border-danger-800">
-                  <p className="text-sm font-medium text-danger-800 dark:text-danger-300 mb-4 flex items-center gap-2">
+                  className='p-4 bg-status-danger-bg rounded-xl border border-status-danger-border'>
+                  <p className='text-sm font-medium text-status-danger-text mb-4 flex items-center gap-2'>
                     <ShieldAlert className="h-4 w-4"/>
                     Risk Flags
                   </p>
                   <ul className="space-y-2">
                     {screeningSummary.riskFlags.map((flag, idx) => (
-                      <li key={idx} className="text-sm text-danger-700 dark:text-danger-400 flex items-start gap-2">
+                      <li key={idx} className='text-sm text-status-danger-text flex items-start gap-2'>
                         <ShieldAlert className="h-3.5 w-3.5 mt-0.5 flex-shrink-0"/>
                         <span>{flag}</span>
                       </li>

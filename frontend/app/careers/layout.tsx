@@ -46,13 +46,12 @@ export default function CareersLayout({
           </Link>
           <a
             href="mailto:careers@nulogic.io"
-            className="text-sm font-medium text-accent-600 hover:text-accent-700 transition-colors"
+            className='text-sm font-medium text-accent hover:text-accent transition-colors'
           >
             Contact HR
           </a>
         </div>
       </header>
-
       {children}
     </div>
   );

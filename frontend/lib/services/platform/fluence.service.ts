@@ -1,4 +1,4 @@
-import { apiClient } from '../../api/client';
+import {apiClient} from '../../api/client';
 import {
   WikiPage,
   WikiSpace,
@@ -47,13 +47,13 @@ class FluenceService {
     sortBy: string = 'updatedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<WikiPage>> {
-    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiPage>;
+    const empty = {content: [], totalElements: 0, totalPages: 0, size, number: page} as Page<WikiPage>;
     try {
-      const params: Record<string, unknown> = { page, size, sortBy, sortDirection };
+      const params: Record<string, unknown> = {page, size, sortBy, sortDirection};
       if (spaceId) {
         params.spaceId = spaceId;
       }
-      const response = await apiClient.getPermissive<Page<WikiPage>>('/knowledge/wiki/pages', { params });
+      const response = await apiClient.getPermissive<Page<WikiPage>>('/knowledge/wiki/pages', {params});
       return (response.status === 403 || response.status === 405) ? empty : response.data;
     } catch {
       return empty;
@@ -120,7 +120,7 @@ class FluenceService {
   async movePage(pageId: string, parentPageId: string | null): Promise<WikiPage> {
     const response = await apiClient.patch<WikiPage>(
       `/knowledge/wiki/pages/${pageId}/move`,
-      { parentPageId }
+      {parentPageId}
     );
     return response.data;
   }
@@ -129,7 +129,7 @@ class FluenceService {
     const response = await apiClient.get<Blob>(
       `/knowledge/wiki/pages/${pageId}/export`,
       {
-        params: { format },
+        params: {format},
         responseType: 'blob',
       }
     );
@@ -144,10 +144,10 @@ class FluenceService {
     sortBy: string = 'updatedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<WikiSpace>> {
-    const empty = { content: [], totalElements: 0, totalPages: 0, size, number: page } as Page<WikiSpace>;
+    const empty = {content: [], totalElements: 0, totalPages: 0, size, number: page} as Page<WikiSpace>;
     try {
       const response = await apiClient.getPermissive<Page<WikiSpace>>('/knowledge/wiki/spaces', {
-        params: { page, size, sortBy, sortDirection },
+        params: {page, size, sortBy, sortDirection},
       });
       return response.status === 403 ? empty : response.data;
     } catch {
@@ -183,11 +183,11 @@ class FluenceService {
     sortBy: string = 'publishedAt',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<BlogPost>> {
-    const params: Record<string, unknown> = { page, size, sortBy, sortDirection };
+    const params: Record<string, unknown> = {page, size, sortBy, sortDirection};
     if (categoryId) {
       params.categoryId = categoryId;
     }
-    const response = await apiClient.get<Page<BlogPost>>('/knowledge/blogs', { params });
+    const response = await apiClient.get<Page<BlogPost>>('/knowledge/blogs', {params});
     return response.data;
   }
 
@@ -278,7 +278,7 @@ class FluenceService {
     sortBy: string = 'usageCount',
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<DocumentTemplate>> {
-    const params: Record<string, unknown> = { page, size, sortBy, sortDirection };
+    const params: Record<string, unknown> = {page, size, sortBy, sortDirection};
     if (categoryId) {
       params.categoryId = categoryId;
     }
@@ -329,7 +329,7 @@ class FluenceService {
     const response = await apiClient.get<Page<FluenceComment>>(
       `/fluence/comments/${contentType}/${contentId}`,
       {
-        params: { page, size },
+        params: {page, size},
       }
     );
     return response.data;
@@ -378,7 +378,7 @@ class FluenceService {
     page: number = 0,
     size: number = 20
   ): Promise<FluenceSearchResponse> {
-    const params: Record<string, unknown> = { query, page, size };
+    const params: Record<string, unknown> = {query, page, size};
     if (type) {
       params.type = type;
     }
@@ -443,11 +443,11 @@ class FluenceService {
     size: number = 20,
     status?: string
   ): Promise<Page<WikiPage>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
     if (status) params.status = status;
     const response = await apiClient.get<Page<WikiPage>>(
       '/knowledge/wiki/pages/my',
-      { params }
+      {params}
     );
     return response.data;
   }
@@ -457,11 +457,11 @@ class FluenceService {
     size: number = 20,
     status?: string
   ): Promise<Page<BlogPost>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
     if (status) params.status = status;
     const response = await apiClient.get<Page<BlogPost>>(
       '/knowledge/blogs/my',
-      { params }
+      {params}
     );
     return response.data;
   }
@@ -474,7 +474,7 @@ class FluenceService {
   ): Promise<WikiPage> {
     const response = await apiClient.put<WikiPage>(
       `/knowledge/wiki/pages/${pageId}/editors`,
-      { editorIds }
+      {editorIds}
     );
     return response.data;
   }
@@ -485,10 +485,11 @@ class FluenceService {
   ): Promise<BlogPost> {
     const response = await apiClient.put<BlogPost>(
       `/knowledge/blogs/${postId}/editors`,
-      { editorIds }
+      {editorIds}
     );
     return response.data;
   }
+
   // ─── Activity Feed ──────────────────────────────────────────────────────────
 
   async getActivityFeed(
@@ -496,13 +497,13 @@ class FluenceService {
     size: number = 20,
     contentType?: string
   ): Promise<Page<FluenceActivity>> {
-    const params: Record<string, unknown> = { page, size };
+    const params: Record<string, unknown> = {page, size};
     if (contentType) {
       params.contentType = contentType;
     }
     const response = await apiClient.get<Page<FluenceActivity>>(
       '/fluence/activities',
-      { params }
+      {params}
     );
     return response.data;
   }
@@ -513,7 +514,7 @@ class FluenceService {
   ): Promise<Page<FluenceActivity>> {
     const response = await apiClient.get<Page<FluenceActivity>>(
       '/fluence/activities/me',
-      { params: { page, size } }
+      {params: {page, size}}
     );
     return response.data;
   }
@@ -530,7 +531,7 @@ class FluenceService {
     const response = await apiClient.post<FluenceAttachment>(
       `/fluence/attachments/${contentType}/${contentId}`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      {headers: {'Content-Type': 'multipart/form-data'}}
     );
     return response.data;
   }
@@ -628,7 +629,7 @@ class FluenceService {
   ): Promise<SpaceMember> {
     const response = await apiClient.post<SpaceMember>(
       `/knowledge/wiki/spaces/${spaceId}/members`,
-      { userId, role }
+      {userId, role}
     );
     return response.data;
   }
@@ -640,7 +641,7 @@ class FluenceService {
   ): Promise<SpaceMember> {
     const response = await apiClient.patch<SpaceMember>(
       `/knowledge/wiki/spaces/${spaceId}/members/${userId}`,
-      { role }
+      {role}
     );
     return response.data;
   }

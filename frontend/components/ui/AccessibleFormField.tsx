@@ -69,21 +69,20 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
         className={cn(
           'block text-sm font-medium mb-1.5',
           error
-            ? 'text-danger-600 dark:text-danger-400'
+            ? 'text-status-danger-text'
             : 'text-[var(--text-secondary)]'
         )}
       >
         {label}
         {required && (
           <span
-            className="ml-0.5 text-danger-500"
+            className='ml-0.5 text-status-danger-text'
             aria-hidden="true"
           >
             *
           </span>
         )}
       </label>
-
       {/* Clone children to inject aria attributes */}
       {React.Children.map(children, (child) => {
         if (!React.isValidElement(child)) return child;
@@ -103,7 +102,6 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
 
         return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, injectedProps);
       })}
-
       {/* Help text */}
       {helpText && !error && (
         <p
@@ -113,14 +111,13 @@ export const AccessibleFormField: React.FC<AccessibleFormFieldProps> = ({
           {helpText}
         </p>
       )}
-
       {/* Error message */}
       {error && (
         <p
           id={errorId}
           role="alert"
           aria-live="polite"
-          className="mt-1 text-xs text-danger-600 dark:text-danger-400"
+          className='mt-1 text-xs text-status-danger-text'
         >
           {error}
         </p>

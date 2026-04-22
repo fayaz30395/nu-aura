@@ -13,7 +13,6 @@ export default function Loading() {
         </div>
         <Skeleton height={40} width={180}/>
       </div>
-
       {/* Leave balance cards skeleton */}
       <div className="space-y-4">
         <Skeleton height={18} width="30%"/>
@@ -21,7 +20,7 @@ export default function Loading() {
           {Array.from({length: 4}).map((_, index) => (
             <div
               key={index}
-              className="rounded-lg border border-surface-200 dark:border-surface-800 p-4 space-y-4"
+              className='rounded-lg border border-subtle p-4 space-y-4'
             >
               <Skeleton height={32} width={32} radius="xl"/>
               <Skeleton height={18} width="60%"/>
@@ -31,10 +30,9 @@ export default function Loading() {
           ))}
         </div>
       </div>
-
       {/* Recent leave requests table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
-        <div className="row-between p-4 border-b border-surface-200 dark:border-surface-800">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
+        <div className='row-between p-4 border-b border-subtle'>
           <Skeleton height={20} width="25%"/>
           <Skeleton height={16} width={80}/>
         </div>

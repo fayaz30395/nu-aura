@@ -90,7 +90,7 @@ export default function CustomFieldRenderer({
               value={value?.currencyCode || 'INR'}
               onChange={(e) => onChange(currentValue, {currencyCode: e.target.value})}
               disabled={disabled}
-              className="px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className='px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500'
             >
               <option value="INR">INR</option>
               <option value="USD">USD</option>
@@ -168,7 +168,7 @@ export default function CustomFieldRenderer({
                     onChange(newValues.join(','));
                   }}
                   disabled={disabled}
-                  className="rounded text-accent-600 focus:ring-accent-500"
+                  className='rounded text-accent focus:ring-accent-500'
                 />
                 <span className="text-body-secondary">{option}</span>
               </label>
@@ -184,7 +184,7 @@ export default function CustomFieldRenderer({
               checked={currentValue === 'true'}
               onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
               disabled={disabled}
-              className="rounded text-accent-600 focus:ring-accent-500 w-5 h-5"
+              className='rounded text-accent focus:ring-accent-500 w-5 h-5'
             />
             <span className="text-body-secondary">
               {definition.description || 'Yes'}
@@ -218,7 +218,7 @@ export default function CustomFieldRenderer({
               }}
               disabled={disabled}
               accept={definition.allowedFileTypes?.map((t) => `.${t}`).join(',')}
-              className="w-full text-body-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent-50 file:text-accent-700 dark:file:bg-accent-900/30 dark:file:text-accent-300 hover:file:bg-accent-100"
+              className='w-full text-body-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent-subtle file:text-accent hover:file:bg-accent-subtle'
             />
             {definition.allowedFileTypes && definition.allowedFileTypes.length > 0 && (
               <p className="text-caption">
@@ -246,7 +246,7 @@ export default function CustomFieldRenderer({
     <div className="mb-4">
       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
         {definition.fieldName}
-        {definition.isRequired && <span className="text-danger-500 ml-1">*</span>}
+        {definition.isRequired && <span className='text-status-danger-text ml-1'>*</span>}
       </label>
       {renderField()}
       {definition.description && definition.fieldType !== 'CHECKBOX' && (

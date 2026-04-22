@@ -13,13 +13,12 @@ export default function AllocationsLoading() {
         </div>
         <Skeleton height={36} width={130}/>
       </div>
-
       {/* Stat cards skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({length: 4}).map((_, index) => (
           <div
             key={index}
-            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
+            className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4 sm:p-6'
           >
             <Skeleton height={16} width="60%" className="mb-4"/>
             <Skeleton height={32} width="80%" className="mb-4"/>
@@ -27,16 +26,14 @@ export default function AllocationsLoading() {
           </div>
         ))}
       </div>
-
       {/* Chart area skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4 sm:p-6'>
         <Skeleton height={20} width="40%" className="mb-4"/>
         <Skeleton height={300}/>
       </div>
-
       {/* Table section skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
-        <div className="border-b border-surface-200 dark:border-surface-800 p-4">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
+        <div className='border-b border-subtle p-4'>
           <Skeleton height={20} width="30%"/>
         </div>
         <div className="space-y-2 p-4 sm:p-4">

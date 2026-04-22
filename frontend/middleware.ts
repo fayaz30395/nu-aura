@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import {NextResponse} from 'next/server';
+import type {NextRequest} from 'next/server';
 
 /**
  * Next.js Edge Middleware for route protection and security hardening.
@@ -147,7 +147,7 @@ function decodeJwt(token: string): {
 } {
   try {
     const [, base64Url] = token.split('.');
-    if (!base64Url) return { roles: [], isExpired: true };
+    if (!base64Url) return {roles: [], isExpired: true};
 
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload =
@@ -170,9 +170,9 @@ function decodeJwt(token: string): {
     const exp: number | undefined = payload.exp;
     const isExpired = exp !== undefined ? Date.now() / 1000 > exp : false;
 
-    return { role: singleRole, roles, isExpired };
+    return {role: singleRole, roles, isExpired};
   } catch {
-    return { roles: [], isExpired: true };
+    return {roles: [], isExpired: true};
   }
 }
 
@@ -219,13 +219,13 @@ function isAuthenticatedRoute(path: string): boolean {
 function addSecurityHeaders(response: NextResponse): NextResponse {
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');
-  
+
   // Prevent MIME type sniffing
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  
+
   // Control referrer information
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // Enable HSTS only in production (SEC-004: HSTS on localhost causes HTTPS redirect loop)
   if (process.env.NODE_ENV === 'production') {
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -263,16 +263,16 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       "upgrade-insecure-requests",
     ].join('; ')
   );
-  
+
   // Permissions Policy (formerly Feature Policy) - restrict sensitive features
   response.headers.set(
     'Permissions-Policy',
     'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   );
-  
+
   // Prevent XSS attacks (legacy header, still useful for some browsers)
   response.headers.set('X-XSS-Protection', '1; mode=block');
-  
+
   // Disable DNS prefetching to improve privacy
   response.headers.set('X-DNS-Prefetch-Control', 'off');
 
@@ -280,7 +280,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const {pathname} = request.nextUrl;
 
   // Skip API routes and static assets
   if (matchesPattern(pathname, SKIP_PATTERNS)) {
@@ -317,7 +317,7 @@ export function middleware(request: NextRequest) {
   }
 
   // DEF-29: Decode JWT and check expiry
-  const { role, roles, isExpired } = decodeJwt(accessToken);
+  const {role, roles, isExpired} = decodeJwt(accessToken);
 
   // P0-SESSION-FIX: Check if a valid refresh token cookie exists alongside
   // the expired access token. If so, let the page load — the client-side

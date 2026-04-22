@@ -193,7 +193,7 @@ export default function GanttChartPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
+        <Loader2 className='h-8 w-8 animate-spin text-accent'/>
       </div>
     );
   }
@@ -202,7 +202,7 @@ export default function GanttChartPage() {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
-        <AlertCircle className="h-12 w-12 text-danger-500"/>
+        <AlertCircle className='h-12 w-12 text-status-danger-text'/>
         <p className="text-lg text-[var(--text-secondary)]">{errorMessage}</p>
         <Button onClick={refetch}>Try Again</Button>
       </div>
@@ -217,7 +217,7 @@ export default function GanttChartPage() {
           <div className="flex items-center gap-4">
             <div
               className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-accent-800 shadow-[var(--shadow-dropdown)]">
-              <Calendar className="h-6 w-6 text-white"/>
+              <Calendar className='h-6 w-6 text-inverse'/>
             </div>
             <div>
               <h1 className="text-xl font-bold skeuo-emboss">
@@ -244,8 +244,8 @@ export default function GanttChartPage() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-info-50 dark:bg-info-900/30">
-                <Target className="h-5 w-5 text-info-600"/>
+              <div className='p-2 rounded-lg bg-status-info-bg'>
+                <Target className='h-5 w-5 text-status-info-text'/>
               </div>
               <div>
                 <p className="text-body-muted">Total Tasks</p>
@@ -255,8 +255,8 @@ export default function GanttChartPage() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <Target className="h-5 w-5 text-success-600"/>
+              <div className='p-2 rounded-lg bg-status-success-bg'>
+                <Target className='h-5 w-5 text-status-success-text'/>
               </div>
               <div>
                 <p className="text-body-muted">Completed</p>
@@ -266,8 +266,8 @@ export default function GanttChartPage() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
-                <Clock className="h-5 w-5 text-danger-600"/>
+              <div className='p-2 rounded-lg bg-status-danger-bg'>
+                <Clock className='h-5 w-5 text-status-danger-text'/>
               </div>
               <div>
                 <p className="text-body-muted">Delayed</p>
@@ -277,8 +277,8 @@ export default function GanttChartPage() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-warning-50 dark:bg-warning-900/30">
-                <AlertCircle className="h-5 w-5 text-warning-600"/>
+              <div className='p-2 rounded-lg bg-status-warning-bg'>
+                <AlertCircle className='h-5 w-5 text-status-warning-text'/>
               </div>
               <div>
                 <p className="text-body-muted">At Risk</p>
@@ -288,8 +288,8 @@ export default function GanttChartPage() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Target className="h-5 w-5 text-accent-600"/>
+              <div className='p-2 rounded-lg bg-accent-subtle'>
+                <Target className='h-5 w-5 text-accent'/>
               </div>
               <div>
                 <p className="text-body-muted">Avg Progress</p>
@@ -399,7 +399,7 @@ export default function GanttChartPage() {
                   <div className="flex-1 relative h-16">
                     {/* Task Bar */}
                     <div
-                      className="absolute top-3 h-10 rounded-md flex items-center justify-center text-xs text-white font-medium"
+                      className='absolute top-3 h-10 rounded-md flex items-center justify-center text-xs text-inverse font-medium'
                       style={{
                         ...getTaskPosition(task),
                         backgroundColor: task.color,
@@ -417,12 +417,14 @@ export default function GanttChartPage() {
 
                     {/* Delayed/At Risk Indicators */}
                     {isTaskDelayed(task) && (
-                      <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-danger-500 text-white text-xs rounded">
+                      <div
+                        className='absolute right-2 top-1 px-1.5 py-0.5 bg-status-danger-bg text-inverse text-xs rounded'>
                         Delayed
                       </div>
                     )}
                     {!isTaskDelayed(task) && isTaskAtRisk(task) && (
-                      <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-warning-500 text-white text-xs rounded">
+                      <div
+                        className='absolute right-2 top-1 px-1.5 py-0.5 bg-status-warning-bg text-inverse text-xs rounded'>
                         At Risk
                       </div>
                     )}
@@ -433,8 +435,8 @@ export default function GanttChartPage() {
               {ganttTasks.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
                   <div
-                    className="w-16 h-16 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-4">
-                    <BarChart3 className="h-8 w-8 text-accent-500"/>
+                    className='w-16 h-16 rounded-full bg-accent-subtle flex items-center justify-center mb-4'>
+                    <BarChart3 className='h-8 w-8 text-accent'/>
                   </div>
                   <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Gantt View Coming Soon</h2>
                   <p className="text-body-muted max-w-md">

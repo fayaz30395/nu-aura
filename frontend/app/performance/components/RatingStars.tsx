@@ -57,7 +57,7 @@ export default function RatingStars({
             >
               {isFilled ? (
                 <svg
-                  className={`${starSize} text-warning-400 fill-current`}
+                  className={`${starSize} text-status-warning-text fill-current`}
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -66,7 +66,7 @@ export default function RatingStars({
                 </svg>
               ) : isHalfFilled ? (
                 <svg
-                  className={`${starSize} text-warning-400`}
+                  className={`${starSize} text-status-warning-text`}
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -83,7 +83,7 @@ export default function RatingStars({
                 </svg>
               ) : (
                 <svg
-                  className={`${starSize} text-surface-300 dark:text-surface-600`}
+                  className={`${starSize} text-muted`}
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -97,7 +97,7 @@ export default function RatingStars({
         })}
       </div>
       {showLabel && (
-        <span className="text-sm text-surface-600 dark:text-surface-400">
+        <span className='text-sm text-secondary'>
           {displayRating.toFixed(1)} / {maxRating}
         </span>
       )}

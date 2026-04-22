@@ -167,11 +167,11 @@ export default function CompOffPage() {
         </div>
 
         {/* Info card */}
-        <Card className="border-accent-200 tint-info skeuo-card">
+        <Card className='border-[var(--accent-primary)] tint-info skeuo-card'>
           <CardContent className="pt-4">
             <div className="flex gap-4">
-              <AlertCircle className="w-5 h-5 text-accent-600 shrink-0 mt-0.5"/>
-              <div className="text-sm text-accent-800">
+              <AlertCircle className='w-5 h-5 text-accent shrink-0 mt-0.5'/>
+              <div className='text-sm text-accent'>
                 <strong>Eligibility:</strong> Minimum 60 minutes overtime required. Half-day credited for 4h+, full day
                 for 8h+.
                 Requests are auto-approved after 7 days if no manager action.
@@ -204,7 +204,7 @@ export default function CompOffPage() {
         <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-4"><SkeletonTable rows={5} columns={5} /></div>
+              <div className="p-4"><SkeletonTable rows={5} columns={5}/></div>
             ) : requests.length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
                 <Clock className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>
@@ -234,7 +234,7 @@ export default function CompOffPage() {
                       <td className="px-4 py-4">
                         {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
                       </td>
-                      <td className="px-4 py-4 font-semibold text-accent-700">{req.compOffDays}</td>
+                      <td className='px-4 py-4 font-semibold text-accent'>{req.compOffDays}</td>
                       <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
                       <td className="px-4 py-4">
                           <span
@@ -249,7 +249,7 @@ export default function CompOffPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-success-700 border-success-200"
+                              className='text-status-success-text border-status-success-border'
                               disabled={approveMutation.isPending}
                               onClick={() => approveMutation.mutate({id: req.id, action: 'approve'})}
                             >
@@ -258,7 +258,7 @@ export default function CompOffPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-danger-700 border-danger-200"
+                              className='text-status-danger-text border-status-danger-border'
                               disabled={approveMutation.isPending}
                               onClick={() => approveMutation.mutate({id: req.id, action: 'reject'})}
                             >
@@ -292,7 +292,6 @@ export default function CompOffPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* Request Modal */}
       <Modal
         opened={showRequestModal}
@@ -310,7 +309,7 @@ export default function CompOffPage() {
               className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
             />
             {errors.attendanceDate && (
-              <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.attendanceDate.message}</p>
             )}
             <p className="text-caption mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
           </div>

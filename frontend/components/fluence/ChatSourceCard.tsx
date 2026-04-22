@@ -34,7 +34,7 @@ export const ChatSourceCard: React.FC<ChatSourceCardProps> = ({source}) => {
       </div>
       <div className="flex-1 min-w-0">
         <p
-          className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
+          className='text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent transition-colors'>
           {source.title}
         </p>
         {source.excerpt && (

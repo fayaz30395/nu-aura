@@ -16,17 +16,15 @@ export default function AnalyticsError({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4">
-      <div className="p-4 bg-danger-100 dark:bg-danger-900/30 rounded-lg">
-        <AlertCircle className={`${iconSize.pageHeader} text-danger-600 dark:text-danger-300`}/>
+      <div className='p-4 bg-status-danger-bg rounded-lg'>
+        <AlertCircle className={`${iconSize.pageHeader} text-status-danger-text`}/>
       </div>
-
       <div className="text-center max-w-md">
         <h1 className={`${typography.sectionTitle} mb-2`}>Failed to load analytics</h1>
         <p className={typography.bodySecondary}>
           {error.message || 'An unexpected error occurred while loading the analytics dashboard.'}
         </p>
       </div>
-
       <div className="flex gap-4">
         <Button onClick={reset} className="gap-2">
           Try again

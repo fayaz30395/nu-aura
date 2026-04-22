@@ -304,7 +304,7 @@ export default function CreateBlogPost() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-warning-600 hover:bg-warning-700"
+                className='bg-status-warning-bg hover:bg-status-warning-bg'
               >
                 {isSubmitting ? 'Creating...' : 'Create Post'}
               </Button>

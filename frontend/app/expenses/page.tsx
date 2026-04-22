@@ -368,7 +368,7 @@ export default function ExpenseClaims() {
     return (
       <AppLayout activeMenuItem="expenses">
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
         </div>
       </AppLayout>
     );
@@ -392,14 +392,14 @@ export default function ExpenseClaims() {
         {/* Notifications */}
         {error && (
           <div
-            className="mb-4 p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            className='mb-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-center gap-2 text-status-danger-text'>
             <AlertCircle className="w-5 h-5"/>
             {error}
           </div>
         )}
         {success && (
           <div
-            className="mb-4 p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            className='mb-4 p-4 bg-status-success-bg border border-status-success-border rounded-lg flex items-center gap-2 text-status-success-text'>
             <CheckCircle className="w-5 h-5"/>
             {success}
           </div>
@@ -417,7 +417,7 @@ export default function ExpenseClaims() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-4 sm:px-4 py-2 sm:py-4 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2 skeuo-button"
+            className='px-4 sm:px-4 py-2 sm:py-4 bg-accent text-inverse rounded-lg hover:bg-accent transition-colors flex items-center gap-2 skeuo-button'
           >
             <Plus className="w-5 h-5"/>
             New Claim
@@ -428,7 +428,7 @@ export default function ExpenseClaims() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
+              <div className='p-2 rounded-lg bg-status-warning-bg text-status-warning-text'>
                 <AlertCircle className="w-5 h-5"/>
               </div>
               <div>
@@ -439,7 +439,7 @@ export default function ExpenseClaims() {
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
+              <div className='p-2 rounded-lg bg-status-success-bg text-status-success-text'>
                 <CheckCircle className="w-5 h-5"/>
               </div>
               <div>
@@ -450,7 +450,7 @@ export default function ExpenseClaims() {
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30 text-accent-700">
+              <div className='p-2 rounded-lg bg-accent-subtle text-accent'>
                 <DollarSign className="w-5 h-5"/>
               </div>
               <div>
@@ -462,7 +462,7 @@ export default function ExpenseClaims() {
           </div>
           <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)] skeuo-card">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
+              <div className='p-2 rounded-lg bg-status-info-bg text-status-info-text'>
                 <FileText className="w-5 h-5"/>
               </div>
               <div>
@@ -591,7 +591,8 @@ export default function ExpenseClaims() {
                   className="input-aura"
                   {...register('claimDate')}
                 />
-                {errors.claimDate && <span className="text-danger-500 text-sm">{errors.claimDate.message}</span>}
+                {errors.claimDate &&
+                  <span className='text-status-danger-text text-sm'>{errors.claimDate.message}</span>}
               </div>
 
               <div>
@@ -613,7 +614,7 @@ export default function ExpenseClaims() {
                   <option value="MEDICAL">Medical</option>
                   <option value="OTHER">Other</option>
                 </select>
-                {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
+                {errors.category && <span className='text-status-danger-text text-sm'>{errors.category.message}</span>}
               </div>
 
               <div className="md:col-span-2">
@@ -624,7 +625,8 @@ export default function ExpenseClaims() {
                   placeholder="Describe your expense..."
                   {...register('description')}
                 />
-                {errors.description && <span className="text-danger-500 text-sm">{errors.description.message}</span>}
+                {errors.description &&
+                  <span className='text-status-danger-text text-sm'>{errors.description.message}</span>}
               </div>
 
               <div>
@@ -637,7 +639,7 @@ export default function ExpenseClaims() {
                   placeholder="0.00"
                   {...register('amount')}
                 />
-                {errors.amount && <span className="text-danger-500 text-sm">{errors.amount.message}</span>}
+                {errors.amount && <span className='text-status-danger-text text-sm'>{errors.amount.message}</span>}
               </div>
 
               <div>
@@ -662,7 +664,8 @@ export default function ExpenseClaims() {
                   placeholder="https://..."
                   {...register('receiptUrl')}
                 />
-                {errors.receiptUrl && <span className="text-danger-500 text-sm">{errors.receiptUrl.message}</span>}
+                {errors.receiptUrl &&
+                  <span className='text-status-danger-text text-sm'>{errors.receiptUrl.message}</span>}
               </div>
 
               <div className="md:col-span-2">
@@ -700,15 +703,15 @@ export default function ExpenseClaims() {
         {/* Bulk Action Toolbar */}
         {selectedClaims.size > 0 && activeTab === 'pending' && (
           <div
-            className="bg-accent-50 dark:bg-accent-900/30 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+            className='bg-accent-subtle border border-[var(--accent-primary)] rounded-lg p-4 mb-4 flex flex-wrap items-center justify-between gap-4'>
             <div className="flex items-center gap-4">
               <input
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length}
                 onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                className='w-5 h-5 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
               />
-              <span className="font-medium text-accent-900 dark:text-accent-100">
+              <span className='font-medium text-accent'>
                 {selectedClaims.size} claim{selectedClaims.size !== 1 ? 's' : ''} selected
               </span>
             </div>
@@ -717,7 +720,7 @@ export default function ExpenseClaims() {
                 <button
                   onClick={handleBulkApprove}
                   disabled={bulkProcessing}
-                  className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-2 bg-status-success-bg text-inverse rounded-lg hover:bg-status-success-bg disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   <CheckCircle className="w-4 h-4"/>
                   {bulkProcessing ? 'Processing...' : `Approve ${selectedClaims.size}`}
@@ -727,7 +730,7 @@ export default function ExpenseClaims() {
                 <button
                   onClick={() => setShowBulkRejectModal(true)}
                   disabled={bulkProcessing}
-                  className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+                  className='px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2'
                 >
                   <XCircle className="w-4 h-4"/>
                   Reject {selectedClaims.size}
@@ -773,7 +776,7 @@ export default function ExpenseClaims() {
               Pending Approval
               {statistics.pendingCount > 0 && (
                 <span
-                  className="ml-2 px-2 py-0.5 text-xs rounded-full bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300">
+                  className='ml-2 px-2 py-0.5 text-xs rounded-full bg-status-warning-bg text-status-warning-text'>
                   {statistics.pendingCount}
                 </span>
               )}
@@ -821,7 +824,7 @@ export default function ExpenseClaims() {
                   type="checkbox"
                   checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
                   onChange={handleSelectAll}
-                  className="w-5 h-5 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                  className='w-5 h-5 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                 />
                 <span className="text-body-secondary">
                 Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
@@ -831,11 +834,11 @@ export default function ExpenseClaims() {
 
             {((activeTab === 'my-claims' && myClaimsQuery.isLoading) || (activeTab === 'pending' && pendingClaimsQuery.isLoading) || (activeTab === 'all' && allClaimsQuery.isLoading)) ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
               </div>
             ) : myClaimsQuery.error || pendingClaimsQuery.error || allClaimsQuery.error ? (
               <div className="flex flex-col items-center justify-center h-64">
-                <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
+                <AlertCircle className='h-12 w-12 text-status-danger-text mb-4'/>
                 <p className="text-center text-[var(--text-secondary)] max-w-md">
                   {myClaimsQuery.error?.message || pendingClaimsQuery.error?.message || allClaimsQuery.error?.message || 'Failed to load expense claims. Please try again.'}
                 </p>
@@ -845,7 +848,7 @@ export default function ExpenseClaims() {
                     else if (activeTab === 'pending') pendingClaimsQuery.refetch();
                     else if (activeTab === 'all') allClaimsQuery.refetch();
                   }}
-                  className="mt-4 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 transition-colors"
+                  className='mt-4 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent transition-colors'
                 >
                   Retry
                 </button>
@@ -876,7 +879,7 @@ export default function ExpenseClaims() {
                             type="checkbox"
                             checked={selectedClaims.has(claim.id)}
                             onChange={() => handleSelectClaim(claim.id)}
-                            className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                            className='w-5 h-5 mt-1 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                           />
                         )}
                         <div>
@@ -899,7 +902,8 @@ export default function ExpenseClaims() {
                         <div className="text-xl font-bold text-[var(--text-primary)]">
                           {formatCurrency(claim.amount, claim.currency)}
                         </div>
-                        <div className="text-body-secondary">{claim.category ? claim.category.replace('_', ' ') : '-'}</div>
+                        <div
+                          className="text-body-secondary">{claim.category ? claim.category.replace('_', ' ') : '-'}</div>
                       </div>
                     </div>
 
@@ -923,7 +927,7 @@ export default function ExpenseClaims() {
                       {claim.rejectionReason && (
                         <div className="col-span-2">
                           <span className="text-[var(--text-secondary)]">Rejection Reason:</span>
-                          <p className="font-medium text-danger-600">{claim.rejectionReason}</p>
+                          <p className='font-medium text-status-danger-text'>{claim.rejectionReason}</p>
                         </div>
                       )}
                     </div>
@@ -935,7 +939,7 @@ export default function ExpenseClaims() {
                           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
                             <button
                               onClick={() => handleSubmitClaim(claim.id)}
-                              className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 text-sm transition-colors"
+                              className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent text-sm transition-colors'
                             >
                               Submit for Approval
                             </button>
@@ -943,7 +947,7 @@ export default function ExpenseClaims() {
                           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
                             <button
                               onClick={() => handleDeleteStart(claim.id)}
-                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
+                              className='px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg text-sm transition-colors flex items-center gap-2'
                             >
                               <XCircle className="w-4 h-4"/>
                               Delete
@@ -956,7 +960,7 @@ export default function ExpenseClaims() {
                           <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
                             <button
                               onClick={() => handleApprove(claim.id)}
-                              className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm transition-colors flex items-center gap-2"
+                              className='px-4 py-2 bg-status-success-bg text-inverse rounded-lg hover:bg-status-success-bg text-sm transition-colors flex items-center gap-2'
                             >
                               <CheckCircle className="w-4 h-4"/>
                               Approve
@@ -965,7 +969,7 @@ export default function ExpenseClaims() {
                           <PermissionGate permission={Permissions.EXPENSE_APPROVE}>
                             <button
                               onClick={() => handleRejectStart(claim.id)}
-                              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 text-sm transition-colors flex items-center gap-2"
+                              className='px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg text-sm transition-colors flex items-center gap-2'
                             >
                               <XCircle className="w-4 h-4"/>
                               Reject
@@ -1002,7 +1006,7 @@ export default function ExpenseClaims() {
             </p>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
+                Rejection Reason <span className='text-status-danger-text'>*</span>
               </label>
               <textarea
                 value={bulkRejectReason}
@@ -1023,7 +1027,7 @@ export default function ExpenseClaims() {
             <button
               onClick={handleBulkReject}
               disabled={!bulkRejectReason.trim() || bulkProcessing}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <XCircle className="w-4 h-4"/>
               {bulkProcessing ? 'Rejecting...' : `Reject ${selectedClaims.size} Claims`}
@@ -1070,7 +1074,7 @@ export default function ExpenseClaims() {
             </p>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
+                Rejection Reason <span className='text-status-danger-text'>*</span>
               </label>
               <textarea
                 value={rejectReason}
@@ -1095,7 +1099,7 @@ export default function ExpenseClaims() {
             <button
               onClick={handleRejectConfirm}
               disabled={!rejectReason.trim() || rejectMutation.isPending}
-              className="px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <XCircle className="w-4 h-4"/>
               {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

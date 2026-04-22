@@ -35,6 +35,14 @@ interface ModalFooterProps {
 
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+const SIZE_CLASS: Record<NonNullable<ModalProps['size']>, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-lg',
+  lg: 'max-w-2xl',
+  xl: 'max-w-4xl',
+  full: 'max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]',
+};
+
 const ModalTitleIdContext = React.createContext<string | undefined>(undefined);
 
 const Modal: React.FC<ModalProps> = ({
@@ -51,7 +59,6 @@ const Modal: React.FC<ModalProps> = ({
   const titleId = `modal-title-${generatedId}`;
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // QA-003: Focus trap — trap Tab/Shift+Tab within modal
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && closeOnEscape) {
       onClose();
@@ -71,22 +78,18 @@ const Modal: React.FC<ModalProps> = ({
         e.preventDefault();
         lastElement.focus();
       }
-    } else {
-      if (document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement.focus();
-      }
+    } else if (document.activeElement === lastElement) {
+      e.preventDefault();
+      firstElement.focus();
     }
   }, [closeOnEscape, onClose]);
 
   useEffect(() => {
     if (isOpen) {
-      // Save current focus to restore later
       previousFocusRef.current = document.activeElement as HTMLElement;
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
-      // Auto-focus first focusable element in modal
       requestAnimationFrame(() => {
         const firstFocusable = modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
         firstFocusable?.focus();
@@ -96,18 +99,9 @@ const Modal: React.FC<ModalProps> = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
-      // Restore focus to the element that triggered the modal
       previousFocusRef.current?.focus();
     };
   }, [isOpen, handleKeyDown]);
-
-  const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
-    full: 'max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]',
-  };
 
   return (
     <ModalTitleIdContext.Provider value={titleId}>
@@ -119,10 +113,8 @@ const Modal: React.FC<ModalProps> = ({
             role="dialog"
             aria-labelledby={titleId}
           >
-            {/* Backdrop */}
             <motion.div
-              className="absolute inset-0"
-              style={{backgroundColor: 'var(--bg-overlay)'}}
+              className="absolute inset-0 bg-[var(--bg-overlay)]"
               onClick={closeOnBackdrop ? onClose : undefined}
               initial="initial"
               animate="animate"
@@ -130,20 +122,15 @@ const Modal: React.FC<ModalProps> = ({
               variants={overlayVariants}
             />
 
-            {/* Modal */}
             <motion.div
               ref={modalRef}
               className={cn(
-                'relative w-full rounded-lg border',
-                'max-h-[90vh] overflow-hidden flex flex-col',
-                sizeClasses[size],
+                'relative w-full rounded-lg border flex flex-col overflow-hidden',
+                'max-h-[90vh]',
+                'bg-[var(--bg-elevated)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]',
+                SIZE_CLASS[size],
                 className
               )}
-              style={{
-                backgroundColor: 'var(--bg-elevated)',
-                borderColor: 'var(--border-main)',
-                boxShadow: 'var(--shadow-dropdown)',
-              }}
               onClick={(e) => e.stopPropagation()}
               initial="initial"
               animate="animate"
@@ -170,14 +157,16 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   return (
     <div
       className={cn(
-        'row-between px-6 py-4',
+        'flex items-center justify-between gap-4 px-6 py-4 border-b border-[var(--border-main)]',
         className
       )}
-      style={{borderBottom: '1px solid var(--border-main)'}}
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
-          <h2 id={titleId} className="text-xl font-semibold text-surface-900 dark:text-surface-50 truncate">
+          <h2
+            id={titleId}
+            className="text-lg font-semibold text-[var(--text-primary)] truncate"
+          >
             {children}
           </h2>
         ) : (
@@ -186,41 +175,40 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       </div>
       {showCloseButton && onClose && (
         <button
+          type="button"
           onClick={onClose}
-          className="ml-4 p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-200 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className={cn(
+            'shrink-0 h-8 w-8 inline-flex items-center justify-center rounded-md',
+            'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]',
+            'transition-colors cursor-pointer',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
+          )}
           aria-label="Close modal"
         >
-          <X className="h-5 w-5"/>
+          <X className="h-4 w-4"/>
         </button>
       )}
     </div>
   );
 };
 
-const ModalBody: React.FC<ModalBodyProps> = ({children, className}) => {
-  return (
-    <div className={cn('flex-1 overflow-y-auto px-6 py-4', className)}>
-      {children}
-    </div>
-  );
-};
+const ModalBody: React.FC<ModalBodyProps> = ({children, className}) => (
+  <div className={cn('flex-1 overflow-y-auto px-6 py-4', className)}>
+    {children}
+  </div>
+);
 
-const ModalFooter: React.FC<ModalFooterProps> = ({children, className}) => {
-  return (
-    <div
-      className={cn(
-        'flex items-center justify-end gap-2 px-6 py-4',
-        className
-      )}
-      style={{
-        borderTop: '1px solid var(--border-main)',
-        backgroundColor: 'var(--bg-surface)',
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+const ModalFooter: React.FC<ModalFooterProps> = ({children, className}) => (
+  <div
+    className={cn(
+      'flex items-center justify-end gap-2 px-6 py-4',
+      'border-t border-[var(--border-main)] bg-[var(--bg-surface)]',
+      className
+    )}
+  >
+    {children}
+  </div>
+);
 
 export {Modal, ModalHeader, ModalBody, ModalFooter};
 export type {ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps};

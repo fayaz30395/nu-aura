@@ -406,7 +406,7 @@ export default function ProjectCalendarPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="projects">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading calendar...</span>
         </div>
       </AppLayout>
@@ -468,9 +468,9 @@ export default function ProjectCalendarPage() {
 
         {/* Error Alert */}
         {queryError && (
-          <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
+          <Card className='border border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+              <div className='flex items-center gap-2 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{queryError instanceof Error ? queryError.message : 'Failed to load data'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">
@@ -661,7 +661,6 @@ export default function ProjectCalendarPage() {
                               </div>
                             </div>
                           </div>
-
                           {/* Timeline Column */}
                           <div className="flex-1 relative p-2">
                             {isMilestone ? (
@@ -720,7 +719,7 @@ export default function ProjectCalendarPage() {
                                 />
                                 {/* Label */}
                                 <span
-                                  className="absolute inset-0 flex items-center px-2 text-xs font-medium text-white truncate">
+                                  className='absolute inset-0 flex items-center px-2 text-xs font-medium text-inverse truncate'>
                                   {item.progress}%
                                 </span>
                               </div>
@@ -738,11 +737,11 @@ export default function ProjectCalendarPage() {
                         const position = calculatePosition(today, today);
                         return (
                           <div
-                            className="absolute top-0 bottom-0 w-0.5 bg-accent-500 pointer-events-none z-20"
+                            className='absolute top-0 bottom-0 w-0.5 bg-accent pointer-events-none z-20'
                             style={{left: position.left}}
                           >
                             <div
-                              className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent-500 rounded-full"/>
+                              className='absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent rounded-full'/>
                           </div>
                         );
                       }

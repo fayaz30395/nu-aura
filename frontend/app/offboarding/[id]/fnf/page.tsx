@@ -281,7 +281,7 @@ export default function FnFSettlementPage() {
                 <IconArrowLeft size={20}/>
               </ActionIcon>
               <div>
-                <Title order={2} className="text-surface-900 dark:text-surface-50">
+                <Title order={2} className='text-primary'>
                   Full & Final Settlement
                 </Title>
                 <Text size="sm" c="dimmed">
@@ -563,7 +563,7 @@ export default function FnFSettlementPage() {
             </SimpleGrid>
 
             {/* Net Payable */}
-            <Paper withBorder p="md" radius="md" mt="md" className="bg-accent-50 dark:bg-accent-900/20">
+            <Paper withBorder p="md" radius="md" mt="md" className='bg-accent-subtle'>
               <Group justify="space-between">
                 <Title order={3}>Net Payable</Title>
                 <Title order={3} c={liveNet >= 0 ? 'sky.7' : 'red.7'}>

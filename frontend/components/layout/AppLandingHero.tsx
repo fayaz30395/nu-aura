@@ -74,7 +74,6 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
           ease: 'linear',
         }}
       />
-
       {/* Floating particles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(5)].map((_, i) => (
@@ -99,7 +98,6 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
           />
         ))}
       </div>
-
       {/* Content container */}
       <motion.div
         className="relative z-10"
@@ -114,14 +112,14 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
           whileHover={{scale: 1.05}}
           transition={{type: 'spring', stiffness: 300, damping: 20}}
         >
-          <div className={`${iconInnerDimensions[iconSize]} text-white flex items-center justify-center`}>
+          <div className={`${iconInnerDimensions[iconSize]} text-inverse flex items-center justify-center`}>
             {icon}
           </div>
         </motion.div>
 
         {/* Title */}
         <motion.h1
-          className="text-3xl md:text-4xl font-bold text-surface-800 dark:text-surface-100 mb-4"
+          className='text-3xl md:text-4xl font-bold text-primary mb-4'
           variants={itemVariants}
         >
           {title}
@@ -129,7 +127,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
 
         {/* Description */}
         <motion.p
-          className="text-surface-600 dark:text-surface-400 max-w-md mx-auto mb-6 text-base leading-relaxed"
+          className='text-secondary max-w-md mx-auto mb-6 text-base leading-relaxed'
           variants={itemVariants}
         >
           {description}
@@ -138,7 +136,7 @@ export const AppLandingHero: React.FC<AppLandingHeroProps> = ({
         {/* Coming Soon Badge */}
         {comingSoon && (
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400 text-sm font-medium"
+            className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-subtle text-accent text-sm font-medium'
             variants={itemVariants}
             animate={{y: [0, -4, 0]}}
             transition={{duration: 2, repeat: Infinity}}

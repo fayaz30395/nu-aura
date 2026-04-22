@@ -35,7 +35,7 @@ function renderMessageContent(content: string): React.ReactNode[] {
       <Link
         key={`link-${match.index}`}
         href={linkUrl}
-        className="text-accent-500 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 underline underline-offset-2 transition-colors"
+        className='text-accent hover:text-accent underline underline-offset-2 transition-colors'
       >
         {linkText}
       </Link>
@@ -67,20 +67,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({message}) => {
         className={cn(
           'flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full mt-0.5',
           isUser
-            ? 'bg-accent-100 dark:bg-accent-900/50 text-accent-700 dark:text-accent-400'
-            : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400'
+            ? 'bg-accent-subtle text-accent'
+            : 'bg-surface text-secondary'
         )}
       >
         {isUser ? <User className="h-3.5 w-3.5"/> : <Bot className="h-3.5 w-3.5"/>}
       </div>
-
       {/* Bubble */}
       <div className={cn('max-w-[85%] space-y-2')}>
         <div
           className={cn(
             'rounded-lg px-4 py-2 text-sm leading-relaxed',
             isUser
-              ? 'bg-accent-700 text-white rounded-br-md'
+              ? 'bg-accent text-inverse rounded-br-md'
               : 'bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-bl-md'
           )}
         >
@@ -91,14 +90,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({message}) => {
             </div>
           ) : message.isStreaming ? (
             <div className="flex items-center gap-1.5 py-0.5">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-500"/>
+              <Loader2 className='h-3.5 w-3.5 animate-spin text-accent'/>
               <span className="text-caption">Thinking...</span>
             </div>
           ) : null}
 
           {/* Streaming cursor */}
           {message.isStreaming && message.content && (
-            <span className="inline-block w-1.5 h-4 bg-accent-500 animate-pulse ml-0.5 align-middle rounded-md"/>
+            <span className='inline-block w-1.5 h-4 bg-accent animate-pulse ml-0.5 align-middle rounded-md'/>
           )}
         </div>
 

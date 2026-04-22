@@ -170,7 +170,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                 onClick={handleSubmitReply}
                 disabled={!replyText.trim() || isSubmittingReply}
                 aria-label="Send reply"
-                className="px-2 py-1 text-xs font-semibold text-white bg-accent-700 rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='px-2 py-1 text-xs font-semibold text-inverse bg-accent rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 <Send className="h-3 w-3"/>
               </button>
@@ -182,7 +182,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
             <button
               onClick={handleLoadReplies}
               disabled={isLoadingReplies}
-              className="text-2xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 mt-1 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='text-2xs font-medium text-accent hover:text-accent mt-1 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               {isLoadingReplies ? 'Loading...' : `View ${comment.replyCount || childReplies.length} ${(comment.replyCount || childReplies.length) === 1 ? 'reply' : 'replies'}`}
             </button>

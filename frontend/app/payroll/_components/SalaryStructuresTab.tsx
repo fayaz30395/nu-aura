@@ -53,13 +53,12 @@ export function SalaryStructuresTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreateStructure}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Create Structure
           </button>
         </PermissionGate>
       </div>
-
       {loading ? (
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading salary structures...</div>
       ) : filtered.length === 0 ? (
@@ -102,12 +101,12 @@ export function SalaryStructuresTab({
 
               {Array.isArray(structure.allowances) && structure.allowances.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold text-sm mb-2 text-success-700">Allowances</h4>
+                  <h4 className='font-semibold text-sm mb-2 text-status-success-text'>Allowances</h4>
                   <div className="space-y-1">
                     {structure.allowances.map((allow, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{allow.name}</span>
-                        <span className="text-success-600 font-medium">{formatCurrency(allow.amount)}</span>
+                        <span className='text-status-success-text font-medium'>{formatCurrency(allow.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -116,12 +115,12 @@ export function SalaryStructuresTab({
 
               {Array.isArray(structure.deductions) && structure.deductions.length > 0 && (
                 <div className="mb-4">
-                  <h4 className="font-semibold text-sm mb-2 text-danger-700">Deductions</h4>
+                  <h4 className='font-semibold text-sm mb-2 text-status-danger-text'>Deductions</h4>
                   <div className="space-y-1">
                     {structure.deductions.map((ded, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">{ded.name}</span>
-                        <span className="text-danger-600 font-medium">{formatCurrency(ded.amount)}</span>
+                        <span className='text-status-danger-text font-medium'>{formatCurrency(ded.amount)}</span>
                       </div>
                     ))}
                   </div>
@@ -132,7 +131,7 @@ export function SalaryStructuresTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditStructure(structure)}
-                    className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                    className='flex-1 px-4 py-2 bg-accent-subtle text-accent rounded hover:bg-accent-subtle text-sm font-medium'
                   >
                     Edit
                   </button>
@@ -140,7 +139,7 @@ export function SalaryStructuresTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onDeleteStructure(structure)}
-                    className="flex-1 px-4 py-2 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded hover:bg-danger-100 dark:hover:bg-danger-900/60 text-sm font-medium"
+                    className='flex-1 px-4 py-2 bg-status-danger-bg text-status-danger-text rounded hover:bg-status-danger-bg text-sm font-medium'
                   >
                     Delete
                   </button>

@@ -125,7 +125,7 @@ export default function NewTravelRequestPage() {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
         </div>
       </AppLayout>
     );
@@ -244,9 +244,9 @@ export default function NewTravelRequestPage() {
 
         {(createMutation.isError || submitMutation.isError) && (
           <div
-            className="flex items-center gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-            <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0"/>
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to create travel request. Please try
+            className='flex items-center gap-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-xl'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
+            <p className='text-sm text-status-danger-text'>Failed to create travel request. Please try
               again.</p>
           </div>
         )}
@@ -255,8 +255,8 @@ export default function NewTravelRequestPage() {
           {/* Travel Details */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+              <div className='p-2 bg-accent-subtle rounded-lg'>
+                <Briefcase className='h-5 w-5 text-accent'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Travel Details</h2>
             </div>
@@ -264,7 +264,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Travel Type <span className="text-danger-500">*</span>
+                  Travel Type <span className='text-status-danger-text'>*</span>
                 </label>
                 <select
                   {...register('travelType')}
@@ -278,7 +278,7 @@ export default function NewTravelRequestPage() {
                   <option value="OTHER">Other</option>
                 </select>
                 {errors.travelType && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.travelType.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.travelType.message}</p>
                 )}
               </div>
 
@@ -297,7 +297,7 @@ export default function NewTravelRequestPage() {
 
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Purpose <span className="text-danger-500">*</span>
+                Purpose <span className='text-status-danger-text'>*</span>
               </label>
               <textarea
                 {...register('purpose')}
@@ -306,7 +306,7 @@ export default function NewTravelRequestPage() {
                 className={`${inputClass(!!errors.purpose)} resize-none`}
               />
               {errors.purpose && (
-                <p className="mt-1 text-sm text-danger-500">{errors.purpose.message}</p>
+                <p className='mt-1 text-sm text-status-danger-text'>{errors.purpose.message}</p>
               )}
             </div>
           </div>
@@ -314,8 +314,8 @@ export default function NewTravelRequestPage() {
           {/* Journey Details */}
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                <MapPin className="h-5 w-5 text-success-600 dark:text-success-400"/>
+              <div className='p-2 bg-status-success-bg rounded-lg'>
+                <MapPin className='h-5 w-5 text-status-success-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Journey Details</h2>
             </div>
@@ -323,7 +323,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Origin City <span className="text-danger-500">*</span>
+                  Origin City <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="text"
@@ -332,13 +332,13 @@ export default function NewTravelRequestPage() {
                   className={cardInputClass(!!errors.originCity)}
                 />
                 {errors.originCity && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.originCity.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.originCity.message}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Destination City <span className="text-danger-500">*</span>
+                  Destination City <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="text"
@@ -347,13 +347,13 @@ export default function NewTravelRequestPage() {
                   className={cardInputClass(!!errors.destinationCity)}
                 />
                 {errors.destinationCity && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.destinationCity.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.destinationCity.message}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Departure Date <span className="text-danger-500">*</span>
+                  Departure Date <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="date"
@@ -361,13 +361,13 @@ export default function NewTravelRequestPage() {
                   className={cardInputClass(!!errors.departureDate)}
                 />
                 {errors.departureDate && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.departureDate.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.departureDate.message}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Return Date <span className="text-danger-500">*</span>
+                  Return Date <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="date"
@@ -376,7 +376,7 @@ export default function NewTravelRequestPage() {
                   className={cardInputClass(!!errors.returnDate)}
                 />
                 {errors.returnDate && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.returnDate.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.returnDate.message}</p>
                 )}
               </div>
             </div>
@@ -386,7 +386,7 @@ export default function NewTravelRequestPage() {
                 <input
                   type="checkbox"
                   {...register('isInternational')}
-                  className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
+                  className='w-4 h-4 text-accent bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500'
                 />
                 <span className="text-body-secondary">International Travel</span>
               </label>
@@ -396,7 +396,7 @@ export default function NewTravelRequestPage() {
                   <input
                     type="checkbox"
                     {...register('visaRequired')}
-                    className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
+                    className='w-4 h-4 text-accent bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500'
                   />
                   <span className="text-body-secondary">Visa Required</span>
                 </label>
@@ -407,8 +407,8 @@ export default function NewTravelRequestPage() {
           {/* Transport Details */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg">
-                <Plane className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              <div className='p-2 bg-accent-subtle rounded-lg'>
+                <Plane className='h-5 w-5 text-accent'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Transport Details</h2>
             </div>
@@ -416,7 +416,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Transport Mode <span className="text-danger-500">*</span>
+                  Transport Mode <span className='text-status-danger-text'>*</span>
                 </label>
                 <select
                   {...register('transportMode')}
@@ -429,7 +429,7 @@ export default function NewTravelRequestPage() {
                   <option value="SELF_ARRANGED">Self Arranged</option>
                 </select>
                 {errors.transportMode && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.transportMode.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.transportMode.message}</p>
                 )}
               </div>
 
@@ -450,7 +450,7 @@ export default function NewTravelRequestPage() {
               <input
                 type="checkbox"
                 {...register('cabRequired')}
-                className="w-4 h-4 text-accent-700 bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-accent-500"
+                className='w-4 h-4 text-accent bg-[var(--bg-secondary)] border-[var(--border-main)] rounded focus:ring-accent-500'
               />
               <span className="text-body-secondary">Local cab/taxi required</span>
             </label>
@@ -459,8 +459,8 @@ export default function NewTravelRequestPage() {
           {/* Accommodation */}
           <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-accent-300 dark:bg-accent-900/30 rounded-lg">
-                <Hotel className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
+              <div className='p-2 bg-accent-subtle rounded-lg'>
+                <Hotel className='h-5 w-5 text-accent'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Accommodation</h2>
             </div>
@@ -469,7 +469,7 @@ export default function NewTravelRequestPage() {
               <input
                 type="checkbox"
                 {...register('accommodationRequired')}
-                className="w-4 h-4 text-accent-700 bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500"
+                className='w-4 h-4 text-accent bg-[var(--bg-card)] border-[var(--border-main)] rounded focus:ring-accent-500'
               />
               <span className="text-body-secondary">Accommodation required</span>
             </label>
@@ -490,7 +490,7 @@ export default function NewTravelRequestPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Check-in Date <span className="text-danger-500">*</span>
+                    Check-in Date <span className='text-status-danger-text'>*</span>
                   </label>
                   <input
                     type="date"
@@ -499,13 +499,13 @@ export default function NewTravelRequestPage() {
                     className={cardInputClass(!!errors.checkInDate)}
                   />
                   {errors.checkInDate && (
-                    <p className="mt-1 text-sm text-danger-500">{errors.checkInDate.message}</p>
+                    <p className='mt-1 text-sm text-status-danger-text'>{errors.checkInDate.message}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                    Check-out Date <span className="text-danger-500">*</span>
+                    Check-out Date <span className='text-status-danger-text'>*</span>
                   </label>
                   <input
                     type="date"
@@ -513,7 +513,7 @@ export default function NewTravelRequestPage() {
                     className={cardInputClass(!!errors.checkOutDate)}
                   />
                   {errors.checkOutDate && (
-                    <p className="mt-1 text-sm text-danger-500">{errors.checkOutDate.message}</p>
+                    <p className='mt-1 text-sm text-status-danger-text'>{errors.checkOutDate.message}</p>
                   )}
                 </div>
               </div>
@@ -523,8 +523,8 @@ export default function NewTravelRequestPage() {
           {/* Budget */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-4 pb-4 border-b border-[var(--border-main)]">
-              <div className="p-2 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                <DollarSign className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+              <div className='p-2 bg-status-warning-bg rounded-lg'>
+                <DollarSign className='h-5 w-5 text-status-warning-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">Budget Details</h2>
             </div>
@@ -532,7 +532,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Estimated Cost (INR) <span className="text-danger-500">*</span>
+                  Estimated Cost (INR) <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="number"
@@ -543,7 +543,7 @@ export default function NewTravelRequestPage() {
                   className={inputClass(!!errors.estimatedCost)}
                 />
                 {errors.estimatedCost && (
-                  <p className="mt-1 text-sm text-danger-500">{errors.estimatedCost.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.estimatedCost.message}</p>
                 )}
               </div>
 
@@ -599,7 +599,7 @@ export default function NewTravelRequestPage() {
             type="button"
             onClick={handleSubmitRequest}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin"/> : <Send className="h-5 w-5"/>}
             Submit Request

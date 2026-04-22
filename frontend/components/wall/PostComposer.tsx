@@ -181,7 +181,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
               className={cn(
                 'flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                 activeTab === tab.id
-                  ? 'text-accent-700 dark:text-accent-400'
+                  ? 'text-accent'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
               )}
             >
@@ -190,7 +190,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="composerActiveTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
+                  className='absolute bottom-0 left-0 right-0 h-0.5 bg-accent'
                   transition={{type: 'spring', stiffness: 300, damping: 30}}
                 />
               )}
@@ -217,11 +217,11 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                     rows={4}
                     className={cn(
                       'input-aura w-full resize-none',
-                      postForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
+                      postForm.formState.errors.content && 'border-status-danger-border focus:ring-danger-500/50'
                     )}
                   />
                   {postForm.formState.errors.content && (
-                    <p className="mt-1 text-xs text-danger-500">{postForm.formState.errors.content.message}</p>
+                    <p className='mt-1 text-xs text-status-danger-text'>{postForm.formState.errors.content.message}</p>
                   )}
                 </div>
 
@@ -305,11 +305,11 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                     rows={2}
                     className={cn(
                       'input-aura w-full resize-none',
-                      pollForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
+                      pollForm.formState.errors.content && 'border-status-danger-border focus:ring-danger-500/50'
                     )}
                   />
                   {pollForm.formState.errors.content && (
-                    <p className="mt-1 text-xs text-danger-500">{pollForm.formState.errors.content.message}</p>
+                    <p className='mt-1 text-xs text-status-danger-text'>{pollForm.formState.errors.content.message}</p>
                   )}
                 </div>
 
@@ -327,7 +327,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                           placeholder={`Option ${index + 1}`}
                           className={cn(
                             'input-aura flex-1',
-                            pollForm.formState.errors.pollOptions?.[index]?.value && 'border-danger-500 focus:ring-danger-500/50'
+                            pollForm.formState.errors.pollOptions?.[index]?.value && 'border-status-danger-border focus:ring-danger-500/50'
                           )}
                         />
                         {fields.length > 2 && (
@@ -335,7 +335,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                             type="button"
                             onClick={() => remove(index)}
                             aria-label="Remove option"
-                            className="p-1.5 text-[var(--text-muted)] hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-1.5 text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           >
                             <X className="w-4 h-4"/>
                           </button>
@@ -344,7 +344,8 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                     ))}
                   </div>
                   {pollForm.formState.errors.pollOptions && (
-                    <p className="mt-1 text-xs text-danger-500">{pollForm.formState.errors.pollOptions.message}</p>
+                    <p
+                      className='mt-1 text-xs text-status-danger-text'>{pollForm.formState.errors.pollOptions.message}</p>
                   )}
 
                   {/* Add Option Button */}
@@ -352,7 +353,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                     <button
                       type="button"
                       onClick={() => append({value: ''})}
-                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-accent hover:bg-accent-subtle rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       <Plus className="w-4 h-4"/>
                       Add Option
@@ -421,7 +422,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                   />
                   {praiseForm.formState.errors.praiseRecipientId && (
                     <p
-                      className="mt-1 text-xs text-danger-500">{praiseForm.formState.errors.praiseRecipientId.message}</p>
+                      className='mt-1 text-xs text-status-danger-text'>{praiseForm.formState.errors.praiseRecipientId.message}</p>
                   )}
                 </div>
 
@@ -446,7 +447,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                               className={cn(
                                 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                                 isSelected
-                                  ? 'border-accent-400 bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300 dark:border-accent-600'
+                                  ? 'border-[var(--accent-primary)] bg-accent-subtle text-accent'
                                   : 'border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-secondary)]'
                               )}
                             >
@@ -471,11 +472,12 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                     rows={4}
                     className={cn(
                       'input-aura w-full resize-none',
-                      praiseForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
+                      praiseForm.formState.errors.content && 'border-status-danger-border focus:ring-danger-500/50'
                     )}
                   />
                   {praiseForm.formState.errors.content && (
-                    <p className="mt-1 text-xs text-danger-500">{praiseForm.formState.errors.content.message}</p>
+                    <p
+                      className='mt-1 text-xs text-status-danger-text'>{praiseForm.formState.errors.content.message}</p>
                   )}
                 </div>
 

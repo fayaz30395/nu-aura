@@ -43,7 +43,7 @@ import {createLogger} from '@/lib/utils/logger';
 const log = createLogger('BenefitsPage');
 
 function formatINR(amount: number): string {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-IN', {style: 'currency', currency: 'INR', maximumFractionDigits: 0}).format(amount);
 }
 
 const enrollmentFormSchema = z.object({
@@ -369,7 +369,7 @@ export default function BenefitsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading benefits...</span>
         </div>
       </AppLayout>
@@ -395,7 +395,7 @@ export default function BenefitsPage() {
         {/* Notifications */}
         {error && (
           <div
-            className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-center gap-2 text-status-danger-text'>
             <AlertCircle className="w-5 h-5"/>
             {error}
             <Button size="sm" variant="outline" onClick={() => plansQuery.refetch()} className="ml-auto">
@@ -405,7 +405,7 @@ export default function BenefitsPage() {
         )}
         {success && (
           <div
-            className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            className='p-4 bg-status-success-bg border border-status-success-border rounded-lg flex items-center gap-2 text-status-success-text'>
             <CheckCircle className="w-5 h-5"/>
             {success}
           </div>
@@ -434,8 +434,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                <div className='rounded-lg bg-status-success-bg p-4'>
+                  <CheckCircle className='h-6 w-6 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Enrolled Plans</p>
@@ -447,8 +447,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <IndianRupee className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <IndianRupee className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Monthly Premium</p>
@@ -461,8 +461,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4 dark:bg-accent-900">
-                  <Gift className="h-6 w-6 text-accent-700 dark:text-accent-600"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <Gift className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Available Plans</p>
@@ -474,8 +474,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Shield className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                <div className='rounded-lg bg-status-warning-bg p-4'>
+                  <Shield className='h-6 w-6 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Coverage</p>
@@ -489,8 +489,8 @@ export default function BenefitsPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <CreditCard className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <CreditCard className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Flex Credits</p>
@@ -716,7 +716,7 @@ export default function BenefitsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+                            className='text-status-danger-text hover:bg-status-danger-bg'
                             onClick={() => handleTerminateStart(enrollment.id)}
                           >
                             <XCircle className="h-4 w-4 mr-1"/>
@@ -780,12 +780,12 @@ export default function BenefitsPage() {
                           {claim.approvedAmount !== undefined && (
                             <div>
                               <span className="text-[var(--text-secondary)]">Approved Amount:</span>
-                              <p className="font-medium text-success-600">{formatINR(claim.approvedAmount)}</p>
+                              <p className='font-medium text-status-success-text'>{formatINR(claim.approvedAmount)}</p>
                             </div>
                           )}
                         </div>
                         {claim.rejectionReason && (
-                          <div className="mt-2 text-sm text-danger-600">
+                          <div className='mt-2 text-sm text-status-danger-text'>
                             <span className="font-medium">Rejection Reason:</span> {claim.rejectionReason}
                           </div>
                         )}
@@ -807,10 +807,12 @@ export default function BenefitsPage() {
         <Card className="bg-gradient-to-r from-accent-500 to-accent-700">
           <CardContent className="p-4">
             <div className="row-between">
-              <div className="text-white">
+              <div className='text-inverse'>
                 <h3 className="text-base font-semibold">Open Enrollment Period</h3>
                 <p className="mt-1 opacity-90">
-                  March 1 - March 31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and update your benefits selections.
+                  March 1 - March
+                  31, {new Date().getMonth() < 2 ? new Date().getFullYear() : new Date().getFullYear() + 1}. Review and
+                  update your benefits selections.
                 </p>
               </div>
               <Button variant="secondary" onClick={() => setActiveTab('plans')}>
@@ -881,7 +883,8 @@ export default function BenefitsPage() {
                         <option value="FAMILY">Family</option>
                       </select>
                       {enrollmentErrors.coverageLevel &&
-                        <span className="text-danger-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
+                        <span
+                          className='text-status-danger-text text-sm'>{enrollmentErrors.coverageLevel.message}</span>}
                     </div>
 
                     <div>
@@ -895,7 +898,8 @@ export default function BenefitsPage() {
                         {...registerEnrollment('effectiveDate')}
                       />
                       {enrollmentErrors.effectiveDate &&
-                        <span className="text-danger-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
+                        <span
+                          className='text-status-danger-text text-sm'>{enrollmentErrors.effectiveDate.message}</span>}
                     </div>
 
                     {stats.flexCredits > 0 && (
@@ -964,7 +968,7 @@ export default function BenefitsPage() {
                   ))}
                 </select>
                 {claimErrors.enrollmentId &&
-                  <span className="text-danger-500 text-sm">{claimErrors.enrollmentId.message}</span>}
+                  <span className='text-status-danger-text text-sm'>{claimErrors.enrollmentId.message}</span>}
               </div>
 
               <div>
@@ -982,7 +986,7 @@ export default function BenefitsPage() {
                   <option value="OTHER">Other</option>
                 </select>
                 {claimErrors.claimType &&
-                  <span className="text-danger-500 text-sm">{claimErrors.claimType.message}</span>}
+                  <span className='text-status-danger-text text-sm'>{claimErrors.claimType.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -996,7 +1000,7 @@ export default function BenefitsPage() {
                     {...registerClaim('serviceDate')}
                   />
                   {claimErrors.serviceDate &&
-                    <span className="text-danger-500 text-sm">{claimErrors.serviceDate.message}</span>}
+                    <span className='text-status-danger-text text-sm'>{claimErrors.serviceDate.message}</span>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -1011,7 +1015,7 @@ export default function BenefitsPage() {
                     {...registerClaim('claimAmount')}
                   />
                   {claimErrors.claimAmount &&
-                    <span className="text-danger-500 text-sm">{claimErrors.claimAmount.message}</span>}
+                    <span className='text-status-danger-text text-sm'>{claimErrors.claimAmount.message}</span>}
                 </div>
               </div>
 
@@ -1026,7 +1030,7 @@ export default function BenefitsPage() {
                   {...registerClaim('serviceProvider')}
                 />
                 {claimErrors.serviceProvider &&
-                  <span className="text-danger-500 text-sm">{claimErrors.serviceProvider.message}</span>}
+                  <span className='text-status-danger-text text-sm'>{claimErrors.serviceProvider.message}</span>}
               </div>
 
               <div>

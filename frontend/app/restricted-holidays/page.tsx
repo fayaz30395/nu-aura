@@ -167,7 +167,8 @@ export default function RestrictedHolidaysPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div
+            className='h-8 w-8 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
         </div>
       </AppLayout>
     );
@@ -192,28 +193,28 @@ export default function RestrictedHolidaysPage() {
         {/* ─── Header ─────────────────────────────────────────── */}
         <div className="row-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className='text-2xl font-bold text-primary'>
               Restricted Holidays
             </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+            <p className='text-sm text-muted mt-1'>
               Choose from optional holidays within your annual quota
             </p>
           </div>
           {summary && (
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-xs text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                <p className='text-xs text-muted uppercase tracking-wider'>
                   Quota {year}
                 </p>
-                <p className="text-lg font-semibold text-surface-900 dark:text-white">
-                  <span className="text-accent-700">{summary.usedSelections}</span>
-                  <span className="text-surface-400 mx-1">/</span>
+                <p className='text-lg font-semibold text-primary'>
+                  <span className='text-accent'>{summary.usedSelections}</span>
+                  <span className='text-muted mx-1'>/</span>
                   {summary.maxSelections}
                 </p>
               </div>
-              <div className="w-20 h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+              <div className='w-20 h-2 bg-elevated rounded-full overflow-hidden'>
                 <div
-                  className="h-full bg-accent-600 rounded-full transition-all"
+                  className='h-full bg-accent rounded-full transition-all'
                   style={{
                     width: `${Math.min(100, (summary.usedSelections / summary.maxSelections) * 100)}%`,
                   }}
@@ -224,7 +225,7 @@ export default function RestrictedHolidaysPage() {
         </div>
 
         {/* ─── Tabs ───────────────────────────────────────────── */}
-        <div className="border-b border-surface-200 dark:border-surface-700">
+        <div className='border-b border-subtle'>
           <nav className="flex gap-1 -mb-px" aria-label="Tabs">
             {tabs.map((tab) => {
               const TabIcon = tab.icon;
@@ -381,11 +382,13 @@ interface BrowseTabProps {
 }
 
 function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, summary}: BrowseTabProps) {
-  if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({length: 6}).map((_, i) => <SkeletonCard key={i} />)}</div>;
+  if (isLoading) return <div
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({length: 6}).map((_, i) =>
+    <SkeletonCard key={i}/>)}</div>;
   if (holidays.length === 0) {
     return (
       <EmptyState
-        icon={<CalendarDays className="w-12 h-12 text-surface-400"/>}
+        icon={<CalendarDays className='w-12 h-12 text-muted'/>}
         title="No restricted holidays available"
         description="Your organization has not published any restricted holidays for this year yet."
       />
@@ -398,14 +401,13 @@ function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, sum
     <div className="space-y-4">
       {summary && (
         <div
-          className="rounded-lg border border-accent-200 bg-accent-50 dark:bg-accent-900/20 dark:border-accent-800 p-4">
-          <p className="text-sm text-accent-800 dark:text-accent-300">
+          className='rounded-lg border border-[var(--accent-primary)] bg-accent-subtle p-4'>
+          <p className='text-sm text-accent'>
             You have <strong>{summary.remainingSelections}</strong> selection(s) remaining.
             {summary.requiresApproval && ' Selections require manager approval.'}
           </p>
         </div>
       )}
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {holidays.map((holiday) => {
           const isSelected = selectedIds.has(holiday.id);
@@ -423,10 +425,10 @@ function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, sum
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-surface-900 dark:text-white">
+                  <h3 className='font-semibold text-primary'>
                     {holiday.holidayName}
                   </h3>
-                  <p className="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
+                  <p className='text-sm text-muted mt-0.5'>
                     {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
                       weekday: 'long',
                       year: 'numeric',
@@ -439,30 +441,25 @@ function BrowseTab({holidays, isLoading, selectedIds, onSelect, isSelecting, sum
                   {categoryLabels[holiday.category]}
                 </span>
               </div>
-
               {holiday.description && (
-                <p className="text-sm text-surface-600 dark:text-surface-300 mb-4">
+                <p className='text-sm text-secondary mb-4'>
                   {holiday.description}
                 </p>
               )}
-
               <div className="mt-auto">
                 {isSelected ? (
                   <span
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 dark:text-accent-400">
+                    className='inline-flex items-center gap-1.5 text-sm font-medium text-accent'>
                     <CheckCircle className="w-4 h-4"/>
                     Selected
                   </span>
                 ) : isPast ? (
-                  <span className="text-sm text-surface-400">Past holiday</span>
+                  <span className='text-sm text-muted'>Past holiday</span>
                 ) : (
                   <button
                     onClick={() => onSelect(holiday.id)}
                     disabled={isSelecting || quotaExhausted}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg
-                      bg-accent-700 text-white hover:bg-accent-800 disabled:opacity-50
-                      disabled:cursor-not-allowed transition-colors
-                      focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                    className='inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg\n                      bg-accent text-inverse hover:bg-accent-hover disabled:opacity-50\n                      disabled:cursor-not-allowed transition-colors\n                      focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                   >
                     <Plus className="w-4 h-4"/>
                     Select
@@ -489,11 +486,11 @@ interface MySelectionsTabProps {
 }
 
 function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySelectionsTabProps) {
-  if (isLoading) return <SkeletonTable rows={4} columns={4} />;
+  if (isLoading) return <SkeletonTable rows={4} columns={4}/>;
   if (selections.length === 0) {
     return (
       <EmptyState
-        icon={<Star className="w-12 h-12 text-surface-400"/>}
+        icon={<Star className='w-12 h-12 text-muted'/>}
         title="No selections yet"
         description="Browse available restricted holidays and select the ones you'd like to take."
       />
@@ -519,10 +516,10 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
                 <CalendarDays className="w-5 h-5"/>
               </div>
               <div>
-                <h4 className="font-medium text-surface-900 dark:text-white">
+                <h4 className='font-medium text-primary'>
                   {selection.holidayName ?? 'Unknown Holiday'}
                 </h4>
-                <p className="text-sm text-surface-500 dark:text-surface-400">
+                <p className='text-sm text-muted'>
                   {selection.holidayDate
                     ? new Date(selection.holidayDate).toLocaleDateString('en-IN', {
                       weekday: 'short',
@@ -533,7 +530,7 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
                     : 'Date N/A'}
                 </p>
                 {selection.rejectionReason && (
-                  <p className="text-xs text-danger-600 mt-1">
+                  <p className='text-xs text-status-danger-text mt-1'>
                     Reason: {selection.rejectionReason}
                   </p>
                 )}
@@ -548,8 +545,7 @@ function MySelectionsTab({selections, isLoading, onCancel, isCancelling}: MySele
                 <button
                   onClick={() => onCancel(selection.id)}
                   disabled={isCancelling}
-                  className="text-sm text-surface-500 hover:text-danger-600 transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 rounded px-2 py-1"
+                  className='text-sm text-muted hover:text-status-danger-text transition-colors\n                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 rounded px-2 py-1'
                 >
                   Cancel
                 </button>
@@ -578,11 +574,11 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  if (isLoading) return <SkeletonTable rows={4} columns={5} />;
+  if (isLoading) return <SkeletonTable rows={4} columns={5}/>;
   if (selections.length === 0) {
     return (
       <EmptyState
-        icon={<CheckCircle className="w-12 h-12 text-surface-400"/>}
+        icon={<CheckCircle className='w-12 h-12 text-muted'/>}
         title="No pending approvals"
         description="There are no restricted holiday selections waiting for approval."
       />
@@ -594,13 +590,13 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
       {selections.map((selection) => (
         <div
           key={selection.id}
-          className="row-between rounded-lg border border-warning-200 bg-warning-50 dark:bg-warning-900/20 dark:border-warning-800 p-4"
+          className='row-between rounded-lg border border-status-warning-border bg-status-warning-bg p-4'
         >
           <div>
-            <h4 className="font-medium text-surface-900 dark:text-white">
+            <h4 className='font-medium text-primary'>
               {selection.holidayName ?? 'Unknown Holiday'}
             </h4>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className='text-sm text-muted'>
               Employee: {selection.employeeId.slice(0, 8)}...
               {' | '}
               {selection.holidayDate
@@ -620,9 +616,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   placeholder="Reason for rejection..."
-                  className="text-sm border rounded-lg px-4 py-1.5 w-48 focus:outline-none
-                    focus:ring-2 focus:ring-accent-700 border-surface-300 dark:border-surface-600
-                    dark:bg-surface-800 dark:text-white"
+                  className='text-sm border rounded-lg px-4 py-1.5 w-48 focus:outline-none\n                    focus:ring-2 focus:ring-accent-700 border-subtle'
                 />
                 <button
                   onClick={() => {
@@ -631,7 +625,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
                     setRejectReason('');
                   }}
                   disabled={isActing}
-                  className="px-4 py-1.5 text-sm bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-1.5 text-sm bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   Confirm
                 </button>
@@ -640,7 +634,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
                     setRejectingId(null);
                     setRejectReason('');
                   }}
-                  className="px-4 py-1.5 text-sm text-surface-600 hover:text-surface-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-1.5 text-sm text-secondary hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   Cancel
                 </button>
@@ -650,10 +644,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
                 <button
                   onClick={() => onApprove(selection.id)}
                   disabled={isActing}
-                  className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium
-                    bg-success-600 text-white rounded-lg hover:bg-success-700
-                    disabled:opacity-50 transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                  className='inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium\n                    bg-status-success-bg text-inverse rounded-lg hover:bg-status-success-bg\n                    disabled:opacity-50 transition-colors\n                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                 >
                   <CheckCircle className="w-3.5 h-3.5"/>
                   Approve
@@ -661,10 +652,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
                 <button
                   onClick={() => setRejectingId(selection.id)}
                   disabled={isActing}
-                  className="inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium
-                    bg-[var(--bg-card)] text-danger-600 border border-danger-300 rounded-lg hover:bg-danger-50
-                    disabled:opacity-50 transition-colors
-                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                  className='inline-flex items-center gap-1 px-4 py-1.5 text-sm font-medium\n                    bg-[var(--bg-card)] text-status-danger-text border border-status-danger-border rounded-lg hover:bg-status-danger-bg\n                    disabled:opacity-50 transition-colors\n                    focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                 >
                   <XCircle className="w-3.5 h-3.5"/>
                   Reject
@@ -691,52 +679,49 @@ interface ManageTabProps {
 }
 
 function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProps) {
-  if (isLoading) return <SkeletonTable rows={5} columns={4} />;
+  if (isLoading) return <SkeletonTable rows={5} columns={4}/>;
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
         <button
           onClick={onAdd}
-          className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium
-            bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors
-            focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+          className='inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium\n            bg-accent text-inverse rounded-lg hover:bg-accent-hover transition-colors\n            focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
         >
           <Plus className="w-4 h-4"/>
           Add Restricted Holiday
         </button>
       </div>
-
       {holidays.length === 0 ? (
         <EmptyState
-          icon={<Calendar className="w-12 h-12 text-surface-400"/>}
+          icon={<Calendar className='w-12 h-12 text-muted'/>}
           title="No restricted holidays"
           description="Add restricted holidays that employees can opt into."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-surface-200 dark:border-surface-700">
+        <div className='overflow-hidden rounded-xl border border-subtle'>
           <table className="w-full text-sm">
-            <thead className="bg-surface-50 dark:bg-surface-800">
+            <thead className='bg-base'>
             <tr>
-              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Holiday</th>
-              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Date</th>
-              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Category</th>
-              <th className="text-left px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Status</th>
-              <th className="text-right px-4 py-2 font-medium text-surface-600 dark:text-surface-300">Actions</th>
+              <th className='text-left px-4 py-2 font-medium text-secondary'>Holiday</th>
+              <th className='text-left px-4 py-2 font-medium text-secondary'>Date</th>
+              <th className='text-left px-4 py-2 font-medium text-secondary'>Category</th>
+              <th className='text-left px-4 py-2 font-medium text-secondary'>Status</th>
+              <th className='text-right px-4 py-2 font-medium text-secondary'>Actions</th>
             </tr>
             </thead>
-            <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+            <tbody className='divide-y divide-surface-100'>
             {holidays.map((holiday) => (
-              <tr key={holiday.id} className="bg-[var(--bg-card)] hover:bg-surface-50 dark:hover:bg-surface-750">
+              <tr key={holiday.id} className='bg-[var(--bg-card)] hover:bg-base'>
                 <td className="px-4 py-4">
                   <div>
-                    <p className="font-medium text-surface-900 dark:text-white">{holiday.holidayName}</p>
+                    <p className='font-medium text-primary'>{holiday.holidayName}</p>
                     {holiday.description && (
-                      <p className="text-xs text-surface-500 mt-0.5 truncate max-w-xs">{holiday.description}</p>
+                      <p className='text-xs text-muted mt-0.5 truncate max-w-xs'>{holiday.description}</p>
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-4 text-surface-600 dark:text-surface-300">
+                <td className='px-4 py-4 text-secondary'>
                   {new Date(holiday.holidayDate).toLocaleDateString('en-IN', {
                     month: 'short',
                     day: 'numeric',
@@ -761,16 +746,14 @@ function ManageTab({holidays, isLoading, onAdd, onEdit, onDelete}: ManageTabProp
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => onEdit(holiday)}
-                      className="p-1.5 rounded-lg text-surface-500 hover:text-accent-700 hover:bg-accent-50
-                          transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className='p-1.5 rounded-lg text-muted hover:text-accent hover:bg-accent-subtle\n                          transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                       aria-label={`Edit ${holiday.holidayName}`}
                     >
                       <Edit3 className="w-4 h-4"/>
                     </button>
                     <button
                       onClick={() => onDelete(holiday.id)}
-                      className="p-1.5 rounded-lg text-surface-500 hover:text-danger-600 hover:bg-danger-50
-                          transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                      className='p-1.5 rounded-lg text-muted hover:text-status-danger-text hover:bg-status-danger-bg\n                          transition-colors focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                       aria-label={`Delete ${holiday.holidayName}`}
                     >
                       <Trash2 className="w-4 h-4"/>
@@ -815,7 +798,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
     },
   });
 
-  if (isLoading) return <SkeletonForm fields={4} />;
+  if (isLoading) return <SkeletonForm fields={4}/>;
 
   const onSubmit = (values: PolicyFormValues) => {
     onSave({
@@ -828,42 +811,38 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
 
   return (
     <div className="max-w-lg">
-      <div className="rounded-xl border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] p-6">
-        <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-6">
+      <div className='rounded-xl border border-subtle bg-[var(--bg-card)] p-6'>
+        <h3 className='text-xl font-semibold text-primary mb-6'>
           Restricted Holiday Policy ({year})
         </h3>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className='block text-sm font-medium text-secondary mb-1.5'>
               Max Selections Per Year
             </label>
             <input
               type="number"
               {...form.register('maxSelectionsPerYear', {valueAsNumber: true})}
               min={1}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
             />
             {form.formState.errors.maxSelectionsPerYear && (
-              <p className="text-xs text-danger-600 mt-1">
+              <p className='text-xs text-status-danger-text mt-1'>
                 {form.formState.errors.maxSelectionsPerYear.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className='block text-sm font-medium text-secondary mb-1.5'>
               Min Days Before Selection
             </label>
             <input
               type="number"
               {...form.register('minDaysBeforeSelection', {valueAsNumber: true})}
               min={0}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
             />
           </div>
 
@@ -889,7 +868,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
                 </button>
               )}
             />
-            <span className="text-sm text-surface-700 dark:text-surface-300">
+            <span className='text-sm text-secondary'>
               Require manager approval
             </span>
           </div>
@@ -899,9 +878,7 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full px-4 py-2.5 text-sm font-medium bg-accent-700 text-white rounded-lg
-              hover:bg-accent-800 disabled:opacity-50 transition-colors
-              focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+            className='w-full px-4 py-2.5 text-sm font-medium bg-accent text-inverse rounded-lg\n              hover:bg-accent-hover disabled:opacity-50 transition-colors\n              focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
           >
             {isSaving ? 'Saving...' : 'Save Policy'}
           </button>
@@ -954,69 +931,60 @@ function HolidayFormModal({holiday, onClose, onSubmit, isSubmitting}: HolidayFor
       <motion.div
         initial={{opacity: 0, scale: 0.95}}
         animate={{opacity: 1, scale: 1}}
-        className="relative w-full max-w-lg rounded-lg bg-[var(--bg-elevated)]
-          shadow-[var(--shadow-dropdown)] border border-surface-200 dark:border-surface-700 p-6 mx-4"
+        className='relative w-full max-w-lg rounded-lg bg-[var(--bg-elevated)]\n          shadow-[var(--shadow-dropdown)] border border-subtle p-6 mx-4'
       >
-        <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-6">
+        <h3 className='text-xl font-semibold text-primary mb-6'>
           {holiday ? 'Edit Restricted Holiday' : 'Add Restricted Holiday'}
         </h3>
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label className='block text-sm font-medium text-secondary mb-1'>
               Holiday Name *
             </label>
             <input
               {...form.register('holidayName')}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
               placeholder="e.g., Pongal"
             />
             {form.formState.errors.holidayName && (
-              <p className="text-xs text-danger-600 mt-1">{form.formState.errors.holidayName.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{form.formState.errors.holidayName.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label className='block text-sm font-medium text-secondary mb-1'>
               Date *
             </label>
             <input
               type="date"
               {...form.register('holidayDate')}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
             />
             {form.formState.errors.holidayDate && (
-              <p className="text-xs text-danger-600 mt-1">{form.formState.errors.holidayDate.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{form.formState.errors.holidayDate.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label className='block text-sm font-medium text-secondary mb-1'>
               Description
             </label>
             <textarea
               {...form.register('description')}
               rows={2}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white resize-none"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)] resize-none'
               placeholder="Brief description of this holiday"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label className='block text-sm font-medium text-secondary mb-1'>
               Category
             </label>
             <select
               {...form.register('category')}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
             >
               {Object.entries(categoryLabels).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
@@ -1025,14 +993,12 @@ function HolidayFormModal({holiday, onClose, onSubmit, isSubmitting}: HolidayFor
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label className='block text-sm font-medium text-secondary mb-1'>
               Applicable Regions (JSON)
             </label>
             <input
               {...form.register('applicableRegions')}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
-                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
-                dark:bg-surface-700 dark:text-white"
+              className='w-full rounded-lg border border-subtle px-4 py-2\n                text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-[var(--accent-primary)]'
               placeholder='["IN-TN","IN-KA"] or leave blank for all'
             />
           </div>
@@ -1059,26 +1025,21 @@ function HolidayFormModal({holiday, onClose, onSubmit, isSubmitting}: HolidayFor
                 </button>
               )}
             />
-            <span className="text-sm text-surface-700 dark:text-surface-300">Active</span>
+            <span className='text-sm text-secondary'>Active</span>
           </div>
 
-          <div className="flex justify-end gap-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+          <div className='flex justify-end gap-4 pt-4 border-t border-subtle'>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-surface-700 dark:text-surface-300
-                bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600
-                rounded-lg hover:bg-surface-50 dark:hover:bg-surface-600 transition-colors
-                focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+              className='px-4 py-2 text-sm font-medium text-secondary\n                bg-[var(--bg-card)] border border-subtle\n                rounded-lg hover:bg-base transition-colors\n                focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium bg-accent-700 text-white rounded-lg
-                hover:bg-accent-800 disabled:opacity-50 transition-colors
-                focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+              className='px-4 py-2 text-sm font-medium bg-accent text-inverse rounded-lg\n                hover:bg-accent-hover disabled:opacity-50 transition-colors\n                focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
             >
               {isSubmitting ? 'Saving...' : holiday ? 'Update' : 'Create'}
             </button>

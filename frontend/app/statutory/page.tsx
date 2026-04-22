@@ -135,7 +135,7 @@ export default function StatutoryPage() {
       <AppLayout activeMenuItem="statutory">
         <div className="p-6 space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse"/>
           ))}
         </div>
       </AppLayout>
@@ -146,7 +146,7 @@ export default function StatutoryPage() {
     return (
       <AppLayout activeMenuItem="statutory">
         <div className="p-6">
-          <p className="text-danger-600">You do not have permission to view statutory compliance.</p>
+          <p className='text-status-danger-text'>You do not have permission to view statutory compliance.</p>
         </div>
       </AppLayout>
     );
@@ -351,7 +351,7 @@ export default function StatutoryPage() {
                   {Array.from({length: 4}).map((_, i) => (
                     <div key={i} className="flex gap-4">
                       {Array.from({length: 5}).map((_, j) => (
-                        <div key={j} className="skeleton-aura h-4 rounded flex-1" />
+                        <div key={j} className="skeleton-aura h-4 rounded flex-1"/>
                       ))}
                     </div>
                   ))}

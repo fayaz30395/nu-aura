@@ -56,8 +56,8 @@ export function DeleteSpaceModal({
       onClose={handleClose}
       title={
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-100 dark:bg-danger-950/30">
-            <Trash2 className="h-4 w-4 text-danger-600 dark:text-danger-400"/>
+          <div className='flex items-center justify-center w-8 h-8 rounded-lg bg-status-danger-bg'>
+            <Trash2 className='h-4 w-4 text-status-danger-text'/>
           </div>
           <span className="text-lg font-semibold text-[var(--text-primary)]">
             Delete Space
@@ -82,13 +82,13 @@ export function DeleteSpaceModal({
           >
             {/* Danger banner */}
             <div
-              className="flex items-start gap-4 p-4 rounded-xl bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800">
-              <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-4 p-4 rounded-xl bg-status-danger-bg border border-status-danger-border'>
+              <AlertTriangle className='h-6 w-6 text-status-danger-text flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="text-sm font-semibold text-danger-800 dark:text-danger-300 mb-1">
+                <p className='text-sm font-semibold text-status-danger-text mb-1'>
                   You are about to delete &ldquo;{space.name}&rdquo;
                 </p>
-                <p className="text-sm text-danger-700 dark:text-danger-400">
+                <p className='text-sm text-status-danger-text'>
                   This space contains <strong>{pageCount} page{pageCount !== 1 ? 's' : ''}</strong>.
                   All pages must be migrated to another space before deletion.
                   This action requires approval from the space owner.
@@ -100,7 +100,7 @@ export function DeleteSpaceModal({
             <div className="p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]">
               <div className="flex items-center gap-4 mb-4">
                 <div
-                  className="flex items-center justify-center w-12 h-12 rounded-xl text-2xl text-white"
+                  className='flex items-center justify-center w-12 h-12 rounded-xl text-2xl text-inverse'
                   style={{backgroundColor: space.color || '#3e63dd'}}
                 >
                   {space.icon || '📁'}
@@ -176,13 +176,13 @@ export function DeleteSpaceModal({
             className="space-y-6"
           >
             <div
-              className="flex items-start gap-4 p-4 rounded-xl bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
-              <ArrowRight className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-4 p-4 rounded-xl bg-status-warning-bg border border-status-warning-border'>
+              <ArrowRight className='h-5 w-5 text-status-warning-text flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="text-sm font-semibold text-warning-800 dark:text-warning-300 mb-1">
+                <p className='text-sm font-semibold text-status-warning-text mb-1'>
                   Where should the {pageCount} page{pageCount !== 1 ? 's' : ''} go?
                 </p>
-                <p className="text-sm text-warning-700 dark:text-warning-400">
+                <p className='text-sm text-status-warning-text'>
                   Select a destination space. All pages and their comments, likes, and
                   revision history will be preserved.
                 </p>
@@ -212,7 +212,7 @@ export function DeleteSpaceModal({
                     }`}
                   >
                     <div
-                      className="flex items-center justify-center w-10 h-10 rounded-lg text-lg text-white flex-shrink-0"
+                      className='flex items-center justify-center w-10 h-10 rounded-lg text-lg text-inverse flex-shrink-0'
                       style={{backgroundColor: s.color || '#3e63dd'}}
                     >
                       {s.icon || '📁'}
@@ -241,7 +241,7 @@ export function DeleteSpaceModal({
                 className="flex items-center gap-4 p-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]"
               >
                 <div
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-sm text-white"
+                  className='flex items-center justify-center w-8 h-8 rounded-lg text-sm text-inverse'
                   style={{backgroundColor: space.color || '#3e63dd'}}
                 >
                   {space.icon || '📁'}
@@ -253,7 +253,7 @@ export function DeleteSpaceModal({
                   <ArrowRight className="h-4 w-4"/>
                 </div>
                 <div
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-sm text-white"
+                  className='flex items-center justify-center w-8 h-8 rounded-lg text-sm text-inverse'
                   style={{
                     backgroundColor:
                       otherSpaces.find((s) => s.id === selectedTargetId)?.color || '#3e63dd',
@@ -297,13 +297,13 @@ export function DeleteSpaceModal({
           >
             {/* Approval notice */}
             <div
-              className="flex items-start gap-4 p-4 rounded-xl bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800">
-              <Shield className="h-5 w-5 text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-4 p-4 rounded-xl bg-accent-subtle border border-[var(--accent-primary)]'>
+              <Shield className='h-5 w-5 text-accent flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="text-sm font-semibold text-accent-800 dark:text-accent-300 mb-1">
+                <p className='text-sm font-semibold text-accent mb-1'>
                   Approval Required
                 </p>
-                <p className="text-sm text-accent-700 dark:text-accent-400">
+                <p className='text-sm text-accent'>
                   An approval request will be sent to <strong>{space.ownerName || 'the space owner'}</strong>.
                   The space will be marked for deletion and removed once approved.
                   {pageCount > 0 && selectedTargetId && (

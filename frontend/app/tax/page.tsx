@@ -117,10 +117,10 @@ export default function TaxOverviewPage() {
         {/* Error State */}
         {isError && (
           <Card withBorder radius="md" p="md" mb="lg"
-                className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+                className='border-status-danger-border bg-status-danger-bg'>
             <Group justify="space-between">
               <Group gap="sm">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
+                <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
                 <Text size="sm" c="red">
                   {error instanceof Error ? error.message : 'Failed to load tax data'}
                 </Text>
@@ -162,8 +162,8 @@ export default function TaxOverviewPage() {
             <Group justify="space-between">
               <Group gap="md">
                 <div
-                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                  <FileSpreadsheet className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+                  className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                  <FileSpreadsheet className='h-5 w-5 text-accent'/>
                 </div>
                 <div>
                   <Text fw={600}>Tax Declarations</Text>
@@ -198,7 +198,9 @@ export default function TaxOverviewPage() {
                   {Array.from({length: 3}).map((_, i) => (
                     <Table.Tr key={i}>
                       {Array.from({length: 4}).map((_, j) => (
-                        <Table.Td key={j}><div className="skeleton-aura h-4 rounded w-full" /></Table.Td>
+                        <Table.Td key={j}>
+                          <div className="skeleton-aura h-4 rounded w-full"/>
+                        </Table.Td>
                       ))}
                     </Table.Tr>
                   ))}

@@ -16,7 +16,6 @@ export default function ApprovalsLoading() {
           <Skeleton height={36} width={90}/>
         </div>
       </div>
-
       {/* Search and filters skeleton */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <div className="flex-1 flex gap-2">
@@ -25,10 +24,9 @@ export default function ApprovalsLoading() {
         </div>
         <Skeleton height={40} width={160}/>
       </div>
-
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
-        <div className="border-b border-surface-200 dark:border-surface-800">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
+        <div className='border-b border-subtle'>
           <Skeleton height={44}/>
         </div>
         <div className="space-y-2 p-4 sm:p-4">

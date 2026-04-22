@@ -13,8 +13,8 @@ export function PageErrorFallback({
                                   }: PageErrorFallbackProps) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 p-12 text-center">
-      <div className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center mb-4">
-        <svg className="w-8 h-8 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className='w-16 h-16 rounded-full bg-status-danger-bg flex items-center justify-center mb-4'>
+        <svg className='w-8 h-8 text-status-danger-text' fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -38,7 +38,7 @@ export function PageErrorFallback({
         )}
         <button
           onClick={() => window.location.reload()}
-          className="px-4 py-2 text-sm font-medium rounded-lg bg-accent-500 text-white hover:bg-accent-700 transition-colors"
+          className='px-4 py-2 text-sm font-medium rounded-lg bg-accent text-inverse hover:bg-accent transition-colors'
         >
           Refresh page
         </button>

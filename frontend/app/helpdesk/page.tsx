@@ -105,10 +105,10 @@ export default function HelpdeskPage() {
         {/* Pending Escalations */}
         {escalations.length > 0 && (
           <div
-            className="bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
+            className='bg-status-warning-bg border border-status-warning-border rounded-xl p-4'>
             <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="w-5 h-5 text-warning-600"/>
-              <h3 className="font-semibold text-warning-800 dark:text-warning-300">
+              <AlertTriangle className='w-5 h-5 text-status-warning-text'/>
+              <h3 className='font-semibold text-status-warning-text'>
                 Pending Escalations ({escalations.length})
               </h3>
             </div>
@@ -142,7 +142,7 @@ export default function HelpdeskPage() {
             className="row-between card-interactive p-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <div className="flex items-center gap-4">
-              <Ticket className="w-5 h-5 text-accent-700 dark:text-accent-400"/>
+              <Ticket className='w-5 h-5 text-accent'/>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Tickets</p>
                 <p className="text-caption">View and manage support tickets</p>
@@ -214,19 +214,19 @@ export default function HelpdeskPage() {
             <h3 className="font-semibold text-[var(--text-primary)] mb-4">Overview</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-xl font-bold text-success-600">{dashboard.slaMetCount}</p>
+                <p className='text-xl font-bold text-status-success-text'>{dashboard.slaMetCount}</p>
                 <p className="text-caption">SLAs Met</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-danger-600">{dashboard.slaBreachedCount}</p>
+                <p className='text-xl font-bold text-status-danger-text'>{dashboard.slaBreachedCount}</p>
                 <p className="text-caption">SLAs Breached</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-accent-600">{dashboard.firstContactResolutions}</p>
+                <p className='text-xl font-bold text-accent'>{dashboard.firstContactResolutions}</p>
                 <p className="text-caption">First Contact Resolutions</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-accent-800">{activeSlaCount}</p>
+                <p className='text-xl font-bold text-accent'>{activeSlaCount}</p>
                 <p className="text-caption">Active SLA Policies</p>
               </div>
             </div>

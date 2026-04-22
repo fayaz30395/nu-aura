@@ -49,10 +49,10 @@ export function CalendarGridView({
 
   const renderMonthView = () => (
     <div
-      className="grid grid-cols-7 gap-px bg-surface-200 dark:bg-surface-700 rounded-lg overflow-hidden border border-surface-200 dark:border-surface-700">
+      className='grid grid-cols-7 gap-px bg-elevated rounded-lg overflow-hidden border border-subtle'>
       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
         <div key={day}
-             className="bg-surface-50 dark:bg-surface-800 p-2 text-center text-sm font-medium text-surface-600 dark:text-surface-400">
+             className='bg-base p-2 text-center text-sm font-medium text-secondary'>
           {day}
         </div>
       ))}
@@ -79,7 +79,7 @@ export function CalendarGridView({
                 {format(day, 'd')}
               </span>
               {dayEvents.length > 0 && (
-                <span className="text-xs text-surface-500 font-medium">
+                <span className='text-xs text-muted font-medium'>
                   {dayEvents.length} items
                 </span>
               )}
@@ -107,7 +107,7 @@ export function CalendarGridView({
               ))}
               {dayEvents.length > 4 && (
                 <button
-                  className="w-full text-center text-xs text-surface-500 hover:text-accent-700 dark:hover:text-accent-400 p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                  className='w-full text-center text-xs text-muted hover:text-accent p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
                   onClick={(e) => {
                     e.stopPropagation();
                     onDateChange(day);
@@ -129,8 +129,8 @@ export function CalendarGridView({
       {/* Implement Week/Day views later if needed, for now Month is priority */}
       {viewMode !== 'month' && (
         <div
-          className="flex items-center justify-center h-64 bg-surface-50 dark:bg-surface-900/50 rounded-lg border border-dashed border-surface-300 dark:border-surface-700">
-          <p className="text-surface-500">
+          className='flex items-center justify-center h-64 bg-base rounded-lg border border-dashed border-subtle'>
+          <p className='text-muted'>
             {viewMode.charAt(0).toUpperCase() + viewMode.slice(1)} view coming soon
           </p>
         </div>

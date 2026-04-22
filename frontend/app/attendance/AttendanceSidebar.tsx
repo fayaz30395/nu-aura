@@ -54,7 +54,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
                 <div className="flex items-center gap-4">
                   <div
                     className={`h-11 w-11 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-[var(--shadow-elevated)] group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all`}>
-                    <action.icon className="h-5 w-5 text-white"/>
+                    <action.icon className='h-5 w-5 text-inverse'/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3
@@ -62,7 +62,7 @@ export const AttendanceQuickActions = memo(function AttendanceQuickActions() {
                     <p className="text-caption mt-0.5">{action.desc}</p>
                   </div>
                   <ArrowRight
-                    className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all flex-shrink-0"/>
+                    className='h-4 w-4 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all flex-shrink-0'/>
                 </div>
               </CardContent>
             </Card>
@@ -92,7 +92,7 @@ export const AttendanceUpcomingHolidays = memo(function AttendanceUpcomingHolida
         <div className="flex items-center gap-2 mb-4">
           <div
             className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
-            <CalendarDays className="h-3.5 w-3.5 text-white"/>
+            <CalendarDays className='h-3.5 w-3.5 text-inverse'/>
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">Upcoming Holidays</h4>
         </div>
@@ -144,7 +144,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
         <div className="flex items-center gap-2 mb-4">
           <div
             className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-[var(--shadow-card)]">
-            <Coffee className="h-3.5 w-3.5 text-white"/>
+            <Coffee className='h-3.5 w-3.5 text-inverse'/>
           </div>
           <h4 className="text-sm font-bold text-[var(--text-primary)] skeuo-emboss">This Week</h4>
         </div>
@@ -152,7 +152,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
           <div>
             <div className="row-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Present Days</span>
-              <span className="font-bold text-success-600 dark:text-success-400">{weekStats.presentDays}/5</span>
+              <span className='font-bold text-status-success-text'>{weekStats.presentDays}/5</span>
             </div>
             <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
@@ -164,7 +164,7 @@ export const AttendanceWeekProgress = memo(function AttendanceWeekProgress({
           <div>
             <div className="row-between text-xs mb-1">
               <span className="font-medium text-[var(--text-secondary)]">Total Hours</span>
-              <span className="font-bold text-accent-700 dark:text-accent-400">
+              <span className='font-bold text-accent'>
                 {totalWeekHours.toFixed(1)}h / {STANDARD_WORK_HOURS * 5}h
               </span>
             </div>

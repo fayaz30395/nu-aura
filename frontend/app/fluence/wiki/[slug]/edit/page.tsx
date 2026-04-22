@@ -320,7 +320,7 @@ export default function EditWikiPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="gap-2 bg-accent-600 hover:bg-accent-700"
+              className='gap-2 bg-accent hover:bg-accent'
             >
               <Save className="w-4 h-4"/>
               {isSubmitting ? 'Saving...' : 'Save Changes'}

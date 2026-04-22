@@ -102,7 +102,7 @@ export default function SystemDashboard() {
         <div className="flex items-center gap-4">
           <div
             className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Server className="h-6 w-6 text-white"/>
+            <Server className='h-6 w-6 text-inverse'/>
           </div>
           <div>
             <h1 className="text-xl font-bold skeuo-emboss">
@@ -126,7 +126,6 @@ export default function SystemDashboard() {
           <RefreshCw className="h-5 w-5"/>
         </ActionIcon>
       </div>
-
       {/* Overview Stats Cards */}
       <SimpleGrid cols={{base: 1, sm: 2, lg: 4}} spacing="lg">
         {/* Total Tenants Card */}
@@ -139,8 +138,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Tenants
             </Text>
-            <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-              <Building2 className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+            <div className='p-2 rounded-lg bg-accent-subtle'>
+              <Building2 className='h-5 w-5 text-accent'/>
             </div>
           </Group>
           <div className="space-y-2">
@@ -167,8 +166,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Active Users
             </Text>
-            <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-              <Users className="h-5 w-5 text-success-600 dark:text-success-400"/>
+            <div className='p-2 rounded-lg bg-status-success-bg'>
+              <Users className='h-5 w-5 text-status-success-text'/>
             </div>
           </Group>
           <div className="space-y-2">
@@ -193,8 +192,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Total Employees
             </Text>
-            <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
-              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
+            <div className='p-2 rounded-lg bg-accent-subtle'>
+              <TrendingUp className='h-5 w-5 text-accent'/>
             </div>
           </Group>
           <div className="space-y-2">
@@ -219,8 +218,8 @@ export default function SystemDashboard() {
             <Text size="sm" fw={500} className="text-[var(--text-secondary)]">
               Pending Approvals
             </Text>
-            <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30">
-              <Zap className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+            <div className='p-2 rounded-lg bg-status-warning-bg'>
+              <Zap className='h-5 w-5 text-status-warning-text'/>
             </div>
           </Group>
           <div className="space-y-2">
@@ -235,7 +234,6 @@ export default function SystemDashboard() {
           </div>
         </Paper>
       </SimpleGrid>
-
       {/* Growth Chart */}
       <Paper
         p="lg"
@@ -262,7 +260,6 @@ export default function SystemDashboard() {
           </div>
         )}
       </Paper>
-
       {/* Tenants List */}
       <Paper
         p="lg"
@@ -393,7 +390,6 @@ export default function SystemDashboard() {
           <Text className="text-[var(--text-muted)]">No tenants found</Text>
         )}
       </Paper>
-
       {/* Impersonation Modal */}
       <Modal
         opened={impersonationModalOpen}

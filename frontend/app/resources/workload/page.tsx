@@ -317,7 +317,7 @@ export default function WorkloadDashboardPage() {
           <select
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-            className="input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+            className='input-aura rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'
           >
             {dateRangeOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>{opt.label}</option>
@@ -355,7 +355,7 @@ export default function WorkloadDashboardPage() {
                 className={cn(
                   'rounded-full px-4 py-1 text-xs font-medium transition-all',
                   selectedRanges.includes(opt.key)
-                    ? 'bg-[var(--bg-secondary)] text-white dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]'
+                    ? 'bg-[var(--bg-secondary)] text-inverse dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]'
                     : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]'
                 )}
               >
@@ -386,7 +386,7 @@ export default function WorkloadDashboardPage() {
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-4 text-sm placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className='w-56 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] py-1.5 pl-9 pr-4 text-sm placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'
             />
           </div>
         </div>
@@ -394,7 +394,7 @@ export default function WorkloadDashboardPage() {
         {/* Error state */}
         {error && (
           <div
-            className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+            className='flex items-center gap-4 rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
             <AlertCircle className="h-4 w-4 flex-shrink-0"/>
             <span className="flex-1">{error instanceof Error ? error.message : 'Error loading data'}</span>
             <button onClick={() => refetchData()} className="font-medium hover:underline">
@@ -449,13 +449,13 @@ export default function WorkloadDashboardPage() {
                   {/* Over-allocated */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-danger-600 dark:text-danger-400">
+                      <h3 className='text-sm font-medium text-status-danger-text'>
                         Over-Allocated
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
                     </div>
                     <div
-                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                      className='divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'>
                       {(() => {
                         const overAllocated = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED')
@@ -479,13 +479,13 @@ export default function WorkloadDashboardPage() {
                   {/* Under-utilized */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-warning-600 dark:text-warning-400">
+                      <h3 className='text-sm font-medium text-status-warning-text'>
                         Under-Utilized
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
                     </div>
                     <div
-                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                      className='divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'>
                       {(() => {
                         const underUtilized = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED')
@@ -515,7 +515,7 @@ export default function WorkloadDashboardPage() {
                       </h3>
                     </div>
                     <div
-                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                      className='divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'>
                       {(() => {
                         const unassigned = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED')
@@ -539,13 +539,13 @@ export default function WorkloadDashboardPage() {
                   {/* Optimal */}
                   <div>
                     <div className="mb-4 row-between">
-                      <h3 className="text-sm font-medium text-success-600 dark:text-success-400">
+                      <h3 className='text-sm font-medium text-status-success-text'>
                         Optimal
                         ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
                     </div>
                     <div
-                      className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                      className='divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'>
                       {(() => {
                         const optimal = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL')
@@ -582,7 +582,7 @@ export default function WorkloadDashboardPage() {
 
               {activeTab === 'employees' && (
                 <div
-                  className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+                  className='divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'>
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
                       <EmployeeWorkloadCard
@@ -627,7 +627,6 @@ export default function WorkloadDashboardPage() {
           </>
         )}
       </div>
-
       {/* Employee Allocation Detail Modal */}
       <EmployeeAllocationDetailModal
         isOpen={showEmployeeModal}
@@ -670,24 +669,22 @@ function DepartmentCard({
           {avgAllocation}%
         </span>
       </div>
-
       {/* Progress bar */}
       <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
         <div
           className={cn(
             'h-full rounded-full transition-all',
-            avgAllocation > 100 ? 'bg-danger-500' : avgAllocation >= 70 ? 'bg-success-500' : 'bg-warning-400'
+            avgAllocation > 100 ? 'bg-status-danger-bg' : avgAllocation >= 70 ? 'bg-status-success-bg' : 'bg-status-warning-bg'
           )}
           style={{width: `${Math.min(avgAllocation, 100)}%`}}
         />
       </div>
-
       {expanded && (
         <div className="mt-4 row-between text-xs">
           <div className="flex items-center gap-4">
-            <span className="text-danger-600">{department.overAllocatedCount} over</span>
-            <span className="text-success-600">{department.optimalCount} optimal</span>
-            <span className="text-warning-600">{department.underUtilizedCount} under</span>
+            <span className='text-status-danger-text'>{department.overAllocatedCount} over</span>
+            <span className='text-status-success-text'>{department.optimalCount} optimal</span>
+            <span className='text-status-warning-text'>{department.underUtilizedCount} under</span>
             <span className="text-[var(--text-muted)]">{department.unassignedCount} free</span>
           </div>
         </div>

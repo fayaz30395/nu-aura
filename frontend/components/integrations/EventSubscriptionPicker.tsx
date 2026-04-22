@@ -46,8 +46,8 @@ export function EventSubscriptionPicker({
   if (supportedEvents.length === 0) {
     return (
       <div
-        className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-        <p className="text-sm text-warning-700 dark:text-warning-300">
+        className='p-4 rounded-lg bg-status-warning-bg border border-status-warning-border'>
+        <p className='text-sm text-status-warning-text'>
           No events available for this connector.
         </p>
       </div>

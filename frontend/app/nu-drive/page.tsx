@@ -617,7 +617,8 @@ function DriveContent() {
       <div
         className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="skeuo-card p-10 flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+          <div
+            className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Drive...</p>
         </div>
       </div>
@@ -663,7 +664,8 @@ function DriveContent() {
             {isLoading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-10 h-10 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+                  <div
+                    className='w-10 h-10 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
                   <p className="text-[var(--text-muted)]">Loading files...</p>
                 </div>
               </div>
@@ -691,7 +693,6 @@ function DriveContent() {
           </>
         )}
       </div>
-
       {/* Context Menu */}
       {showContextMenu && contextMenuFile && (
         <FileContextMenu
@@ -713,7 +714,6 @@ function DriveContent() {
           onDelete={canDeleteFiles ? deleteFile : undefined}
         />
       )}
-
       {/* Modals */}
       <NewFolderModal
         opened={showNewFolderModal}
@@ -726,7 +726,6 @@ function DriveContent() {
         onNameChange={setNewFolderName}
         onCreate={createNewFolder}
       />
-
       <ShareModal
         opened={showShareModal}
         file={selectedFile}
@@ -743,7 +742,6 @@ function DriveContent() {
         onGetShareableLink={getShareableLink}
         onCopyLink={copyLink}
       />
-
       <RenameModal
         opened={showRenameModal}
         file={contextMenuFile}
@@ -756,7 +754,6 @@ function DriveContent() {
         onRenameChange={setRenameValue}
         onRename={renameFile}
       />
-
       <FilePreviewModal
         opened={showPreviewModal}
         file={previewFile}
@@ -772,7 +769,6 @@ function DriveContent() {
         onShare={openShareModal}
         onImgError={() => setPreviewImgError(true)}
       />
-
       <DeleteConfirm
         isOpen={deleteConfirmOpen}
         onClose={() => {

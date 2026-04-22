@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {useState, useEffect, Suspense} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useGoogleLogin } from '@react-oauth/google';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
-import { MfaVerification } from '@/components/auth/MfaVerification';
+import {useGoogleLogin} from '@react-oauth/google';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {saveGoogleToken, GOOGLE_SSO_SCOPES} from '@/lib/utils/googleToken';
+import {MfaVerification} from '@/components/auth/MfaVerification';
 import {
   AlertCircle,
   Shield,
@@ -29,7 +29,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { createLogger } from '@/lib/utils/logger';
+import {createLogger} from '@/lib/utils/logger';
 
 const emailPasswordSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -52,15 +52,71 @@ interface DemoAccount {
 // Tree-shaking removes the array entirely in production builds without the flag.
 const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE
   ? [
-      { name: 'Fayaz M', email: 'fayaz.m@nulogic.io', role: 'SUPER_ADMIN', department: 'Executive', level: 'CEO', color: 'from-danger-500 to-danger-600' },
-      { name: 'Sumit Kumar', email: 'sumit@nulogic.io', role: 'MANAGER', department: 'Engineering', level: 'Manager', color: 'from-accent-500 to-accent-600' },
-      { name: 'Mani S', email: 'mani@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Team Lead', color: 'from-accent-500 to-accent-600' },
-      { name: 'Gokul R', email: 'gokul@nulogic.io', role: 'TEAM_LEAD', department: 'Engineering', level: 'Lead', color: 'from-accent-500 to-accent-600' },
-      { name: 'Saran V', email: 'saran@nulogic.io', role: 'EMPLOYEE', department: 'Engineering', level: 'Employee', color: 'from-accent-600 to-accent-700' },
-      { name: 'Jagadeesh N', email: 'jagadeesh@nulogic.io', role: 'HR_MANAGER', department: 'HR', level: 'HR Manager', color: 'from-accent-700 to-accent-800' },
-      { name: 'Suresh M', email: 'suresh@nulogic.io', role: 'RECRUITMENT_ADMIN', department: 'Recruitment', level: 'Lead', color: 'from-accent-500 to-accent-600' },
-      { name: 'Dhanush A', email: 'dhanush@nulogic.io', role: 'TEAM_LEAD', department: 'HR', level: 'HR Lead', color: 'from-accent-600 to-accent-700' },
-    ]
+    {
+      name: 'Fayaz M',
+      email: 'fayaz.m@nulogic.io',
+      role: 'SUPER_ADMIN',
+      department: 'Executive',
+      level: 'CEO',
+      color: 'from-danger-500 to-danger-600'
+    },
+    {
+      name: 'Sumit Kumar',
+      email: 'sumit@nulogic.io',
+      role: 'MANAGER',
+      department: 'Engineering',
+      level: 'Manager',
+      color: 'from-accent-500 to-accent-600'
+    },
+    {
+      name: 'Mani S',
+      email: 'mani@nulogic.io',
+      role: 'TEAM_LEAD',
+      department: 'Engineering',
+      level: 'Team Lead',
+      color: 'from-accent-500 to-accent-600'
+    },
+    {
+      name: 'Gokul R',
+      email: 'gokul@nulogic.io',
+      role: 'TEAM_LEAD',
+      department: 'Engineering',
+      level: 'Lead',
+      color: 'from-accent-500 to-accent-600'
+    },
+    {
+      name: 'Saran V',
+      email: 'saran@nulogic.io',
+      role: 'EMPLOYEE',
+      department: 'Engineering',
+      level: 'Employee',
+      color: 'from-accent-600 to-accent-700'
+    },
+    {
+      name: 'Jagadeesh N',
+      email: 'jagadeesh@nulogic.io',
+      role: 'HR_MANAGER',
+      department: 'HR',
+      level: 'HR Manager',
+      color: 'from-accent-700 to-accent-800'
+    },
+    {
+      name: 'Suresh M',
+      email: 'suresh@nulogic.io',
+      role: 'RECRUITMENT_ADMIN',
+      department: 'Recruitment',
+      level: 'Lead',
+      color: 'from-accent-500 to-accent-600'
+    },
+    {
+      name: 'Dhanush A',
+      email: 'dhanush@nulogic.io',
+      role: 'TEAM_LEAD',
+      department: 'HR',
+      level: 'HR Lead',
+      color: 'from-accent-600 to-accent-700'
+    },
+  ]
   : [];
 
 const DEMO_PASSWORD = IS_DEMO_MODE ? 'Welcome@123' : '';
@@ -96,21 +152,28 @@ const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
   return (
-    <div className="fixed inset-0" style={{ zIndex: 0 }} suppressHydrationWarning>
+    <div className="fixed inset-0" style={{zIndex: 0}} suppressHydrationWarning>
       {/* Base */}
-      <div className="absolute inset-0 bg-[var(--bg-main)]" />
+      <div className="absolute inset-0 bg-[var(--bg-main)]"/>
       {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'color-mix(in srgb, var(--nu-lapis-blue) 8%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'color-mix(in srgb, var(--nu-purple) 6%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'color-mix(in srgb, var(--nu-red-orange) 4%, transparent)' }} suppressHydrationWarning />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]"
+             style={{background: 'color-mix(in srgb, var(--nu-lapis-blue) 8%, transparent)'}} suppressHydrationWarning/>
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]"
+             style={{background: 'color-mix(in srgb, var(--nu-purple) 6%, transparent)'}} suppressHydrationWarning/>
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]"
+             style={{background: 'color-mix(in srgb, var(--nu-red-orange) 4%, transparent)'}} suppressHydrationWarning/>
       </div>
       {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-0" style={{ background: 'var(--bg-main)' }} suppressHydrationWarning />
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'color-mix(in srgb, var(--nu-purple) 8%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'color-mix(in srgb, var(--nu-red-orange) 5%, transparent)' }} suppressHydrationWarning />
+        <div className="absolute inset-0" style={{background: 'var(--bg-main)'}} suppressHydrationWarning/>
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]"
+             style={{background: 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)'}}
+             suppressHydrationWarning/>
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]"
+             style={{background: 'color-mix(in srgb, var(--nu-purple) 8%, transparent)'}} suppressHydrationWarning/>
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]"
+             style={{background: 'color-mix(in srgb, var(--nu-red-orange) 5%, transparent)'}} suppressHydrationWarning/>
         {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -127,14 +190,14 @@ function AnimatedBackground() {
 // ─── Floating Feature Pills ────────────────────────────────────────
 function FeaturePills() {
   const features = [
-    { icon: Shield, label: 'Enterprise Security', delay: '0s' },
-    { icon: Zap, label: 'Smart Workflows', delay: '0.2s' },
-    { icon: Globe, label: 'Multi-Tenant SaaS', delay: '0.4s' },
+    {icon: Shield, label: 'Enterprise Security', delay: '0s'},
+    {icon: Zap, label: 'Smart Workflows', delay: '0.2s'},
+    {icon: Globe, label: 'Multi-Tenant SaaS', delay: '0.4s'},
   ];
 
   return (
     <div className="flex flex-wrap gap-4 justify-center mt-8">
-      {features.map(({ icon: Icon, label, delay }) => (
+      {features.map(({icon: Icon, label, delay}) => (
         <div
           key={label}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs font-medium"
@@ -142,7 +205,7 @@ function FeaturePills() {
             animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
           }}
         >
-          <Icon className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
+          <Icon className='w-3.5 h-3.5 text-accent'/>
           {label}
         </div>
       ))}
@@ -155,7 +218,7 @@ function LoginPageLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-2 border-accent-300/30 border-t-accent-500 rounded-full animate-spin"/>
         <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
     </div>
@@ -165,17 +228,17 @@ function LoginPageLoading() {
 // ─── Page Wrapper ────────────────────────────────────────────────────
 export default function LoginPageWrapper() {
   return (
-    <Suspense fallback={<LoginPageLoading />}>
-      <LoginPage />
+    <Suspense fallback={<LoginPageLoading/>}>
+      <LoginPage/>
     </Suspense>
   );
 }
 
 // ─── Demo Login Panel ────────────────────────────────────────────────
 function DemoLoginPanel({
-  onLogin,
-  isLoading,
-}: {
+                          onLogin,
+                          isLoading,
+                        }: {
   onLogin: (email: string) => void;
   isLoading: boolean;
 }) {
@@ -192,22 +255,21 @@ function DemoLoginPanel({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full row-between px-4 py-2.5 rounded-xl bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800/40 text-warning-700 dark:text-warning-300 text-sm font-medium transition-colors hover:bg-warning-100 dark:hover:bg-warning-900/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        className='w-full row-between px-4 py-2.5 rounded-xl bg-status-warning-bg border border-status-warning-border text-status-warning-text text-sm font-medium transition-colors hover:bg-status-warning-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
       >
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4" />
+          <Users className="w-4 h-4"/>
           <span>Demo Accounts</span>
-          <span className="text-xs px-1.5 py-0.5 rounded bg-warning-200/60 dark:bg-warning-800/40 text-warning-800 dark:text-warning-200">
+          <span className='text-xs px-1.5 py-0.5 rounded bg-warning-200/60 text-status-warning-text'>
             {DEMO_ACCOUNTS.length} roles
           </span>
         </div>
-        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        {isExpanded ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
       </button>
-
       {isExpanded && (
         <div
           className="mt-4 space-y-2 max-h-[320px] overflow-y-auto pr-1"
-          style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
+          style={{animation: 'fadeSlideUp 0.3s ease-out'}}
         >
           {DEMO_ACCOUNTS.map((account) => (
             <button
@@ -218,7 +280,7 @@ function DemoLoginPanel({
               className="w-full flex items-center gap-4 px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] hover:border-[var(--border-strong)] transition-all duration-200 group text-left hover:translate-x-0.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <div
-                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-[var(--shadow-card)]`}
+                className={`w-9 h-9 rounded-lg bg-gradient-to-br ${account.color} flex items-center justify-center text-inverse text-xs font-bold flex-shrink-0 shadow-[var(--shadow-card)]`}
               >
                 {account.name.split(' ').map(n => n[0]).join('')}
               </div>
@@ -227,7 +289,8 @@ function DemoLoginPanel({
                   <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {account.name}
                   </span>
-                  <span className="text-2xs px-1.5 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 font-medium flex-shrink-0">
+                  <span
+                    className='text-2xs px-1.5 py-0.5 rounded-full bg-accent-subtle text-accent font-medium flex-shrink-0'>
                     {account.role?.replace(/_/g, ' ') ?? '-'}
                   </span>
                 </div>
@@ -235,14 +298,17 @@ function DemoLoginPanel({
                   {account.department} &middot; {account.level}
                 </div>
               </div>
-              <LogIn className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              <LogIn
+                className="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"/>
               {isLoading && loadingEmail === account.email && (
-                <div className="w-4 h-4 border-2 border-accent-300 border-t-accent-700 rounded-full animate-spin flex-shrink-0" />
+                <div
+                  className='w-4 h-4 border-2 border-[var(--accent-primary)] border-t-accent-700 rounded-full animate-spin flex-shrink-0'/>
               )}
             </button>
           ))}
           <p className="text-2xs text-[var(--text-muted)] text-center pt-1">
-            Password for all accounts: <code className="px-1 py-0.5 bg-[var(--bg-elevated)] rounded text-[var(--text-secondary)]">Welcome@123</code>
+            Password for all accounts: <code
+            className="px-1 py-0.5 bg-[var(--bg-elevated)] rounded text-[var(--text-secondary)]">Welcome@123</code>
           </p>
         </div>
       )}
@@ -254,7 +320,7 @@ function DemoLoginPanel({
 function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
+  const {login, googleLogin, user, isAuthenticated, hasHydrated, setUser} = useAuth();
 
   const [error, setError] = useState<string | null>(null);
   const [mfaRequired, setMfaRequired] = useState(false);
@@ -274,8 +340,8 @@ function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors: emailErrors },
-  } = useForm<EmailPasswordForm>({ resolver: zodResolver(emailPasswordSchema) });
+    formState: {errors: emailErrors},
+  } = useForm<EmailPasswordForm>({resolver: zodResolver(emailPasswordSchema)});
 
   useEffect(() => {
     setMounted(true);
@@ -312,7 +378,7 @@ function LoginPage() {
       }
       setUser(null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 
   // Redirect after fresh login
@@ -363,7 +429,7 @@ function LoginPage() {
     setIsDemoLoading(true);
     setError(null);
     try {
-      await login({ email, password: DEMO_PASSWORD });
+      await login({email, password: DEMO_PASSWORD});
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
@@ -380,7 +446,7 @@ function LoginPage() {
     setIsEmailLoading(true);
     setError(null);
     try {
-      await login({ email: data.email, password: data.password });
+      await login({email: data.email, password: data.password});
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
@@ -399,7 +465,7 @@ function LoginPage() {
       setError(null);
       try {
         const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          headers: {Authorization: `Bearer ${tokenResponse.access_token}`},
         });
         if (!userInfoResponse.ok) throw new Error('Failed to get user info');
         const userInfo = await userInfoResponse.json();
@@ -415,11 +481,13 @@ function LoginPage() {
           return;
         }
         saveGoogleToken(tokenResponse.access_token, tokenResponse.expires_in || 3600);
-        await googleLogin({ credential: tokenResponse.access_token, accessToken: true });
+        await googleLogin({credential: tokenResponse.access_token, accessToken: true});
         setDidFreshLogin(true);
         router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
       } catch (err: unknown) {
-        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Google sign-in failed. Please try again.');
+        setError((err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Google sign-in failed. Please try again.');
       } finally {
         setIsGoogleLoading(false);
       }
@@ -437,7 +505,7 @@ function LoginPage() {
   if (mfaRequired && mfaUserId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4">
-        <AnimatedBackground />
+        <AnimatedBackground/>
         <div className="relative z-10 max-w-md w-full">
           <MfaVerification
             userId={mfaUserId}
@@ -486,20 +554,20 @@ function LoginPage() {
           animation: shimmer 3s ease-in-out infinite;
         }
       `}</style>
-
       <div className="min-h-screen flex relative overflow-hidden">
-        <AnimatedBackground />
+        <AnimatedBackground/>
 
         {/* ─── Left Panel: Branding ─────────────────────────── */}
         <div className="hidden lg:flex lg:w-[55%] relative z-10 flex-col justify-center items-center px-16">
           <div
             className="max-w-lg"
-            style={{ animation: 'fadeSlideUp 0.8s ease-out 0.1s both' }}
+            style={{animation: 'fadeSlideUp 0.8s ease-out 0.1s both'}}
           >
             {/* Platform badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800/40 mb-8">
-              <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse" />
-              <span className="text-accent-700 dark:text-accent-300 text-xs font-medium tracking-wider uppercase" style={{ letterSpacing: '3px' }}>
+            <div
+              className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-100/60 border border-[var(--accent-primary)] mb-8'>
+              <div className='w-2 h-2 rounded-full bg-status-success-bg animate-pulse'/>
+              <span className='text-accent text-xs font-medium tracking-wider uppercase' style={{letterSpacing: '3px'}}>
                 Infinite Innovation
               </span>
             </div>
@@ -507,8 +575,9 @@ function LoginPage() {
             {/* Headline */}
             <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
               Your People.
-              <br />
-              <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, var(--nu-red-orange) 0%, var(--nu-purple) 50%, var(--nu-lapis-blue) 100%)' }}>
+              <br/>
+              <span className="bg-clip-text text-transparent"
+                    style={{backgroundImage: 'linear-gradient(135deg, var(--nu-red-orange) 0%, var(--nu-purple) 50%, var(--nu-lapis-blue) 100%)'}}>
                 Amplified.
               </span>
             </h1>
@@ -521,15 +590,15 @@ function LoginPage() {
             {/* App icons row — NULogic brand gradient palette */}
             <div className="flex gap-4 mb-8">
               {[
-                { name: 'HRMS', bg: 'var(--nu-gradient-dark)', Icon: Users },
-                { name: 'Hire', bg: 'var(--nu-gradient-primary)', Icon: Target },
-                { name: 'Grow', bg: 'linear-gradient(135deg, var(--nu-purple), #61629D)', Icon: TrendingUp },
-                { name: 'Fluence', bg: 'linear-gradient(135deg, var(--nu-dark-teal), #3E616A)', Icon: Lightbulb },
+                {name: 'HRMS', bg: 'var(--nu-gradient-dark)', Icon: Users},
+                {name: 'Hire', bg: 'var(--nu-gradient-primary)', Icon: Target},
+                {name: 'Grow', bg: 'linear-gradient(135deg, var(--nu-purple), #61629D)', Icon: TrendingUp},
+                {name: 'Fluence', bg: 'linear-gradient(135deg, var(--nu-dark-teal), #3E616A)', Icon: Lightbulb},
               ].map((app, i) => (
                 <div
                   key={app.name}
                   className="group flex flex-col items-center gap-2.5"
-                  style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
+                  style={{animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both`}}
                 >
                   <div
                     className="w-14 h-14 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:shadow-[var(--shadow-dropdown)] transition-all duration-300"
@@ -539,7 +608,7 @@ function LoginPage() {
                       animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
                     }}
                   >
-                    <app.Icon className="h-6 w-6 text-white" />
+                    <app.Icon className='h-6 w-6 text-inverse'/>
                   </div>
                   <span className="text-[var(--text-secondary)] text-xs font-semibold tracking-wide">
                     NU-{app.name}
@@ -548,7 +617,7 @@ function LoginPage() {
               ))}
             </div>
 
-            <FeaturePills />
+            <FeaturePills/>
           </div>
         </div>
 
@@ -556,14 +625,14 @@ function LoginPage() {
         <div className="w-full lg:w-[45%] relative z-10 flex items-center justify-center px-6 py-12">
           <div
             className="w-full max-w-[420px]"
-            style={{ animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none' }}
+            style={{animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none'}}
           >
             {/* Logo */}
             <div className="flex justify-center mb-10 lg:mb-8">
               <div className="relative">
                 <div
                   className="absolute -inset-4 rounded-full bg-accent-500/10 blur-xl"
-                  style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
+                  style={{animation: 'pulse-ring 4s ease-in-out infinite'}}
                 />
                 {/* Light mode: navy text + gradient "g" */}
                 <Image
@@ -589,7 +658,8 @@ function LoginPage() {
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
               <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss mb-2">
-                Welcome to <span className="bg-clip-text text-transparent font-extrabold" style={{ backgroundImage: 'var(--nu-gradient-brand)' }}>NU-AURA</span>
+                Welcome to <span className="bg-clip-text text-transparent font-extrabold"
+                                 style={{backgroundImage: 'var(--nu-gradient-brand)'}}>NU-AURA</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-sm">
                 Your unified people platform
@@ -597,7 +667,8 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8" style={{ boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)' }}>
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8"
+                 style={{boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)'}}>
               <div className="text-center mb-7">
                 <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
                   Sign In
@@ -610,15 +681,15 @@ function LoginPage() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 mb-6 rounded-xl bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
-                  style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
+                  className='flex items-start gap-4 p-4 mb-6 rounded-xl bg-status-danger-bg border border-status-danger-border'
+                  style={{animation: 'fadeSlideUp 0.3s ease-out'}}
                 >
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className='w-5 h-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
                   <div>
-                    <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
+                    <p className='text-sm font-medium text-status-danger-text'>
                       Authentication Failed
                     </p>
-                    <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
+                    <p className='text-sm text-status-danger-text mt-0.5'>
                       {error}
                     </p>
                   </div>
@@ -629,11 +700,14 @@ function LoginPage() {
               <button
                 type="button"
                 className="w-full relative group flex items-center justify-center gap-4 px-6 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
-                onClick={() => { handleGoogleSSO(); }}
+                onClick={() => {
+                  handleGoogleSSO();
+                }}
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (
-                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin" />
+                  <div
+                    className="w-5 h-5 border-2 border-[var(--border-main)] border-t-accent-700 rounded-full animate-spin"/>
                 ) : (
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -655,13 +729,14 @@ function LoginPage() {
                   </svg>
                 )}
                 <span>Continue with Google</span>
-                <ArrowRight className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                <ArrowRight
+                  className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"/>
               </button>
 
               {/* Domain notice */}
               <p className="text-center text-[var(--text-secondary)] text-xs mt-4 leading-relaxed">
-                Restricted to <span className="text-accent-700 dark:text-accent-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
-                <br />
+                Restricted to <span className='text-accent font-semibold'>@{ALLOWED_DOMAIN}</span> accounts.
+                <br/>
                 <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
 
@@ -673,21 +748,21 @@ function LoginPage() {
                   className="w-full row-between px-4 py-2.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] text-[var(--text-secondary)] text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-4 h-4"/>
                     <span>Sign in with Email</span>
                   </div>
-                  {showEmailForm ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {showEmailForm ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
                 </button>
 
                 {showEmailForm && (
                   <form
                     onSubmit={handleSubmit(handleEmailLogin)}
                     className="mt-3 space-y-4"
-                    style={{ animation: 'fadeSlideUp 0.2s ease-out' }}
+                    style={{animation: 'fadeSlideUp 0.2s ease-out'}}
                   >
                     <div>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
                         <input
                           {...register('email')}
                           type="email"
@@ -697,13 +772,13 @@ function LoginPage() {
                         />
                       </div>
                       {emailErrors.email && (
-                        <p className="text-danger-500 text-xs mt-1">{emailErrors.email.message}</p>
+                        <p className='text-status-danger-text text-xs mt-1'>{emailErrors.email.message}</p>
                       )}
                     </div>
 
                     <div>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"/>
                         <input
                           {...register('password')}
                           type={showPassword ? 'text' : 'password'}
@@ -717,16 +792,16 @@ function LoginPage() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
                         >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {showPassword ? <EyeOff className="w-4 h-4"/> : <Eye className="w-4 h-4"/>}
                         </button>
                       </div>
                       {emailErrors.password && (
-                        <p className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
+                        <p className='text-status-danger-text text-xs mt-1'>{emailErrors.password.message}</p>
                       )}
                       <div className="flex justify-end mt-1">
                         <Link
                           href="/auth/forgot-password"
-                          className="text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
+                          className='text-xs text-accent hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded'
                         >
                           Forgot Password?
                         </Link>
@@ -736,12 +811,12 @@ function LoginPage() {
                     <button
                       type="submit"
                       disabled={isEmailLoading}
-                      className="skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-accent-600 hover:bg-accent-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-inverse bg-accent hover:bg-accent rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {isEmailLoading ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
                       ) : (
-                        <LogIn className="w-4 h-4" />
+                        <LogIn className="w-4 h-4"/>
                       )}
                       {isEmailLoading ? 'Signing in…' : 'Sign In'}
                     </button>
@@ -751,16 +826,17 @@ function LoginPage() {
 
               {/* Demo Login Panel — only shown when NEXT_PUBLIC_DEMO_MODE=true */}
               {IS_DEMO_MODE && (
-                <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading} />
+                <DemoLoginPanel onLogin={handleDemoLogin} isLoading={isDemoLoading}/>
               )}
 
               {/* Divider */}
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[var(--border-subtle)]" />
+                  <div className="w-full border-t border-[var(--border-subtle)]"/>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-4 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
+                  <span
+                    className="px-4 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
                     secure enterprise SSO
                   </span>
                 </div>
@@ -769,19 +845,20 @@ function LoginPage() {
               {/* Trust badges */}
               <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
                 <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
+                  <Shield className='w-3.5 h-3.5 text-accent'/>
                   <span>SOC 2</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
+                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]"/>
                 <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <svg className='w-3.5 h-3.5 text-accent' viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
                   <span>Encrypted</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
+                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]"/>
                 <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
+                  <Globe className='w-3.5 h-3.5 text-accent'/>
                   <span>GDPR</span>
                 </div>
               </div>
@@ -791,11 +868,11 @@ function LoginPage() {
             <div className="text-center mt-8 space-y-2">
               <p className="text-xs text-[var(--text-secondary)]">
                 By signing in, you agree to our{' '}
-                <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
+                <Link href="/terms" className='text-accent hover:text-accent transition-colors font-medium'>
                   Terms
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors font-medium">
+                <Link href="/privacy" className='text-accent hover:text-accent transition-colors font-medium'>
                   Privacy Policy
                 </Link>
               </p>

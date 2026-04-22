@@ -18,7 +18,7 @@ export default function EmployeeAttendanceChart({weeklyTrend}: EmployeeAttendanc
       <LineChart data={weeklyTrend}>
         <CartesianGrid
           strokeDasharray="3 3"
-          className="stroke-surface-200 dark:stroke-surface-700"
+          className='stroke-surface-200'
         />
         <XAxis
           dataKey="date"

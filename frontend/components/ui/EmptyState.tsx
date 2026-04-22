@@ -78,8 +78,8 @@ export function EmptyState({
             disabled={finalActionLoading}
             className={cn(
               'px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200',
-              'bg-accent-700 hover:bg-accent-800 dark:bg-accent-700 dark:hover:bg-accent-800',
-              'text-white disabled:opacity-50 disabled:cursor-not-allowed',
+              'bg-accent hover:bg-accent-hover',
+              'text-inverse disabled:opacity-50 disabled:cursor-not-allowed',
               'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             )}
           >

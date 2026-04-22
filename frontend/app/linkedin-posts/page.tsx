@@ -102,7 +102,7 @@ export default function LinkedInPostsPage() {
             <div className="row-between">
               <div>
                 <h1 className="text-xl font-bold skeuo-emboss">
-                  <Linkedin className="w-8 h-8 text-accent-600"/>
+                  <Linkedin className='w-8 h-8 text-accent'/>
                   LinkedIn Posts
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -115,7 +115,7 @@ export default function LinkedInPostsPage() {
                     setEditingPost(null);
                     setShowCreateModal(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-[var(--shadow-card)]"
+                  className='flex items-center gap-2 px-4 py-2.5 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors font-medium shadow-[var(--shadow-card)]'
                 >
                   <Plus className="w-5 h-5"/>
                   Add Post
@@ -138,7 +138,7 @@ export default function LinkedInPostsPage() {
                 placeholder="Search by content or author..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent bg-[var(--bg-secondary)]/50 dark:text-white"
+                className='w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent bg-[var(--bg-secondary)]/50'
               />
             </div>
           </motion.div>
@@ -151,7 +151,7 @@ export default function LinkedInPostsPage() {
           >
             {isLoading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-accent-600"/>
+                <Loader2 className='w-8 h-8 animate-spin text-accent'/>
               </div>
             ) : filteredPosts.length === 0 ? (
               <EmptyState
@@ -210,7 +210,7 @@ export default function LinkedInPostsPage() {
                           {post.tags.slice(0, 3).map((tag) => (
                             <span
                               key={tag}
-                              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-full"
+                              className='inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-accent-subtle text-accent rounded-full'
                             >
                               <Tag className="w-3 h-3"/>
                               {tag}
@@ -228,19 +228,19 @@ export default function LinkedInPostsPage() {
                       {/* Engagement Stats */}
                       <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[var(--border-main)]">
                         <div className="flex items-center gap-2 text-sm">
-                          <Heart className="w-4 h-4 text-danger-500"/>
+                          <Heart className='w-4 h-4 text-status-danger-text'/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.likes}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <MessageCircle className="w-4 h-4 text-accent-500"/>
+                          <MessageCircle className='w-4 h-4 text-accent'/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.comments}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <Share2 className="w-4 h-4 text-success-500"/>
+                          <Share2 className='w-4 h-4 text-status-success-text'/>
                           <span className="text-[var(--text-secondary)]">
                             {post.engagement.shares}
                           </span>
@@ -258,7 +258,7 @@ export default function LinkedInPostsPage() {
                           </span>
                           {post.isFromNulogic && (
                             <span
-                              className="flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-500">
+                              className='flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-accent-subtle text-accent'>
                               <Zap className="w-3 h-3"/>
                               Nulogic
                             </span>
@@ -268,7 +268,7 @@ export default function LinkedInPostsPage() {
                           href={post.postUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
+                          className='p-1.5 text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle rounded-lg transition-colors'
                           title="View on LinkedIn"
                         >
                           <ExternalLink className="w-4 h-4"/>
@@ -282,14 +282,14 @@ export default function LinkedInPostsPage() {
                         className="px-6 py-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
                         <button
                           onClick={() => handleEditPost(post)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors"
+                          className='flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent bg-accent-subtle hover:bg-accent-subtle rounded-lg transition-colors'
                         >
                           <Edit2 className="w-4 h-4"/>
                           Edit
                         </button>
                         <button
                           onClick={() => setShowDeleteConfirm(post.id)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors"
+                          className='flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-status-danger-text bg-status-danger-bg hover:bg-status-danger-bg rounded-lg transition-colors'
                         >
                           <Trash2 className="w-4 h-4"/>
                           Delete
@@ -303,7 +303,6 @@ export default function LinkedInPostsPage() {
           </motion.div>
         </div>
       </div>
-
       {/* Create/Edit Modal */}
       <AnimatePresence>
         {showCreateModal && (
@@ -320,7 +319,6 @@ export default function LinkedInPostsPage() {
           />
         )}
       </AnimatePresence>
-
       {/* Delete Confirmation */}
       <ConfirmDialog
         isOpen={!!showDeleteConfirm}
@@ -490,18 +488,18 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Post URL */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Post URL <span className="text-danger-500">*</span>
+              Post URL <span className='text-status-danger-text'>*</span>
             </label>
             <input
               type="url"
               {...register('postUrl')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                 errors.postUrl ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="https://www.linkedin.com/feed/update/..."
             />
             {errors.postUrl && (
-              <p className="mt-1 text-xs text-danger-500">{errors.postUrl.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.postUrl.message}</p>
             )}
           </div>
 
@@ -509,18 +507,18 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Author Name <span className="text-danger-500">*</span>
+                Author Name <span className='text-status-danger-text'>*</span>
               </label>
               <input
                 type="text"
                 {...register('authorName')}
-                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                   errors.authorName ? 'border-danger-500' : 'border-[var(--border-main)]'
                 }`}
                 placeholder="John Doe"
               />
               {errors.authorName && (
-                <p className="mt-1 text-xs text-danger-500">{errors.authorName.message}</p>
+                <p className='mt-1 text-xs text-status-danger-text'>{errors.authorName.message}</p>
               )}
             </div>
             <div>
@@ -530,7 +528,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
               <input
                 type="text"
                 {...register('authorTitle')}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                 placeholder="CEO at Company"
               />
             </div>
@@ -539,18 +537,18 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
           {/* Content Snippet */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Content Snippet <span className="text-danger-500">*</span>
+              Content Snippet <span className='text-status-danger-text'>*</span>
             </label>
             <textarea
               {...register('contentSnippet')}
               rows={4}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white resize-none ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] resize-none ${
                 errors.contentSnippet ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="Paste the post content or a snippet..."
             />
             {errors.contentSnippet && (
-              <p className="mt-1 text-xs text-danger-500">{errors.contentSnippet.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.contentSnippet.message}</p>
             )}
           </div>
 
@@ -562,30 +560,30 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
             <input
               type="url"
               {...register('imageUrl')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                 errors.imageUrl ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}
               placeholder="https://..."
             />
             {errors.imageUrl && (
-              <p className="mt-1 text-xs text-danger-500">{errors.imageUrl.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.imageUrl.message}</p>
             )}
           </div>
 
           {/* Posted Date */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Posted Date <span className="text-danger-500">*</span>
+              Posted Date <span className='text-status-danger-text'>*</span>
             </label>
             <input
               type="date"
               {...register('postedAt')}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                 errors.postedAt ? 'border-danger-500' : 'border-[var(--border-main)]'
               }`}
             />
             {errors.postedAt && (
-              <p className="mt-1 text-xs text-danger-500">{errors.postedAt.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.postedAt.message}</p>
             )}
           </div>
 
@@ -597,7 +595,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
             <input
               type="text"
               {...register('tags')}
-              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+              className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
               placeholder="tag1, tag2, tag3"
             />
             <p className="mt-1 text-caption">
@@ -625,12 +623,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                           errors.likes ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.likes && (
-                        <p className="mt-1 text-xs text-danger-500">{errors.likes.message}</p>
+                        <p className='mt-1 text-xs text-status-danger-text'>{errors.likes.message}</p>
                       )}
                     </>
                   )}
@@ -650,12 +648,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                           errors.comments ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.comments && (
-                        <p className="mt-1 text-xs text-danger-500">{errors.comments.message}</p>
+                        <p className='mt-1 text-xs text-status-danger-text'>{errors.comments.message}</p>
                       )}
                     </>
                   )}
@@ -675,12 +673,12 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                         min="0"
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white ${
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-transparent dark:bg-[var(--bg-secondary)] ${
                           errors.shares ? 'border-danger-500' : 'border-[var(--border-main)]'
                         }`}
                       />
                       {errors.shares && (
-                        <p className="mt-1 text-xs text-danger-500">{errors.shares.message}</p>
+                        <p className='mt-1 text-xs text-status-danger-text'>{errors.shares.message}</p>
                       )}
                     </>
                   )}
@@ -702,7 +700,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                   onChange={(e) => field.onChange(e.target.checked)}
                   onBlur={field.onBlur}
                   name={field.name}
-                  className="w-4 h-4 text-accent-600 rounded focus:ring-accent-500"
+                  className='w-4 h-4 text-accent rounded focus:ring-accent-500'
                 />
               )}
             />
@@ -725,7 +723,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
             type="submit"
             form="linkedin-form"
             disabled={createPostMutation.isPending || updatePostMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-inverse rounded-lg hover:bg-accent transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {createPostMutation.isPending || updatePostMutation.isPending ? (
               <>

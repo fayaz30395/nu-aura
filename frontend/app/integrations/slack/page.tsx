@@ -182,7 +182,7 @@ export default function SlackIntegrationPage() {
           </button>
           <div className="flex items-center gap-2">
             <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
-              <Zap className="h-6 w-6 text-white"/>
+              <Zap className='h-6 w-6 text-inverse'/>
             </div>
             <div>
               <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
@@ -207,24 +207,24 @@ export default function SlackIntegrationPage() {
         {/* Setup Guide */}
         <div className="skeuo-card p-6 mb-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Shield className="h-5 w-5 text-accent-700"/>
+            <Shield className='h-5 w-5 text-accent'/>
             Setup Guide
           </h2>
           <ol className="space-y-2 text-body-secondary">
             <li className="flex gap-2">
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
+                className='flex-shrink-0 w-6 h-6 rounded-full bg-accent-subtle text-accent flex items-center justify-center text-xs font-bold'>1</span>
               <span>
                 Create a Slack App at{' '}
                 <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer"
-                   className="text-accent-700 hover:underline inline-flex items-center gap-1">
+                   className='text-accent hover:underline inline-flex items-center gap-1'>
                   api.slack.com/apps <ExternalLink className="h-3 w-3"/>
                 </a>
               </span>
             </li>
             <li className="flex gap-2">
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">2</span>
+                className='flex-shrink-0 w-6 h-6 rounded-full bg-accent-subtle text-accent flex items-center justify-center text-xs font-bold'>2</span>
               <span>Add Bot Token Scopes: <code
                 className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">chat:write</code>, <code
                 className="px-1.5 py-0.5 bg-[var(--bg-secondary)] rounded text-xs">users:read.email</code>, <code
@@ -232,12 +232,12 @@ export default function SlackIntegrationPage() {
             </li>
             <li className="flex gap-2">
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">3</span>
+                className='flex-shrink-0 w-6 h-6 rounded-full bg-accent-subtle text-accent flex items-center justify-center text-xs font-bold'>3</span>
               <span>Install the app to your workspace and copy the Bot Token below</span>
             </li>
             <li className="flex gap-2">
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">4</span>
+                className='flex-shrink-0 w-6 h-6 rounded-full bg-accent-subtle text-accent flex items-center justify-center text-xs font-bold'>4</span>
               <span>Configure Slash Commands using the webhook URLs below</span>
             </li>
           </ol>
@@ -246,7 +246,7 @@ export default function SlackIntegrationPage() {
         {/* Webhook URLs */}
         <div className="skeuo-card p-6 mb-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-accent-700"/>
+            <MessageSquare className='h-5 w-5 text-accent'/>
             Webhook URLs
           </h2>
           <p className="text-body-muted mb-4">
@@ -268,7 +268,7 @@ export default function SlackIntegrationPage() {
                   className="p-2 hover:bg-[var(--bg-surface)] rounded transition-colors"
                 >
                   {copied === label ? (
-                    <Check className="h-4 w-4 text-success-500"/>
+                    <Check className='h-4 w-4 text-status-success-text'/>
                   ) : (
                     <Copy className="h-4 w-4 text-[var(--text-muted)]"/>
                   )}
@@ -276,8 +276,8 @@ export default function SlackIntegrationPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 p-2 bg-accent-50 dark:bg-accent-950/30 rounded-lg">
-            <p className="text-xs text-accent-800 dark:text-accent-400">
+          <div className='mt-4 p-2 bg-accent-subtle rounded-lg'>
+            <p className='text-xs text-accent'>
               <strong>Slash Commands to configure:</strong> <code>/leave</code> and <code>/balance</code> — both
               pointing to the Slash Commands URL above.
             </p>
@@ -288,7 +288,7 @@ export default function SlackIntegrationPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="skeuo-card p-6 mb-6">
             <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Key className="h-5 w-5 text-accent-700"/>
+              <Key className='h-5 w-5 text-accent'/>
               Configuration
             </h2>
             <div className="space-y-4">
@@ -301,7 +301,7 @@ export default function SlackIntegrationPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" {...register('isEnabled')} className="sr-only peer"/>
                   <div
-                    className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-surface-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-700"></div>
+                    className="w-11 h-6 bg-[var(--border-main)] peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accent-700 peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[var(--bg-card)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--bg-card)] after:border-subtle after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"></div>
                 </label>
               </div>
 
@@ -318,7 +318,7 @@ export default function SlackIntegrationPage() {
                     disabled={!isEnabled}
                   />
                   {errors.slackWorkspaceId && (
-                    <p className="text-danger-500 text-xs mt-1">{errors.slackWorkspaceId.message}</p>
+                    <p className='text-status-danger-text text-xs mt-1'>{errors.slackWorkspaceId.message}</p>
                   )}
                   <p className="text-caption mt-1">Found in Slack App settings &gt; Basic Information</p>
                 </div>
@@ -337,7 +337,7 @@ export default function SlackIntegrationPage() {
                     disabled={!isEnabled}
                   />
                   {errors.slackDefaultChannel && (
-                    <p className="text-danger-500 text-xs mt-1">{errors.slackDefaultChannel.message}</p>
+                    <p className='text-status-danger-text text-xs mt-1'>{errors.slackDefaultChannel.message}</p>
                   )}
                 </div>
               </div>

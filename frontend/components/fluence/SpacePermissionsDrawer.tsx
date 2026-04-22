@@ -518,7 +518,6 @@ export function SpacePermissionsDrawer({
                             className="w-8 h-8 rounded-full bg-[var(--accent-primary-subtle)] flex items-center justify-center text-xs font-medium text-[var(--accent-primary)] flex-shrink-0">
                             {getInitials(member.userName ?? '')}
                           </div>
-
                           {/* Name */}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-[var(--text-primary)] truncate">
@@ -530,7 +529,6 @@ export function SpacePermissionsDrawer({
                               </p>
                             )}
                           </div>
-
                           {/* Role badge / selector */}
                           <Select
                             value={member.role}
@@ -552,12 +550,11 @@ export function SpacePermissionsDrawer({
                               },
                             }}
                           />
-
                           {/* Remove button */}
                           <button
                             type="button"
                             onClick={() => handleRemoveMember(member)}
-                            className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--status-danger-text)] hover:bg-danger-50 dark:hover:bg-danger-950 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+                            className='p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--status-danger-text)] hover:bg-status-danger-bg transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
                             aria-label={`Remove ${member.userName ?? 'member'}`}
                           >
                             <X className="h-4 w-4"/>

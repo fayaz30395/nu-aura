@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState, useRef, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions } from '@/lib/hooks/usePermissions';
+import {useEffect, useState, useRef, ReactNode} from 'react';
+import {useRouter, usePathname} from 'next/navigation';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 import {
   findRouteConfig,
   isPublicRoute,
   RouteConfig,
 } from '@/lib/config/routes';
-import { SkeletonDashboard } from '@/components/ui/Skeleton';
-import { logger } from '@/lib/utils/logger';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
+import {logger} from '@/lib/utils/logger';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -34,13 +34,13 @@ interface AuthGuardProps {
  * }
  */
 export function AuthGuard({
-  children,
-  loadingComponent,
-  accessDeniedComponent,
-}: AuthGuardProps): ReactNode {
+                            children,
+                            loadingComponent,
+                            accessDeniedComponent,
+                          }: AuthGuardProps): ReactNode {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, hasHydrated, restoreSession } = useAuth();
+  const {user, isAuthenticated, hasHydrated, restoreSession} = useAuth();
   const {
     hasPermission,
     hasAnyPermission,
@@ -248,7 +248,7 @@ export function AuthGuard({
 
     return (
       <div className="p-6">
-        <SkeletonDashboard />
+        <SkeletonDashboard/>
       </div>
     );
   }
@@ -260,7 +260,7 @@ export function AuthGuard({
     }
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-surface-50">
+      <div className='flex flex-col items-center justify-center min-h-screen bg-base'>
         <div className="text-center p-8">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Access Denied</h1>
@@ -269,7 +269,7 @@ export function AuthGuard({
           </p>
           <button
             onClick={() => router.push('/me/dashboard')}
-            className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Go to Home
           </button>

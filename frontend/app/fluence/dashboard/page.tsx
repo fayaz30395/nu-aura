@@ -88,9 +88,9 @@ export default function FluenceDashboardPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="p-4 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <BookOpen className="w-6 h-6 text-white"/>
+                    <BookOpen className='w-6 h-6 text-inverse'/>
                   </div>
-                  <h1 className={`${typography.pageTitle} text-white skeuo-emboss`}>
+                  <h1 className={`${typography.pageTitle} text-inverse skeuo-emboss`}>
                     NU-Fluence Knowledge Hub
                   </h1>
                 </div>
@@ -113,7 +113,7 @@ export default function FluenceDashboardPage() {
               <Button
                 onClick={() => router.push('/fluence/blogs/new')}
                 variant="outline"
-                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                className='gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-inverse font-medium backdrop-blur-sm'
               >
                 <Pen className={iconSize.button}/>
                 Write Blog Post
@@ -121,7 +121,7 @@ export default function FluenceDashboardPage() {
               <Button
                 onClick={() => router.push('/fluence/search')}
                 variant="outline"
-                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                className='gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-inverse font-medium backdrop-blur-sm'
               >
                 <Clock className={iconSize.button}/>
                 Explore
@@ -132,9 +132,9 @@ export default function FluenceDashboardPage() {
           {/* Decorative background */}
           <div className="absolute inset-0 opacity-10">
             <div
-              className="absolute top-0 right-0 w-96 h-96 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4"/>
+              className='absolute top-0 right-0 w-96 h-96 bg-accent-subtle rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4'/>
             <div
-              className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 dark:bg-accent-400 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
+              className='absolute bottom-0 left-0 w-64 h-64 bg-accent-subtle rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4'/>
           </div>
         </motion.div>
 
@@ -205,7 +205,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <BookOpen className={`${iconSize.cardInline} text-accent-600`}/>
+                  <BookOpen className={`${iconSize.cardInline} text-accent`}/>
                   <CardTitle className={typography.cardTitle}>
                     Top Wiki Pages
                   </CardTitle>
@@ -250,7 +250,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <Pen className={`${iconSize.cardInline} text-warning-600`}/>
+                  <Pen className={`${iconSize.cardInline} text-status-warning-text`}/>
                   <CardTitle className={typography.cardTitle}>
                     Latest Blog Posts
                   </CardTitle>
@@ -295,7 +295,7 @@ export default function FluenceDashboardPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <FileText className={`${iconSize.cardInline} text-success-600`}/>
+                  <FileText className={`${iconSize.cardInline} text-status-success-text`}/>
                   <CardTitle className={typography.cardTitle}>
                     Templates
                   </CardTitle>

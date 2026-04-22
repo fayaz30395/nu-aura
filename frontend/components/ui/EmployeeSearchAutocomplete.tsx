@@ -150,29 +150,29 @@ export function EmployeeSearchAutocomplete({
   return (
     <div className={`relative ${className}`}>
       {label && (
-        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+        <label className='block text-sm font-medium text-secondary mb-1'>
           {label}
-          {required && <span className="text-danger-500 ml-1">*</span>}
+          {required && <span className='text-status-danger-text ml-1'>*</span>}
         </label>
       )}
       <div className="relative">
         {value ? (
           <div
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 rounded-lg">
+            className='flex items-center gap-2 px-4 py-2 bg-[var(--bg-input)] border border-subtle rounded-lg'>
             <div
-              className="w-7 h-7 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-xs font-medium">
+              className='w-7 h-7 rounded-full bg-accent-subtle flex items-center justify-center text-accent text-xs font-medium'>
               {getInitials(value.name)}
             </div>
-            <span className="flex-1 text-surface-900 dark:text-surface-100 text-sm">
+            <span className='flex-1 text-primary text-sm'>
               {value.name}
             </span>
             {!disabled && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="p-1 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className='p-1 hover:bg-surface rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
               >
-                <X className="h-4 w-4 text-surface-500"/>
+                <X className='h-4 w-4 text-muted'/>
               </button>
             )}
           </div>
@@ -180,9 +180,9 @@ export function EmployeeSearchAutocomplete({
           <>
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               {loading ? (
-                <Loader2 className="h-4 w-4 text-surface-400 animate-spin"/>
+                <Loader2 className='h-4 w-4 text-muted animate-spin'/>
               ) : (
-                <Search className="h-4 w-4 text-surface-400"/>
+                <Search className='h-4 w-4 text-muted'/>
               )}
             </div>
             <input
@@ -198,7 +198,7 @@ export function EmployeeSearchAutocomplete({
               aria-expanded={isOpen}
               aria-controls="employee-search-results"
               id="employee-search-input"
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className='w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-primary border border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed'
             />
           </>
         )}
@@ -208,7 +208,7 @@ export function EmployeeSearchAutocomplete({
             ref={dropdownRef}
             id="employee-search-results"
             role="listbox"
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto"
+            className='absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-subtle rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-auto'
           >
             {results.map((employee, index) => {
               const name = getEmployeeName(employee);
@@ -220,20 +220,20 @@ export function EmployeeSearchAutocomplete({
                   type="button"
                   onClick={() => handleSelect(employee)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${highlightedIndex === index
+                  className={`w-full px-4 py-2 flex items-center gap-4 text-left hover:bg-base transition-colors ${highlightedIndex === index
                     ? 'bg-surface-50 dark:bg-surface-700'
                     : ''
                   }`}
                 >
                   <div
-                    className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium flex-shrink-0">
+                    className='w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center text-accent text-sm font-medium flex-shrink-0'>
                     {getInitials(name)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
+                    <p className='text-sm font-medium text-primary truncate'>
                       {name}
                     </p>
-                    <p className="text-xs text-surface-500 truncate">
+                    <p className='text-xs text-muted truncate'>
                       {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
                     </p>
                   </div>
@@ -246,12 +246,12 @@ export function EmployeeSearchAutocomplete({
         {isOpen && query && results.length === 0 && !loading && (
           <div
             ref={dropdownRef}
-            className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-[var(--shadow-dropdown)] p-4"
+            className='absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-subtle rounded-lg shadow-[var(--shadow-dropdown)] p-4'
           >
             <div className="flex flex-col items-center text-center">
-              <User className="h-8 w-8 text-surface-400 mb-2"/>
-              <p className="text-sm text-surface-500">No employees found</p>
-              <p className="text-xs text-surface-400 mt-1">
+              <User className='h-8 w-8 text-muted mb-2'/>
+              <p className='text-sm text-muted'>No employees found</p>
+              <p className='text-xs text-muted mt-1'>
                 Try a different search term
               </p>
             </div>

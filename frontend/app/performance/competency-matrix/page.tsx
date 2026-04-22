@@ -483,13 +483,12 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
         <Button
           leftSection={<Plus className="h-4 w-4"/>}
           size="sm"
-          className="bg-accent-700 hover:bg-accent-800"
+          className='bg-accent hover:bg-accent-hover'
           onClick={openAddModal}
         >
           Add Skill
         </Button>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Competency Matrix Grid */}
         <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
@@ -527,7 +526,7 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
                               </Text>
                               {skill.isVerified && (
                                 <Tooltip label="Verified by manager">
-                                  <CheckCircle className="h-3.5 w-3.5 text-success-500 shrink-0"/>
+                                  <CheckCircle className='h-3.5 w-3.5 text-status-success-text shrink-0'/>
                                 </Tooltip>
                               )}
                             </div>
@@ -620,7 +619,7 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
                       </Text>
                       {gap.recommendedCourses.length > 0 && (
                         <Tooltip label={`${gap.recommendedCourses.length} course(s) recommended`}>
-                          <BookOpen className="h-3.5 w-3.5 text-accent-600"/>
+                          <BookOpen className='h-3.5 w-3.5 text-accent'/>
                         </Tooltip>
                       )}
                     </div>
@@ -631,7 +630,6 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
           )}
         </Paper>
       </div>
-
       {/* Add Skill Modal */}
       <Modal
         opened={addModalOpened}
@@ -700,7 +698,7 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
               </Button>
               <Button
                 type="submit"
-                className="bg-accent-700 hover:bg-accent-800"
+                className='bg-accent hover:bg-accent-hover'
                 loading={addSkillMutation.isPending}
               >
                 Save Skill
@@ -763,8 +761,8 @@ function TeamViewTab({managerId}: { managerId: string }) {
               <Text size="xs" c="dimmed">Total Skills</Text>
               <Text size="xl" fw={700}>{skills.length}</Text>
             </div>
-            <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/40">
-              <Target className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+            <div className='p-2 rounded-lg bg-accent-subtle'>
+              <Target className='h-5 w-5 text-accent'/>
             </div>
           </div>
         </Paper>
@@ -774,8 +772,8 @@ function TeamViewTab({managerId}: { managerId: string }) {
               <Text size="xs" c="dimmed">Verified Skills</Text>
               <Text size="xl" fw={700}>{skills.filter((s) => s.isVerified).length}</Text>
             </div>
-            <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/40">
-              <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400"/>
+            <div className='p-2 rounded-lg bg-status-success-bg'>
+              <CheckCircle className='h-5 w-5 text-status-success-text'/>
             </div>
           </div>
         </Paper>
@@ -785,8 +783,8 @@ function TeamViewTab({managerId}: { managerId: string }) {
               <Text size="xs" c="dimmed">Skill Gaps</Text>
               <Text size="xl" fw={700}>{gapReport?.gaps?.length || 0}</Text>
             </div>
-            <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/40">
-              <AlertTriangle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+            <div className='p-2 rounded-lg bg-status-warning-bg'>
+              <AlertTriangle className='h-5 w-5 text-status-warning-text'/>
             </div>
           </div>
         </Paper>
@@ -800,13 +798,12 @@ function TeamViewTab({managerId}: { managerId: string }) {
                   : 'N/A'}
               </Text>
             </div>
-            <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/40">
-              <TrendingUp className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
+            <div className='p-2 rounded-lg bg-accent-subtle'>
+              <TrendingUp className='h-5 w-5 text-accent'/>
             </div>
           </div>
         </Paper>
       </SimpleGrid>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Heatmap Bar Chart */}
         <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
@@ -830,7 +827,7 @@ function TeamViewTab({managerId}: { managerId: string }) {
           </Title>
           {skills.filter((s) => !s.isVerified).length === 0 ? (
             <div className="text-center py-10">
-              <CheckCircle className="h-10 w-10 mx-auto text-success-500 mb-4"/>
+              <CheckCircle className='h-10 w-10 mx-auto text-status-success-text mb-4'/>
               <Text c="dimmed">All skills are verified.</Text>
             </div>
           ) : (
@@ -864,7 +861,6 @@ function TeamViewTab({managerId}: { managerId: string }) {
           )}
         </Paper>
       </div>
-
       {/* Training Recommendations */}
       {gapReport?.gaps && gapReport.gaps.length > 0 && (
         <Paper className="p-4 border border-[var(--border-main)] skeuo-card">
@@ -880,7 +876,7 @@ function TeamViewTab({managerId}: { managerId: string }) {
                   className="p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-light)]"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <BookOpen className="h-4 w-4 text-accent-600"/>
+                    <BookOpen className='h-4 w-4 text-accent'/>
                     <Text size="sm" fw={600}>{gap.skillName}</Text>
                     <Badge size="xs" color={GAP_LEVEL_COLORS[gap.gapLevel]} variant="light">
                       {gap.gapLevel}
@@ -893,7 +889,7 @@ function TeamViewTab({managerId}: { managerId: string }) {
                     {gap.recommendedCourses.map((course) => (
                       <div
                         key={course.courseId}
-                        className="flex items-center gap-2 text-xs text-accent-700 dark:text-accent-400"
+                        className='flex items-center gap-2 text-xs text-accent'
                       >
                         <ChevronRight className="h-3 w-3"/>
                         <span>{course.title}</span>
@@ -928,8 +924,8 @@ export default function CompetencyMatrixPage() {
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-1">
-            <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/40">
-              <BarChart3 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+            <div className='p-2 rounded-lg bg-accent-subtle'>
+              <BarChart3 className='h-5 w-5 text-accent'/>
             </div>
             <div>
               <h1

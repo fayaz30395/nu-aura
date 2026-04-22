@@ -308,7 +308,7 @@ export default function RolesPage() {
   if (isLoading) {
     return (
       <div className="p-4 md:p-6 lg:p-8">
-        <SkeletonTable rows={6} columns={4} />
+        <SkeletonTable rows={6} columns={4}/>
       </div>
     );
   }
@@ -328,7 +328,6 @@ export default function RolesPage() {
         cancelText="Cancel"
         type="danger"
       />
-
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-xl font-bold skeuo-emboss">Role Management</h1>
@@ -345,7 +344,7 @@ export default function RolesPage() {
           />
           <button
             onClick={() => setShowCreateModal(true)}
-            className="btn-primary px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+            className='btn-primary px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
           >
             Create Role
           </button>
@@ -414,7 +413,7 @@ export default function RolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
                     onClick={() => openPermissionsModal(role)}
-                    className="text-accent-700 hover:text-accent-700 mr-4"
+                    className='text-accent hover:text-accent mr-4'
                   >
                     Permissions
                   </button>
@@ -428,7 +427,7 @@ export default function RolesPage() {
                       </button>
                       <button
                         onClick={() => handleDeleteRole(role)}
-                        className="text-danger-600 hover:text-danger-700"
+                        className='text-status-danger-text hover:text-status-danger-text'
                       >
                         Delete
                       </button>
@@ -460,7 +459,7 @@ export default function RolesPage() {
                       placeholder="e.g., MANAGER"
                     />
                     {createForm.formState.errors.code && (
-                      <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.code.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{createForm.formState.errors.code.message}</p>
                     )}
                     <p className="mt-1 text-caption">
                       Unique identifier for this role (uppercase)
@@ -479,7 +478,7 @@ export default function RolesPage() {
                       placeholder="e.g., Manager"
                     />
                     {createForm.formState.errors.name && (
-                      <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.name.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{createForm.formState.errors.name.message}</p>
                     )}
                     <p className="mt-1 text-caption">
                       Display name for this role
@@ -498,7 +497,8 @@ export default function RolesPage() {
                     placeholder="Optional description of this role..."
                   />
                   {createForm.formState.errors.description && (
-                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.description.message}</p>
+                    <p
+                      className='mt-1 text-xs text-status-danger-text'>{createForm.formState.errors.description.message}</p>
                   )}
                 </div>
 
@@ -550,7 +550,7 @@ export default function RolesPage() {
                                       </div>
                                     </div>
                                     {isSelected && (
-                                      <svg className="w-5 h-5 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
+                                      <svg className='w-5 h-5 text-accent' fill="currentColor" viewBox="0 0 20 20">
                                         <path
                                           fillRule="evenodd"
                                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -599,7 +599,7 @@ export default function RolesPage() {
                   <button
                     type="submit"
                     disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
-                    className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                    className='cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50'
                   >
                     {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
                   </button>
@@ -636,7 +636,7 @@ export default function RolesPage() {
                     className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                   />
                   {editForm.formState.errors.name && (
-                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.name.message}</p>
+                    <p className='mt-1 text-xs text-status-danger-text'>{editForm.formState.errors.name.message}</p>
                   )}
                 </div>
                 <div className="mb-4">
@@ -649,7 +649,8 @@ export default function RolesPage() {
                     rows={3}
                   />
                   {editForm.formState.errors.description && (
-                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.description.message}</p>
+                    <p
+                      className='mt-1 text-xs text-status-danger-text'>{editForm.formState.errors.description.message}</p>
                   )}
                 </div>
                 <div className="mb-4">
@@ -715,7 +716,7 @@ export default function RolesPage() {
                   <button
                     type="submit"
                     disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
-                    className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50"
+                    className='cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50'
                   >
                     {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
                   </button>
@@ -763,7 +764,7 @@ export default function RolesPage() {
                                   checked={isSelected}
                                   onChange={() => togglePermission(permission.code)}
                                   disabled={selectedRole.isSystemRole}
-                                  className="mt-1 rounded text-accent-700 focus:ring-accent-500"
+                                  className='mt-1 rounded text-accent focus:ring-accent-500'
                                 />
                                 <div>
                                 <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -788,7 +789,6 @@ export default function RolesPage() {
                               </span>
                               )}
                             </div>
-
                             {/* Scope selector with custom target picker - only show when permission is selected */}
                             {isSelected && !selectedRole.isSystemRole && (
                               <div className="mt-4 pl-6">
@@ -822,8 +822,8 @@ export default function RolesPage() {
                   });
                   if (customScopesWithoutTargets.length > 0) {
                     return (
-                      <p className="text-xs text-warning-600 dark:text-warning-400">
-                        <strong>{customScopesWithoutTargets.length}</strong> permission(s) have CUSTOM scope but no
+                      <p className='text-xs text-status-warning-text'>
+                        <strong>{customScopesWithoutTargets.length}</strong>permission(s) have CUSTOM scope but no
                         targets selected
                       </p>
                     );

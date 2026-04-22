@@ -164,9 +164,9 @@ function AvatarInitials({
 
   return (
     <div
-      className={`${sizeMap[size]} bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center flex-shrink-0`}
+      className={`${sizeMap[size]} bg-accent-subtle rounded-full flex items-center justify-center flex-shrink-0`}
     >
-      <span className="font-medium text-accent-700 dark:text-accent-400">{initials}</span>
+      <span className='font-medium text-accent'>{initials}</span>
     </div>
   );
 }
@@ -332,8 +332,8 @@ export default function EmployeeDetailPage() {
           </nav>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div
-              className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
-              <p className="text-sm text-danger-600 dark:text-danger-400">
+              className='bg-status-danger-bg border border-status-danger-border rounded-md p-4'>
+              <p className='text-sm text-status-danger-text'>
                 {error || 'Employee not found'}
               </p>
             </div>
@@ -358,7 +358,7 @@ export default function EmployeeDetailPage() {
               <button
                 onClick={() => router.push('/employees')}
                 aria-label="Back to employees list"
-                className="flex items-center gap-1 text-surface-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
+                className='flex items-center gap-1 text-muted hover:text-inverse transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md'
               >
                 <ChevronLeft className="h-4 w-4"/>
                 <span className="text-sm">Employees</span>
@@ -368,7 +368,7 @@ export default function EmployeeDetailPage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                    className='flex items-center gap-2 px-4 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2'
                   >
                     <Pencil className="h-3.5 w-3.5"/>
                     Edit
@@ -377,7 +377,7 @@ export default function EmployeeDetailPage() {
                 <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
                   <button
                     onClick={() => setShowDeleteModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-danger-600 hover:bg-danger-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
+                    className='flex items-center gap-2 px-4 py-2 text-sm font-medium text-inverse bg-status-danger-bg hover:bg-status-danger-bg rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2'
                   >
                     <Trash2 className="h-3.5 w-3.5"/>
                     Delete
@@ -402,15 +402,15 @@ export default function EmployeeDetailPage() {
               )}
               <div>
                 <div className="flex items-center gap-4">
-                  <h1 className="text-2xl font-bold text-white">{employee.fullName}</h1>
+                  <h1 className='text-2xl font-bold text-inverse'>{employee.fullName}</h1>
                   <span
                     className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}
                   >
                     {formatEnumValue(employee.status)}
                   </span>
                 </div>
-                <p className="text-surface-300 text-sm mt-1">{employee.designation || '-'}</p>
-                <p className="text-surface-400 text-xs mt-0.5">{employee.employeeCode}</p>
+                <p className='text-muted text-sm mt-1'>{employee.designation || '-'}</p>
+                <p className='text-muted text-xs mt-0.5'>{employee.employeeCode}</p>
               </div>
             </div>
           </div>
@@ -424,7 +424,7 @@ export default function EmployeeDetailPage() {
                 <Mail className="h-4 w-4 text-[var(--text-muted)]"/>
                 <a
                   href={`mailto:${employee.workEmail}`}
-                  className="text-accent-700 dark:text-accent-400 hover:underline"
+                  className='text-accent hover:underline'
                 >
                   {employee.workEmail}
                 </a>
@@ -492,7 +492,7 @@ export default function EmployeeDetailPage() {
                     className="flex items-center gap-2 group"
                   >
                     <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
-                    <span className="text-sm font-medium text-accent-700 dark:text-accent-400 group-hover:underline">
+                    <span className='text-sm font-medium text-accent group-hover:underline'>
                       {employee.managerName}
                     </span>
                   </button>
@@ -610,7 +610,7 @@ export default function EmployeeDetailPage() {
                             </button>
                           ))}
                           {subordinates.length > 8 && (
-                            <p className="text-xs text-accent-700 dark:text-accent-400 font-medium">
+                            <p className='text-xs text-accent font-medium'>
                               +{subordinates.length - 8} more
                             </p>
                           )}
@@ -706,8 +706,8 @@ export default function EmployeeDetailPage() {
                     <InfoField label="IFSC / Routing" value={employee.bankIfscCode}/>
                     <InfoField label="Tax ID / SSN" value={employee.taxId}/>
                   </div>
-                  <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
-                    <p className="text-xs text-accent-700 dark:text-accent-400">
+                  <div className='mt-4 bg-accent-subtle border border-accent-500/30 rounded-md p-4'>
+                    <p className='text-xs text-accent'>
                       Banking and tax information is encrypted and stored securely.
                     </p>
                   </div>
@@ -758,7 +758,7 @@ export default function EmployeeDetailPage() {
                         className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
                       >
                         <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
-                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
+                        <span className='text-sm font-medium text-accent hover:underline'>
                           {employee.managerName}
                         </span>
                       </button>
@@ -784,7 +784,7 @@ export default function EmployeeDetailPage() {
                             name={employee.dottedLineManager1Name}
                             size="sm"
                           />
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
+                          <span className='text-sm font-medium text-accent hover:underline'>
                             {employee.dottedLineManager1Name}
                           </span>
                         </button>
@@ -811,7 +811,7 @@ export default function EmployeeDetailPage() {
                             name={employee.dottedLineManager2Name}
                             size="sm"
                           />
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
+                          <span className='text-sm font-medium text-accent hover:underline'>
                             {employee.dottedLineManager2Name}
                           </span>
                         </button>
@@ -925,7 +925,7 @@ export default function EmployeeDetailPage() {
                     placeholder="Search document categories..."
                     value={docSearch}
                     onChange={(e) => setDocSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                    className='w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-[var(--accent-primary)]'
                   />
                 </div>
               </div>
@@ -943,8 +943,8 @@ export default function EmployeeDetailPage() {
                       <Card className="cursor-pointer hover:border-accent-500/30 transition-colors">
                         <CardContent className="p-6 text-center">
                           <div
-                            className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                            className='h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                            <Icon className='h-6 w-6 text-accent'/>
                           </div>
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                             {cat.name}
@@ -1105,8 +1105,8 @@ export default function EmployeeDetailPage() {
             <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex items-center mb-4">
                 <div
-                  className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
+                  className='flex-shrink-0 h-12 w-12 rounded-full bg-status-danger-bg flex items-center justify-center'>
+                  <AlertTriangle className='h-6 w-6 text-status-danger-text'/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">
                   Delete Employee
@@ -1127,7 +1127,7 @@ export default function EmployeeDetailPage() {
                 <button
                   onClick={handleDelete}
                   disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
+                  className='flex-1 px-4 py-2 bg-status-danger-bg text-inverse rounded-md hover:bg-status-danger-bg disabled:opacity-50'
                 >
                   {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>

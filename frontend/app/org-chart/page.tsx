@@ -27,7 +27,7 @@ function StatItem({icon, label, value}: StatItemProps) {
   return (
     <div className="flex items-center gap-4 px-4 py-4">
       <div
-        className="h-9 w-9 rounded-lg bg-accent-100 dark:bg-accent-900/40 flex items-center justify-center flex-shrink-0">
+        className='h-9 w-9 rounded-lg bg-accent-subtle flex items-center justify-center flex-shrink-0'>
         {icon}
       </div>
       <div>
@@ -63,14 +63,13 @@ function DepartmentGroupCard({departmentName, employees, highlightedId}: Departm
         className="w-full row-between px-4 py-4 bg-[var(--bg-secondary)]/50 hover:bg-[var(--bg-secondary)] border-b border-[var(--border-main)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400"/>
+          <Building2 className='h-4 w-4 text-accent'/>
           <h3 className="font-semibold text-sm text-[var(--text-primary)]">{departmentName}</h3>
         </div>
         <span className="text-xs text-[var(--text-secondary)] bg-[var(--bg-card)] px-2 py-0.5 rounded-full">
           {employees.length} employee{employees.length !== 1 ? 's' : ''}
         </span>
       </button>
-
       {expanded && (
         <div className="p-4 space-y-1 max-h-80 overflow-y-auto">
           {employees
@@ -90,8 +89,8 @@ function DepartmentGroupCard({departmentName, employees, highlightedId}: Departm
                 className={cn(
                   'flex items-center gap-4 p-2 rounded-lg transition-colors',
                   emp.id === highlightedId
-                    ? 'bg-accent-100 dark:bg-accent-900/40 ring-1 ring-accent-400'
-                    : 'hover:bg-surface-50 dark:hover:bg-surface-800/50',
+                    ? 'bg-accent-subtle ring-1 ring-accent-400'
+                    : 'hover:bg-base',
                 )}
               >
                 {/* Avatar */}
@@ -102,12 +101,12 @@ function DepartmentGroupCard({departmentName, employees, highlightedId}: Departm
                     width={32}
                     height={32}
                     unoptimized
-                    className="h-8 w-8 rounded-full object-cover border border-surface-200 dark:border-surface-600 flex-shrink-0"
+                    className='h-8 w-8 rounded-full object-cover border border-subtle flex-shrink-0'
                   />
                 ) : (
                   <div
-                    className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-accent-700 dark:text-accent-300">
+                    className='h-8 w-8 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+                    <span className='text-xs font-bold text-accent'>
                       {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) ?? ''}
                     </span>
                   </div>
@@ -120,7 +119,7 @@ function DepartmentGroupCard({departmentName, employees, highlightedId}: Departm
                     </p>
                     {manager?.id === emp.id && (
                       <span
-                        className="text-2xs font-semibold px-1.5 py-0.5 rounded bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                        className='text-2xs font-semibold px-1.5 py-0.5 rounded bg-accent-subtle text-accent'>
                         Head
                       </span>
                     )}
@@ -138,7 +137,7 @@ function DepartmentGroupCard({departmentName, employees, highlightedId}: Departm
 
                 <Link
                   href={`/employees/${emp.id}`}
-                  className="text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex-shrink-0"
+                  className='text-accent hover:text-accent flex-shrink-0'
                   aria-label={`View ${emp.fullName}'s profile`}
                 >
                   <ExternalLink className="h-3.5 w-3.5"/>
@@ -248,22 +247,22 @@ export default function OrgChartPage() {
         {/* ── Stats Bar ──────────────────────────────────────────── */}
         <div className="skeuo-card mb-6 grid grid-cols-2 lg:grid-cols-4 divide-x divide-[var(--border-subtle)]">
           <StatItem
-            icon={<Users className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400"/>}
+            icon={<Users className='h-4.5 w-4.5 text-accent'/>}
             label="Total Employees"
             value={stats.totalEmployees}
           />
           <StatItem
-            icon={<Building2 className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400"/>}
+            icon={<Building2 className='h-4.5 w-4.5 text-accent'/>}
             label="Departments"
             value={stats.totalDepartments}
           />
           <StatItem
-            icon={<GitBranch className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400"/>}
+            icon={<GitBranch className='h-4.5 w-4.5 text-accent'/>}
             label="Avg Span of Control"
             value={stats.averageSpanOfControl}
           />
           <StatItem
-            icon={<Layers className="h-4.5 w-4.5 text-accent-600 dark:text-accent-400"/>}
+            icon={<Layers className='h-4.5 w-4.5 text-accent'/>}
             label="Hierarchy Depth"
             value={stats.maxDepth}
           />
@@ -289,7 +288,7 @@ export default function OrgChartPage() {
               {searchMatchCount > 0 ? (
                 <span>
                   Found <span
-                  className="font-semibold text-accent-700 dark:text-accent-400">{searchMatchCount}</span> match{searchMatchCount !== 1 ? 'es' : ''} for &quot;{searchQuery}&quot;
+                  className='font-semibold text-accent'>{searchMatchCount}</span> match{searchMatchCount !== 1 ? 'es' : ''} for &quot;{searchQuery}&quot;
                 </span>
               ) : (
                 <span>No matches found for &quot;{searchQuery}&quot;</span>
@@ -302,7 +301,7 @@ export default function OrgChartPage() {
         {error ? (
           <div className="skeuo-card p-6">
             <div className="flex items-center justify-center h-64">
-              <div className="text-center text-danger-600 dark:text-danger-400">
+              <div className='text-center text-status-danger-text'>
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -316,7 +315,7 @@ export default function OrgChartPage() {
           <div className="skeuo-card p-6">
             <div className="flex items-center justify-center h-64">
               <div className="text-center text-[var(--text-secondary)]">
-                <Users className="mx-auto h-12 w-12 text-surface-300 dark:text-surface-600"/>
+                <Users className='mx-auto h-12 w-12 text-muted'/>
                 <p className="mt-4 text-lg font-medium">No employees found</p>
                 <p className="text-sm mt-1">
                   {selectedDepartment ? 'Try clearing the department filter' : 'Add employees to see the org chart'}
@@ -343,7 +342,7 @@ export default function OrgChartPage() {
           </div>
         ) : (
           /* Department view */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {departmentGroups.map(([deptName, emps]) => (
               <DepartmentGroupCard
                 key={deptName}
@@ -352,30 +351,30 @@ export default function OrgChartPage() {
                 highlightedId={highlightedNodeId}
               />
             ))}
-          </div>
+          </div>)
         )}
 
         {/* ── Legend ──────────────────────────────────────────────── */}
         <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[var(--text-secondary)]">
           <span className="font-medium mr-1">Legend:</span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-accent-100 border border-accent-400"/>
+            <span className='inline-block w-3 h-3 rounded bg-accent-subtle border border-[var(--accent-primary)]'/>
             Executive
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-accent-100 border border-accent-400"/>
+            <span className='inline-block w-3 h-3 rounded bg-accent-subtle border border-[var(--accent-primary)]'/>
             Director/VP
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-success-100 border border-success-400"/>
+            <span className='inline-block w-3 h-3 rounded bg-status-success-bg border border-status-success-border'/>
             Manager
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-warning-100 border border-warning-400"/>
+            <span className='inline-block w-3 h-3 rounded bg-status-warning-bg border border-status-warning-border'/>
             Lead
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-3 rounded bg-surface-100 border border-surface-300"/>
+            <span className='inline-block w-3 h-3 rounded bg-surface border border-subtle'/>
             Individual Contributor
           </span>
         </div>

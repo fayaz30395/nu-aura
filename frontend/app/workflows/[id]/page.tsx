@@ -150,7 +150,7 @@ function StepPipelinePreview({
           {/* Step node */}
           <div className="flex flex-col items-center flex-shrink-0">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-500 bg-accent-50 text-sm font-bold text-accent-700 dark:border-accent-400 dark:bg-accent-900/30 dark:text-accent-300">
+              className='flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--accent-primary)] bg-accent-subtle text-sm font-bold text-accent'>
               {idx + 1}
             </div>
             <p className="mt-2 max-w-[120px] text-center text-xs font-medium text-[var(--text-primary)] truncate">
@@ -168,9 +168,9 @@ function StepPipelinePreview({
           {/* Connector arrow */}
           {idx < steps.length - 1 && (
             <div className="flex items-center flex-shrink-0 px-1">
-              <div className="h-0.5 w-8 bg-accent-300 dark:bg-accent-600"/>
+              <div className='h-0.5 w-8 bg-accent-subtle'/>
               <div
-                className="h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-accent-300 dark:border-l-accent-600"/>
+                className='h-0 w-0 border-l-[6px] border-y-[4px] border-y-transparent border-l-accent-300'/>
             </div>
           )}
         </React.Fragment>
@@ -338,7 +338,7 @@ export default function WorkflowDetailPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-danger-500"/>}
+            icon={<XCircle className='h-12 w-12 text-status-danger-text'/>}
           />
         </div>
       </AppLayout>
@@ -366,7 +366,7 @@ export default function WorkflowDetailPage() {
           <EmptyState
             title="Workflow not found"
             description="The requested workflow definition could not be found."
-            icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
+            icon={<AlertTriangle className='h-12 w-12 text-status-warning-text'/>}
           />
         </div>
       </AppLayout>
@@ -436,7 +436,7 @@ export default function WorkflowDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5 text-accent-600"/>
+                  <GitBranch className='h-5 w-5 text-accent'/>
                   Approval Pipeline ({workflow.totalSteps} {workflow.totalSteps === 1 ? 'step' : 'steps'})
                 </CardTitle>
               </CardHeader>
@@ -468,7 +468,7 @@ export default function WorkflowDetailPage() {
                       className="flex gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)]/30 p-4"
                     >
                       <div
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                        className='flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent-subtle text-sm font-bold text-accent'>
                         {idx + 1}
                       </div>
                       <div className="flex-1 space-y-1">
@@ -478,36 +478,36 @@ export default function WorkflowDetailPage() {
                         )}
                         <div className="flex flex-wrap gap-2 pt-1">
                           <span
-                            className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                            className='inline-flex items-center rounded-full bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent'>
                             {getApproverTypeLabel(step.approverType)}
                           </span>
                           {step.roleName && (
                             <span
-                              className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                              className='inline-flex items-center rounded-full bg-accent-subtle px-2 py-0.5 text-xs font-medium text-accent'>
                               Role: {step.roleName}
                             </span>
                           )}
                           {step.slaHours && step.slaHours > 0 && (
                             <span
-                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                              className='inline-flex items-center gap-1 rounded-full bg-status-warning-bg px-2 py-0.5 text-xs font-medium text-status-warning-text'>
                               <Clock className="h-3 w-3"/> SLA: {step.slaHours}h
                             </span>
                           )}
                           {step.escalationEnabled && (
                             <span
-                              className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                              className='inline-flex items-center gap-1 rounded-full bg-status-warning-bg px-2 py-0.5 text-xs font-medium text-status-warning-text'>
                               <AlertTriangle className="h-3 w-3"/> Escalation
                             </span>
                           )}
                           {step.commentsRequired && (
                             <span
-                              className="inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-surface-700 dark:bg-surface-800/30 dark:text-surface-300">
+                              className='inline-flex items-center rounded-full bg-surface px-2 py-0.5 text-xs font-medium text-secondary'>
                               Comments required
                             </span>
                           )}
                           {step.isOptional && (
                             <span
-                              className="inline-flex items-center rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
+                              className='inline-flex items-center rounded-full bg-status-warning-bg px-2 py-0.5 text-xs font-medium text-status-warning-text'>
                               Optional
                             </span>
                           )}
@@ -556,44 +556,44 @@ export default function WorkflowDetailPage() {
                   {/* Name */}
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Name <span className="text-danger-500">*</span>
+                      Workflow Name <span className='text-status-danger-text'>*</span>
                     </label>
                     <input
                       {...form.register('name')}
                       placeholder="e.g., Leave Approval - Standard"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                     {form.formState.errors.name && (
-                      <p className="mt-1 text-xs text-danger-500">{form.formState.errors.name.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{form.formState.errors.name.message}</p>
                     )}
                   </div>
 
                   {/* Entity Type */}
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Entity Type <span className="text-danger-500">*</span>
+                      Entity Type <span className='text-status-danger-text'>*</span>
                     </label>
                     <select
                       {...form.register('entityType')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     >
                       {ENTITY_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
                       ))}
                     </select>
                     {form.formState.errors.entityType && (
-                      <p className="mt-1 text-xs text-danger-500">{form.formState.errors.entityType.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{form.formState.errors.entityType.message}</p>
                     )}
                   </div>
 
                   {/* Workflow Type */}
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                      Workflow Type <span className="text-danger-500">*</span>
+                      Workflow Type <span className='text-status-danger-text'>*</span>
                     </label>
                     <select
                       {...form.register('workflowType')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     >
                       {WORKFLOW_TYPE_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
@@ -610,7 +610,7 @@ export default function WorkflowDetailPage() {
                       {...form.register('description')}
                       placeholder="Describe what this workflow is used for..."
                       rows={2}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                   </div>
                 </div>
@@ -632,7 +632,7 @@ export default function WorkflowDetailPage() {
                       type="number"
                       {...form.register('minAmount')}
                       placeholder="0"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                   </div>
                   <div>
@@ -643,7 +643,7 @@ export default function WorkflowDetailPage() {
                       type="number"
                       {...form.register('maxAmount')}
                       placeholder="No limit"
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                   </div>
                 </div>
@@ -655,7 +655,7 @@ export default function WorkflowDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Eye className="h-5 w-5 text-accent-600"/>
+                    <Eye className='h-5 w-5 text-accent'/>
                     Pipeline Preview
                   </CardTitle>
                 </CardHeader>
@@ -675,7 +675,7 @@ export default function WorkflowDetailPage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5 text-accent-600"/>
+                  <GitBranch className='h-5 w-5 text-accent'/>
                   Approval Steps
                 </CardTitle>
                 <Button
@@ -700,7 +700,7 @@ export default function WorkflowDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {form.formState.errors.steps?.root && (
-                  <p className="text-sm text-danger-500">{form.formState.errors.steps.root.message}</p>
+                  <p className='text-sm text-status-danger-text'>{form.formState.errors.steps.root.message}</p>
                 )}
                 {fields.length === 0 && (
                   <p className="py-8 text-center text-body-muted">
@@ -735,7 +735,7 @@ export default function WorkflowDetailPage() {
                           </button>
                         </div>
                         <div
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-bold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                          className='flex h-8 w-8 items-center justify-center rounded-full bg-accent-subtle text-sm font-bold text-accent'>
                           {idx + 1}
                         </div>
                         <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -746,7 +746,7 @@ export default function WorkflowDetailPage() {
                         type="button"
                         onClick={() => remove(idx)}
                         aria-label="Delete step"
-                        className="rounded p-1 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='rounded p-1 text-status-danger-text hover:bg-status-danger-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         <Trash2 className="h-4 w-4"/>
                       </button>
@@ -756,15 +756,15 @@ export default function WorkflowDetailPage() {
                       {/* Step Name */}
                       <div>
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Step Name <span className="text-danger-500">*</span>
+                          Step Name <span className='text-status-danger-text'>*</span>
                         </label>
                         <input
                           {...form.register(`steps.${idx}.stepName`)}
                           placeholder="e.g., Manager Approval"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                         />
                         {form.formState.errors.steps?.[idx]?.stepName && (
-                          <p className="mt-1 text-xs text-danger-500">
+                          <p className='mt-1 text-xs text-status-danger-text'>
                             {form.formState.errors.steps[idx]?.stepName?.message}
                           </p>
                         )}
@@ -773,11 +773,11 @@ export default function WorkflowDetailPage() {
                       {/* Approver Type */}
                       <div>
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                          Approver Type <span className="text-danger-500">*</span>
+                          Approver Type <span className='text-status-danger-text'>*</span>
                         </label>
                         <select
                           {...form.register(`steps.${idx}.approverType`)}
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                         >
                           {APPROVER_TYPE_OPTIONS.map((o) => (
                             <option key={o.value} value={o.value}>{o.label}</option>
@@ -795,7 +795,7 @@ export default function WorkflowDetailPage() {
                           <input
                             {...form.register(`steps.${idx}.roleName`)}
                             placeholder="e.g., Finance Manager"
-                            className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                            className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                           />
                         </div>
                       )}
@@ -809,7 +809,7 @@ export default function WorkflowDetailPage() {
                           type="number"
                           {...form.register(`steps.${idx}.slaHours`)}
                           placeholder="48"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                         />
                       </div>
 
@@ -821,7 +821,7 @@ export default function WorkflowDetailPage() {
                         <input
                           {...form.register(`steps.${idx}.description`)}
                           placeholder="Optional step description"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                         />
                       </div>
                     </div>
@@ -832,7 +832,7 @@ export default function WorkflowDetailPage() {
                         <input
                           type="checkbox"
                           {...form.register(`steps.${idx}.escalationEnabled`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
+                          className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         Escalation
                       </label>
@@ -840,7 +840,7 @@ export default function WorkflowDetailPage() {
                         <input
                           type="checkbox"
                           {...form.register(`steps.${idx}.commentsRequired`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
+                          className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         Comments Required
                       </label>
@@ -848,7 +848,7 @@ export default function WorkflowDetailPage() {
                         <input
                           type="checkbox"
                           {...form.register(`steps.${idx}.delegationAllowed`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
+                          className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         Allow Delegation
                       </label>
@@ -856,7 +856,7 @@ export default function WorkflowDetailPage() {
                         <input
                           type="checkbox"
                           {...form.register(`steps.${idx}.isOptional`)}
-                          className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"
+                          className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         Optional Step
                       </label>
@@ -872,7 +872,7 @@ export default function WorkflowDetailPage() {
                           type="number"
                           {...form.register(`steps.${idx}.escalateAfterHours`)}
                           placeholder="72"
-                          className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                          className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                         />
                       </div>
                     )}
@@ -895,7 +895,7 @@ export default function WorkflowDetailPage() {
                     <input
                       type="number"
                       {...form.register('defaultSlaHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                   </div>
                   <div>
@@ -905,7 +905,7 @@ export default function WorkflowDetailPage() {
                     <input
                       type="number"
                       {...form.register('escalationAfterHours')}
-                      className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                     />
                   </div>
                 </div>
@@ -913,47 +913,47 @@ export default function WorkflowDetailPage() {
                 <div className="mt-4 flex flex-wrap gap-6">
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('escalationEnabled')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Enable Escalation
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnSubmission')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Notify on Submission
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnApproval')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Notify on Approval
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnRejection')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Notify on Rejection
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('notifyOnEscalation')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Notify on Escalation
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('allowParallelApproval')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Allow Parallel Approval
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('autoApproveEnabled')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Auto-Approve Enabled
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('skipLevelAllowed')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Skip-Level Allowed
                   </label>
                   <label className="flex items-center gap-2 text-body-secondary">
                     <input type="checkbox" {...form.register('isDefault')}
-                           className="h-4 w-4 rounded border-[var(--border-main)] text-accent-600 focus:ring-accent-500"/>
+                           className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'/>
                     Set as Default
                   </label>
                 </div>

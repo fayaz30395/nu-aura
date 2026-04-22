@@ -91,7 +91,7 @@ function RoundLabel({round}: { round: string | null | undefined }) {
   };
   return (
     <span
-      className="text-xs font-semibold px-2 py-0.5 rounded-md bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
+      className='text-xs font-semibold px-2 py-0.5 rounded-md bg-accent-subtle text-accent'>
       {round ? (labels[round] ?? round) : '—'}
     </span>
   );
@@ -149,7 +149,7 @@ export function InterviewScorecardModal({
         <div className="flex justify-between items-center p-6 border-b border-[var(--border-main)]">
           <div>
             <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-accent-500"/>
+              <TrendingUp className='h-5 w-5 text-accent'/>
               Interview Scorecards
             </h2>
             <p className="text-body-muted mt-0.5">{candidateName}</p>
@@ -175,7 +175,7 @@ export function InterviewScorecardModal({
 
           {isError && (
             <div className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)]">
-              <AlertCircle className="h-8 w-8 mb-2 text-danger-400"/>
+              <AlertCircle className='h-8 w-8 mb-2 text-status-danger-text'/>
               <p className="text-sm">Failed to load interviews. Please try again.</p>
             </div>
           )}
@@ -214,7 +214,7 @@ export function InterviewScorecardModal({
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-success-600">
+                    <p className='text-2xl font-bold text-status-success-text'>
                       {stats.resultCounts['SELECTED'] ?? 0}
                     </p>
                     <p className="text-caption mt-1">Selected Votes</p>

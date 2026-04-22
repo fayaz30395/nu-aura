@@ -65,7 +65,6 @@ export function PayrollRunsTab({
           </button>
         </PermissionGate>
       </div>
-
       {loading ? (
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading payroll runs...</div>
       ) : filtered.length === 0 ? (
@@ -107,7 +106,8 @@ export function PayrollRunsTab({
             {filtered.map((run) => (
               <tr key={run.id}
                   className="border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                <td className="px-6 py-4 text-sm font-medium">{run.runName?.trim() ? run.runName : <span className="text-[var(--text-muted)] italic">Untitled Run</span>}</td>
+                <td className="px-6 py-4 text-sm font-medium">{run.runName?.trim() ? run.runName :
+                  <span className="text-[var(--text-muted)] italic">Untitled Run</span>}</td>
                 <td className="px-6 py-4 text-body-secondary">
                   {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
                 </td>
@@ -126,7 +126,7 @@ export function PayrollRunsTab({
                         <button
                           onClick={() => onProcessRun(run)}
                           disabled={loading}
-                          className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded text-xs hover:bg-accent-100 disabled:opacity-50"
+                          className='px-2 py-1 bg-accent-subtle text-accent rounded text-xs hover:bg-accent-subtle disabled:opacity-50'
                         >
                           Process
                         </button>
@@ -137,7 +137,7 @@ export function PayrollRunsTab({
                         <button
                           onClick={() => onApproveRun(run)}
                           disabled={loading}
-                          className="px-2 py-1 bg-success-50 dark:bg-success-900/40 text-success-600 dark:text-success-400 rounded text-xs hover:bg-success-100 dark:hover:bg-success-900/60 disabled:opacity-50"
+                          className='px-2 py-1 bg-status-success-bg text-status-success-text rounded text-xs hover:bg-status-success-bg disabled:opacity-50'
                         >
                           Approve
                         </button>
@@ -146,7 +146,7 @@ export function PayrollRunsTab({
                     <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                       <button
                         onClick={() => onEditRun(run)}
-                        className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded text-xs hover:bg-accent-100"
+                        className='px-2 py-1 bg-accent-subtle text-accent rounded text-xs hover:bg-accent-subtle'
                       >
                         Edit
                       </button>
@@ -154,7 +154,7 @@ export function PayrollRunsTab({
                     <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                       <button
                         onClick={() => onDeleteRun(run)}
-                        className="px-2 py-1 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded text-xs hover:bg-danger-100 dark:hover:bg-danger-900/60"
+                        className='px-2 py-1 bg-status-danger-bg text-status-danger-text rounded text-xs hover:bg-status-danger-bg'
                       >
                         Delete
                       </button>

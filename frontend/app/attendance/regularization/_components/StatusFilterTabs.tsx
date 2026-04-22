@@ -23,7 +23,7 @@ export function StatusFilterTabs({statusFilter, onFilterChange}: StatusFilterTab
           <span
             className={
               statusFilter === tab
-                ? 'text-accent-700 dark:text-accent-400'
+                ? 'text-accent'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
             }
           >
@@ -32,7 +32,7 @@ export function StatusFilterTabs({statusFilter, onFilterChange}: StatusFilterTab
           {statusFilter === tab && (
             <motion.div
               layoutId="tabUnderline"
-              className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-700 dark:bg-accent-400"
+              className='absolute bottom-0 left-0 right-0 h-0.5 bg-accent'
               transition={{type: 'spring', stiffness: 380, damping: 30}}
             />
           )}

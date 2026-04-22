@@ -207,7 +207,7 @@ export default function WorkflowListPage() {
           <EmptyState
             title="Access denied"
             description="You do not have permission to view workflow definitions."
-            icon={<XCircle className="h-12 w-12 text-danger-500"/>}
+            icon={<XCircle className='h-12 w-12 text-status-danger-text'/>}
           />
         </div>
       </AppLayout>
@@ -276,7 +276,7 @@ export default function WorkflowListPage() {
                 setEntityTypeFilter(e.target.value as WorkflowEntityType | 'ALL');
                 setPage(0);
               }}
-              className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm text-[var(--text-primary)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
             >
               <option value="ALL">All types</option>
               {Object.entries(ENTITY_TYPE_CONFIG).map(([key, cfg]) => (
@@ -298,7 +298,7 @@ export default function WorkflowListPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
             />
           </div>
         </div>
@@ -384,7 +384,7 @@ export default function WorkflowListPage() {
                           </span>
                         {wf.isDefault && (
                           <span
-                            className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
+                            className='ml-1.5 inline-flex items-center gap-1 rounded-full bg-accent-subtle px-2 py-0.5 text-xs font-semibold text-accent'>
                               <Shield className="h-3 w-3"/>
                               Default
                             </span>
@@ -442,7 +442,7 @@ export default function WorkflowListPage() {
                                   </button>
                                   <button
                                     type="button"
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    className='flex w-full items-center gap-2 px-4 py-2 text-sm text-status-danger-text hover:bg-status-danger-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                     onClick={() => {
                                       setDeleteTarget(wf);
                                       setMenuOpenId(null);
@@ -494,16 +494,14 @@ export default function WorkflowListPage() {
           </>
         )}
       </motion.div>
-
       {/* Click outside to close menu */}
       {menuOpenId && (
         <div className="fixed inset-0 z-40 cursor-pointer" onClick={() => setMenuOpenId(null)}/>
       )}
-
       {/* Deactivate Confirmation Modal */}
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="md">
         <ModalHeader onClose={() => setDeleteTarget(null)}>
-          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+          <div className='flex items-center gap-2 text-status-danger-text'>
             <Power className="h-5 w-5"/>
             Deactivate Workflow
           </div>
@@ -521,7 +519,7 @@ export default function WorkflowListPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-danger-600 hover:bg-danger-700"
+            className='bg-status-danger-bg hover:bg-status-danger-bg'
             onClick={handleDeactivate}
             disabled={deactivateMutation.isPending}
           >

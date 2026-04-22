@@ -15,13 +15,13 @@ export default function Loading() {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 border-b border-surface-200 dark:border-surface-800 pb-2">
+      <div className='flex gap-4 border-b border-subtle pb-2'>
         {Array.from({length: 4}).map((_, index) => (
           <Skeleton key={index} height={32} width={90}/>
         ))}
       </div>
       <div
-        className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+        className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4 sm:p-6 space-y-4'>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({length: 8}).map((_, index) => (
             <div key={index} className="space-y-1">

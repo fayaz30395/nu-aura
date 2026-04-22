@@ -323,17 +323,17 @@ export default function SsoSettingsPage() {
         {/* Status Messages */}
         {success && (
           <div
-            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
-            <Check className="h-5 w-5 text-success-600 flex-shrink-0"/>
-            <p className="text-success-800 dark:text-success-200 font-medium">{success}</p>
+            className='flex items-center gap-2 p-4 bg-status-success-bg border border-status-success-border rounded-lg'>
+            <Check className='h-5 w-5 text-status-success-text flex-shrink-0'/>
+            <p className='text-status-success-text font-medium'>{success}</p>
           </div>
         )}
 
         {(error || fetchError) && (
           <div
-            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-            <AlertCircle className="h-5 w-5 text-danger-600 flex-shrink-0"/>
-            <p className="text-danger-800 dark:text-danger-200 font-medium">
+            className='flex items-center gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
+            <p className='text-status-danger-text font-medium'>
               {error || 'No SAML configuration found. Fill in the form below to set one up.'}
             </p>
           </div>
@@ -341,7 +341,7 @@ export default function SsoSettingsPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -360,7 +360,7 @@ export default function SsoSettingsPage() {
                 {/* Name */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    IdP Name <span className="text-danger-500">*</span>
+                    IdP Name <span className='text-status-danger-text'>*</span>
                   </label>
                   <input
                     {...register('name')}
@@ -368,14 +368,14 @@ export default function SsoSettingsPage() {
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.name && (
-                    <p className="text-sm text-danger-500 mt-1">{errors.name.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{errors.name.message}</p>
                   )}
                 </div>
 
                 {/* Entity ID */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    Entity ID <span className="text-danger-500">*</span>
+                    Entity ID <span className='text-status-danger-text'>*</span>
                   </label>
                   <input
                     {...register('entityId')}
@@ -383,14 +383,14 @@ export default function SsoSettingsPage() {
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.entityId && (
-                    <p className="text-sm text-danger-500 mt-1">{errors.entityId.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{errors.entityId.message}</p>
                   )}
                 </div>
 
                 {/* SSO URL */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                    SSO URL <span className="text-danger-500">*</span>
+                    SSO URL <span className='text-status-danger-text'>*</span>
                   </label>
                   <input
                     {...register('ssoUrl')}
@@ -398,7 +398,7 @@ export default function SsoSettingsPage() {
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.ssoUrl && (
-                    <p className="text-sm text-danger-500 mt-1">{errors.ssoUrl.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{errors.ssoUrl.message}</p>
                   )}
                 </div>
 
@@ -413,7 +413,7 @@ export default function SsoSettingsPage() {
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                   />
                   {errors.sloUrl && (
-                    <p className="text-sm text-danger-500 mt-1">{errors.sloUrl.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{errors.sloUrl.message}</p>
                   )}
                 </div>
 
@@ -431,7 +431,7 @@ export default function SsoSettingsPage() {
                     If provided, the IdP metadata will be auto-fetched to configure the SSO connection.
                   </p>
                   {errors.metadataUrl && (
-                    <p className="text-sm text-danger-500 mt-1">{errors.metadataUrl.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{errors.metadataUrl.message}</p>
                   )}
                 </div>
 
@@ -463,14 +463,14 @@ export default function SsoSettingsPage() {
               <CardContent className="space-y-4">
                 {samlConfig?.hasCertificate && (
                   <div
-                    className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0"/>
+                    className='flex items-center gap-2 p-4 bg-status-success-bg border border-status-success-border rounded-lg'>
+                    <CheckCircle className='h-4 w-4 text-status-success-text flex-shrink-0'/>
                     <div>
-                      <p className="text-sm text-success-800 dark:text-success-200 font-medium">
+                      <p className='text-sm text-status-success-text font-medium'>
                         Certificate uploaded
                       </p>
                       {samlConfig.certificateFingerprint && (
-                        <p className="text-xs text-success-600 dark:text-success-400 font-mono mt-0.5 break-all">
+                        <p className='text-xs text-status-success-text font-mono mt-0.5 break-all'>
                           SHA-256: {samlConfig.certificateFingerprint}
                         </p>
                       )}
@@ -551,9 +551,9 @@ export default function SsoSettingsPage() {
                   ))}
                 </div>
                 <div
-                  className="flex items-start gap-2 mt-4 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-                  <Info className="h-4 w-4 text-accent-600 mt-0.5 flex-shrink-0"/>
-                  <p className="text-xs text-accent-800 dark:text-accent-200">
+                  className='flex items-start gap-2 mt-4 p-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg'>
+                  <Info className='h-4 w-4 text-accent mt-0.5 flex-shrink-0'/>
+                  <p className='text-xs text-accent'>
                     Enter the SAML attribute name your IdP sends for each field. Common formats include
                     OID URIs (e.g., urn:oid:2.5.4.42) or friendly names (e.g., firstName). Check your IdP
                     documentation for the exact attribute names.
@@ -621,9 +621,9 @@ export default function SsoSettingsPage() {
 
                 {isActive && (
                   <div
-                    className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                    <AlertCircle className="h-4 w-4 text-warning-600 mt-0.5 flex-shrink-0"/>
-                    <p className="text-xs text-warning-800 dark:text-warning-200">
+                    className='flex items-start gap-2 p-4 bg-status-warning-bg border border-status-warning-border rounded-lg'>
+                    <AlertCircle className='h-4 w-4 text-status-warning-text mt-0.5 flex-shrink-0'/>
+                    <p className='text-xs text-status-warning-text'>
                       Enabling SSO will add a &quot;Sign in with SSO&quot; button to your login page. Ensure you
                       have tested the configuration before enabling in production.
                     </p>
@@ -649,9 +649,9 @@ export default function SsoSettingsPage() {
                         : 'bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800'
                     }`}>
                       {testMutation.data.success ? (
-                        <CheckCircle className="h-5 w-5 text-success-600"/>
+                        <CheckCircle className='h-5 w-5 text-status-success-text'/>
                       ) : (
-                        <XCircle className="h-5 w-5 text-danger-600"/>
+                        <XCircle className='h-5 w-5 text-status-danger-text'/>
                       )}
                       <p className={`font-medium ${
                         testMutation.data.success
@@ -665,17 +665,17 @@ export default function SsoSettingsPage() {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         {testMutation.data.certificateValid ? (
-                          <CheckCircle className="h-4 w-4 text-success-600"/>
+                          <CheckCircle className='h-4 w-4 text-status-success-text'/>
                         ) : (
-                          <XCircle className="h-4 w-4 text-danger-600"/>
+                          <XCircle className='h-4 w-4 text-status-danger-text'/>
                         )}
                         <span className="text-[var(--text-secondary)]">Certificate</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {testMutation.data.metadataReachable ? (
-                          <CheckCircle className="h-4 w-4 text-success-600"/>
+                          <CheckCircle className='h-4 w-4 text-status-success-text'/>
                         ) : (
-                          <XCircle className="h-4 w-4 text-warning-500"/>
+                          <XCircle className='h-4 w-4 text-status-warning-text'/>
                         )}
                         <span className="text-[var(--text-secondary)]">Metadata URL</span>
                       </div>
@@ -697,7 +697,7 @@ export default function SsoSettingsPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='inline-flex items-center gap-2 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent-hover transition-colors disabled:opacity-50 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin"/>
@@ -741,7 +741,7 @@ export default function SsoSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-danger-200 dark:border-danger-800 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/20 transition-colors ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-status-danger-border text-status-danger-text hover:bg-status-danger-bg transition-colors ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   <Trash2 className="h-4 w-4"/>
                   Delete
@@ -750,12 +750,12 @@ export default function SsoSettingsPage() {
 
               {showDeleteConfirm && (
                 <div className="flex items-center gap-2 ml-auto">
-                  <span className="text-sm text-danger-600 font-medium">Are you sure?</span>
+                  <span className='text-sm text-status-danger-text font-medium'>Are you sure?</span>
                   <button
                     type="button"
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
-                    className="inline-flex items-center gap-1 px-4 py-1.5 bg-danger-600 text-white rounded-lg text-sm hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-1 px-4 py-1.5 bg-status-danger-bg text-inverse rounded-lg text-sm hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {deleteMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin"/> : null}
                     Confirm

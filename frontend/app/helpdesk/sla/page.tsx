@@ -9,6 +9,7 @@ import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -100,8 +101,7 @@ export default function HelpdeskSLAPage() {
       resetFormHandler();
     } catch (error: unknown) {
       toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to save SLA'
+        getErrorMessage(error, 'Failed to save SLA')
       );
     }
   };
@@ -137,8 +137,7 @@ export default function HelpdeskSLAPage() {
       setSlaToDelete(null);
     } catch (error: unknown) {
       toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to delete SLA'
+        getErrorMessage(error, 'Failed to delete SLA')
       );
     }
   };
@@ -148,8 +147,7 @@ export default function HelpdeskSLAPage() {
       await acknowledgeMutation.mutateAsync(escalationId);
     } catch (error: unknown) {
       toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to acknowledge escalation'
+        getErrorMessage(error, 'Failed to acknowledge escalation')
       );
     }
   };
@@ -204,7 +202,6 @@ export default function HelpdeskSLAPage() {
         cancelText="Cancel"
         type="danger"
       />
-
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-xl font-bold skeuo-emboss">SLA Management</h1>
@@ -229,7 +226,7 @@ export default function HelpdeskSLAPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="skeuo-card p-6">
               <div
-                className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%
+                className='text-3xl font-bold text-status-success-text'>{dashboardData.slaComplianceRate?.toFixed(1) || 0}%
               </div>
               <div className="text-[var(--text-secondary)]">SLA Compliance</div>
               <div className="text-body-muted mt-1">
@@ -238,17 +235,17 @@ export default function HelpdeskSLAPage() {
             </div>
             <div className="skeuo-card p-6">
               <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
+                className='text-3xl font-bold text-accent'>{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
             <div className="skeuo-card p-6">
               <div
-                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
+                className='text-3xl font-bold text-accent'>{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
               <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
             </div>
             <div className="skeuo-card p-6">
               <div
-                className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
+                className='text-3xl font-bold text-status-warning-text'>{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
               <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
               <div className="text-body-muted mt-1">
                 {dashboardData.firstContactResolutions} FCR
@@ -295,7 +292,7 @@ export default function HelpdeskSLAPage() {
                     className="input-aura"
                   />
                   {errors.name && (
-                    <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
+                    <p className='text-status-danger-text text-sm mt-1'>{errors.name.message}</p>
                   )}
                 </div>
                 <div>
@@ -332,7 +329,7 @@ export default function HelpdeskSLAPage() {
                     min="1"
                   />
                   {errors.firstResponseMinutes && (
-                    <p className="text-danger-500 text-sm mt-1">{errors.firstResponseMinutes.message}</p>
+                    <p className='text-status-danger-text text-sm mt-1'>{errors.firstResponseMinutes.message}</p>
                   )}
                 </div>
                 <div>
@@ -344,7 +341,7 @@ export default function HelpdeskSLAPage() {
                     min="1"
                   />
                   {errors.resolutionMinutes && (
-                    <p className="text-danger-500 text-sm mt-1">{errors.resolutionMinutes.message}</p>
+                    <p className='text-status-danger-text text-sm mt-1'>{errors.resolutionMinutes.message}</p>
                   )}
                 </div>
                 <div>
@@ -438,7 +435,7 @@ export default function HelpdeskSLAPage() {
         )}
 
         {loading ? (
-          <SkeletonTable rows={5} columns={4} />
+          <SkeletonTable rows={5} columns={4}/>
         ) : (
           <>
             {/* Dashboard Tab */}
@@ -466,20 +463,20 @@ export default function HelpdeskSLAPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">SLA Met</div>
-                      <div className="text-xl font-bold text-success-600">{dashboardData.slaMetCount}</div>
+                      <div className='text-xl font-bold text-status-success-text'>{dashboardData.slaMetCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">SLA Breached</div>
-                      <div className="text-xl font-bold text-danger-600">{dashboardData.slaBreachedCount}</div>
+                      <div className='text-xl font-bold text-status-danger-text'>{dashboardData.slaBreachedCount}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">First Contact Resolutions</div>
                       <div
-                        className="text-xl font-bold text-accent-700 dark:text-accent-400">{dashboardData.firstContactResolutions}</div>
+                        className='text-xl font-bold text-accent'>{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <div className="text-body-secondary mb-1">Customer Satisfaction</div>
-                      <div className="text-xl font-bold text-accent-800">
+                      <div className='text-xl font-bold text-accent'>
                         {dashboardData.averageCSAT ? `${dashboardData.averageCSAT.toFixed(1)}/5` : 'N/A'}
                       </div>
                     </div>
@@ -517,7 +514,7 @@ export default function HelpdeskSLAPage() {
                     </th>
                   </tr>
                   </thead>
-                  <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className='bg-[var(--bg-card)] divide-y divide-surface-200'>
                   {slas.map((sla) => (
                     <tr key={sla.id}>
                       <td className="px-6 py-4">
@@ -553,13 +550,13 @@ export default function HelpdeskSLAPage() {
                         <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
                           <button
                             onClick={() => handleEdit(sla)}
-                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 mr-4"
+                            className='text-accent hover:text-accent mr-4'
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(sla)}
-                            className="text-danger-600 hover:text-danger-800"
+                            className='text-status-danger-text hover:text-status-danger-text'
                           >
                             Delete
                           </button>
@@ -598,7 +595,7 @@ export default function HelpdeskSLAPage() {
                             </span>
                             {escalation.isAutoEscalated && (
                               <span
-                                className="px-2 py-1 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
+                                className='px-2 py-1 bg-accent-subtle text-accent rounded-full text-xs'>
                                 Auto-Escalated
                               </span>
                             )}

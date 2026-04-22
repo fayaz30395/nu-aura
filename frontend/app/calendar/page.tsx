@@ -49,7 +49,7 @@ export default function CalendarPage() {
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading calendar...</p>
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function CalendarPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2
-              className="h-8 w-8 animate-spin text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              className='h-8 w-8 animate-spin text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             <p className="text-[var(--text-secondary)]">Loading calendar...</p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function CalendarPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle
-              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              className='h-12 w-12 text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Failed to load calendar events'}
             </p>
@@ -179,7 +179,7 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
+              className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30'
             >
               <Plus className="h-5 w-5"/>
               New Event
@@ -204,7 +204,7 @@ export default function CalendarPage() {
             </button>
             <button
               onClick={goToToday}
-              className="px-4 py-1.5 text-sm font-medium text-accent-700 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='px-4 py-1.5 text-sm font-medium text-accent hover:bg-accent-subtle rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               Today
             </button>
@@ -247,7 +247,7 @@ export default function CalendarPage() {
 
         {/* Today's Events */}
         {todayEvents.length > 0 && (
-          <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
+          <div className='bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-inverse'>
             <div className="flex items-center gap-4 mb-4">
               <CalendarDays className="h-6 w-6"/>
               <h2 className="text-xl font-semibold">Today&apos;s Events</h2>
@@ -301,14 +301,14 @@ export default function CalendarPage() {
               <PermissionGate permission={Permissions.CALENDAR_CREATE}>
                 <button
                   onClick={() => router.push('/calendar/new')}
-                  className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='mt-4 text-accent hover:text-accent text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   Create your first event
                 </button>
               </PermissionGate>
             </div>
           ) : (
-            <div className="divide-y divide-surface-100 dark:divide-surface-800">
+            <div className='divide-y divide-surface-100'>
               {Object.entries(groupedEvents).map(([date, dateEvents]) => (
                 <div key={date}>
                   <div className="px-6 py-4 bg-[var(--bg-secondary)]/50">
@@ -363,7 +363,7 @@ export default function CalendarPage() {
                             )}
                             {event.meetingLink && (
                               <span
-                                className="text-xs text-accent-500 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                                className='text-xs text-accent flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                                 <Video className="h-3 w-3"/>
                                 Online
                               </span>
@@ -397,15 +397,15 @@ export default function CalendarPage() {
           <PermissionGate permission={Permissions.CALENDAR_CREATE}>
             <button
               onClick={() => router.push('/calendar/new')}
-              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className='group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-[var(--accent-primary)] transition-all duration-200 text-left'
             >
               <div className="row-between mb-4">
                 <div
                   className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  <Plus className='h-5 w-5 text-inverse'/>
                 </div>
                 <ChevronRight
-                  className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                 Schedule Event
@@ -418,15 +418,15 @@ export default function CalendarPage() {
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+            className='group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-[var(--accent-primary)] transition-all duration-200 text-left'
           >
             <div className="row-between mb-4">
               <div
                 className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform">
-                <Video className="h-5 w-5 text-white"/>
+                <Video className='h-5 w-5 text-inverse'/>
               </div>
               <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               My Meetings

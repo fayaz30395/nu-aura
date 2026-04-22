@@ -126,7 +126,7 @@ function PlaceholderToolbar({placeholders, onInsert}: PlaceholderToolbarProps) {
   return (
     <div className="border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] p-4">
       <div className="flex items-center gap-2 mb-2">
-        <Variable className="h-4 w-4 text-accent-600"/>
+        <Variable className='h-4 w-4 text-accent'/>
         <span className="text-sm font-medium text-[var(--text-primary)]">
           Insert Placeholder
         </span>
@@ -152,7 +152,7 @@ function PlaceholderToolbar({placeholders, onInsert}: PlaceholderToolbarProps) {
                     type="button"
                     onClick={() => onInsert(`{{${item.key}}}`)}
                     title={`${item.label} — e.g. ${item.example}`}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-50 text-accent-700 border border-accent-200 rounded-md hover:bg-accent-100 dark:bg-accent-900/30 dark:text-accent-300 dark:border-accent-800 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-subtle text-accent border border-[var(--accent-primary)] rounded-md hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     <Tag className="h-3 w-3"/>
                     {item.label}
@@ -187,7 +187,7 @@ function TemplatePreviewModal({templateId, templateName, isOpen, onClose}: Previ
       <ModalBody>
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
-            <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+            <Loader2 className='h-6 w-6 animate-spin text-accent'/>
             <span className="ml-2 text-[var(--text-secondary)]">Generating preview...</span>
           </div>
         ) : previewHtml ? (
@@ -431,7 +431,7 @@ export default function LetterTemplatesPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letter-templates">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading templates...</span>
         </div>
       </AppLayout>
@@ -461,9 +461,9 @@ export default function LetterTemplatesPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+              <div className='flex items-center gap-2 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{error instanceof Error ? error.message : 'Failed to load templates'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetch()} className="ml-auto">
@@ -511,8 +511,8 @@ export default function LetterTemplatesPage() {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30">
-                        <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                      <div className='rounded-lg bg-accent-subtle p-2'>
+                        <FileText className='h-5 w-5 text-accent'/>
                       </div>
                       <div>
                         <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
@@ -688,7 +688,7 @@ export default function LetterTemplatesPage() {
                     placeholder="e.g., Standard Offer Letter"
                   />
                   {form.formState.errors.name && (
-                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.name.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{form.formState.errors.name.message}</p>
                   )}
                 </div>
                 <div>
@@ -702,7 +702,7 @@ export default function LetterTemplatesPage() {
                     placeholder="e.g., OFFER_STANDARD"
                   />
                   {form.formState.errors.code && (
-                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.code.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{form.formState.errors.code.message}</p>
                   )}
                 </div>
               </div>
@@ -724,7 +724,7 @@ export default function LetterTemplatesPage() {
                     ))}
                   </select>
                   {form.formState.errors.category && (
-                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.category.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{form.formState.errors.category.message}</p>
                   )}
                 </div>
                 <div>
@@ -772,7 +772,8 @@ export default function LetterTemplatesPage() {
                     )}
                   />
                   {form.formState.errors.templateContent && (
-                    <p className="text-xs text-danger-500 mt-1">{form.formState.errors.templateContent.message}</p>
+                    <p
+                      className='text-xs text-status-danger-text mt-1'>{form.formState.errors.templateContent.message}</p>
                   )}
                 </div>
               </div>
@@ -785,7 +786,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('includeSignature')}
-                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
+                      className='h-4 w-4 rounded border-subtle text-accent focus:ring-accent-500'
                     />
                     <label className="text-sm text-[var(--text-primary)]">Include Signature Block</label>
                   </div>
@@ -793,7 +794,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('includeCompanyLogo')}
-                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
+                      className='h-4 w-4 rounded border-subtle text-accent focus:ring-accent-500'
                     />
                     <label className="text-sm text-[var(--text-primary)]">Include Company Logo</label>
                   </div>
@@ -831,7 +832,7 @@ export default function LetterTemplatesPage() {
                     <input
                       type="checkbox"
                       {...form.register('requiresApproval')}
-                      className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
+                      className='h-4 w-4 rounded border-subtle text-accent focus:ring-accent-500'
                     />
                     <label className="text-sm text-[var(--text-primary)]">Requires Approval Before Issuing</label>
                   </div>

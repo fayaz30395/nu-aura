@@ -74,7 +74,7 @@ export function RejectRequestModal({
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
-                        Reason for Rejection <span className="text-danger-500">*</span>
+                        Reason for Rejection <span className='text-status-danger-text'>*</span>
                       </label>
                       <textarea
                         {...register('reason')}
@@ -87,7 +87,7 @@ export function RejectRequestModal({
                           <motion.p
                             initial={{opacity: 0, y: -4}}
                             animate={{opacity: 1, y: 0}}
-                            className="text-danger-500 text-sm"
+                            className='text-status-danger-text text-sm'
                           >
                             {errors.reason.message}
                           </motion.p>
@@ -127,7 +127,7 @@ export function RejectRequestModal({
                       type="submit"
                       disabled={isPending || isSubmitting}
                       onClick={handleSubmit(onSubmit)}
-                      className="w-full bg-danger-600 hover:bg-danger-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='w-full bg-status-danger-bg hover:bg-status-danger-bg text-inverse font-medium disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       <ThumbsDown className="h-4 w-4 mr-2"/>
                       {isPending || isSubmitting ? 'Rejecting...' : 'Reject Request'}

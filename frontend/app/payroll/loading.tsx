@@ -13,7 +13,7 @@ export default function Loading() {
         </div>
 
         {/* Tabs skeleton */}
-        <div className="flex gap-4 border-b border-surface-200 dark:border-surface-700 pb-2">
+        <div className='flex gap-4 border-b border-subtle pb-2'>
           <Skeleton height={32} width={110}/>
           <Skeleton height={32} width={90}/>
           <Skeleton height={32} width={130}/>
@@ -26,7 +26,7 @@ export default function Loading() {
             <Skeleton height={36} width={150}/>
           </div>
           <div
-            className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
+            className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
             <Skeleton height={44}/>
             <div className="space-y-2 p-4 sm:p-4">
               {Array.from({length: 5}).map((_, index) => (

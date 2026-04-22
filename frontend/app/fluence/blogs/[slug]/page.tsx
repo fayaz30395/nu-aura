@@ -209,7 +209,6 @@ export default function BlogPostDetailPage() {
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-500)] to-[var(--accent-800)] origin-left z-50"
         style={{scaleX: readingProgress / 100}}
       />
-
       <div className="space-y-6">
         {/* Back Button */}
         <motion.button
@@ -503,11 +502,11 @@ export default function BlogPostDetailPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     {post.visibility === 'PUBLIC' || post.visibility === 'ORGANIZATION' ? (
-                      <Globe className="w-4 h-4 flex-shrink-0 text-success-600"/>
+                      <Globe className='w-4 h-4 flex-shrink-0 text-status-success-text'/>
                     ) : post.visibility === 'DEPARTMENT' ? (
-                      <Building2 className="w-4 h-4 flex-shrink-0 text-accent-600"/>
+                      <Building2 className='w-4 h-4 flex-shrink-0 text-accent'/>
                     ) : (
-                      <Lock className="w-4 h-4 flex-shrink-0 text-warning-600"/>
+                      <Lock className='w-4 h-4 flex-shrink-0 text-status-warning-text'/>
                     )}
                     <span className="text-[var(--text-secondary)] capitalize font-medium">
                       {post.visibility.toLowerCase()}
@@ -594,7 +593,7 @@ export default function BlogPostDetailPage() {
                   whileTap={{scale: 0.95}}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="px-4 py-2.5 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-2.5 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   aria-label="Send comment"
                 >
                   <Send className="w-4 h-4"/>
@@ -641,7 +640,7 @@ export default function BlogPostDetailPage() {
                             whileHover={{scale: 1.1}}
                             whileTap={{scale: 0.95}}
                             onClick={() => setDeleteCommentId(comment.id)}
-                            className="text-[var(--text-muted)] hover:text-danger-500 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                            className='text-[var(--text-muted)] hover:text-status-danger-text transition-colors opacity-0 group-hover:opacity-100 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
                             title="Delete comment"
                             aria-label="Delete comment"
                           >
@@ -667,7 +666,6 @@ export default function BlogPostDetailPage() {
           </div>
         </motion.div>
       </div>
-
       {/* Delete Comment Confirm Dialog */}
       <ConfirmDialog
         isOpen={deleteCommentId !== null}
@@ -684,7 +682,6 @@ export default function BlogPostDetailPage() {
         type="danger"
         loading={deleteComment.isPending}
       />
-
       {/* Viewers Modal */}
       <Modal
         opened={showViewers}

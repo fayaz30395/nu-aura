@@ -115,7 +115,6 @@ export default function FeatureFlagsPage() {
           </Button>
         )}
       </Group>
-
       {/* Filters */}
       <Group>
         <TextInput
@@ -135,7 +134,6 @@ export default function FeatureFlagsPage() {
           w={200}
         />
       </Group>
-
       {/* Feature Flag Cards */}
       <Stack gap="sm">
         {filteredFlags.map((flag: FeatureFlag) => (
@@ -144,7 +142,7 @@ export default function FeatureFlagsPage() {
               <Group gap="md" wrap="nowrap" style={{flex: 1}}>
                 <ToggleLeft
                   size={24}
-                  className={flag.enabled ? 'text-success-500' : 'text-[var(--text-muted)]'}
+                  className={flag.enabled ? 'text-status-success-text' : 'text-[var(--text-muted)]'}
                 />
                 <div style={{flex: 1}}>
                   <Group gap="xs">
@@ -209,7 +207,6 @@ export default function FeatureFlagsPage() {
           </Card>
         )}
       </Stack>
-
       {/* Create Modal */}
       <Modal
         opened={createOpen}

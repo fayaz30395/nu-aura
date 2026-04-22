@@ -85,7 +85,6 @@ export default function AboutPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -101,15 +100,14 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
-
       {/* Mission & Vision */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card padding="lg" className="border-l-4 border-l-accent-500">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Target className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">
@@ -125,8 +123,8 @@ export default function AboutPage() {
 
             <Card padding="lg" className="border-l-4 border-l-info-500">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-info-50 dark:bg-info-950 flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-info-600 dark:text-info-400"/>
+                <div className='w-12 h-12 rounded-xl bg-status-info-bg flex items-center justify-center'>
+                  <Zap className='h-6 w-6 text-status-info-text'/>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">
@@ -142,7 +140,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Values */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
@@ -167,7 +164,7 @@ export default function AboutPage() {
                 <Card padding="lg" className="text-center h-full">
                   <div
                     className="w-14 h-14 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="h-7 w-7 text-white"/>
+                    <value.icon className='h-7 w-7 text-inverse'/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {value.title}
@@ -181,7 +178,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Timeline */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
@@ -206,7 +202,7 @@ export default function AboutPage() {
               >
                 <div className="flex-shrink-0">
                   <div
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold shadow-[var(--shadow-dropdown)]">
+                    className='w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-inverse font-bold shadow-[var(--shadow-dropdown)]'>
                     {milestone.year}
                   </div>
                 </div>
@@ -221,7 +217,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Stats */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
@@ -235,7 +230,7 @@ export default function AboutPage() {
                 transition={{delay: index * 0.1}}
                 className="text-center"
               >
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
+                <stat.icon className='h-10 w-10 text-accent mx-auto mb-4'/>
                 <div className="text-4xl font-bold text-[var(--text-primary)] skeuo-emboss mb-1">
                   {stat.value}
                 </div>
@@ -245,7 +240,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

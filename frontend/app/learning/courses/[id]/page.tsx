@@ -126,7 +126,8 @@ export default function CourseDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+        <div
+          className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full'/>
       </div>
     );
   }
@@ -138,8 +139,8 @@ export default function CourseDetailPage() {
   if (error || !course) {
     return (
       <div className="p-6 text-center">
-        <p className="text-danger-600 mb-4">{error || 'Course not found'}</p>
-        <Link href="/learning" className="text-accent-600 hover:underline">← Back to Learning</Link>
+        <p className='text-status-danger-text mb-4'>{error || 'Course not found'}</p>
+        <Link href="/learning" className='text-accent hover:underline'>← Back to Learning</Link>
       </div>
     );
   }
@@ -152,23 +153,23 @@ export default function CourseDetailPage() {
     <AppLayout>
       <div className="min-h-screen bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         {/* Hero */}
-        <div className="bg-gradient-to-r from-accent-700 to-accent-900 text-white">
+        <div className='bg-gradient-to-r from-accent-700 to-accent-900 text-inverse'>
           <div className="max-w-5xl mx-auto px-6 py-8">
             <Link href="/learning"
-                  className="flex items-center gap-1 text-accent-200 hover:text-white text-sm mb-4 w-fit">
+                  className='flex items-center gap-1 text-accent hover:text-inverse text-sm mb-4 w-fit'>
               <ArrowLeft className="h-4 w-4"/> Back to Learning
             </Link>
             {course.isMandatory && (
               <span
-                className="inline-block mb-4 px-2 py-0.5 bg-warning-400 text-white text-xs font-semibold rounded-full">
+                className='inline-block mb-4 px-2 py-0.5 bg-status-warning-bg text-inverse text-xs font-semibold rounded-full'>
               Mandatory
             </span>
             )}
             <h1 className="text-xl font-bold skeuo-emboss mb-2">{course.title}</h1>
             {course.shortDescription && (
-              <p className="text-accent-100 text-base mb-4">{course.shortDescription}</p>
+              <p className='text-accent text-base mb-4'>{course.shortDescription}</p>
             )}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-accent-200">
+            <div className='flex flex-wrap items-center gap-4 text-sm text-accent'>
               {course.difficultyLevel && (
                 <span
                   className={`px-2 py-0.5 rounded text-xs font-medium ${DIFFICULTY_COLOR[course.difficultyLevel as keyof typeof DIFFICULTY_COLOR] ?? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'}`}>
@@ -190,7 +191,7 @@ export default function CourseDetailPage() {
               )}
               {course.avgRating && (
                 <span className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-warning-300 text-warning-300"/>
+                <Star className='h-3.5 w-3.5 fill-warning-300 text-status-warning-text'/>
                   {course.avgRating.toFixed(1)} ({course.totalRatings})
               </span>
               )}
@@ -282,13 +283,13 @@ export default function CourseDetailPage() {
                               <h4 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h4>
                               {isPassed && (
                                 <span
-                                  className="flex items-center gap-1 px-2 py-0.5 bg-success-100 dark:bg-success-900/50 text-success-700 dark:text-success-300 text-xs font-medium rounded">
+                                  className='flex items-center gap-1 px-2 py-0.5 bg-status-success-bg text-status-success-text text-xs font-medium rounded'>
                                 <CheckCircle2 className="h-3 w-3"/> Passed
                               </span>
                               )}
                               {isFailed && (
                                 <span
-                                  className="flex items-center gap-1 px-2 py-0.5 bg-danger-100 dark:bg-danger-900/50 text-danger-700 dark:text-danger-300 text-xs font-medium rounded">
+                                  className='flex items-center gap-1 px-2 py-0.5 bg-status-danger-bg text-status-danger-text text-xs font-medium rounded'>
                                 <AlertCircle className="h-3 w-3"/> Failed
                               </span>
                               )}
@@ -299,7 +300,7 @@ export default function CourseDetailPage() {
                             <div className="flex flex-wrap gap-4 mt-2 text-xs text-[var(--text-secondary)]">
                               <span>{quiz.totalQuestions} questions</span>
                               {quiz.timeLimit && <span>{quiz.timeLimit} min time limit</span>}
-                              <span className="text-accent-600 dark:text-accent-400 font-medium">{quiz.passingScore}% to pass</span>
+                              <span className='text-accent font-medium'>{quiz.passingScore}% to pass</span>
                             </div>
                           </div>
 
@@ -402,14 +403,14 @@ export default function CourseDetailPage() {
                       <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                      <div className="h-full bg-accent-600 rounded-full" style={{width: `${progress}%`}}/>
+                      <div className='h-full bg-accent rounded-full' style={{width: `${progress}%`}}/>
                     </div>
                   </div>
 
                   {enrollment?.status === 'COMPLETED' && !enrollment?.certificateId && (
                     <div
-                      className="mb-4 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg border border-warning-200 dark:border-warning-800">
-                      <p className="text-xs text-warning-800 dark:text-warning-200">
+                      className='mb-4 p-4 bg-status-warning-bg rounded-lg border border-status-warning-border'>
+                      <p className='text-xs text-status-warning-text'>
                         Processing your certificate... This should appear within a few minutes.
                       </p>
                     </div>
@@ -417,7 +418,7 @@ export default function CourseDetailPage() {
 
                   <Link
                     href={`/learning/courses/${id}/play`}
-                    className="btn-primary flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors mb-2"
+                    className='btn-primary flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-accent text-inverse rounded-md font-medium hover:bg-accent transition-colors mb-2'
                   >
                     <Play className="h-4 w-4"/>
                     {progress > 0 ? 'Continue Learning' : 'Start Course'}
@@ -427,12 +428,12 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleDownloadCertificate}
                       disabled={downloadingCert}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-success-600 text-success-600 dark:text-success-400 rounded-md text-sm font-medium hover:bg-success-50 dark:hover:bg-success-900/20 mb-2 disabled:opacity-60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='flex items-center justify-center gap-2 w-full px-4 py-2 border border-status-success-border text-status-success-text rounded-md text-sm font-medium hover:bg-status-success-bg mb-2 disabled:opacity-60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {downloadingCert ? (
                         <>
                           <div
-                            className="animate-spin h-4 w-4 border-2 border-success-600 border-t-transparent rounded-full"/>
+                            className='animate-spin h-4 w-4 border-2 border-status-success-border border-t-transparent rounded-full'/>
                           Downloading...
                         </>
                       ) : (
@@ -448,7 +449,7 @@ export default function CourseDetailPage() {
                       href="/learning/certificates"
                       className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md text-sm font-medium hover:bg-[var(--bg-surface)]"
                     >
-                      <Award className="h-4 w-4 text-success-600 dark:text-success-400"/> View All Certificates
+                      <Award className='h-4 w-4 text-status-success-text'/> View All Certificates
                     </Link>
                   )}
                 </>
@@ -457,11 +458,12 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleEnroll}
                     disabled={enrollMutation.isPending}
-                    className="btn-primary w-full px-4 py-2.5 bg-accent-600 text-white rounded-md font-medium hover:bg-accent-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='btn-primary w-full px-4 py-2.5 bg-accent text-inverse rounded-md font-medium hover:bg-accent transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {enrollMutation.isPending ? (
                       <>
-                        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"/>
+                        <div
+                          className='animate-spin h-4 w-4 border-2 border-[var(--bg-card)] border-t-transparent rounded-full'/>
                         Enrolling...</>
                     ) : (
                       <><Play className="h-4 w-4"/> Enroll &amp; Start</>
@@ -470,7 +472,7 @@ export default function CourseDetailPage() {
                 </PermissionGate>
               )}
 
-              {error && <p className="mt-2 text-xs text-danger-600 dark:text-danger-400">{error}</p>}
+              {error && <p className='mt-2 text-xs text-status-danger-text'>{error}</p>}
 
               <div className="mt-4 space-y-2 text-body-secondary">
                 {course.instructorName && (
@@ -498,7 +500,7 @@ export default function CourseDetailPage() {
                 )}
                 <div className="flex justify-between">
                   <span className="text-[var(--text-muted)]">Certificate</span>
-                  <span className="flex items-center gap-1 text-success-600 dark:text-success-400 font-medium">
+                  <span className='flex items-center gap-1 text-status-success-text font-medium'>
                   <CheckCircle2 className="h-3.5 w-3.5"/> Awarded
                 </span>
                 </div>

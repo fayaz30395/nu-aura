@@ -16,7 +16,7 @@ interface FileListViewProps {
 export function FileListView({files, activeTab, onFileClick, onContextMenu}: FileListViewProps) {
   return (
     <Card>
-      <div className="divide-y divide-surface-100 dark:divide-surface-800">
+      <div className='divide-y divide-surface-100'>
         {files.map((file) => (
           <div
             key={file.id}
@@ -33,7 +33,7 @@ export function FileListView({files, activeTab, onFileClick, onContextMenu}: Fil
                   {file.name}
                 </p>
                 {file.starred && (
-                  <Star className="h-4 w-4 text-warning-500 fill-warning-500 flex-shrink-0"/>
+                  <Star className='h-4 w-4 text-status-warning-text fill-warning-500 flex-shrink-0'/>
                 )}
                 {file.shared && (
                   <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>

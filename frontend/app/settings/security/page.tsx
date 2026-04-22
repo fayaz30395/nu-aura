@@ -105,9 +105,9 @@ export default function SecuritySettingsPage() {
         {/* Success Message */}
         {success && (
           <div
-            className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <Check className="h-5 w-5 text-success-600"/>
-            <p className="text-success-800 dark:text-success-200 font-medium">
+            className='flex items-center gap-2 p-4 bg-status-success-bg border border-status-success-border rounded-lg animate-in fade-in slide-in-from-top-2 duration-300'>
+            <Check className='h-5 w-5 text-status-success-text'/>
+            <p className='text-status-success-text font-medium'>
               Security settings updated successfully!
             </p>
           </div>
@@ -116,9 +116,9 @@ export default function SecuritySettingsPage() {
         {/* Error Message */}
         {error && (
           <div
-            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600"/>
-            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
+            className='flex items-center gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg animate-in fade-in slide-in-from-top-2 duration-300'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text'/>
+            <p className='text-status-danger-text font-medium'>{error}</p>
           </div>
         )}
 
@@ -149,9 +149,9 @@ export default function SecuritySettingsPage() {
                         : 'bg-warning-100 dark:bg-warning-900/30'
                     }`}>
                       {mfaStatusData.enabled ? (
-                        <Check className="h-5 w-5 text-success-600 dark:text-success-400"/>
+                        <Check className='h-5 w-5 text-status-success-text'/>
                       ) : (
-                        <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+                        <AlertCircle className='h-5 w-5 text-status-warning-text'/>
                       )}
                     </div>
                     <div className="flex-1">
@@ -172,7 +172,7 @@ export default function SecuritySettingsPage() {
                         </p>
                       )}
                       {!mfaStatusData.enabled && (
-                        <p className="text-sm mt-1 text-warning-700 dark:text-warning-300">
+                        <p className='text-sm mt-1 text-status-warning-text'>
                           Your account is not protected by two-factor authentication. We recommend enabling it.
                         </p>
                       )}
@@ -193,7 +193,7 @@ export default function SecuritySettingsPage() {
               {/* Error State */}
               {isMfaError && (
                 <div className="flex items-center justify-center py-8">
-                  <p className="text-danger-600 dark:text-danger-400">Failed to load MFA status</p>
+                  <p className='text-status-danger-text'>Failed to load MFA status</p>
                 </div>
               )}
 
@@ -243,7 +243,7 @@ export default function SecuritySettingsPage() {
                           },
                         })}
                       />
-                      {errors.code && <p className="text-danger-500 text-sm mt-1">{errors.code.message}</p>}
+                      {errors.code && <p className='text-status-danger-text text-sm mt-1'>{errors.code.message}</p>}
                       <div className="flex gap-4">
                         <Button
                           type="button"
@@ -314,8 +314,8 @@ export default function SecuritySettingsPage() {
             <div className="space-y-4">
               <div
                 className="flex items-start gap-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]">
-                <div className="p-2 bg-accent-100 dark:bg-accent-900/30 rounded-lg flex-shrink-0">
-                  <Laptop className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+                <div className='p-2 bg-accent-subtle rounded-lg flex-shrink-0'>
+                  <Laptop className='h-5 w-5 text-accent'/>
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-[var(--text-primary)]">This Device</p>
@@ -332,7 +332,6 @@ export default function SecuritySettingsPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* MFA Setup Modal */}
       <MfaSetup
         isOpen={showMfaSetup}

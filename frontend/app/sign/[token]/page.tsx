@@ -233,7 +233,7 @@ export default function SignPage() {
       <div
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-10 w-10 text-accent-600 animate-spin mx-auto mb-4"/>
+          <Loader2 className='h-10 w-10 text-accent animate-spin mx-auto mb-4'/>
           <p className="text-[var(--text-secondary)] text-sm">Loading document information...</p>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default function SignPage() {
       <div
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
-          <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
+          <XCircle className='h-14 w-14 text-status-danger-text mx-auto mb-4'/>
           <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">Link Invalid or
             Expired</h1>
           <p className="text-[var(--text-muted)] text-sm mb-2">{error}</p>
@@ -267,11 +267,11 @@ export default function SignPage() {
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
           {isSignedStatus ? (
-            <CheckCircle className="h-14 w-14 text-success-500 mx-auto mb-4"/>
+            <CheckCircle className='h-14 w-14 text-status-success-text mx-auto mb-4'/>
           ) : isDeclinedStatus ? (
-            <XCircle className="h-14 w-14 text-danger-500 mx-auto mb-4"/>
+            <XCircle className='h-14 w-14 text-status-danger-text mx-auto mb-4'/>
           ) : (
-            <AlertCircle className="h-14 w-14 text-warning-500 mx-auto mb-4"/>
+            <AlertCircle className='h-14 w-14 text-status-warning-text mx-auto mb-4'/>
           )}
           <h1 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss mb-2">
             {isSignedStatus
@@ -302,7 +302,7 @@ export default function SignPage() {
       <div
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-success-500 mx-auto mb-4"/>
+          <CheckCircle className='h-16 w-16 text-status-success-text mx-auto mb-4'/>
           <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Document Signed Successfully
           </h1>
@@ -347,7 +347,7 @@ export default function SignPage() {
       <div
         className="min-h-screen bg-gradient-to-br from-[var(--bg-main)] to-[var(--bg-surface)] flex items-center justify-center px-4">
         <div className="max-w-md w-full skeuo-card p-8 text-center">
-          <XCircle className="h-16 w-16 text-danger-400 mx-auto mb-4"/>
+          <XCircle className='h-16 w-16 text-status-danger-text mx-auto mb-4'/>
           <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             Signing Request Declined
           </h1>
@@ -370,8 +370,8 @@ export default function SignPage() {
       {/* Header */}
       <div className="bg-[var(--bg-card)] divider-b shadow-[var(--shadow-card)]">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <div className="h-8 w-8 rounded-lg bg-accent-600 flex items-center justify-center">
-            <FileText className="h-4 w-4 text-white"/>
+          <div className='h-8 w-8 rounded-lg bg-accent flex items-center justify-center'>
+            <FileText className='h-4 w-4 text-inverse'/>
           </div>
           <div>
             <p className="text-caption uppercase tracking-wider font-medium">
@@ -381,13 +381,12 @@ export default function SignPage() {
           </div>
         </div>
       </div>
-
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Document Info Card */}
         <div className="skeuo-card p-6">
           <div className="flex items-start gap-4">
-            <div className="h-12 w-12 rounded-lg bg-accent-50 flex items-center justify-center flex-shrink-0">
-              <FileText className="h-6 w-6 text-accent-600"/>
+            <div className='h-12 w-12 rounded-lg bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+              <FileText className='h-6 w-6 text-accent'/>
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-semibold text-[var(--text-primary)] truncate">
@@ -419,7 +418,7 @@ export default function SignPage() {
                 )}
               </div>
               {docInfo?.tokenExpiresAt && (
-                <p className="text-xs text-warning-600 mt-2">
+                <p className='text-xs text-status-warning-text mt-2'>
                   Signing link expires: {formatDate(docInfo.tokenExpiresAt)}
                 </p>
               )}
@@ -431,7 +430,7 @@ export default function SignPage() {
                 href={docInfo.documentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-accent-600 hover:text-accent-700 font-medium"
+                className='inline-flex items-center gap-2 text-sm text-accent hover:text-accent font-medium'
               >
                 <ExternalLink className="h-4 w-4"/>
                 View Document ({docInfo.documentName || 'Open PDF'})
@@ -475,7 +474,7 @@ export default function SignPage() {
                   }`}
                 />
                 {emailError && (
-                  <p className="mt-1.5 text-xs text-danger-600 flex items-center gap-1">
+                  <p className='mt-1.5 text-xs text-status-danger-text flex items-center gap-1'>
                     <AlertCircle className="h-3 w-3 flex-shrink-0"/>
                     {emailError}
                   </p>
@@ -484,7 +483,7 @@ export default function SignPage() {
               <button
                 onClick={handleEmailVerify}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="w-full py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='w-full py-2.5 px-4 bg-accent hover:bg-accent text-inverse text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Continue to Sign
               </button>
@@ -611,7 +610,7 @@ export default function SignPage() {
             {/* Submit Error */}
             {submitError && (
               <div
-                className="flex items-start gap-2 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-lg px-4 py-2.5">
+                className='flex items-start gap-2 text-sm text-status-danger-text bg-status-danger-bg border border-status-danger-border rounded-lg px-4 py-2.5'>
                 <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5"/>
                 {submitError}
               </div>
@@ -629,7 +628,7 @@ export default function SignPage() {
               <button
                 onClick={handleSign}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 bg-accent-600 hover:bg-accent-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex-1 py-2.5 px-4 bg-accent hover:bg-accent text-inverse text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {signDocumentMutation.isPending ? (
                   <>
@@ -655,7 +654,6 @@ export default function SignPage() {
           Powered by NU-AURA HRMS &mdash; Electronic Signature Service
         </p>
       </div>
-
       {/* Decline Modal */}
       {showDeclineModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
@@ -675,7 +673,7 @@ export default function SignPage() {
               className="input-aura resize-none"
             />
             {declineError && (
-              <p className="mt-2 text-xs text-danger-600 flex items-center gap-1">
+              <p className='mt-2 text-xs text-status-danger-text flex items-center gap-1'>
                 <AlertCircle className="h-3 w-3 flex-shrink-0"/>
                 {declineError}
               </p>
@@ -695,7 +693,7 @@ export default function SignPage() {
               <button
                 onClick={handleDecline}
                 disabled={declineDocumentMutation.isPending}
-                className="flex-1 py-2.5 px-4 bg-danger-600 hover:bg-danger-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex-1 py-2.5 px-4 bg-status-danger-bg hover:bg-status-danger-bg text-inverse text-sm font-medium rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {declineDocumentMutation.isPending ? (
                   <>

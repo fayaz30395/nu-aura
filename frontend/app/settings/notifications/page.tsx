@@ -25,7 +25,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'leave',
     label: 'Leave & Attendance',
     description: 'Leave applications, approvals, check-in reminders, and missed punches',
-    icon: <Bell className="h-5 w-5 text-accent-500"/>,
+    icon: <Bell className='h-5 w-5 text-accent'/>,
     email: true,
     push: true,
     inApp: true,
@@ -34,7 +34,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'approvals',
     label: 'Approvals & Workflows',
     description: 'Pending approvals, escalations, and workflow status updates',
-    icon: <MessageSquare className="h-5 w-5 text-warning-500"/>,
+    icon: <MessageSquare className='h-5 w-5 text-status-warning-text'/>,
     email: true,
     push: true,
     inApp: true,
@@ -43,7 +43,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'payroll',
     label: 'Payroll & Expenses',
     description: 'Payslip availability, salary credits, and expense approvals',
-    icon: <DollarSign className="h-5 w-5 text-success-500"/>,
+    icon: <DollarSign className='h-5 w-5 text-status-success-text'/>,
     email: true,
     push: false,
     inApp: true,
@@ -52,7 +52,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'performance',
     label: 'Performance & Training',
     description: 'Review cycles, goal updates, training assignments, and feedback',
-    icon: <BookOpen className="h-5 w-5 text-accent-600"/>,
+    icon: <BookOpen className='h-5 w-5 text-accent'/>,
     email: true,
     push: false,
     inApp: true,
@@ -61,7 +61,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'recruitment',
     label: 'Recruitment & Onboarding',
     description: 'Application updates, interview schedules, and onboarding tasks',
-    icon: <UserPlus className="h-5 w-5 text-accent-500"/>,
+    icon: <UserPlus className='h-5 w-5 text-accent'/>,
     email: true,
     push: false,
     inApp: true,
@@ -70,7 +70,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'celebrations',
     label: 'Celebrations',
     description: 'Birthdays, work anniversaries, and team milestones',
-    icon: <Gift className="h-5 w-5 text-accent-700"/>,
+    icon: <Gift className='h-5 w-5 text-accent'/>,
     email: false,
     push: false,
     inApp: true,
@@ -79,7 +79,7 @@ const preferenceCategories: NotificationPreference[] = [
     key: 'announcements',
     label: 'System & Announcements',
     description: 'Organization-wide updates, policy changes, and system alerts',
-    icon: <Mail className="h-5 w-5 text-accent-700"/>,
+    icon: <Mail className='h-5 w-5 text-accent'/>,
     email: true,
     push: false,
     inApp: true,
@@ -150,7 +150,7 @@ export default function NotificationSettingsPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading preferences...</span>
         </div>
       </AppLayout>

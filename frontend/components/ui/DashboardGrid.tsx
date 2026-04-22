@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -14,8 +14,8 @@ import {
   IconSettings,
   IconX,
 } from '@tabler/icons-react';
-import { Button } from './Button';
-import { Card, CardContent, CardHeader, CardTitle } from './Card';
+import {Button} from './Button';
+import {Card, CardContent, CardHeader, CardTitle} from './Card';
 
 /**
  * Represents a single dashboard widget
@@ -55,10 +55,10 @@ interface WidgetVisibility {
  * - Widget styling with card container
  */
 export const DashboardGrid: React.FC<DashboardGridProps> = ({
-  widgets,
-  dashboardId,
-  columns = 2,
-}) => {
+                                                              widgets,
+                                                              dashboardId,
+                                                              columns = 2,
+                                                            }) => {
   const [widgetOrder, setWidgetOrder] = useState<string[]>([]);
   const [widgetVisibility, setWidgetVisibility] = useState<WidgetVisibility>({});
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
@@ -92,7 +92,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
     if (savedVisibility) {
       try {
         const parsed = JSON.parse(savedVisibility);
-        setWidgetVisibility({ ...initialVisibility, ...parsed });
+        setWidgetVisibility({...initialVisibility, ...parsed});
       } catch {
         setWidgetVisibility(initialVisibility);
       }
@@ -117,7 +117,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
   // Handle drag end
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+    const {source, destination} = result;
 
     // If dropped outside the list
     if (!destination) {
@@ -187,7 +187,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => setShowSettingsPanel(true)}
-                    leftIcon={<IconSettings className="h-4 w-4" />}
+                    leftIcon={<IconSettings className="h-4 w-4"/>}
                   >
                     Show Widgets
                   </Button>
@@ -212,7 +212,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                       }}
                     >
                       {/* Widget Header with Grip Handle */}
-                      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
+                      <CardHeader
+                        className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           {/* Grip Handle */}
                           <div
@@ -279,12 +280,14 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
       {/* Settings Panel - Toggle Widget Visibility */}
       {showSettingsPanel && (
-        <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setShowSettingsPanel(false)} />
+        <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setShowSettingsPanel(false)}/>
       )}
 
       {showSettingsPanel && (
-        <Card className="fixed right-4 top-4 z-50 w-80 max-h-[calc(100vh-2rem)] overflow-y-auto shadow-[var(--shadow-elevated)]">
-          <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
+        <Card
+          className="fixed right-4 top-4 z-50 w-80 max-h-[calc(100vh-2rem)] overflow-y-auto shadow-[var(--shadow-elevated)]">
+          <CardHeader
+            className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
             <CardTitle className="text-sm font-semibold">
               Widget Settings
             </CardTitle>
@@ -293,7 +296,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
               className="p-1.5 cursor-pointer hover:bg-[var(--bg-subtle)] rounded-md transition-colors"
               aria-label="Close settings panel"
             >
-              <IconX className="h-4 w-4 text-[var(--text-secondary)]" />
+              <IconX className="h-4 w-4 text-[var(--text-secondary)]"/>
             </button>
           </CardHeader>
 
@@ -310,9 +313,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
                     aria-label={`Toggle ${widget.title} visibility`}
                   >
                     {widgetVisibility[widget.id] ? (
-                      <IconEye className="h-4 w-4 text-[var(--accent-primary)]" />
+                      <IconEye className="h-4 w-4 text-[var(--accent-primary)]"/>
                     ) : (
-                      <IconEyeOff className="h-4 w-4 text-[var(--text-tertiary)]" />
+                      <IconEyeOff className="h-4 w-4 text-[var(--text-tertiary)]"/>
                     )}
                   </button>
                   <span

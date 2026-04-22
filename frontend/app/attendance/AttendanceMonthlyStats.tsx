@@ -79,7 +79,7 @@ export const AttendanceMonthlyStats = memo(function AttendanceMonthlyStats({
               <div className="row-between mb-2">
                 <div
                   className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-[var(--shadow-elevated)]`}>
-                  <stat.icon className="h-5 w-5 text-white"/>
+                  <stat.icon className='h-5 w-5 text-inverse'/>
                 </div>
                 {stat.total !== null && (
                   <span

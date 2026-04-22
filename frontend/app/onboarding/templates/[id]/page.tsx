@@ -189,14 +189,14 @@ export default function TemplateEditorPage() {
                 className="rounded-lg h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                 onClick={() => router.back()}
               >
-                <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
+                <ArrowLeft className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent transition-colors'/>
               </Button>
               <div>
                 <h1
                   className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss flex items-center gap-4">
-                  Blueprint <span className="text-accent-700">Editor</span>
+                  Blueprint <span className='text-accent'>Editor</span>
                   <Badge variant="outline"
-                         className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                         className='rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent'>
                     V1.0
                   </Badge>
                 </h1>
@@ -251,13 +251,13 @@ export default function TemplateEditorPage() {
               </Card>
 
               <Card
-                className="border-0 bg-accent-600/5 dark:bg-accent-600/10 border-l-4 border-accent-600 rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10">
+                className='border-0 bg-accent-600/5 border-l-4 border-[var(--accent-primary)] rounded-lg shadow-[var(--shadow-dropdown)] shadow-accent-500/10'>
                 <CardContent className="p-8 space-y-4">
-                  <div className="flex items-center gap-2 text-accent-600 font-black uppercase tracking-widest text-xs">
+                  <div className='flex items-center gap-2 text-accent font-black uppercase tracking-widest text-xs'>
                     <AlertCircle className="h-4 w-4"/>
                     Orchestration Sync
                   </div>
-                  <p className="text-sm font-bold text-accent-700 dark:text-accent-400">
+                  <p className='text-sm font-bold text-accent'>
                     Changes made here will affect all <span
                     className="underline decoration-accent-400 decoration-2">future</span> onboarding processes
                     initiated with this template.
@@ -279,7 +279,7 @@ export default function TemplateEditorPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-xl font-black tracking-widest uppercase text-xs border-accent-500/20 text-accent-700 hover:bg-accent-500 hover:text-white transition-all transform hover:scale-105"
+                    className='rounded-xl font-black tracking-widest uppercase text-xs border-accent-500/20 text-accent hover:bg-accent hover:text-inverse transition-all transform hover:scale-105'
                     leftIcon={<Plus className="h-3.5 w-3.5"/>}
                     onClick={handleAddTask}
                   >
@@ -307,7 +307,7 @@ export default function TemplateEditorPage() {
                                   <h4 className="font-black text-[var(--text-primary)] text-lg">{task.taskName}</h4>
                                   {task.isMandatory && (
                                     <Badge variant="danger"
-                                           className="rounded-lg px-2 py-0.5 font-black text-[8px] tracking-widest uppercase bg-danger-500 text-white">
+                                           className='rounded-lg px-2 py-0.5 font-black text-[8px] tracking-widest uppercase bg-status-danger-bg text-inverse'>
                                       Required
                                     </Badge>
                                   )}
@@ -324,7 +324,7 @@ export default function TemplateEditorPage() {
                                     Due Day {task.estimatedDaysFromStart || 7}
                                   </div>
                                   <div
-                                    className="flex items-center gap-1.5 text-xs font-black text-accent-500 uppercase tracking-widest">
+                                    className='flex items-center gap-1.5 text-xs font-black text-accent uppercase tracking-widest'>
                                     <Zap className="h-3 w-3"/>
                                     {task.priority || 'MEDIUM'}
                                   </div>
@@ -344,7 +344,7 @@ export default function TemplateEditorPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] text-danger-500 hover:bg-danger-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
+                                className='h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] text-status-danger-text hover:bg-status-danger-bg hover:text-inverse opacity-0 group-hover:opacity-100 transition-all'
                                 onClick={() => handleDeleteTask(task.id)}
                               >
                                 <Trash2 className="h-4 w-4"/>
@@ -385,7 +385,7 @@ export default function TemplateEditorPage() {
             <motion.div
               initial={{opacity: 0, scale: 0.95, y: 20}}
               animate={{opacity: 1, scale: 1, y: 0}}
-              className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-[var(--shadow-elevated)] overflow-hidden border-t-8 border-accent-700"
+              className='relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-[var(--shadow-elevated)] overflow-hidden border-t-8 border-[var(--accent-primary)]'
             >
               <div className="p-12 space-y-10">
                 <div className="row-between">
@@ -406,7 +406,7 @@ export default function TemplateEditorPage() {
                     <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task
                       Objective</label>
                     <Input
-                      className="input-aura rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-accent-500"
+                      className='input-aura rounded-lg bg-[var(--bg-secondary)] border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-accent-500'
                       placeholder="e.g., Set up workstation and systems"
                       value={taskForm.taskName}
                       onChange={(e) => setTaskForm({...taskForm, taskName: e.target.value})}
@@ -418,7 +418,7 @@ export default function TemplateEditorPage() {
                       Description</label>
                     <textarea
                       rows={3}
-                      className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
+                      className='w-full rounded-lg bg-[var(--bg-secondary)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none'
                       placeholder="Detailed instructions for this specific step..."
                       value={taskForm.description || ''}
                       onChange={(e) => setTaskForm({...taskForm, description: e.target.value})}
@@ -432,7 +432,7 @@ export default function TemplateEditorPage() {
                       Category
                     </label>
                     <select
-                      className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
+                      className='w-full rounded-lg bg-[var(--bg-secondary)] border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none'
                       value={taskForm.category}
                       onChange={(e) => setTaskForm({...taskForm, category: e.target.value as OnboardingTaskCategory})}
                     >
@@ -452,7 +452,7 @@ export default function TemplateEditorPage() {
                       Priority
                     </label>
                     <select
-                      className="w-full rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none"
+                      className='w-full rounded-lg bg-[var(--bg-secondary)] border-0 p-6 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-accent-500 outline-none'
                       value={taskForm.priority}
                       onChange={(e) => setTaskForm({...taskForm, priority: e.target.value as OnboardingTaskPriority})}
                     >
@@ -470,7 +470,7 @@ export default function TemplateEditorPage() {
                     </label>
                     <Input
                       type="number"
-                      className="rounded-lg bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-accent-500"
+                      className='rounded-lg bg-[var(--bg-secondary)] border-0 p-6 font-black focus:ring-2 focus:ring-accent-500'
                       value={taskForm.estimatedDaysFromStart || 0}
                       onChange={(e) => setTaskForm({
                         ...taskForm,
@@ -480,11 +480,11 @@ export default function TemplateEditorPage() {
                   </div>
 
                   <div
-                    className="flex items-center gap-4 bg-[var(--bg-secondary)] dark:bg-black/20 p-6 rounded-lg border border-dashed border-[var(--border-main)]">
+                    className='flex items-center gap-4 bg-[var(--bg-secondary)] p-6 rounded-lg border border-dashed border-[var(--border-main)]'>
                     <input
                       type="checkbox"
                       id="mandatory"
-                      className="h-5 w-5 rounded-md border-accent-500 text-accent-700 focus:ring-accent-500"
+                      className='h-5 w-5 rounded-md border-[var(--accent-primary)] text-accent focus:ring-accent-500'
                       checked={taskForm.isMandatory}
                       onChange={(e) => setTaskForm({...taskForm, isMandatory: e.target.checked})}
                     />

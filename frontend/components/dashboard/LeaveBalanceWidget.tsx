@@ -97,12 +97,10 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           View All <ArrowRight className="h-3 w-3"/>
         </Link>
       </div>
-
       {/* Circular Progress */}
       <div className="flex justify-center mb-4">
         <CircularProgress used={current.used} total={current.total}/>
       </div>
-
       {/* Leave Type Label */}
       <div className="text-center mb-4">
         <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
@@ -112,7 +110,6 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           {current.used} used · {current.total} total
         </p>
       </div>
-
       {/* Dots navigation */}
       {balances.length > 1 && (
         <div className="flex justify-center gap-1.5 mb-4">
@@ -128,12 +125,11 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           ))}
         </div>
       )}
-
       {/* Actions */}
       <div className="space-y-2 pt-4 border-t border-[var(--border-subtle)]">
         <Link
           href="/leave/apply"
-          className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"
+          className='block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-inverse transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]'
           style={{
             background: 'var(--nu-gradient-dark)',
             boxShadow: '0 2px 8px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)',

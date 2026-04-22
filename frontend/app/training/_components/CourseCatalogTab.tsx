@@ -99,11 +99,10 @@ export function CourseCatalogTab({
           </div>
         </CardContent>
       </Card>
-
       {/* Programs Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
         </div>
       ) : availablePrograms.length === 0 ? (
         <Card>
@@ -124,14 +123,14 @@ export function CourseCatalogTab({
             return (
               <Card key={program.id} className="card-interactive overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-white">
+                  <div className='bg-gradient-to-r from-accent-500 to-accent-700 p-4 text-inverse'>
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm opacity-80">{program.programCode}</p>
                         <h3 className="text-xl font-semibold">{program.programName}</h3>
                       </div>
                       {enrolled && (
-                        <Badge variant="success" className="bg-white/20 text-white">
+                        <Badge variant="success" className='bg-white/20 text-inverse'>
                           <CheckCircle className="h-3 w-3 mr-1"/>
                           Enrolled
                         </Badge>
@@ -151,7 +150,7 @@ export function CourseCatalogTab({
                       </span>
                       {program.isMandatory && (
                         <span
-                          className="px-2 py-1 text-xs font-medium rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900 dark:text-danger-200">
+                          className='px-2 py-1 text-xs font-medium rounded-full bg-status-danger-bg text-status-danger-text'>
                           Mandatory
                         </span>
                       )}

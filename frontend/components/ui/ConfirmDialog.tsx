@@ -59,7 +59,7 @@ export function ConfirmDialog({
   const typeStyles = {
     danger: {
       icon: (
-        <svg className="w-6 h-6 text-danger-600 dark:text-danger-400" fill="none" stroke="currentColor"
+        <svg className='w-6 h-6 text-status-danger-text' fill="none" stroke="currentColor"
              viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
@@ -70,7 +70,7 @@ export function ConfirmDialog({
     },
     warning: {
       icon: (
-        <svg className="w-6 h-6 text-warning-600 dark:text-warning-400" fill="none" stroke="currentColor"
+        <svg className='w-6 h-6 text-status-warning-text' fill="none" stroke="currentColor"
              viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
@@ -81,7 +81,7 @@ export function ConfirmDialog({
     },
     info: {
       icon: (
-        <svg className="w-6 h-6 text-accent-600 dark:text-accent-400" fill="none" stroke="currentColor"
+        <svg className='w-6 h-6 text-accent' fill="none" stroke="currentColor"
              viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -146,7 +146,7 @@ export function ConfirmDialog({
               <button
                 onClick={handleConfirmClick}
                 disabled={loading}
-                className={`flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
+                className={`flex-1 px-4 py-2.5 ${style.buttonClass} text-inverse rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2`}
               >
                 {loading ? (
                   <>

@@ -398,7 +398,6 @@ export default function FeaturesPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -414,7 +413,6 @@ export default function FeaturesPage() {
           </p>
         </div>
       </section>
-
       {/* Module Tabs */}
       <section className="px-4 sm:px-6 lg:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
@@ -449,7 +447,7 @@ export default function FeaturesPage() {
                     <div
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedModule.color} flex items-center justify-center mb-4`}
                     >
-                      <feature.icon className="h-6 w-6 text-white"/>
+                      <feature.icon className='h-6 w-6 text-inverse'/>
                     </div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                       {feature.title}
@@ -460,7 +458,7 @@ export default function FeaturesPage() {
                     <ul className="space-y-2">
                       {feature.benefits.map((benefit, i) => (
                         <li key={i} className="flex items-center gap-2 text-body-secondary">
-                          <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                          <Check className='h-4 w-4 text-status-success-text flex-shrink-0'/>
                           {benefit}
                         </li>
                       ))}
@@ -472,7 +470,6 @@ export default function FeaturesPage() {
           )}
         </div>
       </section>
-
       {/* Integrations */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-5xl mx-auto text-center">
@@ -493,9 +490,9 @@ export default function FeaturesPage() {
                 className="flex flex-col items-center gap-4 group cursor-pointer"
               >
                 <div
-                  className="w-16 h-16 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-accent-500 group-hover:shadow-card-hover transition-all">
+                  className='w-16 h-16 rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-[var(--accent-primary)] group-hover:shadow-card-hover transition-all'>
                   <integration.icon
-                    className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent-500 transition-colors"/>
+                    className='h-8 w-8 text-[var(--text-secondary)] group-hover:text-accent transition-colors'/>
                 </div>
                 <span className="text-sm font-medium text-[var(--text-muted)]">
                   {integration.name}
@@ -514,7 +511,6 @@ export default function FeaturesPage() {
           </div>
         </div>
       </section>
-
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

@@ -122,27 +122,25 @@ export function HolidayCarousel({
       onMouseLeave={() => setIsHovering(false)}
     >
       <HolidayIllustration/>
-
       {/* Header */}
       <div className="row-between mb-2 relative z-10">
-        <span className="text-xs font-semibold uppercase tracking-wider text-accent-200">
+        <span className='text-xs font-semibold uppercase tracking-wider text-accent'>
           Holidays
         </span>
         <a
           href="/holidays"
-          className="text-xs text-accent-200 hover:text-white transition-colors font-medium"
+          className='text-xs text-accent hover:text-inverse transition-colors font-medium'
         >
           View All
         </a>
       </div>
-
       {/* Holiday Content */}
       <div className="relative z-10 flex items-center">
         {/* Left Arrow */}
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedHolidays.length) % displayedHolidays.length)}
-            className="flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className='flex-shrink-0 -ml-1 mr-2 rounded-full p-1 text-white/60 hover:text-inverse hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2'
             aria-label="Previous holiday"
           >
             <ChevronLeft className="h-5 w-5"/>
@@ -154,7 +152,7 @@ export function HolidayCarousel({
           <h3 className="text-xl font-bold leading-tight truncate">
             {currentHoliday.name}
           </h3>
-          <p className="text-sm text-accent-200 mt-1">
+          <p className='text-sm text-accent mt-1'>
             {formattedDate}
           </p>
           <div className="flex items-center gap-2 mt-2">
@@ -163,12 +161,12 @@ export function HolidayCarousel({
               {typeLabel}
             </span>
             {currentHoliday.daysUntil > 0 && (
-              <span className="text-xs text-accent-200">
+              <span className='text-xs text-accent'>
                 in {currentHoliday.daysUntil} {currentHoliday.daysUntil === 1 ? 'day' : 'days'}
               </span>
             )}
             {currentHoliday.daysUntil === 0 && (
-              <span className="text-xs font-semibold text-white">Today!</span>
+              <span className='text-xs font-semibold text-inverse'>Today!</span>
             )}
           </div>
         </div>
@@ -177,14 +175,13 @@ export function HolidayCarousel({
         {displayedHolidays.length > 1 && (
           <button
             onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedHolidays.length)}
-            className="flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className='flex-shrink-0 -mr-1 ml-2 rounded-full p-1 text-white/60 hover:text-inverse hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2'
             aria-label="Next holiday"
           >
             <ChevronRight className="h-5 w-5"/>
           </button>
         )}
       </div>
-
       {/* Dot Indicators */}
       {displayedHolidays.length > 1 && (
         <div className="flex justify-center gap-1.5 mt-2 relative z-10">

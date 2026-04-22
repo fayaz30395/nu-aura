@@ -256,7 +256,7 @@ export default function RegularizationPage() {
                 Request corrections for your attendance records
               </p>
             </div>
-            <Button onClick={handleOpenCreate} className="bg-accent-500 hover:bg-accent-700 text-white">
+            <Button onClick={handleOpenCreate} className='bg-accent hover:bg-accent text-inverse'>
               <Plus className="h-4 w-4 mr-2"/>
               Request Regularization
             </Button>
@@ -303,7 +303,6 @@ export default function RegularizationPage() {
           <TeamRequestsView onReject={handleOpenReject}/>
         )}
       </motion.div>
-
       {/* Create Request Modal */}
       <CreateRequestModal
         open={showCreateModal}
@@ -321,7 +320,6 @@ export default function RegularizationPage() {
         onQuickReason={(template) => setValue('reason', template)}
         handleSubmit={handleSubmit}
       />
-
       {/* Reject Request Modal */}
       <RejectRequestModal
         open={showRejectModal}
@@ -334,7 +332,6 @@ export default function RegularizationPage() {
         onSubmit={onRejectSubmit}
         handleSubmit={handleSubmitReject}
       />
-
       {/* Cancel Confirm Dialog */}
       <ConfirmDialog
         isOpen={cancelConfirmOpen}

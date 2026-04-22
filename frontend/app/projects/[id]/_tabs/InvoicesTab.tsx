@@ -119,7 +119,7 @@ export function InvoicesTab({projectId}: InvoicesTabProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+          <Loader2 className='h-6 w-6 animate-spin text-accent'/>
         </CardContent>
       </Card>
     );
@@ -164,7 +164,6 @@ export function InvoicesTab({projectId}: InvoicesTabProps) {
           value={stats.overdueCount.toString()}
         />
       </div>
-
       {/* Invoices Table */}
       <Card>
         <CardContent className="space-y-4">
@@ -182,7 +181,7 @@ export function InvoicesTab({projectId}: InvoicesTabProps) {
 
           {invoicesErrorMessage && (
             <div
-              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
               {invoicesErrorMessage}
             </div>
           )}

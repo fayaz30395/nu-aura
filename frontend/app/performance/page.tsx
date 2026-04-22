@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import {useMemo} from 'react';
 import Link from 'next/link';
 import {
   Flag,
@@ -23,13 +23,13 @@ import {
   useOkrDashboardSummary,
   useMyPending360Reviews,
 } from '@/lib/hooks/queries/usePerformance';
-import { AppLayout } from '@/components/layout';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
-import { SkeletonStatCard } from '@/components/ui/Skeleton';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
-import { Button } from '@/components/ui/Button';
-import { useRouter } from 'next/navigation';
+import {AppLayout} from '@/components/layout';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
+import {SkeletonStatCard} from '@/components/ui/Skeleton';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Button} from '@/components/ui/Button';
+import {useRouter} from 'next/navigation';
 
 interface DashboardStats {
   totalGoals: number;
@@ -147,27 +147,29 @@ const performanceModules = [
 ];
 
 const StatCard = ({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  color,
-}: {
+                    title,
+                    value,
+                    subtitle,
+                    icon: Icon,
+                    color,
+                  }: {
   title: string;
   value: string | number;
   subtitle?: string;
   icon: React.ElementType;
   color: string;
 }) => (
-  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
+  <div
+    className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
     <div className="flex items-start justify-between">
       <div>
         <p className="text-sm font-medium text-[var(--text-muted)] skeuo-deboss">{title}</p>
-        <p className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
+        <p
+          className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1 skeuo-emboss">{value}</p>
         {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
-        <Icon className="h-5 w-5 text-white" />
+        <Icon className='h-5 w-5 text-inverse'/>
       </div>
     </div>
   </div>
@@ -180,7 +182,7 @@ const PERFORMANCE_ALLOWED_ROLES = [
 
 export default function PerformancePage() {
   const router = useRouter();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // P0-002: Block EMPLOYEE/non-management roles from accessing admin performance hub
   const hasAccess = hasAnyRole(...PERFORMANCE_ALLOWED_ROLES);
@@ -224,7 +226,7 @@ export default function PerformancePage() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <TrendingUp className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+          <TrendingUp className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
           <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
           <p className="text-[var(--text-muted)] max-w-md mb-6">
             You don&apos;t have permission to access the Performance Management hub.
@@ -257,186 +259,193 @@ export default function PerformancePage() {
 
   return (
     <AppLayout activeMenuItem="performance">
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance Management</h1>
-        <p className="text-body-muted mt-1 skeuo-deboss">
-          Track goals, conduct reviews, and manage employee performance
-        </p>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {loading ? (
-          <>
-            <SkeletonStatCard />
-            <SkeletonStatCard />
-            <SkeletonStatCard />
-            <SkeletonStatCard />
-          </>
-        ) : (
-          <>
-            <StatCard
-              title="Active Goals"
-              value={stats.activeGoals}
-              subtitle={`${stats.completedGoals} completed`}
-              icon={Flag}
-              color="bg-accent-500"
-            />
-            <StatCard
-              title="Goal Progress"
-              value={`${stats.averageProgress}%`}
-              subtitle="Average across all goals"
-              icon={TrendingUp}
-              color="bg-success-500"
-            />
-            <StatCard
-              title="OKR Objectives"
-              value={stats.okrObjectives}
-              subtitle={`${stats.okrProgress}% progress`}
-              icon={SlidersHorizontal}
-              color="bg-accent-700"
-            />
-            <StatCard
-              title="Pending Reviews"
-              value={stats.pending360Reviews}
-              subtitle="360 feedback requests"
-              icon={Clock}
-              color="bg-warning-500"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      {stats.pending360Reviews > 0 && (
-        <div className="mb-8 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
-          <div className="row-between">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
-                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
-              </div>
-              <div>
-                <p className="font-medium text-warning-800 dark:text-warning-300">
-                  You have {stats.pending360Reviews} pending 360 feedback request(s)
-                </p>
-                <p className="text-sm text-warning-600 dark:text-warning-400">
-                  Complete your feedback to help your colleagues grow
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/performance/360-feedback"
-              className="px-4 py-2 bg-warning-600 hover:bg-warning-700 dark:bg-warning-700 dark:hover:bg-warning-600 text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              Review Now
-            </Link>
-          </div>
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1
+            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] skeuo-emboss">Performance
+            Management</h1>
+          <p className="text-body-muted mt-1 skeuo-deboss">
+            Track goals, conduct reviews, and manage employee performance
+          </p>
         </div>
-      )}
 
-      {/* Module Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {performanceModules.map((module) => {
-          // Determine permission gate per module
-          let permission: string | null = null;
-          switch (module.id) {
-            case 'goals':
-            case 'okr':
-              // Goals and OKRs are self-service — no permission gate required
-              permission = null;
-              break;
-            case 'reviews':
-              permission = Permissions.REVIEW_VIEW;
-              break;
-            case '360-feedback':
-              permission = Permissions.FEEDBACK_360_VIEW;
-              break;
-            case 'feedback':
-              permission = Permissions.FEEDBACK_CREATE;
-              break;
-            case 'cycles':
-              permission = Permissions.REVIEW_VIEW;
-              break;
-            case 'pip':
-              permission = Permissions.PIP_VIEW;
-              break;
-            case 'calibration':
-              permission = Permissions.CALIBRATION_VIEW;
-              break;
-            case '9box':
-              permission = Permissions.REVIEW_VIEW;
-              break;
-            case 'competency-matrix':
-              permission = Permissions.REVIEW_VIEW;
-              break;
-            default:
-              permission = null;
-          }
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {loading ? (
+            <>
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
+              <SkeletonStatCard/>
+            </>
+          ) : (
+            <>
+              <StatCard
+                title="Active Goals"
+                value={stats.activeGoals}
+                subtitle={`${stats.completedGoals} completed`}
+                icon={Flag}
+                color="bg-accent-500"
+              />
+              <StatCard
+                title="Goal Progress"
+                value={`${stats.averageProgress}%`}
+                subtitle="Average across all goals"
+                icon={TrendingUp}
+                color="bg-success-500"
+              />
+              <StatCard
+                title="OKR Objectives"
+                value={stats.okrObjectives}
+                subtitle={`${stats.okrProgress}% progress`}
+                icon={SlidersHorizontal}
+                color="bg-accent-700"
+              />
+              <StatCard
+                title="Pending Reviews"
+                value={stats.pending360Reviews}
+                subtitle="360 feedback requests"
+                icon={Clock}
+                color="bg-warning-500"
+              />
+            </>
+          )}
+        </div>
 
-          const CardLink = (
-            <Link
-              href={module.href}
-              aria-label={`Go to ${module.title} management`}
-              className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all duration-200 overflow-hidden skeuo-card"
-            >
-              <div className="p-4">
-                <div className="flex items-start gap-4">
-                  <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
-                    <module.icon className={`h-5 w-5 ${module.textColor}`} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
-                      {module.title}
-                    </h3>
-                    <p className="text-caption mt-0.5">{module.description}</p>
-                  </div>
+        {/* Quick Actions */}
+        {stats.pending360Reviews > 0 && (
+          <div className="mb-8 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
+            <div className="row-between">
+              <div className="flex items-center gap-4">
+                <div className='p-2 bg-status-warning-bg rounded-lg'>
+                  <Clock className='h-5 w-5 text-status-warning-text'/>
+                </div>
+                <div>
+                  <p className='font-medium text-status-warning-text'>
+                    You have {stats.pending360Reviews} pending 360 feedback request(s)
+                  </p>
+                  <p className='text-sm text-status-warning-text'>
+                    Complete your feedback to help your colleagues grow
+                  </p>
                 </div>
               </div>
-              <div className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`} />
-            </Link>
-          );
+              <Link
+                href="/performance/360-feedback"
+                className='px-4 py-2 bg-status-warning-bg hover:bg-status-warning-bg text-inverse rounded-lg text-sm font-medium transition-colors'
+              >
+                Review Now
+              </Link>
+            </div>
+          </div>
+        )}
 
-          if (permission) {
-            return (
-              <PermissionGate key={module.id} permission={permission} fallback={null}>
-                {CardLink}
-              </PermissionGate>
+        {/* Module Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {performanceModules.map((module) => {
+            // Determine permission gate per module
+            let permission: string | null = null;
+            switch (module.id) {
+              case 'goals':
+              case 'okr':
+                // Goals and OKRs are self-service — no permission gate required
+                permission = null;
+                break;
+              case 'reviews':
+                permission = Permissions.REVIEW_VIEW;
+                break;
+              case '360-feedback':
+                permission = Permissions.FEEDBACK_360_VIEW;
+                break;
+              case 'feedback':
+                permission = Permissions.FEEDBACK_CREATE;
+                break;
+              case 'cycles':
+                permission = Permissions.REVIEW_VIEW;
+                break;
+              case 'pip':
+                permission = Permissions.PIP_VIEW;
+                break;
+              case 'calibration':
+                permission = Permissions.CALIBRATION_VIEW;
+                break;
+              case '9box':
+                permission = Permissions.REVIEW_VIEW;
+                break;
+              case 'competency-matrix':
+                permission = Permissions.REVIEW_VIEW;
+                break;
+              default:
+                permission = null;
+            }
+
+            const CardLink = (
+              <Link
+                href={module.href}
+                aria-label={`Go to ${module.title} management`}
+                className="group card-interactive rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all duration-200 overflow-hidden skeuo-card"
+              >
+                <div className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className={`p-2.5 rounded-lg ${module.lightColor}`}>
+                      <module.icon className={`h-5 w-5 ${module.textColor}`}/>
+                    </div>
+                    <div className="flex-1">
+                      <h3
+                        className='text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] group-hover:text-accent transition-colors'>
+                        {module.title}
+                      </h3>
+                      <p className="text-caption mt-0.5">{module.description}</p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={`h-1 ${module.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`}/>
+              </Link>
             );
-          }
 
-          return <div key={module.id}>{CardLink}</div>;
-        })}
-      </div>
+            if (permission) {
+              return (
+                <PermissionGate key={module.id} permission={permission} fallback={null}>
+                  {CardLink}
+                </PermissionGate>
+              );
+            }
 
-      {/* Getting Started Section */}
-      <div className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
-        <h2 className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting Started</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
-            <CheckCircle className="h-6 w-6 text-accent-600 dark:text-accent-400 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
-            <p className="text-body-secondary mt-1">
-              Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
-            </p>
-          </div>
-          <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
-            <MessageSquare className="h-6 w-6 text-success-600 dark:text-success-400 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
-            <p className="text-body-secondary mt-1">
-              Continuous feedback helps improve performance year-round
-            </p>
-          </div>
-          <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
-            <BarChart3 className="h-6 w-6 text-accent-800 dark:text-accent-600 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
-            <p className="text-body-secondary mt-1">
-              Update your goals and OKRs regularly to stay on track
-            </p>
+            return <div key={module.id}>{CardLink}</div>;
+          })}
+        </div>
+
+        {/* Getting Started Section */}
+        <div
+          className="mt-6 skeuo-card rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4">
+          <h2
+            className="text-base font-semibold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mb-4 skeuo-emboss">Getting
+            Started</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
+              <CheckCircle className='h-6 w-6 text-accent mb-2'/>
+              <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
+              <p className="text-body-secondary mt-1">
+                Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
+              </p>
+            </div>
+            <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
+              <MessageSquare className='h-6 w-6 text-status-success-text mb-2'/>
+              <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
+              <p className="text-body-secondary mt-1">
+                Continuous feedback helps improve performance year-round
+              </p>
+            </div>
+            <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
+              <BarChart3 className='h-6 w-6 text-accent mb-2'/>
+              <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
+              <p className="text-body-secondary mt-1">
+                Update your goals and OKRs regularly to stay on track
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </AppLayout>
   );
 }

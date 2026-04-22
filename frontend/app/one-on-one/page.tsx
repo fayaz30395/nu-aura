@@ -234,7 +234,7 @@ function StatCard({
           {subtitle && <p className="text-caption mt-1">{subtitle}</p>}
         </div>
         <div className={`p-2 rounded-lg ${color}`}>
-          <Icon className="h-5 w-5 text-white"/>
+          <Icon className='h-5 w-5 text-inverse'/>
         </div>
       </div>
     </div>
@@ -573,7 +573,7 @@ export default function OneOnOnePage() {
                           href={meeting.meetingLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:underline"
+                          className='flex items-center gap-1 text-accent hover:underline'
                         >
                           <Video className="h-4 w-4"/> Join
                         </a>
@@ -599,7 +599,7 @@ export default function OneOnOnePage() {
                           <button
                             onClick={handleStartMeeting}
                             disabled={startMutation.isPending}
-                            className="flex items-center gap-1 px-4 py-1.5 text-sm bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='flex items-center gap-1 px-4 py-1.5 text-sm bg-status-success-bg hover:bg-status-success-bg text-inverse rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           >
                             <Play className="h-3.5 w-3.5"/> Start
                           </button>
@@ -608,7 +608,7 @@ export default function OneOnOnePage() {
                       <PermissionGate permission={Permissions.MEETING_CREATE}>
                         <button
                           onClick={() => setShowCompleteModal(true)}
-                          className="flex items-center gap-1 px-4 py-1.5 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                          className='flex items-center gap-1 px-4 py-1.5 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors'
                         >
                           <CheckCircle2 className="h-3.5 w-3.5"/> Complete
                         </button>
@@ -621,7 +621,7 @@ export default function OneOnOnePage() {
                       </button>
                       <button
                         onClick={() => setShowCancelModal(true)}
-                        className="flex items-center gap-1 px-4 py-1.5 text-sm border border-danger-300 text-danger-600 dark:text-danger-400 rounded-lg hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors"
+                        className='flex items-center gap-1 px-4 py-1.5 text-sm border border-status-danger-border text-status-danger-text rounded-lg hover:bg-status-danger-bg transition-colors'
                       >
                         <Ban className="h-3.5 w-3.5"/> Cancel
                       </button>
@@ -658,7 +658,7 @@ export default function OneOnOnePage() {
                         {isActive && (
                           <button
                             onClick={() => setShowAgendaForm(!showAgendaForm)}
-                            className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
+                            className='flex items-center gap-1 text-sm text-accent hover:underline'
                           >
                             <Plus className="h-4 w-4"/> Add Point
                           </button>
@@ -677,7 +677,7 @@ export default function OneOnOnePage() {
                               />
                               {agendaForm.formState.errors.title && (
                                 <p
-                                  className="text-xs text-danger-500 mt-1">{agendaForm.formState.errors.title.message}</p>
+                                  className='text-xs text-status-danger-text mt-1'>{agendaForm.formState.errors.title.message}</p>
                               )}
                             </div>
                             <textarea
@@ -715,7 +715,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={addAgendaMutation.isPending}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                               >
                                 {addAgendaMutation.isPending ? 'Adding...' : 'Add'}
                               </button>
@@ -763,9 +763,9 @@ export default function OneOnOnePage() {
                                 className="mt-0.5 flex-shrink-0"
                               >
                                 {item.isDiscussed ? (
-                                  <CheckCircle2 className="h-5 w-5 text-success-600"/>
+                                  <CheckCircle2 className='h-5 w-5 text-status-success-text'/>
                                 ) : (
-                                  <CircleDot className="h-5 w-5 text-[var(--text-muted)] hover:text-accent-700"/>
+                                  <CircleDot className='h-5 w-5 text-[var(--text-muted)] hover:text-accent'/>
                                 )}
                               </button>
                               <div className="flex-1 min-w-0">
@@ -791,14 +791,14 @@ export default function OneOnOnePage() {
                                 )}
                                 {item.discussionNotes && (
                                   <p
-                                    className="text-xs text-success-700 dark:text-success-400 mt-1 italic">{item.discussionNotes}</p>
+                                    className='text-xs text-status-success-text mt-1 italic'>{item.discussionNotes}</p>
                                 )}
                                 <span className="text-caption">Added by {item.addedBy?.toLowerCase()}</span>
                               </div>
                               {isActive && !item.isDiscussed && (
                                 <button
                                   onClick={() => setDeleteAgendaItem({meetingId: selectedMeetingId!, itemId: item.id})}
-                                  className="text-[var(--text-muted)] hover:text-danger-500 transition-colors"
+                                  className='text-[var(--text-muted)] hover:text-status-danger-text transition-colors'
                                 >
                                   <Trash2 className="h-4 w-4"/>
                                 </button>
@@ -819,7 +819,7 @@ export default function OneOnOnePage() {
                           <PermissionGate permission={Permissions.MEETING_CREATE}>
                             <button
                               onClick={() => setShowActionForm(!showActionForm)}
-                              className="flex items-center gap-1 text-sm text-accent-700 dark:text-accent-400 hover:underline"
+                              className='flex items-center gap-1 text-sm text-accent hover:underline'
                             >
                               <Plus className="h-4 w-4"/> Add Action
                             </button>
@@ -837,7 +837,8 @@ export default function OneOnOnePage() {
                               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             {actionForm.formState.errors.title && (
-                              <p className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
+                              <p
+                                className='text-xs text-status-danger-text'>{actionForm.formState.errors.title.message}</p>
                             )}
                             <textarea
                               {...actionForm.register('description')}
@@ -853,7 +854,7 @@ export default function OneOnOnePage() {
                               />
                               {actionForm.formState.errors.assigneeId && (
                                 <p
-                                  className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
+                                  className='text-xs text-status-danger-text col-span-2'>{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
                                 {...actionForm.register('assigneeRole')}
@@ -883,7 +884,7 @@ export default function OneOnOnePage() {
                               <button
                                 type="submit"
                                 disabled={createActionMutation.isPending}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                               >
                                 {createActionMutation.isPending ? 'Adding...' : 'Add Action'}
                               </button>
@@ -923,7 +924,7 @@ export default function OneOnOnePage() {
                                   </span>
                                   {item.isOverdue && (
                                     <span
-                                      className="text-xs px-1.5 py-0.5 rounded-full bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400 font-medium">
+                                      className='text-xs px-1.5 py-0.5 rounded-full bg-status-danger-bg text-status-danger-text font-medium'>
                                       Overdue
                                     </span>
                                   )}
@@ -961,7 +962,7 @@ export default function OneOnOnePage() {
                                         data: {status: 'COMPLETED'},
                                       })
                                     }
-                                    className="text-xs px-2 py-1 rounded bg-success-600 text-white hover:bg-success-700 transition-colors"
+                                    className='text-xs px-2 py-1 rounded bg-status-success-bg text-inverse hover:bg-status-success-bg transition-colors'
                                     title="Mark Complete"
                                   >
                                     <Check className="h-3 w-3"/>
@@ -1007,7 +1008,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleSaveNotes}
                         disabled={updateNotesMutation.isPending}
-                        className="flex items-center gap-1 px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex items-center gap-1 px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         <Send className="h-3.5 w-3.5"/>
                         {updateNotesMutation.isPending ? 'Saving...' : 'Save Notes'}
@@ -1083,7 +1084,7 @@ export default function OneOnOnePage() {
                                 <button
                                   type="submit"
                                   disabled={submitFeedbackMutation.isPending}
-                                  className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                 >
                                   {submitFeedbackMutation.isPending ? 'Submitting...' : 'Submit Feedback'}
                                 </button>
@@ -1102,7 +1103,7 @@ export default function OneOnOnePage() {
                               <p className="text-[var(--text-muted)] mb-4">No feedback submitted yet.</p>
                               <button
                                 onClick={() => setShowFeedbackForm(true)}
-                                className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors"
+                                className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors'
                               >
                                 Submit Feedback
                               </button>
@@ -1146,7 +1147,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCancelMeeting}
                         disabled={!cancelReason || cancelMutation.isPending}
-                        className="px-4 py-2 text-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='px-4 py-2 text-sm bg-status-danger-bg hover:bg-status-danger-bg text-inverse rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Meeting'}
                       </button>
@@ -1194,7 +1195,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleRescheduleMeeting}
                         disabled={!rescheduleDate || !rescheduleTime || rescheduleMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {rescheduleMutation.isPending ? 'Rescheduling...' : 'Reschedule'}
                       </button>
@@ -1228,7 +1229,7 @@ export default function OneOnOnePage() {
                       <button
                         onClick={handleCompleteMeeting}
                         disabled={completeMutation.isPending}
-                        className="px-4 py-2 text-sm bg-accent-700 hover:bg-accent-800 text-white rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-inverse rounded-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {completeMutation.isPending ? 'Completing...' : 'Complete'}
                       </button>
@@ -1239,7 +1240,6 @@ export default function OneOnOnePage() {
             </>
           )}
         </div>
-
         {/* Delete Agenda Item Confirm Dialog */}
         <ConfirmDialog
           isOpen={deleteAgendaItem !== null}
@@ -1293,7 +1293,7 @@ export default function OneOnOnePage() {
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.title && (
-                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.title.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{scheduleForm.formState.errors.title.message}</p>
                 )}
               </div>
 
@@ -1307,7 +1307,8 @@ export default function OneOnOnePage() {
                   className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 {scheduleForm.formState.errors.employeeId && (
-                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
+                  <p
+                    className='text-xs text-status-danger-text mt-1'>{scheduleForm.formState.errors.employeeId.message}</p>
                 )}
               </div>
 
@@ -1332,7 +1333,8 @@ export default function OneOnOnePage() {
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.meetingDate && (
-                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.meetingDate.message}</p>
+                    <p
+                      className='text-xs text-status-danger-text mt-1'>{scheduleForm.formState.errors.meetingDate.message}</p>
                   )}
                 </div>
                 <div>
@@ -1343,7 +1345,8 @@ export default function OneOnOnePage() {
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                   />
                   {scheduleForm.formState.errors.startTime && (
-                    <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.startTime.message}</p>
+                    <p
+                      className='text-xs text-status-danger-text mt-1'>{scheduleForm.formState.errors.startTime.message}</p>
                   )}
                 </div>
                 <div>
@@ -1402,7 +1405,7 @@ export default function OneOnOnePage() {
                   <input
                     type="checkbox"
                     {...scheduleForm.register('isRecurring')}
-                    className="h-4 w-4 rounded border-surface-300 text-accent-700 focus:ring-accent-700"
+                    className='h-4 w-4 rounded border-subtle text-accent focus:ring-accent-700'
                   />
                   <span className="text-sm font-medium text-[var(--text-primary)]">Make this a recurring meeting</span>
                 </label>
@@ -1437,7 +1440,7 @@ export default function OneOnOnePage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 text-sm font-medium bg-accent-700 hover:bg-accent-800 text-white rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-inverse rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {createMutation.isPending ? 'Scheduling...' : 'Schedule Meeting'}
                 </button>
@@ -1479,7 +1482,7 @@ export default function OneOnOnePage() {
           <PermissionGate permission={Permissions.MEETING_CREATE}>
             <button
               onClick={() => setView('schedule')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
+              className='flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-hover text-inverse text-sm font-medium rounded-lg transition-colors'
             >
               <Plus className="h-4 w-4"/> Schedule Meeting
             </button>
@@ -1533,14 +1536,14 @@ export default function OneOnOnePage() {
         {(overdueActionsQuery.data?.length || 0) > 0 && (
           <div className="mb-6 p-4 tint-orange border border-[var(--status-warning-border)] rounded-lg">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-warning-100 dark:bg-warning-900/40 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+              <div className='p-2 bg-status-warning-bg rounded-lg'>
+                <AlertCircle className='h-5 w-5 text-status-warning-text'/>
               </div>
               <div>
-                <p className="font-medium text-warning-800 dark:text-warning-300">
+                <p className='font-medium text-status-warning-text'>
                   You have {overdueActionsQuery.data?.length} overdue action item(s)
                 </p>
-                <p className="text-sm text-warning-600 dark:text-warning-400">
+                <p className='text-sm text-status-warning-text'>
                   Review and complete your pending action items
                 </p>
               </div>
@@ -1621,7 +1624,7 @@ export default function OneOnOnePage() {
                     className="w-full text-left p-4 hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-4"
                   >
                     <div
-                      className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400">
+                      className='hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-accent-subtle text-accent'>
                       <span className="text-xs font-medium uppercase">
                         {new Date(m.meetingDate + 'T00:00:00').toLocaleDateString('en-US', {month: 'short'})}
                       </span>

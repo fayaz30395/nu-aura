@@ -23,7 +23,7 @@ export default function OkrRedirectPage() {
         {showFallback && (
           <Link
             href="/performance/okr"
-            className="mt-4 inline-block text-sm text-accent-700 dark:text-accent-400 hover:underline cursor-pointer"
+            className='mt-4 inline-block text-sm text-accent hover:underline cursor-pointer'
           >
             Click here if not redirected
           </Link>

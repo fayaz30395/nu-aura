@@ -89,10 +89,10 @@ export default function ContractTemplatesPage() {
         {/* Templates Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center p-16">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           </div>
         ) : isError ? (
-          <div className="text-center p-8 text-danger-500">
+          <div className='text-center p-8 text-status-danger-text'>
             Failed to load templates. Please try refreshing the page.
           </div>
         ) : templates.length === 0 ? (
@@ -175,7 +175,6 @@ export default function ContractTemplatesPage() {
           </div>
         )}
       </div>
-
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         onClose={() => {

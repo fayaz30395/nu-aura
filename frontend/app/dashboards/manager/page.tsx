@@ -161,7 +161,8 @@ export default function ManagerDashboardPage() {
             <h1 className="text-xl font-bold skeuo-emboss">Team Dashboard</h1>
             <p className="text-[var(--text-secondary)] mt-1">Manager overview</p>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Team dashboard data is temporarily unavailable. Some metrics may not be displayed.
@@ -227,13 +228,13 @@ export default function ManagerDashboardPage() {
         <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <div className="h-1.5 w-1.5 rounded-full bg-accent-500 animate-pulse"/>
+              <div className='h-1.5 w-1.5 rounded-full bg-accent animate-pulse'/>
               <span
-                className="text-2xs font-bold uppercase tracking-wider text-accent-700 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Live Insights</span>
+                className='text-2xs font-bold uppercase tracking-wider text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>Live Insights</span>
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
               Team <span
-              className="text-transparent bg-clip-text bg-gradient-to-r from-accent-700 to-accent-600 dark:from-accent-400 dark:to-accent-400 skeuo-emboss">Pulse</span>
+              className='text-transparent bg-clip-text bg-gradient-to-r from-accent-700 to-accent-600 skeuo-emboss'>Pulse</span>
             </h1>
             <p className="text-[var(--text-secondary)] mt-1 text-sm">
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
@@ -246,7 +247,8 @@ export default function ManagerDashboardPage() {
                 : 'bg-warning-500/10 border-warning-500/20 text-warning-700 dark:text-warning-400'
               }`}>
               <Activity className="h-4 w-4"/>
-              <span className="font-bold">Health: {teamOverview.teamHealthStatus ? teamOverview.teamHealthStatus.replace('_', ' ') : '-'}</span>
+              <span
+                className="font-bold">Health: {teamOverview.teamHealthStatus ? teamOverview.teamHealthStatus.replace('_', ' ') : '-'}</span>
             </div>
           </div>
         </motion.div>
@@ -258,18 +260,18 @@ export default function ManagerDashboardPage() {
               className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users
-                  className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-10 w-10 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-[var(--text-primary)]">{teamOverview.totalTeamSize}</span>
-                    <div className="h-6 w-0.5 rounded-full bg-accent-500"/>
+                    <div className='h-6 w-0.5 rounded-full bg-accent'/>
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Reports</span>
                       <span
-                        className="text-xs font-bold text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamOverview.directReports} Direct</span>
+                        className='text-xs font-bold text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
                 </div>
@@ -282,7 +284,7 @@ export default function ManagerDashboardPage() {
               className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <UserCheck
-                  className="h-10 w-10 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-10 w-10 text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -291,11 +293,11 @@ export default function ManagerDashboardPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="text-2xl font-black text-[var(--text-primary)]">{teamAttendance.presentToday}</span>
-                    <div className="h-6 w-0.5 rounded-full bg-success-500"/>
+                    <div className='h-6 w-0.5 rounded-full bg-status-success-bg'/>
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">On-Site</span>
                       <span
-                        className="text-xs font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamAttendance.workFromHomeToday} WFH</span>
+                        className='text-xs font-bold text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{teamAttendance.workFromHomeToday} WFH</span>
                     </div>
                   </div>
                 </div>
@@ -308,7 +310,7 @@ export default function ManagerDashboardPage() {
               className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Calendar
-                  className="h-10 w-10 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-10 w-10 text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -316,11 +318,11 @@ export default function ManagerDashboardPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="text-2xl font-black text-[var(--text-primary)]">{teamAttendance.onLeaveToday}</span>
-                    <div className="h-6 w-0.5 rounded-full bg-warning-500"/>
+                    <div className='h-6 w-0.5 rounded-full bg-status-warning-bg'/>
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Confirmed</span>
                       <span
-                        className="text-xs font-bold text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamLeave.pendingApprovals} Pending</span>
+                        className='text-xs font-bold text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{teamLeave.pendingApprovals} Pending</span>
                     </div>
                   </div>
                 </div>
@@ -333,7 +335,7 @@ export default function ManagerDashboardPage() {
               className="group border-0 shadow-[var(--shadow-dropdown)] bg-[var(--bg-card)] hover:shadow-[var(--shadow-dropdown)] transition-all duration-300 overflow-hidden relative skeuo-card max-h-[80px]">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Zap
-                  className="h-10 w-10 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-10 w-10 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <CardContent className="p-4">
                 <div className="flex flex-col gap-1">
@@ -341,11 +343,11 @@ export default function ManagerDashboardPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className="text-2xl font-black text-[var(--text-primary)]">{actionItems.totalActionItems}</span>
-                    <div className="h-6 w-0.5 rounded-full bg-accent-500"/>
+                    <div className='h-6 w-0.5 rounded-full bg-accent'/>
                     <div className="flex flex-col">
                       <span className="text-2xs font-bold text-[var(--text-muted)]">Total</span>
                       <span
-                        className="text-xs font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
+                        className='text-xs font-bold text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
                     </div>
                   </div>
                 </div>
@@ -365,7 +367,7 @@ export default function ManagerDashboardPage() {
                 <CardTitle className="row-between">
                   <div className="flex items-center gap-4">
                     <Activity
-                      className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                      className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                     <span className="text-sm">Attendance Flow</span>
                   </div>
                   <Badge variant="outline"
@@ -379,7 +381,7 @@ export default function ManagerDashboardPage() {
                       <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Weekly
                         Rate</p>
                       <span
-                        className="text-xl font-black text-accent-600 dark:text-accent-400 font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className='text-xl font-black text-accent font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                         {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
@@ -388,14 +390,15 @@ export default function ManagerDashboardPage() {
                         className="text-2xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-0.5">Stability</p>
                       <div className="flex items-center gap-2">
                         <span
-                          className="text-xl font-black text-success-600 dark:text-success-400 font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                          className='text-xl font-black text-status-success-text font-mono tracking-tighter cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                           {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
                         </span>
                         {teamAttendance.monthlyAttendanceChange !== 0 && (
                           <div
                             className={`p-1 rounded-full ${teamAttendance.monthlyAttendanceChange > 0 ? 'bg-success-500' : 'bg-danger-500'}`}>
-                            {teamAttendance.monthlyAttendanceChange > 0 ? <TrendingUp className="h-3 w-3 text-white"/> :
-                              <TrendingDown className="h-3 w-3 text-white"/>}
+                            {teamAttendance.monthlyAttendanceChange > 0 ?
+                              <TrendingUp className='h-3 w-3 text-inverse'/> :
+                              <TrendingDown className='h-3 w-3 text-inverse'/>}
                           </div>
                         )}
                       </div>
@@ -418,7 +421,7 @@ export default function ManagerDashboardPage() {
                 className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-4">
                   <Star
-                    className="h-4 w-4 text-warning-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    className='h-4 w-4 text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                   <span className="text-sm">Performance DNA</span>
                 </CardTitle>
               </CardHeader>
@@ -447,7 +450,7 @@ export default function ManagerDashboardPage() {
                         />
                       </div>
                       <div
-                        className="flex justify-between mt-1 font-bold text-xs text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className='flex justify-between mt-1 font-bold text-xs text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                         <span>{teamPerformance.goalCompletionRate?.toFixed(0)}% Completed</span>
                         <span>On Track</span>
                       </div>
@@ -473,18 +476,18 @@ export default function ManagerDashboardPage() {
                 <CardTitle className="row-between">
                   <div className="flex items-center gap-2">
                     <FileText
-                      className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                      className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                     <span className="text-sm">Approval Pipeline</span>
                   </div>
                   <Badge
-                    className="bg-accent-500/10 text-accent-700 dark:text-accent-400 border-accent-500/20 text-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                    className='bg-accent-500/10 text-accent border-accent-500/20 text-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                     {teamLeave.pendingLeaveRequests.length} Active
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div
-                  className="divide-y divide-surface-200/50 dark:divide-surface-700/50 max-h-[220px] overflow-y-auto">
+                  className='divide-y divide-surface-200/50 max-h-[220px] overflow-y-auto'>
                   {teamLeave.pendingLeaveRequests.slice(0, 5).map((leave) => (
                     <div
                       key={leave.requestId}
@@ -493,15 +496,15 @@ export default function ManagerDashboardPage() {
                       <div className="row-between">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
+                            className='h-7 w-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-inverse flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]'>
                             {leave.employeeName?.charAt(0)}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <span
-                                className="font-bold text-xs text-[var(--text-primary)] group-hover:text-accent-500 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{leave.employeeName}</span>
+                                className='font-bold text-xs text-[var(--text-primary)] group-hover:text-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{leave.employeeName}</span>
                               {leave.urgency === 'HIGH' && (
-                                <span className="animate-pulse flex h-1.5 w-1.5 rounded-full bg-danger-500"/>
+                                <span className='animate-pulse flex h-1.5 w-1.5 rounded-full bg-status-danger-bg'/>
                               )}
                             </div>
                             <p className="text-2xs font-bold text-[var(--text-muted)]">
@@ -521,7 +524,7 @@ export default function ManagerDashboardPage() {
                       <div
                         className="h-10 w-10 rounded-full bg-success-500/10 flex items-center justify-center mx-auto mb-2">
                         <CheckCircle
-                          className="h-5 w-5 text-success-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                          className='h-5 w-5 text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                       </div>
                       <p className="text-sm font-black text-[var(--text-primary)]">Clear Pipeline</p>
                       <p className="text-[var(--text-muted)] mt-0.5 text-xs font-bold">All approvals are up to date.</p>
@@ -539,7 +542,7 @@ export default function ManagerDashboardPage() {
                 className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 py-2.5 px-4">
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList
-                    className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                   <span className="text-sm">Immediate Acts</span>
                 </CardTitle>
               </CardHeader>
@@ -590,7 +593,7 @@ export default function ManagerDashboardPage() {
 
                   {(actionItems.overdueApprovals > 0 || actionItems.overdueReviews > 0) && (
                     <div
-                      className="mt-2 p-2 rounded-xl bg-danger-500/10 border border-danger-500/20 text-danger-600 dark:text-danger-400 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className='mt-2 p-2 rounded-xl bg-danger-500/10 border border-danger-500/20 text-status-danger-text flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                       <AlertCircle className="h-4 w-4 animate-bounce"/>
                       <div>
                         <p
@@ -612,7 +615,7 @@ export default function ManagerDashboardPage() {
               <CardTitle className="row-between">
                 <div className="flex items-center gap-2">
                   <FolderKanban
-                    className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                   <span className="text-sm">Team Projects & Allocations</span>
                 </div>
                 {teamProjectsData?.summary && (
@@ -620,10 +623,10 @@ export default function ManagerDashboardPage() {
                     <span>{teamProjectsData.summary.totalReports} Reports</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]"/>
                     <span
-                      className="text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamProjectsData.summary.allocatedCount} Allocated</span>
+                      className='text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{teamProjectsData.summary.allocatedCount} Allocated</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]"/>
                     <span
-                      className="text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{teamProjectsData.summary.unallocatedCount} Unallocated</span>
+                      className='text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{teamProjectsData.summary.unallocatedCount} Unallocated</span>
                     <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]"/>
                     <span>Avg: {teamProjectsData.summary.avgAllocation}%</span>
                   </div>
@@ -646,7 +649,7 @@ export default function ManagerDashboardPage() {
                   <div
                     className="h-14 w-14 rounded-full bg-accent-500/10 flex items-center justify-center mx-auto mb-4">
                     <Briefcase
-                      className="h-7 w-7 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                      className='h-7 w-7 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">Coming Soon</p>
                   <p className="text-[var(--text-muted)] mt-1 text-sm font-bold">
@@ -660,7 +663,7 @@ export default function ManagerDashboardPage() {
                 <div className="p-8 text-center">
                   <div
                     className="h-14 w-14 rounded-full bg-surface-500/10 flex items-center justify-center mx-auto mb-4">
-                    <FolderKanban className="h-7 w-7 text-surface-400"/>
+                    <FolderKanban className='h-7 w-7 text-muted'/>
                   </div>
                   <p className="text-base font-black text-[var(--text-primary)]">No Project Data</p>
                   <p className="text-[var(--text-muted)] mt-1 text-sm font-bold">
@@ -681,13 +684,13 @@ export default function ManagerDashboardPage() {
                       <div className="row-between mb-2">
                         <div className="flex items-center gap-4">
                           <div
-                            className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]">
+                            className='h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-inverse flex items-center justify-center font-black text-xs shadow-[var(--shadow-elevated)]'>
                             {member.employeeName?.charAt(0)}
                           </div>
                           <div>
                             <button
                               onClick={() => router.push(`/employees/${member.employeeId}`)}
-                              className="font-extrabold text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              className='font-extrabold text-[var(--text-primary)] hover:text-accent transition-colors text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             >
                               {member.employeeName}
                             </button>
@@ -700,14 +703,14 @@ export default function ManagerDashboardPage() {
                         <div className="flex items-center gap-4">
                           {member.isOverAllocated && (
                             <div
-                              className="flex items-center gap-1 text-xs font-black text-danger-600 dark:text-danger-400 bg-danger-500/10 px-2.5 py-1 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                              className='flex items-center gap-1 text-xs font-black text-status-danger-text bg-danger-500/10 px-2.5 py-1 rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                               <AlertTriangle className="h-3.5 w-3.5"/>
                               Over-allocated
                             </div>
                           )}
                           <div className="flex items-center gap-2">
                             <div
-                              className="w-24 h-2 rounded-full bg-[var(--bg-secondary)] dark:bg-surface-700 overflow-hidden">
+                              className='w-24 h-2 rounded-full bg-[var(--bg-secondary)] overflow-hidden'>
                               <div
                                 className={`h-full rounded-full transition-all duration-500 ${getAllocationColor(member.totalAllocation)}`}
                                 style={{width: `${Math.min(member.totalAllocation, 100)}%`}}
@@ -734,7 +737,7 @@ export default function ManagerDashboardPage() {
                                   className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${priorityDotColor[project.projectPriority] || 'bg-surface-400'}`}/>
                                 <button
                                   onClick={() => router.push(`/projects/${project.projectId}`)}
-                                  className="font-bold text-sm text-[var(--text-primary)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                  className='font-bold text-sm text-[var(--text-primary)] hover:text-accent transition-colors flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                 >
                                   {project.projectName}
                                   <ExternalLink
@@ -778,12 +781,12 @@ export default function ManagerDashboardPage() {
               exit={{height: 0, opacity: 0}}
             >
               <Card
-                className="border-0 shadow-[var(--shadow-elevated)] bg-danger-50 dark:bg-danger-950 overflow-hidden">
+                className='border-0 shadow-[var(--shadow-elevated)] bg-status-danger-bg overflow-hidden'>
                 <CardContent className="p-4">
                   <div className="row-between mb-2">
                     <div className="flex items-center gap-2">
                       <div
-                        className="h-7 w-7 rounded-lg bg-danger-500 text-white flex items-center justify-center shadow-[var(--shadow-elevated)]">
+                        className='h-7 w-7 rounded-lg bg-status-danger-bg text-inverse flex items-center justify-center shadow-[var(--shadow-elevated)]'>
                         <AlertTriangle className="h-4 w-4"/>
                       </div>
                       <h2 className="text-sm font-black text-[var(--text-primary)] tracking-tight">System Alerts</h2>
@@ -793,7 +796,8 @@ export default function ManagerDashboardPage() {
                     {teamAlerts.slice(0, 3).map((alert) => (
                       <div key={alert.id} className="p-4 rounded-xl bg-[var(--glass-bg)] border border-danger-500/10">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge className="bg-danger-500 text-white font-black px-1.5 py-0 text-2xs">CRITICAL</Badge>
+                          <Badge
+                            className='bg-status-danger-bg text-inverse font-black px-1.5 py-0 text-2xs'>CRITICAL</Badge>
                           <span
                             className="text-2xs font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
                         </div>
@@ -803,7 +807,7 @@ export default function ManagerDashboardPage() {
                         <div
                           className="mt-2 pt-2 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 row-between">
                           <span
-                            className="text-2xs font-black uppercase text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Action: {alert.actionRequired}</span>
+                            className='text-2xs font-black uppercase text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>Action: {alert.actionRequired}</span>
                           <Button variant="ghost" size="sm" className="font-black text-2xs h-6 px-2">RESOLVE</Button>
                         </div>
                       </div>
@@ -822,34 +826,34 @@ export default function ManagerDashboardPage() {
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <Target
-                  className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                 Team Goals
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 pt-0">
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="p-2 bg-success-50 dark:bg-success-900/20 rounded-lg text-center">
+                  <div className='p-2 bg-status-success-bg rounded-lg text-center'>
                     <p
-                      className="text-lg font-bold text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className='text-lg font-bold text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                       {teamPerformance.goalsOnTrack}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
                       On Track
                     </p>
                   </div>
-                  <div className="p-2 bg-warning-50 dark:bg-warning-900/20 rounded-lg text-center">
+                  <div className='p-2 bg-status-warning-bg rounded-lg text-center'>
                     <p
-                      className="text-lg font-bold text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className='text-lg font-bold text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                       {teamPerformance.goalsAtRisk}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
                       At Risk
                     </p>
                   </div>
-                  <div className="p-2 bg-accent-50 dark:bg-accent-900/20 rounded-lg text-center">
+                  <div className='p-2 bg-accent-subtle rounded-lg text-center'>
                     <p
-                      className="text-lg font-bold text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                      className='text-lg font-bold text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                       {teamPerformance.goalsCompleted}
                     </p>
                     <p className="text-2xs text-[var(--text-secondary)]">
@@ -869,7 +873,7 @@ export default function ManagerDashboardPage() {
                   </div>
                   <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                     <div
-                      className="bg-accent-600 h-2 rounded-full transition-all"
+                      className='bg-accent h-2 rounded-full transition-all'
                       style={{width: `${teamPerformance.goalCompletionRate}%`}}
                     />
                   </div>
@@ -883,7 +887,7 @@ export default function ManagerDashboardPage() {
             <CardHeader className="py-2.5 px-4">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <Users
-                  className="h-4 w-4 text-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                 Engagement & Feedback
               </CardTitle>
             </CardHeader>
@@ -905,7 +909,7 @@ export default function ManagerDashboardPage() {
                     </span>
                     {teamPerformance.oneOnOnesOverdue > 0 && (
                       <span
-                        className="text-danger-600 dark:text-danger-400 flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className='text-status-danger-text flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                         <AlertCircle className="h-3 w-3"/>
                         {teamPerformance.oneOnOnesOverdue} overdue
                       </span>
@@ -925,9 +929,9 @@ export default function ManagerDashboardPage() {
                   {teamPerformance.pendingFeedbackRequests > 0 && (
                     <div className="flex items-center gap-1 text-2xs mt-0.5">
                       <Clock
-                        className="h-3 w-3 text-warning-600 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                        className='h-3 w-3 text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                       <span
-                        className="text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                        className='text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                         {teamPerformance.pendingFeedbackRequests} pending
                       </span>
                     </div>

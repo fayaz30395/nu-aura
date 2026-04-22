@@ -247,7 +247,6 @@ export default function TicketDetailPage() {
         cancelText="Cancel"
         type="danger"
       />
-
       <ConfirmDialog
         isOpen={!!commentToDelete}
         onClose={() => setCommentToDelete(null)}
@@ -258,7 +257,6 @@ export default function TicketDetailPage() {
         cancelText="Cancel"
         type="danger"
       />
-
       <div className="space-y-6">
         {/* Back Navigation */}
         <div className="flex items-center gap-4">
@@ -272,7 +270,7 @@ export default function TicketDetailPage() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-4 mb-2">
-              <span className="text-sm font-mono text-accent-700 dark:text-accent-400">
+              <span className='text-sm font-mono text-accent'>
                 {ticket.ticketNumber || ticket.id.slice(0, 8)}
               </span>
               <Badge variant={statusCfg.variant} size="sm">
@@ -336,10 +334,10 @@ export default function TicketDetailPage() {
 
             {/* Escalations */}
             {escalations.length > 0 && (
-              <Card className="p-6 border-warning-200 dark:border-warning-800 bg-warning-50/50 dark:bg-warning-950/10">
+              <Card className='p-6 border-status-warning-border bg-warning-50/50'>
                 <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="h-4 w-4 text-warning-600"/>
-                  <h3 className="text-sm font-semibold text-warning-800 dark:text-warning-300">
+                  <AlertTriangle className='h-4 w-4 text-status-warning-text'/>
+                  <h3 className='text-sm font-semibold text-status-warning-text'>
                     Escalations ({escalations.length})
                   </h3>
                 </div>
@@ -411,7 +409,7 @@ export default function TicketDetailPage() {
                       className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                       {...register('comment')}
                     />
-                    {errors.comment && <p className="text-sm text-danger-500">{errors.comment.message}</p>}
+                    {errors.comment && <p className='text-sm text-status-danger-text'>{errors.comment.message}</p>}
                     <div className="row-between">
                       <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
                         <label className="flex items-center gap-2 text-body-secondary">
@@ -584,8 +582,8 @@ function CommentItem({comment, currentUserId, onDelete, formatDate}: CommentItem
     <div
       className={`flex gap-4 ${comment.isInternal ? 'bg-warning-50/50 dark:bg-warning-950/10 -mx-2 px-2 py-2 rounded-lg border border-warning-200/50 dark:border-warning-800/30' : ''}`}>
       <div
-        className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
-        <User className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
+        className='h-8 w-8 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+        <User className='h-4 w-4 text-accent'/>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
@@ -602,7 +600,7 @@ function CommentItem({comment, currentUserId, onDelete, formatDate}: CommentItem
         {isOwn && (
           <button
             onClick={() => onDelete(comment.id)}
-            className="text-caption hover:text-danger-500 mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='text-caption hover:text-status-danger-text mt-1 flex items-center gap-1 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             aria-label="Delete comment"
           >
             <Trash2 className="h-3 w-3"/>

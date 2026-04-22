@@ -14,7 +14,6 @@ export default function GanttLoading() {
           <div className="h-9 w-24 bg-[var(--bg-surface)] rounded-md"/>
         </div>
       </div>
-
       {/* Gantt chart container */}
       <div className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg overflow-hidden">
         {/* Timeline header */}
@@ -44,7 +43,7 @@ export default function GanttLoading() {
             {/* Timeline bar column */}
             <div className="flex-1 relative p-2 flex items-center">
               <div
-                className="h-6 bg-info-100 rounded absolute"
+                className='h-6 bg-status-info-bg rounded absolute'
                 style={{
                   left: `${10 + (i * 7) % 40}%`,
                   width: `${15 + (i * 11) % 35}%`,

@@ -20,11 +20,11 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'SUCCESS':
-        return <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400"/>;
+        return <CheckCircle2 className='h-5 w-5 text-status-success-text'/>;
       case 'FAILED':
-        return <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>;
+        return <XCircle className='h-5 w-5 text-status-danger-text'/>;
       case 'SKIPPED':
-        return <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>;
+        return <AlertCircle className='h-5 w-5 text-status-warning-text'/>;
       default:
         return null;
     }
@@ -54,7 +54,7 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
   if (isLoading && !data) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-accent-700"/>
+        <Loader2 className='h-6 w-6 animate-spin text-accent'/>
       </div>
     );
   }
@@ -89,7 +89,6 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
           </Button>
         ))}
       </div>
-
       {/* Events Table */}
       <div className="rounded-lg border border-[var(--border-main)] overflow-hidden">
         <table className="w-full text-sm">
@@ -138,17 +137,15 @@ export function IntegrationActivityLog({connectorId, pageSize = 20}: Integration
           </tbody>
         </table>
       </div>
-
       {/* Error Message */}
       {data.content.some((e: IntegrationEventLog) => e.status === 'FAILED') && (
         <div
-          className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
-          <p className="text-sm text-danger-700 dark:text-danger-300">
+          className='p-4 rounded-lg bg-status-danger-bg border border-status-danger-border'>
+          <p className='text-sm text-status-danger-text'>
             Some events failed. Check error messages above for details.
           </p>
         </div>
       )}
-
       {/* Pagination */}
       {data.totalPages > 1 && (
         <div className="row-between pt-4">

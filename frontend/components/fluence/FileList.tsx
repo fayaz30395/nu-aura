@@ -76,10 +76,9 @@ export function FileList({attachments, onDelete, isDeleting, className}: FileLis
             className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
           >
             <div
-              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
-              <IconComponent className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+              <IconComponent className='h-5 w-5 text-accent'/>
             </div>
-
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                 {attachment.fileName}
@@ -91,7 +90,6 @@ export function FileList({attachments, onDelete, isDeleting, className}: FileLis
                 )}
               </p>
             </div>
-
             <div className="flex items-center gap-1 flex-shrink-0">
               <Button
                 variant="ghost"
@@ -109,7 +107,7 @@ export function FileList({attachments, onDelete, isDeleting, className}: FileLis
                   onClick={() => onDelete(attachment.id)}
                   disabled={isDeleting}
                   title="Delete"
-                  className="p-2 text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-900/20"
+                  className='p-2 text-status-danger-text hover:text-status-danger-text hover:bg-status-danger-bg'
                 >
                   <Trash2 className="h-4 w-4"/>
                 </Button>

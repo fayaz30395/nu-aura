@@ -96,7 +96,7 @@ export default function SignupPage() {
   if (isSuccess) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4">
+        className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 py-12 px-4'>
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -121,8 +121,8 @@ export default function SignupPage() {
             <CardContent className="pt-8 pb-8 text-center space-y-4">
               <div className="flex justify-center">
                 <div
-                  className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-success-600 dark:text-success-400"/>
+                  className='w-16 h-16 rounded-full bg-status-success-bg flex items-center justify-center'>
+                  <CheckCircle2 className='w-8 h-8 text-status-success-text'/>
                 </div>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -147,7 +147,7 @@ export default function SignupPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 dark:from-surface-950 dark:via-surface-900 dark:to-accent-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+      className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-[var(--bg-surface)] to-accent-50 py-12 px-4 sm:px-6 lg:px-8 pattern-dots'>
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -178,9 +178,9 @@ export default function SignupPage() {
               {/* Error */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
-                  <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
+                  className='flex items-start gap-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-xl'>
+                  <AlertCircle className='w-5 h-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
+                  <p className='text-sm text-status-danger-text'>{error}</p>
                 </div>
               )}
 
@@ -210,7 +210,7 @@ export default function SignupPage() {
                     }`}
                   />
                   {errors.companyName && (
-                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.companyName.message}</p>
+                    <p className='text-xs text-status-danger-text'>{errors.companyName.message}</p>
                   )}
                 </div>
 
@@ -236,7 +236,7 @@ export default function SignupPage() {
                     />
                   </div>
                   {errors.companyCode && (
-                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.companyCode.message}</p>
+                    <p className='text-xs text-status-danger-text'>{errors.companyCode.message}</p>
                   )}
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function SignupPage() {
                       }`}
                     />
                     {errors.adminFirstName && (
-                      <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminFirstName.message}</p>
+                      <p className='text-xs text-status-danger-text'>{errors.adminFirstName.message}</p>
                     )}
                   </div>
                   <div className="space-y-1">
@@ -284,7 +284,7 @@ export default function SignupPage() {
                       }`}
                     />
                     {errors.adminLastName && (
-                      <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminLastName.message}</p>
+                      <p className='text-xs text-status-danger-text'>{errors.adminLastName.message}</p>
                     )}
                   </div>
                 </div>
@@ -311,7 +311,7 @@ export default function SignupPage() {
                     />
                   </div>
                   {errors.adminEmail && (
-                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.adminEmail.message}</p>
+                    <p className='text-xs text-status-danger-text'>{errors.adminEmail.message}</p>
                   )}
                 </div>
 
@@ -346,7 +346,7 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-danger-600 dark:text-danger-400">{errors.password.message}</p>
+                    <p className='text-xs text-status-danger-text'>{errors.password.message}</p>
                   )}
                 </div>
               </div>
@@ -364,11 +364,11 @@ export default function SignupPage() {
 
               <p className="text-xs text-center text-[var(--text-muted)]">
                 By creating an account, you agree to our{' '}
-                <Link href="/terms" className="text-accent-700 dark:text-accent-400 hover:underline">
+                <Link href="/terms" className='text-accent hover:underline'>
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-accent-700 dark:text-accent-400 hover:underline">
+                <Link href="/privacy" className='text-accent hover:underline'>
                   Privacy Policy
                 </Link>
               </p>
@@ -380,7 +380,7 @@ export default function SignupPage() {
           Already have an account?{' '}
           <Link
             href="/auth/login"
-            className="font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors"
+            className='font-medium text-accent hover:text-accent transition-colors'
           >
             Sign in
           </Link>

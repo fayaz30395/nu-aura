@@ -137,7 +137,7 @@ function ProgramCard({program}: {
             )}
             <div className="flex items-center gap-4 text-caption">
               <span
-                className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
+                className='bg-accent-subtle text-accent px-2 py-0.5 rounded-full font-medium'>
                 {CATEGORY_LABELS[program.category] ?? program.category}
               </span>
               <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">
@@ -284,10 +284,10 @@ function CreateProgramModal({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Program Name <span className="text-danger-500">*</span>
+                Program Name <span className='text-status-danger-text'>*</span>
               </label>
               <Input {...register('name')} placeholder="e.g. 30-Day Step Challenge"/>
-              {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
+              {errors.name && <p className='text-xs text-status-danger-text mt-1'>{errors.name.message}</p>}
             </div>
 
             <div>
@@ -300,7 +300,7 @@ function CreateProgramModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Type <span className="text-danger-500">*</span>
+                  Type <span className='text-status-danger-text'>*</span>
                 </label>
                 <Select {...register('programType')}>
                   {Object.entries(PROGRAM_TYPE_LABELS).map(([value, label]) => (
@@ -310,7 +310,7 @@ function CreateProgramModal({
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Category <span className="text-danger-500">*</span>
+                  Category <span className='text-status-danger-text'>*</span>
                 </label>
                 <Select {...register('category')}>
                   {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
@@ -356,7 +356,7 @@ function CreateProgramModal({
               </label>
               <Input {...register('externalLink')} type="url" placeholder="https://…"/>
               {errors.externalLink && (
-                <p className="text-xs text-danger-500 mt-1">{errors.externalLink.message}</p>
+                <p className='text-xs text-status-danger-text mt-1'>{errors.externalLink.message}</p>
               )}
             </div>
 
@@ -461,10 +461,10 @@ function CreateChallengeModal({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Challenge Name <span className="text-danger-500">*</span>
+                Challenge Name <span className='text-status-danger-text'>*</span>
               </label>
               <Input {...register('name')} placeholder="e.g. 10,000 Steps a Day"/>
-              {errors.name && <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>}
+              {errors.name && <p className='text-xs text-status-danger-text mt-1'>{errors.name.message}</p>}
             </div>
 
             <div>
@@ -477,7 +477,7 @@ function CreateChallengeModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Challenge Type <span className="text-danger-500">*</span>
+                  Challenge Type <span className='text-status-danger-text'>*</span>
                 </label>
                 <Select {...register('challengeType')}>
                   <option value="STEPS">Steps</option>
@@ -489,7 +489,7 @@ function CreateChallengeModal({
                   <option value="CUSTOM">Custom</option>
                 </Select>
                 {errors.challengeType && (
-                  <p className="text-xs text-danger-500 mt-1">{errors.challengeType.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{errors.challengeType.message}</p>
                 )}
               </div>
               <div>
@@ -503,20 +503,20 @@ function CreateChallengeModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Start Date <span className="text-danger-500">*</span>
+                  Start Date <span className='text-status-danger-text'>*</span>
                 </label>
                 <Input {...register('startDate')} type="date"/>
                 {errors.startDate && (
-                  <p className="text-xs text-danger-500 mt-1">{errors.startDate.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{errors.startDate.message}</p>
                 )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  End Date <span className="text-danger-500">*</span>
+                  End Date <span className='text-status-danger-text'>*</span>
                 </label>
                 <Input {...register('endDate')} type="date"/>
                 {errors.endDate && (
-                  <p className="text-xs text-danger-500 mt-1">{errors.endDate.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{errors.endDate.message}</p>
                 )}
               </div>
             </div>
@@ -660,8 +660,8 @@ export default function WellnessAdminPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900/30">
-                  <Heart className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <Heart className='h-5 w-5 text-accent'/>
                 </div>
                 <div>
                   <p className="text-caption">Active Programs</p>
@@ -671,8 +671,8 @@ export default function WellnessAdminPage() {
             </Card>
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900/30">
-                  <Target className="h-5 w-5 text-success-600 dark:text-success-400"/>
+                <div className='rounded-lg bg-status-success-bg p-4'>
+                  <Target className='h-5 w-5 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-caption">Active Challenges</p>
@@ -683,8 +683,8 @@ export default function WellnessAdminPage() {
             </Card>
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900/30">
-                  <Calendar className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+                <div className='rounded-lg bg-status-warning-bg p-4'>
+                  <Calendar className='h-5 w-5 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-caption">Upcoming Challenges</p>
@@ -716,7 +716,7 @@ export default function WellnessAdminPage() {
           {/* Content */}
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <RefreshCw className="h-6 w-6 animate-spin text-accent-500 mr-4"/>
+              <RefreshCw className='h-6 w-6 animate-spin text-accent mr-4'/>
               <span className="text-[var(--text-muted)]">Loading…</span>
             </div>
           ) : activeTab === 'programs' ? (

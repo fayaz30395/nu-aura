@@ -165,7 +165,8 @@ export default function PayrollRunsPage() {
   return (
     <AppLayout activeMenuItem="payroll">
       <PermissionGate permission={Permissions.PAYROLL_VIEW}
-                      fallback={<div className="p-6"><p className="text-danger-600">You do not have permission to view
+                      fallback={<div className="p-6"><p className='text-status-danger-text'>You do not have permission
+                        to view
                         payroll runs.</p></div>}>
         <motion.div
           className="p-6"
@@ -184,7 +185,7 @@ export default function PayrollRunsPage() {
             {/* Error Message */}
             {error && (
               <div
-                className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/40 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-300 rounded-lg">
+                className='mb-6 p-4 bg-status-danger-bg border border-status-danger-border text-status-danger-text rounded-lg'>
                 {error}
                 <button
                   onClick={() => setError(null)}

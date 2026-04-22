@@ -141,7 +141,7 @@ export default function NewOnboardingPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-2">
             <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)] skeuo-emboss">
-              Initiate <span className="text-accent-700">Onboarding</span>
+              Initiate <span className='text-accent'>Onboarding</span>
             </h1>
             <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of
               3: {steps[currentStep - 1].name}</p>
@@ -179,14 +179,14 @@ export default function NewOnboardingPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
-                    <User className="h-6 w-6 text-accent-500"/>
+                    <User className='h-6 w-6 text-accent'/>
                     <span>Candidate Selection</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
                   <div className="bg-accent-500/5 p-6 rounded-3xl border border-accent-500/10">
                     <label
-                      className="block text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-400 mb-4">
+                      className='block text-sm font-bold uppercase tracking-widest text-accent mb-4'>
                       Find Employee
                     </label>
                     <EmployeeSearchAutocomplete
@@ -203,7 +203,7 @@ export default function NewOnboardingPage() {
                     <div
                       className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-accent-500/10 animate-in fade-in slide-in-from-bottom-2">
                       <div
-                        className="h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-3xl shadow-[var(--shadow-dropdown)]">
+                        className='h-20 w-20 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 text-inverse flex items-center justify-center font-black text-3xl shadow-[var(--shadow-dropdown)]'>
                         {selectedEmployee.name.charAt(0)}
                       </div>
                       <div>
@@ -228,7 +228,7 @@ export default function NewOnboardingPage() {
               <Card className="lg:col-span-2 border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
-                    <ClipboardList className="h-6 w-6 text-accent-500"/>
+                    <ClipboardList className='h-6 w-6 text-accent'/>
                     <span>Checklist Template</span>
                   </CardTitle>
                 </CardHeader>
@@ -256,7 +256,7 @@ export default function NewOnboardingPage() {
                           </div>
                         </div>
                         {selectedTemplate?.id === temp.id && (
-                          <CheckCircle className="h-6 w-6 text-accent-500"/>
+                          <CheckCircle className='h-6 w-6 text-accent'/>
                         )}
                       </div>
                     ))}
@@ -267,7 +267,7 @@ export default function NewOnboardingPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)] bg-[var(--bg-card)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
-                    <Calendar className="h-6 w-6 text-success-500"/>
+                    <Calendar className='h-6 w-6 text-status-success-text'/>
                     <span>Timeline</span>
                   </CardTitle>
                 </CardHeader>
@@ -281,7 +281,7 @@ export default function NewOnboardingPage() {
                       className="rounded-lg border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] font-bold"
                     />
                     {errors.startDate && (
-                      <p className="text-xs text-danger-500 mt-1 font-medium">{errors.startDate.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1 font-medium'>{errors.startDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -308,18 +308,18 @@ export default function NewOnboardingPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
-                  <User className="h-10 w-10 mx-auto text-accent-700 mb-2"/>
-                  <p className="text-xs font-black uppercase tracking-widest text-accent-700">Employee</p>
+                  <User className='h-10 w-10 mx-auto text-accent mb-2'/>
+                  <p className='text-xs font-black uppercase tracking-widest text-accent'>Employee</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedEmployee?.name}</p>
                 </div>
                 <div className="p-8 rounded-3xl bg-accent-500/10 border border-accent-500/20 text-center space-y-2">
-                  <Layout className="h-10 w-10 mx-auto text-accent-600 mb-2"/>
-                  <p className="text-xs font-black uppercase tracking-widest text-accent-600">Checklist</p>
+                  <Layout className='h-10 w-10 mx-auto text-accent mb-2'/>
+                  <p className='text-xs font-black uppercase tracking-widest text-accent'>Checklist</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
                 </div>
                 <div className="p-8 rounded-3xl bg-success-500/10 border border-success-500/20 text-center space-y-2">
-                  <Calendar className="h-10 w-10 mx-auto text-success-600 mb-2"/>
-                  <p className="text-xs font-black uppercase tracking-widest text-success-600">Starts</p>
+                  <Calendar className='h-10 w-10 mx-auto text-status-success-text mb-2'/>
+                  <p className='text-xs font-black uppercase tracking-widest text-status-success-text'>Starts</p>
                   <p className="text-xl font-black text-[var(--text-primary)]">{formData.startDate}</p>
                 </div>
               </div>
@@ -336,7 +336,7 @@ export default function NewOnboardingPage() {
                                       {...register('notes')}
                                     />
                   {errors.notes && (
-                    <p className="text-xs text-danger-500 mt-1 font-medium">{errors.notes.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1 font-medium'>{errors.notes.message}</p>
                   )}
                 </CardContent>
               </Card>
@@ -356,7 +356,8 @@ export default function NewOnboardingPage() {
           </Button>
 
           <div className="flex items-center gap-4">
-            {submitError && <span className="text-sm font-bold text-danger-500 animate-pulse">{submitError}</span>}
+            {submitError &&
+              <span className='text-sm font-bold text-status-danger-text animate-pulse'>{submitError}</span>}
             <PermissionGate permission={Permissions.ONBOARDING_CREATE} fallback={<div/>}>
               {currentStep < 3 ? (
                 <Button

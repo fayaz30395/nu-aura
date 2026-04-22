@@ -55,19 +55,18 @@ export function OrgChartFilters({
           placeholder="Search by name, designation, or code..."
           value={searchQuery}
           onChange={e => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-surface-900 transition-shadow"
+          className='w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 transition-shadow'
         />
         {searchQuery && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-surface-200 dark:bg-surface-700 flex items-center justify-center text-[var(--text-secondary)] hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors"
+            className='absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-elevated flex items-center justify-center text-[var(--text-secondary)] hover:bg-card transition-colors'
             aria-label="Clear search"
           >
             <span className="text-xs leading-none">&times;</span>
           </button>
         )}
       </div>
-
       {/* View mode toggle */}
       <div className="flex items-center bg-[var(--bg-secondary)] rounded-lg p-0.5 border border-[var(--border-subtle)]">
         {VIEW_OPTIONS.map(opt => (
@@ -77,7 +76,7 @@ export function OrgChartFilters({
             className={cn(
               'flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-all',
               viewMode === opt.value
-                ? 'bg-accent-700 text-white shadow-[var(--shadow-card)]'
+                ? 'bg-accent text-inverse shadow-[var(--shadow-card)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]',
             )}
             aria-pressed={viewMode === opt.value}
@@ -87,12 +86,11 @@ export function OrgChartFilters({
           </button>
         ))}
       </div>
-
       {/* Department filter */}
       <select
         value={selectedDepartment}
         onChange={e => onDepartmentChange(e.target.value)}
-        className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-surface-900 transition-shadow"
+        className='text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 transition-shadow'
       >
         <option value="">All Departments</option>
         {departments.map(dept => (
@@ -101,13 +99,12 @@ export function OrgChartFilters({
           </option>
         ))}
       </select>
-
       {/* Depth filter (only for tree/list views) */}
       {viewMode !== 'department' && (
         <select
           value={maxDepth}
           onChange={e => onMaxDepthChange(Number(e.target.value))}
-          className="text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 dark:focus:ring-offset-surface-900 transition-shadow"
+          className='text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-1 transition-shadow'
         >
           {DEPTH_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>

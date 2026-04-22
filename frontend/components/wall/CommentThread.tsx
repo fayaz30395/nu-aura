@@ -37,7 +37,7 @@ function AuthorAvatar({author}: AuthorAvatarProps): JSX.Element {
 
   return (
     <div
-      className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+      className='flex h-8 w-8 items-center justify-center rounded-full bg-accent-subtle text-xs font-semibold text-accent'>
       {initials}
     </div>
   );
@@ -73,10 +73,8 @@ function CommentItem({
       {isReply && (
         <div className="absolute left-4 top-0 h-full w-0.5 bg-[var(--border-subtle)]"/>
       )}
-
       {/* Avatar */}
       <AuthorAvatar author={comment.author}/>
-
       {/* Comment content */}
       <div className="flex-1">
         <div className="rounded-lg bg-[var(--bg-secondary)] p-4">
@@ -103,7 +101,7 @@ function CommentItem({
         <div className="mt-2 flex items-center gap-4">
           <button
             onClick={() => onReply(comment.id, comment.author.fullName)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-accent-700 dark:hover:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+            className='inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
           >
             <CornerDownRight className="h-3.5 w-3.5"/>
             Reply
@@ -112,7 +110,7 @@ function CommentItem({
           {isAuthor && (
             <button
               onClick={() => onDelete(comment.id)}
-              className="inline-flex items-center gap-1 text-xs font-medium text-danger-600 hover:text-danger-700 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='inline-flex items-center gap-1 text-xs font-medium text-status-danger-text hover:text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               <Trash2 className="h-3.5 w-3.5"/>
               Delete
@@ -179,20 +177,18 @@ export function CommentThread({
           initial={{opacity: 0}}
           animate={{opacity: 1}}
           onClick={onLoadMore}
-          className="text-center text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+          className='text-center text-sm font-medium text-accent hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
         >
           Load more comments
         </motion.button>
       )}
-
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-8">
           <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500 dark:border-t-accent-400"/>
+            className='h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-accent-500'/>
         </div>
       )}
-
       {/* Comments list */}
       <div className="space-y-4">
         {comments.map((comment) => (
@@ -205,7 +201,6 @@ export function CommentThread({
           />
         ))}
       </div>
-
       {/* No comments state */}
       {!isLoading && comments.length === 0 && (
         <motion.div
@@ -218,7 +213,6 @@ export function CommentThread({
           </p>
         </motion.div>
       )}
-
       {/* Input section */}
       <div className="space-y-2 border-t border-[var(--border-subtle)] pt-4">
         {/* Reply indicator */}
@@ -227,15 +221,15 @@ export function CommentThread({
             initial={{opacity: 0, height: 0}}
             animate={{opacity: 1, height: 'auto'}}
             exit={{opacity: 0, height: 0}}
-            className="rounded-lg bg-accent-50 p-2 dark:bg-accent-900"
+            className='rounded-lg bg-accent-subtle p-2'
           >
             <div className="row-between">
-              <span className="text-xs font-medium text-accent-700 dark:text-accent-300">
+              <span className='text-xs font-medium text-accent'>
                 Replying to {replyingTo.authorName}
               </span>
               <button
                 onClick={() => setReplyingTo(null)}
-                className="text-xs text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className='text-xs text-accent hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
               >
                 Cancel
               </button>

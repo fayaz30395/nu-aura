@@ -69,9 +69,9 @@ export default function OrganizationHealthPage() {
     return (
       <AppLayout activeMenuItem="analytics">
         <div className="flex items-center justify-center min-h-[400px]">
-          <Card className="max-w-md border-danger-100 dark:border-danger-900/30">
+          <Card className='max-w-md border-status-danger-border'>
             <CardContent className="pt-6 text-center">
-              <AlertCircle className="h-12 w-12 text-danger-500 mx-auto mb-4"/>
+              <AlertCircle className='h-12 w-12 text-status-danger-text mx-auto mb-4'/>
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Failed to load Dashboard</h2>
               <p
                 className="text-[var(--text-secondary)] mb-6">{error?.message || 'Unable to load organization health data'}</p>
@@ -115,19 +115,19 @@ export default function OrganizationHealthPage() {
             animate={{opacity: 1, scale: 1}}
           >
             <Card
-              className="h-full bg-gradient-to-br from-accent-700 to-accent-800 text-white overflow-hidden relative">
+              className='h-full bg-gradient-to-br from-accent-700 to-accent-800 text-inverse overflow-hidden relative'>
               <div className="absolute top-0 right-0 p-8 opacity-10">
                 <ShieldCheck className="h-48 w-48"/>
               </div>
               <CardContent className="p-8 flex flex-col items-center justify-center text-center h-full relative z-10">
                 <span
-                  className="text-accent-100 text-sm font-medium tracking-wider uppercase mb-2">Organization Pulse</span>
+                  className='text-accent text-sm font-medium tracking-wider uppercase mb-2'>Organization Pulse</span>
                 <div className="text-8xl font-black mb-4">{healthScore.score}</div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] rounded-full mb-6">
-                  <Zap className="h-5 w-5 text-warning-300"/>
+                  <Zap className='h-5 w-5 text-status-warning-text'/>
                   <span className="font-bold text-lg">{healthScore.status}</span>
                 </div>
-                <div className="flex items-center gap-2 text-accent-100 italic">
+                <div className='flex items-center gap-2 text-accent italic'>
                   {healthScore.trend >= 0 ? <TrendingUp className="h-4 w-4"/> : <TrendingDown className="h-4 w-4"/>}
                   <span>{Math.abs(healthScore.trend)}% Improvement since last quarter</span>
                 </div>
@@ -140,7 +140,7 @@ export default function OrganizationHealthPage() {
               <CardHeader className="pb-2">
                 <div className="row-between">
                   <CardTitle className="text-lg">Staff Retention</CardTitle>
-                  <Users className="h-5 w-5 text-success-500"/>
+                  <Users className='h-5 w-5 text-status-success-text'/>
                 </div>
               </CardHeader>
               <CardContent>
@@ -151,7 +151,7 @@ export default function OrganizationHealthPage() {
                   </div>
                   <div className="text-right">
                     <div
-                      className="text-success-600 dark:text-success-400 font-medium flex items-center justify-end gap-1">
+                      className='text-status-success-text font-medium flex items-center justify-end gap-1'>
                       <TrendingUp className="h-3 w-3"/> 1.2%
                     </div>
                     <div className="text-caption">vs prev year</div>
@@ -167,7 +167,7 @@ export default function OrganizationHealthPage() {
               <CardHeader className="pb-2">
                 <div className="row-between">
                   <CardTitle className="text-lg">Engagement Intensity</CardTitle>
-                  <Activity className="h-5 w-5 text-warning-500"/>
+                  <Activity className='h-5 w-5 text-status-warning-text'/>
                 </div>
               </CardHeader>
               <CardContent>
@@ -177,7 +177,7 @@ export default function OrganizationHealthPage() {
                     <div className="text-body-muted">Avg Engagement Score</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-accent-700 font-medium">{engagement.participationRate}%</div>
+                    <div className='text-accent font-medium'>{engagement.participationRate}%</div>
                     <div className="text-caption">Participation</div>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function OrganizationHealthPage() {
           <Card className="bg-[var(--bg-card)]">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <PieChartIcon className="h-5 w-5 text-accent-500"/> Diversity & Inclusion
+                <PieChartIcon className='h-5 w-5 text-accent'/> Diversity & Inclusion
               </CardTitle>
               <CardDescription>Workforce makeup by gender</CardDescription>
             </CardHeader>
@@ -219,7 +219,7 @@ export default function OrganizationHealthPage() {
           <Card className="bg-[var(--bg-card)]">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5 text-accent-500"/> Tenure Distribution
+                <Clock className='h-5 w-5 text-accent'/> Tenure Distribution
               </CardTitle>
               <CardDescription>Employee longevity profile</CardDescription>
             </CardHeader>
@@ -238,7 +238,7 @@ export default function OrganizationHealthPage() {
           <Card className="bg-[var(--bg-card)]">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Award className="h-5 w-5 text-warning-500"/> Learning Vitality
+                <Award className='h-5 w-5 text-status-warning-text'/> Learning Vitality
               </CardTitle>
               <CardDescription>Skills development & training health</CardDescription>
             </CardHeader>
@@ -251,7 +251,7 @@ export default function OrganizationHealthPage() {
                   </div>
                   <div className="h-2 w-full bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-warning-400"
+                      className='h-full bg-status-warning-bg'
                       initial={{width: 0}}
                       animate={{width: `${training.completionRate}%`}}
                     />
@@ -295,14 +295,15 @@ export default function OrganizationHealthPage() {
                   <th className="pb-4 font-medium">Health Status</th>
                 </tr>
                 </thead>
-                <tbody className="divide-y dark:divide-surface-800">
+                <tbody className='divide-y'>
                 {Object.entries(diversity.departmentDistribution).map(([name, count], idx) => (
                   <tr key={name} className="text-sm">
                     <td className="py-4 font-medium text-[var(--text-primary)]">{name}</td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-[var(--bg-secondary)] rounded-full">
-                          <div className="h-full bg-success-500 rounded-full" style={{width: `${90 - idx * 5}%`}}/>
+                          <div className='h-full bg-status-success-bg rounded-full'
+                               style={{width: `${90 - idx * 5}%`}}/>
                         </div>
                         <span>{90 - idx * 5}%</span>
                       </div>
@@ -310,7 +311,7 @@ export default function OrganizationHealthPage() {
                     <td className="py-4">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-[var(--bg-secondary)] rounded-full">
-                          <div className="h-full bg-accent-500 rounded-full" style={{width: `${85 - idx * 3}%`}}/>
+                          <div className='h-full bg-accent rounded-full' style={{width: `${85 - idx * 3}%`}}/>
                         </div>
                         <span>{85 - idx * 3}%</span>
                       </div>

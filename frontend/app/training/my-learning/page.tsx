@@ -168,14 +168,15 @@ export default function MyLearningPage() {
 
         {/* Notifications */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-700 rounded-lg border border-danger-200">
+          <div
+            className='flex items-center gap-2 p-4 bg-status-danger-bg text-status-danger-text rounded-lg border border-status-danger-border'>
             <AlertCircle className="h-5 w-5 shrink-0"/>
             <span className="text-sm">{error}</span>
           </div>
         )}
         {successMsg && (
           <div
-            className="flex items-center gap-2 p-4 bg-success-50 text-success-700 rounded-lg border border-success-200">
+            className='flex items-center gap-2 p-4 bg-status-success-bg text-status-success-text rounded-lg border border-status-success-border'>
             <CheckCircle className="h-5 w-5 shrink-0"/>
             <span className="text-sm">{successMsg}</span>
           </div>
@@ -186,22 +187,22 @@ export default function MyLearningPage() {
           <StatCard
             title="Enrolled"
             value={String(totalEnrolled)}
-            icon={<BookOpen className="h-5 w-5 text-accent-500"/>}
+            icon={<BookOpen className='h-5 w-5 text-accent'/>}
           />
           <StatCard
             title="In Progress"
             value={String(inProgress)}
-            icon={<PlayCircle className="h-5 w-5 text-warning-500"/>}
+            icon={<PlayCircle className='h-5 w-5 text-status-warning-text'/>}
           />
           <StatCard
             title="Completed"
             value={String(completed)}
-            icon={<CheckCircle className="h-5 w-5 text-success-500"/>}
+            icon={<CheckCircle className='h-5 w-5 text-status-success-text'/>}
           />
           <StatCard
             title="Avg Progress"
             value={`${avgProgress}%`}
-            icon={<Clock className="h-5 w-5 text-accent-700"/>}
+            icon={<Clock className='h-5 w-5 text-accent'/>}
           />
         </div>
 
@@ -219,7 +220,7 @@ export default function MyLearningPage() {
               Browse the{' '}
               <button
                 onClick={() => router.push('/training/catalog')}
-                className="text-accent-600 hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className='text-accent hover:underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
               >
                 course catalog
               </button>
@@ -264,7 +265,7 @@ export default function MyLearningPage() {
                             </span>
                           )}
                           {enrollment.certificateId && (
-                            <span className="flex items-center gap-1 text-success-600">
+                            <span className='flex items-center gap-1 text-status-success-text'>
                               <Award className="h-3 w-3"/>
                               Certificate issued
                             </span>
@@ -285,7 +286,7 @@ export default function MyLearningPage() {
                       <div className="shrink-0">
                         {isCompleted ? (
                           <Button variant="outline" size="sm" disabled className="flex items-center gap-1">
-                            <CheckCircle className="h-4 w-4 text-success-500"/>
+                            <CheckCircle className='h-4 w-4 text-status-success-text'/>
                             Done
                           </Button>
                         ) : (

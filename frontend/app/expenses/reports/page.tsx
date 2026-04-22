@@ -12,7 +12,7 @@ import {endOfMonth, format, startOfMonth, subMonths} from 'date-fns';
 // Chart skeleton displayed while the recharts bundle lazy-loads.
 // Recharts uses browser-only SVG/ResizeObserver APIs so ssr: false is required.
 const ChartSkeleton = () => (
-  <div className="w-full h-[300px] animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg"/>
+  <div className='w-full h-[300px] animate-pulse bg-surface rounded-lg'/>
 );
 
 const ExpenseTrendChart = dynamic(
@@ -69,34 +69,34 @@ export default function ExpenseReportsPage() {
     <AppLayout>
       <PermissionGate
         permission={Permissions.EXPENSE_VIEW_ALL}
-        fallback={<div className="p-8 text-center text-surface-500">You do not have permission to view expense
+        fallback={<div className='p-8 text-center text-muted'>You do not have permission to view expense
           reports.</div>}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+              <h1 className='text-2xl font-bold text-primary flex items-center gap-2'>
                 <BarChart3 className="w-6 h-6"/>
                 Expense Reports
               </h1>
-              <p className="text-surface-500 mt-1">Organization-wide expense analytics</p>
+              <p className='text-muted mt-1'>Organization-wide expense analytics</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-surface-500"/>
+                <Calendar className='w-4 h-4 text-muted'/>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="px-4 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className='px-4 py-1.5 border border-subtle rounded-lg bg-[var(--bg-input)] text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-700'
                 />
-                <span className="text-surface-400">to</span>
+                <span className='text-muted'>to</span>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="px-4 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
+                  className='px-4 py-1.5 border border-subtle rounded-lg bg-[var(--bg-input)] text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent-700'
                 />
               </div>
             </div>
@@ -104,21 +104,21 @@ export default function ExpenseReportsPage() {
 
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700"/>
+              <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-[var(--accent-primary)]'/>
             </div>
           ) : !report ? (
-            <div className="text-center py-20 text-surface-500">No report data available.</div>
+            <div className='text-center py-20 text-muted'>No report data available.</div>
           ) : (
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Total Claims</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{report.totalClaims}</p>
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <p className='text-sm text-muted mb-1'>Total Claims</p>
+                  <p className='text-3xl font-bold text-primary'>{report.totalClaims}</p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Total Amount</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <p className='text-sm text-muted mb-1'>Total Amount</p>
+                  <p className='text-3xl font-bold text-primary'>
                     {new Intl.NumberFormat('en-IN', {
                       style: 'currency',
                       currency: 'INR',
@@ -126,9 +126,9 @@ export default function ExpenseReportsPage() {
                     }).format(report.totalAmount)}
                   </p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Avg per Claim</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <p className='text-sm text-muted mb-1'>Avg per Claim</p>
+                  <p className='text-3xl font-bold text-primary'>
                     {report.totalClaims > 0
                       ? new Intl.NumberFormat('en-IN', {
                         style: 'currency',
@@ -138,51 +138,51 @@ export default function ExpenseReportsPage() {
                       : '-'}
                   </p>
                 </div>
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <p className="text-sm text-surface-500 mb-1">Categories</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50">{categoryChartData.length}</p>
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <p className='text-sm text-muted mb-1'>Categories</p>
+                  <p className='text-3xl font-bold text-primary'>{categoryChartData.length}</p>
                 </div>
               </div>
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Monthly Trend */}
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <h3 className='font-semibold text-primary mb-4 flex items-center gap-2'>
                     <TrendingUp className="w-4 h-4"/>
                     Monthly Trend
                   </h3>
                   {trendData.length > 0 ? (
                     <ExpenseTrendChart data={trendData}/>
                   ) : (
-                    <p className="text-center text-surface-500 py-12">No trend data</p>
+                    <p className='text-center text-muted py-12'>No trend data</p>
                   )}
                 </div>
 
                 {/* By Category Pie */}
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+                <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                  <h3 className='font-semibold text-primary mb-4 flex items-center gap-2'>
                     <PieChart className="w-4 h-4"/>
                     By Category
                   </h3>
                   {categoryChartData.length > 0 ? (
                     <ExpenseCategoryChart data={categoryChartData}/>
                   ) : (
-                    <p className="text-center text-surface-500 py-12">No category data</p>
+                    <p className='text-center text-muted py-12'>No category data</p>
                   )}
                 </div>
               </div>
 
               {/* Status Breakdown */}
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6">
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+              <div className='bg-[var(--bg-input)] border border-subtle rounded-lg p-6'>
+                <h3 className='font-semibold text-primary mb-4 flex items-center gap-2'>
                   <BarChart3 className="w-4 h-4"/>
                   By Status
                 </h3>
                 {statusChartData.length > 0 ? (
                   <ExpenseStatusChart data={statusChartData}/>
                 ) : (
-                  <p className="text-center text-surface-500 py-12">No status data</p>
+                  <p className='text-center text-muted py-12'>No status data</p>
                 )}
               </div>
             </>

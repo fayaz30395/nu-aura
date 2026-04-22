@@ -50,12 +50,11 @@ export function WelcomeBanner({
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{backgroundImage: 'var(--skeuo-noise)'}}
       />
-
       <div className="relative z-10">
         <p className="text-xs font-medium uppercase tracking-[0.15em] text-accent-200/70 mb-1">
           {today}
         </p>
-        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight">
+        <h1 className='text-xl sm:text-2xl font-bold text-inverse tracking-tight leading-tight'>
           {greeting}, {firstName}
         </h1>
         {(designation || department) && (
@@ -85,12 +84,11 @@ export function QuickAccessWidget({
         </h2>
         {totalPending > 0 && (
           <span
-            className="inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-br from-warning-500 to-warning-600">
+            className='inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-xs font-bold text-inverse bg-gradient-to-br from-warning-500 to-warning-600'>
             {totalPending}
           </span>
         )}
       </div>
-
       <div className="space-y-1.5">
         {hasNoPending ? (
           <div
@@ -109,8 +107,8 @@ export function QuickAccessWidget({
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="flex items-center justify-center w-7 h-7 rounded-lg bg-warning-100 dark:bg-warning-900/30">
-                    <AlertCircle className="h-3.5 w-3.5 text-warning-600 dark:text-warning-400"/>
+                    className='flex items-center justify-center w-7 h-7 rounded-lg bg-status-warning-bg'>
+                    <AlertCircle className='h-3.5 w-3.5 text-status-warning-text'/>
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Pending Approvals
@@ -133,8 +131,8 @@ export function QuickAccessWidget({
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                    <Clock className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400"/>
+                    className='flex items-center justify-center w-7 h-7 rounded-lg bg-accent-subtle'>
+                    <Clock className='h-3.5 w-3.5 text-accent'/>
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Pending Timesheets
@@ -157,8 +155,8 @@ export function QuickAccessWidget({
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                    <AlertCircle className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400"/>
+                    className='flex items-center justify-center w-7 h-7 rounded-lg bg-accent-subtle'>
+                    <AlertCircle className='h-3.5 w-3.5 text-accent'/>
                   </div>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Profile Updates
@@ -189,7 +187,7 @@ export function QuickAccessWidget({
           </div>
           {inboxCount > 0 && (
             <span
-              className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-danger-500 text-xs font-semibold text-white">
+              className='inline-flex items-center justify-center h-5 w-5 rounded-full bg-status-danger-bg text-xs font-semibold text-inverse'>
               {inboxCount}
             </span>
           )}

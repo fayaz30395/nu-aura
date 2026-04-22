@@ -111,7 +111,6 @@ export default function ContactPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -127,7 +126,6 @@ export default function ContactPage() {
           </p>
         </div>
       </section>
-
       {/* Contact Methods */}
       <section className="px-4 sm:px-6 lg:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
@@ -143,13 +141,13 @@ export default function ContactPage() {
                   <div
                     className={`w-14 h-14 rounded-lg bg-gradient-to-br ${method.color} flex items-center justify-center mx-auto mb-4`}
                   >
-                    <method.icon className="h-7 w-7 text-white"/>
+                    <method.icon className='h-7 w-7 text-inverse'/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {method.title}
                   </h3>
                   <p className="text-body-muted mb-2">{method.description}</p>
-                  <p className="text-sm font-medium text-accent-700 dark:text-accent-400">
+                  <p className='text-sm font-medium text-accent'>
                     {method.value}
                   </p>
                 </Card>
@@ -158,7 +156,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
       {/* Contact Form */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -176,14 +173,14 @@ export default function ContactPage() {
                 <motion.div
                   initial={{opacity: 0, y: -10}}
                   animate={{opacity: 1, y: 0}}
-                  className="mb-6 p-4 rounded-lg bg-success-50 dark:bg-success-950 border border-success-200 dark:border-success-800 flex items-start gap-4"
+                  className='mb-6 p-4 rounded-lg bg-status-success-bg border border-status-success-border flex items-start gap-4'
                 >
-                  <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400 flex-shrink-0 mt-0.5"/>
+                  <CheckCircle2 className='h-5 w-5 text-status-success-text flex-shrink-0 mt-0.5'/>
                   <div>
-                    <p className="text-sm font-medium text-success-700 dark:text-success-300">
+                    <p className='text-sm font-medium text-status-success-text'>
                       Message sent successfully!
                     </p>
-                    <p className="text-sm text-success-600 dark:text-success-400 mt-1">
+                    <p className='text-sm text-status-success-text mt-1'>
                       We&apos;ll get back to you shortly.
                     </p>
                   </div>
@@ -200,10 +197,10 @@ export default function ContactPage() {
                       type="text"
                       placeholder="John Doe"
                       {...register('name')}
-                      className={errors.name ? 'border-danger-500' : ''}
+                      className={errors.name ? 'border-status-danger-border' : ''}
                     />
                     {errors.name && (
-                      <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                      <p className='text-status-danger-text text-sm mt-1'>
                         {errors.name.message}
                       </p>
                     )}
@@ -216,10 +213,10 @@ export default function ContactPage() {
                       type="email"
                       placeholder="john@company.com"
                       {...register('email')}
-                      className={errors.email ? 'border-danger-500' : ''}
+                      className={errors.email ? 'border-status-danger-border' : ''}
                     />
                     {errors.email && (
-                      <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                      <p className='text-status-danger-text text-sm mt-1'>
                         {errors.email.message}
                       </p>
                     )}
@@ -235,10 +232,10 @@ export default function ContactPage() {
                       type="text"
                       placeholder="Acme Inc."
                       {...register('company')}
-                      className={errors.company ? 'border-danger-500' : ''}
+                      className={errors.company ? 'border-status-danger-border' : ''}
                     />
                     {errors.company && (
-                      <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                      <p className='text-status-danger-text text-sm mt-1'>
                         {errors.company.message}
                       </p>
                     )}
@@ -251,10 +248,10 @@ export default function ContactPage() {
                       type="tel"
                       placeholder="+1 (555) 123-4567"
                       {...register('phone')}
-                      className={errors.phone ? 'border-danger-500' : ''}
+                      className={errors.phone ? 'border-status-danger-border' : ''}
                     />
                     {errors.phone && (
-                      <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                      <p className='text-status-danger-text text-sm mt-1'>
                         {errors.phone.message}
                       </p>
                     )}
@@ -269,10 +266,10 @@ export default function ContactPage() {
                     type="text"
                     placeholder="How can we help?"
                     {...register('subject')}
-                    className={errors.subject ? 'border-danger-500' : ''}
+                    className={errors.subject ? 'border-status-danger-border' : ''}
                   />
                   {errors.subject && (
-                    <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                    <p className='text-status-danger-text text-sm mt-1'>
                       {errors.subject.message}
                     </p>
                   )}
@@ -291,7 +288,7 @@ export default function ContactPage() {
                     {...register('message')}
                   />
                   {errors.message && (
-                    <p className="text-danger-600 dark:text-danger-400 text-sm mt-1">
+                    <p className='text-status-danger-text text-sm mt-1'>
                       {errors.message.message}
                     </p>
                   )}
@@ -340,7 +337,7 @@ export default function ContactPage() {
                 ].map((faq, index) => (
                   <Card key={index} padding="md">
                     <div className="flex items-start gap-4">
-                      <HelpCircle className="h-5 w-5 text-accent-700 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
+                      <HelpCircle className='h-5 w-5 text-accent flex-shrink-0 mt-0.5'/>
                       <div>
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                           {faq.question}
@@ -355,7 +352,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
       {/* Office Locations */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
@@ -372,8 +368,8 @@ export default function ContactPage() {
             {offices.map((office, index) => (
               <Card key={index} padding="lg">
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950 flex items-center justify-center mb-4">
-                  <MapPin className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                  className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center mb-4'>
+                  <MapPin className='h-6 w-6 text-accent'/>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   {office.city}, {office.country}

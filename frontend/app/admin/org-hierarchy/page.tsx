@@ -170,7 +170,7 @@ export default function OrgHierarchyPage() {
             onClick={() => hasSubordinates && toggleNode(employee.id)}
           >
             {/* Header with Employee Photo */}
-            <div className="bg-white/60 dark:bg-white/10 border-b border-current border-opacity-20 p-4">
+            <div className='bg-white/60 border-b border-current border-opacity-20 p-4'>
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <div className={`
@@ -180,7 +180,7 @@ export default function OrgHierarchyPage() {
                     {getInitials(employee.fullName)}
                   </div>
                   <div
-                    className="absolute -bottom-1 -right-1 bg-success-500 border-2 border-white dark:border-surface-800 rounded-full h-4 w-4"></div>
+                    className='absolute -bottom-1 -right-1 bg-status-success-bg border-2 border-[var(--bg-card)] rounded-full h-4 w-4'></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-base truncate">
@@ -211,7 +211,7 @@ export default function OrgHierarchyPage() {
                 </div>
                 {hasSubordinates && (
                   <button
-                    className="ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors"
+                    className='ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/30 transition-colors'
                   >
                     <svg
                       className={`h-5 w-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -229,12 +229,12 @@ export default function OrgHierarchyPage() {
               {/* Additional Info */}
               <div className="flex flex-wrap gap-2 mt-4">
                 {employee.level && (
-                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-white/50 dark:bg-white/10">
+                  <span className='px-2 py-1 text-xs font-medium rounded-md bg-white/50'>
                     {employee.level.replace(/_/g, ' ')}
                   </span>
                 )}
                 {employee.employmentType && (
-                  <span className="px-2 py-1 text-xs rounded-md bg-white/30 dark:bg-white/10">
+                  <span className='px-2 py-1 text-xs rounded-md bg-white/30'>
                     {employee.employmentType.replace(/_/g, ' ')}
                   </span>
                 )}
@@ -271,7 +271,6 @@ export default function OrgHierarchyPage() {
               className="absolute left-1/2 -translate-x-1/2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
           )}
         </div>
-
         {/* Subordinates - Horizontal Layout */}
         {hasSubordinates && isExpanded && (
           <div className="relative">
@@ -312,7 +311,7 @@ export default function OrgHierarchyPage() {
         <div className="mb-6">
           <h1 className="text-xl font-bold skeuo-emboss flex items-center space-x-4">
             <svg
-              className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='h-8 w-8 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               fill="currentColor" viewBox="0 0 20 20">
               <path
                 d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
@@ -380,7 +379,8 @@ export default function OrgHierarchyPage() {
           {loading ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-accent-700 mx-auto"></div>
+                <div
+                  className='animate-spin rounded-full h-16 w-16 border-b-4 border-[var(--accent-primary)] mx-auto'></div>
                 <p className="mt-6 text-[var(--text-secondary)] font-medium">Loading organization chart...</p>
               </div>
             </div>
@@ -388,14 +388,14 @@ export default function OrgHierarchyPage() {
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <div
-                  className="mx-auto h-16 w-16 text-danger-500 mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='mx-auto h-16 w-16 text-status-danger-text mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                           d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
                 <p
-                  className="text-danger-600 dark:text-danger-400 font-medium mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
+                  className='text-status-danger-text font-medium mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (

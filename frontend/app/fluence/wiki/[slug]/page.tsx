@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
-import { notFound } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import {useState, useCallback, useEffect, useRef, Fragment} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {usePermissions, Permissions} from '@/lib/hooks/usePermissions';
+import {notFound} from 'next/navigation';
+import {motion, AnimatePresence} from 'framer-motion';
 import {
   ArrowLeft,
   Edit,
@@ -35,9 +35,9 @@ import {
   FileType,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { Skeleton, Modal, Tooltip, ActionIcon, Badge } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { AppLayout } from '@/components/layout';
+import {Skeleton, Modal, Tooltip, ActionIcon, Badge} from '@mantine/core';
+import {notifications} from '@mantine/notifications';
+import {AppLayout} from '@/components/layout';
 import {
   useWikiPage,
   useComments,
@@ -52,20 +52,20 @@ import {
   useWikiPageRevisions,
   useRestoreWikiPageRevision,
 } from '@/lib/hooks/queries/useFluence';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { fluenceService } from '@/lib/services/platform/fluence.service';
-import { MentionInput, type MentionInputHandle } from '@/components/fluence/MentionInput';
-import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
-import { TableOfContents } from '@/components/fluence/TableOfContents';
-import { Breadcrumbs } from '@/components/fluence/Breadcrumbs';
-import { WatchButton } from '@/components/fluence/WatchButton';
-import { InlineCommentsPanel } from '@/components/fluence/InlineComments';
-import type { FluenceComment } from '@/lib/types/platform/fluence';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {fluenceService} from '@/lib/services/platform/fluence.service';
+import {MentionInput, type MentionInputHandle} from '@/components/fluence/MentionInput';
+import {layout, typography, card, motion as dsMotion, iconSize} from '@/lib/design-system';
+import {TableOfContents} from '@/components/fluence/TableOfContents';
+import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
+import {WatchButton} from '@/components/fluence/WatchButton';
+import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
+import type {FluenceComment} from '@/lib/types/platform/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
   () => import('@/components/fluence/ContentViewer'),
-  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
+  {ssr: false, loading: () => <Skeleton height={300} radius="md"/>}
 );
 
 interface Viewer {
@@ -170,15 +170,15 @@ interface CommentThreadProps {
 }
 
 function CommentThread({
-  comment,
-  userId,
-  onDelete,
-  onReply,
-  replyingTo,
-  replyText,
-  onReplyTextChange,
-  onSubmitReply,
-}: CommentThreadProps) {
+                         comment,
+                         userId,
+                         onDelete,
+                         onReply,
+                         replyingTo,
+                         replyText,
+                         onReplyTextChange,
+                         onSubmitReply,
+                       }: CommentThreadProps) {
   const [showReplies, setShowReplies] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
@@ -194,8 +194,8 @@ function CommentThread({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 8 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+        hidden: {opacity: 0, y: 8},
+        visible: {opacity: 1, y: 0, transition: {duration: 0.25}},
       }}
       className="group"
     >
@@ -204,7 +204,7 @@ function CommentThread({
         <div
           className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
             comment.authorId
-          )} flex items-center justify-center text-sm font-semibold text-white`}
+          )} flex items-center justify-center text-sm font-semibold text-inverse`}
         >
           {getInitials(comment.authorName || 'A')}
         </div>
@@ -233,7 +233,7 @@ function CommentThread({
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <ThumbsUp className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} />
+              <ThumbsUp className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`}/>
               {likeCount > 0 && <span>{likeCount}</span>}
             </button>
 
@@ -241,7 +241,7 @@ function CommentThread({
               onClick={() => onReply(comment.id)}
               className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <Reply className="h-3.5 w-3.5" />
+              <Reply className="h-3.5 w-3.5"/>
               Reply
             </button>
 
@@ -251,7 +251,7 @@ function CommentThread({
                 aria-label="Delete comment"
                 className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5"/>
                 Delete
               </button>
             )}
@@ -264,15 +264,15 @@ function CommentThread({
                 onClick={() => setShowReplies(!showReplies)}
                 className="flex items-center gap-1.5 text-xs font-medium text-[var(--accent-700)] hover:text-[var(--accent-800)] transition-colors mb-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
               >
-                <CornerDownRight className="h-3.5 w-3.5" />
+                <CornerDownRight className="h-3.5 w-3.5"/>
                 {showReplies ? (
                   <>
-                    <ChevronUp className="h-3 w-3" />
+                    <ChevronUp className="h-3 w-3"/>
                     Hide {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
                   </>
                 ) : (
                   <>
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown className="h-3 w-3"/>
                     Show {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
                   </>
                 )}
@@ -281,10 +281,10 @@ function CommentThread({
               <AnimatePresence>
                 {showReplies && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    initial={{opacity: 0, height: 0}}
+                    animate={{opacity: 1, height: 'auto'}}
+                    exit={{opacity: 0, height: 0}}
+                    transition={{duration: 0.2, ease: 'easeInOut'}}
                     className="border-l-2 border-[var(--border-main)] pl-4 ml-1 space-y-4 overflow-hidden"
                   >
                     {replies.map((reply) => (
@@ -305,10 +305,10 @@ function CommentThread({
           <AnimatePresence>
             {replyingTo === comment.id && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.15 }}
+                initial={{opacity: 0, height: 0}}
+                animate={{opacity: 1, height: 'auto'}}
+                exit={{opacity: 0, height: 0}}
+                transition={{duration: 0.15}}
                 className="mt-4 flex gap-2 items-start overflow-hidden"
               >
                 <div className="flex-1">
@@ -321,14 +321,14 @@ function CommentThread({
                   />
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{scale: 1.05}}
+                  whileTap={{scale: 0.95}}
                   onClick={onSubmitReply}
                   disabled={!replyText.trim()}
                   aria-label="Send reply"
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                  className='mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4"/>
                 </motion.button>
               </motion.div>
             )}
@@ -347,21 +347,21 @@ interface ReplyItemProps {
   onDelete: (id: string) => void;
 }
 
-function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
+function ReplyItem({reply, userId, onDelete}: ReplyItemProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(reply.likeCount || 0);
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.2 }}
+      initial={{opacity: 0, x: -8}}
+      animate={{opacity: 1, x: 0}}
+      transition={{duration: 0.2}}
       className="flex gap-4 group/reply"
     >
       <div
         className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
           reply.authorId
-        )} flex items-center justify-center text-xs font-semibold text-white`}
+        )} flex items-center justify-center text-xs font-semibold text-inverse`}
       >
         {getInitials(reply.authorName || 'A')}
       </div>
@@ -388,7 +388,7 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
                 : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
             }`}
           >
-            <ThumbsUp className={`h-3 w-3 ${liked ? 'fill-current' : ''}`} />
+            <ThumbsUp className={`h-3 w-3 ${liked ? 'fill-current' : ''}`}/>
             {likeCount > 0 && <span>{likeCount}</span>}
           </button>
           {reply.authorId === userId && (
@@ -397,7 +397,7 @@ function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
               aria-label="Delete reply"
               className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover/reply:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="h-3 w-3"/>
             </button>
           )}
         </div>
@@ -412,9 +412,9 @@ export default function WikiPageDetailPage() {
   const router = useRouter();
   const params = useParams();
   const pageId = params.slug as string;
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [commentText, setCommentText] = useState('');
-  const { hasAnyPermission, isReady } = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.WIKI_VIEW,
@@ -439,10 +439,10 @@ export default function WikiPageDetailPage() {
   const commentInputRef = useRef<MentionInputHandle>(null);
   const contentContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
-  const { data: commentsData } = useComments(pageId, 'WIKI', 0, 50, !!pageId && !!page);
-  const { data: viewers } = useContentViewers(pageId, 'WIKI', showViewers && !!pageId);
-  const { data: revisions } = useWikiPageRevisions(pageId, showHistory && !!pageId);
+  const {data: page, isLoading} = useWikiPage(pageId, !!pageId);
+  const {data: commentsData} = useComments(pageId, 'WIKI', 0, 50, !!pageId && !!page);
+  const {data: viewers} = useContentViewers(pageId, 'WIKI', showViewers && !!pageId);
+  const {data: revisions} = useWikiPageRevisions(pageId, showHistory && !!pageId);
 
   const likeMutation = useLikeWikiPage();
   const unlikeMutation = useUnlikeWikiPage();
@@ -466,7 +466,7 @@ export default function WikiPageDetailPage() {
   // Record view on page load
   useEffect(() => {
     if (pageId && page) {
-      recordView.mutate({ contentId: pageId, contentType: 'WIKI' });
+      recordView.mutate({contentId: pageId, contentType: 'WIKI'});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageId, page?.id]);
@@ -483,9 +483,9 @@ export default function WikiPageDetailPage() {
   const handleToggleFavorite = useCallback(() => {
     if (!page) return;
     if (isFavorited) {
-      removeFavorite.mutate({ contentId: page.id, contentType: 'WIKI_PAGE' });
+      removeFavorite.mutate({contentId: page.id, contentType: 'WIKI_PAGE'});
     } else {
-      addFavorite.mutate({ contentId: page.id, contentType: 'WIKI_PAGE' });
+      addFavorite.mutate({contentId: page.id, contentType: 'WIKI_PAGE'});
     }
   }, [page, isFavorited, addFavorite, removeFavorite]);
 
@@ -525,11 +525,11 @@ export default function WikiPageDetailPage() {
   const handleAddComment = useCallback(() => {
     if (!page || !commentText.trim()) return;
     createComment.mutate(
-      { contentId: page.id, contentType: 'WIKI', data: { body: commentText.trim() } },
+      {contentId: page.id, contentType: 'WIKI', data: {body: commentText.trim()}},
       {
         onSuccess: () => {
           setCommentText('');
-          notifications.show({ title: 'Comment added', message: '', color: 'green' });
+          notifications.show({title: 'Comment added', message: '', color: 'green'});
         },
       }
     );
@@ -539,10 +539,10 @@ export default function WikiPageDetailPage() {
     (commentId: string) => {
       if (!page) return;
       deleteComment.mutate(
-        { contentId: page.id, contentType: 'WIKI', commentId },
+        {contentId: page.id, contentType: 'WIKI', commentId},
         {
           onSuccess: () => {
-            notifications.show({ title: 'Comment deleted', message: '', color: 'green' });
+            notifications.show({title: 'Comment deleted', message: '', color: 'green'});
           },
         }
       );
@@ -561,13 +561,13 @@ export default function WikiPageDetailPage() {
       {
         contentId: page.id,
         contentType: 'WIKI',
-        data: { body: replyText.trim(), parentId: replyingTo },
+        data: {body: replyText.trim(), parentId: replyingTo},
       },
       {
         onSuccess: () => {
           setReplyText('');
           setReplyingTo(null);
-          notifications.show({ title: 'Reply posted', message: '', color: 'green' });
+          notifications.show({title: 'Reply posted', message: '', color: 'green'});
         },
       }
     );
@@ -578,7 +578,7 @@ export default function WikiPageDetailPage() {
       navigator.clipboard.writeText(window.location.href);
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
-      notifications.show({ title: 'Link copied to clipboard!', message: '', color: 'blue' });
+      notifications.show({title: 'Link copied to clipboard!', message: '', color: 'blue'});
     }
   }, []);
 
@@ -586,7 +586,7 @@ export default function WikiPageDetailPage() {
     (revisionId: string) => {
       if (!page) return;
       restoreRevision.mutate(
-        { pageId: page.id, revisionId },
+        {pageId: page.id, revisionId},
         {
           onSuccess: () => {
             setShowHistory(false);
@@ -646,9 +646,9 @@ export default function WikiPageDetailPage() {
       <motion.div {...dsMotion.pageEnter} className={layout.sectionGap}>
         {/* Back Button */}
         <motion.div
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
+          initial={{opacity: 0, x: -12}}
+          animate={{opacity: 1, x: 0}}
+          transition={{duration: 0.25, ease: 'easeOut'}}
         >
           <button
             onClick={() => router.back()}
@@ -664,9 +664,9 @@ export default function WikiPageDetailPage() {
 
         {/* Title Section */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3, ease: 'easeOut', delay: 0.1}}
           className={card.base}
         >
           <div className={card.paddingLarge}>
@@ -681,7 +681,7 @@ export default function WikiPageDetailPage() {
                     <div
                       className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
                         page.authorId || 'default'
-                      )} flex items-center justify-center text-sm font-semibold text-white`}
+                      )} flex items-center justify-center text-sm font-semibold text-inverse`}
                     >
                       {getInitials(page.authorName || 'A')}
                     </div>
@@ -694,7 +694,7 @@ export default function WikiPageDetailPage() {
                   </div>
 
                   <div className="flex items-center gap-2 text-[var(--text-muted)]">
-                    <Calendar className={`${iconSize.cardInline} flex-shrink-0`} />
+                    <Calendar className={`${iconSize.cardInline} flex-shrink-0`}/>
                     <span className="text-sm">
                       {new Date(page.updatedAt).toLocaleDateString()}
                     </span>
@@ -724,7 +724,7 @@ export default function WikiPageDetailPage() {
                 <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
                   {/* Like Button */}
                   <motion.button
-                    whileTap={{ scale: 0.92 }}
+                    whileTap={{scale: 0.92}}
                     onClick={handleToggleLike}
                     disabled={likeMutation.isPending || unlikeMutation.isPending}
                     aria-label={isLiked ? 'Unlike' : 'Like'}
@@ -744,7 +744,7 @@ export default function WikiPageDetailPage() {
 
                   {/* Favorite Button */}
                   <motion.button
-                    whileTap={{ scale: 0.92 }}
+                    whileTap={{scale: 0.92}}
                     onClick={handleToggleFavorite}
                     disabled={addFavorite.isPending || removeFavorite.isPending}
                     aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
@@ -767,32 +767,32 @@ export default function WikiPageDetailPage() {
                     onClick={() => {
                       document
                         .getElementById('comments-section')
-                        ?.scrollIntoView({ behavior: 'smooth' });
+                        ?.scrollIntoView({behavior: 'smooth'});
                     }}
                     aria-label="Jump to comments"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
-                    <MessageCircle className="h-4 w-4" />
+                    <MessageCircle className="h-4 w-4"/>
                     <span>{totalCommentCount}</span>
                   </button>
 
                   {/* Share */}
                   <motion.button
-                    whileTap={{ scale: 0.92 }}
+                    whileTap={{scale: 0.92}}
                     onClick={handleCopyLink}
                     aria-label="Share link"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
                     {linkCopied ? (
-                      <Check className="h-4 w-4 text-[var(--status-success-text)]" />
+                      <Check className="h-4 w-4 text-[var(--status-success-text)]"/>
                     ) : (
-                      <Share2 className="h-4 w-4" />
+                      <Share2 className="h-4 w-4"/>
                     )}
                     <span>{linkCopied ? 'Copied' : 'Share'}</span>
                   </motion.button>
 
                   {/* Watch / Subscribe */}
-                  <WatchButton pageId={page.id} size="sm" />
+                  <WatchButton pageId={page.id} size="sm"/>
                 </div>
               </div>
 
@@ -806,7 +806,7 @@ export default function WikiPageDetailPage() {
                       onClick={() => router.push(`/fluence/wiki/${page.id}/edit`)}
                       className="hover:bg-[var(--bg-secondary)] transition-colors"
                     >
-                      <Edit className={iconSize.cardInline} />
+                      <Edit className={iconSize.cardInline}/>
                     </ActionIcon>
                   </Tooltip>
                 )}
@@ -817,7 +817,7 @@ export default function WikiPageDetailPage() {
                     onClick={() => setShowHistory(true)}
                     className="hover:bg-[var(--bg-secondary)] transition-colors"
                   >
-                    <History className={iconSize.cardInline} />
+                    <History className={iconSize.cardInline}/>
                   </ActionIcon>
                 </Tooltip>
 
@@ -831,7 +831,7 @@ export default function WikiPageDetailPage() {
                       loading={exporting}
                       className="hover:bg-[var(--bg-secondary)] transition-colors"
                     >
-                      <Download className={iconSize.cardInline} />
+                      <Download className={iconSize.cardInline}/>
                     </ActionIcon>
                   </Tooltip>
 
@@ -844,24 +844,24 @@ export default function WikiPageDetailPage() {
                           onClick={() => setExportMenuOpen(false)}
                         />
                         <motion.div
-                          initial={{ opacity: 0, y: -4, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
-                          transition={{ duration: 0.15 }}
+                          initial={{opacity: 0, y: -4, scale: 0.95}}
+                          animate={{opacity: 1, y: 0, scale: 1}}
+                          exit={{opacity: 0, y: -4, scale: 0.95}}
+                          transition={{duration: 0.15}}
                           className="absolute right-0 top-full mt-1 z-50 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
                         >
                           <button
                             onClick={() => handleExport('pdf')}
                             className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
                           >
-                            <FileText className={iconSize.button} />
+                            <FileText className={iconSize.button}/>
                             Export as PDF
                           </button>
                           <button
                             onClick={() => handleExport('docx')}
                             className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
                           >
-                            <FileType className={iconSize.button} />
+                            <FileType className={iconSize.button}/>
                             Export as DOCX
                           </button>
                         </motion.div>
@@ -877,14 +877,14 @@ export default function WikiPageDetailPage() {
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: 'Wiki', href: '/fluence/wiki' },
+            {label: 'Wiki', href: '/fluence/wiki'},
             {
               label: page.spaceName || 'Untitled Space',
               href: `/fluence/wiki?space=${page.spaceId}`,
             },
             {
               label: page.title,
-              icon: <BookOpen className={iconSize.meta} />,
+              icon: <BookOpen className={iconSize.meta}/>,
             },
           ]}
           className="mb-4"
@@ -894,33 +894,33 @@ export default function WikiPageDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Table of Contents (hidden on mobile/tablet) */}
           <div className="hidden lg:block lg:col-span-1 order-last">
-            <TableOfContents contentRef={contentContainerRef} />
+            <TableOfContents contentRef={contentContainerRef}/>
           </div>
 
           {/* Main Content Area */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
+            initial={{opacity: 0, y: 12}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.3, ease: 'easeOut', delay: 0.15}}
             className="lg:col-span-2"
           >
             <div ref={contentContainerRef} data-page-content className={`${card.base} ${card.paddingLarge}`}>
-              <ContentViewer content={page.content} />
+              <ContentViewer content={page.content}/>
             </div>
           </motion.div>
 
           {/* Sidebar */}
           <motion.div
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
+            initial={{opacity: 0, x: 12}}
+            animate={{opacity: 1, x: 0}}
+            transition={{duration: 0.3, ease: 'easeOut', delay: 0.15}}
             className="lg:col-span-1"
           >
             {/* Stats Card */}
             <motion.div
               variants={{
-                hidden: { opacity: 0, y: 8 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+                hidden: {opacity: 0, y: 8},
+                visible: {opacity: 1, y: 0, transition: {duration: 0.25}},
               }}
               initial="hidden"
               animate="visible"
@@ -950,7 +950,7 @@ export default function WikiPageDetailPage() {
                   </div>
                   <div className="row-between pb-4 border-b border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-[var(--text-muted)]" />
+                      <MessageCircle className="h-4 w-4 text-[var(--text-muted)]"/>
                       <span className={typography.bodySecondary}>Comments</span>
                     </div>
                     <span className="text-lg font-semibold text-[var(--text-primary)]">
@@ -970,11 +970,11 @@ export default function WikiPageDetailPage() {
             {/* Actions Card */}
             <motion.div
               variants={{
-                hidden: { opacity: 0, y: 8 },
+                hidden: {opacity: 0, y: 8},
                 visible: {
                   opacity: 1,
                   y: 0,
-                  transition: { duration: 0.25, delay: 0.06 },
+                  transition: {duration: 0.25, delay: 0.06},
                 },
               }}
               initial="hidden"
@@ -985,21 +985,21 @@ export default function WikiPageDetailPage() {
                 <h3 className={`${typography.cardTitle} mb-4`}>Actions</h3>
                 <div className="space-y-2">
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{scale: 1.02}}
+                    whileTap={{scale: 0.98}}
                     onClick={() => setShowHistory(true)}
                     className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
-                    <History className={`${iconSize.cardInline} flex-shrink-0`} />
+                    <History className={`${iconSize.cardInline} flex-shrink-0`}/>
                     <span>Version History</span>
                   </motion.button>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{scale: 1.02}}
+                    whileTap={{scale: 0.98}}
                     className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                   >
-                    <Archive className={`${iconSize.cardInline} flex-shrink-0`} />
+                    <Archive className={`${iconSize.cardInline} flex-shrink-0`}/>
                     <span>Archive</span>
                   </motion.button>
                 </div>
@@ -1010,11 +1010,11 @@ export default function WikiPageDetailPage() {
             {page.visibility && (
               <motion.div
                 variants={{
-                  hidden: { opacity: 0, y: 8 },
+                  hidden: {opacity: 0, y: 8},
                   visible: {
                     opacity: 1,
                     y: 0,
-                    transition: { duration: 0.25, delay: 0.12 },
+                    transition: {duration: 0.25, delay: 0.12},
                   },
                 }}
                 initial="hidden"
@@ -1044,8 +1044,9 @@ export default function WikiPageDetailPage() {
                       </p>
                     )}
                     {page.editorIds && page.editorIds.length > 0 && (
-                      <div className="flex items-center gap-2 text-caption pl-7 pt-2 border-t border-[var(--border-main)]">
-                        <Users className={`${iconSize.meta} flex-shrink-0`} />
+                      <div
+                        className="flex items-center gap-2 text-caption pl-7 pt-2 border-t border-[var(--border-main)]">
+                        <Users className={`${iconSize.meta} flex-shrink-0`}/>
                         <span>
                           {page.editorIds.length} editor
                           {page.editorIds.length !== 1 ? 's' : ''} with edit access
@@ -1064,16 +1065,16 @@ export default function WikiPageDetailPage() {
             ═══════════════════════════════════════════════════════════ */}
         <motion.div
           id="comments-section"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut', delay: 0.2 }}
+          initial={{opacity: 0, y: 12}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.3, ease: 'easeOut', delay: 0.2}}
           className={card.base}
         >
           <div className={card.paddingLarge}>
             {/* Header */}
             <div className="row-between mb-6">
               <div className="flex items-center gap-2">
-                <MessageCircle className={iconSize.cardInline} />
+                <MessageCircle className={iconSize.cardInline}/>
                 <h2 className={typography.cardTitle}>
                   Discussion{' '}
                   <span className="text-[var(--text-muted)] font-normal">
@@ -1088,7 +1089,7 @@ export default function WikiPageDetailPage() {
               <div
                 className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
                   user?.id || 'me'
-                )} flex items-center justify-center text-sm font-semibold text-white`}
+                )} flex items-center justify-center text-sm font-semibold text-inverse`}
               >
                 {getInitials(user?.fullName || 'You')}
               </div>
@@ -1103,14 +1104,14 @@ export default function WikiPageDetailPage() {
                   />
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{scale: 1.05}}
+                  whileTap={{scale: 0.95}}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
                   aria-label="Send comment"
-                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                  className='mt-0.5 p-2.5 rounded-xl bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4"/>
                 </motion.button>
               </div>
             </div>
@@ -1118,8 +1119,9 @@ export default function WikiPageDetailPage() {
             {/* Comments List */}
             {comments.length === 0 ? (
               <div className="text-center py-12">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] mx-auto mb-4">
-                  <MessageCircle className="h-6 w-6 text-[var(--text-muted)]" />
+                <div
+                  className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] mx-auto mb-4">
+                  <MessageCircle className="h-6 w-6 text-[var(--text-muted)]"/>
                 </div>
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
                   No comments yet
@@ -1133,10 +1135,10 @@ export default function WikiPageDetailPage() {
                 initial="hidden"
                 animate="visible"
                 variants={{
-                  hidden: { opacity: 0 },
+                  hidden: {opacity: 0},
                   visible: {
                     opacity: 1,
-                    transition: { staggerChildren: 0.08, delayChildren: 0 },
+                    transition: {staggerChildren: 0.08, delayChildren: 0},
                   },
                 }}
                 className="space-y-6"
@@ -1154,7 +1156,7 @@ export default function WikiPageDetailPage() {
                       onSubmitReply={handleSubmitReply}
                     />
                     {/* Divider between top-level comments */}
-                    <div className="divider-b last:border-b-0" />
+                    <div className="divider-b last:border-b-0"/>
                   </Fragment>
                 ))}
               </motion.div>
@@ -1162,14 +1164,13 @@ export default function WikiPageDetailPage() {
           </div>
         </motion.div>
       </motion.div>
-
       {/* ═══ Viewers Modal ═══ */}
       <Modal
         opened={showViewers}
         onClose={() => setShowViewers(false)}
         title="Who viewed this page"
         size="md"
-        styles={{ title: { fontSize: '1.125rem', fontWeight: 600 } }}
+        styles={{title: {fontSize: '1.125rem', fontWeight: 600}}}
       >
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {!viewers || viewers.length === 0 ? (
@@ -1181,8 +1182,8 @@ export default function WikiPageDetailPage() {
               initial="hidden"
               animate="visible"
               variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
+                hidden: {opacity: 0},
+                visible: {opacity: 1, transition: {staggerChildren: 0.05}},
               }}
               className="space-y-2"
             >
@@ -1190,8 +1191,8 @@ export default function WikiPageDetailPage() {
                 <motion.div
                   key={v.id}
                   variants={{
-                    hidden: { opacity: 0, x: -8 },
-                    visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
+                    hidden: {opacity: 0, x: -8},
+                    visible: {opacity: 1, x: 0, transition: {duration: 0.2}},
                   }}
                   className="row-between py-4 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
@@ -1199,7 +1200,7 @@ export default function WikiPageDetailPage() {
                     <div
                       className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
                         v.id
-                      )} flex items-center justify-center text-xs font-semibold text-white`}
+                      )} flex items-center justify-center text-xs font-semibold text-inverse`}
                     >
                       {getInitials(v.viewerName || 'U')}
                     </div>
@@ -1214,14 +1215,13 @@ export default function WikiPageDetailPage() {
           )}
         </div>
       </Modal>
-
       {/* ═══ Version History Modal ═══ */}
       <Modal
         opened={showHistory}
         onClose={() => setShowHistory(false)}
         title="Version History"
         size="lg"
-        styles={{ title: { fontSize: '1.125rem', fontWeight: 600 } }}
+        styles={{title: {fontSize: '1.125rem', fontWeight: 600}}}
       >
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {!revisions || revisions.length === 0 ? (
@@ -1233,8 +1233,8 @@ export default function WikiPageDetailPage() {
               initial="hidden"
               animate="visible"
               variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
+                hidden: {opacity: 0},
+                visible: {opacity: 1, transition: {staggerChildren: 0.05}},
               }}
               className="space-y-4"
             >
@@ -1242,8 +1242,8 @@ export default function WikiPageDetailPage() {
                 <motion.div
                   key={rev.id}
                   variants={{
-                    hidden: { opacity: 0, y: 8 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+                    hidden: {opacity: 0, y: 8},
+                    visible: {opacity: 1, y: 0, transition: {duration: 0.2}},
                   }}
                   className="flex items-start justify-between p-4 rounded-lg border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
@@ -1274,13 +1274,13 @@ export default function WikiPageDetailPage() {
                   </div>
                   {rev.version !== page.version && (
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{scale: 1.05}}
+                      whileTap={{scale: 0.95}}
                       onClick={() => handleRestoreRevision(rev.id)}
                       disabled={restoreRevision.isPending}
-                      className="ml-4 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      className='ml-4 px-4 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 flex-shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
                     >
-                      <RefreshCw className="h-3 w-3" />
+                      <RefreshCw className="h-3 w-3"/>
                       Restore
                     </motion.button>
                   )}
@@ -1290,7 +1290,6 @@ export default function WikiPageDetailPage() {
           )}
         </div>
       </Modal>
-
       {/* Inline Comments Panel */}
       {page && (
         <InlineCommentsPanel

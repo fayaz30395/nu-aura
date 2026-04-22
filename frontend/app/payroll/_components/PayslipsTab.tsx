@@ -66,13 +66,12 @@ export function PayslipsTab({
         <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
           <button
             onClick={onCreatePayslip}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Create Payslip
           </button>
         </PermissionGate>
       </div>
-
       {loading ? (
         <div className="text-center py-12 text-[var(--text-secondary)]">Loading payslips...</div>
       ) : filtered.length === 0 ? (
@@ -115,15 +114,15 @@ export function PayslipsTab({
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-secondary)]">Allowances</span>
-                  <span className="text-success-600 font-medium">{formatCurrency(payslip.allowances)}</span>
+                  <span className='text-status-success-text font-medium'>{formatCurrency(payslip.allowances)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-secondary)]">Deductions</span>
-                  <span className="text-danger-600 font-medium">{formatCurrency(payslip.deductions)}</span>
+                  <span className='text-status-danger-text font-medium'>{formatCurrency(payslip.deductions)}</span>
                 </div>
                 <div className="border-t pt-4 flex justify-between text-sm font-semibold">
                   <span className="text-[var(--text-primary)]">Net Amount</span>
-                  <span className="text-accent-700 dark:text-accent-400">{formatCurrency(payslip.netAmount)}</span>
+                  <span className='text-accent'>{formatCurrency(payslip.netAmount)}</span>
                 </div>
               </div>
 
@@ -131,7 +130,7 @@ export function PayslipsTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onEditPayslip(payslip)}
-                    className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                    className='flex-1 px-4 py-2 bg-accent-subtle text-accent rounded hover:bg-accent-subtle text-sm font-medium'
                   >
                     Edit
                   </button>
@@ -139,7 +138,7 @@ export function PayslipsTab({
                 <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                   <button
                     onClick={() => onDeletePayslip(payslip)}
-                    className="flex-1 px-4 py-2 bg-danger-50 dark:bg-danger-900/40 text-danger-600 dark:text-danger-400 rounded hover:bg-danger-100 dark:hover:bg-danger-900/60 text-sm font-medium"
+                    className='flex-1 px-4 py-2 bg-status-danger-bg text-status-danger-text rounded hover:bg-status-danger-bg text-sm font-medium'
                   >
                     Delete
                   </button>

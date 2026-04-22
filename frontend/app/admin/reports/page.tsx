@@ -160,7 +160,6 @@ export default function AdminReportsPage() {
           Platform-wide reporting, analytics, and data exports
         </p>
       </div>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Download reports grid */}
         <div className="xl:col-span-2">
@@ -184,7 +183,7 @@ export default function AdminReportsPage() {
                     onClick={() => handleDownload(report)}
                     disabled={isDownloading}
                     aria-label={`Download ${report.label}`}
-                    className="shrink-0 p-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-muted)] hover:text-accent-500 hover:border-accent-300 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className='shrink-0 p-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-muted)] hover:text-accent hover:border-[var(--accent-primary)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     {isDownloading ? (
                       <RefreshCw className="h-4 w-4 animate-spin"/>
@@ -206,7 +205,7 @@ export default function AdminReportsPage() {
               </h2>
               <Link
                 href="/reports/scheduled"
-                className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
+                className='text-xs text-accent hover:underline flex items-center gap-1 cursor-pointer'
               >
                 Manage <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -226,7 +225,7 @@ export default function AdminReportsPage() {
                 <p className="text-body-muted">No scheduled reports configured</p>
                 <Link
                   href="/reports/scheduled"
-                  className="mt-1 inline-block text-xs text-accent-500 hover:underline cursor-pointer"
+                  className='mt-1 inline-block text-xs text-accent hover:underline cursor-pointer'
                 >
                   Set up a schedule →
                 </Link>
@@ -235,7 +234,7 @@ export default function AdminReportsPage() {
               <div className="divide-y divide-[var(--border-subtle)]">
                 {activeScheduled.slice(0, 8).map((sr) => (
                   <div key={sr.id} className="flex items-center gap-2 px-4 py-2">
-                    <RefreshCw className="h-4 w-4 text-accent-500 shrink-0"/>
+                    <RefreshCw className='h-4 w-4 text-accent shrink-0'/>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {sr.scheduleName}
@@ -265,14 +264,14 @@ export default function AdminReportsPage() {
                 href={href}
                 className="flex items-center gap-2 rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4 hover:bg-[var(--surface-hover)] transition-colors shadow-[var(--shadow-card)] cursor-pointer group"
               >
-                <div className="shrink-0 rounded-lg p-2 bg-accent-50 dark:bg-accent-950/20">
-                  <Icon className="h-4 w-4 text-accent-500"/>
+                <div className='shrink-0 rounded-lg p-2 bg-accent-subtle'>
+                  <Icon className='h-4 w-4 text-accent'/>
                 </div>
                 <p className="flex-1 text-sm font-medium text-[var(--text-primary)] truncate">
                   {label}
                 </p>
                 <ChevronRight
-                  className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-500 transition-colors shrink-0"/>
+                  className='h-4 w-4 text-[var(--text-muted)] group-hover:text-accent transition-colors shrink-0'/>
               </Link>
             ))}
           </div>

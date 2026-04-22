@@ -64,11 +64,11 @@ const getStatusColor = (status: string) => {
 const getRequestStatusIcon = (status: string) => {
   switch (status) {
     case 'COMPLETED':
-      return <CheckCircle className="h-5 w-5 text-success-500"/>;
+      return <CheckCircle className='h-5 w-5 text-status-success-text'/>;
     case 'IN_PROGRESS':
-      return <Clock className="h-5 w-5 text-accent-500"/>;
+      return <Clock className='h-5 w-5 text-accent'/>;
     case 'DECLINED':
-      return <AlertTriangle className="h-5 w-5 text-danger-500"/>;
+      return <AlertTriangle className='h-5 w-5 text-status-danger-text'/>;
     default:
       return <Clock className="h-5 w-5 text-[var(--text-muted)]"/>;
   }
@@ -264,7 +264,7 @@ export default function Feedback360Page() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600"></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
         </div>
       </AppLayout>
     );
@@ -287,7 +287,7 @@ export default function Feedback360Page() {
                   resetCycleForm();
                   setShowCycleModal(true);
                 }}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
+                className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-inverse bg-accent hover:bg-accent'
               >
                 <Plus className="h-5 w-5 mr-2"/>
                 New Cycle
@@ -297,8 +297,8 @@ export default function Feedback360Page() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-danger-50 border border-danger-200 rounded-md">
-            <p className="text-sm text-danger-600">{error}</p>
+          <div className='mb-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-md'>
+            <p className='text-sm text-status-danger-text'>{error}</p>
           </div>
         )}
 
@@ -328,7 +328,7 @@ export default function Feedback360Page() {
               Pending Reviews ({pendingReviews.length})
               {pendingReviews.length > 0 && (
                 <span
-                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-800">
+                  className='inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-status-danger-bg text-status-danger-text'>
                 {pendingReviews.length}
               </span>
               )}
@@ -408,7 +408,7 @@ export default function Feedback360Page() {
                           <span className="px-2 py-0.5 bg-[var(--bg-surface)] rounded text-xs">Upward</span>
                         )}
                         {cycle.isAnonymous && (
-                          <span className="px-2 py-0.5 bg-accent-300 text-accent-900 rounded text-xs">
+                          <span className='px-2 py-0.5 bg-accent-subtle text-accent rounded text-xs'>
                           Anonymous
                         </span>
                         )}
@@ -420,7 +420,7 @@ export default function Feedback360Page() {
                           <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
                             <button
                               onClick={() => setActivateConfirm(cycle.id)}
-                              className="p-2 text-success-600 hover:bg-success-50 rounded"
+                              className='p-2 text-status-success-text hover:bg-status-success-bg rounded'
                               title="Activate"
                             >
                               <Play className="h-5 w-5"/>
@@ -429,7 +429,7 @@ export default function Feedback360Page() {
                           <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
                             <button
                               onClick={() => setDeleteConfirm(cycle.id)}
-                              className="p-2 text-danger-600 hover:bg-danger-50 rounded"
+                              className='p-2 text-status-danger-text hover:bg-status-danger-bg rounded'
                               title="Delete"
                             >
                               <Trash2 className="h-5 w-5"/>
@@ -461,7 +461,7 @@ export default function Feedback360Page() {
           <div className="space-y-4">
             {pendingReviews.length === 0 ? (
               <div className="text-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-                <CheckCircle className="mx-auto h-12 w-12 text-success-400"/>
+                <CheckCircle className='mx-auto h-12 w-12 text-status-success-text'/>
                 <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">All caught up!</h3>
                 <p className="mt-1 text-body-muted">
                   You have no pending feedback reviews.
@@ -505,7 +505,7 @@ export default function Feedback360Page() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-800">
+                            className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-subtle text-accent'>
                             {request.reviewerType}
                           </span>
                         </td>
@@ -522,7 +522,7 @@ export default function Feedback360Page() {
                           <PermissionGate permission={Permissions.FEEDBACK_360_SUBMIT}>
                             <button
                               onClick={() => openResponseModal(request)}
-                              className="inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-accent-600 hover:bg-accent-700"
+                              className='inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-medium rounded text-inverse bg-accent hover:bg-accent'
                             >
                               <Pencil className="h-4 w-4 mr-1"/>
                               Provide Feedback
@@ -587,7 +587,7 @@ export default function Feedback360Page() {
                         <span className="text-[var(--text-muted)]">Self Review:</span>
                         <span className="font-medium">
                         {summary.selfReviewCompleted ? (
-                          <CheckCircle className="h-5 w-5 text-success-500 inline"/>
+                          <CheckCircle className='h-5 w-5 text-status-success-text inline'/>
                         ) : (
                           <Clock className="h-5 w-5 text-[var(--text-muted)] inline"/>
                         )}
@@ -597,7 +597,7 @@ export default function Feedback360Page() {
                         <span className="text-[var(--text-muted)]">Manager Review:</span>
                         <span className="font-medium">
                         {summary.managerReviewCompleted ? (
-                          <CheckCircle className="h-5 w-5 text-success-500 inline"/>
+                          <CheckCircle className='h-5 w-5 text-status-success-text inline'/>
                         ) : (
                           <Clock className="h-5 w-5 text-[var(--text-muted)] inline"/>
                         )}
@@ -621,7 +621,7 @@ export default function Feedback360Page() {
                             <div className="flex items-center gap-2">
                               <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                                 <div
-                                  className="h-full bg-accent-500"
+                                  className='h-full bg-accent'
                                   style={{width: `${(summary.avgCommunication / 5) * 100}%`}}
                                 />
                               </div>
@@ -637,7 +637,7 @@ export default function Feedback360Page() {
                             <div className="flex items-center gap-2">
                               <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                                 <div
-                                  className="h-full bg-success-500"
+                                  className='h-full bg-status-success-bg'
                                   style={{width: `${(summary.avgTeamwork / 5) * 100}%`}}
                                 />
                               </div>
@@ -653,7 +653,7 @@ export default function Feedback360Page() {
                             <div className="flex items-center gap-2">
                               <div className="w-24 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                                 <div
-                                  className="h-full bg-accent-700"
+                                  className='h-full bg-accent'
                                   style={{width: `${(summary.avgLeadership / 5) * 100}%`}}
                                 />
                               </div>
@@ -671,7 +671,7 @@ export default function Feedback360Page() {
                       <div className="space-y-4 border-t border-[var(--border-subtle)] pt-4">
                         {summary.consolidatedStrengths && (
                           <div>
-                            <h4 className="text-xs font-medium text-success-600 mb-1">Strengths</h4>
+                            <h4 className='text-xs font-medium text-status-success-text mb-1'>Strengths</h4>
                             <p className="text-body-secondary line-clamp-2">
                               {summary.consolidatedStrengths}
                             </p>
@@ -679,7 +679,7 @@ export default function Feedback360Page() {
                         )}
                         {summary.consolidatedImprovements && (
                           <div>
-                            <h4 className="text-xs font-medium text-warning-600 mb-1">
+                            <h4 className='text-xs font-medium text-status-warning-text mb-1'>
                               Areas for Improvement
                             </h4>
                             <p className="text-body-secondary line-clamp-2">
@@ -701,7 +701,7 @@ export default function Feedback360Page() {
                         <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
                           <button
                             onClick={() => setShareConfirm(summary.id)}
-                            className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-white bg-accent-600 rounded hover:bg-accent-700"
+                            className='inline-flex items-center px-4 py-1.5 text-sm font-medium text-inverse bg-accent rounded hover:bg-accent'
                           >
                             <Share2 className="h-4 w-4 mr-1"/>
                             Share
@@ -872,7 +872,7 @@ export default function Feedback360Page() {
                         onChange={(e) =>
                           setCycleForm({...cycleForm, includeSelfReview: e.target.checked})
                         }
-                        className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                        className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Self Review</span>
                     </label>
@@ -883,7 +883,7 @@ export default function Feedback360Page() {
                         onChange={(e) =>
                           setCycleForm({...cycleForm, includeManagerReview: e.target.checked})
                         }
-                        className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                        className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Manager Review</span>
                     </label>
@@ -894,7 +894,7 @@ export default function Feedback360Page() {
                         onChange={(e) =>
                           setCycleForm({...cycleForm, includePeerReview: e.target.checked})
                         }
-                        className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                        className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Peer Review</span>
                     </label>
@@ -905,7 +905,7 @@ export default function Feedback360Page() {
                         onChange={(e) =>
                           setCycleForm({...cycleForm, includeUpwardReview: e.target.checked})
                         }
-                        className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                        className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                       />
                       <span className="ml-2 text-sm text-[var(--text-primary)]">Upward Review</span>
                     </label>
@@ -917,7 +917,7 @@ export default function Feedback360Page() {
                       onChange={(e) =>
                         setCycleForm({...cycleForm, isAnonymous: e.target.checked})
                       }
-                      className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                      className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                     />
                     <span className="ml-2 text-sm text-[var(--text-primary)]">
                     Anonymous peer feedback
@@ -939,7 +939,7 @@ export default function Feedback360Page() {
                   <button
                     onClick={handleCreateCycle}
                     disabled={!cycleForm.name || !cycleForm.startDate || !cycleForm.endDate}
-                    className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='px-4 py-2 text-sm font-medium text-inverse bg-accent rounded-md hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     Create Cycle
                   </button>
@@ -1087,7 +1087,7 @@ export default function Feedback360Page() {
                     <button
                       onClick={() => handleSubmitResponse(false)}
                       disabled={!responseForm.overallRating}
-                      className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50"
+                      className='px-4 py-2 text-sm font-medium text-inverse bg-accent rounded-md hover:bg-accent disabled:opacity-50'
                     >
                       Submit Feedback
                     </button>

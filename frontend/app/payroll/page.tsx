@@ -104,7 +104,7 @@ export default function PayrollPage() {
     return (
       <AppLayout activeMenuItem="payroll">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-          <Banknote className="h-12 w-12 text-[var(--text-muted)] mb-4" />
+          <Banknote className="h-12 w-12 text-[var(--text-muted)] mb-4"/>
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Access Denied</h2>
           <p className="text-[var(--text-muted)] max-w-md">
             You don&apos;t have permission to access the Payroll module. Redirecting...
@@ -127,7 +127,7 @@ export default function PayrollPage() {
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-2">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <TrendingUp className="h-6 w-6 text-white"/>
+                <TrendingUp className='h-6 w-6 text-inverse'/>
               </div>
               <h1 className="text-xl font-bold skeuo-emboss">Payroll Management</h1>
             </div>
@@ -148,7 +148,7 @@ export default function PayrollPage() {
                 <div className="row-between mb-4">
                   <div
                     className={`p-2.5 rounded-lg bg-gradient-to-br ${gradient} group-hover:scale-110 transition-transform duration-200`}>
-                    <Icon className="h-5 w-5 text-white"/>
+                    <Icon className='h-5 w-5 text-inverse'/>
                   </div>
                   <ChevronRight
                     className={`h-4 w-4 text-[var(--text-muted)] ${hoverText} group-hover:translate-x-1 transition-all duration-200`}/>

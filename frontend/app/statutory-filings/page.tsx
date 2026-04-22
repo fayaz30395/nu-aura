@@ -217,7 +217,7 @@ export default function StatutoryFilingsPage() {
       <Container size="xl" py="md">
         <Group justify="space-between" mb="lg">
           <div>
-            <Title order={2} className="text-surface-900 dark:text-white">
+            <Title order={2} className='text-primary'>
               Statutory Filing Reports
             </Title>
             <Text c="dimmed" size="sm">
@@ -226,7 +226,7 @@ export default function StatutoryFilingsPage() {
           </div>
           <Button
             leftSection={<IconFileText size={16}/>}
-            className="bg-accent-700 hover:bg-accent-800"
+            className='bg-accent hover:bg-accent-hover'
             onClick={() => setGenerateModalOpen(true)}
           >
             Generate Filing
@@ -256,7 +256,7 @@ export default function StatutoryFilingsPage() {
                         <ThemeIcon
                           size="lg"
                           radius="md"
-                          className="bg-accent-700"
+                          className='bg-accent'
                         >
                           {FILING_ICONS[ft.filingType]}
                         </ThemeIcon>
@@ -525,7 +525,7 @@ export default function StatutoryFilingsPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-accent-700 hover:bg-accent-800"
+                  className='bg-accent hover:bg-accent-hover'
                   loading={generateMutation.isPending}
                   leftSection={<IconFileText size={16}/>}
                 >

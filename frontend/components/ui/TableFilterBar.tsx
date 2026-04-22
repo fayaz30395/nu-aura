@@ -246,7 +246,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
           Filters
           {activeFilterCount > 0 && (
             <span
-              className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+              className='inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-accent-subtle text-accent'>
               {activeFilterCount}
             </span>
           )}
@@ -280,7 +280,7 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
             onClick={onApply}
             className={cn(
               'px-4 min-h-[44px] text-sm font-medium rounded-md',
-              'bg-accent-700 text-white hover:bg-accent-800',
+              'bg-accent text-inverse hover:bg-accent-hover',
               'focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2',
               'transition-colors duration-150'
             )}
@@ -289,7 +289,6 @@ export const TableFilterBar: React.FC<TableFilterBarProps> = ({
           </button>
         </div>
       </div>
-
       {/* ── Filter fields (collapsible) ───────────────────────────── */}
       {!isCollapsed && (
         <div

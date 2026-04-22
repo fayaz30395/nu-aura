@@ -253,16 +253,15 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
 
   return (
     <div
-      className="space-y-4 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
+      className='space-y-4 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)]'>
       <div className="row-between">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Custom Scope Targets</p>
         <span className="text-caption">
           {targets.length} selected
         </span>
       </div>
-
       {/* Target Type Tabs */}
-      <div className="flex gap-1 p-1 bg-[var(--bg-surface)] dark:bg-surface-700 rounded-lg">
+      <div className='flex gap-1 p-1 bg-[var(--bg-surface)] rounded-lg'>
         {(['EMPLOYEE', 'DEPARTMENT', 'LOCATION'] as TargetType[]).map((type) => (
           <button
             key={type}
@@ -280,7 +279,6 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
           </button>
         ))}
       </div>
-
       {/* Search Input */}
       <div className="relative" ref={dropdownRef}>
         <div className="relative">
@@ -295,7 +293,7 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
             onFocus={() => setShowDropdown(true)}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
-            className="w-full px-4 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className='w-full px-4 py-2 pl-9 text-sm border border-[var(--border-main)] rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed'
           />
           <div
             className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-[var(--text-muted)]">
@@ -317,7 +315,7 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
         {/* Search Results Dropdown */}
         {showDropdown && (searchResults.length > 0 || (searchQuery && !isSearching)) && (
           <div
-            className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto">
+            className='absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] max-h-60 overflow-y-auto'>
             {searchResults.length > 0 ? (
               searchResults.map((result) => (
                 <button
@@ -351,12 +349,10 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
           </div>
         )}
       </div>
-
       {/* Error Message */}
       {error && (
-        <p className="text-xs text-danger-600 dark:text-danger-400">{error}</p>
+        <p className='text-xs text-status-danger-text'>{error}</p>
       )}
-
       {/* Selected Targets */}
       {targets.length > 0 ? (
         <div className="space-y-2">
@@ -393,7 +389,6 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
           No custom targets selected. Search to add employees, departments, or locations.
         </p>
       )}
-
       {/* Help Text */}
       <p className="text-caption">
         Users with this permission will only have access to records belonging to the selected targets.

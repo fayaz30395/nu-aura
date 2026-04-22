@@ -99,34 +99,34 @@ export default function LearningPage() {
           </div>
         ) : dashboardError ? (
           <div
-            className="mb-6 p-4 rounded-lg border border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
-            <p className="text-sm text-danger-600 dark:text-danger-400">Failed to load learning dashboard. Please try
+            className='mb-6 p-4 rounded-lg border border-status-danger-border bg-status-danger-bg'>
+            <p className='text-sm text-status-danger-text'>Failed to load learning dashboard. Please try
               refreshing the page.</p>
           </div>
         ) : dashboard ? (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.totalEnrollments}</div>
+                className='text-3xl font-bold text-accent'>{dashboard.totalEnrollments}</div>
               <div className="text-[var(--text-secondary)]">Total Enrollments</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-warning-600 dark:text-warning-400">{dashboard.inProgress}</div>
+              <div className='text-3xl font-bold text-status-warning-text'>{dashboard.inProgress}</div>
               <div className="text-[var(--text-secondary)]">In Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
-              <div className="text-3xl font-bold text-success-600 dark:text-success-400">{dashboard.completed}</div>
+              <div className='text-3xl font-bold text-status-success-text'>{dashboard.completed}</div>
               <div className="text-[var(--text-secondary)]">Completed</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div
-                className="text-3xl font-bold text-accent-800 dark:text-accent-600">{dashboard.averageProgress?.toFixed(0) || 0}%
+                className='text-3xl font-bold text-accent'>{dashboard.averageProgress?.toFixed(0) || 0}%
               </div>
               <div className="text-[var(--text-secondary)]">Avg Progress</div>
             </div>
             <div className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-card)] p-6">
               <div
-                className="text-3xl font-bold text-accent-700 dark:text-accent-400">{dashboard.certificatesEarned}</div>
+                className='text-3xl font-bold text-accent'>{dashboard.certificatesEarned}</div>
               <div className="text-[var(--text-secondary)]">Certificates</div>
             </div>
           </div>
@@ -185,8 +185,8 @@ export default function LearningPage() {
                         </div>
                       ) : (
                         <div
-                          className="w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 dark:from-accent-600 dark:to-accent-900 flex items-center justify-center">
-                          <span className="text-4xl text-white">📚</span>
+                          className='w-full h-40 bg-gradient-to-r from-accent-500 to-accent-800 flex items-center justify-center'>
+                          <span className='text-4xl text-inverse'>📚</span>
                         </div>
                       )}
                       <div className="p-4">
@@ -194,7 +194,7 @@ export default function LearningPage() {
                           <h3 className="font-semibold text-lg text-[var(--text-primary)]">{course.title}</h3>
                           {course.isMandatory && (
                             <span
-                              className="px-2 py-1 bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300 text-xs rounded-full">Mandatory</span>
+                              className='px-2 py-1 bg-status-danger-bg text-status-danger-text text-xs rounded-full'>Mandatory</span>
                           )}
                         </div>
                         {course.shortDescription && (
@@ -269,7 +269,7 @@ export default function LearningPage() {
                         </div>
                         <div className="text-right">
                           <div
-                            className="text-xl font-bold text-accent-700 dark:text-accent-400">{enrollment.progressPercentage?.toFixed(0) || 0}%
+                            className='text-xl font-bold text-accent'>{enrollment.progressPercentage?.toFixed(0) || 0}%
                           </div>
                           <div className="text-body-secondary">Progress</div>
                         </div>
@@ -326,7 +326,7 @@ export default function LearningPage() {
                 {certificates.length > 0 ? (
                   certificates.map((cert) => (
                     <div key={cert.id}
-                         className="bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-warning-500 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
+                         className='bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 border-l-4 border-status-warning-border hover:shadow-[var(--shadow-dropdown)] transition-shadow'>
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="text-2xl mb-2" aria-label="Certificate">🏆</div>

@@ -68,7 +68,7 @@ export function MailSidebar({
               </div>
               {label.id === 'INBOX' && unreadCount > 0 && (
                 <span
-                  className="px-2 py-0.5 bg-danger-100 dark:bg-danger-950 text-danger-600 dark:text-danger-400 rounded-full text-xs font-medium">
+                  className='px-2 py-0.5 bg-status-danger-bg text-status-danger-text rounded-full text-xs font-medium'>
                   {unreadCount}
                 </span>
               )}

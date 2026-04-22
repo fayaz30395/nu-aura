@@ -68,7 +68,7 @@ function RatingStars({value}: { value: number }) {
           size={12}
           className={
             star <= value
-              ? 'text-warning-400 fill-warning-400'
+              ? 'text-status-warning-text fill-warning-400'
               : 'text-[var(--border-main)] fill-[var(--border-main)]'
           }
         />
@@ -155,7 +155,7 @@ function ReviewCompetencyPanel({
                 e.stopPropagation();
                 onAddClick(reviewId);
               }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent-700 text-white text-xs font-medium hover:bg-accent-800 transition-colors cursor-pointer"
+              className='flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-inverse text-xs font-medium hover:bg-accent-hover transition-colors cursor-pointer'
             >
               <Plus size={12}/>
               Add
@@ -163,7 +163,6 @@ function ReviewCompetencyPanel({
           </PermissionGate>
         </div>
       </button>
-
       {/* Body */}
       {expanded && (
         <div className="bg-[var(--bg-surface)] px-6 py-4">
@@ -178,7 +177,7 @@ function ReviewCompetencyPanel({
               <span className="text-sm">No competencies added yet.</span>
               <button
                 onClick={() => refetch()}
-                className="text-accent-600 hover:underline text-sm cursor-pointer focus-visible:outline-none"
+                className='text-accent hover:underline text-sm cursor-pointer focus-visible:outline-none'
               >
                 Refresh
               </button>
@@ -215,7 +214,7 @@ function ReviewCompetencyPanel({
                         <PermissionGate permission={Permissions.REVIEW_DELETE}>
                           <button
                             onClick={() => setDeleteTarget(comp)}
-                            className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
+                            className='p-1.5 rounded-md text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500'
                           >
                             <Trash2 size={14}/>
                           </button>
@@ -229,7 +228,6 @@ function ReviewCompetencyPanel({
           )}
         </div>
       )}
-
       <ConfirmDialog
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
@@ -306,27 +304,27 @@ function AddCompetencyModal({
           {/* Competency Name */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Competency Name <span className="text-danger-500">*</span>
+              Competency Name <span className='text-status-danger-text'>*</span>
             </label>
             <input
               {...register('competencyName')}
               type="text"
               placeholder="e.g. System Design, Communication"
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className='w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
             />
             {errors.competencyName && (
-              <p className="text-xs text-danger-500 mt-1">{errors.competencyName.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{errors.competencyName.message}</p>
             )}
           </div>
 
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Category <span className="text-danger-500">*</span>
+              Category <span className='text-status-danger-text'>*</span>
             </label>
             <select
               {...register('category')}
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className='w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
             >
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -335,14 +333,14 @@ function AddCompetencyModal({
               ))}
             </select>
             {errors.category && (
-              <p className="text-xs text-danger-500 mt-1">{errors.category.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{errors.category.message}</p>
             )}
           </div>
 
           {/* Rating */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-              Rating (1–5) <span className="text-danger-500">*</span>
+              Rating (1–5) <span className='text-status-danger-text'>*</span>
             </label>
             <input
               {...register('rating')}
@@ -350,10 +348,10 @@ function AddCompetencyModal({
               min={1}
               max={5}
               step={0.5}
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              className='w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
             />
             {errors.rating && (
-              <p className="text-xs text-danger-500 mt-1">{errors.rating.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{errors.rating.message}</p>
             )}
           </div>
 
@@ -366,7 +364,7 @@ function AddCompetencyModal({
               {...register('comments')}
               rows={3}
               placeholder="Add observations or development notes…"
-              className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 resize-none"
+              className='w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] resize-none'
             />
           </div>
 
@@ -381,7 +379,7 @@ function AddCompetencyModal({
             <button
               type="submit"
               disabled={isSubmitting || addMutation.isPending}
-              className="px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-50 transition-colors cursor-pointer"
+              className='px-4 py-2 rounded-lg bg-accent text-inverse text-sm font-medium hover:bg-accent-hover disabled:opacity-50 transition-colors cursor-pointer'
             >
               {addMutation.isPending ? 'Adding…' : 'Add Competency'}
             </button>
@@ -459,7 +457,7 @@ export default function CompetencyFrameworkPage() {
                     filteredReviews[0] && setAddModalReviewId(filteredReviews[0].id)
                   }
                   disabled={filteredReviews.length === 0}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-40 transition-colors cursor-pointer"
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-inverse text-sm font-medium hover:bg-accent-hover disabled:opacity-40 transition-colors cursor-pointer'
                 >
                   <Plus size={16}/>
                   Add Competency
@@ -505,7 +503,7 @@ export default function CompetencyFrameworkPage() {
                     <select
                       value={selectedCycleId}
                       onChange={(e) => setSelectedCycleId(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                     >
                       <option value="">Select a cycle…</option>
                       {cycles.map((c) => (
@@ -532,7 +530,7 @@ export default function CompetencyFrameworkPage() {
                         placeholder="Filter by name or department…"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                        className='w-full pl-9 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       />
                     </div>
                   </div>
@@ -569,7 +567,7 @@ export default function CompetencyFrameworkPage() {
               </div>
             ) : allReviewsQuery.isLoading ? (
               <div className="flex items-center justify-center py-16">
-                <RefreshCw size={20} className="animate-spin text-accent-500 mr-4"/>
+                <RefreshCw size={20} className='animate-spin text-accent mr-4'/>
                 <span className="text-[var(--text-muted)]">Loading reviews…</span>
               </div>
             ) : filteredReviews.length === 0 ? (

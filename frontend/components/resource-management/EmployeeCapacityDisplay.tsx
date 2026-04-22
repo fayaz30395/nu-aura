@@ -57,31 +57,30 @@ export function EmployeeCapacityDisplay({
       <div className="row-between">
         <div className="flex items-center gap-2">
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+            className='flex h-10 w-10 items-center justify-center rounded-full bg-accent-subtle text-accent'>
             <User className="h-5 w-5"/>
           </div>
           <div>
-            <p className="font-medium text-surface-900 dark:text-surface-50">
+            <p className='font-medium text-primary'>
               {capacity.employeeName}
             </p>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className='text-sm text-muted'>
               {capacity.employeeCode} {capacity.designation && `• ${capacity.designation}`}
             </p>
           </div>
         </div>
         {capacity.hasPendingApprovals && (
           <span
-            className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
+            className='inline-flex items-center gap-1 rounded-full bg-status-warning-bg px-2.5 py-1 text-xs font-medium text-status-warning-text'>
             <Clock className="h-3 w-3"/>
             Pending Approval
           </span>
         )}
       </div>
-
       {/* Allocation Gauge */}
       <div className="space-y-2">
         <div className="row-between text-sm">
-          <span className="font-medium text-surface-700 dark:text-surface-300">
+          <span className='font-medium text-secondary'>
             Total Allocation
           </span>
           <div className="flex items-center gap-2">
@@ -96,11 +95,11 @@ export function EmployeeCapacityDisplay({
         </div>
 
         {/* Progress bar */}
-        <div className="relative h-3 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+        <div className='relative h-3 w-full overflow-hidden rounded-full bg-elevated'>
           {/* Background markers at 50%, 75%, 100% */}
-          <div className="absolute left-1/2 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
-          <div className="absolute left-3/4 top-0 h-full w-px bg-surface-300 dark:bg-surface-600"/>
-          <div className="absolute right-0 top-0 h-full w-px bg-surface-400 dark:bg-surface-500"
+          <div className='absolute left-1/2 top-0 h-full w-px bg-card'/>
+          <div className='absolute left-3/4 top-0 h-full w-px bg-card'/>
+          <div className='absolute right-0 top-0 h-full w-px bg-card'
                style={{left: '66.67%'}}/>
 
           {/* Filled portion */}
@@ -118,13 +117,13 @@ export function EmployeeCapacityDisplay({
 
           {/* 100% marker line */}
           <div
-            className="absolute top-0 h-full w-0.5 bg-surface-800 dark:bg-surface-200"
+            className='absolute top-0 h-full w-0.5 bg-inverse'
             style={{left: '66.67%'}}
           />
         </div>
 
         {/* Scale labels */}
-        <div className="flex justify-between text-xs text-surface-500 dark:text-surface-400">
+        <div className='flex justify-between text-xs text-muted'>
           <span>0%</span>
           <span>50%</span>
           <span>75%</span>
@@ -132,40 +131,38 @@ export function EmployeeCapacityDisplay({
           <span>150%</span>
         </div>
       </div>
-
       {/* Capacity summary */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
-          <p className="text-xs text-surface-500 dark:text-surface-400">Approved</p>
-          <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+        <div className='rounded-lg bg-base p-4'>
+          <p className='text-xs text-muted'>Approved</p>
+          <p className='text-lg font-semibold text-primary'>
             {formatAllocationPercentage(capacity.approvedAllocation)}
           </p>
         </div>
-        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
-          <p className="text-xs text-surface-500 dark:text-surface-400">Pending</p>
-          <p className="text-lg font-semibold text-warning-600 dark:text-warning-400">
+        <div className='rounded-lg bg-base p-4'>
+          <p className='text-xs text-muted'>Pending</p>
+          <p className='text-lg font-semibold text-status-warning-text'>
             {formatAllocationPercentage(capacity.pendingAllocation)}
           </p>
         </div>
-        <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
-          <p className="text-xs text-surface-500 dark:text-surface-400">Available</p>
+        <div className='rounded-lg bg-base p-4'>
+          <p className='text-xs text-muted'>Available</p>
           <p
             className={cn(
               'text-lg font-semibold',
               capacity.availableCapacity < 0
-                ? 'text-danger-600 dark:text-danger-400'
-                : 'text-success-600 dark:text-success-400'
+                ? 'text-status-danger-text'
+                : 'text-status-success-text'
             )}
           >
             {formatAllocationPercentage(Math.max(0, capacity.availableCapacity))}
           </p>
         </div>
       </div>
-
       {/* Allocation breakdown */}
       {showBreakdown && capacity.allocations.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
+          <p className='text-sm font-medium text-secondary'>
             Project Allocations ({capacity.allocations.length})
           </p>
           <div className="max-h-48 space-y-2 overflow-y-auto">
@@ -175,12 +172,11 @@ export function EmployeeCapacityDisplay({
           </div>
         </div>
       )}
-
       {/* View details link */}
       {onViewDetails && (
         <button
           onClick={onViewDetails}
-          className="text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+          className='text-sm font-medium text-accent hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
         >
           View full availability →
         </button>
@@ -210,16 +206,15 @@ function CompactCapacityDisplay({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {/* Mini gauge */}
-      <div className="relative h-2 w-24 overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+      <div className='relative h-2 w-24 overflow-hidden rounded-full bg-elevated'>
         <div
           className={cn(
             'absolute left-0 top-0 h-full rounded-full',
-            isOverAllocated ? 'bg-danger-500' : 'bg-success-500'
+            isOverAllocated ? 'bg-status-danger-bg' : 'bg-status-success-bg'
           )}
           style={{width: `${Math.min((capacity.totalAllocation / 100) * 100, 100)}%`}}
         />
       </div>
-
       {/* Percentage */}
       <span
         className="text-sm font-medium"
@@ -227,12 +222,11 @@ function CompactCapacityDisplay({
       >
         {formatAllocationPercentage(capacity.totalAllocation)}
       </span>
-
       {/* Status icon */}
       {isOverAllocated ? (
-        <AlertTriangle className="h-4 w-4 text-danger-500"/>
+        <AlertTriangle className='h-4 w-4 text-status-danger-text'/>
       ) : capacity.hasPendingApprovals ? (
-        <Clock className="h-4 w-4 text-warning-500"/>
+        <Clock className='h-4 w-4 text-status-warning-text'/>
       ) : null}
     </div>
   );
@@ -287,29 +281,29 @@ function AllocationRow({allocation}: AllocationRowProps) {
       className={cn(
         'row-between rounded-lg border p-4',
         allocation.isPendingApproval
-          ? 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
-          : 'border-surface-200 bg-[var(--bg-card)] dark:border-surface-700'
+          ? 'border-status-warning-border bg-status-warning-bg'
+          : 'border-subtle bg-[var(--bg-card)]'
       )}
     >
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded bg-surface-100 dark:bg-surface-700">
-          <Briefcase className="h-4 w-4 text-surface-600 dark:text-surface-400"/>
+        <div className='flex h-8 w-8 items-center justify-center rounded bg-surface'>
+          <Briefcase className='h-4 w-4 text-secondary'/>
         </div>
         <div>
-          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+          <p className='text-sm font-medium text-primary'>
             {allocation.projectName}
           </p>
-          <p className="text-xs text-surface-500 dark:text-surface-400">
+          <p className='text-xs text-muted'>
             {allocation.role} • {allocation.projectCode}
           </p>
         </div>
       </div>
       <div className="text-right">
-        <p className="text-sm font-semibold text-surface-900 dark:text-surface-50">
+        <p className='text-sm font-semibold text-primary'>
           {formatAllocationPercentage(allocation.allocationPercentage)}
         </p>
         {allocation.isPendingApproval && (
-          <span className="text-xs text-warning-600 dark:text-warning-400">Pending</span>
+          <span className='text-xs text-status-warning-text'>Pending</span>
         )}
       </div>
     </div>

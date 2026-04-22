@@ -147,7 +147,7 @@ export default function TravelPage() {
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading travel requests...</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function TravelPage() {
           <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/travel/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <Plus className="h-5 w-5"/>
               New Travel Request
@@ -253,12 +253,12 @@ export default function TravelPage() {
         {error ? (
           <div
             className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)]">
-            <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text mb-4'/>
             <p
               className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
               onClick={() => void refetch()}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               Retry
             </button>
@@ -286,7 +286,7 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 cursor-pointer"
+                  className='group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-[var(--accent-primary)] transition-all duration-200 cursor-pointer'
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">
@@ -294,7 +294,7 @@ export default function TravelPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                            <TypeIcon className="h-5 w-5 text-white"/>
+                            <TypeIcon className='h-5 w-5 text-inverse'/>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -314,7 +314,7 @@ export default function TravelPage() {
                           </div>
                         </div>
                         <ChevronRight
-                          className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
+                          className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all'/>
                       </div>
 
                       {/* Details */}
@@ -328,7 +328,7 @@ export default function TravelPage() {
                             </p>
                             {request.isInternational && (
                               <span
-                                className="inline-block mt-1 text-xs px-2 py-0.5 bg-accent-300 dark:bg-accent-900/30 text-accent-900 dark:text-accent-600 rounded">
+                                className='inline-block mt-1 text-xs px-2 py-0.5 bg-accent-subtle text-accent rounded'>
                                 International
                               </span>
                             )}
@@ -373,7 +373,7 @@ export default function TravelPage() {
                               {formatCurrency(request.estimatedCost)}
                             </p>
                             {request.advanceRequired > 0 && (
-                              <p className="text-xs text-warning-600 dark:text-warning-400">
+                              <p className='text-xs text-status-warning-text'>
                                 Advance: {formatCurrency(request.advanceRequired)}
                               </p>
                             )}

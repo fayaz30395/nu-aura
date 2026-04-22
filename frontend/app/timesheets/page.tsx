@@ -282,7 +282,7 @@ export default function TimesheetsPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading timesheets...</span>
         </div>
       </AppLayout>
@@ -319,9 +319,9 @@ export default function TimesheetsPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+              <div className='flex items-center gap-2 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
               </div>
@@ -334,8 +334,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Timer className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <Timer className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Hours</p>
@@ -347,8 +347,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                <div className='rounded-lg bg-status-warning-bg p-4'>
+                  <Clock className='h-6 w-6 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
@@ -360,8 +360,8 @@ export default function TimesheetsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                <div className='rounded-lg bg-status-success-bg p-4'>
+                  <CheckCircle className='h-6 w-6 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Approved</p>
@@ -487,7 +487,7 @@ export default function TimesheetsPage() {
                             </td>
                           );
                         })}
-                        <td className="px-4 py-2 text-center font-bold text-accent-700 dark:text-accent-400">
+                        <td className='px-4 py-2 text-center font-bold text-accent'>
                           {rowTotal > 0 ? `${rowTotal}h` : '—'}
                         </td>
                       </tr>
@@ -511,7 +511,7 @@ export default function TimesheetsPage() {
                       </td>
                     );
                   })}
-                  <td className="px-4 py-4 text-center font-bold text-accent-700 dark:text-accent-400">
+                  <td className='px-4 py-4 text-center font-bold text-accent'>
                     {currentWeekTimesheet?.totalHours || 0}h
                   </td>
                 </tr>
@@ -527,7 +527,7 @@ export default function TimesheetsPage() {
                     Total: <strong className="text-[var(--text-primary)]">{currentWeekTimesheet.totalHours}h</strong>
                   </span>
                   {currentWeekTimesheet.billableHours !== undefined && (
-                    <span className="text-success-600 dark:text-success-400">
+                    <span className='text-status-success-text'>
                       Billable: <strong>{currentWeekTimesheet.billableHours}h</strong>
                     </span>
                   )}
@@ -577,7 +577,7 @@ export default function TimesheetsPage() {
                             {timesheet.totalHours}h
                           </p>
                           {timesheet.billableHours !== undefined && (
-                            <p className="text-xs text-success-600 dark:text-success-400">
+                            <p className='text-xs text-status-success-text'>
                               {timesheet.billableHours}h billable
                             </p>
                           )}
@@ -641,8 +641,8 @@ export default function TimesheetsPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
-              <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                <FileSpreadsheet className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+              <div className='rounded-lg bg-accent-subtle p-2'>
+                <FileSpreadsheet className='h-6 w-6 text-accent'/>
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)]">
@@ -671,7 +671,7 @@ export default function TimesheetsPage() {
 
                 {selectedTimesheet.rejectionReason && (
                   <div
-                    className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
+                    className='p-4 bg-status-danger-bg rounded-lg text-status-danger-text'>
                     <strong>Rejection Reason:</strong> {selectedTimesheet.rejectionReason}
                   </div>
                 )}
@@ -850,7 +850,7 @@ export default function TimesheetsPage() {
                     type="checkbox"
                     checked={entryForm.isBillable}
                     onChange={(e) => setEntryForm({...entryForm, isBillable: e.target.checked})}
-                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                    className='rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   />
                   <span className="text-body-secondary">Billable</span>
                 </label>
@@ -859,7 +859,7 @@ export default function TimesheetsPage() {
                     type="checkbox"
                     checked={entryForm.isOvertime || false}
                     onChange={(e) => setEntryForm({...entryForm, isOvertime: e.target.checked})}
-                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                    className='rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   />
                   <span className="text-body-secondary">Overtime</span>
                 </label>

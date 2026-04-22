@@ -43,8 +43,8 @@ export function CreateOfferModal({
             </button>
           </div>
 
-          <div className="mb-4 p-4 bg-success-50 dark:bg-success-900/20 rounded-xl">
-            <p className="text-sm text-success-700 dark:text-success-300">
+          <div className='mb-4 p-4 bg-status-success-bg rounded-xl'>
+            <p className='text-sm text-status-success-text'>
               Creating offer letter for <strong>{candidate.fullName}</strong>
             </p>
           </div>
@@ -58,7 +58,8 @@ export function CreateOfferModal({
                 className={inputCls}
               />
               {offerForm.formState.errors.offeredSalary && (
-                <p className="text-xs text-danger-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
+                <p
+                  className='text-xs text-status-danger-text mt-1'>{offerForm.formState.errors.offeredSalary.message}</p>
               )}
             </div>
 
@@ -79,7 +80,7 @@ export function CreateOfferModal({
                 className={inputCls}
               />
               {offerForm.formState.errors.joiningDate && (
-                <p className="text-xs text-danger-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
+                <p className='text-xs text-status-danger-text mt-1'>{offerForm.formState.errors.joiningDate.message}</p>
               )}
             </div>
 

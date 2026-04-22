@@ -60,7 +60,6 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
           <p className="text-caption truncate">{emp.designation}</p>
         )}
       </div>
-
       {/* Stacked bar */}
       <div className="flex-1 min-w-0">
         <div
@@ -71,7 +70,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
               {bands.map((band, _idx) => (
                 <div
                   key={band.projectId}
-                  className="h-full flex items-center justify-center text-white text-xs font-semibold overflow-hidden"
+                  className='h-full flex items-center justify-center text-inverse text-xs font-semibold overflow-hidden'
                   style={{
                     width: `${Math.min(band.allocationPct, 100)}%`,
                     backgroundColor: band.color,
@@ -99,7 +98,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
           {/* Over-allocation overflow stripe */}
           {total > 100 && (
             <div
-              className="absolute top-0 right-0 h-full flex items-center justify-center text-white text-xs font-bold"
+              className='absolute top-0 right-0 h-full flex items-center justify-center text-inverse text-xs font-bold'
               style={{
                 width: `${Math.min(total - 100, 30)}%`,
                 background: 'repeating-linear-gradient(45deg, #ef4444, #ef4444 4px, #fca5a5 4px, #fca5a5 8px)',
@@ -109,7 +108,6 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
           )}
         </div>
       </div>
-
       {/* % label */}
       <div className="w-16 flex-shrink-0 text-right">
         <span
@@ -119,14 +117,13 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
           {total}%
         </span>
       </div>
-
       {/* Project legend (visible on hover) */}
       <div
         className="w-48 flex-shrink-0 hidden lg:flex flex-wrap gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {bands.slice(0, 3).map(b => (
           <span
             key={b.projectId}
-            className="text-xs px-1.5 py-0.5 rounded-full text-white font-medium truncate max-w-[80px]"
+            className='text-xs px-1.5 py-0.5 rounded-full text-inverse font-medium truncate max-w-[80px]'
             style={{backgroundColor: b.color}}
             title={b.projectName}
           >
@@ -191,8 +188,8 @@ export default function CapacityTimelinePage() {
       <AppLayout activeMenuItem="resources"
                  breadcrumbs={[{label: 'Resources', href: '/resources'}, {label: 'Capacity'}]}>
         <div className="p-6 flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
-            <Info size={24} className="text-warning-600"/>
+          <div className='w-14 h-14 rounded-full bg-status-warning-bg flex items-center justify-center mb-4'>
+            <Info size={24} className='text-status-warning-text'/>
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not
             Available</h2>
@@ -270,7 +267,7 @@ export default function CapacityTimelinePage() {
 
         {error && (
           <div
-            className="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-900/20 dark:border-danger-800 dark:text-danger-300 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
+            className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4 flex items-center gap-2'>
             <AlertTriangle size={15}/>
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -308,12 +305,12 @@ export default function CapacityTimelinePage() {
             placeholder="Search employee..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-52"
+            className='px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] w-52'
           />
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+            className='px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -337,13 +334,13 @@ export default function CapacityTimelinePage() {
             <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[var(--border-main)] text-caption">
               <span className="font-medium text-[var(--text-secondary)]">Legend:</span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-success-500"/> ≤80% optimal
+                <span className='inline-block w-3 h-3 rounded-md bg-status-success-bg'/> ≤80% optimal
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-warning-400"/> 81–99% high
+                <span className='inline-block w-3 h-3 rounded-md bg-status-warning-bg'/> 81–99% high
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-md bg-danger-500"/> ≥100% over-allocated
+                <span className='inline-block w-3 h-3 rounded-md bg-status-danger-bg'/> ≥100% over-allocated
               </span>
               <span className="ml-auto text-[var(--text-muted)] italic">
                 Hover a row to see project names

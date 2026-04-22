@@ -106,7 +106,7 @@ export default function ApplyLeavePage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
+            className='text-accent hover:text-accent flex items-center gap-2'
           >
             ← Back
           </button>
@@ -114,7 +114,8 @@ export default function ApplyLeavePage() {
 
         <h1 className="text-xl font-bold skeuo-emboss mb-6">Apply for Leave</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6 border border-[var(--border-main)] rounded-xl">
+        <form onSubmit={handleSubmit(onSubmit)}
+              className="skeuo-card p-6 border border-[var(--border-main)] rounded-xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
@@ -132,7 +133,8 @@ export default function ApplyLeavePage() {
                   </option>
                 ))}
               </select>
-              {errors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
+              {errors.leaveTypeId &&
+                <p className='text-status-danger-text text-sm mt-1'>{errors.leaveTypeId.message}</p>}
               {balance && (
                 <div className="mt-2 text-body-secondary">
                   Available Balance: <span className="font-semibold">{balance.available} days</span>
@@ -150,7 +152,7 @@ export default function ApplyLeavePage() {
                 {...register('startDate')}
                 className="input-aura"
               />
-              {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
+              {errors.startDate && <p className='text-status-danger-text text-sm mt-1'>{errors.startDate.message}</p>}
             </div>
 
             {/* End Date */}
@@ -164,7 +166,7 @@ export default function ApplyLeavePage() {
                 min={startDate}
                 className="input-aura"
               />
-              {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
+              {errors.endDate && <p className='text-status-danger-text text-sm mt-1'>{errors.endDate.message}</p>}
             </div>
 
             {/* Half Day */}
@@ -173,7 +175,7 @@ export default function ApplyLeavePage() {
                 <input
                   type="checkbox"
                   {...register('isHalfDay')}
-                  className="w-4 h-4 text-accent-700"
+                  className='w-4 h-4 text-accent'
                 />
                 <span className="text-sm font-medium text-[var(--text-secondary)]">Half Day Leave</span>
               </label>
@@ -191,7 +193,7 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="FIRST_HALF"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-accent-700"
+                      className='w-4 h-4 text-accent'
                     />
                     <span className="text-body-secondary">First Half (Morning)</span>
                   </label>
@@ -200,19 +202,20 @@ export default function ApplyLeavePage() {
                       type="radio"
                       value="SECOND_HALF"
                       {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-accent-700"
+                      className='w-4 h-4 text-accent'
                     />
                     <span className="text-body-secondary">Second Half (Afternoon)</span>
                   </label>
                 </div>
-                {errors.halfDayPeriod && <p className="text-danger-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
+                {errors.halfDayPeriod &&
+                  <p className='text-status-danger-text text-sm mt-1'>{errors.halfDayPeriod.message}</p>}
               </div>
             )}
 
             {/* Total Days */}
-            <div className="md:col-span-2 bg-accent-50 dark:bg-accent-950/30 p-4 rounded-lg">
+            <div className='md:col-span-2 bg-accent-subtle p-4 rounded-lg'>
               <div className="text-body-secondary">Total Days Requested:</div>
-              <div className="text-xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
+              <div className='text-xl font-bold text-accent'>{totalDays} days</div>
             </div>
 
             {/* Reason */}
@@ -226,7 +229,7 @@ export default function ApplyLeavePage() {
                 className="input-aura"
                 placeholder="Please provide a reason for your leave..."
               />
-              {errors.reason && <p className="text-danger-500 text-sm mt-1">{errors.reason.message}</p>}
+              {errors.reason && <p className='text-status-danger-text text-sm mt-1'>{errors.reason.message}</p>}
             </div>
           </div>
 

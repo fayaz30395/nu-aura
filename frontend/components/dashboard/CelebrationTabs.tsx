@@ -105,7 +105,6 @@ export function CelebrationTabs() {
           <ChevronDown size={16} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}/>
         </button>
       </div>
-
       {/* Content */}
       {isExpanded && (
         <div className="px-4 py-2">
@@ -116,7 +115,7 @@ export function CelebrationTabs() {
               <p className="text-caption">Failed to load celebrations</p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-xs text-accent-500 hover:text-accent-400 font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                className='text-xs text-accent hover:text-accent font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
               >
                 Try again
               </button>

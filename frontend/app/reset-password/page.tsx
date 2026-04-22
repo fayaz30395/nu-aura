@@ -56,20 +56,20 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+        className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 py-12 px-4 sm:px-6 lg:px-8'>
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div
               className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white"/>
+              <Building2 className='w-8 h-8 text-inverse'/>
             </div>
             <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
               <div
-                className="inline-flex items-center justify-center w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-full mb-4">
-                <AlertCircle className="w-8 h-8 text-danger-600 dark:text-danger-400"/>
+                className='inline-flex items-center justify-center w-16 h-16 bg-status-danger-bg rounded-full mb-4'>
+                <AlertCircle className='w-8 h-8 text-status-danger-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Invalid Reset Link
@@ -99,20 +99,20 @@ function ResetPasswordForm() {
   if (isSuccess) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+        className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 py-12 px-4 sm:px-6 lg:px-8'>
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div
               className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-              <Building2 className="w-8 h-8 text-white"/>
+              <Building2 className='w-8 h-8 text-inverse'/>
             </div>
             <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           </div>
           <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
             <CardContent className="pt-8 pb-8 text-center">
               <div
-                className="inline-flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                <CheckCircle className="w-8 h-8 text-success-600 dark:text-success-400"/>
+                className='inline-flex items-center justify-center w-16 h-16 bg-status-success-bg rounded-full mb-4'>
+                <CheckCircle className='w-8 h-8 text-status-success-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Password Reset Successfully
@@ -159,13 +159,13 @@ function ResetPasswordForm() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 py-12 px-4 sm:px-6 lg:px-8'>
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div
             className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg mb-4 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Building2 className="w-8 h-8 text-white"/>
+            <Building2 className='w-8 h-8 text-inverse'/>
           </div>
           <h1 className="text-xl font-bold skeuo-emboss">NU-AURA</h1>
           <p className="mt-2 text-body-secondary">
@@ -187,10 +187,10 @@ function ResetPasswordForm() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-4 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
+                  className='flex items-start gap-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-xl'>
+                  <AlertCircle className='w-5 h-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
                   <div className="flex-1">
-                    <p className="text-sm text-danger-700 dark:text-danger-400">{error}</p>
+                    <p className='text-sm text-status-danger-text'>{error}</p>
                   </div>
                 </div>
               )}
@@ -231,7 +231,7 @@ function ResetPasswordForm() {
                   </button>
                 </div>
                 {errors.newPassword && (
-                  <p className="text-sm text-danger-600 dark:text-danger-400 mt-1">
+                  <p className='text-sm text-status-danger-text mt-1'>
                     {errors.newPassword.message}
                   </p>
                 )}
@@ -273,7 +273,7 @@ function ResetPasswordForm() {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-sm text-danger-600 dark:text-danger-400 mt-1">
+                  <p className='text-sm text-status-danger-text mt-1'>
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -306,7 +306,7 @@ function ResetPasswordForm() {
               <div className="text-center">
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 transition-colors"
+                  className='inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent transition-colors'
                 >
                   <ArrowLeft className="w-4 h-4"/>
                   Back to Sign In
@@ -339,14 +339,14 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div
-          className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950">
+          className='min-h-screen flex items-center justify-center bg-gradient-to-br from-accent-50 via-surface-50 to-surface-100'>
           <div className="w-full max-w-md p-8 space-y-6">
-            <div className="skeleton-aura h-10 w-48 rounded mx-auto" />
-            <div className="skeleton-aura h-4 w-64 rounded mx-auto" />
+            <div className="skeleton-aura h-10 w-48 rounded mx-auto"/>
+            <div className="skeleton-aura h-4 w-64 rounded mx-auto"/>
             <div className="space-y-4">
-              <div className="skeleton-aura h-10 w-full rounded" />
-              <div className="skeleton-aura h-10 w-full rounded" />
-              <div className="skeleton-aura h-10 w-full rounded-lg" />
+              <div className="skeleton-aura h-10 w-full rounded"/>
+              <div className="skeleton-aura h-10 w-full rounded"/>
+              <div className="skeleton-aura h-10 w-full rounded-lg"/>
             </div>
           </div>
         </div>

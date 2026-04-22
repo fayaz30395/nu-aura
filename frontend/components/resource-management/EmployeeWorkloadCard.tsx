@@ -58,7 +58,7 @@ export function EmployeeWorkloadCard({
     <div
       className={cn(
         'group flex items-center gap-4 rounded-lg px-4 py-2.5 transition-colors',
-        'hover:bg-surface-50 dark:hover:bg-surface-800/50',
+        'hover:bg-base',
         onViewDetails && 'cursor-pointer',
         className
       )}
@@ -69,24 +69,23 @@ export function EmployeeWorkloadCard({
         className={cn(
           'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-medium',
           isOverAllocated
-            ? 'bg-danger-100 text-danger-700 dark:bg-danger-900/40 dark:text-danger-300'
-            : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
+            ? 'bg-status-danger-bg text-status-danger-text'
+            : 'bg-surface text-secondary'
         )}
       >
         {getInitials(workload.employeeName)}
       </div>
-
       {/* Name and role */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium text-surface-900 dark:text-surface-100">
+          <span className='truncate text-sm font-medium text-primary'>
             {workload.employeeName}
           </span>
           {workload.hasPendingApprovals && (
-            <span className="flex h-2 w-2 rounded-full bg-warning-400" title="Pending approval"/>
+            <span className='flex h-2 w-2 rounded-full bg-status-warning-bg' title="Pending approval"/>
           )}
         </div>
-        <div className="flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
+        <div className='flex items-center gap-2 text-xs text-muted'>
           <span className="truncate">{workload.designation || workload.employeeCode}</span>
           {showProjects && activeAllocations.length > 0 && (
             <>
@@ -96,20 +95,19 @@ export function EmployeeWorkloadCard({
           )}
         </div>
       </div>
-
       {/* Allocation bar */}
       <div className="flex items-center gap-2">
         <div className="w-24">
           <div className="row-between mb-1">
-            <span className="text-xs text-surface-400">
+            <span className='text-xs text-muted'>
               {activeAllocations.length > 0 ? activeAllocations[0].projectName.substring(0, 12) : ''}
             </span>
           </div>
-          <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+          <div className='relative h-1.5 w-full overflow-hidden rounded-full bg-elevated'>
             <div
               className={cn(
                 'absolute left-0 top-0 h-full rounded-full transition-all',
-                isOverAllocated ? 'bg-danger-500' : activeAllocation >= 70 ? 'bg-success-500' : 'bg-warning-400'
+                isOverAllocated ? 'bg-status-danger-bg' : activeAllocation >= 70 ? 'bg-status-success-bg' : 'bg-status-warning-bg'
               )}
               style={{width: `${Math.min(activeAllocation, 100)}%`}}
             />

@@ -144,7 +144,7 @@ export default function CompanySpotlightPage() {
             <div className="row-between">
               <div>
                 <h1 className="text-xl font-bold skeuo-emboss">
-                  <Lightbulb className="w-8 h-8 text-warning-500"/>
+                  <Lightbulb className='w-8 h-8 text-status-warning-text'/>
                   Company Spotlight
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -156,7 +156,7 @@ export default function CompanySpotlightPage() {
                   setEditingSpotlight(null);
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex items-center gap-2 px-4 py-2.5 bg-status-warning-bg text-inverse rounded-xl hover:bg-status-warning-bg transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 <Plus className="w-5 h-5"/>
                 Add Slide
@@ -172,7 +172,7 @@ export default function CompanySpotlightPage() {
           >
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-warning-500"/>
+                <Loader2 className='w-8 h-8 animate-spin text-status-warning-text'/>
               </div>
             ) : spotlights.length === 0 ? (
               <EmptyState
@@ -205,7 +205,7 @@ export default function CompanySpotlightPage() {
                           <div
                             className={`w-full h-full bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center`}
                           >
-                            <div className="text-white">
+                            <div className='text-inverse'>
                               <h3 className="font-bold text-sm mb-1 line-clamp-2">
                                 {spotlight.title}
                               </h3>
@@ -240,7 +240,7 @@ export default function CompanySpotlightPage() {
                               )}
                               {isDateRestricted && !isActive && spotlight.isActive && (
                                 <span
-                                  className="px-2 py-1 text-xs font-medium rounded-full bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300">
+                                  className='px-2 py-1 text-xs font-medium rounded-full bg-status-warning-bg text-status-warning-text'>
                                   Scheduled
                                 </span>
                               )}
@@ -267,7 +267,7 @@ export default function CompanySpotlightPage() {
                                 href={spotlight.ctaUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 flex items-center gap-1"
+                                className='text-accent hover:text-accent flex items-center gap-1'
                               >
                                 <ExternalLink className="w-3.5 h-3.5"/>
                                 CTA Link
@@ -280,7 +280,7 @@ export default function CompanySpotlightPage() {
                         <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleEditSpotlight(spotlight)}
-                            className="p-2 text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 text-accent hover:bg-accent-subtle rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Edit"
                             aria-label="Edit spotlight"
                           >
@@ -288,7 +288,7 @@ export default function CompanySpotlightPage() {
                           </button>
                           <button
                             onClick={() => setShowDeleteConfirm(spotlight.id)}
-                            className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 text-status-danger-text hover:bg-status-danger-bg rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Delete"
                             aria-label="Delete spotlight"
                           >
@@ -304,7 +304,6 @@ export default function CompanySpotlightPage() {
           </motion.div>
         </div>
       </div>
-
       {/* Create/Edit Modal */}
       <AnimatePresence>
         {showCreateModal && (
@@ -322,7 +321,6 @@ export default function CompanySpotlightPage() {
           />
         )}
       </AnimatePresence>
-
       {/* Delete Confirmation */}
       <ConfirmDialog
         isOpen={!!showDeleteConfirm}
@@ -463,16 +461,16 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Title <span className="text-danger-500">*</span>
+                  Title <span className='text-status-danger-text'>*</span>
                 </label>
                 <input
                   type="text"
                   {...register('title')}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                  className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                   placeholder="Enter slide title"
                 />
                 {errors.title && (
-                  <p className="mt-1 text-sm text-danger-600 dark:text-danger-400">{errors.title.message}</p>
+                  <p className='mt-1 text-sm text-status-danger-text'>{errors.title.message}</p>
                 )}
               </div>
 
@@ -484,7 +482,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                 <textarea
                   {...register('description')}
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white resize-none"
+                  className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] resize-none'
                   placeholder="Optional description"
                 />
               </div>
@@ -497,7 +495,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                 <input
                   type="url"
                   {...register('imageUrl')}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                  className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                   placeholder="https://..."
                 />
               </div>
@@ -511,7 +509,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                   <input
                     type="url"
                     {...register('ctaUrl')}
-                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                    className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                     placeholder="https://..."
                   />
                 </div>
@@ -522,7 +520,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                   <input
                     type="text"
                     {...register('ctaLabel')}
-                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                    className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                     placeholder="Learn More"
                   />
                 </div>
@@ -535,7 +533,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                 </label>
                 <select
                   {...register('bgGradient')}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                  className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                 >
                   {Object.entries(GRADIENT_PRESETS).map(([key, {name}]) => (
                     <option key={key} value={key}>
@@ -554,7 +552,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                   type="number"
                   min="0"
                   {...register('displayOrder', {valueAsNumber: true})}
-                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                  className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                 />
                 <p className="mt-1 text-caption">
                   Lower numbers appear first
@@ -570,7 +568,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                   <input
                     type="date"
                     {...register('startDate')}
-                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                    className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                   />
                 </div>
                 <div>
@@ -580,7 +578,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
                   <input
                     type="date"
                     {...register('endDate')}
-                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
+                    className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)]'
                   />
                 </div>
               </div>
@@ -588,7 +586,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
               {/* Error */}
               {error && (
                 <div
-                  className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+                  className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg text-sm text-status-danger-text'>
                   {error}
                 </div>
               )}
@@ -602,7 +600,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
               <div
                 className={`w-full aspect-video rounded-lg bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-[var(--shadow-dropdown)] overflow-hidden`}
               >
-                <div className="text-white max-w-full">
+                <div className='text-inverse max-w-full'>
                   <h3 className="font-bold text-lg mb-2 line-clamp-2">
                     {title || 'Your Slide Title'}
                   </h3>
@@ -634,7 +632,7 @@ function CreateSpotlightModal({spotlight, onClose, onSuccess}: CreateSpotlightMo
           <button
             onClick={handleSubmit(onSubmit)}
             disabled={createMutation.isPending || updateMutation.isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-status-warning-bg text-inverse rounded-lg hover:bg-status-warning-bg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {createMutation.isPending || updateMutation.isPending ? (
               <>

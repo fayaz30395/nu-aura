@@ -1,16 +1,16 @@
 'use client';
 
-import { useMemo, useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { StatCard } from '@/components/ui/StatCard';
-import { Badge } from '@/components/ui/Badge';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonStatCard, SkeletonCard } from '@/components/ui/Skeleton';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
+import {useMemo, useState, useRef, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {StatCard} from '@/components/ui/StatCard';
+import {Badge} from '@/components/ui/Badge';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {SkeletonStatCard, SkeletonCard} from '@/components/ui/Skeleton';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
   useJobOpenings,
   useCandidates,
@@ -28,12 +28,12 @@ import {
   Clock,
   Loader2,
 } from 'lucide-react';
-import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/hire/recruitment';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
+import {JobOpening, Candidate, Interview, CandidateStatus} from '@/lib/types/hire/recruitment';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: {opacity: 0},
   visible: {
     opacity: 1,
     transition: {
@@ -44,7 +44,7 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: {opacity: 0, y: 20},
   visible: {
     opacity: 1,
     y: 0,
@@ -122,7 +122,7 @@ const RECRUITMENT_ALLOWED_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'H
 
 export default function RecruitmentDashboard() {
   const router = useRouter();
-  const { hasAnyRole, isReady } = usePermissions();
+  const {hasAnyRole, isReady} = usePermissions();
 
   // P0-001: Block non-recruitment roles from accessing admin hub
   const hasAccess = hasAnyRole(...RECRUITMENT_ALLOWED_ROLES);
@@ -207,7 +207,7 @@ export default function RecruitmentDashboard() {
           setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, recentApplications.length));
         }
       },
-      { root: container, rootMargin: '100px' }
+      {root: container, rootMargin: '100px'}
     );
 
     observer.observe(sentinel);
@@ -237,7 +237,7 @@ export default function RecruitmentDashboard() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <Briefcase className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+          <Briefcase className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
           <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Restricted</h2>
           <p className="text-[var(--text-muted)] max-w-md mb-6">
             You don&apos;t have permission to access the Recruitment dashboard.
@@ -273,24 +273,24 @@ export default function RecruitmentDashboard() {
   const isInitialLoad =
     !loadingTimedOut &&
     (jobOpeningsQuery.isLoading ||
-     candidatesQuery.isLoading ||
-     openJobsQuery.isLoading ||
-     interviewsQuery.isLoading);
+      candidatesQuery.isLoading ||
+      openJobsQuery.isLoading ||
+      interviewsQuery.isLoading);
 
   if (isInitialLoad) {
     return (
       <AppLayout>
         <div className="space-y-6">
-          <div className="h-32 bg-[var(--bg-secondary)] rounded-lg" />
+          <div className="h-32 bg-[var(--bg-secondary)] rounded-lg"/>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <SkeletonStatCard />
-            <SkeletonStatCard />
-            <SkeletonStatCard />
-            <SkeletonStatCard />
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
+            <SkeletonStatCard/>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <SkeletonCard />
-            <SkeletonCard />
+            <SkeletonCard/>
+            <SkeletonCard/>
           </div>
         </div>
       </AppLayout>
@@ -309,8 +309,8 @@ export default function RecruitmentDashboard() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-          <div className="h-16 w-16 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
-            <Briefcase className="h-8 w-8 text-accent-700 dark:text-accent-400" />
+          <div className='h-16 w-16 rounded-lg bg-accent-subtle flex items-center justify-center mb-6'>
+            <Briefcase className='h-8 w-8 text-accent'/>
           </div>
           <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
             Welcome to Recruitment
@@ -324,7 +324,7 @@ export default function RecruitmentDashboard() {
               onClick={() => router.push('/recruitment/jobs')}
               className="flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"/>
               Create First Job Opening
             </Button>
           </PermissionGate>
@@ -344,281 +344,283 @@ export default function RecruitmentDashboard() {
           </div>
         }
       >
-      <motion.div
-        className="space-y-6"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        {/* Page Header */}
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
-              Recruitment Dashboard
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2 skeuo-deboss">
-              Track job openings, candidates, and interviews
-            </p>
-          </div>
-          <div className="flex gap-2 sm:gap-4">
-            <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
-              <Button
-                onClick={() => router.push('/recruitment/jobs')}
-                className="flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Post New Job</span>
-                <span className="sm:hidden">New Job</span>
-              </Button>
-            </PermissionGate>
-            <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
-              <Button
-                onClick={() => router.push('/recruitment/candidates')}
-                variant="outline"
-                className="flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Add Candidate</span>
-                <span className="sm:hidden">Candidate</span>
-              </Button>
-            </PermissionGate>
-          </div>
-        </motion.div>
+        <motion.div
+          className="space-y-6"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          {/* Page Header */}
+          <motion.div variants={itemVariants}
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+                Recruitment Dashboard
+              </h1>
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 sm:mt-2 skeuo-deboss">
+                Track job openings, candidates, and interviews
+              </p>
+            </div>
+            <div className="flex gap-2 sm:gap-4">
+              <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
+                <Button
+                  onClick={() => router.push('/recruitment/jobs')}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <Plus className="h-4 w-4"/>
+                  <span className="hidden sm:inline">Post New Job</span>
+                  <span className="sm:hidden">New Job</span>
+                </Button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.CANDIDATE_VIEW}>
+                <Button
+                  onClick={() => router.push('/recruitment/candidates')}
+                  variant="outline"
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <Users className="h-4 w-4"/>
+                  <span className="hidden sm:inline">Add Candidate</span>
+                  <span className="sm:hidden">Candidate</span>
+                </Button>
+              </PermissionGate>
+            </div>
+          </motion.div>
 
-        {/* Summary Stats Row */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <StatCard
-            icon={<Briefcase className="h-5 w-5" />}
-            title="Active Job Openings"
-            value={stats.activeJobs}
-            variant="primary"
-            onAction={() => router.push('/recruitment/jobs')}
-            actionLabel="View Jobs"
-          />
-          <StatCard
-            icon={<Users className="h-5 w-5" />}
-            title="Total Candidates"
-            value={stats.totalCandidates}
-            variant="success"
-            onAction={() => router.push('/recruitment/candidates')}
-            actionLabel="View All"
-          />
-          <StatCard
-            icon={<Calendar className="h-5 w-5" />}
-            title="Interviews This Week"
-            value={stats.interviewsThisWeek}
-            variant="blue"
-            onAction={() => router.push('/recruitment/interviews')}
-            actionLabel="Schedule"
-          />
-          <StatCard
-            icon={<FileText className="h-5 w-5" />}
-            title="Pending Offers"
-            value={stats.pendingOffers}
-            variant="orange"
-            onAction={() => router.push('/recruitment/candidates')}
-            actionLabel="Review"
-          />
-        </motion.div>
+          {/* Summary Stats Row */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <StatCard
+              icon={<Briefcase className="h-5 w-5"/>}
+              title="Active Job Openings"
+              value={stats.activeJobs}
+              variant="primary"
+              onAction={() => router.push('/recruitment/jobs')}
+              actionLabel="View Jobs"
+            />
+            <StatCard
+              icon={<Users className="h-5 w-5"/>}
+              title="Total Candidates"
+              value={stats.totalCandidates}
+              variant="success"
+              onAction={() => router.push('/recruitment/candidates')}
+              actionLabel="View All"
+            />
+            <StatCard
+              icon={<Calendar className="h-5 w-5"/>}
+              title="Interviews This Week"
+              value={stats.interviewsThisWeek}
+              variant="blue"
+              onAction={() => router.push('/recruitment/interviews')}
+              actionLabel="Schedule"
+            />
+            <StatCard
+              icon={<FileText className="h-5 w-5"/>}
+              title="Pending Offers"
+              value={stats.pendingOffers}
+              variant="orange"
+              onAction={() => router.push('/recruitment/candidates')}
+              actionLabel="Review"
+            />
+          </motion.div>
 
-        {/* Interviews Today Card */}
-        <motion.div variants={itemVariants}>
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-accent-600 dark:text-accent-400" />
-                Interviews Today
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {todaysInterviews.length === 0 ? (
-                <EmptyState
-                  icon={<Calendar className="h-12 w-12" />}
-                  title="No Interviews Today"
-                  description="Schedule interviews or check back later"
-                  action={{
-                    label: 'Schedule Interview',
-                    onClick: () => router.push('/recruitment/interviews'),
-                  }}
-                />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {todaysInterviews.map((interview, index) => (
-                    <motion.div
-                      key={interview.id}
-                      className="p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="h-10 w-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-accent-700 dark:text-accent-400" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-[var(--text-primary)]">
-                            {interview.candidateName || 'Candidate'}
-                          </h4>
-                          <p className="text-body-muted">
-                            {interview.jobTitle || 'Position'}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2 text-caption">
-                            <Clock className="h-3.5 w-3.5" />
-                            {formatTime(interview.scheduledAt)}
-                            {interview.interviewRound && (
-                              <Badge variant="info" size="sm">
-                                {interview.interviewRound.replace(/_/g, ' ')}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Active Openings Card */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400" />
-                Active Job Openings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentOpenings.length === 0 ? (
-                <EmptyState
-                  icon={<Briefcase className="h-12 w-12" />}
-                  title="No Active Openings"
-                  description="Start by posting a new job opening"
-                  action={{
-                    label: 'Post Job',
-                    onClick: () => router.push('/recruitment/jobs'),
-                  }}
-                />
-              ) : (
-                <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
-                  {recentOpenings.map((job, index) => (
-                    <motion.div
-                      key={job.id}
-                      className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
-                      onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-[var(--text-primary)]">
-                            {job.jobTitle}
-                          </h3>
-                          <div className="flex gap-4 mt-2 text-body-muted">
-                            {job.departmentName && (
-                              <span className="flex items-center gap-1">
-                                <Users className="h-3.5 w-3.5" />
-                                {job.departmentName}
-                              </span>
-                            )}
-                            {job.location && (
-                              <span className="flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5" />
-                                {job.location}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <Badge variant="success" size="sm">
-                          {job.candidateCount || 0} Applications
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Applications Card */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <div className="row-between">
+          {/* Interviews Today Card */}
+          <motion.div variants={itemVariants}>
+            <Card>
+              <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
-                  Recent Applications
+                  <Calendar className='h-5 w-5 text-accent'/>
+                  Interviews Today
                 </CardTitle>
-                {recentApplications.length > 0 && (
-                  <span className="text-caption">
+              </CardHeader>
+              <CardContent>
+                {todaysInterviews.length === 0 ? (
+                  <EmptyState
+                    icon={<Calendar className="h-12 w-12"/>}
+                    title="No Interviews Today"
+                    description="Schedule interviews or check back later"
+                    action={{
+                      label: 'Schedule Interview',
+                      onClick: () => router.push('/recruitment/interviews'),
+                    }}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {todaysInterviews.map((interview, index) => (
+                      <motion.div
+                        key={interview.id}
+                        className="p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50"
+                        initial={{opacity: 0, y: 8}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: index * 0.1}}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className='h-10 w-10 rounded-full bg-accent-subtle flex items-center justify-center'>
+                            <User className='h-5 w-5 text-accent'/>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-[var(--text-primary)]">
+                              {interview.candidateName || 'Candidate'}
+                            </h4>
+                            <p className="text-body-muted">
+                              {interview.jobTitle || 'Position'}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2 text-caption">
+                              <Clock className="h-3.5 w-3.5"/>
+                              {formatTime(interview.scheduledAt)}
+                              {interview.interviewRound && (
+                                <Badge variant="info" size="sm">
+                                  {interview.interviewRound.replace(/_/g, ' ')}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Main Content Grid */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Active Openings Card */}
+            <Card className="h-fit">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className='h-5 w-5 text-accent'/>
+                  Active Job Openings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {recentOpenings.length === 0 ? (
+                  <EmptyState
+                    icon={<Briefcase className="h-12 w-12"/>}
+                    title="No Active Openings"
+                    description="Start by posting a new job opening"
+                    action={{
+                      label: 'Post Job',
+                      onClick: () => router.push('/recruitment/jobs'),
+                    }}
+                  />
+                ) : (
+                  <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
+                    {recentOpenings.map((job, index) => (
+                      <motion.div
+                        key={job.id}
+                        className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
+                        onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
+                        initial={{opacity: 0, x: -20}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{delay: index * 0.1}}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-[var(--text-primary)]">
+                              {job.jobTitle}
+                            </h3>
+                            <div className="flex gap-4 mt-2 text-body-muted">
+                              {job.departmentName && (
+                                <span className="flex items-center gap-1">
+                                <Users className="h-3.5 w-3.5"/>
+                                  {job.departmentName}
+                              </span>
+                              )}
+                              {job.location && (
+                                <span className="flex items-center gap-1">
+                                <MapPin className="h-3.5 w-3.5"/>
+                                  {job.location}
+                              </span>
+                              )}
+                            </div>
+                          </div>
+                          <Badge variant="success" size="sm">
+                            {job.candidateCount || 0} Applications
+                          </Badge>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Recent Applications Card */}
+            <Card className="h-fit">
+              <CardHeader className="pb-4">
+                <div className="row-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className='h-5 w-5 text-status-success-text'/>
+                    Recent Applications
+                  </CardTitle>
+                  {recentApplications.length > 0 && (
+                    <span className="text-caption">
                     {visibleApplications.length} of {recentApplications.length}
                   </span>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              {recentApplications.length === 0 ? (
-                <EmptyState
-                  icon={<Users className="h-12 w-12" />}
-                  title="No Applications Yet"
-                  description="Applications will appear here as they arrive"
-                />
-              ) : (
-                <div
-                  ref={scrollContainerRef}
-                  className="space-y-4 max-h-[460px] overflow-y-auto pr-1"
-                >
-                  {visibleApplications.map((candidate, index) => (
-                    <motion.div
-                      key={candidate.id}
-                      className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
-                      onClick={() =>
-                        router.push(`/recruitment/candidates?id=${candidate.id}`)
-                      }
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: Math.min(index, 5) * 0.05 }}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="font-semibold text-[var(--text-primary)] truncate"
-                            title={candidate.fullName}
-                          >
-                            {candidate.fullName}
-                          </h3>
-                          <p className="text-body-muted truncate" title={candidate.jobTitle || 'Position not specified'}>
-                            {candidate.jobTitle || 'Position not specified'}
-                          </p>
-                          <p className="text-caption mt-1">
-                            Applied {formatDate(candidate.appliedDate)}
-                          </p>
-                        </div>
-                        <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
-                          {candidate.status?.replace(/_/g, ' ') ?? '-'}
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
-                  {/* Lazy-load sentinel with spinner */}
-                  {hasMore && (
-                    <div ref={loadMoreRef} className="flex justify-center items-center py-4">
-                      <Loader2 className="h-4 w-4 animate-spin text-accent-700 dark:text-accent-400 mr-2" />
-                      <span className="text-caption">
-                        Loading more candidates...
-                      </span>
-                    </div>
                   )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+              </CardHeader>
+              <CardContent>
+                {recentApplications.length === 0 ? (
+                  <EmptyState
+                    icon={<Users className="h-12 w-12"/>}
+                    title="No Applications Yet"
+                    description="Applications will appear here as they arrive"
+                  />
+                ) : (
+                  <div
+                    ref={scrollContainerRef}
+                    className="space-y-4 max-h-[460px] overflow-y-auto pr-1"
+                  >
+                    {visibleApplications.map((candidate, index) => (
+                      <motion.div
+                        key={candidate.id}
+                        className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
+                        onClick={() =>
+                          router.push(`/recruitment/candidates?id=${candidate.id}`)
+                        }
+                        initial={{opacity: 0, x: -20}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{delay: Math.min(index, 5) * 0.05}}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <h3
+                              className="font-semibold text-[var(--text-primary)] truncate"
+                              title={candidate.fullName}
+                            >
+                              {candidate.fullName}
+                            </h3>
+                            <p className="text-body-muted truncate"
+                               title={candidate.jobTitle || 'Position not specified'}>
+                              {candidate.jobTitle || 'Position not specified'}
+                            </p>
+                            <p className="text-caption mt-1">
+                              Applied {formatDate(candidate.appliedDate)}
+                            </p>
+                          </div>
+                          <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
+                            {candidate.status?.replace(/_/g, ' ') ?? '-'}
+                          </Badge>
+                        </div>
+                      </motion.div>
+                    ))}
+                    {/* Lazy-load sentinel with spinner */}
+                    {hasMore && (
+                      <div ref={loadMoreRef} className="flex justify-center items-center py-4">
+                        <Loader2 className='h-4 w-4 animate-spin text-accent mr-2'/>
+                        <span className="text-caption">
+                        Loading more candidates...
+                      </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
 
-      </motion.div>
+        </motion.div>
       </PermissionGate>
     </AppLayout>
   );

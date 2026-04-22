@@ -1,6 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { apiConfig } from '@/lib/config';
-import { logger } from '@/lib/utils/logger';
+import axios, {AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse} from 'axios';
+import {apiConfig} from '@/lib/config';
+import {logger} from '@/lib/utils/logger';
 
 const API_URL = apiConfig.baseUrl;
 
@@ -119,7 +119,9 @@ class ApiClient {
             const promise = refreshPromise ?? (refreshPromise = this.client.post('/auth/refresh', null)
               .then((res) => res.status === 200)
               .catch(() => false)
-              .finally(() => { refreshPromise = null; }));
+              .finally(() => {
+                refreshPromise = null;
+              }));
 
             const refreshed = await promise;
 

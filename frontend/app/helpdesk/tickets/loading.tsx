@@ -13,15 +13,13 @@ export default function TicketsLoading() {
         </div>
         <Skeleton height={36} width={130}/>
       </div>
-
       {/* Search bar skeleton */}
       <div className="flex gap-4">
         <Skeleton height={40} className="flex-1"/>
         <Skeleton height={40} width={90}/>
       </div>
-
       {/* Table skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
         <Skeleton height={44}/>
         <div className="space-y-2 p-4">
           {Array.from({length: 8}).map((_, index) => (

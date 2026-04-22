@@ -41,7 +41,7 @@ export default function SalaryStructuresPage() {
                 <button
                   onClick={() => router.push('/payroll/salary-structures/create')}
                   aria-label="Create new salary structure"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   <Plus className="w-4 h-4"/>
                   Create Structure
@@ -63,8 +63,8 @@ export default function SalaryStructuresPage() {
             {isError && !isLoading && (
               <Card withBorder shadow="xs" radius="md" p="xl" className="skeuo-card">
                 <Stack align="center" gap="md" py="xl">
-                  <div className="rounded-full bg-danger-50 dark:bg-danger-950/20 p-4">
-                    <AlertCircle className="w-12 h-12 text-danger-500"/>
+                  <div className='rounded-full bg-status-danger-bg p-4'>
+                    <AlertCircle className='w-12 h-12 text-status-danger-text'/>
                   </div>
                   <Title order={4} fw={500} ta="center" className="skeuo-emboss">
                     Failed to Load Salary Structures
@@ -93,7 +93,7 @@ export default function SalaryStructuresPage() {
                   <button
                     onClick={() => router.push('/payroll/salary-structures/create')}
                     aria-label="Create new salary structure"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-lg transition-colors mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     <Plus className="w-4 h-4"/>
                     Create Structure

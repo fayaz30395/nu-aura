@@ -537,11 +537,11 @@ export default function DashboardPage() {
     viewType: 'EMPLOYEE' as const,
     viewLabel: 'Dashboard',
     teamSize: 0,
-    attendance: { present: 0, absent: 0, onLeave: 0, onTime: 0, late: 0, attendancePercentage: 0, trend: [] },
-    leave: { pending: 0, approved: 0, rejected: 0, utilizationPercentage: 0, trend: [], distribution: [] },
+    attendance: {present: 0, absent: 0, onLeave: 0, onTime: 0, late: 0, attendancePercentage: 0, trend: []},
+    leave: {pending: 0, approved: 0, rejected: 0, utilizationPercentage: 0, trend: [], distribution: []},
     payroll: null,
-    headcount: { total: 0, newJoinees: 0, exits: 0, growthPercentage: 0, trend: [], departmentDistribution: [] },
-    upcomingEvents: { birthdays: [], anniversaries: [], holidays: [] },
+    headcount: {total: 0, newJoinees: 0, exits: 0, growthPercentage: 0, trend: [], departmentDistribution: []},
+    upcomingEvents: {birthdays: [], anniversaries: [], holidays: []},
   };
 
   const viewBadgeClass = safeAnalytics.viewType === 'ADMIN'
@@ -921,7 +921,8 @@ export default function DashboardPage() {
       <div className="space-y-8">
         {/* Inline analytics error banner — dashboard still usable */}
         {analyticsUnavailable && (
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               {error ? `Analytics temporarily unavailable: ${error}` : 'Analytics data could not be loaded.'}
@@ -1056,7 +1057,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
+                {clockError && <span className='text-sm text-status-danger-text'>{clockError}</span>}
                 {canCheckIn && (
                   <Button variant="success" onClick={handleCheckIn} isLoading={checkInMutation.isPending}
                           leftIcon={<LogIn className="h-4 w-4"/>}>
@@ -1086,7 +1087,6 @@ export default function DashboardPage() {
           columns={2}
         />
       </div>
-
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
@@ -1234,7 +1234,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-
       {/* Email Preview Modal */}
       {selectedEmail && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
@@ -1295,7 +1294,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">

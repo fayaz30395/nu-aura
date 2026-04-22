@@ -248,7 +248,7 @@ export default function ImplicitRolesPage() {
   if (isLoading) {
     return (
       <div className="p-4 md:p-6 lg:p-8">
-        <SkeletonTable rows={6} columns={4} />
+        <SkeletonTable rows={6} columns={4}/>
       </div>
     );
   }
@@ -268,7 +268,6 @@ export default function ImplicitRolesPage() {
         cancelText="Cancel"
         type="danger"
       />
-
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-xl font-bold skeuo-emboss">Implicit Roles</h1>
@@ -305,7 +304,7 @@ export default function ImplicitRolesPage() {
           <button
             onClick={handleRecomputeAll}
             disabled={recomputeMutation.isPending}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 disabled:opacity-50 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Recompute All
           </button>
@@ -313,22 +312,22 @@ export default function ImplicitRolesPage() {
 
         {selectedRules.length > 0 && (
           <div
-            className="mb-4 p-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg flex justify-between items-center">
-            <span className="text-sm text-accent-900 dark:text-accent-100">
+            className='mb-4 p-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg flex justify-between items-center'>
+            <span className='text-sm text-accent'>
               {selectedRules.length} rule(s) selected
             </span>
             <div className="flex gap-2">
               <button
                 onClick={handleBulkActivate}
                 disabled={bulkActivateMutation.isPending}
-                className="px-4 py-1 text-sm bg-success-500 text-white rounded hover:bg-success-600 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='px-4 py-1 text-sm bg-status-success-bg text-inverse rounded hover:bg-status-success-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Activate
               </button>
               <button
                 onClick={handleBulkDeactivate}
                 disabled={bulkDeactivateMutation.isPending}
-                className="px-4 py-1 text-sm bg-warning-500 text-white rounded hover:bg-warning-600 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='px-4 py-1 text-sm bg-status-warning-bg text-inverse rounded hover:bg-status-warning-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Deactivate
               </button>
@@ -426,7 +425,7 @@ export default function ImplicitRolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-body-muted">
                   <button
                     onClick={() => openAffectedUsersModal(rule)}
-                    className="text-accent-700 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='text-accent hover:text-accent underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {rule.affectedUserCount} users
                   </button>
@@ -445,13 +444,13 @@ export default function ImplicitRolesPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                   <button
                     onClick={() => openEditModal(rule)}
-                    className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='text-accent hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteRule(rule)}
-                    className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='text-status-danger-text hover:text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     Delete
                   </button>
@@ -462,7 +461,6 @@ export default function ImplicitRolesPage() {
           </table>
         </div>
       </div>
-
       {/* Create Rule Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
@@ -481,7 +479,8 @@ export default function ImplicitRolesPage() {
                     placeholder="e.g., Manager Auto-Role"
                   />
                   {createForm.formState.errors.ruleName && (
-                    <p className="mt-1 text-xs text-danger-500">{createForm.formState.errors.ruleName.message}</p>
+                    <p
+                      className='mt-1 text-xs text-status-danger-text'>{createForm.formState.errors.ruleName.message}</p>
                   )}
                 </div>
 
@@ -500,7 +499,7 @@ export default function ImplicitRolesPage() {
                     ))}
                   </select>
                   {createForm.formState.errors.conditionType && (
-                    <p className="mt-1 text-xs text-danger-500">
+                    <p className='mt-1 text-xs text-status-danger-text'>
                       {createForm.formState.errors.conditionType.message}
                     </p>
                   )}
@@ -524,7 +523,7 @@ export default function ImplicitRolesPage() {
                     ))}
                   </select>
                   {createForm.formState.errors.targetRoleId && (
-                    <p className="mt-1 text-xs text-danger-500">
+                    <p className='mt-1 text-xs text-status-danger-text'>
                       {createForm.formState.errors.targetRoleId.message}
                     </p>
                   )}
@@ -594,7 +593,6 @@ export default function ImplicitRolesPage() {
           </div>
         </div>
       )}
-
       {/* Edit Rule Modal */}
       {showEditModal && selectedRule && (
         <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center z-50 p-4">
@@ -612,7 +610,7 @@ export default function ImplicitRolesPage() {
                     className="input-aura"
                   />
                   {editForm.formState.errors.ruleName && (
-                    <p className="mt-1 text-xs text-danger-500">{editForm.formState.errors.ruleName.message}</p>
+                    <p className='mt-1 text-xs text-status-danger-text'>{editForm.formState.errors.ruleName.message}</p>
                   )}
                 </div>
 
@@ -713,7 +711,6 @@ export default function ImplicitRolesPage() {
           </div>
         </div>
       )}
-
       {/* Affected Users Modal */}
       {showAffectedUsersModal && selectedRule && (
         <AffectedUsersModal rule={selectedRule} onClose={() => setShowAffectedUsersModal(false)}/>
@@ -746,7 +743,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
           </button>
         </div>
 
-        {usersQuery.isLoading && <SkeletonTable rows={3} columns={3} />}
+        {usersQuery.isLoading && <SkeletonTable rows={3} columns={3}/>}
 
         {usersQuery.data && (
           <div className="skeuo-card overflow-x-auto">
@@ -805,7 +802,7 @@ function AffectedUsersModal({rule, onClose}: AffectedUsersModalProps) {
         )}
 
         {usersQuery.error && (
-          <p className="text-danger-500 text-sm mt-4">Failed to load affected users</p>
+          <p className='text-status-danger-text text-sm mt-4'>Failed to load affected users</p>
         )}
 
         <div className="flex justify-end mt-6">

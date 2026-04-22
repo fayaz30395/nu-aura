@@ -201,9 +201,9 @@ function FileDropZone({
   if (currentFile) {
     return (
       <div
-        className="row-between p-4 rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20">
+        className='row-between p-4 rounded-lg border border-[var(--accent-primary)] bg-accent-subtle'>
         <div className="flex items-center gap-4">
-          <FileSpreadsheet className="h-8 w-8 text-accent-700 dark:text-accent-400"/>
+          <FileSpreadsheet className='h-8 w-8 text-accent'/>
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">{currentFile.name}</p>
             <p className="text-caption">
@@ -213,7 +213,7 @@ function FileDropZone({
         </div>
         <button type="button"
                 onClick={onClear}
-                className="p-2 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/30 text-danger-600 dark:text-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='p-2 rounded-lg hover:bg-status-danger-bg text-status-danger-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 aria-label="Remove file"
         >
           <Trash2 className="h-4 w-4"/>
@@ -380,7 +380,6 @@ function ImportSection() {
           );
         })}
       </div>
-
       {/* Step 1: Type selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {IMPORT_TYPES.map(({value, label, description, icon: Icon}) => (
@@ -412,7 +411,6 @@ function ImportSection() {
           </button>
         ))}
       </div>
-
       {/* Template info & download */}
       {currentTemplate && !templatesLoading && (
         <div
@@ -420,13 +418,13 @@ function ImportSection() {
           <div className="flex items-start justify-between">
             <div>
               <h4 className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
-                <Info className="h-4 w-4 text-accent-600"/>
+                <Info className='h-4 w-4 text-accent'/>
                 Required Columns
               </h4>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {currentTemplate.requiredColumns.map((col: string) => (
                   <span key={col}
-                        className="px-2 py-0.5 rounded bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 text-xs font-mono">
+                        className='px-2 py-0.5 rounded bg-status-danger-bg text-status-danger-text text-xs font-mono'>
                     {col} *
                   </span>
                 ))}
@@ -457,7 +455,7 @@ function ImportSection() {
                   type="button"
                   onClick={() => downloadTemplateMutation.mutate('xlsx')}
                   disabled={downloadTemplateMutation.isPending}
-                  className="px-4 py-1.5 text-xs font-medium rounded-lg bg-accent-700 hover:bg-accent-800 text-white transition-colors"
+                  className='px-4 py-1.5 text-xs font-medium rounded-lg bg-accent hover:bg-accent-hover text-inverse transition-colors'
                 >
                   <Download className="h-3.5 w-3.5 inline mr-1"/>XLSX
                 </button>
@@ -466,7 +464,6 @@ function ImportSection() {
           </div>
         </div>
       )}
-
       {/* Step 2: File upload */}
       <FileDropZone
         onFileDrop={handleFileSelect}
@@ -479,7 +476,6 @@ function ImportSection() {
           setImportResult(null);
         }}
       />
-
       {/* Preview results (employee type) */}
       {step === 'preview' && preview && (
         <motion.div
@@ -507,7 +503,7 @@ function ImportSection() {
                 </thead>
                 <tbody className="divide-y divide-[var(--border-subtle)]">
                 {preview.rows.slice(0, 10).map((row) => (
-                  <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-danger-50 dark:bg-danger-900/10'}>
+                  <tr key={row.rowNumber} className={row.isValid ? '' : 'bg-status-danger-bg'}>
                     <td className="px-4 py-2 text-[var(--text-secondary)]">{row.rowNumber}</td>
                     <td className="px-4 py-2 font-mono text-[var(--text-primary)]">{row.employeeCode}</td>
                     <td className="px-4 py-2 text-[var(--text-primary)]">{row.fullName}</td>
@@ -515,9 +511,9 @@ function ImportSection() {
                     <td className="px-4 py-2 text-[var(--text-secondary)]">{row.departmentName}</td>
                     <td className="px-4 py-2">
                       {row.isValid ? (
-                        <CheckCircle2 className="h-4 w-4 text-success-500"/>
+                        <CheckCircle2 className='h-4 w-4 text-status-success-text'/>
                       ) : (
-                        <span className="text-danger-600 dark:text-danger-400">{row.rowErrors?.join(', ')}</span>
+                        <span className='text-status-danger-text'>{row.rowErrors?.join(', ')}</span>
                       )}
                     </td>
                   </tr>
@@ -527,23 +523,22 @@ function ImportSection() {
             </div>
           )}
           {preview.errors.length > 0 && (
-            <div className="p-4 bg-danger-50 dark:bg-danger-900/10 border-t border-danger-200 dark:border-danger-800">
-              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">
+            <div className='p-4 bg-status-danger-bg border-t border-status-danger-border'>
+              <h5 className='text-xs font-medium text-status-danger-text mb-2'>
                 Validation Errors ({preview.errors.length})
               </h5>
-              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400">
+              <ul className='space-y-1 text-xs text-status-danger-text'>
                 {preview.errors.slice(0, 10).map((err, i) => (
                   <li key={i}>Row {err.rowNumber}: {err.field} - {err.message}</li>
                 ))}
                 {preview.errors.length > 10 && (
-                  <li className="text-danger-500">...and {preview.errors.length - 10} more errors</li>
+                  <li className='text-status-danger-text'>...and {preview.errors.length - 10} more errors</li>
                 )}
               </ul>
             </div>
           )}
         </motion.div>
       )}
-
       {/* Import result */}
       {step === 'result' && importResult && (
         <motion.div
@@ -553,9 +548,9 @@ function ImportSection() {
         >
           <div className="flex items-center gap-4 mb-4">
             {importResult.errorCount === 0 ? (
-              <CheckCircle2 className="h-8 w-8 text-success-500"/>
+              <CheckCircle2 className='h-8 w-8 text-status-success-text'/>
             ) : (
-              <AlertTriangle className="h-8 w-8 text-warning-500"/>
+              <AlertTriangle className='h-8 w-8 text-status-warning-text'/>
             )}
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">Import Complete</h4>
@@ -569,23 +564,23 @@ function ImportSection() {
               <p className="text-caption">Total</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{importResult.totalRows}</p>
             </div>
-            <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
-              <p className="text-xs text-success-600 dark:text-success-400">Success</p>
-              <p className="text-xl font-bold text-success-700 dark:text-success-300">{importResult.successCount}</p>
+            <div className='p-4 rounded-lg bg-status-success-bg'>
+              <p className='text-xs text-status-success-text'>Success</p>
+              <p className='text-xl font-bold text-status-success-text'>{importResult.successCount}</p>
             </div>
-            <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20">
-              <p className="text-xs text-danger-600 dark:text-danger-400">Errors</p>
-              <p className="text-xl font-bold text-danger-700 dark:text-danger-300">{importResult.errorCount}</p>
+            <div className='p-4 rounded-lg bg-status-danger-bg'>
+              <p className='text-xs text-status-danger-text'>Errors</p>
+              <p className='text-xl font-bold text-status-danger-text'>{importResult.errorCount}</p>
             </div>
-            <div className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20">
-              <p className="text-xs text-warning-600 dark:text-warning-400">Skipped</p>
-              <p className="text-xl font-bold text-warning-700 dark:text-warning-300">{importResult.skippedCount}</p>
+            <div className='p-4 rounded-lg bg-status-warning-bg'>
+              <p className='text-xs text-status-warning-text'>Skipped</p>
+              <p className='text-xl font-bold text-status-warning-text'>{importResult.skippedCount}</p>
             </div>
           </div>
           {importResult.errors.length > 0 && (
-            <div className="mt-4 rounded-lg bg-danger-50 dark:bg-danger-900/10 p-4">
-              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">Errors</h5>
-              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-40 overflow-y-auto">
+            <div className='mt-4 rounded-lg bg-status-danger-bg p-4'>
+              <h5 className='text-xs font-medium text-status-danger-text mb-2'>Errors</h5>
+              <ul className='space-y-1 text-xs text-status-danger-text max-h-40 overflow-y-auto'>
                 {importResult.errors.map((err, i) => (
                   <li key={i}>Row {err.rowNumber}: {err.field} = &quot;{err.value}&quot; - {err.errorMessage}</li>
                 ))}
@@ -594,14 +589,13 @@ function ImportSection() {
           )}
         </motion.div>
       )}
-
       {/* Action buttons */}
       <div className="flex items-center gap-4">
         {step === 'upload' && file && (
           <button type="button"
                   onClick={handleValidateAndPreview}
                   disabled={isProcessing}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {(previewEmployeeMutation.isPending || validateMutation.isPending) &&
               <RefreshCw className="h-4 w-4 animate-spin"/>}
@@ -613,7 +607,7 @@ function ImportSection() {
           <button type="button"
                   onClick={handleImport}
                   disabled={isProcessing}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {(importMutation.isPending || executeEmployeeMutation.isPending) &&
               <RefreshCw className="h-4 w-4 animate-spin"/>}
@@ -684,7 +678,6 @@ function ExportSection() {
           ))}
         </div>
       </div>
-
       {/* Format selector */}
       <div>
         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -709,12 +702,11 @@ function ExportSection() {
           ))}
         </div>
       </div>
-
       {/* Export button */}
       <button type="button"
               onClick={handleExport}
               disabled={exportMutation.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
       >
         {exportMutation.isPending ? (
           <RefreshCw className="h-4 w-4 animate-spin"/>
@@ -853,17 +845,16 @@ function KekaMigrationSection() {
           );
         })}
       </div>
-
       {/* Upload step */}
       {wizardStep === 'upload' && (
         <div className="space-y-4">
           <div
-            className="rounded-lg border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/10 p-4">
-            <h4 className="text-sm font-medium text-accent-800 dark:text-accent-300 flex items-center gap-2">
+            className='rounded-lg border border-[var(--accent-primary)] bg-accent-subtle p-4'>
+            <h4 className='text-sm font-medium text-accent flex items-center gap-2'>
               <Info className="h-4 w-4"/>
               KEKA Migration
             </h4>
-            <p className="text-xs text-accent-700 dark:text-accent-400 mt-1">
+            <p className='text-xs text-accent mt-1'>
               Upload your KEKA export file (.csv or .xlsx). The system will detect columns and let you map them to
               NU-AURA fields.
             </p>
@@ -878,7 +869,7 @@ function KekaMigrationSection() {
             <button type="button"
                     onClick={handleUpload}
                     disabled={isProcessing}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               {uploadMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Upload & Detect Columns
@@ -887,7 +878,6 @@ function KekaMigrationSection() {
           )}
         </div>
       )}
-
       {/* Column mapping step */}
       {wizardStep === 'map' && uploadResult && (
         <div className="space-y-4">
@@ -922,7 +912,7 @@ function KekaMigrationSection() {
                     </select>
                   </div>
                   {mapping.isRequired && (
-                    <span className="text-xs text-danger-500 font-medium flex-shrink-0">Required</span>
+                    <span className='text-xs text-status-danger-text font-medium flex-shrink-0'>Required</span>
                   )}
                 </div>
               ))}
@@ -932,7 +922,7 @@ function KekaMigrationSection() {
             <button type="button"
                     onClick={handlePreview}
                     disabled={isProcessing}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               {previewMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Preview Import
@@ -947,7 +937,6 @@ function KekaMigrationSection() {
           </div>
         </div>
       )}
-
       {/* Preview step */}
       {wizardStep === 'preview' && previewData && (
         <div className="space-y-4">
@@ -956,13 +945,13 @@ function KekaMigrationSection() {
               <p className="text-caption">Total Rows</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{previewData.totalRows}</p>
             </div>
-            <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
-              <p className="text-xs text-success-600 dark:text-success-400">Valid</p>
-              <p className="text-xl font-bold text-success-700 dark:text-success-300">{previewData.validRows}</p>
+            <div className='p-4 rounded-lg bg-status-success-bg'>
+              <p className='text-xs text-status-success-text'>Valid</p>
+              <p className='text-xl font-bold text-status-success-text'>{previewData.validRows}</p>
             </div>
-            <div className="p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20">
-              <p className="text-xs text-danger-600 dark:text-danger-400">Errors</p>
-              <p className="text-xl font-bold text-danger-700 dark:text-danger-300">{previewData.errorRows}</p>
+            <div className='p-4 rounded-lg bg-status-danger-bg'>
+              <p className='text-xs text-status-danger-text'>Errors</p>
+              <p className='text-xl font-bold text-status-danger-text'>{previewData.errorRows}</p>
             </div>
           </div>
 
@@ -997,11 +986,11 @@ function KekaMigrationSection() {
           )}
 
           {previewData.errors.length > 0 && (
-            <div className="rounded-lg bg-danger-50 dark:bg-danger-900/10 p-4">
-              <h5 className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-2">
+            <div className='rounded-lg bg-status-danger-bg p-4'>
+              <h5 className='text-xs font-medium text-status-danger-text mb-2'>
                 Validation Errors ({previewData.errors.length})
               </h5>
-              <ul className="space-y-1 text-xs text-danger-600 dark:text-danger-400 max-h-32 overflow-y-auto">
+              <ul className='space-y-1 text-xs text-status-danger-text max-h-32 overflow-y-auto'>
                 {previewData.errors.slice(0, 10).map((err, i) => (
                   <li key={i}>Row {err.row}: {err.field} - {err.message}</li>
                 ))}
@@ -1013,7 +1002,7 @@ function KekaMigrationSection() {
             <button type="button"
                     onClick={handleExecute}
                     disabled={isProcessing || previewData.validRows === 0}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-hover text-inverse text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               {executeMutation.isPending && <RefreshCw className="h-4 w-4 animate-spin"/>}
               Execute Import ({previewData.validRows} rows)
@@ -1029,7 +1018,6 @@ function KekaMigrationSection() {
           </div>
         </div>
       )}
-
       {/* Done step */}
       {wizardStep === 'done' && executeMutation.data && (
         <motion.div
@@ -1038,7 +1026,7 @@ function KekaMigrationSection() {
           className="rounded-lg border border-[var(--border-main)] p-6"
         >
           <div className="flex items-center gap-4 mb-4">
-            <CheckCircle2 className="h-8 w-8 text-success-500"/>
+            <CheckCircle2 className='h-8 w-8 text-status-success-text'/>
             <div>
               <h4 className="text-lg font-semibold text-[var(--text-primary)]">KEKA Migration Complete</h4>
               <p className="text-body-muted">
@@ -1051,17 +1039,17 @@ function KekaMigrationSection() {
               <p className="text-caption">Processed</p>
               <p className="text-xl font-bold text-[var(--text-primary)]">{executeMutation.data.totalProcessed}</p>
             </div>
-            <div className="p-4 rounded-lg bg-success-50 dark:bg-success-900/20">
-              <p className="text-xs text-success-600 dark:text-success-400">Created</p>
-              <p className="text-xl font-bold text-success-700 dark:text-success-300">{executeMutation.data.created}</p>
+            <div className='p-4 rounded-lg bg-status-success-bg'>
+              <p className='text-xs text-status-success-text'>Created</p>
+              <p className='text-xl font-bold text-status-success-text'>{executeMutation.data.created}</p>
             </div>
-            <div className="p-4 rounded-lg bg-accent-50 dark:bg-accent-900/20">
-              <p className="text-xs text-accent-600 dark:text-accent-400">Updated</p>
-              <p className="text-xl font-bold text-accent-700 dark:text-accent-300">{executeMutation.data.updated}</p>
+            <div className='p-4 rounded-lg bg-accent-subtle'>
+              <p className='text-xs text-accent'>Updated</p>
+              <p className='text-xl font-bold text-accent'>{executeMutation.data.updated}</p>
             </div>
-            <div className="p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20">
-              <p className="text-xs text-warning-600 dark:text-warning-400">Skipped</p>
-              <p className="text-xl font-bold text-warning-700 dark:text-warning-300">{executeMutation.data.skipped}</p>
+            <div className='p-4 rounded-lg bg-status-warning-bg'>
+              <p className='text-xs text-status-warning-text'>Skipped</p>
+              <p className='text-xl font-bold text-status-warning-text'>{executeMutation.data.skipped}</p>
             </div>
           </div>
           <button type="button"
@@ -1083,7 +1071,7 @@ function HistorySection() {
   const {data: historyPage, isLoading} = useKekaImportHistory(page, 20);
 
   if (isLoading) {
-    return <SkeletonTable rows={5} columns={4} />;
+    return <SkeletonTable rows={5} columns={4}/>;
   }
 
   if (!historyPage || historyPage.content.length === 0) {
@@ -1118,8 +1106,8 @@ function HistorySection() {
               <td className="px-4 py-4 font-medium text-[var(--text-primary)]">{entry.fileName}</td>
               <td className="px-4 py-4"><StatusBadge status={entry.status}/></td>
               <td className="px-4 py-4 text-[var(--text-secondary)]">{entry.totalRows ?? '-'}</td>
-              <td className="px-4 py-4 text-success-600 dark:text-success-400">{entry.created ?? '-'}</td>
-              <td className="px-4 py-4 text-danger-600 dark:text-danger-400">{entry.errors ?? '-'}</td>
+              <td className='px-4 py-4 text-status-success-text'>{entry.created ?? '-'}</td>
+              <td className='px-4 py-4 text-status-danger-text'>{entry.errors ?? '-'}</td>
               <td className="px-4 py-4 text-[var(--text-muted)]">
                 {entry.duration ? `${(entry.duration / 1000).toFixed(1)}s` : '-'}
               </td>
@@ -1131,7 +1119,6 @@ function HistorySection() {
           </tbody>
         </table>
       </div>
-
       {/* Pagination */}
       {historyPage.totalElements > 20 && (
         <div className="row-between">
@@ -1181,7 +1168,7 @@ export default function ImportExportPage() {
         fallback={
           <div className="flex items-center justify-center h-96">
             <EmptyState
-              icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
+              icon={<AlertTriangle className='h-12 w-12 text-status-warning-text'/>}
               title="Access Denied"
               description="You do not have permission to access the Import/Export Hub."
             />
@@ -1234,7 +1221,7 @@ export default function ImportExportPage() {
                 <AdminGate
                   fallback={
                     <EmptyState
-                      icon={<AlertTriangle className="h-12 w-12 text-warning-500"/>}
+                      icon={<AlertTriangle className='h-12 w-12 text-status-warning-text'/>}
                       title="Admin Only"
                       description="KEKA migration is restricted to system administrators."
                     />

@@ -22,14 +22,14 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, cla
         {data.birthdays.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Cake className="h-4 w-4 text-accent-600"/>
+              <Cake className='h-4 w-4 text-accent'/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Birthdays</h4>
             </div>
             <div className="space-y-2">
               {data.birthdays.slice(0, 5).map((birthday, index) => (
                 <div
                   key={index}
-                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className='row-between p-4 bg-accent-subtle rounded-lg'
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -37,7 +37,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, cla
                     </p>
                     <p className="text-caption">{birthday.department}</p>
                   </div>
-                  <span className="text-xs font-semibold text-accent-600 dark:text-accent-600">{birthday.date}</span>
+                  <span className='text-xs font-semibold text-accent'>{birthday.date}</span>
                 </div>
               ))}
             </div>
@@ -48,14 +48,14 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, cla
         {data.anniversaries.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Gift className="h-4 w-4 text-accent-600"/>
+              <Gift className='h-4 w-4 text-accent'/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Work Anniversaries</h4>
             </div>
             <div className="space-y-2">
               {data.anniversaries.slice(0, 5).map((anniversary, index) => (
                 <div
                   key={index}
-                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className='row-between p-4 bg-accent-subtle rounded-lg'
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -65,7 +65,7 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, cla
                       {anniversary.department} • {anniversary.years} years
                     </p>
                   </div>
-                  <span className="text-xs font-semibold text-accent-600 dark:text-accent-600">
+                  <span className='text-xs font-semibold text-accent'>
                     {anniversary.date}
                   </span>
                 </div>
@@ -78,20 +78,20 @@ export const UpcomingEventsCard: React.FC<UpcomingEventsCardProps> = ({data, cla
         {data.holidays.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Calendar className="h-4 w-4 text-accent-600"/>
+              <Calendar className='h-4 w-4 text-accent'/>
               <h4 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h4>
             </div>
             <div className="space-y-2">
               {data.holidays.slice(0, 5).map((holiday, index) => (
                 <div
                   key={index}
-                  className="row-between p-4 bg-accent-50 dark:bg-accent-950/20 rounded-lg"
+                  className='row-between p-4 bg-accent-subtle rounded-lg'
                 >
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{holiday.name}</p>
                     <p className="text-caption">{holiday.type}</p>
                   </div>
-                  <span className="text-xs font-semibold text-accent-600 dark:text-accent-400">{holiday.date}</span>
+                  <span className='text-xs font-semibold text-accent'>{holiday.date}</span>
                 </div>
               ))}
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { agencyService } from '@/lib/services/hire/agency.service';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {agencyService} from '@/lib/services/hire/agency.service';
 import {
   AgencyStatus,
   CreateAgencyRequest,
@@ -15,10 +15,10 @@ import {
 export const agencyKeys = {
   all: ['agencies'] as const,
   list: (page: number, size: number, status?: AgencyStatus, search?: string) =>
-    [...agencyKeys.all, 'list', { page, size, status, search }] as const,
+    [...agencyKeys.all, 'list', {page, size, status, search}] as const,
   detail: (id: string) => [...agencyKeys.all, 'detail', id] as const,
   submissions: (agencyId: string, page: number, size: number) =>
-    [...agencyKeys.all, 'submissions', agencyId, { page, size }] as const,
+    [...agencyKeys.all, 'submissions', agencyId, {page, size}] as const,
   submissionsByJob: (jobId: string) =>
     [...agencyKeys.all, 'submissions-by-job', jobId] as const,
   performance: (agencyId: string) =>
@@ -78,7 +78,7 @@ export function useCreateAgency() {
   return useMutation({
     mutationFn: (data: CreateAgencyRequest) => agencyService.createAgency(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: agencyKeys.all });
+      queryClient.invalidateQueries({queryKey: agencyKeys.all});
     },
   });
 }
@@ -86,11 +86,11 @@ export function useCreateAgency() {
 export function useUpdateAgency() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAgencyRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateAgencyRequest }) =>
       agencyService.updateAgency(id, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: agencyKeys.detail(variables.id) });
-      queryClient.invalidateQueries({ queryKey: agencyKeys.all });
+      queryClient.invalidateQueries({queryKey: agencyKeys.detail(variables.id)});
+      queryClient.invalidateQueries({queryKey: agencyKeys.all});
     },
   });
 }
@@ -100,7 +100,7 @@ export function useDeleteAgency() {
   return useMutation({
     mutationFn: (id: string) => agencyService.deleteAgency(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: agencyKeys.all });
+      queryClient.invalidateQueries({queryKey: agencyKeys.all});
     },
   });
 }
@@ -109,9 +109,9 @@ export function useSubmitCandidate() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      agencyId,
-      data,
-    }: {
+                   agencyId,
+                   data,
+                 }: {
       agencyId: string;
       data: CreateSubmissionRequest;
     }) => agencyService.submitCandidate(agencyId, data),
@@ -130,10 +130,10 @@ export function useUpdateSubmissionStatus() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      agencyId,
-      submissionId,
-      data,
-    }: {
+                   agencyId,
+                   submissionId,
+                   data,
+                 }: {
       agencyId: string;
       submissionId: string;
       data: UpdateSubmissionStatusRequest;

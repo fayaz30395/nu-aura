@@ -174,11 +174,11 @@ export default function NewEventPage() {
 
         {createEventMutation.isError && (
           <div
-            className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+            className='p-4 bg-status-danger-bg border border-status-danger-border rounded-xl flex items-center gap-4'>
             <AlertCircle
-              className="h-5 w-5 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+              className='h-5 w-5 text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
             <p
-              className="text-sm text-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">Failed
+              className='text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>Failed
               to create event. Please try again.</p>
           </div>
         )}
@@ -203,7 +203,7 @@ export default function NewEventPage() {
             />
             {errors.title && (
               <p
-                className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.title.message}</p>
+                className='mt-1 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{errors.title.message}</p>
             )}
           </div>
 
@@ -213,7 +213,7 @@ export default function NewEventPage() {
               <input
                 type="checkbox"
                 {...register('allDay')}
-                className="w-5 h-5 rounded border-[var(--border-main)] text-accent-500 focus:ring-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='w-5 h-5 rounded border-[var(--border-main)] text-accent focus:ring-accent-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               />
               <span className="text-sm font-medium text-[var(--text-secondary)]">All Day Event</span>
             </label>
@@ -237,7 +237,7 @@ export default function NewEventPage() {
               </div>
               {errors.startTime && (
                 <p
-                  className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.startTime.message}</p>
+                  className='mt-1 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{errors.startTime.message}</p>
               )}
             </div>
             <div>
@@ -256,7 +256,7 @@ export default function NewEventPage() {
               </div>
               {errors.endTime && (
                 <p
-                  className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.endTime.message}</p>
+                  className='mt-1 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{errors.endTime.message}</p>
               )}
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function NewEventPage() {
             </div>
             {errors.meetingLink && (
               <p
-                className="mt-1 text-sm text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">{errors.meetingLink.message}</p>
+                className='mt-1 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>{errors.meetingLink.message}</p>
             )}
           </div>
 
@@ -399,7 +399,7 @@ export default function NewEventPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50"
+                className='flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50'
               >
                 {isLoading ? (
                   <>

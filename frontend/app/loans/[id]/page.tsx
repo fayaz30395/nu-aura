@@ -90,7 +90,7 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading loan details...</p>
           </div>
         </div>
@@ -107,13 +107,13 @@ export default function LoanDetailPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text'/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Loan not found'}
             </p>
             <button
               onClick={() => router.push('/loans')}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               Back to Loans
             </button>
@@ -163,8 +163,8 @@ export default function LoanDetailPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <DollarSign className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              <div className='p-2 rounded-lg bg-accent-subtle'>
+                <DollarSign className='h-5 w-5 text-accent'/>
               </div>
               <span className="text-body-muted">
                 {loan.totalAmount ? 'Total Amount' : 'Principal Amount'}
@@ -177,8 +177,8 @@ export default function LoanDetailPage() {
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <TrendingUp className="h-5 w-5 text-success-600 dark:text-success-400"/>
+              <div className='p-2 rounded-lg bg-status-success-bg'>
+                <TrendingUp className='h-5 w-5 text-status-success-text'/>
               </div>
               <span className="text-body-muted">Amount Repaid</span>
             </div>
@@ -189,8 +189,8 @@ export default function LoanDetailPage() {
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
-                <Wallet className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
+              <div className='p-2 rounded-lg bg-status-danger-bg'>
+                <Wallet className='h-5 w-5 text-status-danger-text'/>
               </div>
               <span className="text-body-muted">
                 Outstanding Amount
@@ -209,7 +209,7 @@ export default function LoanDetailPage() {
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Repayment Progress
               </h3>
-              <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
+              <span className='text-sm font-medium text-accent'>
                 {progress.toFixed(1)}% Complete
               </span>
             </div>
@@ -343,14 +343,14 @@ export default function LoanDetailPage() {
         {/* Rejection Reason */}
         {loan.status === 'REJECTED' && loan.rejectedReason && (
           <div
-            className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
+            className='bg-status-danger-bg border border-status-danger-border rounded-lg p-6'>
             <div className="flex items-center gap-4 mb-4">
-              <XCircle className="h-5 w-5 text-danger-500"/>
-              <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
+              <XCircle className='h-5 w-5 text-status-danger-text'/>
+              <h3 className='text-xl font-semibold text-status-danger-text'>
                 Rejection Reason
               </h3>
             </div>
-            <p className="text-danger-600 dark:text-danger-300">{loan.rejectedReason}</p>
+            <p className='text-status-danger-text'>{loan.rejectedReason}</p>
           </div>
         )}
 

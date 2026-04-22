@@ -117,10 +117,10 @@ export default function ResourcesPage() {
           </div>
 
           {/* API Not Available Card */}
-          <Card className="border-warning-200 dark:border-warning-800">
+          <Card className='border-status-warning-border'>
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-4 rounded-full bg-warning-50 p-4 dark:bg-warning-900/30">
-                <Settings className="h-8 w-8 text-warning-600 dark:text-warning-400"/>
+              <div className='mb-4 rounded-full bg-status-warning-bg p-4'>
+                <Settings className='h-8 w-8 text-status-warning-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Resource Management API Not Available
@@ -210,11 +210,11 @@ export default function ResourcesPage() {
 
         {/* Error State */}
         {error && !isApiNotAvailable && (
-          <Card className="border-danger-200 dark:border-danger-800">
+          <Card className='border-status-danger-border'>
             <CardContent className="flex items-center gap-4 p-4">
-              <AlertTriangle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
+              <AlertTriangle className='h-5 w-5 text-status-danger-text'/>
               <div className="flex-1">
-                <p className="font-medium text-danger-600 dark:text-danger-400">Error Loading Data</p>
+                <p className='font-medium text-status-danger-text'>Error Loading Data</p>
                 <p className="text-body-secondary">
                   {error instanceof Error ? error.message : 'Failed to load data'}
                 </p>
@@ -279,7 +279,7 @@ export default function ResourcesPage() {
                       </div>
                       {card.badge && (
                         <span
-                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-danger-500 text-xs font-bold text-white">
+                          className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-status-danger-bg text-xs font-bold text-inverse'>
                           {card.badge}
                         </span>
                       )}
@@ -292,7 +292,7 @@ export default function ResourcesPage() {
                         {card.description}
                       </p>
                     </div>
-                    <div className="mt-4 flex items-center text-sm font-medium text-accent-700 dark:text-accent-400">
+                    <div className='mt-4 flex items-center text-sm font-medium text-accent'>
                       View
                       <ArrowRight className="ml-1 h-4 w-4"/>
                     </div>
@@ -308,7 +308,7 @@ export default function ResourcesPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+                <Clock className='h-5 w-5 text-status-warning-text'/>
                 Pending Allocation Approvals
               </CardTitle>
               <Link href="/resources/approvals">
@@ -327,8 +327,8 @@ export default function ResourcesPage() {
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-900/30">
-                        <Users className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
+                        className='flex h-10 w-10 items-center justify-center rounded-full bg-status-warning-bg'>
+                        <Users className='h-5 w-5 text-status-warning-text'/>
                       </div>
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">
@@ -340,7 +340,7 @@ export default function ResourcesPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-danger-600 dark:text-danger-400">
+                      <p className='text-sm font-medium text-status-danger-text'>
                         {approval.resultingAllocation}% total
                       </p>
                       <p className="text-caption">
@@ -356,9 +356,9 @@ export default function ResourcesPage() {
 
         {/* Alerts - Over-allocated employees */}
         {summary && summary.overAllocatedCount > 0 && (
-          <Card className="border-danger-200 dark:border-danger-800">
+          <Card className='border-status-danger-border'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+              <CardTitle className='flex items-center gap-2 text-status-danger-text'>
                 <AlertTriangle className="h-5 w-5"/>
                 Attention Required
               </CardTitle>
@@ -397,7 +397,7 @@ function QuickStatCard({
   highlight?: boolean;
 }) {
   return (
-    <Card className={highlight ? 'border-danger-200 dark:border-danger-800' : ''}>
+    <Card className={highlight ? 'border-status-danger-border' : ''}>
       <CardContent className="flex items-center gap-4 p-4">
         <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
           <Icon className="h-5 w-5"/>

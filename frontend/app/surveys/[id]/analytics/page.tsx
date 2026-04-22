@@ -92,7 +92,8 @@ export default function SurveyAnalyticsPage() {
               </Button>
               <div>
                 <h1 className={typography.pageTitle}>
-                  {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded" /> : `${survey?.title} — Analytics`}
+                  {surveyLoading ?
+                    <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : `${survey?.title} — Analytics`}
                 </h1>
                 <p className={typography.bodySecondary}>
                   Response data and question-level insights
@@ -116,8 +117,8 @@ export default function SurveyAnalyticsPage() {
               <Card className="card-aura">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                      <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                    <div className='rounded-lg bg-accent-subtle p-4'>
+                      <Users className='h-6 w-6 text-accent'/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Total Responses</p>
@@ -130,8 +131,8 @@ export default function SurveyAnalyticsPage() {
               <Card className="card-aura">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                      <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                    <div className='rounded-lg bg-status-success-bg p-4'>
+                      <TrendingUp className='h-6 w-6 text-status-success-text'/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Completion Rate</p>
@@ -146,8 +147,8 @@ export default function SurveyAnalyticsPage() {
               <Card className="card-aura">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                      <BarChart3 className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                    <div className='rounded-lg bg-accent-subtle p-4'>
+                      <BarChart3 className='h-6 w-6 text-accent'/>
                     </div>
                     <div>
                       <p className={typography.bodySecondary}>Questions</p>

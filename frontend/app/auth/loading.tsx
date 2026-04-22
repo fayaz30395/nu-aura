@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function AuthLoading() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-surface-50 dark:bg-surface-900 p-4">
+    <div className='flex items-center justify-center min-h-screen bg-base p-4'>
       <div className="w-full max-w-md space-y-6">
         {/* Logo/Brand skeleton */}
         <div className="flex justify-center mb-6">
@@ -13,7 +13,7 @@ export default function AuthLoading() {
 
         {/* Card container skeleton */}
         <div
-          className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8 space-y-4">
+          className='bg-[var(--bg-input)] rounded-lg border border-subtle p-6 sm:p-8 space-y-4'>
           {/* Title skeleton */}
           <Skeleton height={28} width="70%"/>
           <Skeleton height={16} width="90%"/>

@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonCard } from '@/components/ui/Skeleton';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useState, useMemo} from 'react';
+import {useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {SkeletonCard} from '@/components/ui/Skeleton';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
   useAgencies,
   useCreateAgency,
@@ -40,9 +40,9 @@ import {
   TrendingUp,
   DollarSign,
 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 
 const agencySchema = z.object({
   name: z.string().min(1, 'Agency name is required').max(200),
@@ -64,13 +64,13 @@ const agencySchema = z.object({
 type AgencyFormValues = z.infer<typeof agencySchema>;
 
 const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  hidden: {opacity: 0},
+  visible: {opacity: 1, transition: {staggerChildren: 0.08, delayChildren: 0.1}},
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  hidden: {opacity: 0, y: 16},
+  visible: {opacity: 1, y: 0, transition: {duration: 0.3}},
 };
 
 function getStatusVariant(status: AgencyStatus): 'success' | 'warning' | 'danger' | 'default' {
@@ -90,11 +90,11 @@ function getFeeLabel(feeType?: AgencyFeeType, feeAmount?: number): string {
   return `Fixed`;
 }
 
-function RatingStars({ rating }: { rating?: number }) {
+function RatingStars({rating}: { rating?: number }) {
   if (!rating) return <span className="text-caption">No rating</span>;
   return (
     <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
+      {Array.from({length: 5}).map((_, i) => (
         <Star
           key={i}
           className={`h-3.5 w-3.5 ${
@@ -122,7 +122,7 @@ export default function AgenciesPage() {
 
   const form = useForm<AgencyFormValues>({
     resolver: zodResolver(agencySchema),
-    defaultValues: { status: 'ACTIVE' },
+    defaultValues: {status: 'ACTIVE'},
   });
 
   const agencies = useMemo(() => agenciesQuery.data?.content || [], [agenciesQuery.data]);
@@ -132,14 +132,14 @@ export default function AgenciesPage() {
     const pending = agencies.filter((a) => a.status === 'PENDING_APPROVAL').length;
     const avgRating = agencies.filter((a) => a.rating).length > 0
       ? agencies.filter((a) => a.rating).reduce((sum, a) => sum + (a.rating || 0), 0) /
-        agencies.filter((a) => a.rating).length
+      agencies.filter((a) => a.rating).length
       : 0;
-    return { total: agencies.length, active, pending, avgRating };
+    return {total: agencies.length, active, pending, avgRating};
   }, [agencies]);
 
   function openCreateForm() {
     setEditingAgency(null);
-    form.reset({ status: 'ACTIVE' });
+    form.reset({status: 'ACTIVE'});
     setShowForm(true);
   }
 
@@ -171,7 +171,7 @@ export default function AgenciesPage() {
     };
 
     if (editingAgency) {
-      await updateMutation.mutateAsync({ id: editingAgency.id, data: payload as UpdateAgencyRequest });
+      await updateMutation.mutateAsync({id: editingAgency.id, data: payload as UpdateAgencyRequest});
     } else {
       await createMutation.mutateAsync(payload as CreateAgencyRequest);
     }
@@ -227,7 +227,7 @@ export default function AgenciesPage() {
                 onClick={openCreateForm}
                 className="flex items-center gap-2"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-4 w-4"/>
                 Add Agency
               </Button>
             </PermissionGate>
@@ -237,28 +237,28 @@ export default function AgenciesPage() {
           <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                <Building2 className='h-4 w-4 text-accent'/>
                 <span className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Total</span>
               </div>
               <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">{stats.total}</p>
             </Card>
             <Card className="p-4">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-success-600 dark:text-success-400" />
+                <Users className='h-4 w-4 text-status-success-text'/>
                 <span className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Active</span>
               </div>
               <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">{stats.active}</p>
             </Card>
             <Card className="p-4">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-warning-600 dark:text-warning-400" />
+                <TrendingUp className='h-4 w-4 text-status-warning-text'/>
                 <span className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Pending</span>
               </div>
               <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">{stats.pending}</p>
             </Card>
             <Card className="p-4">
               <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-warning-500" />
+                <Star className='h-4 w-4 text-status-warning-text'/>
                 <span className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Avg Rating</span>
               </div>
               <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">
@@ -270,7 +270,7 @@ export default function AgenciesPage() {
           {/* Filters */}
           <motion.div variants={itemVariants} className="flex items-center gap-4">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
               <input
                 type="text"
                 placeholder="Search agencies..."
@@ -280,7 +280,7 @@ export default function AgenciesPage() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-[var(--text-muted)]" />
+              <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
               <select
                 value={statusFilter || ''}
                 onChange={(e) => setStatusFilter((e.target.value || undefined) as AgencyStatus | undefined)}
@@ -298,8 +298,8 @@ export default function AgenciesPage() {
           {/* Agency Form Modal */}
           {showForm && (
             <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{opacity: 0, y: -8}}
+              animate={{opacity: 1, y: 0}}
               className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/40"
               onClick={() => setShowForm(false)}
             >
@@ -317,7 +317,7 @@ export default function AgenciesPage() {
                       className="p-1.5 rounded-md hover:bg-[var(--bg-secondary)] cursor-pointer"
                       aria-label="Close form"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4"/>
                     </button>
                   </div>
                 </CardHeader>
@@ -334,7 +334,7 @@ export default function AgenciesPage() {
                           placeholder="Agency name"
                         />
                         {form.formState.errors.name && (
-                          <p className="text-xs text-danger-600 mt-1">
+                          <p className='text-xs text-status-danger-text mt-1'>
                             {form.formState.errors.name.message}
                           </p>
                         )}
@@ -360,7 +360,7 @@ export default function AgenciesPage() {
                           placeholder="agency@example.com"
                         />
                         {form.formState.errors.email && (
-                          <p className="text-xs text-danger-600 mt-1">
+                          <p className='text-xs text-status-danger-text mt-1'>
                             {form.formState.errors.email.message}
                           </p>
                         )}
@@ -517,14 +517,14 @@ export default function AgenciesPage() {
           {/* Agency List */}
           {agenciesQuery.isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
+              <SkeletonCard/>
+              <SkeletonCard/>
+              <SkeletonCard/>
+              <SkeletonCard/>
             </div>
           ) : agencies.length === 0 ? (
             <EmptyState
-              icon={<Building2 className="h-10 w-10" />}
+              icon={<Building2 className="h-10 w-10"/>}
               title="No Agencies Found"
               description={
                 search || statusFilter
@@ -533,7 +533,7 @@ export default function AgenciesPage() {
               }
               action={
                 !search && !statusFilter
-                  ? { label: 'Add Agency', onClick: openCreateForm }
+                  ? {label: 'Add Agency', onClick: openCreateForm}
                   : undefined
               }
             />
@@ -559,30 +559,30 @@ export default function AgenciesPage() {
                               {agency.status?.replace(/_/g, ' ') ?? '-'}
                             </Badge>
                           </div>
-                          <RatingStars rating={agency.rating} />
+                          <RatingStars rating={agency.rating}/>
                           <div className="mt-2 space-y-1">
                             {agency.contactPerson && (
                               <p className="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
-                                <Users className="h-3 w-3" />
+                                <Users className="h-3 w-3"/>
                                 {agency.contactPerson}
                               </p>
                             )}
                             {agency.email && (
                               <p className="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
-                                <Mail className="h-3 w-3" />
+                                <Mail className="h-3 w-3"/>
                                 {agency.email}
                               </p>
                             )}
                             {agency.phone && (
                               <p className="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
-                                <Phone className="h-3 w-3" />
+                                <Phone className="h-3 w-3"/>
                                 {agency.phone}
                               </p>
                             )}
                           </div>
                           <div className="flex items-center gap-4 mt-2">
                             <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
-                              <DollarSign className="h-3 w-3" />
+                              <DollarSign className="h-3 w-3"/>
                               {getFeeLabel(agency.feeType, agency.feeAmount)}
                             </span>
                             {agency.specializations && (
@@ -595,20 +595,26 @@ export default function AgenciesPage() {
                         <div className="flex items-center gap-1 flex-shrink-0">
                           <PermissionGate permission={Permissions.AGENCY_UPDATE}>
                             <button
-                              onClick={(e) => { e.stopPropagation(); openEditForm(agency); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditForm(agency);
+                              }}
                               className="p-1.5 rounded-md hover:bg-[var(--bg-secondary)] cursor-pointer"
                               aria-label="Edit agency"
                             >
-                              <Edit2 className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                              <Edit2 className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                             </button>
                           </PermissionGate>
                           <PermissionGate permission={Permissions.AGENCY_DELETE}>
                             <button
-                              onClick={(e) => { e.stopPropagation(); handleDelete(agency.id); }}
-                              className="p-1.5 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900/20 cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(agency.id);
+                              }}
+                              className='p-1.5 rounded-md hover:bg-status-danger-bg cursor-pointer'
                               aria-label="Delete agency"
                             >
-                              <Trash2 className="h-3.5 w-3.5 text-danger-600 dark:text-danger-400" />
+                              <Trash2 className='h-3.5 w-3.5 text-status-danger-text'/>
                             </button>
                           </PermissionGate>
                         </div>

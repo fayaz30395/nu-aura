@@ -51,7 +51,7 @@ export function ProjectStep({
   return (
     <>
       {/* Toggle between new/existing project */}
-      <div className="flex gap-4 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg">
+      <div className='flex gap-4 p-1 bg-surface rounded-lg'>
         <button
           type="button"
           onClick={() => onUseExistingProjectChange(false)}
@@ -77,18 +77,17 @@ export function ProjectStep({
           Select Existing Project
         </button>
       </div>
-
       {useExistingProject ? (
         /* Existing Project Selection */
-        <div className="space-y-4">
+        (<div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className='block text-sm font-medium text-secondary mb-2'>
               Select Project
             </label>
             <select
               value={selectedProjectId}
               onChange={(e) => onSelectedProjectIdChange(e.target.value)}
-              className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
+              className='w-full rounded-lg border border-subtle bg-[var(--bg-input)] px-4 py-2.5'
             >
               <option value="">Choose a project...</option>
               {projects.map((proj) => (
@@ -98,12 +97,11 @@ export function ProjectStep({
               ))}
             </select>
           </div>
-
           {selectedProject && (
             <div
-              className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
-              <h4 className="font-medium text-surface-800 dark:text-surface-200 mb-2">{selectedProject.name}</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm text-surface-600 dark:text-surface-400">
+              className='bg-base rounded-lg p-4 border border-subtle'>
+              <h4 className='font-medium text-primary mb-2'>{selectedProject.name}</h4>
+              <div className='grid grid-cols-2 gap-2 text-sm text-secondary'>
                 <div>Code: {selectedProject.projectCode}</div>
                 <div>Status: {selectedProject.status}</div>
                 <div>Client: {selectedProject.clientName || 'N/A'}</div>
@@ -113,14 +111,14 @@ export function ProjectStep({
               </div>
             </div>
           )}
-        </div>
+        </div>)
       ) : (
         /* New Project Form */
-        <div className="space-y-4">
+        (<div className="space-y-4">
           {/* Row 1: Name & Code */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 Project Name *
               </label>
               <Input
@@ -132,7 +130,7 @@ export function ProjectStep({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 Project ID/Code *
               </label>
               <Input
@@ -144,11 +142,10 @@ export function ProjectStep({
               />
             </div>
           </div>
-
           {/* Row 2: Start & End Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 <Calendar className="inline-block h-4 w-4 mr-1"/>
                 Start Date *
               </label>
@@ -160,7 +157,7 @@ export function ProjectStep({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 <Calendar className="inline-block h-4 w-4 mr-1"/>
                 End Date
               </label>
@@ -172,11 +169,10 @@ export function ProjectStep({
               />
             </div>
           </div>
-
           {/* Row 3: Resources Needed & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 <Users className="inline-block h-4 w-4 mr-1"/>
                 Resources Needed *
               </label>
@@ -189,19 +185,19 @@ export function ProjectStep({
                 onChange={(e) => onResourcesNeededChange(Math.max(1, parseInt(e.target.value) || 1))}
                 required
               />
-              <p className="text-xs text-surface-500 mt-1">
+              <p className='text-xs text-muted mt-1'>
                 How many employees will be allocated to this project?
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 <User className="inline-block h-4 w-4 mr-1"/>
                 Project Manager
               </label>
               <select
                 value={projectData.projectManagerId}
                 onChange={(e) => onProjectDataChange({...projectData, projectManagerId: e.target.value})}
-                className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
+                className='w-full rounded-lg border border-subtle bg-[var(--bg-input)] px-4 py-2.5'
               >
                 <option value="">Select Manager</option>
                 {employees.map((emp) => (
@@ -212,11 +208,10 @@ export function ProjectStep({
               </select>
             </div>
           </div>
-
           {/* Row 4: Budget */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 <DollarSign className="inline-block h-4 w-4 mr-1"/>
                 Budget
               </label>
@@ -234,7 +229,7 @@ export function ProjectStep({
                 <select
                   value={projectData.currency}
                   onChange={(e) => onProjectDataChange({...projectData, currency: e.target.value})}
-                  className="w-24 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-2"
+                  className='w-24 rounded-lg border border-subtle bg-[var(--bg-input)] px-2'
                 >
                   <option value="USD">USD</option>
                   <option value="INR">INR</option>
@@ -244,16 +239,15 @@ export function ProjectStep({
               </div>
             </div>
           </div>
-
           {/* Client Information Section */}
-          <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-            <h4 className="text-sm font-medium text-surface-800 dark:text-surface-200 mb-4 flex items-center">
+          <div className='border-t border-subtle pt-4'>
+            <h4 className='text-sm font-medium text-primary mb-4 flex items-center'>
               <Building2 className="h-4 w-4 mr-2"/>
               Client Information
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className='block text-sm font-medium text-secondary mb-1'>
                   Client Name
                 </label>
                 <Input
@@ -264,7 +258,7 @@ export function ProjectStep({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className='block text-sm font-medium text-secondary mb-1'>
                   Client Contact
                 </label>
                 <Input
@@ -276,18 +270,18 @@ export function ProjectStep({
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 Client Notes
               </label>
               <textarea
                 placeholder="Any additional notes about the client or project requirements..."
                 value={projectData.clientNotes}
                 onChange={(e) => onProjectDataChange({...projectData, clientNotes: e.target.value})}
-                className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px]"
+                className='w-full rounded-lg border border-subtle bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px]'
               />
             </div>
           </div>
-        </div>
+        </div>)
       )}
     </>
   );

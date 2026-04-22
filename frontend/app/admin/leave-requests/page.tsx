@@ -135,7 +135,8 @@ export default function AdminLeaveRequestsPage() {
       <>
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto"></div>
+            <div
+              className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)] mx-auto'></div>
             <p className="mt-4 text-[var(--text-secondary)]">Loading leave requests...</p>
           </div>
         </div>
@@ -153,7 +154,7 @@ export default function AdminLeaveRequestsPage() {
 
         {error && (
           <div
-            className="mb-4 p-4 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 rounded">
+            className='mb-4 p-4 bg-status-danger-bg border border-status-danger-border text-status-danger-text rounded'>
             {error instanceof Error ? error.message : 'Failed to load leave requests'}
           </div>
         )}
@@ -207,7 +208,7 @@ export default function AdminLeaveRequestsPage() {
               </th>
             </tr>
             </thead>
-            <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
+            <tbody className='bg-[var(--bg-card)] divide-y divide-surface-200'>
             {leaveRequests.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-6 py-12 text-center text-[var(--text-secondary)]">
@@ -249,7 +250,7 @@ export default function AdminLeaveRequestsPage() {
                             setSelectedRequest(request);
                             setShowApproveModal(true);
                           }}
-                          className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='text-status-success-text hover:text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                         >
                           Approve
                         </button>
@@ -258,7 +259,7 @@ export default function AdminLeaveRequestsPage() {
                             setSelectedRequest(request);
                             setShowRejectModal(true);
                           }}
-                          className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='text-status-danger-text hover:text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                         >
                           Reject
                         </button>
@@ -275,7 +276,6 @@ export default function AdminLeaveRequestsPage() {
           </table>
         </div>
       </div>
-
       {/* Approve Modal */}
       {showApproveModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -310,7 +310,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleApprove}
-                className="btn-primary px-4 py-2 bg-success-600 text-white rounded-md hover:bg-success-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='btn-primary px-4 py-2 bg-status-success-bg text-inverse rounded-md hover:bg-status-success-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 disabled={approveMutation.isPending}
               >
                 {approveMutation.isPending ? 'Approving...' : 'Approve'}
@@ -319,7 +319,6 @@ export default function AdminLeaveRequestsPage() {
           </div>
         </div>
       )}
-
       {/* Reject Modal */}
       {showRejectModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -330,7 +329,7 @@ export default function AdminLeaveRequestsPage() {
             </p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Rejection Reason <span className="text-danger-500">*</span>
+                Rejection Reason <span className='text-status-danger-text'>*</span>
               </label>
               <textarea
                 value={rejectionReason}
@@ -355,7 +354,7 @@ export default function AdminLeaveRequestsPage() {
               </button>
               <button
                 onClick={handleReject}
-                className="btn-secondary px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='btn-secondary px-4 py-2 bg-status-danger-bg text-inverse rounded-md hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 disabled={rejectMutation.isPending || !rejectionReason.trim()}
               >
                 {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}

@@ -17,11 +17,10 @@ export default function Loading() {
           <Skeleton height={36} width={36}/>
         </div>
       </div>
-
       {/* Calendar grid skeleton */}
-      <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className='bg-[var(--bg-card)] rounded-lg border border-subtle overflow-hidden'>
         {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-surface-200 dark:border-surface-800">
+        <div className='grid grid-cols-7 border-b border-subtle'>
           {Array.from({length: 7}).map((_, index) => (
             <div key={index} className="p-4 text-center">
               <Skeleton height={16} width="60%" className="mx-auto"/>
@@ -31,10 +30,10 @@ export default function Loading() {
         {/* Calendar cells */}
         {Array.from({length: 5}).map((_, rowIndex) => (
           <div key={rowIndex}
-               className="grid grid-cols-7 border-b border-surface-200 dark:border-surface-800 last:border-b-0">
+               className='grid grid-cols-7 border-b border-subtle last:border-b-0'>
             {Array.from({length: 7}).map((_, colIndex) => (
               <div key={colIndex}
-                   className="p-2 min-h-[80px] border-r border-surface-200 dark:border-surface-800 last:border-r-0">
+                   className='p-2 min-h-[80px] border-r border-subtle last:border-r-0'>
                 <Skeleton height={14} width={20} className="mb-2"/>
                 <Skeleton height={10} width="80%"/>
               </div>

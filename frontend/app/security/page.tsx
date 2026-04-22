@@ -179,7 +179,6 @@ export default function SecurityPage() {
           </div>
         </div>
       </header>
-
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
@@ -198,7 +197,6 @@ export default function SecurityPage() {
           </Button>
         </div>
       </section>
-
       {/* Certifications */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -215,7 +213,7 @@ export default function SecurityPage() {
                   <div
                     className={`w-16 h-16 rounded-lg bg-gradient-to-br ${cert.color} flex items-center justify-center mx-auto mb-4`}
                   >
-                    <cert.icon className="h-8 w-8 text-white"/>
+                    <cert.icon className='h-8 w-8 text-inverse'/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {cert.name}
@@ -227,7 +225,6 @@ export default function SecurityPage() {
           </div>
         </div>
       </section>
-
       {/* Security Features */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto">
@@ -251,8 +248,8 @@ export default function SecurityPage() {
               >
                 <Card padding="lg" className="h-full">
                   <div
-                    className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950 flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                    className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center mb-4'>
+                    <feature.icon className='h-6 w-6 text-status-success-text'/>
                   </div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                     {feature.title}
@@ -263,7 +260,7 @@ export default function SecurityPage() {
                   <ul className="space-y-2">
                     {feature.details.map((detail, i) => (
                       <li key={i} className="flex items-center gap-2 text-body-secondary">
-                        <Check className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                        <Check className='h-4 w-4 text-status-success-text flex-shrink-0'/>
                         {detail}
                       </li>
                     ))}
@@ -274,7 +271,6 @@ export default function SecurityPage() {
           </div>
         </div>
       </section>
-
       {/* Compliance */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
@@ -294,7 +290,7 @@ export default function SecurityPage() {
             {complianceFeatures.map((feature, index) => (
               <Card key={index} padding="lg">
                 <div className="flex items-start gap-4">
-                  <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1"/>
+                  <Check className='h-6 w-6 text-status-success-text flex-shrink-0 mt-1'/>
                   <div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                       {feature.title}
@@ -307,7 +303,6 @@ export default function SecurityPage() {
           </div>
         </div>
       </section>
-
       {/* Infrastructure */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--bg-surface)]">
         <div className="max-w-5xl mx-auto">
@@ -342,7 +337,7 @@ export default function SecurityPage() {
               },
             ].map((stat, index) => (
               <Card key={index} padding="lg" className="text-center">
-                <stat.icon className="h-10 w-10 text-accent-700 dark:text-accent-400 mx-auto mb-4"/>
+                <stat.icon className='h-10 w-10 text-accent mx-auto mb-4'/>
                 <div className="text-3xl font-bold text-[var(--text-primary)] mb-1">
                   {stat.value}
                 </div>
@@ -352,7 +347,6 @@ export default function SecurityPage() {
           </div>
         </div>
       </section>
-
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">

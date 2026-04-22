@@ -11,6 +11,7 @@ import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {SkeletonTable} from '@/components/ui/Skeleton';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 import {
   useCreateOfficeLocation,
   useDeleteOfficeLocation,
@@ -105,8 +106,7 @@ export default function OfficeLocationsPage() {
           },
           onError: (error: unknown) => {
             toast.error(
-              (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-              'Failed to update location'
+              getErrorMessage(error, 'Failed to update location')
             );
           },
         }
@@ -121,8 +121,7 @@ export default function OfficeLocationsPage() {
         },
         onError: (error: unknown) => {
           toast.error(
-            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to create location'
+            getErrorMessage(error, 'Failed to create location')
           );
         },
       });
@@ -161,8 +160,7 @@ export default function OfficeLocationsPage() {
       },
       onError: (error: unknown) => {
         toast.error(
-          (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Failed to delete location'
+          getErrorMessage(error, 'Failed to delete location')
         );
       },
     });
@@ -205,7 +203,7 @@ export default function OfficeLocationsPage() {
               setEditingId(null);
               setShowForm(true);
             }}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Add Location
           </button>
@@ -224,7 +222,7 @@ export default function OfficeLocationsPage() {
                   {...register('name')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
+                {errors.name && <p className='text-status-danger-text text-sm mt-1'>{errors.name.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Address *</label>
@@ -233,7 +231,7 @@ export default function OfficeLocationsPage() {
                   {...register('address')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.address && <p className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
+                {errors.address && <p className='text-status-danger-text text-sm mt-1'>{errors.address.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">City *</label>
@@ -242,7 +240,7 @@ export default function OfficeLocationsPage() {
                   {...register('city')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
+                {errors.city && <p className='text-status-danger-text text-sm mt-1'>{errors.city.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">State *</label>
@@ -251,7 +249,7 @@ export default function OfficeLocationsPage() {
                   {...register('state')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.state && <p className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
+                {errors.state && <p className='text-status-danger-text text-sm mt-1'>{errors.state.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Country *</label>
@@ -260,7 +258,7 @@ export default function OfficeLocationsPage() {
                   {...register('country')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.country && <p className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
+                {errors.country && <p className='text-status-danger-text text-sm mt-1'>{errors.country.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Postal Code</label>
@@ -269,7 +267,8 @@ export default function OfficeLocationsPage() {
                   {...register('postalCode')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
+                {errors.postalCode &&
+                  <p className='text-status-danger-text text-sm mt-1'>{errors.postalCode.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Latitude *</label>
@@ -279,7 +278,7 @@ export default function OfficeLocationsPage() {
                   {...register('latitude')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.latitude && <p className="text-danger-500 text-sm mt-1">{errors.latitude.message}</p>}
+                {errors.latitude && <p className='text-status-danger-text text-sm mt-1'>{errors.latitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Longitude *</label>
@@ -289,7 +288,7 @@ export default function OfficeLocationsPage() {
                   {...register('longitude')}
                   className="w-full p-2 border rounded-lg"
                 />
-                {errors.longitude && <p className="text-danger-500 text-sm mt-1">{errors.longitude.message}</p>}
+                {errors.longitude && <p className='text-status-danger-text text-sm mt-1'>{errors.longitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Geofence Radius (meters) *</label>
@@ -301,7 +300,7 @@ export default function OfficeLocationsPage() {
                   max="10000"
                 />
                 {errors.geofenceRadius &&
-                  <p className="text-danger-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
+                  <p className='text-status-danger-text text-sm mt-1'>{errors.geofenceRadius.message}</p>}
               </div>
               <div className="flex items-end">
                 <button
@@ -316,7 +315,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-6 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
@@ -337,10 +336,10 @@ export default function OfficeLocationsPage() {
         )}
 
         {loading ? (
-          <div className="py-4"><SkeletonTable rows={5} columns={4} /></div>
+          <div className="py-4"><SkeletonTable rows={5} columns={4}/></div>
         ) : (
           <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] overflow-hidden">
-            <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
+            <table className='min-w-full divide-y divide-surface-200'>
               <thead className="bg-[var(--bg-secondary)]/50">
               <tr>
                 <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
@@ -357,13 +356,13 @@ export default function OfficeLocationsPage() {
                 </th>
               </tr>
               </thead>
-              <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
+              <tbody className='bg-[var(--bg-card)] divide-y divide-surface-200'>
               {locations.map((location) => (
                 <tr key={location.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="font-medium">{location.name}</div>
                     {location.isDefault && (
-                      <span className="text-xs text-accent-700 dark:text-accent-400">Default</span>
+                      <span className='text-xs text-accent'>Default</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -388,13 +387,13 @@ export default function OfficeLocationsPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleEdit(location)}
-                      className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='text-accent hover:text-accent mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(location)}
-                      className="text-danger-600 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='text-status-danger-text hover:text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       Delete
                     </button>

@@ -306,8 +306,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                    <Briefcase className="h-6 w-6 text-accent-700"/>
+                  <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                    <Briefcase className='h-6 w-6 text-accent'/>
                   </div>
                   <div>
                     <p className="text-body-muted">Total Jobs</p>
@@ -325,8 +325,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
-                    <Briefcase className="h-6 w-6 text-success-600"/>
+                  <div className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center'>
+                    <Briefcase className='h-6 w-6 text-status-success-text'/>
                   </div>
                   <div>
                     <p className="text-body-muted">Open</p>
@@ -363,8 +363,8 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)] skeuo-card">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                    <Briefcase className="h-6 w-6 text-accent-600"/>
+                  <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                    <Briefcase className='h-6 w-6 text-accent'/>
                   </div>
                   <div>
                     <p className="text-body-muted">Closed</p>
@@ -378,8 +378,8 @@ export default function JobOpeningsPage() {
 
         {/* Error */}
         {jobOpeningsQuery.error && (
-          <div className="p-4 bg-danger-50 border border-danger-200 rounded-xl">
-            <p className="text-sm text-danger-600">
+          <div className='p-4 bg-status-danger-bg border border-status-danger-border rounded-xl'>
+            <p className='text-sm text-status-danger-text'>
               {jobOpeningsQuery.error instanceof Error ? jobOpeningsQuery.error.message : 'Failed to load job openings'}
             </p>
           </div>
@@ -396,13 +396,13 @@ export default function JobOpeningsPage() {
                   placeholder="Search job openings..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className='w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                className='px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
               >
                 <option value="">All Status</option>
                 <option value="OPEN">Open</option>
@@ -507,7 +507,7 @@ export default function JobOpeningsPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                          className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='p-2 text-[var(--text-muted)] hover:text-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           title="View Candidates"
                           aria-label="View candidates"
                         >
@@ -515,7 +515,7 @@ export default function JobOpeningsPage() {
                         </button>
                         <button
                           onClick={() => handleEdit(job)}
-                          className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='p-2 text-[var(--text-muted)] hover:text-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           title="Edit"
                           aria-label="Edit job"
                         >
@@ -527,7 +527,7 @@ export default function JobOpeningsPage() {
                               setJobToDelete(job);
                               setShowDeleteModal(true);
                             }}
-                            className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 text-[var(--text-muted)] hover:text-status-danger-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Delete"
                             aria-label="Delete job"
                           >
@@ -573,7 +573,8 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="JOB-001"
                       />
-                      {errors.jobCode && <p className="text-xs text-danger-600 mt-1">{errors.jobCode.message}</p>}
+                      {errors.jobCode &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.jobCode.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
@@ -583,7 +584,8 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="Senior Software Engineer"
                       />
-                      {errors.jobTitle && <p className="text-xs text-danger-600 mt-1">{errors.jobTitle.message}</p>}
+                      {errors.jobTitle &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.jobTitle.message}</p>}
                     </div>
                   </div>
 
@@ -600,7 +602,7 @@ export default function JobOpeningsPage() {
                         ))}
                       </select>
                       {errors.departmentId &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.departmentId.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.departmentId.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring
@@ -615,7 +617,7 @@ export default function JobOpeningsPage() {
                         ))}
                       </select>
                       {errors.hiringManagerId &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.hiringManagerId.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.hiringManagerId.message}</p>}
                     </div>
                   </div>
 
@@ -628,7 +630,8 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="Remote / City"
                       />
-                      {errors.location && <p className="text-xs text-danger-600 mt-1">{errors.location.message}</p>}
+                      {errors.location &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.location.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment
@@ -644,7 +647,7 @@ export default function JobOpeningsPage() {
                         <option value="INTERNSHIP">Internship</option>
                       </select>
                       {errors.employmentType &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.employmentType.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.employmentType.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of
@@ -656,7 +659,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                       />
                       {errors.numberOfOpenings &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.numberOfOpenings.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.numberOfOpenings.message}</p>}
                     </div>
                   </div>
 
@@ -669,7 +672,8 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="50000"
                       />
-                      {errors.minSalary && <p className="text-xs text-danger-600 mt-1">{errors.minSalary.message}</p>}
+                      {errors.minSalary &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.minSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
@@ -679,7 +683,8 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                         placeholder="80000"
                       />
-                      {errors.maxSalary && <p className="text-xs text-danger-600 mt-1">{errors.maxSalary.message}</p>}
+                      {errors.maxSalary &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.maxSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience
@@ -691,7 +696,7 @@ export default function JobOpeningsPage() {
                         placeholder="3-5 years"
                       />
                       {errors.experienceRequired &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.experienceRequired.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.experienceRequired.message}</p>}
                     </div>
                   </div>
 
@@ -708,7 +713,7 @@ export default function JobOpeningsPage() {
                         <option value="CLOSED">Closed</option>
                         <option value="CANCELLED">Cancelled</option>
                       </select>
-                      {errors.status && <p className="text-xs text-danger-600 mt-1">{errors.status.message}</p>}
+                      {errors.status && <p className='text-xs text-status-danger-text mt-1'>{errors.status.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
@@ -721,7 +726,8 @@ export default function JobOpeningsPage() {
                         <option value="HIGH">High</option>
                         <option value="URGENT">Urgent</option>
                       </select>
-                      {errors.priority && <p className="text-xs text-danger-600 mt-1">{errors.priority.message}</p>}
+                      {errors.priority &&
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.priority.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing
@@ -732,7 +738,7 @@ export default function JobOpeningsPage() {
                         className="input-aura"
                       />
                       {errors.closingDate &&
-                        <p className="text-xs text-danger-600 mt-1">{errors.closingDate.message}</p>}
+                        <p className='text-xs text-status-danger-text mt-1'>{errors.closingDate.message}</p>}
                     </div>
                   </div>
 
@@ -743,7 +749,7 @@ export default function JobOpeningsPage() {
                         type="button"
                         onClick={handleGenerateJobDescription}
                         disabled={generateJDMutation.isPending}
-                        className="flex items-center gap-1 text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex items-center gap-1 text-xs font-medium text-accent hover:text-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         <Sparkles className="h-3.5 w-3.5"/>
                         Generate with AI
@@ -752,11 +758,11 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={4}
                       {...register('jobDescription')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       placeholder="Describe the job role and responsibilities..."
                     />
                     {errors.jobDescription &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.jobDescription.message}</p>}
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>
@@ -764,11 +770,11 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={3}
                       {...register('requirements')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       placeholder="List the requirements..."
                     />
                     {errors.requirements &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.requirements.message}</p>}
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.requirements.message}</p>}
                   </div>
 
                   <div>
@@ -777,11 +783,11 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       placeholder="React, TypeScript, Node.js..."
                     />
                     {errors.skillsRequired &&
-                      <p className="text-xs text-danger-600 mt-1">{errors.skillsRequired.message}</p>}
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.skillsRequired.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
@@ -817,8 +823,9 @@ export default function JobOpeningsPage() {
             <div
               className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-danger-600"/>
+                <div
+                  className='flex-shrink-0 h-12 w-12 rounded-xl bg-status-danger-bg flex items-center justify-center'>
+                  <Trash2 className='h-6 w-6 text-status-danger-text'/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
               </div>
@@ -859,7 +866,7 @@ export default function JobOpeningsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-accent-700"/>
+                    <Sparkles className='h-6 w-6 text-accent'/>
                     Generated Job Description
                   </h2>
                   <button
@@ -877,7 +884,7 @@ export default function JobOpeningsPage() {
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
                     <div
-                      className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-700 mx-auto mb-4"></div>
+                      className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)] mx-auto mb-4'></div>
                     <p className="text-[var(--text-muted)]">Generating job description with AI...</p>
                   </div>
                 ) : aiGeneratedJD ? (

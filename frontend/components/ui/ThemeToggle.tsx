@@ -115,7 +115,6 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
           )}
         />
       </button>
-
       {/* Dropdown */}
       {open && (
         <div
@@ -147,7 +146,7 @@ export function ThemeToggle({compact = false, className}: ThemeToggleProps) {
                   'flex items-center gap-2.5 w-full px-4 py-2 rounded-lg text-sm',
                   'transition-colors duration-150',
                   isActive
-                    ? 'bg-accent-500/10 text-accent-700 dark:text-accent-400 font-medium'
+                    ? 'bg-accent-500/10 text-accent font-medium'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]',
                 )}
               >

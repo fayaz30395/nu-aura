@@ -134,7 +134,7 @@ export default function AdminSettingsPage() {
       <div className="flex items-center gap-4">
         <div
           className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-          <Settings className="h-6 w-6 text-white"/>
+          <Settings className='h-6 w-6 text-inverse'/>
         </div>
         <div>
           <h1 className="text-xl font-bold skeuo-emboss">
@@ -145,7 +145,6 @@ export default function AdminSettingsPage() {
           </p>
         </div>
       </div>
-
       {/* Settings Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {settingsCards.map((card) => {
@@ -153,7 +152,7 @@ export default function AdminSettingsPage() {
           return (
             <Card
               key={card.id}
-              className="group cursor-pointer hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200"
+              className='group cursor-pointer hover:shadow-[var(--shadow-dropdown)] hover:border-[var(--accent-primary)] transition-all duration-200'
               onClick={() => handleCardClick(card.href)}
             >
               <CardContent className="p-6">
@@ -162,10 +161,10 @@ export default function AdminSettingsPage() {
                     <Icon className={`h-6 w-6 ${card.color}`}/>
                   </div>
                   <ChevronRight
-                    className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                    className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                 </div>
                 <h3
-                  className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='mt-4 font-semibold text-[var(--text-primary)] group-hover:text-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   {card.title}
                 </h3>
                 <p className="mt-1 text-body-secondary">
@@ -176,7 +175,6 @@ export default function AdminSettingsPage() {
           );
         })}
       </div>
-
       {/* Quick Actions */}
       <Card>
         <CardHeader>
@@ -192,9 +190,9 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/admin/leave-requests')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
+              <div className='p-2 rounded-lg bg-status-success-bg'>
                 <Calendar
-                  className="h-5 w-5 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-5 w-5 text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
@@ -206,9 +204,9 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/employees')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+              <div className='p-2 rounded-lg bg-accent-subtle'>
                 <Users
-                  className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-5 w-5 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Employees</p>
@@ -220,9 +218,9 @@ export default function AdminSettingsPage() {
               onClick={() => router.push('/departments')}
               className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+              <div className='p-2 rounded-lg bg-accent-subtle'>
                 <Building2
-                  className="h-5 w-5 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-5 w-5 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
               </div>
               <div>
                 <p className="font-medium text-[var(--text-primary)]">Departments</p>

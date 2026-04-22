@@ -68,7 +68,7 @@ function SingleChoiceQuestion({
             value={opt}
             checked={answer.selectedOptions?.[0] === opt}
             onChange={() => onChange({selectedOptions: [opt]})}
-            className="text-accent-700 focus:ring-accent-500"
+            className='text-accent focus:ring-accent-500'
           />
           <span className={typography.body}>{opt}</span>
         </label>
@@ -111,7 +111,7 @@ function MultipleChoiceQuestion({
             type="checkbox"
             checked={selected.includes(opt)}
             onChange={() => toggle(opt)}
-            className="rounded text-accent-700 focus:ring-accent-500"
+            className='rounded text-accent focus:ring-accent-500'
           />
           <span className={typography.body}>{opt}</span>
         </label>
@@ -303,7 +303,7 @@ export default function SurveyRespondPage() {
           className="flex flex-col items-center justify-center py-24"
           {...dsMotion.pageEnter}
         >
-          <CheckCircle className="h-16 w-16 text-success-500"/>
+          <CheckCircle className='h-16 w-16 text-status-success-text'/>
           <h2 className="mt-6 text-2xl font-bold text-[var(--text-primary)]">
             Thank you!
           </h2>
@@ -338,7 +338,7 @@ export default function SurveyRespondPage() {
             </Button>
             <div>
               <h1 className={typography.pageTitle}>
-                {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded" /> : survey?.title}
+                {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
               </h1>
               {survey?.description && (
                 <p className={typography.bodySecondary}>{survey.description}</p>
@@ -348,8 +348,8 @@ export default function SurveyRespondPage() {
 
           {survey?.isAnonymous && (
             <div
-              className="flex items-center gap-2 rounded-lg border border-accent-200 bg-accent-50 p-4 dark:border-accent-800 dark:bg-accent-900/20">
-              <ShieldCheck className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              className='flex items-center gap-2 rounded-lg border border-[var(--accent-primary)] bg-accent-subtle p-4'>
+              <ShieldCheck className='h-5 w-5 text-accent'/>
               <span className={typography.body}>
                 This is an anonymous survey. Your identity will not be recorded.
               </span>
@@ -367,7 +367,7 @@ export default function SurveyRespondPage() {
               </div>
               <div className="h-2 w-full rounded-full bg-[var(--bg-surface)]">
                 <div
-                  className="h-2 rounded-full bg-accent-600 transition-all duration-300"
+                  className='h-2 rounded-full bg-accent transition-all duration-300'
                   style={{width: `${progress}%`}}
                 />
               </div>

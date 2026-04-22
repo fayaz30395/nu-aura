@@ -515,7 +515,7 @@ function FavoriteCard({
       className={`${card.interactive} ${card.padding} w-full text-left flex items-center gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2`}
       {...dsMotion.cardHover}
     >
-      <StarIcon className="h-5 w-5 text-warning-500 fill-warning-500 flex-shrink-0"/>
+      <StarIcon className='h-5 w-5 text-status-warning-text fill-warning-500 flex-shrink-0'/>
       <div className={`${colorMap[typeColor]} flex-shrink-0`}>
         <TypeIcon className={iconSize.cardInline}/>
       </div>

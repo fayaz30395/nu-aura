@@ -200,7 +200,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                   </p>
                   <p className="text-caption">.xlsx</p>
                 </div>
-                {format === 'EXCEL' && <Check className="h-4 w-4 text-success-600 absolute top-2 right-2"/>}
+                {format === 'EXCEL' && <Check className='h-4 w-4 text-status-success-text absolute top-2 right-2'/>}
               </button>
 
               <button
@@ -219,7 +219,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                   </p>
                   <p className="text-caption">.pdf</p>
                 </div>
-                {format === 'PDF' && <Check className="h-4 w-4 text-danger-600 absolute top-2 right-2"/>}
+                {format === 'PDF' && <Check className='h-4 w-4 text-status-danger-text absolute top-2 right-2'/>}
               </button>
 
               <button
@@ -240,7 +240,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                   </p>
                   <p className="text-caption">.csv</p>
                 </div>
-                {format === 'CSV' && <Check className="h-4 w-4 text-accent-600 absolute top-2 right-2"/>}
+                {format === 'CSV' && <Check className='h-4 w-4 text-accent absolute top-2 right-2'/>}
               </button>
             </div>
           </div>
@@ -249,7 +249,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           {report.requiresDateRange && (
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                Date Range <span className="text-danger-500">*</span>
+                Date Range <span className='text-status-danger-text'>*</span>
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -277,7 +277,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           {/* Error */}
           {error && (
             <div
-              className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+              className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg text-sm text-status-danger-text'>
               {error}
             </div>
           )}
@@ -294,7 +294,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           <button
             onClick={handleDownload}
             disabled={isPending}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--bg-sidebar)] text-inverse rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             {isPending ? (
               <>
@@ -380,10 +380,10 @@ export default function ReportsPage() {
               initial={{opacity: 0, y: -10}}
               animate={{opacity: 1, y: 0}}
               exit={{opacity: 0, y: -10}}
-              className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg flex items-center gap-4"
+              className='p-4 bg-status-success-bg border border-status-success-border rounded-lg flex items-center gap-4'
             >
-              <Check className="h-5 w-5 text-success-600"/>
-              <span className="text-success-700 dark:text-success-400">{successMessage}</span>
+              <Check className='h-5 w-5 text-status-success-text'/>
+              <span className='text-status-success-text'>{successMessage}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -430,7 +430,7 @@ export default function ReportsPage() {
                       )}
                       <button
                         onClick={() => setSelectedReport(report)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-white rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
+                        className='w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-sidebar)] text-inverse rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors duration-200'
                       >
                         <Download className="h-4 w-4"/>
                         <span className="text-sm font-medium">Download Report</span>
@@ -445,13 +445,13 @@ export default function ReportsPage() {
 
         {/* Info Card */}
         <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.6}}>
-          <Card className="bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-900">
+          <Card className='bg-accent-subtle border-[var(--accent-primary)]'>
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <FileText className="h-5 w-5 text-accent-600 dark:text-accent-400 mt-0.5"/>
+                <FileText className='h-5 w-5 text-accent mt-0.5'/>
                 <div>
-                  <h3 className="font-semibold text-accent-900 dark:text-accent-100">Report Generation Tips</h3>
-                  <ul className="text-sm text-accent-700 dark:text-accent-300 mt-2 space-y-1">
+                  <h3 className='font-semibold text-accent'>Report Generation Tips</h3>
+                  <ul className='text-sm text-accent mt-2 space-y-1'>
                     <li>• Excel format is recommended for data analysis and further processing</li>
                     <li>• PDF format is ideal for printing and sharing official documents</li>
                     <li>• CSV format provides raw data compatible with all spreadsheet applications</li>

@@ -87,7 +87,7 @@ export const FluenceChatWidget: React.FC = () => {
             className={cn(
               'fixed bottom-6 right-6 z-50 flex items-center justify-center',
               'w-14 h-14 rounded-full shadow-[var(--shadow-dropdown)] cursor-pointer',
-              'bg-accent-700 hover:bg-accent-700 text-white',
+              'bg-accent hover:bg-accent text-inverse',
               'transition-colors duration-200',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
               // On mobile, position above the bottom nav
@@ -99,7 +99,6 @@ export const FluenceChatWidget: React.FC = () => {
           </motion.button>
         )}
       </AnimatePresence>
-
       {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
@@ -123,8 +122,8 @@ export const FluenceChatWidget: React.FC = () => {
             <div className="row-between px-4 py-4 divider-b bg-[var(--bg-surface)]">
               <div className="flex items-center gap-2">
                 <div
-                  className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/50">
-                  <Sparkles className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
+                  className='flex items-center justify-center w-8 h-8 rounded-lg bg-accent-subtle'>
+                  <Sparkles className='h-4 w-4 text-accent'/>
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">
@@ -139,7 +138,7 @@ export const FluenceChatWidget: React.FC = () => {
                 {messages.length > 0 && (
                   <button
                     onClick={clearChat}
-                    className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='p-1.5 rounded-lg text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     aria-label="Clear chat"
                     title="Clear chat"
                   >
@@ -165,10 +164,10 @@ export const FluenceChatWidget: React.FC = () => {
             >
               {messages.length === 0 ? (
                 /* Empty state with suggested questions */
-                <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                (<div className="flex flex-col items-center justify-center h-full text-center px-4">
                   <div
-                    className="w-12 h-12 rounded-lg bg-accent-100 dark:bg-accent-900/50 flex items-center justify-center mb-4">
-                    <Sparkles className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                    className='w-12 h-12 rounded-lg bg-accent-subtle flex items-center justify-center mb-4'>
+                    <Sparkles className='h-6 w-6 text-accent'/>
                   </div>
                   <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
                     Ask NU-Fluence AI
@@ -194,15 +193,15 @@ export const FluenceChatWidget: React.FC = () => {
                       </button>
                     ))}
                   </div>
-                </div>
+                </div>)
               ) : (
                 /* Message list */
-                <>
+                (<>
                   {messages.map((msg) => (
                     <ChatMessage key={msg.id} message={msg}/>
                   ))}
                   <div ref={messagesEndRef}/>
-                </>
+                </>)
               )}
             </div>
 
@@ -237,7 +236,7 @@ export const FluenceChatWidget: React.FC = () => {
                   className={cn(
                     'flex-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl',
                     'px-4 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]',
-                    'outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/20',
+                    'outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-500/20',
                     'transition-colors disabled:opacity-60'
                   )}
                 />
@@ -246,7 +245,7 @@ export const FluenceChatWidget: React.FC = () => {
                     onClick={abort}
                     className={cn(
                       'flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-xl cursor-pointer',
-                      'bg-danger-600 hover:bg-danger-700 text-white transition-colors',
+                      'bg-status-danger-bg hover:bg-status-danger-bg text-inverse transition-colors',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     )}
                     aria-label="Stop generating"
@@ -262,8 +261,8 @@ export const FluenceChatWidget: React.FC = () => {
                       'flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-xl transition-colors',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                       inputValue.trim()
-                        ? 'bg-accent-700 hover:bg-accent-700 text-white cursor-pointer'
-                        : 'bg-surface-100 dark:bg-surface-800 text-surface-400 cursor-not-allowed'
+                        ? 'bg-accent hover:bg-accent text-inverse cursor-pointer'
+                        : 'bg-surface text-muted cursor-not-allowed'
                     )}
                     aria-label="Send message"
                     title="Send"

@@ -70,7 +70,7 @@ function DistributionChart({
             <div
               key={r}
               title={`Rating ${r}: ${counts[r] || 0} (${pct.toFixed(0)}%)`}
-              className={`flex items-center justify-center text-white text-xs font-bold transition-all ${colors[i]}`}
+              className={`flex items-center justify-center text-inverse text-xs font-bold transition-all ${colors[i]}`}
               style={{width: `${Math.max(pct, 2)}%`, minWidth: pct > 5 ? '32px' : 'auto'}}
             >
               {pct > 8 && counts[r]}
@@ -353,7 +353,7 @@ export default function CalibrationPage() {
                 <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
                   <button
                     onClick={publishRatings}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-inverse text-sm font-medium hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     <TrendingUp size={16}/>
                     Publish
@@ -376,7 +376,7 @@ export default function CalibrationPage() {
                     <select
                       value={selectedCycleId}
                       onChange={e => setSelectedCycleId(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                     >
                       <option value="">Select a cycle</option>
                       {cycles.map(c => (
@@ -430,8 +430,8 @@ export default function CalibrationPage() {
                     <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                          <Users className="text-accent-600 dark:text-accent-400" size={20}/>
+                          className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                          <Users className='text-accent' size={20}/>
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Total Employees</p>
@@ -445,8 +445,8 @@ export default function CalibrationPage() {
                     <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                          <Target className="text-success-600 dark:text-success-400" size={20}/>
+                          className='w-10 h-10 rounded-lg bg-status-success-bg flex items-center justify-center'>
+                          <Target className='text-status-success-text' size={20}/>
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Rated</p>
@@ -460,8 +460,8 @@ export default function CalibrationPage() {
                     <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
-                          <BarChart3 className="text-accent-800 dark:text-accent-600" size={20}/>
+                          className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                          <BarChart3 className='text-accent' size={20}/>
                         </div>
                         <div className="flex-1">
                           <p className="text-caption">Avg Rating</p>
@@ -484,16 +484,16 @@ export default function CalibrationPage() {
                 {/* Bell Curve Warning */}
                 {curveWarning && (
                   <div
-                    className="flex items-start gap-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg px-4 py-4">
+                    className='flex items-start gap-4 bg-status-warning-bg border border-status-warning-border rounded-lg px-4 py-4'>
                     <AlertTriangle
                       size={16}
-                      className="text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"
+                      className='text-status-warning-text flex-shrink-0 mt-0.5'
                     />
                     <div>
-                      <p className="text-sm font-medium text-warning-900 dark:text-warning-200">
+                      <p className='text-sm font-medium text-status-warning-text'>
                         Bell Curve Alert
                       </p>
-                      <p className="text-sm text-warning-800 dark:text-warning-300 mt-0.5">
+                      <p className='text-sm text-status-warning-text mt-0.5'>
                         {curveWarning}
                       </p>
                     </div>
@@ -513,7 +513,7 @@ export default function CalibrationPage() {
                         placeholder="Search employee..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                        className='w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       />
                     </div>
 
@@ -521,7 +521,7 @@ export default function CalibrationPage() {
                       <select
                         value={departmentFilter}
                         onChange={e => setDepartmentFilter(e.target.value)}
-                        className="px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                        className='px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       >
                         <option value="">All Departments</option>
                         {uniqueDepartments.map(dept => (
@@ -539,7 +539,7 @@ export default function CalibrationPage() {
                   <div className="flex items-center justify-center py-16">
                     <RefreshCw
                       size={24}
-                      className="animate-spin text-accent-500 mr-4"
+                      className='animate-spin text-accent mr-4'
                     />
                     <span className="text-[var(--text-muted)]">Loading reviews...</span>
                   </div>
@@ -567,7 +567,7 @@ export default function CalibrationPage() {
                                 setSortField('name');
                                 setSortOrder(sortOrder === 'asc' && sortField === 'name' ? 'desc' : 'asc');
                               }}
-                              className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors flex items-center gap-1"
+                              className='hover:text-[var(--text-primary)] transition-colors flex items-center gap-1'
                             >
                               Employee
                               {sortField === 'name' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
@@ -581,7 +581,7 @@ export default function CalibrationPage() {
                                   sortOrder === 'asc' && sortField === 'department' ? 'desc' : 'asc'
                                 );
                               }}
-                              className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                              className='hover:text-[var(--text-primary)] transition-colors'
                             >
                               Department
                               {sortField === 'department' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
@@ -601,7 +601,7 @@ export default function CalibrationPage() {
                                   sortOrder === 'asc' && sortField === 'rating' ? 'desc' : 'asc'
                                 );
                               }}
-                              className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                              className='hover:text-[var(--text-primary)] transition-colors'
                             >
                               Final Rating
                               {sortField === 'rating' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
@@ -653,7 +653,7 @@ export default function CalibrationPage() {
                                     handleFinalRatingChange(row.employeeId, e.target.value)
                                   }
                                   placeholder="1–5"
-                                  className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                                  className='w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                                 />
                               </td>
                               <td className="px-4 py-4 text-center">
@@ -662,7 +662,7 @@ export default function CalibrationPage() {
                                     <button
                                       onClick={() => handleSaveFinal(row)}
                                       disabled={saving === row.employeeId}
-                                      className="px-4 py-1 text-xs font-medium text-white bg-accent-700 hover:bg-accent-700 rounded-lg disabled:opacity-50 transition-colors"
+                                      className='px-4 py-1 text-xs font-medium text-inverse bg-accent hover:bg-accent rounded-lg disabled:opacity-50 transition-colors'
                                     >
                                       {saving === row.employeeId ? 'Saving...' : 'Save'}
                                     </button>

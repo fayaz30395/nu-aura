@@ -148,7 +148,7 @@ export function SpaceFormDrawer({
       title={
         <div className="flex items-center gap-2">
           <div
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-white text-sm"
+            className='flex items-center justify-center w-8 h-8 rounded-lg text-inverse text-sm'
             style={{backgroundColor: selectedColor || '#3e63dd'}}
           >
             {selectedIcon || '📁'}
@@ -173,7 +173,7 @@ export function SpaceFormDrawer({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Type className="h-4 w-4"/>
-            Space Name <span className="text-danger-500">*</span>
+            Space Name <span className='text-status-danger-text'>*</span>
           </label>
           <input
             {...register('name')}
@@ -182,7 +182,7 @@ export function SpaceFormDrawer({
             autoFocus
           />
           {errors.name && (
-            <p className="text-xs text-danger-500 mt-1">{errors.name.message}</p>
+            <p className='text-xs text-status-danger-text mt-1'>{errors.name.message}</p>
           )}
         </div>
 
@@ -199,7 +199,7 @@ export function SpaceFormDrawer({
             className="input-aura w-full resize-none"
           />
           {errors.description && (
-            <p className="text-xs text-danger-500 mt-1">{errors.description.message}</p>
+            <p className='text-xs text-status-danger-text mt-1'>{errors.description.message}</p>
           )}
         </div>
 
@@ -277,7 +277,7 @@ export function SpaceFormDrawer({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Eye className="h-4 w-4"/>
-            Visibility <span className="text-danger-500">*</span>
+            Visibility <span className='text-status-danger-text'>*</span>
           </label>
           <Controller
             name="visibility"
@@ -308,7 +308,7 @@ export function SpaceFormDrawer({
             )}
           />
           {errors.visibility && (
-            <p className="text-xs text-danger-500 mt-1">{errors.visibility.message}</p>
+            <p className='text-xs text-status-danger-text mt-1'>{errors.visibility.message}</p>
           )}
         </div>
 

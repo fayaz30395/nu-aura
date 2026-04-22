@@ -94,12 +94,12 @@ export default function ExecutiveDashboardPage() {
   const getAlertIcon = (severity: StrategicAlert['severity']) => {
     switch (severity) {
       case 'CRITICAL':
-        return <AlertCircle className="h-5 w-5 text-danger-500"/>;
+        return <AlertCircle className='h-5 w-5 text-status-danger-text'/>;
       case 'WARNING':
-        return <AlertTriangle className="h-5 w-5 text-warning-500"/>;
+        return <AlertTriangle className='h-5 w-5 text-status-warning-text'/>;
       case 'INFO':
       default:
-        return <Info className="h-5 w-5 text-accent-500"/>;
+        return <Info className='h-5 w-5 text-accent'/>;
     }
   };
 
@@ -117,9 +117,9 @@ export default function ExecutiveDashboardPage() {
 
   const getTrendIcon = (trend: string) => {
     if (trend === 'UP') {
-      return <ArrowUpRight className="h-4 w-4 text-success-600"/>;
+      return <ArrowUpRight className='h-4 w-4 text-status-success-text'/>;
     } else if (trend === 'DOWN') {
-      return <ArrowDownRight className="h-4 w-4 text-danger-600"/>;
+      return <ArrowDownRight className='h-4 w-4 text-status-danger-text'/>;
     }
     return <Minus className="h-4 w-4 text-[var(--text-muted)]"/>;
   };
@@ -200,7 +200,8 @@ export default function ExecutiveDashboardPage() {
               <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Executive dashboard data is temporarily unavailable. Some metrics may not be displayed.
@@ -290,7 +291,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-accent-500"/>
+                  <BarChart3 className='h-5 w-5 text-accent'/>
                   Headcount Trend
                 </CardTitle>
               </CardHeader>
@@ -305,7 +306,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <PieChart className="h-5 w-5 text-accent-500"/>
+                  <PieChart className='h-5 w-5 text-accent'/>
                   Department Distribution
                 </CardTitle>
               </CardHeader>
@@ -336,7 +337,7 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-[var(--shadow-elevated)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-warning-500"/>
+                  <AlertTriangle className='h-5 w-5 text-status-warning-text'/>
                   Strategic Alerts
                 </CardTitle>
               </CardHeader>
@@ -375,7 +376,7 @@ export default function ExecutiveDashboardPage() {
                     ))
                   ) : (
                     <div className="text-center py-8">
-                      <CheckCircle className="h-12 w-12 text-success-500 mx-auto mb-2"/>
+                      <CheckCircle className='h-12 w-12 text-status-success-text mx-auto mb-2'/>
                       <p className="text-body-muted">No active alerts</p>
                     </div>
                   )}
@@ -391,7 +392,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Users className="h-5 w-5 text-accent-500"/>
+                    <Users className='h-5 w-5 text-accent'/>
                     Workforce Overview
                   </CardTitle>
                 </CardHeader>
@@ -405,22 +406,22 @@ export default function ExecutiveDashboardPage() {
                     <div className="row-between">
                       <span className="text-body-secondary">Active Employees</span>
                       <span
-                        className="text-lg font-bold text-success-600">{data.workforceSummary.activeEmployees}</span>
+                        className='text-lg font-bold text-status-success-text'>{data.workforceSummary.activeEmployees}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">New Hires (Month)</span>
                       <span
-                        className="text-lg font-bold text-accent-600">{data.workforceSummary.newHiresThisMonth}</span>
+                        className='text-lg font-bold text-accent'>{data.workforceSummary.newHiresThisMonth}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Terminations (Month)</span>
                       <span
-                        className="text-lg font-bold text-danger-600">{data.workforceSummary.terminationsThisMonth}</span>
+                        className='text-lg font-bold text-status-danger-text'>{data.workforceSummary.terminationsThisMonth}</span>
                     </div>
                     <div className="row-between pt-4 border-t border-[var(--border-main)]">
                       <span className="text-sm font-medium text-[var(--text-secondary)]">Retention Rate</span>
                       <span
-                        className="text-xl font-bold text-accent-700">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
+                        className='text-xl font-bold text-accent'>{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
                     </div>
                   </div>
                 </CardContent>
@@ -432,7 +433,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Activity className="h-5 w-5 text-accent-500"/>
+                    <Activity className='h-5 w-5 text-accent'/>
                     Productivity
                   </CardTitle>
                 </CardHeader>
@@ -441,21 +442,22 @@ export default function ExecutiveDashboardPage() {
                     <div className="row-between">
                       <span className="text-body-secondary">Attendance Rate</span>
                       <span
-                        className="text-lg font-bold text-success-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
+                        className='text-lg font-bold text-status-success-text'>{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Performance Rating</span>
                       <span
-                        className="text-lg font-bold text-accent-700">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
+                        className='text-lg font-bold text-accent'>{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Engagement Score</span>
                       <span
-                        className="text-lg font-bold text-accent-600">{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
+                        className='text-lg font-bold text-accent'>{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">eNPS</span>
-                      <span className="text-lg font-bold text-warning-600">{data.productivityMetrics.eNPS || 0}</span>
+                      <span
+                        className='text-lg font-bold text-status-warning-text'>{data.productivityMetrics.eNPS || 0}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -467,7 +469,7 @@ export default function ExecutiveDashboardPage() {
               <Card className="border-0 shadow-[var(--shadow-elevated)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Shield className="h-5 w-5 text-danger-500"/>
+                    <Shield className='h-5 w-5 text-status-danger-text'/>
                     Risk Indicators
                   </CardTitle>
                 </CardHeader>
@@ -475,21 +477,22 @@ export default function ExecutiveDashboardPage() {
                   <div className="space-y-4">
                     <div className="row-between">
                       <span className="text-body-secondary">High Risk Employees</span>
-                      <span className="text-lg font-bold text-danger-600">{data.riskIndicators.highRiskEmployees}</span>
+                      <span
+                        className='text-lg font-bold text-status-danger-text'>{data.riskIndicators.highRiskEmployees}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Predicted Attrition</span>
                       <span
-                        className="text-lg font-bold text-warning-600">{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
+                        className='text-lg font-bold text-status-warning-text'>{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Compliance Issues</span>
                       <span
-                        className="text-lg font-bold text-warning-600">{data.riskIndicators.complianceIssuesCount}</span>
+                        className='text-lg font-bold text-status-warning-text'>{data.riskIndicators.complianceIssuesCount}</span>
                     </div>
                     <div className="row-between">
                       <span className="text-body-secondary">Skill Gaps</span>
-                      <span className="text-lg font-bold text-accent-800">{data.riskIndicators.totalSkillGaps}</span>
+                      <span className='text-lg font-bold text-accent'>{data.riskIndicators.totalSkillGaps}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -505,7 +508,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
-                  <DollarSign className="h-5 w-5 text-accent-500"/>
+                  <DollarSign className='h-5 w-5 text-accent'/>
                 </div>
                 <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}
@@ -513,9 +516,9 @@ export default function ExecutiveDashboardPage() {
                 {data.financialSummary.payrollCostChangePercent != null && (
                   <div className="flex items-center gap-2 mt-2">
                     {data.financialSummary.payrollCostChangePercent >= 0 ? (
-                      <ArrowUpRight className="h-4 w-4 text-danger-600"/>
+                      <ArrowUpRight className='h-4 w-4 text-status-danger-text'/>
                     ) : (
-                      <ArrowDownRight className="h-4 w-4 text-success-600"/>
+                      <ArrowDownRight className='h-4 w-4 text-status-success-text'/>
                     )}
                     <span
                       className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? 'text-danger-600' : 'text-success-600'}`}>
@@ -530,7 +533,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">YTD Payroll</p>
-                  <Calendar className="h-5 w-5 text-success-500"/>
+                  <Calendar className='h-5 w-5 text-status-success-text'/>
                 </div>
                 <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.yearToDatePayrollCost || 0)}
@@ -545,7 +548,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Cost/Employee</p>
-                  <Users className="h-5 w-5 text-warning-500"/>
+                  <Users className='h-5 w-5 text-status-warning-text'/>
                 </div>
                 <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.avgCostPerEmployee || 0)}
@@ -560,7 +563,7 @@ export default function ExecutiveDashboardPage() {
               <CardContent className="p-6">
                 <div className="row-between mb-2">
                   <p className="text-sm font-medium text-[var(--text-muted)]">Revenue/Employee</p>
-                  <TrendingUp className="h-5 w-5 text-accent-500"/>
+                  <TrendingUp className='h-5 w-5 text-accent'/>
                 </div>
                 <p className="text-xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.revenuePerEmployee || 0)}

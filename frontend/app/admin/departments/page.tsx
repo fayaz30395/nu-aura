@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import {useState, useEffect} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {useQueryClient, useMutation} from '@tanstack/react-query';
 import {
   Building2, Plus, Search, Pencil, Trash2, ToggleLeft, ToggleRight,
   ChevronLeft, ChevronRight, AlertCircle, X,
 } from 'lucide-react';
-import { AdminPageContent } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
-import { useToast } from '@/components/notifications/ToastProvider';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
-import { useAllDepartments, departmentKeys } from '@/lib/hooks/queries/useDepartments';
-import { departmentService } from '@/lib/services/hrms/department.service';
-import { Department, DepartmentRequest, DepartmentType } from '@/lib/types/hrms/employee';
+import {AdminPageContent} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAllDepartments, departmentKeys} from '@/lib/hooks/queries/useDepartments';
+import {departmentService} from '@/lib/services/hrms/department.service';
+import {Department, DepartmentRequest, DepartmentType} from '@/lib/types/hrms/employee';
 
 const DEPT_TYPES: DepartmentType[] = [
   'ENGINEERING', 'PRODUCT', 'DESIGN', 'MARKETING', 'SALES',
@@ -38,7 +38,7 @@ const PAGE_SIZE = 20;
 export default function DepartmentsPage() {
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { isReady: permReady } = usePermissions();
+  const {isReady: permReady} = usePermissions();
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -46,51 +46,74 @@ export default function DepartmentsPage() {
   const [editTarget, setEditTarget] = useState<Department | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Department | null>(null);
 
-  const { data, isLoading, isError } = useAllDepartments(page, PAGE_SIZE);
+  const {data, isLoading, isError} = useAllDepartments(page, PAGE_SIZE);
   const departments = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
 
   const filtered = search.trim()
     ? departments.filter(d =>
-        d.name.toLowerCase().includes(search.toLowerCase()) ||
-        d.code.toLowerCase().includes(search.toLowerCase())
-      )
+      d.name.toLowerCase().includes(search.toLowerCase()) ||
+      d.code.toLowerCase().includes(search.toLowerCase())
+    )
     : departments;
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<DeptFormData>({
+  const {register, handleSubmit, reset, formState: {errors}} = useForm<DeptFormData>({
     resolver: zodResolver(deptSchema),
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: departmentKeys.all });
+  const invalidate = () => queryClient.invalidateQueries({queryKey: departmentKeys.all});
 
   const createMutation = useMutation({
     mutationFn: (data: DepartmentRequest) => departmentService.createDepartment(data),
-    onSuccess: () => { toast.success('Department created'); invalidate(); closeModal(); },
-    onError: (err: unknown) => toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Create failed'),
+    onSuccess: () => {
+      toast.success('Department created');
+      invalidate();
+      closeModal();
+    },
+    onError: (err: unknown) => toast.error((err as {
+      response?: { data?: { message?: string } }
+    })?.response?.data?.message ?? 'Create failed'),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: DepartmentRequest }) => departmentService.updateDepartment(id, data),
-    onSuccess: () => { toast.success('Department updated'); invalidate(); closeModal(); },
-    onError: (err: unknown) => toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Update failed'),
+    mutationFn: ({id, data}: { id: string; data: DepartmentRequest }) => departmentService.updateDepartment(id, data),
+    onSuccess: () => {
+      toast.success('Department updated');
+      invalidate();
+      closeModal();
+    },
+    onError: (err: unknown) => toast.error((err as {
+      response?: { data?: { message?: string } }
+    })?.response?.data?.message ?? 'Update failed'),
   });
 
   const toggleMutation = useMutation({
-    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+    mutationFn: ({id, active}: { id: string; active: boolean }) =>
       active ? departmentService.deactivateDepartment(id) : departmentService.activateDepartment(id),
-    onSuccess: (_, vars) => { toast.success(vars.active ? 'Department deactivated' : 'Department activated'); invalidate(); },
-    onError: (err: unknown) => toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Toggle failed'),
+    onSuccess: (_, vars) => {
+      toast.success(vars.active ? 'Department deactivated' : 'Department activated');
+      invalidate();
+    },
+    onError: (err: unknown) => toast.error((err as {
+      response?: { data?: { message?: string } }
+    })?.response?.data?.message ?? 'Toggle failed'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => departmentService.deleteDepartment(id),
-    onSuccess: () => { toast.success('Department deleted'); invalidate(); setDeleteTarget(null); },
-    onError: (err: unknown) => toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Delete failed'),
+    onSuccess: () => {
+      toast.success('Department deleted');
+      invalidate();
+      setDeleteTarget(null);
+    },
+    onError: (err: unknown) => toast.error((err as {
+      response?: { data?: { message?: string } }
+    })?.response?.data?.message ?? 'Delete failed'),
   });
 
   const openCreate = () => {
     setEditTarget(null);
-    reset({ code: '', name: '', description: '', location: '', costCenter: '' });
+    reset({code: '', name: '', description: '', location: '', costCenter: ''});
     setShowModal(true);
   };
 
@@ -107,13 +130,19 @@ export default function DepartmentsPage() {
     setShowModal(true);
   };
 
-  const closeModal = () => { setShowModal(false); setEditTarget(null); };
+  const closeModal = () => {
+    setShowModal(false);
+    setEditTarget(null);
+  };
 
   // Escape key closes any open modal
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      if (deleteTarget) { setDeleteTarget(null); return; }
+      if (deleteTarget) {
+        setDeleteTarget(null);
+        return;
+      }
       if (showModal) closeModal();
     };
     document.addEventListener('keydown', handler);
@@ -130,7 +159,7 @@ export default function DepartmentsPage() {
       costCenter: data.costCenter || undefined,
     };
     if (editTarget) {
-      updateMutation.mutate({ id: editTarget.id, data: payload });
+      updateMutation.mutate({id: editTarget.id, data: payload});
     } else {
       createMutation.mutate(payload);
     }
@@ -144,8 +173,8 @@ export default function DepartmentsPage() {
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="skeuo-card p-4 animate-pulse">
-              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/4 mb-2" />
-              <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2" />
+              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/4 mb-2"/>
+              <div className="h-3 bg-[var(--skeleton-base)] rounded w-1/2"/>
             </div>
           ))}
         </div>
@@ -157,7 +186,7 @@ export default function DepartmentsPage() {
     <AdminPageContent>
       <PermissionGate
         permission={Permissions.EMPLOYEE_READ}
-        fallback={<p className="text-danger-600 p-6">You do not have permission to view departments.</p>}
+        fallback={<p className='text-status-danger-text p-6'>You do not have permission to view departments.</p>}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -168,14 +197,14 @@ export default function DepartmentsPage() {
             </p>
           </div>
           <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4"/>
             New Department
           </Button>
         </div>
 
         {/* Search */}
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
           <input
             type="text"
             value={search}
@@ -191,20 +220,20 @@ export default function DepartmentsPage() {
           <div className="space-y-2">
             {[1, 2, 3, 4, 5].map(i => (
               <div key={i} className="skeuo-card p-4 animate-pulse flex gap-4">
-                <div className="h-4 bg-[var(--skeleton-base)] rounded w-16" />
-                <div className="h-4 bg-[var(--skeleton-base)] rounded w-40" />
-                <div className="h-4 bg-[var(--skeleton-base)] rounded w-24 ml-auto" />
+                <div className="h-4 bg-[var(--skeleton-base)] rounded w-16"/>
+                <div className="h-4 bg-[var(--skeleton-base)] rounded w-40"/>
+                <div className="h-4 bg-[var(--skeleton-base)] rounded w-24 ml-auto"/>
               </div>
             ))}
           </div>
         ) : isError ? (
-          <div className="flex items-center gap-2 p-6 skeuo-card text-danger-600">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+          <div className='flex items-center gap-2 p-6 skeuo-card text-status-danger-text'>
+            <AlertCircle className="h-5 w-5 flex-shrink-0"/>
             <span className="text-sm">Failed to load departments. Please try again.</span>
           </div>
         ) : filtered.length === 0 ? (
           <div className="skeuo-card p-12 flex flex-col items-center gap-2 text-center">
-            <Building2 className="h-10 w-10 text-[var(--text-muted)]" />
+            <Building2 className="h-10 w-10 text-[var(--text-muted)]"/>
             <p className="text-sm font-medium text-[var(--text-secondary)]">
               {search ? 'No departments match your search' : 'No departments yet'}
             </p>
@@ -218,29 +247,41 @@ export default function DepartmentsPage() {
           <div className="skeuo-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--border-subtle)]">
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Code</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Name</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Type</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Employees</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Status</th>
-                  <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Actions</th>
-                </tr>
+              <tr className="border-b border-[var(--border-subtle)]">
+                <th
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Code
+                </th>
+                <th
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Name
+                </th>
+                <th
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Type
+                </th>
+                <th
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Employees
+                </th>
+                <th
+                  className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Status
+                </th>
+                <th
+                  className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Actions
+                </th>
+              </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-subtle)]">
-                {filtered.map(dept => (
-                  <tr key={dept.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
-                    <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-secondary)]">{dept.code}</td>
-                    <td className="px-4 py-2.5 font-medium">{dept.name}</td>
-                    <td className="px-4 py-2.5 text-[var(--text-secondary)]">
-                      {dept.type ? (
-                        <span className="px-2 py-0.5 rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 text-xs font-medium">
+              {filtered.map(dept => (
+                <tr key={dept.id} className="hover:bg-[var(--bg-elevated)] transition-colors">
+                  <td className="px-4 py-2.5 font-mono text-xs text-[var(--text-secondary)]">{dept.code}</td>
+                  <td className="px-4 py-2.5 font-medium">{dept.name}</td>
+                  <td className="px-4 py-2.5 text-[var(--text-secondary)]">
+                    {dept.type ? (
+                      <span className='px-2 py-0.5 rounded-full bg-accent-subtle text-accent text-xs font-medium'>
                           {dept.type}
                         </span>
-                      ) : '—'}
-                    </td>
-                    <td className="px-4 py-2.5 text-[var(--text-secondary)]">{dept.employeeCount ?? 0}</td>
-                    <td className="px-4 py-2.5">
+                    ) : '—'}
+                  </td>
+                  <td className="px-4 py-2.5 text-[var(--text-secondary)]">{dept.employeeCount ?? 0}</td>
+                  <td className="px-4 py-2.5">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         dept.isActive
                           ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
@@ -248,37 +289,37 @@ export default function DepartmentsPage() {
                       }`}>
                         {dept.isActive ? 'Active' : 'Inactive'}
                       </span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
-                          onClick={() => toggleMutation.mutate({ id: dept.id, active: dept.isActive })}
-                          disabled={toggleMutation.isPending}
-                          className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] disabled:opacity-40"
-                        >
-                          {dept.isActive
-                            ? <ToggleRight className="h-4 w-4 text-success-600" />
-                            : <ToggleLeft className="h-4 w-4" />}
-                        </button>
-                        <button
-                          aria-label="Edit department"
-                          onClick={() => openEdit(dept)}
-                          className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          aria-label="Delete department"
-                          onClick={() => setDeleteTarget(dept)}
-                          className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
+                        onClick={() => toggleMutation.mutate({id: dept.id, active: dept.isActive})}
+                        disabled={toggleMutation.isPending}
+                        className='p-1.5 rounded-md text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] disabled:opacity-40'
+                      >
+                        {dept.isActive
+                          ? <ToggleRight className='h-4 w-4 text-status-success-text'/>
+                          : <ToggleLeft className="h-4 w-4"/>}
+                      </button>
+                      <button
+                        aria-label="Edit department"
+                        onClick={() => openEdit(dept)}
+                        className='p-1.5 rounded-md text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
+                      >
+                        <Pencil className="h-4 w-4"/>
+                      </button>
+                      <button
+                        aria-label="Delete department"
+                        onClick={() => setDeleteTarget(dept)}
+                        className='p-1.5 rounded-md text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]'
+                      >
+                        <Trash2 className="h-4 w-4"/>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
               </tbody>
             </table>
           </div>
@@ -297,7 +338,7 @@ export default function DepartmentsPage() {
                 disabled={page === 0}
                 className="p-1.5 rounded-md border border-[var(--border-main)] disabled:opacity-40 hover:bg-[var(--bg-elevated)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4"/>
               </button>
               <button
                 aria-label="Next page"
@@ -305,7 +346,7 @@ export default function DepartmentsPage() {
                 disabled={page >= totalPages - 1}
                 className="p-1.5 rounded-md border border-[var(--border-main)] disabled:opacity-40 hover:bg-[var(--bg-elevated)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4"/>
               </button>
             </div>
           </div>
@@ -324,7 +365,7 @@ export default function DepartmentsPage() {
                   onClick={closeModal}
                   className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4"/>
                 </button>
               </div>
 
@@ -332,17 +373,17 @@ export default function DepartmentsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Code <span className="text-danger-500">*</span>
+                      Code <span className='text-status-danger-text'>*</span>
                     </label>
-                    <input {...register('code')} placeholder="ENG" className="input-aura w-full uppercase" />
-                    {errors.code && <p className="text-danger-500 text-xs mt-1">{errors.code.message}</p>}
+                    <input {...register('code')} placeholder="ENG" className="input-aura w-full uppercase"/>
+                    {errors.code && <p className='text-status-danger-text text-xs mt-1'>{errors.code.message}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                      Name <span className="text-danger-500">*</span>
+                      Name <span className='text-status-danger-text'>*</span>
                     </label>
-                    <input {...register('name')} placeholder="Engineering" className="input-aura w-full" />
-                    {errors.name && <p className="text-danger-500 text-xs mt-1">{errors.name.message}</p>}
+                    <input {...register('name')} placeholder="Engineering" className="input-aura w-full"/>
+                    {errors.name && <p className='text-status-danger-text text-xs mt-1'>{errors.name.message}</p>}
                   </div>
                 </div>
 
@@ -356,17 +397,18 @@ export default function DepartmentsPage() {
 
                 <div>
                   <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-                  <textarea {...register('description')} rows={2} placeholder="Optional description…" className="input-aura w-full resize-none" />
+                  <textarea {...register('description')} rows={2} placeholder="Optional description…"
+                            className="input-aura w-full resize-none"/>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Location</label>
-                    <input {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full" />
+                    <input {...register('location')} placeholder="e.g. Chennai" className="input-aura w-full"/>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Cost Center</label>
-                    <input {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full" />
+                    <input {...register('costCenter')} placeholder="e.g. CC-001" className="input-aura w-full"/>
                   </div>
                 </div>
 
@@ -386,13 +428,14 @@ export default function DepartmentsPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
             <div className="w-full max-w-sm skeuo-card p-6 shadow-[var(--shadow-elevated)]">
               <div className="flex items-start gap-2 mb-4">
-                <div className="p-2 rounded-lg bg-danger-100 dark:bg-danger-900/30">
-                  <Trash2 className="h-5 w-5 text-danger-600" />
+                <div className='p-2 rounded-lg bg-status-danger-bg'>
+                  <Trash2 className='h-5 w-5 text-status-danger-text'/>
                 </div>
                 <div>
                   <h3 className="font-semibold text-[var(--text-primary)]">Delete Department</h3>
                   <p className="text-sm text-[var(--text-secondary)] mt-1">
-                    Delete <strong>{deleteTarget.name}</strong>? This cannot be undone. Departments with active employees cannot be deleted.
+                    Delete <strong>{deleteTarget.name}</strong>? This cannot be undone. Departments with active
+                    employees cannot be deleted.
                   </p>
                 </div>
               </div>

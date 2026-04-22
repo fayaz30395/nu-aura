@@ -178,10 +178,10 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
               <Upload className={`w-8 h-8 ${isDragOver ? 'text-accent-600' : 'text-surface-400'}`}/>
             </div>
             <div className="text-center">
-              <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
+              <p className='text-sm font-medium text-secondary'>
                 Drag and drop your receipt here
               </p>
-              <p className="text-xs text-surface-500 mt-1">
+              <p className='text-xs text-muted mt-1'>
                 or click to browse. Accepts JPEG, PNG, PDF (max 10MB)
               </p>
             </div>
@@ -196,77 +196,74 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
           </div>
           {validationError && (
             <div
-              className="mt-2 flex items-center gap-2 p-2 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-danger-500 flex-shrink-0"/>
-              <p className="text-sm text-danger-600 dark:text-danger-400">{validationError}</p>
+              className='mt-2 flex items-center gap-2 p-2 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+              <AlertTriangle className='w-4 h-4 text-status-danger-text flex-shrink-0'/>
+              <p className='text-sm text-status-danger-text'>{validationError}</p>
             </div>
           )}
         </div>
       )}
-
       {/* Scanning Stage */}
       {stage === 'scanning' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
           <div className="relative">
             <div
-              className="animate-spin rounded-full h-12 w-12 border-4 border-surface-200 dark:border-surface-700 border-t-accent-600"/>
-            <Camera className="absolute inset-0 m-auto w-5 h-5 text-accent-600"/>
+              className='animate-spin rounded-full h-12 w-12 border-4 border-subtle border-t-accent-600'/>
+            <Camera className='absolute inset-0 m-auto w-5 h-5 text-accent'/>
           </div>
           <div className="text-center">
-            <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
+            <p className='text-sm font-medium text-secondary'>
               Scanning receipt...
             </p>
-            <p className="text-xs text-surface-500 mt-1">
+            <p className='text-xs text-muted mt-1'>
               {selectedFile?.name} ({((selectedFile?.size ?? 0) / 1024).toFixed(0)} KB)
             </p>
           </div>
         </div>
       )}
-
       {/* Error Stage */}
       {stage === 'error' && (
         <div className="flex flex-col items-center justify-center gap-4 p-8">
-          <div className="p-4 rounded-full bg-danger-100 dark:bg-danger-900/30">
-            <AlertTriangle className="w-8 h-8 text-danger-500"/>
+          <div className='p-4 rounded-full bg-status-danger-bg'>
+            <AlertTriangle className='w-8 h-8 text-status-danger-text'/>
           </div>
           <div className="text-center">
-            <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
+            <p className='text-sm font-medium text-secondary'>
               Failed to scan receipt
             </p>
-            <p className="text-xs text-surface-500 mt-1">
+            <p className='text-xs text-muted mt-1'>
               The image may be too blurry or the format unsupported.
             </p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleReScan}
-              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='flex items-center gap-1.5 px-4 py-2 bg-accent hover:bg-accent-hover text-inverse rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               <RotateCcw className="w-4 h-4"/>
               Try Again
             </button>
             <button
               onClick={onCancel}
-              className="px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='px-4 py-2 text-secondary hover:bg-surface rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               Cancel
             </button>
           </div>
         </div>
       )}
-
       {/* Review Stage — Editable OCR Results */}
       {stage === 'review' && ocrResult && (
         <div className="space-y-4">
           {/* Confidence indicator */}
-          <div className="row-between p-2 bg-surface-50 dark:bg-surface-800 rounded-lg">
+          <div className='row-between p-2 bg-base rounded-lg'>
             <div className="flex items-center gap-2">
               <CheckCircle className={`w-4 h-4 ${confidenceColor(ocrResult.confidence)}`}/>
               <span className={`text-sm font-medium ${confidenceColor(ocrResult.confidence)}`}>
                 {confidenceLabel(ocrResult.confidence)} ({(ocrResult.confidence * 100).toFixed(0)}%)
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-surface-500">
+            <div className='flex items-center gap-1.5 text-xs text-muted'>
               <FileText className="w-3.5 h-3.5"/>
               {ocrResult.receiptFileName}
             </div>
@@ -275,7 +272,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
           {/* Editable fields */}
           <div className="space-y-2">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 Merchant Name
               </label>
               <input
@@ -283,13 +280,13 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
                 value={editMerchant}
                 onChange={(e) => setEditMerchant(e.target.value)}
                 placeholder="Enter merchant name"
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                className='w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-input)] text-primary focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
               />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className='block text-sm font-medium text-secondary mb-1'>
                   Amount
                 </label>
                 <input
@@ -299,17 +296,17 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
                   value={editAmount}
                   onChange={(e) => setEditAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                  className='w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-input)] text-primary focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className='block text-sm font-medium text-secondary mb-1'>
                   Currency
                 </label>
                 <select
                   value={editCurrency}
                   onChange={(e) => setEditCurrency(e.target.value)}
-                  className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                  className='w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-input)] text-primary focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
                 >
                   <option value="INR">INR</option>
                   <option value="USD">USD</option>
@@ -320,14 +317,14 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className='block text-sm font-medium text-secondary mb-1'>
                 Receipt Date
               </label>
               <input
                 type="date"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
+                className='w-full px-4 py-2 border border-subtle rounded-lg bg-[var(--bg-input)] text-primary focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2'
               />
             </div>
           </div>
@@ -336,21 +333,21 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
           <div className="flex gap-2 justify-end pt-2">
             <button
               onClick={handleReScan}
-              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='flex items-center gap-1.5 px-4 py-2 text-secondary hover:bg-surface rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               <RotateCcw className="w-4 h-4"/>
               Re-scan
             </button>
             <button
               onClick={onCancel}
-              className="flex items-center gap-1.5 px-4 py-2 text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='flex items-center gap-1.5 px-4 py-2 text-secondary hover:bg-surface rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               <X className="w-4 h-4"/>
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              className="flex items-center gap-1.5 px-4 py-2 bg-accent-700 hover:bg-accent-800 text-white rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+              className='flex items-center gap-1.5 px-4 py-2 bg-accent hover:bg-accent-hover text-inverse rounded-lg text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
             >
               <CheckCircle className="w-4 h-4"/>
               Confirm &amp; Fill

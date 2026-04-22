@@ -60,23 +60,22 @@ export function AllocationApprovalModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalHeader onClose={onClose}>
-        <div className="flex items-center gap-2 text-warning-600 dark:text-warning-400">
+        <div className='flex items-center gap-2 text-status-warning-text'>
           <AlertTriangle className="h-5 w-5"/>
           <span>Over-Allocation Warning</span>
         </div>
       </ModalHeader>
-
       <ModalBody className="space-y-6">
         {/* Warning message */}
         <div
-          className="rounded-lg border border-warning-200 bg-warning-50 p-4 dark:border-warning-800 dark:bg-warning-900/20">
+          className='rounded-lg border border-status-warning-border bg-status-warning-bg p-4'>
           <div className="flex gap-2">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning-600 dark:text-warning-400"/>
+            <AlertTriangle className='h-5 w-5 flex-shrink-0 text-status-warning-text'/>
             <div className="space-y-1">
-              <p className="font-medium text-warning-800 dark:text-warning-200">
+              <p className='font-medium text-status-warning-text'>
                 This assignment will result in over-allocation
               </p>
-              <p className="text-sm text-warning-700 dark:text-warning-300">
+              <p className='text-sm text-status-warning-text'>
                 {employeeCapacity.employeeName} will be allocated at{' '}
                 <strong>{formatAllocationPercentage(resultingAllocation)}</strong>, which exceeds 100%.
                 This requires approval from their manager.
@@ -87,46 +86,46 @@ export function AllocationApprovalModal({
 
         {/* Allocation visualization */}
         <div className="space-y-4">
-          <h3 className="font-medium text-surface-900 dark:text-surface-50">
+          <h3 className='font-medium text-primary'>
             Allocation Summary
           </h3>
 
           <div className="row-between gap-4">
             {/* Current allocation */}
             <div
-              className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
-              <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
+              className='flex-1 rounded-lg border border-subtle bg-base p-4'>
+              <p className='text-xs uppercase tracking-wide text-muted'>
                 Current Allocation
               </p>
-              <p className="mt-1 text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <p className='mt-1 text-2xl font-bold text-primary'>
                 {formatAllocationPercentage(validationResult.currentTotalAllocation)}
               </p>
             </div>
 
             {/* Arrow */}
-            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400"/>
+            <ArrowRight className='h-6 w-6 flex-shrink-0 text-muted'/>
 
             {/* New allocation */}
             <div
-              className="flex-1 rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
-              <p className="text-xs uppercase tracking-wide text-surface-500 dark:text-surface-400">
+              className='flex-1 rounded-lg border border-subtle bg-base p-4'>
+              <p className='text-xs uppercase tracking-wide text-muted'>
                 Proposed Addition
               </p>
-              <p className="mt-1 text-2xl font-bold text-accent-700 dark:text-accent-400">
+              <p className='mt-1 text-2xl font-bold text-accent'>
                 +{formatAllocationPercentage(proposedAllocation)}
               </p>
             </div>
 
             {/* Arrow */}
-            <ArrowRight className="h-6 w-6 flex-shrink-0 text-surface-400"/>
+            <ArrowRight className='h-6 w-6 flex-shrink-0 text-muted'/>
 
             {/* Resulting allocation */}
             <div
-              className="flex-1 rounded-lg border border-danger-200 bg-danger-50 p-4 dark:border-danger-800 dark:bg-danger-900/20">
-              <p className="text-xs uppercase tracking-wide text-danger-600 dark:text-danger-400">
+              className='flex-1 rounded-lg border border-status-danger-border bg-status-danger-bg p-4'>
+              <p className='text-xs uppercase tracking-wide text-status-danger-text'>
                 Resulting Total
               </p>
-              <p className="mt-1 text-2xl font-bold text-danger-600 dark:text-danger-400">
+              <p className='mt-1 text-2xl font-bold text-status-danger-text'>
                 {formatAllocationPercentage(resultingAllocation)}
               </p>
             </div>
@@ -134,16 +133,16 @@ export function AllocationApprovalModal({
         </div>
 
         {/* Project details */}
-        <div className="rounded-lg border border-surface-200 p-4 dark:border-surface-700">
+        <div className='rounded-lg border border-subtle p-4'>
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900">
-              <Briefcase className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+            <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-accent-subtle'>
+              <Briefcase className='h-5 w-5 text-accent'/>
             </div>
             <div>
-              <p className="font-medium text-surface-900 dark:text-surface-50">
+              <p className='font-medium text-primary'>
                 {projectName}
               </p>
-              <p className="text-sm text-surface-500 dark:text-surface-400">
+              <p className='text-sm text-muted'>
                 {projectCode} • {role}
               </p>
             </div>
@@ -152,7 +151,7 @@ export function AllocationApprovalModal({
 
         {/* Employee's current allocations */}
         <div className="space-y-4">
-          <h3 className="font-medium text-surface-900 dark:text-surface-50">
+          <h3 className='font-medium text-primary'>
             Current Project Allocations
           </h3>
           {validationResult.existingAllocations.length > 0 ? (
@@ -160,27 +159,27 @@ export function AllocationApprovalModal({
               {validationResult.existingAllocations.map((allocation) => (
                 <div
                   key={allocation.projectId}
-                  className="row-between rounded-lg border border-surface-200 p-4 dark:border-surface-700"
+                  className='row-between rounded-lg border border-subtle p-4'
                 >
                   <div className="flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-surface-400"/>
+                    <Briefcase className='h-4 w-4 text-muted'/>
                     <div>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                      <p className='text-sm font-medium text-primary'>
                         {allocation.projectName}
                       </p>
-                      <p className="text-xs text-surface-500 dark:text-surface-400">
+                      <p className='text-xs text-muted'>
                         {allocation.role}
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm font-semibold text-surface-900 dark:text-surface-50">
+                  <span className='text-sm font-semibold text-primary'>
                     {formatAllocationPercentage(allocation.allocationPercentage)}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className='text-sm text-muted'>
               No existing project allocations
             </p>
           )}
@@ -189,31 +188,31 @@ export function AllocationApprovalModal({
         {/* Reason input */}
         {showReasonInput ? (
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className='block text-sm font-medium text-secondary'>
               Reason for over-allocation (optional)
             </label>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
-              className="w-full rounded-lg border border-surface-200 bg-[var(--bg-input)] p-4 text-sm placeholder:text-surface-400 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-surface-700 dark:placeholder:text-surface-500"
+              className='w-full rounded-lg border border-subtle bg-[var(--bg-input)] p-4 text-sm placeholder:text-muted focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               rows={3}
             />
           </div>
         ) : (
           <button
             onClick={() => setShowReasonInput(true)}
-            className="text-sm text-accent-700 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+            className='text-sm text-accent hover:text-accent'
           >
             + Add reason for this allocation
           </button>
         )}
 
         {/* Approval flow info */}
-        <div className="flex items-start gap-2 rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
-          <Clock className="h-5 w-5 flex-shrink-0 text-surface-400"/>
-          <div className="text-sm text-surface-600 dark:text-surface-400">
-            <p className="font-medium text-surface-900 dark:text-surface-50">
+        <div className='flex items-start gap-2 rounded-lg bg-base p-4'>
+          <Clock className='h-5 w-5 flex-shrink-0 text-muted'/>
+          <div className='text-sm text-secondary'>
+            <p className='font-medium text-primary'>
               What happens next?
             </p>
             <ul className="mt-2 list-inside list-disc space-y-1">
@@ -224,7 +223,6 @@ export function AllocationApprovalModal({
           </div>
         </div>
       </ModalBody>
-
       <ModalFooter>
         <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
           Cancel
@@ -235,7 +233,7 @@ export function AllocationApprovalModal({
             variant="outline"
             onClick={handleProceedAnyway}
             disabled={isSubmitting}
-            className="border-warning-300 text-warning-700 hover:bg-warning-50 dark:border-warning-700 dark:text-warning-400 dark:hover:bg-warning-900/20"
+            className='border-status-warning-border text-status-warning-text hover:bg-status-warning-bg'
           >
             Skip Approval (Admin)
           </Button>
@@ -249,7 +247,7 @@ export function AllocationApprovalModal({
         >
           {isSubmitting ? (
             <>
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"/>
+              <div className='h-4 w-4 animate-spin rounded-full border-2 border-[var(--bg-card)] border-t-transparent'/>
               Submitting...
             </>
           ) : (

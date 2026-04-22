@@ -163,7 +163,7 @@ export default function AvailabilityCalendarPage() {
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]"
+                  className='rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]'
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}
@@ -177,7 +177,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeLeaves}
                     onChange={(e) => setIncludeLeaves(e.target.checked)}
-                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                    className='rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   />
                   Show Leaves
                 </label>
@@ -186,7 +186,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeHolidays}
                     onChange={(e) => setIncludeHolidays(e.target.checked)}
-                    className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                    className='rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   />
                   Show Holidays
                 </label>

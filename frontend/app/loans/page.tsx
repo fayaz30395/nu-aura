@@ -117,7 +117,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading loans data...</p>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function LoansPage() {
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-8 w-8 text-danger-500"/>
+            <AlertCircle className='h-8 w-8 text-status-danger-text'/>
             <p className="text-[var(--text-secondary)]">{error}</p>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <CreditCard className="h-5 w-5 text-white"/>
+                <CreditCard className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -183,7 +183,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-danger-500 to-danger-600">
-                <DollarSign className="h-5 w-5 text-white"/>
+                <DollarSign className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -199,7 +199,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-success-500 to-success-600">
-                <TrendingUp className="h-5 w-5 text-white"/>
+                <TrendingUp className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -215,7 +215,7 @@ export default function LoansPage() {
           <div className="skeuo-card p-4">
             <div className="flex items-start justify-between mb-4">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-warning-500 to-warning-600">
-                <Clock className="h-5 w-5 text-white"/>
+                <Clock className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -272,7 +272,7 @@ export default function LoansPage() {
                   </th>
                 </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                <tbody className='divide-y divide-surface-100'>
                 {loans.map((loan) => {
                   const statusConfig = getStatusConfig(loan.status);
                   const StatusIcon = statusConfig.icon;
@@ -322,7 +322,7 @@ export default function LoansPage() {
                             e.stopPropagation();
                             router.push(`/loans/${loan.id}`);
                           }}
-                          className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
+                          className='text-accent hover:text-accent text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1'
                         >
                           View Details
                         </button>
@@ -346,10 +346,10 @@ export default function LoansPage() {
               <div className="row-between mb-4">
                 <div
                   className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  <Plus className='h-5 w-5 text-inverse'/>
                 </div>
                 <ChevronRight
-                  className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
+                  className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all'/>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                 Apply for Loan
@@ -367,10 +367,10 @@ export default function LoansPage() {
             <div className="row-between mb-4">
               <div
                 className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
-                <FileText className="h-5 w-5 text-white"/>
+                <FileText className='h-5 w-5 text-inverse'/>
               </div>
               <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
+                className='h-5 w-5 text-[var(--text-muted)] group-hover:text-status-success-text group-hover:translate-x-1 transition-all'/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans

@@ -84,7 +84,7 @@ function CardHeader({
       <div className="flex gap-4">
         {/* Avatar */}
         <div
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+          className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-subtle text-sm font-semibold text-accent'>
           {initials}
         </div>
 
@@ -94,7 +94,7 @@ function CardHeader({
             <h4 className="font-medium text-[var(--text-primary)]">
               {author.fullName}
             </h4>
-            {pinned && <Pin className="h-4 w-4 text-warning-600 dark:text-warning-400"/>}
+            {pinned && <Pin className='h-4 w-4 text-status-warning-text'/>}
           </div>
 
           <div className="mt-1 flex items-center gap-2 text-caption">
@@ -109,7 +109,6 @@ function CardHeader({
           </div>
         </div>
       </div>
-
       {/* More Menu */}
       {isAuthor && (onDelete || onPin) && (
         <div className="relative">
@@ -148,7 +147,7 @@ function CardHeader({
                     onDelete(postId);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 border-t border-[var(--border-subtle)] px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='flex w-full items-center gap-2 border-t border-[var(--border-subtle)] px-4 py-2 text-sm text-status-danger-text hover:bg-status-danger-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   <Trash2 className="h-4 w-4"/>
                   Delete
@@ -418,7 +417,6 @@ function PollOption({
             </span>
           </div>
         </div>
-
         <div className="overflow-hidden rounded-full bg-[var(--bg-secondary)]">
           <motion.div
             initial={{width: 0}}
@@ -427,7 +425,7 @@ function PollOption({
             className={cn(
               'h-2 rounded-full transition-colors',
               isSelected
-                ? 'bg-accent-500 dark:bg-accent-400'
+                ? 'bg-accent'
                 : 'bg-[var(--text-muted)]'
             )}
           />
@@ -443,7 +441,7 @@ function PollOption({
       whileHover={{scale: 1.01}}
       whileTap={{scale: 0.99}}
       onClick={onVote}
-      className="w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+      className='w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-primary)] hover:bg-accent-subtle cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
     >
       {option.text}
     </motion.button>
@@ -494,8 +492,8 @@ export function PraiseCard({
       <Card
         variant="default"
         className={cn(
-          'overflow-hidden border-l-4 border-l-warning-500 dark:border-l-warning-400',
-          'bg-gradient-to-br from-warning-50/50 to-warning-50/50 dark:from-warning-950/30 dark:to-warning-950/30'
+          'overflow-hidden border-l-4 border-l-warning-500',
+          'bg-gradient-to-br from-warning-50/50 to-warning-50/50'
         )}
       >
         <CardContent className="space-y-4">
@@ -513,9 +511,9 @@ export function PraiseCard({
 
           {/* Praise Title */}
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-card)] px-4 py-4">
-            <Award className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
-            <span className="text-sm font-semibold text-warning-900 dark:text-warning-200">
-              Praised <span className="text-accent-700 dark:text-accent-300">{recipient.fullName}</span>
+            <Award className='h-5 w-5 text-status-warning-text'/>
+            <span className='text-sm font-semibold text-status-warning-text'>
+              Praised <span className='text-accent'>{recipient.fullName}</span>
             </span>
           </div>
 
@@ -527,10 +525,10 @@ export function PraiseCard({
           </div>
 
           {/* Recipient Info Box */}
-          <div className="rounded-lg border-2 border-warning-200 bg-[var(--bg-card)] px-4 py-4 dark:border-warning-800">
+          <div className='rounded-lg border-2 border-status-warning-border bg-[var(--bg-card)] px-4 py-4'>
             <div className="flex items-start gap-4">
               <div
-                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-warning-100 text-sm font-semibold text-warning-700 dark:bg-warning-900 dark:text-warning-300">
+                className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-sm font-semibold text-status-warning-text'>
                 {recipientInitials}
               </div>
 
@@ -549,7 +547,7 @@ export function PraiseCard({
           </div>
 
           {/* Reaction Bar */}
-          <div className="border-t border-warning-200 pt-4 dark:border-warning-800">
+          <div className='border-t border-status-warning-border pt-4'>
             <ReactionBar
               reactionCounts={post.reactionCounts}
               totalReactions={totalReactions}
@@ -569,7 +567,7 @@ export function PraiseCard({
               animate={{opacity: 1, height: 'auto'}}
               exit={{opacity: 0, height: 0}}
               transition={{duration: 0.2}}
-              className="border-t border-warning-200 pt-4 dark:border-warning-800"
+              className='border-t border-status-warning-border pt-4'
             >
               <CommentThread
                 comments={comments}

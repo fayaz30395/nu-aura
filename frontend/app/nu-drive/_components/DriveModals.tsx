@@ -126,7 +126,7 @@ export const ShareModal = React.memo(function ShareModal({
         <div className="p-4 space-y-4">
           {shareSuccess && (
             <div
-              className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg">
+              className='flex items-center gap-2 p-4 bg-status-success-bg text-status-success-text rounded-lg'>
               <Check className="h-4 w-4"/>
               <span className="text-sm">Shared successfully!</span>
             </div>
@@ -297,7 +297,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
         <div className="flex items-center gap-4">
           {getFileIcon(file.mimeType)}
           <div>
-            <h3 className="font-medium text-white truncate max-w-md">{file.name}</h3>
+            <h3 className='font-medium text-inverse truncate max-w-md'>{file.name}</h3>
             {file.modifiedTime && (
               <p className="text-caption">
                 Modified {new Date(file.modifiedTime).toLocaleDateString()}
@@ -311,7 +311,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
               variant="ghost"
               size="sm"
               onClick={() => onDownload(file)}
-              className="text-white hover:bg-[var(--bg-secondary)]"
+              className='text-inverse hover:bg-[var(--bg-secondary)]'
               leftIcon={<Download className="h-4 w-4"/>}
             >
               Download
@@ -321,7 +321,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
             variant="ghost"
             size="sm"
             onClick={() => onShare(file)}
-            className="text-white hover:bg-[var(--bg-secondary)]"
+            className='text-inverse hover:bg-[var(--bg-secondary)]'
             leftIcon={<Share2 className="h-4 w-4"/>}
           >
             Share
@@ -331,7 +331,7 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
               variant="ghost"
               size="sm"
               onClick={() => safeWindowOpen(file.webViewLink, '_blank')}
-              className="text-white hover:bg-[var(--bg-secondary)]"
+              className='text-inverse hover:bg-[var(--bg-secondary)]'
               leftIcon={<ExternalLink className="h-4 w-4"/>}
             >
               Open in Drive
@@ -339,19 +339,18 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
           )}
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='p-2 rounded-full hover:bg-[var(--bg-secondary)] text-inverse ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             <X className="h-5 w-5"/>
           </button>
         </div>
       </div>
-
       {/* Preview Content */}
       <div className="flex-1 flex items-center justify-center overflow-hidden">
         {previewLoading ? (
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-10 w-10 text-white animate-spin"/>
-            <p className="text-white">Loading preview...</p>
+            <Loader2 className='h-10 w-10 text-inverse animate-spin'/>
+            <p className='text-inverse'>Loading preview...</p>
           </div>
         ) : previewContent ? (
           <div className="w-full h-full overflow-auto p-4">

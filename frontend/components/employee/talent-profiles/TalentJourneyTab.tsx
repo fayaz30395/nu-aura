@@ -54,7 +54,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
       {/* Skills Radar / Cloud */}
       <section>
         <div className="flex items-center gap-2 mb-4">
-          <Zap className="h-5 w-5 text-warning-500"/>
+          <Zap className='h-5 w-5 text-status-warning-text'/>
           <h3 className="text-xl font-bold">Verified Skills</h3>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -76,21 +76,20 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                   />
                 ))}
               </div>
-              {skill.verified && <CheckCircle2 className="h-3 w-3 text-accent-500"/>}
+              {skill.verified && <CheckCircle2 className='h-3 w-3 text-accent'/>}
             </motion.div>
           ))}
         </div>
       </section>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Career Timeline */}
         <div className="lg:col-span-7">
           <div className="flex items-center gap-2 mb-6">
-            <Target className="h-5 w-5 text-accent-500"/>
+            <Target className='h-5 w-5 text-accent'/>
             <h3 className="text-xl font-bold">Career Timeline</h3>
           </div>
           <div
-            className="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-200 dark:before:bg-surface-700">
+            className='relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-elevated'>
             {profile.timeline.map((milestone, idx) => (
               <motion.div
                 key={idx}
@@ -104,16 +103,16 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
                   }`}>
                   {getMilestoneIcon(milestone.type)}
                 </div>
-                <Card className="border-none shadow-[var(--shadow-card)] dark:bg-surface-800/50">
+                <Card className='border-none shadow-[var(--shadow-card)]'>
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-1">
-                      <h4 className="font-semibold text-surface-900 dark:text-surface-50">{milestone.title}</h4>
+                      <h4 className='font-semibold text-primary'>{milestone.title}</h4>
                       <span
-                        className="text-xs font-medium text-surface-500 bg-surface-100 dark:bg-surface-700 px-2 py-0.5 rounded uppercase">
+                        className='text-xs font-medium text-muted bg-surface px-2 py-0.5 rounded uppercase'>
                                                 {milestone.date}
                                             </span>
                     </div>
-                    <p className="text-xs text-surface-500">Status: {milestone.status}</p>
+                    <p className='text-xs text-muted'>Status: {milestone.status}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -127,27 +126,27 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
           <div>
             <div className="row-between mb-4">
               <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-accent-500"/>
+                <Award className='h-5 w-5 text-accent'/>
                 <h3 className="text-xl font-bold">Achievements</h3>
               </div>
-              <Button variant="ghost" size="sm" className="text-xs text-accent-700">View All</Button>
+              <Button variant="ghost" size="sm" className='text-xs text-accent'>View All</Button>
             </div>
             <div className="space-y-4">
               {profile.achievements.map((achievement, idx) => (
                 <motion.div
                   key={idx}
                   whileHover={{scale: 1.02}}
-                  className="p-4 bg-gradient-to-r from-surface-50 to-white dark:from-surface-800 dark:to-surface-900 rounded-lg border border-surface-100 dark:border-surface-700 flex gap-4"
+                  className='p-4 bg-gradient-to-r from-surface-50 to-white rounded-lg border border-subtle flex gap-4'
                 >
                   <div
-                    className="h-12 w-12 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700">
+                    className='h-12 w-12 rounded-xl bg-accent-subtle flex items-center justify-center text-accent'>
                     <Sparkles className="h-6 w-6"/>
                   </div>
                   <div>
                     <h4 className="font-semibold text-sm">{achievement.title}</h4>
-                    <p className="text-xs text-surface-500 mt-1 line-clamp-2">{achievement.description}</p>
+                    <p className='text-xs text-muted mt-1 line-clamp-2'>{achievement.description}</p>
                     <span
-                      className="text-xs text-accent-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
+                      className='text-xs text-accent font-semibold mt-2 block uppercase'>{achievement.date}</span>
                   </div>
                 </motion.div>
               ))}
@@ -157,19 +156,19 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
           {/* Feedback */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <MessageSquare className="h-5 w-5 text-accent-700"/>
+              <MessageSquare className='h-5 w-5 text-accent'/>
               <h3 className="text-xl font-bold">Recognition Wall</h3>
             </div>
             <div className="space-y-4">
               {profile.recentFeedback.map((feedback, idx) => (
                 <div key={idx}
-                     className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 border border-transparent hover:border-accent-400 dark:hover:border-accent-900/30 transition-all">
+                     className='p-4 rounded-lg bg-base border border-transparent hover:border-[var(--accent-primary)] transition-all'>
                   <p
-                    className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
+                    className='text-sm italic hover:text-primary'>&quot;{feedback.comment}&quot;</p>
                   <div className="row-between mt-4">
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full bg-accent-300 dark:bg-accent-900/40 text-xs flex items-center justify-center font-semibold text-accent-900">
+                        className='w-6 h-6 rounded-full bg-accent-subtle text-xs flex items-center justify-center font-semibold text-accent'>
                         {feedback.fromName.charAt(0)}
                       </div>
                       <span className="text-xs font-semibold">{feedback.fromName}</span>
@@ -185,7 +184,7 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
               ))}
             </div>
             <Button variant="outline"
-                    className="w-full mt-4 border-dashed border-accent-400 dark:border-accent-900/50 text-accent-800">
+                    className='w-full mt-4 border-dashed border-[var(--accent-primary)] text-accent'>
               Give Feedback
             </Button>
           </div>
@@ -198,31 +197,31 @@ export default function TalentJourneyTab({employeeId}: TalentJourneyTabProps) {
 function getMilestoneIcon(type: string) {
   switch (type) {
     case 'JOINED':
-      return <Calendar className="h-4 w-4 text-success-500"/>;
+      return <Calendar className='h-4 w-4 text-status-success-text'/>;
     case 'PROMOTION':
-      return <TrendingUp className="h-4 w-4 text-accent-500"/>;
+      return <TrendingUp className='h-4 w-4 text-accent'/>;
     case 'PROJECT':
-      return <Briefcase className="h-4 w-4 text-accent-500"/>;
+      return <Briefcase className='h-4 w-4 text-accent'/>;
     default:
-      return <Star className="h-4 w-4 text-warning-500"/>;
+      return <Star className='h-4 w-4 text-status-warning-text'/>;
   }
 }
 
 function TalentJourneySkeleton() {
   return (
     <div className="space-y-8 py-4 animate-pulse">
-      <div className="h-6 w-32 bg-surface-200 dark:bg-surface-800 rounded mb-4"/>
+      <div className='h-6 w-32 bg-elevated rounded mb-4'/>
       <div className="flex flex-wrap gap-2">
-        <div className="h-10 w-24 bg-surface-100 dark:bg-surface-800 rounded-full"/>
-        <div className="h-10 w-32 bg-surface-100 dark:bg-surface-800 rounded-full"/>
-        <div className="h-10 w-28 bg-surface-100 dark:bg-surface-800 rounded-full"/>
+        <div className='h-10 w-24 bg-surface rounded-full'/>
+        <div className='h-10 w-32 bg-surface rounded-full'/>
+        <div className='h-10 w-28 bg-surface rounded-full'/>
       </div>
       <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-1 border-l-2 border-surface-200 dark:border-surface-800 pl-8 space-y-6">
-          <div className="h-24 bg-surface-100 dark:bg-surface-800 rounded-xl"/>
-          <div className="h-24 bg-surface-100 dark:bg-surface-800 rounded-xl"/>
+        <div className='col-span-1 border-l-2 border-subtle pl-8 space-y-6'>
+          <div className='h-24 bg-surface rounded-xl'/>
+          <div className='h-24 bg-surface rounded-xl'/>
         </div>
-        <div className="col-span-11 h-64 bg-surface-100 dark:bg-surface-800 rounded-xl"/>
+        <div className='col-span-11 h-64 bg-surface rounded-xl'/>
       </div>
     </div>
   );

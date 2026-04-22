@@ -84,7 +84,7 @@ export function CompanySpotlight() {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      <div className={`${gradientClass} flex items-center px-6 py-4 text-white`}>
+      <div className={`${gradientClass} flex items-center px-6 py-4 text-inverse`}>
         <div className="flex-1 pr-4">
           <h3 className="text-xl font-semibold mb-1 line-clamp-1">{current.title}</h3>
           {current.description && (
@@ -95,7 +95,7 @@ export function CompanySpotlight() {
               href={current.ctaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-2 px-4 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-lg text-xs font-medium transition-colors"
+              className='inline-block mt-2 px-4 py-1.5 bg-white/15 hover:bg-white/25 text-inverse rounded-lg text-xs font-medium transition-colors'
             >
               {current.ctaLabel}
             </a>
@@ -107,7 +107,6 @@ export function CompanySpotlight() {
           </div>
         )}
       </div>
-
       {/* Nav arrows */}
       {hasMultiple && (
         <>
@@ -116,7 +115,7 @@ export function CompanySpotlight() {
               setCurrentIndex((prev) => (prev - 1 + spotlights.length) % spotlights.length);
               setIsAutoPlaying(false);
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className='absolute left-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-inverse opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2'
             aria-label="Previous spotlight"
           >
             <ChevronLeft className="h-4 w-4"/>
@@ -126,14 +125,13 @@ export function CompanySpotlight() {
               setCurrentIndex((prev) => (prev + 1) % spotlights.length);
               setIsAutoPlaying(false);
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+            className='absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-black/20 hover:bg-black/40 text-inverse opacity-0 group-hover:opacity-100 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2'
             aria-label="Next spotlight"
           >
             <ChevronRight className="h-4 w-4"/>
           </button>
         </>
       )}
-
       {/* Dots */}
       {hasMultiple && (
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">

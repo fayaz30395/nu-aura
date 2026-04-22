@@ -172,7 +172,7 @@ function PermissionPreview({roleCodes}: { roleCodes: string[] }) {
         className="row-between w-full text-left"
       >
         <div className="flex items-center gap-2">
-          <Eye className="h-4 w-4 text-accent-500"/>
+          <Eye className='h-4 w-4 text-accent'/>
           <span className="text-sm font-medium text-[var(--text-primary)]">
             Permission Summary — {allPerms.size} capability areas
           </span>
@@ -289,7 +289,7 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
             <div className={`h-3 w-3 rounded border flex items-center justify-center flex-shrink-0 ${
               selectedRoles.includes(role.value) ? 'border-accent-500 bg-accent-500' : 'border-[var(--border-main)]'
             }`}>
-              {selectedRoles.includes(role.value) && <CheckCircle className="h-2 w-2 text-white"/>}
+              {selectedRoles.includes(role.value) && <CheckCircle className='h-2 w-2 text-inverse'/>}
             </div>
             <span className="font-medium text-[var(--text-primary)]">{role.label}</span>
           </button>
@@ -360,8 +360,8 @@ export default function AdminEmployeesPage() {
       <AdminPageContent className="p-8 flex items-center justify-center h-[60vh]">
         <div className="text-center space-y-4">
           <div
-            className="h-16 w-16 mx-auto rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-            <Shield className="h-8 w-8 text-danger-500"/>
+            className='h-16 w-16 mx-auto rounded-full bg-status-danger-bg flex items-center justify-center'>
+            <Shield className='h-8 w-8 text-status-danger-text'/>
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">Access Denied</h2>
           <p className="text-body-muted">You need HR Admin or Employee Management permission to access this page.</p>
@@ -431,7 +431,6 @@ export default function AdminEmployeesPage() {
           Create Employee
         </Button>
       </motion.div>
-
       {/* Stats */}
       <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25, delay: 0.05}}
                   className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -478,7 +477,6 @@ export default function AdminEmployeesPage() {
           </div>
         ))}
       </motion.div>
-
       {/* Table */}
       <motion.div initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{duration: 0.25, delay: 0.1}}>
         <Card>
@@ -497,12 +495,12 @@ export default function AdminEmployeesPage() {
           </CardHeader>
           <CardContent>
             {employeesLoading ? (
-              <SkeletonTable rows={8} columns={5} />
+              <SkeletonTable rows={8} columns={5}/>
             ) : employeesError ? (
               <div className="flex flex-col items-center gap-4 py-12">
                 <div
-                  className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-danger-500"/>
+                  className='h-12 w-12 rounded-full bg-status-danger-bg flex items-center justify-center'>
+                  <AlertCircle className='h-6 w-6 text-status-danger-text'/>
                 </div>
                 <p className="text-[var(--text-secondary)]">Failed to load employees</p>
                 <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
@@ -533,7 +531,7 @@ export default function AdminEmployeesPage() {
                         <td>
                           <div className="flex items-center gap-2">
                             <div
-                              className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
+                              className='h-8 w-8 rounded-full bg-accent-subtle flex items-center justify-center text-xs font-semibold text-accent'>
                               {emp.firstName?.[0]}{emp.lastName?.[0]}
                             </div>
                             <div>
@@ -588,12 +586,11 @@ export default function AdminEmployeesPage() {
           </CardContent>
         </Card>
       </motion.div>
-
       {/* ═══ INLINE ROLE EDIT MODAL ═══ */}
       <Modal isOpen={!!editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)} size="md">
         <ModalHeader onClose={() => setEditingRoleForEmployee(null)}>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-accent-500"/>
+            <Shield className='h-5 w-5 text-accent'/>
             <span>Edit Roles</span>
           </div>
         </ModalHeader>
@@ -603,13 +600,12 @@ export default function AdminEmployeesPage() {
           )}
         </ModalBody>
       </Modal>
-
       {/* ═══ CREATE EMPLOYEE + ROLE MODAL ═══ */}
       <Modal isOpen={showCreateModal} onClose={handleCloseModal} size="lg">
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader onClose={handleCloseModal}>
             <div className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5 text-accent-500"/>
+              <UserPlus className='h-5 w-5 text-accent'/>
               <span>Create Employee & Assign Roles</span>
             </div>
           </ModalHeader>
@@ -642,14 +638,15 @@ export default function AdminEmployeesPage() {
                       className="h-3.5 w-3.5 inline mr-1"/>Employee Code *</label>
                     <input {...register('employeeCode')} className="input-aura w-full" placeholder="EMP-001"/>
                     {errors.employeeCode &&
-                      <p className="text-xs text-danger-500 mt-1">{errors.employeeCode.message}</p>}
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.employeeCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Mail
                       className="h-3.5 w-3.5 inline mr-1"/>Work Email *</label>
                     <input {...register('workEmail')} type="email" className="input-aura w-full"
                            placeholder="john@company.com"/>
-                    {errors.workEmail && <p className="text-xs text-danger-500 mt-1">{errors.workEmail.message}</p>}
+                    {errors.workEmail &&
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.workEmail.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -657,7 +654,8 @@ export default function AdminEmployeesPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><User
                       className="h-3.5 w-3.5 inline mr-1"/>First Name *</label>
                     <input {...register('firstName')} className="input-aura w-full" placeholder="John"/>
-                    {errors.firstName && <p className="text-xs text-danger-500 mt-1">{errors.firstName.message}</p>}
+                    {errors.firstName &&
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.firstName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Middle Name</label>
@@ -673,7 +671,7 @@ export default function AdminEmployeesPage() {
                     className="h-3.5 w-3.5 inline mr-1"/>Initial Password *</label>
                   <input {...register('password')} type="password" className="input-aura w-full"
                          placeholder="Min 8 chars, uppercase + lowercase + number"/>
-                  {errors.password && <p className="text-xs text-danger-500 mt-1">{errors.password.message}</p>}
+                  {errors.password && <p className='text-xs text-status-danger-text mt-1'>{errors.password.message}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -687,7 +685,8 @@ export default function AdminEmployeesPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2"><Calendar
                       className="h-3.5 w-3.5 inline mr-1"/>Joining Date *</label>
                     <input {...register('joiningDate')} type="date" className="input-aura w-full"/>
-                    {errors.joiningDate && <p className="text-xs text-danger-500 mt-1">{errors.joiningDate.message}</p>}
+                    {errors.joiningDate &&
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.joiningDate.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -733,7 +732,7 @@ export default function AdminEmployeesPage() {
                   <label className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span
                     className="text-caption">(multiple allowed)</span></label>
                 </div>
-                {errors.roleCodes && <p className="text-xs text-danger-500 mb-2">{errors.roleCodes.message}</p>}
+                {errors.roleCodes && <p className='text-xs text-status-danger-text mb-2'>{errors.roleCodes.message}</p>}
 
                 <Controller
                   name="roleCodes"
@@ -766,7 +765,7 @@ export default function AdminEmployeesPage() {
                               className={`mt-0.5 h-4 w-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                                 isSelected ? 'border-accent-500 bg-accent-500' : 'border-[var(--border-main)]'
                               }`}>
-                              {isSelected && <CheckCircle className="h-2.5 w-2.5 text-white"/>}
+                              {isSelected && <CheckCircle className='h-2.5 w-2.5 text-inverse'/>}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
@@ -787,11 +786,11 @@ export default function AdminEmployeesPage() {
                 {/* Super Admin Warning */}
                 {selectedRoleCodes?.includes(Roles.SUPER_ADMIN) && (
                   <div
-                    className="flex items-start gap-2 p-4 rounded-lg bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800">
-                    <AlertCircle className="h-4 w-4 text-danger-600 mt-0.5 flex-shrink-0"/>
+                    className='flex items-start gap-2 p-4 rounded-lg bg-status-danger-bg border border-status-danger-border'>
+                    <AlertCircle className='h-4 w-4 text-status-danger-text mt-0.5 flex-shrink-0'/>
                     <div>
-                      <p className="text-sm font-medium text-danger-800 dark:text-danger-200">Super Admin Access</p>
-                      <p className="text-xs text-danger-600 dark:text-danger-300 mt-0.5">
+                      <p className='text-sm font-medium text-status-danger-text'>Super Admin Access</p>
+                      <p className='text-xs text-status-danger-text mt-0.5'>
                         This role bypasses ALL permission checks. The user will have unrestricted access to all tenants,
                         modules, and data.
                       </p>

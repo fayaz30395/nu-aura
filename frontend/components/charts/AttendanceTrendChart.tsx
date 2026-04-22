@@ -23,7 +23,7 @@ export const AttendanceTrendChart: React.FC<AttendanceTrendChartProps> = ({data,
         {hasData ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-surface-200 dark:stroke-surface-700"/>
+              <CartesianGrid strokeDasharray="3 3" className='stroke-surface-200'/>
               <XAxis
                 dataKey="date"
                 className="text-caption"

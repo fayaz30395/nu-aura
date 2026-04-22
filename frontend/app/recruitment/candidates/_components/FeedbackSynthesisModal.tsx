@@ -25,7 +25,7 @@ export function FeedbackSynthesisModal({
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <MessageSquare className="h-6 w-6 text-success-500"/>
+              <MessageSquare className='h-6 w-6 text-status-success-text'/>
               Feedback Synthesis
             </h2>
             <button onClick={onClose} aria-label="Close modal"
@@ -57,22 +57,22 @@ export function FeedbackSynthesisModal({
             )}
 
             {feedbackSynthesis.agreements && feedbackSynthesis.agreements.length > 0 && (
-              <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-xl">
-                <p className="text-sm font-medium text-success-800 dark:text-success-300 mb-2">Agreements</p>
+              <div className='p-4 bg-status-success-bg rounded-xl'>
+                <p className='text-sm font-medium text-status-success-text mb-2'>Agreements</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.agreements.map((agreement, idx) => (
-                    <li key={idx} className="text-sm text-success-700 dark:text-success-400">{agreement}</li>
+                    <li key={idx} className='text-sm text-status-success-text'>{agreement}</li>
                   ))}
                 </ul>
               </div>
             )}
 
             {feedbackSynthesis.disagreements && feedbackSynthesis.disagreements.length > 0 && (
-              <div className="p-4 bg-warning-50 dark:bg-warning-900/20 rounded-xl">
-                <p className="text-sm font-medium text-warning-800 dark:text-warning-300 mb-2">Disagreements</p>
+              <div className='p-4 bg-status-warning-bg rounded-xl'>
+                <p className='text-sm font-medium text-status-warning-text mb-2'>Disagreements</p>
                 <ul className="list-disc list-inside space-y-1">
                   {feedbackSynthesis.disagreements.map((disagreement, idx) => (
-                    <li key={idx} className="text-sm text-warning-700 dark:text-warning-400">{disagreement}</li>
+                    <li key={idx} className='text-sm text-status-warning-text'>{disagreement}</li>
                   ))}
                 </ul>
               </div>

@@ -101,7 +101,7 @@ export default function JobBoardsPage() {
     queryKey: ['jobs', 'open'],
     queryFn: async (): Promise<{ content: JobOpening[] }> => {
       const response = await apiClient.get<{ content: JobOpening[] }>('/recruitment/job-openings/status/OPEN', {
-        params: { size: 1000 },
+        params: {size: 1000},
       });
       return response.data;
     },
@@ -198,7 +198,7 @@ export default function JobBoardsPage() {
         {/* Postings grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({length: 6}).map((_, i) => <SkeletonCard key={i} />)}
+            {Array.from({length: 6}).map((_, i) => <SkeletonCard key={i}/>)}
           </div>
         ) : postings.length === 0 ? (
           <Card>
@@ -218,7 +218,7 @@ export default function JobBoardsPage() {
                   <CardContent className="pt-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-4">
-                        <div className={`px-2.5 py-1 rounded text-xs font-bold text-white ${bc.color}`}>
+                        <div className={`px-2.5 py-1 rounded text-xs font-bold text-inverse ${bc.color}`}>
                           {bc.logo}
                         </div>
                         <div>
@@ -227,7 +227,7 @@ export default function JobBoardsPage() {
                             <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
                               <a href={posting.externalUrl} target="_blank" rel="noopener noreferrer"
-                                 className="text-accent-500 hover:underline">
+                                 className='text-accent hover:underline'>
                                 <ExternalLink className="w-3.5 h-3.5"/>
                               </a>
                             )}
@@ -237,17 +237,17 @@ export default function JobBoardsPage() {
                             {posting.externalJobId && ` · External: ${posting.externalJobId}`}
                           </p>
                           {posting.errorMessage && (
-                            <p className="text-xs text-danger-600 mt-1">{posting.errorMessage}</p>
+                            <p className='text-xs text-status-danger-text mt-1'>{posting.errorMessage}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-6 text-body-secondary">
                         <div className="text-center">
-                          <p className="text-lg font-bold text-accent-700">{posting.applicationsCount}</p>
+                          <p className='text-lg font-bold text-accent'>{posting.applicationsCount}</p>
                           <p className="text-caption">Applications</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-lg font-bold text-accent-600">{posting.viewsCount}</p>
+                          <p className='text-lg font-bold text-accent'>{posting.viewsCount}</p>
                           <p className="text-caption">Views</p>
                         </div>
                         {posting.status === 'ACTIVE' && (
@@ -274,7 +274,6 @@ export default function JobBoardsPage() {
           </div>
         )}
       </div>
-
       {/* Post modal */}
       {showPostModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
@@ -299,7 +298,7 @@ export default function JobBoardsPage() {
                     ))}
                   </select>
                   {postErrors.jobId && (
-                    <p className="text-xs text-danger-500 mt-1">{postErrors.jobId.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{postErrors.jobId.message}</p>
                   )}
                 </div>
                 <div>
@@ -336,7 +335,7 @@ export default function JobBoardsPage() {
                     )}
                   />
                   {postErrors.boards && (
-                    <p className="text-xs text-danger-500 mt-1">{postErrors.boards.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{postErrors.boards.message}</p>
                   )}
                 </div>
                 <p className="text-caption bg-[var(--bg-surface)] p-4 rounded-md">

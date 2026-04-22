@@ -190,7 +190,7 @@ export default function MyDocumentsPage() {
         ]}
       >
         <div className="p-6">
-          <SkeletonTable rows={5} columns={4} />
+          <SkeletonTable rows={5} columns={4}/>
         </div>
       </AppLayout>
     );
@@ -213,7 +213,7 @@ export default function MyDocumentsPage() {
           </p>
           <button
             onClick={() => router.push('/documents')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='mt-6 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             Go to Document Management
           </button>
@@ -251,7 +251,7 @@ export default function MyDocumentsPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
+              <div className='p-2 rounded-lg bg-status-warning-bg text-status-warning-text'>
                 <Clock className="h-5 w-5"/>
               </div>
               <div>
@@ -264,7 +264,7 @@ export default function MyDocumentsPage() {
           </Card>
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
+              <div className='p-2 rounded-lg bg-status-info-bg text-status-info-text'>
                 <AlertCircle className="h-5 w-5"/>
               </div>
               <div>
@@ -277,7 +277,7 @@ export default function MyDocumentsPage() {
           </Card>
           <Card padding="md" className="card-aura">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
+              <div className='p-2 rounded-lg bg-status-success-bg text-status-success-text'>
                 <CheckCircle className="h-5 w-5"/>
               </div>
               <div>
@@ -358,8 +358,8 @@ export default function MyDocumentsPage() {
 
                       {request.rejectionReason && (
                         <div
-                          className="mt-4 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
-                          <p className="text-sm text-danger-700 dark:text-danger-400">
+                          className='mt-4 p-4 rounded-lg bg-status-danger-bg border border-status-danger-border'>
+                          <p className='text-sm text-status-danger-text'>
                             <strong>Rejection Reason:</strong> {request.rejectionReason}
                           </p>
                         </div>
@@ -427,7 +427,7 @@ export default function MyDocumentsPage() {
                   className={`input-aura w-full px-4 py-2 rounded-lg ${errors.purpose ? 'border-danger-500' : ''}`}
                 />
                 {errors.purpose && (
-                  <p className="mt-1 text-xs text-danger-500">{errors.purpose.message}</p>
+                  <p className='mt-1 text-xs text-status-danger-text'>{errors.purpose.message}</p>
                 )}
               </div>
 
@@ -456,7 +456,7 @@ export default function MyDocumentsPage() {
                   className={`input-aura w-full px-4 py-2 rounded-lg ${errors.requiredByDate ? 'border-danger-500' : ''}`}
                 />
                 {errors.requiredByDate && (
-                  <p className="mt-1 text-xs text-danger-500">{errors.requiredByDate.message}</p>
+                  <p className='mt-1 text-xs text-status-danger-text'>{errors.requiredByDate.message}</p>
                 )}
               </div>
 
@@ -472,7 +472,7 @@ export default function MyDocumentsPage() {
                         type="radio"
                         {...register('deliveryMode')}
                         value={mode}
-                        className="text-accent-700"
+                        className='text-accent'
                       />
                       <span className="text-body-secondary capitalize">
                         {mode.toLowerCase()}

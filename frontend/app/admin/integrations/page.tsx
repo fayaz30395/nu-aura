@@ -26,6 +26,7 @@ import {
   SmsTestRequest,
 } from '@/lib/types/core/integration';
 import {isProduction} from '@/lib/config/env';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
@@ -201,8 +202,7 @@ export default function AdminIntegrationsPage() {
         },
         onError: (error: unknown) => {
           toast.error(
-            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to save configuration'
+            getErrorMessage(error, 'Failed to save configuration')
           );
         },
       }
@@ -218,17 +218,17 @@ export default function AdminIntegrationsPage() {
       <div className="flex items-center gap-2">
         {isActive ? (
           <div
-            className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-success-100 dark:bg-success-900/30">
-            <CheckCircle2 className="h-4 w-4 text-success-600 dark:text-success-400"/>
-            <span className="text-sm font-medium text-success-700 dark:text-success-300">
+            className='badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-status-success-bg'>
+            <CheckCircle2 className='h-4 w-4 text-status-success-text'/>
+            <span className='text-sm font-medium text-status-success-text'>
               Active
             </span>
           </div>
         ) : (
           <div
-            className="badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger-100 dark:bg-danger-900/30">
-            <XCircle className="h-4 w-4 text-danger-600 dark:text-danger-400"/>
-            <span className="text-sm font-medium text-danger-700 dark:text-danger-300">
+            className='badge-status flex items-center gap-2 px-4 py-1.5 rounded-full bg-status-danger-bg'>
+            <XCircle className='h-4 w-4 text-status-danger-text'/>
+            <span className='text-sm font-medium text-status-danger-text'>
               Inactive
             </span>
           </div>
@@ -240,7 +240,7 @@ export default function AdminIntegrationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-700"/>
+        <Loader2 className='h-8 w-8 animate-spin text-accent'/>
       </div>
     );
   }
@@ -252,7 +252,7 @@ export default function AdminIntegrationsPage() {
         <div className="flex items-center gap-4">
           <div
             className="skeuo-emboss p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Settings className="h-6 w-6 text-white"/>
+            <Settings className='h-6 w-6 text-inverse'/>
           </div>
           <div>
             <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
@@ -265,7 +265,6 @@ export default function AdminIntegrationsPage() {
         </div>
         {/* Refresh disabled - data is automatically refetched by React Query */}
       </div>
-
       {/* Tabs for filtering connectors */}
       {connectors.length > 0 && (
         <div className="flex gap-2 flex-wrap">
@@ -293,7 +292,6 @@ export default function AdminIntegrationsPage() {
           )}
         </div>
       )}
-
       {/* Connectors Grid */}
       {connectors.length > 0 && (
         <div>
@@ -309,7 +307,6 @@ export default function AdminIntegrationsPage() {
           </div>
         </div>
       )}
-
       {/* Connector Config Panel */}
       {selectedConnector && (
         <ConnectorConfigPanel
@@ -320,14 +317,13 @@ export default function AdminIntegrationsPage() {
           isLoading={saveConfigMutation.isPending}
         />
       )}
-
       {/* Activity Log */}
       {connectors.length > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-accent-300 dark:bg-accent-900/30">
-                <Zap className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
+              <div className='p-2 rounded-lg bg-accent-subtle'>
+                <Zap className='h-5 w-5 text-accent'/>
               </div>
               <div>
                 <CardTitle>Integration Activity Log</CardTitle>
@@ -340,14 +336,13 @@ export default function AdminIntegrationsPage() {
           </CardContent>
         </Card>
       )}
-
       {/* SMS Integration */}
       <Card>
         <CardHeader>
           <div className="row-between">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <MessageSquare className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              <div className='p-2 rounded-lg bg-accent-subtle'>
+                <MessageSquare className='h-5 w-5 text-accent'/>
               </div>
               <div>
                 <CardTitle>SMS Notifications</CardTitle>
@@ -519,13 +514,13 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Note */}
           {!smsStatus?.configured && (
             <div
-              className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-4 p-4 rounded-lg bg-status-warning-bg border border-status-warning-border'>
+              <AlertCircle className='h-5 w-5 text-status-warning-text flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="font-medium text-warning-900 dark:text-warning-100">
+                <p className='font-medium text-status-warning-text'>
                   SMS Integration Not Configured
                 </p>
-                <p className="text-sm text-warning-700 dark:text-warning-300 mt-1">
+                <p className='text-sm text-status-warning-text mt-1'>
                   To enable SMS notifications, configure the required SMS provider
                   credentials in the server environment. Contact your system administrator for details.
                 </p>
@@ -534,14 +529,13 @@ export default function AdminIntegrationsPage() {
           )}
         </CardContent>
       </Card>
-
       {/* Payment Gateway Integration */}
       <Card>
         <CardHeader>
           <div className="row-between">
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <CreditCard className="h-5 w-5 text-success-600 dark:text-success-400"/>
+              <div className='p-2 rounded-lg bg-status-success-bg'>
+                <CreditCard className='h-5 w-5 text-status-success-text'/>
               </div>
               <div>
                 <CardTitle>Payment Gateway</CardTitle>
@@ -633,13 +627,13 @@ export default function AdminIntegrationsPage() {
           {/* Configuration Note */}
           {!paymentStatus?.configured && (
             <div
-              className="flex items-start gap-4 p-4 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-4 p-4 rounded-lg bg-status-warning-bg border border-status-warning-border'>
+              <AlertCircle className='h-5 w-5 text-status-warning-text flex-shrink-0 mt-0.5'/>
               <div>
-                <p className="font-medium text-warning-900 dark:text-warning-100">
+                <p className='font-medium text-status-warning-text'>
                   Payment Gateway Not Configured
                 </p>
-                <p className="text-sm text-warning-700 dark:text-warning-300 mt-1">
+                <p className='text-sm text-status-warning-text mt-1'>
                   To enable payment processing, configure the required payment gateway
                   credentials in the server environment. Contact your system administrator for details.
                 </p>

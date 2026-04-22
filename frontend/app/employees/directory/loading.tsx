@@ -15,16 +15,14 @@ export default function Loading() {
           <Skeleton height={36} width={130}/>
         </div>
       </div>
-
       {/* Search skeleton */}
       <Skeleton height={40} className="max-w-md"/>
-
       {/* Card grid skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {Array.from({length: 8}).map((_, index) => (
           <div
             key={index}
-            className="rounded-lg border border-surface-200 dark:border-surface-800 p-4 space-y-4"
+            className='rounded-lg border border-subtle p-4 space-y-4'
           >
             <div className="flex items-center gap-4">
               <Skeleton height={48} width={48} radius="xl"/>

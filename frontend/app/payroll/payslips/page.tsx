@@ -40,7 +40,7 @@ export default function PayslipsPage() {
       <AppLayout activeMenuItem="payroll">
         <div className="p-6 space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse"/>
           ))}
         </div>
       </AppLayout>
@@ -51,7 +51,7 @@ export default function PayslipsPage() {
     return (
       <AppLayout activeMenuItem="payroll">
         <div className="p-6">
-          <p className="text-danger-600">You do not have permission to view payslips.</p>
+          <p className='text-status-danger-text'>You do not have permission to view payslips.</p>
         </div>
       </AppLayout>
     );
@@ -152,7 +152,8 @@ export default function PayslipsPage() {
 
           {/* Error Message */}
           {(fetchError || downloadError) && (
-            <div className="mb-6 p-4 bg-danger-50 border border-danger-200 text-danger-800 rounded-lg">
+            <div
+              className='mb-6 p-4 bg-status-danger-bg border border-status-danger-border text-status-danger-text rounded-lg'>
               {downloadError ?? fetchError?.message ?? 'An error occurred'}
               <button
                 onClick={() => setDownloadError(null)}
@@ -253,7 +254,7 @@ export default function PayslipsPage() {
           {/* Payslips Grid */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+              <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
             </div>
           ) : filteredPayslips.length === 0 ? (
             <div className="card-aura rounded-lg p-12 text-center">

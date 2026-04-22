@@ -91,9 +91,9 @@ export default function PayrollReportsPage() {
             initial={{opacity: 0, y: -10}}
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -10}}
-            className="p-4 bg-success-50 dark:bg-success-950/20 border border-success-200 dark:border-success-800 rounded-lg"
+            className='p-4 bg-status-success-bg border border-status-success-border rounded-lg'
           >
-            <span className="text-success-700 dark:text-success-400">{successMessage}</span>
+            <span className='text-status-success-text'>{successMessage}</span>
           </motion.div>
         )}
 
@@ -106,7 +106,7 @@ export default function PayrollReportsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-accent-800"/>
+                <DollarSign className='h-5 w-5 text-accent'/>
                 Payroll Report Configuration
               </CardTitle>
               <CardDescription>
@@ -117,7 +117,7 @@ export default function PayrollReportsPage() {
               {/* Date Range */}
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                  Payroll Period <span className="text-danger-500">*</span>
+                  Payroll Period <span className='text-status-danger-text'>*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -172,9 +172,9 @@ export default function PayrollReportsPage() {
               {/* Error */}
               {error && (
                 <div
-                  className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start gap-2">
-                  <X className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5"/>
-                  <span className="text-sm text-danger-600 dark:text-danger-400">{error}</span>
+                  className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-start gap-2'>
+                  <X className='h-5 w-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
+                  <span className='text-sm text-status-danger-text'>{error}</span>
                 </div>
               )}
 
@@ -202,13 +202,13 @@ export default function PayrollReportsPage() {
 
         {/* Info Card */}
         <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{delay: 0.2}}>
-          <Card className="bg-accent-250 dark:bg-accent-900/20 border-accent-400 dark:border-accent-900">
+          <Card className='bg-accent-subtle border-[var(--accent-primary)]'>
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
-                <DollarSign className="h-5 w-5 text-accent-800 dark:text-accent-600 mt-0.5"/>
+                <DollarSign className='h-5 w-5 text-accent mt-0.5'/>
                 <div>
-                  <h3 className="font-semibold text-accent-900 dark:text-accent-300">Report Details</h3>
-                  <ul className="text-sm text-accent-900 dark:text-accent-500 mt-2 space-y-1">
+                  <h3 className='font-semibold text-accent'>Report Details</h3>
+                  <ul className='text-sm text-accent mt-2 space-y-1'>
                     <li>• Includes employee code, name, department, and designation</li>
                     <li>• Shows basic salary, allowances, and total earnings</li>
                     <li>• Displays deductions breakdown and net salary</li>

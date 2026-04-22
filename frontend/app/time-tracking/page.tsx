@@ -126,7 +126,7 @@ export default function TimeTrackingPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading time entries...</p>
           </div>
         </div>
@@ -139,12 +139,12 @@ export default function TimeTrackingPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text'/>
             <p
               className="text-[var(--text-secondary)]">{error instanceof Error ? error.message : 'Failed to load time entries'}</p>
             <button
               onClick={() => queryClient.invalidateQueries({queryKey: ['time-tracking']})}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors'
             >
               Retry
             </button>
@@ -172,7 +172,7 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30"
+              className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30'
             >
               <Plus className="h-5 w-5"/>
               Log Time
@@ -185,7 +185,7 @@ export default function TimeTrackingPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <Timer className="h-5 w-5 text-white"/>
+                <Timer className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -201,7 +201,7 @@ export default function TimeTrackingPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600">
-                <DollarSign className="h-5 w-5 text-white"/>
+                <DollarSign className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -217,7 +217,7 @@ export default function TimeTrackingPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600">
-                <Clock className="h-5 w-5 text-white"/>
+                <Clock className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -233,7 +233,7 @@ export default function TimeTrackingPage() {
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-4 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
-                <FileText className="h-5 w-5 text-white"/>
+                <FileText className='h-5 w-5 text-inverse'/>
               </div>
             </div>
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -251,17 +251,17 @@ export default function TimeTrackingPage() {
         {draftEntries.length > 0 && (
           <PermissionGate permission={Permissions.TIME_TRACKING_UPDATE}>
             <div
-              className="row-between bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-xl p-4">
+              className='row-between bg-status-warning-bg border border-status-warning-border rounded-xl p-4'>
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-warning-500"/>
-                <span className="text-sm text-warning-700 dark:text-warning-400">
+                <AlertCircle className='h-5 w-5 text-status-warning-text'/>
+                <span className='text-sm text-status-warning-text'>
                   You have {draftEntries.length} draft entries ready to submit
                 </span>
               </div>
               <button
                 onClick={handleSubmitSelected}
                 disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-warning-500 text-white rounded-lg hover:bg-warning-600 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex items-center gap-2 px-4 py-2 bg-status-warning-bg text-inverse rounded-lg hover:bg-status-warning-bg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {submitMultipleMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin"/>
@@ -288,7 +288,7 @@ export default function TimeTrackingPage() {
               <p className="text-[var(--text-muted)]">No time entries found</p>
               <button
                 onClick={() => router.push('/time-tracking/new')}
-                className="mt-4 text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
+                className='mt-4 text-accent hover:text-accent text-sm font-medium'
               >
                 Log your first time entry
               </button>
@@ -341,7 +341,7 @@ export default function TimeTrackingPage() {
                   </th>
                 </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                <tbody className='divide-y divide-surface-100'>
                 {entries.map((entry) => {
                   const statusConfig = getStatusConfig(entry.status);
                   const StatusIcon = statusConfig.icon;
@@ -381,7 +381,7 @@ export default function TimeTrackingPage() {
                             {timeTrackingService.formatHours(entry.hoursWorked)}
                           </span>
                         {entry.isBillable && (
-                          <span className="ml-2 text-xs text-success-600 dark:text-success-400">
+                          <span className='ml-2 text-xs text-status-success-text'>
                               (Billable)
                             </span>
                         )}
@@ -402,7 +402,7 @@ export default function TimeTrackingPage() {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => router.push(`/time-tracking/${entry.id}`)}
-                          className="text-accent-700 dark:text-accent-400 hover:text-accent-700 text-sm font-medium"
+                          className='text-accent hover:text-accent text-sm font-medium'
                         >
                           View
                         </button>
@@ -437,15 +437,15 @@ export default function TimeTrackingPage() {
           <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
             <button
               onClick={() => router.push('/time-tracking/new')}
-              className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left"
+              className='group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-[var(--accent-primary)] transition-all duration-200 text-left'
             >
               <div className="row-between mb-4">
                 <div
                   className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform">
-                  <Plus className="h-5 w-5 text-white"/>
+                  <Plus className='h-5 w-5 text-inverse'/>
                 </div>
                 <ChevronRight
-                  className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
+                  className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent group-hover:translate-x-1 transition-all'/>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                 Log Time
@@ -458,15 +458,15 @@ export default function TimeTrackingPage() {
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}
-            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left"
+            className='group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6 hover:shadow-[var(--shadow-dropdown)] hover:border-status-success-border transition-all duration-200 text-left'
           >
             <div className="row-between mb-4">
               <div
                 className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform">
-                <CalendarDays className="h-5 w-5 text-white"/>
+                <CalendarDays className='h-5 w-5 text-inverse'/>
               </div>
               <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
+                className='h-5 w-5 text-[var(--text-muted)] group-hover:text-status-success-text group-hover:translate-x-1 transition-all'/>
             </div>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
               Weekly View

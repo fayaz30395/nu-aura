@@ -42,8 +42,8 @@ export function WorkloadHeatmap({
   if (data.length === 0) {
     return (
       <div
-        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
-        <p className="text-surface-500 dark:text-surface-400">No workload data available</p>
+        className='flex h-48 items-center justify-center rounded-lg border border-dashed border-subtle'>
+        <p className='text-muted'>No workload data available</p>
       </div>
     );
   }
@@ -56,13 +56,13 @@ export function WorkloadHeatmap({
           <thead>
           <tr>
             <th
-              className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
+              className='sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-secondary'>
               Employee
             </th>
             {weeks.map((week) => (
               <th
                 key={week.weekStart}
-                className="px-2 py-4 text-center text-xs font-medium text-surface-500 dark:text-surface-400"
+                className='px-2 py-4 text-center text-xs font-medium text-muted'
                 style={{minWidth: '60px'}}
               >
                 {week.label}
@@ -84,25 +84,24 @@ export function WorkloadHeatmap({
           </tbody>
         </table>
       </div>
-
       {/* Legend */}
       <div className="mt-4 flex items-center justify-end gap-6">
-        <div className="flex items-center gap-2 text-xs text-surface-600 dark:text-surface-400">
+        <div className='flex items-center gap-2 text-xs text-secondary'>
           <span>Allocation:</span>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-surface-200 dark:bg-surface-700"/>
+            <div className='h-4 w-4 rounded bg-elevated'/>
             <span>0%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-warning-300"/>
+            <div className='h-4 w-4 rounded bg-status-warning-bg'/>
             <span>50%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-success-500"/>
+            <div className='h-4 w-4 rounded bg-status-success-bg'/>
             <span>75-100%</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-4 w-4 rounded bg-danger-500"/>
+            <div className='h-4 w-4 rounded bg-status-danger-bg'/>
             <span>&gt;100%</span>
           </div>
         </div>
@@ -131,32 +130,31 @@ function HeatmapRow({row, onEmployeeClick, onCellClick}: HeatmapRowProps) {
       <td
         className={cn(
           'sticky left-0 z-10 bg-[var(--bg-card)] px-4 py-2',
-          'border-b border-surface-100 dark:border-surface-800',
-          onEmployeeClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800'
+          'border-b border-subtle',
+          onEmployeeClick && 'cursor-pointer hover:bg-base'
         )}
         onClick={() => onEmployeeClick?.(row.employeeId)}
       >
         <div className="flex items-center gap-2">
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+            className='flex h-8 w-8 items-center justify-center rounded-full bg-accent-subtle text-accent'>
             <User className="h-4 w-4"/>
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-medium text-surface-900 dark:text-surface-50">
+              <p className='truncate text-sm font-medium text-primary'>
                 {row.employeeName}
               </p>
               {hasOverAllocation && (
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-danger-500"/>
+                <AlertTriangle className='h-4 w-4 flex-shrink-0 text-status-danger-text'/>
               )}
             </div>
-            <p className="truncate text-xs text-surface-500 dark:text-surface-400">
+            <p className='truncate text-xs text-muted'>
               {row.departmentName || row.employeeCode}
             </p>
           </div>
         </div>
       </td>
-
       {/* Week cells */}
       {row.cells.map((cell) => (
         <HeatmapCell
@@ -184,7 +182,7 @@ function HeatmapCell({cell, onClick}: HeatmapCellProps) {
   return (
     <td
       className={cn(
-        'border-b border-surface-100 px-1 py-2 dark:border-surface-800',
+        'border-b border-subtle px-1 py-2',
         onClick && 'cursor-pointer'
       )}
       onClick={onClick}

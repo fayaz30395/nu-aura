@@ -208,7 +208,7 @@ export default function QuizPage() {
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
         <div className="text-center">
           <div
-            className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+            className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full mx-auto mb-4'/>
           <p className="text-[var(--text-muted)]">Loading quiz...</p>
         </div>
       </div>
@@ -225,12 +225,12 @@ export default function QuizPage() {
         <div className="min-h-screen bg-[var(--bg-secondary)] p-6">
           <div className="max-w-2xl mx-auto">
             <Link href={`/learning/courses/${courseId}`}
-                  className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-6 w-fit">
+                  className='flex items-center gap-1 text-accent hover:text-accent mb-6 w-fit'>
               <ArrowLeft className="h-4 w-4"/> Back to Course
             </Link>
-            <div className="bg-danger-50 border border-danger-200 rounded-lg p-6 text-center">
-              <AlertCircle className="h-12 w-12 text-danger-600 mx-auto mb-4"/>
-              <p className="text-danger-600 font-medium">{error || 'Quiz not found'}</p>
+            <div className='bg-status-danger-bg border border-status-danger-border rounded-lg p-6 text-center'>
+              <AlertCircle className='h-12 w-12 text-status-danger-text mx-auto mb-4'/>
+              <p className='text-status-danger-text font-medium'>{error || 'Quiz not found'}</p>
             </div>
           </div>
         </div>
@@ -259,33 +259,33 @@ export default function QuizPage() {
 
             <div className="skeuo-card overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-accent-600 to-accent-700 text-white p-8">
+              <div className='bg-gradient-to-r from-accent-600 to-accent-700 text-inverse p-8'>
                 <h1 className="text-xl font-bold skeuo-emboss mb-2">{quiz.title}</h1>
                 {quiz.description && (
-                  <p className="text-accent-100">{quiz.description}</p>
+                  <p className='text-accent'>{quiz.description}</p>
                 )}
               </div>
 
               {/* Content */}
               <div className="p-8 space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
-                    <div className="text-xl font-bold text-accent-700">{quiz.totalQuestions}</div>
+                  <div className='bg-accent-subtle rounded-lg p-4 border border-[var(--accent-primary)]'>
+                    <div className='text-xl font-bold text-accent'>{quiz.totalQuestions}</div>
                     <div className="text-body-secondary">Total Questions</div>
                   </div>
                   {quiz.timeLimit && (
-                    <div className="bg-warning-50 rounded-lg p-4 border border-warning-200">
+                    <div className='bg-status-warning-bg rounded-lg p-4 border border-status-warning-border'>
                       <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-warning-600"/>
+                        <Clock className='h-5 w-5 text-status-warning-text'/>
                         <div>
-                          <div className="text-lg font-bold text-warning-700">{quiz.timeLimit}</div>
+                          <div className='text-lg font-bold text-status-warning-text'>{quiz.timeLimit}</div>
                           <div className="text-xs text-[var(--text-secondary)]">Minutes</div>
                         </div>
                       </div>
                     </div>
                   )}
-                  <div className="bg-success-50 rounded-lg p-4 border border-success-200">
-                    <div className="text-xl font-bold text-success-700">{quiz.passingScore}%</div>
+                  <div className='bg-status-success-bg rounded-lg p-4 border border-status-success-border'>
+                    <div className='text-xl font-bold text-status-success-text'>{quiz.passingScore}%</div>
                     <div className="text-body-secondary">Passing Score</div>
                   </div>
                 </div>
@@ -294,21 +294,21 @@ export default function QuizPage() {
                   <h3 className="font-semibold text-[var(--text-primary)] mb-4">Instructions:</h3>
                   <ul className="space-y-2 text-sm text-[var(--text-primary)]">
                     <li className="flex gap-2">
-                      <span className="text-accent-600 font-bold">•</span>
+                      <span className='text-accent font-bold'>•</span>
                       <span>Answer all questions before submitting</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-accent-600 font-bold">•</span>
+                      <span className='text-accent font-bold'>•</span>
                       <span>You can review and change your answers before submission</span>
                     </li>
                     {quiz.timeLimit && (
                       <li className="flex gap-2">
-                        <span className="text-accent-600 font-bold">•</span>
+                        <span className='text-accent font-bold'>•</span>
                         <span>The quiz will auto-submit when time expires</span>
                       </li>
                     )}
                     <li className="flex gap-2">
-                      <span className="text-accent-600 font-bold">•</span>
+                      <span className='text-accent font-bold'>•</span>
                       <span>You need a score of {quiz.passingScore}% or higher to pass</span>
                     </li>
                   </ul>
@@ -317,11 +317,12 @@ export default function QuizPage() {
                 <button
                   onClick={handleStartQuiz}
                   disabled={startQuizMutation.isPending}
-                  className="w-full px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='w-full px-6 py-4 bg-accent text-inverse rounded-lg font-medium hover:bg-accent disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {startQuizMutation.isPending ? (
                     <>
-                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"/>
+                      <div
+                        className='animate-spin h-4 w-4 border-2 border-[var(--bg-card)] border-t-transparent rounded-full'/>
                       Starting...
                     </>
                   ) : (
@@ -357,7 +358,7 @@ export default function QuizPage() {
                   <span className="text-body-secondary">Progress:</span>
                   <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-accent-600 transition-all duration-300"
+                      className='h-full bg-accent transition-all duration-300'
                       style={{width: `${((currentQuestionIdx + 1) / quiz.questions.length) * 100}%`}}
                     />
                   </div>
@@ -396,7 +397,7 @@ export default function QuizPage() {
                     <div className="space-y-4">
                       {currentQuestion.options.map(option => (
                         <label key={option.id}
-                               className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors"
+                               className='flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-subtle transition-colors'
                                style={{
                                  borderColor: answerValue === option.id ? 'var(--accent-primary)' : 'var(--border-subtle)',
                                  backgroundColor: answerValue === option.id ? 'var(--status-info-bg)' : '',
@@ -421,7 +422,7 @@ export default function QuizPage() {
                         const selectedAnswers = Array.isArray(answerValue) ? answerValue : (answerValue ? [answerValue] : []);
                         return (
                           <label key={option.id}
-                                 className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors"
+                                 className='flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-subtle transition-colors'
                                  style={{
                                    borderColor: selectedAnswers.includes(option.id) ? 'var(--accent-primary)' : 'var(--border-subtle)',
                                    backgroundColor: selectedAnswers.includes(option.id) ? 'var(--status-info-bg)' : '',
@@ -451,7 +452,7 @@ export default function QuizPage() {
                     <div className="space-y-4">
                       {['True', 'False'].map(option => (
                         <label key={option}
-                               className="flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-50 transition-colors"
+                               className='flex items-start gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent-subtle transition-colors'
                                style={{
                                  borderColor: answerValue === option ? 'var(--accent-primary)' : 'var(--border-subtle)',
                                  backgroundColor: answerValue === option ? 'var(--status-info-bg)' : '',
@@ -476,7 +477,7 @@ export default function QuizPage() {
                       value={answerValue}
                       onChange={e => handleAnswer(currentQuestion.id, e.target.value)}
                       placeholder="Type your answer here..."
-                      className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:border-accent-600 focus:ring-1 focus:ring-accent-600"
+                      className='w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-accent-600'
                     />
                   )}
                 </div>
@@ -533,11 +534,12 @@ export default function QuizPage() {
                 <button
                   onClick={handleSubmitQuiz}
                   disabled={submitQuizMutation.isPending || questionsAnswered < quiz.questions.length}
-                  className="px-6 py-2 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-6 py-2 bg-status-success-bg text-inverse rounded-lg font-medium hover:bg-status-success-bg disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {submitQuizMutation.isPending ? (
                     <>
-                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"/>
+                      <div
+                        className='animate-spin h-4 w-4 border-2 border-[var(--bg-card)] border-t-transparent rounded-full'/>
                       Submitting...
                     </>
                   ) : (
@@ -567,15 +569,15 @@ export default function QuizPage() {
             {/* Result Card */}
             <div className="skeuo-card overflow-hidden mb-6">
               <div
-                className={`bg-gradient-to-r ${passed ? 'from-success-600 to-success-700' : 'from-danger-600 to-danger-700'} text-white p-8 text-center`}>
+                className={`bg-gradient-to-r ${passed ? 'from-success-600 to-success-700' : 'from-danger-600 to-danger-700'} text-inverse p-8 text-center`}>
                 <div className="flex justify-center mb-4">
                   {passed ? (
                     <div className="p-4 bg-white/20 rounded-full">
-                      <CheckCircle2 className="h-16 w-16 text-white"/>
+                      <CheckCircle2 className='h-16 w-16 text-inverse'/>
                     </div>
                   ) : (
                     <div className="p-4 bg-white/20 rounded-full">
-                      <XCircle className="h-16 w-16 text-white"/>
+                      <XCircle className='h-16 w-16 text-inverse'/>
                     </div>
                   )}
                 </div>
@@ -587,22 +589,22 @@ export default function QuizPage() {
               {/* Score details */}
               <div className="p-8">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                  <div className="bg-accent-50 rounded-lg p-4 border border-accent-200">
+                  <div className='bg-accent-subtle rounded-lg p-4 border border-[var(--accent-primary)]'>
                     <div className="text-body-secondary">Total Questions</div>
-                    <div className="text-xl font-bold text-accent-700">{quiz.totalQuestions}</div>
+                    <div className='text-xl font-bold text-accent'>{quiz.totalQuestions}</div>
                   </div>
-                  <div className="bg-success-50 rounded-lg p-4 border border-success-200">
+                  <div className='bg-status-success-bg rounded-lg p-4 border border-status-success-border'>
                     <div className="text-body-secondary">Correct</div>
-                    <div className="text-xl font-bold text-success-700">{result.correctAnswers || 0}</div>
+                    <div className='text-xl font-bold text-status-success-text'>{result.correctAnswers || 0}</div>
                   </div>
-                  <div className="bg-danger-50 rounded-lg p-4 border border-danger-200">
+                  <div className='bg-status-danger-bg rounded-lg p-4 border border-status-danger-border'>
                     <div className="text-body-secondary">Incorrect</div>
                     <div
-                      className="text-xl font-bold text-danger-700">{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
+                      className='text-xl font-bold text-status-danger-text'>{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
                   </div>
-                  <div className="bg-warning-50 rounded-lg p-4 border border-warning-200">
+                  <div className='bg-status-warning-bg rounded-lg p-4 border border-status-warning-border'>
                     <div className="text-body-secondary">Time Taken</div>
-                    <div className="text-xl font-bold text-warning-700">{result.timeTaken || '-'}</div>
+                    <div className='text-xl font-bold text-status-warning-text'>{result.timeTaken || '-'}</div>
                   </div>
                 </div>
 
@@ -616,9 +618,9 @@ export default function QuizPage() {
                              className={`border rounded-lg p-4 ${detail.isCorrect ? 'border-success-200 bg-success-50' : 'border-danger-200 bg-danger-50'}`}>
                           <div className="flex items-start gap-4">
                             {detail.isCorrect ? (
-                              <CheckCircle2 className="h-5 w-5 text-success-600 flex-shrink-0 mt-0.5"/>
+                              <CheckCircle2 className='h-5 w-5 text-status-success-text flex-shrink-0 mt-0.5'/>
                             ) : (
-                              <XCircle className="h-5 w-5 text-danger-600 flex-shrink-0 mt-0.5"/>
+                              <XCircle className='h-5 w-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
                             )}
                             <div className="flex-1">
                               <p className="font-medium text-[var(--text-primary)]">Q{idx + 1}: {detail.questionId}</p>
@@ -626,7 +628,7 @@ export default function QuizPage() {
                                 className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
                               {!detail.isCorrect && detail.correctAnswer && (
                                 <p className="text-body-secondary">Correct answer: <span
-                                  className="font-medium text-success-700">{detail.correctAnswer}</span></p>
+                                  className='font-medium text-status-success-text'>{detail.correctAnswer}</span></p>
                               )}
                               {detail.explanation && (
                                 <p className="text-sm text-[var(--text-primary)] mt-2 italic">{detail.explanation}</p>
@@ -644,14 +646,14 @@ export default function QuizPage() {
                   {canRetry && (
                     <button
                       onClick={handleRetry}
-                      className="flex items-center justify-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='flex items-center justify-center gap-2 px-6 py-4 bg-accent text-inverse rounded-lg font-medium hover:bg-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       <RefreshCw className="h-4 w-4"/> Retry Quiz
                     </button>
                   )}
                   {passed && (
                     <button
-                      className="flex items-center justify-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='flex items-center justify-center gap-2 px-6 py-4 bg-status-success-bg text-inverse rounded-lg font-medium hover:bg-status-success-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       <Award className="h-4 w-4"/> View Certificate
                     </button>

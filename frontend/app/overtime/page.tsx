@@ -177,7 +177,8 @@ export default function OvertimePage() {
     return (
       <AppLayout activeMenuItem="overtime">
         <div className="flex items-center justify-center h-64">
-          <div className="h-8 w-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin" />
+          <div
+            className='h-8 w-8 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
         </div>
       </AppLayout>
     );
@@ -309,14 +310,14 @@ export default function OvertimePage() {
                       <button
                         onClick={() => handleApproval(record.id, 'APPROVE')}
                         disabled={approveReject.isPending}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50"
+                        className='text-xs px-2.5 py-1 rounded-lg bg-status-success-bg text-status-success-text hover:bg-status-success-bg transition-colors disabled:opacity-50'
                       >
                         Approve
                       </button>
                       <button
                         onClick={() => handleApproval(record.id, 'REJECT')}
                         disabled={approveReject.isPending}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400 transition-colors disabled:opacity-50"
+                        className='text-xs px-2.5 py-1 rounded-lg bg-status-danger-bg text-status-danger-text hover:bg-status-danger-bg transition-colors disabled:opacity-50'
                       >
                         Reject
                       </button>
@@ -386,7 +387,7 @@ export default function OvertimePage() {
           </div>
           <button
             onClick={() => setActiveTab('request')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button"
+            className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl text-sm font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button'
           >
             <Plus className="h-5 w-5"/>
             Request Overtime
@@ -422,7 +423,7 @@ export default function OvertimePage() {
                 >
                   <div className="flex items-center gap-4">
                     <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                      <stat.icon className="h-5 w-5 text-white"/>
+                      <stat.icon className='h-5 w-5 text-inverse'/>
                     </div>
                     <div>
                       <p className="text-body-secondary">{stat.label}</p>
@@ -470,7 +471,7 @@ export default function OvertimePage() {
         {activeTab === 'my-overtime' && (
           <div>
             {isMyLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !myRecords || myRecords.content.length === 0 ? (
               <EmptyState
                 title="No overtime records"
@@ -491,12 +492,12 @@ export default function OvertimePage() {
           <div className="max-w-2xl">
             {submitSuccess ? (
               <div
-                className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4"/>
-                <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
+                className='bg-status-success-bg border border-status-success-border rounded-xl p-6 text-center'>
+                <CheckCircle className='h-12 w-12 text-status-success-text mx-auto mb-4'/>
+                <h3 className='text-xl font-semibold text-status-success-text'>
                   Overtime Request Submitted!
                 </h3>
-                <p className="text-sm text-success-600 dark:text-success-400 mt-1">
+                <p className='text-sm text-status-success-text mt-1'>
                   Your manager will review the request shortly.
                 </p>
               </div>
@@ -521,7 +522,7 @@ export default function OvertimePage() {
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.overtimeDate && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.overtimeDate.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.overtimeDate.message}</p>
                     )}
                   </div>
 
@@ -554,7 +555,7 @@ export default function OvertimePage() {
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.regularHours && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.regularHours.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.regularHours.message}</p>
                     )}
                   </div>
 
@@ -570,7 +571,7 @@ export default function OvertimePage() {
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.actualHours && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.actualHours.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.actualHours.message}</p>
                     )}
                   </div>
 
@@ -586,7 +587,7 @@ export default function OvertimePage() {
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                     />
                     {errors.overtimeHours && (
-                      <p className="text-xs text-danger-500 mt-1">{errors.overtimeHours.message}</p>
+                      <p className='text-xs text-status-danger-text mt-1'>{errors.overtimeHours.message}</p>
                     )}
                   </div>
                 </div>
@@ -618,14 +619,14 @@ export default function OvertimePage() {
                   <button
                     type="submit"
                     disabled={isSubmitting || createOvertime.isPending}
-                    className="px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='px-4 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {createOvertime.isPending ? 'Submitting...' : 'Submit Request'}
                   </button>
                 </div>
 
                 {createOvertime.isError && (
-                  <p className="text-sm text-danger-500 mt-2">
+                  <p className='text-sm text-status-danger-text mt-2'>
                     Failed to submit overtime request. Please try again.
                   </p>
                 )}
@@ -639,7 +640,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
             <div>
               {isPendingLoading ? (
-                <SkeletonTable rows={5} columns={5} />
+                <SkeletonTable rows={5} columns={5}/>
               ) : !pendingRecords || pendingRecords.content.length === 0 ? (
                 <EmptyState
                   title="No pending approvals"
@@ -661,7 +662,7 @@ export default function OvertimePage() {
           <PermissionGate permission={Permissions.ATTENDANCE_VIEW_ALL}>
             <div>
               {isAllLoading ? (
-                <SkeletonTable rows={5} columns={5} />
+                <SkeletonTable rows={5} columns={5}/>
               ) : !allRecords || allRecords.content.length === 0 ? (
                 <EmptyState
                   title="No overtime records"

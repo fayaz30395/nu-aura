@@ -229,7 +229,7 @@ export default function CreateWikiPage() {
             <button
               type="button"
               onClick={() => setPublishDrawerOpen(true)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+              className='inline-flex items-center gap-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
             >
               <Send className="w-4 h-4"/>
               Publish
@@ -253,7 +253,7 @@ export default function CreateWikiPage() {
             />
 
             {errors.title && (
-              <p className="text-xs text-danger-500 mt-1">{errors.title.message}</p>
+              <p className='text-xs text-status-danger-text mt-1'>{errors.title.message}</p>
             )}
           </div>
 
@@ -350,7 +350,7 @@ export default function CreateWikiPage() {
                               <div className="text-caption">{opt.desc}</div>
                             </div>
                             {isSelected && (
-                              <motion.div layoutId="visibility-check" className="w-2 h-2 rounded-full bg-accent-500"/>
+                              <motion.div layoutId="visibility-check" className='w-2 h-2 rounded-full bg-accent'/>
                             )}
                           </button>
                         );
@@ -400,7 +400,7 @@ export default function CreateWikiPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                className='w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
               >
                 <Send className="w-4 h-4"/>
                 {isSubmitting ? 'Publishing...' : 'Publish Page'}

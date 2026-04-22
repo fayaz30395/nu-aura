@@ -1,33 +1,33 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { format, parseISO } from 'date-fns';
-import { useToast } from '@/components/notifications';
-import { getErrorMessage } from '@/lib/utils/error-handler';
-import { User } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { SkeletonDashboard } from '@/components/ui/Skeleton';
+import {useState, useCallback, useEffect} from 'react';
+import {format, parseISO} from 'date-fns';
+import {useToast} from '@/components/notifications';
+import {getErrorMessage} from '@/lib/utils/error-handler';
+import {User} from 'lucide-react';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
 // Dashboard widget components
-import { WelcomeBanner, QuickAccessWidget } from '@/components/dashboard/WelcomeBanner';
-import { TimeClockWidget } from '@/components/dashboard/TimeClockWidget';
-import { HolidayCarousel } from '@/components/dashboard/HolidayCarousel';
-import { OnLeaveTodayCard, WorkingRemotelyCard } from '@/components/dashboard/TeamPresenceWidget';
-import { LeaveBalanceWidget } from '@/components/dashboard/LeaveBalanceWidget';
-import { PostComposer } from '@/components/dashboard/PostComposer';
-import { BirthdayWishingBoard } from '@/components/dashboard/BirthdayWishingBoard';
-import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
-import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { attendanceService } from '@/lib/services/hrms/attendance.service';
-import { useSelfServiceDashboard } from '@/lib/hooks/queries';
-import { useQueryClient } from '@tanstack/react-query';
-import { createLogger } from '@/lib/utils/logger';
+import {WelcomeBanner, QuickAccessWidget} from '@/components/dashboard/WelcomeBanner';
+import {TimeClockWidget} from '@/components/dashboard/TimeClockWidget';
+import {HolidayCarousel} from '@/components/dashboard/HolidayCarousel';
+import {OnLeaveTodayCard, WorkingRemotelyCard} from '@/components/dashboard/TeamPresenceWidget';
+import {LeaveBalanceWidget} from '@/components/dashboard/LeaveBalanceWidget';
+import {PostComposer} from '@/components/dashboard/PostComposer';
+import {BirthdayWishingBoard} from '@/components/dashboard/BirthdayWishingBoard';
+import {CelebrationTabs} from '@/components/dashboard/CelebrationTabs';
+import {CompanyFeed} from '@/components/dashboard/CompanyFeed';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {attendanceService} from '@/lib/services/hrms/attendance.service';
+import {useSelfServiceDashboard} from '@/lib/hooks/queries';
+import {useQueryClient} from '@tanstack/react-query';
+import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('Dashboard');
 
 export default function MyDashboardPage() {
-  const { user, hasHydrated } = useAuth();
+  const {user, hasHydrated} = useAuth();
   const queryClient = useQueryClient();
   const toast = useToast();
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
@@ -38,7 +38,7 @@ export default function MyDashboardPage() {
   const [localCheckOutTime, setLocalCheckOutTime] = useState<string | null>(null);
 
   // React Query — single source of truth for dashboard data
-  const { data: dashboard, isLoading: queryLoading } = useSelfServiceDashboard(
+  const {data: dashboard, isLoading: queryLoading} = useSelfServiceDashboard(
     user?.employeeId || '',
     hasHydrated && !!user?.employeeId
   );
@@ -67,7 +67,7 @@ export default function MyDashboardPage() {
 
   // Refresh attendance state after check-in/check-out by invalidating the React Query cache
   const refreshDashboard = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: ['selfServiceDashboard'] });
+    await queryClient.invalidateQueries({queryKey: ['selfServiceDashboard']});
   }, [queryClient]);
 
   const handleCheckIn = useCallback(async () => {
@@ -106,7 +106,7 @@ export default function MyDashboardPage() {
       setIsCheckedIn(false);
       setCheckInTime(null);
       setLocalCompleted(true);
-      setLocalCheckOutTime(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
+      setLocalCheckOutTime(new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true}));
       refreshDashboard();
     } catch (error: unknown) {
       log.error('Check-out failed:', error);
@@ -118,9 +118,9 @@ export default function MyDashboardPage() {
 
   if (!hasHydrated || isLoading) {
     return (
-      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
+      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
         <div className="p-6">
-          <SkeletonDashboard />
+          <SkeletonDashboard/>
         </div>
       </AppLayout>
     );
@@ -136,9 +136,9 @@ export default function MyDashboardPage() {
   // Non-admin users without employee profile → show fallback
   if (!dashboard && !isSuperAdminOrAdmin) {
     return (
-      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
+      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
         <div className="text-center py-12">
-          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4"/>
           <h2 className="skeuo-emboss text-xl font-semibold text-[var(--text-primary)] mb-2">
             No Employee Profile Linked
           </h2>
@@ -153,7 +153,7 @@ export default function MyDashboardPage() {
   return (
     <AppLayout
       activeMenuItem="my-dashboard"
-      breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
+      breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}
     >
       {/* Two independent columns — bento grid with staggered animations */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
@@ -162,9 +162,9 @@ export default function MyDashboardPage() {
         <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           {/* Welcome Banner — hero card, enters first */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
             <WelcomeBanner
               employeeName={dashboard?.employeeName || user?.fullName || 'Employee'}
@@ -175,9 +175,9 @@ export default function MyDashboardPage() {
 
           {/* Quick Access — Pending actions & inbox */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.08, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
             <QuickAccessWidget
               pendingApprovals={dashboard?.pendingApprovals ?? 0}
@@ -190,9 +190,9 @@ export default function MyDashboardPage() {
           {/* Time Clock — Live clock + Check-in/out (only for employees) */}
           {user?.employeeId && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94] }}
+              initial={{opacity: 0, y: 16}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94]}}
             >
               <TimeClockWidget
                 isCheckedIn={isCheckedIn}
@@ -201,7 +201,11 @@ export default function MyDashboardPage() {
                 onCheckOut={handleCheckOut}
                 isLoading={checkingIn}
                 isCompleted={localCompleted || (!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime)}
-                checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : null)}
+                checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                }) : null)}
                 workDurationMinutes={null}
               />
             </motion.div>
@@ -209,52 +213,52 @@ export default function MyDashboardPage() {
 
           {/* Holiday Carousel — full-width gradient card */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.20, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.20, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <HolidayCarousel />
+            <HolidayCarousel/>
           </motion.div>
 
           {/* On Leave Today */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.24, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.24, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <OnLeaveTodayCard />
+            <OnLeaveTodayCard/>
           </motion.div>
 
           {/* Working Remotely */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <WorkingRemotelyCard />
+            <WorkingRemotelyCard/>
           </motion.div>
 
           {/* Leave Balance — Circular progress ring (only for employees) */}
           {user?.employeeId && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
+              initial={{opacity: 0, y: 16}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.4, delay: 0.32, ease: [0.25, 0.46, 0.45, 0.94]}}
             >
               <LeaveBalanceWidget
                 leaveBalances={
                   dashboard?.leaveBalances
                     ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => {
-                        const avail = available as number;
-                        const total = avail + 2; // estimate; real API will provide totals
-                        return {
-                          leaveTypeId: String(idx),
-                          leaveName: name,
-                          available: avail,
-                          total,
-                          used: total - avail,
-                        };
-                      })
+                      const avail = available as number;
+                      const total = avail + 2; // estimate; real API will provide totals
+                      return {
+                        leaveTypeId: String(idx),
+                        leaveName: name,
+                        available: avail,
+                        total,
+                        used: total - avail,
+                      };
+                    })
                     : undefined
                 }
               />
@@ -265,34 +269,34 @@ export default function MyDashboardPage() {
         {/* ─── Right Column (7/12) ─── */}
         <div className="lg:col-span-7 space-y-6">
           {/* Birthday Wishing Board — shows only on the user's birthday */}
-          <BirthdayWishingBoard />
+          <BirthdayWishingBoard/>
 
           {/* Post Composer — Post / Poll / Praise */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.06, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <PostComposer onPostCreated={() => setFeedRefreshKey((k) => k + 1)} />
+            <PostComposer onPostCreated={() => setFeedRefreshKey((k) => k + 1)}/>
           </motion.div>
 
           {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
           <motion.div
             data-section="celebrations"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.14, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <CelebrationTabs />
+            <CelebrationTabs/>
           </motion.div>
 
           {/* Unified Social Feed — Announcements, Recognitions, LinkedIn, Wall Posts */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{opacity: 0, y: 16}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4, delay: 0.22, ease: [0.25, 0.46, 0.45, 0.94]}}
           >
-            <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey} />
+            <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey}/>
           </motion.div>
         </div>
       </div>

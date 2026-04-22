@@ -47,11 +47,36 @@ const R = (cols: Partial<Record<string, Expect>>, fallback: Expect = 'render'): 
 const ROUTES: RouteSpec[] = [
   {route: '/dashboard', h1: /dashboard/i, roles: R({})},
   {route: '/employees', h1: /employee/i, api: '/api/v1/employees', roles: R({EMPLOYEE: 'redirect'})},
-  {route: '/admin/employees', h1: /employee/i, api: '/api/v1/employees', roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect'})},
-  {route: '/admin/roles', h1: /role/i, api: '/api/v1/roles', roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect', HR_MANAGER: 'redirect'})},
-  {route: '/admin/permissions', h1: /permission/i, api: '/api/v1/permissions', roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect', HR_MANAGER: 'redirect'})},
-  {route: '/admin/payroll', h1: /payroll/i, api: '/api/v1/payroll/runs', roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect'})},
-  {route: '/analytics/org-health', h1: /organization health/i, api: '/api/v1/analytics/org-health', roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect'})},
+  {
+    route: '/admin/employees',
+    h1: /employee/i,
+    api: '/api/v1/employees',
+    roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect'})
+  },
+  {
+    route: '/admin/roles',
+    h1: /role/i,
+    api: '/api/v1/roles',
+    roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect', HR_MANAGER: 'redirect'})
+  },
+  {
+    route: '/admin/permissions',
+    h1: /permission/i,
+    api: '/api/v1/permissions',
+    roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect', HR_MANAGER: 'redirect'})
+  },
+  {
+    route: '/admin/payroll',
+    h1: /payroll/i,
+    api: '/api/v1/payroll/runs',
+    roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect'})
+  },
+  {
+    route: '/analytics/org-health',
+    h1: /organization health/i,
+    api: '/api/v1/analytics/org-health',
+    roles: R({EMPLOYEE: 'redirect', TEAM_LEAD: 'redirect', MANAGER: 'redirect'})
+  },
   {route: '/fluence/wiki', h1: /wiki/i, roles: R({})},
   {route: '/attendance', h1: /attendance/i, roles: R({})},
   {route: '/leave', h1: /leave/i, roles: R({})},

@@ -256,7 +256,7 @@ export default function ShiftSwapPage() {
         <Card className="skeuo-card">
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-4"><SkeletonTable rows={5} columns={5} /></div>
+              <div className="p-4"><SkeletonTable rows={5} columns={5}/></div>
             ) : getDisplayData().length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)]">
                 <ArrowLeftRight className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>
@@ -295,7 +295,8 @@ export default function ShiftSwapPage() {
                     <td className="px-4 py-4">
                       {activeTab === 'incoming' && req.status === 'PENDING' && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="text-success-700 border-success-200"
+                          <Button size="sm" variant="outline"
+                                  className='text-status-success-text border-status-success-border'
                                   disabled={actionMutation.isPending}
                                   onClick={() => actionMutation.mutate({
                                     id: req.id,
@@ -304,7 +305,8 @@ export default function ShiftSwapPage() {
                                   })}>
                             Accept
                           </Button>
-                          <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
+                          <Button size="sm" variant="outline"
+                                  className='text-status-danger-text border-status-danger-border'
                                   disabled={actionMutation.isPending}
                                   onClick={() => actionMutation.mutate({
                                     id: req.id,
@@ -317,7 +319,8 @@ export default function ShiftSwapPage() {
                       )}
                       {activeTab === 'approval' && req.status === 'PENDING_APPROVAL' && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="text-success-700 border-success-200"
+                          <Button size="sm" variant="outline"
+                                  className='text-status-success-text border-status-success-border'
                                   disabled={actionMutation.isPending}
                                   onClick={() => actionMutation.mutate({
                                     id: req.id,
@@ -326,7 +329,8 @@ export default function ShiftSwapPage() {
                                   })}>
                             Approve
                           </Button>
-                          <Button size="sm" variant="outline" className="text-danger-700 border-danger-200"
+                          <Button size="sm" variant="outline"
+                                  className='text-status-danger-text border-status-danger-border'
                                   disabled={actionMutation.isPending}
                                   onClick={() => actionMutation.mutate({
                                     id: req.id,
@@ -373,7 +377,6 @@ export default function ShiftSwapPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* Create modal */}
       <Modal opened={showModal} onClose={handleModalClose} title="New Shift Swap Request" size="lg" centered>
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
@@ -388,7 +391,7 @@ export default function ShiftSwapPage() {
               <option value="PICK_UP">Pick Up (take an available shift)</option>
             </select>
             {errors.swapType && (
-              <p className="mt-1 text-xs text-danger-500">{errors.swapType.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.swapType.message}</p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -400,7 +403,7 @@ export default function ShiftSwapPage() {
                 className={`input-aura ${errors.requesterShiftDate ? 'border-danger-500' : ''}`}
               />
               {errors.requesterShiftDate && (
-                <p className="mt-1 text-xs text-danger-500">{errors.requesterShiftDate.message}</p>
+                <p className='mt-1 text-xs text-status-danger-text'>{errors.requesterShiftDate.message}</p>
               )}
             </div>
             {watchedSwapType === 'SWAP' && (
@@ -431,7 +434,7 @@ export default function ShiftSwapPage() {
               <p className="mt-1 text-caption">No active shift assignments found</p>
             )}
             {errors.requesterAssignmentId && (
-              <p className="mt-1 text-xs text-danger-500">{errors.requesterAssignmentId.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.requesterAssignmentId.message}</p>
             )}
           </div>
           {watchedSwapType !== 'PICK_UP' && (

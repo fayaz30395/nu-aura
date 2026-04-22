@@ -364,15 +364,15 @@ export default function KekaImportPage() {
           {/* Error Alert */}
           {error && (
             <div
-              className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-start">
-              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mr-4 flex-shrink-0 mt-0.5"/>
+              className='mb-6 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-start'>
+              <AlertCircle className='w-5 h-5 text-status-danger-text mr-4 flex-shrink-0 mt-0.5'/>
               <div className="flex-1">
-                <p className="text-danger-800 dark:text-danger-100 font-medium">Error</p>
-                <p className="text-danger-700 dark:text-danger-200 text-sm mt-1">{error}</p>
+                <p className='text-status-danger-text font-medium'>Error</p>
+                <p className='text-status-danger-text text-sm mt-1'>{error}</p>
               </div>
               <button
                 onClick={() => setError(null)}
-                className="text-danger-600 dark:text-danger-400 hover:text-danger-800 dark:hover:text-danger-200 ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='text-status-danger-text hover:text-status-danger-text ml-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 aria-label="Close error message"
               >
                 ×
@@ -412,11 +412,11 @@ export default function KekaImportPage() {
 
               {/* Instructions */}
               <div
-                className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-accent-900 dark:text-accent-100 mb-2">
+                className='bg-accent-subtle border border-[var(--accent-primary)] rounded-lg p-4 mb-6'>
+                <h4 className='font-semibold text-accent mb-2'>
                   How to export from KEKA:
                 </h4>
-                <ol className="text-sm text-accent-800 dark:text-accent-200 space-y-1 list-decimal list-inside">
+                <ol className='text-sm text-accent space-y-1 list-decimal list-inside'>
                   <li>Log in to KEKA HRMS</li>
                   <li>Go to Employees &gt; Employee List</li>
                   <li>Click Export to CSV or Excel</li>
@@ -453,7 +453,7 @@ export default function KekaImportPage() {
 
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
-                      <CheckCircle className="w-12 h-12 text-success-500 mb-4"/>
+                      <CheckCircle className='w-12 h-12 text-status-success-text mb-4'/>
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
@@ -526,11 +526,11 @@ export default function KekaImportPage() {
 
               {unmappedColumns.length > 0 && (
                 <div
-                  className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg flex items-start mb-6">
-                  <AlertTriangle className="w-5 h-5 text-warning-600 dark:text-warning-400 mr-4 flex-shrink-0 mt-0.5"/>
+                  className='p-4 bg-status-warning-bg border border-status-warning-border rounded-lg flex items-start mb-6'>
+                  <AlertTriangle className='w-5 h-5 text-status-warning-text mr-4 flex-shrink-0 mt-0.5'/>
                   <div>
-                    <p className="text-warning-800 dark:text-warning-100 font-medium">Unmapped Columns</p>
-                    <p className="text-warning-700 dark:text-warning-200 text-sm mt-1">
+                    <p className='text-status-warning-text font-medium'>Unmapped Columns</p>
+                    <p className='text-status-warning-text text-sm mt-1'>
                       {unmappedColumns.length} column(s) are not mapped. These will be skipped during
                       import.
                     </p>
@@ -590,7 +590,7 @@ export default function KekaImportPage() {
                         </Table.Td>
                         <Table.Td>
                           {mapping.targetField ? (
-                            <CheckCircle className="w-5 h-5 text-success-500"/>
+                            <CheckCircle className='w-5 h-5 text-status-success-text'/>
                           ) : (
                             <XCircle className="w-5 h-5 text-[var(--text-muted)]"/>
                           )}
@@ -623,38 +623,38 @@ export default function KekaImportPage() {
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div
-                  className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
-                  <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
+                  className='bg-accent-subtle p-4 rounded-lg border border-[var(--accent-primary)]'>
+                  <p className='text-sm text-accent font-medium'>
                     Total Rows
                   </p>
-                  <p className="text-xl font-bold text-accent-900 dark:text-accent-100">
+                  <p className='text-xl font-bold text-accent'>
                     {preview.totalRows}
                   </p>
                 </div>
                 <div
-                  className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
-                  <p className="text-sm text-success-600 dark:text-success-300 font-medium">
+                  className='bg-status-success-bg p-4 rounded-lg border border-status-success-border'>
+                  <p className='text-sm text-status-success-text font-medium'>
                     Valid
                   </p>
-                  <p className="text-xl font-bold text-success-900 dark:text-success-100">
+                  <p className='text-xl font-bold text-status-success-text'>
                     {preview.validRows}
                   </p>
                 </div>
                 <div
-                  className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
-                  <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
+                  className='bg-status-warning-bg p-4 rounded-lg border border-status-warning-border'>
+                  <p className='text-sm text-status-warning-text font-medium'>
                     Warnings
                   </p>
-                  <p className="text-xl font-bold text-warning-900 dark:text-warning-100">
+                  <p className='text-xl font-bold text-status-warning-text'>
                     {preview.warnings.length}
                   </p>
                 </div>
                 <div
-                  className="bg-danger-50 dark:bg-danger-900/20 p-4 rounded-lg border border-danger-200 dark:border-danger-800">
-                  <p className="text-sm text-danger-600 dark:text-danger-300 font-medium">
+                  className='bg-status-danger-bg p-4 rounded-lg border border-status-danger-border'>
+                  <p className='text-sm text-status-danger-text font-medium'>
                     Errors
                   </p>
-                  <p className="text-xl font-bold text-danger-900 dark:text-danger-100">
+                  <p className='text-xl font-bold text-status-danger-text'>
                     {preview.errorRows}
                   </p>
                 </div>
@@ -663,16 +663,16 @@ export default function KekaImportPage() {
               {/* Error Details */}
               {preview.errors.length > 0 && (
                 <div
-                  className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-                  <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
+                  className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+                  <p className='font-semibold text-status-danger-text mb-2'>Import Errors</p>
                   <div className="text-sm space-y-1">
                     {preview.errors.slice(0, 5).map((err, idx) => (
-                      <div key={idx} className="text-danger-700 dark:text-danger-200">
+                      <div key={idx} className='text-status-danger-text'>
                         Row {err.row}, {err.field}: {err.message}
                       </div>
                     ))}
                     {preview.errors.length > 5 && (
-                      <div className="text-danger-700 dark:text-danger-200 font-medium">
+                      <div className='text-status-danger-text font-medium'>
                         +{preview.errors.length - 5} more errors
                       </div>
                     )}
@@ -824,8 +824,8 @@ export default function KekaImportPage() {
 
               {/* Summary */}
               <div
-                className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 p-4 rounded-lg mb-6">
-                <p className="text-sm font-medium text-accent-900 dark:text-accent-100">
+                className='bg-accent-subtle border border-[var(--accent-primary)] p-4 rounded-lg mb-6'>
+                <p className='text-sm font-medium text-accent'>
                   Ready to import {preview.validRows} valid employee records
                 </p>
               </div>
@@ -855,17 +855,17 @@ export default function KekaImportPage() {
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
                       <>
-                        <CheckCircle className="w-6 h-6 text-success-500 mr-2"/>
+                        <CheckCircle className='w-6 h-6 text-status-success-text mr-2'/>
                         Import Completed
                       </>
                     ) : result.status === 'PARTIAL_SUCCESS' ? (
                       <>
-                        <AlertTriangle className="w-6 h-6 text-warning-500 mr-2"/>
+                        <AlertTriangle className='w-6 h-6 text-status-warning-text mr-2'/>
                         Partial Success
                       </>
                     ) : (
                       <>
-                        <XCircle className="w-6 h-6 text-danger-500 mr-2"/>
+                        <XCircle className='w-6 h-6 text-status-danger-text mr-2'/>
                         Import Failed
                       </>
                     )}
@@ -887,38 +887,38 @@ export default function KekaImportPage() {
               {/* Summary Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div
-                  className="bg-accent-50 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-200 dark:border-accent-800">
-                  <p className="text-sm text-accent-600 dark:text-accent-300 font-medium">
+                  className='bg-accent-subtle p-4 rounded-lg border border-[var(--accent-primary)]'>
+                  <p className='text-sm text-accent font-medium'>
                     Total Processed
                   </p>
-                  <p className="text-xl font-bold text-accent-900 dark:text-accent-100">
+                  <p className='text-xl font-bold text-accent'>
                     {result.totalProcessed}
                   </p>
                 </div>
                 <div
-                  className="bg-success-50 dark:bg-success-900/20 p-4 rounded-lg border border-success-200 dark:border-success-800">
-                  <p className="text-sm text-success-600 dark:text-success-300 font-medium">
+                  className='bg-status-success-bg p-4 rounded-lg border border-status-success-border'>
+                  <p className='text-sm text-status-success-text font-medium'>
                     Created
                   </p>
-                  <p className="text-xl font-bold text-success-900 dark:text-success-100">
+                  <p className='text-xl font-bold text-status-success-text'>
                     {result.created}
                   </p>
                 </div>
                 <div
-                  className="bg-accent-250 dark:bg-accent-900/20 p-4 rounded-lg border border-accent-400 dark:border-accent-900">
-                  <p className="text-sm text-accent-800 dark:text-accent-500 font-medium">
+                  className='bg-accent-subtle p-4 rounded-lg border border-[var(--accent-primary)]'>
+                  <p className='text-sm text-accent font-medium'>
                     Updated
                   </p>
-                  <p className="text-xl font-bold text-accent-900 dark:text-accent-300">
+                  <p className='text-xl font-bold text-accent'>
                     {result.updated}
                   </p>
                 </div>
                 <div
-                  className="bg-warning-50 dark:bg-warning-900/20 p-4 rounded-lg border border-warning-200 dark:border-warning-800">
-                  <p className="text-sm text-warning-600 dark:text-warning-300 font-medium">
+                  className='bg-status-warning-bg p-4 rounded-lg border border-status-warning-border'>
+                  <p className='text-sm text-status-warning-text font-medium'>
                     Skipped
                   </p>
-                  <p className="text-xl font-bold text-warning-900 dark:text-warning-100">
+                  <p className='text-xl font-bold text-status-warning-text'>
                     {result.skipped}
                   </p>
                 </div>
@@ -934,16 +934,16 @@ export default function KekaImportPage() {
               {/* Errors */}
               {result.errors.length > 0 && (
                 <div
-                  className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-                  <p className="font-semibold text-danger-800 dark:text-danger-100 mb-2">Import Errors</p>
+                  className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+                  <p className='font-semibold text-status-danger-text mb-2'>Import Errors</p>
                   <div className="text-sm space-y-1 mb-4">
                     {result.errors.slice(0, 5).map((err, idx) => (
-                      <div key={idx} className="text-danger-700 dark:text-danger-200">
+                      <div key={idx} className='text-status-danger-text'>
                         Row {err.row}, {err.field}: {err.message}
                       </div>
                     ))}
                     {result.errors.length > 5 && (
-                      <div className="text-danger-700 dark:text-danger-200 font-medium">
+                      <div className='text-status-danger-text font-medium'>
                         +{result.errors.length - 5} more errors
                       </div>
                     )}

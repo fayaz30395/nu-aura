@@ -244,7 +244,7 @@ export default function TeamDirectory() {
           <div className="row-between">
             <div>
               <h1 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-4 skeuo-emboss">
-                <Users className="w-7 h-7 text-accent-700 dark:text-accent-400"/>
+                <Users className='w-7 h-7 text-accent'/>
                 Team Directory
               </h1>
               <p className="text-[var(--text-muted)] mt-1 skeuo-deboss">
@@ -315,7 +315,7 @@ export default function TeamDirectory() {
                   {(filters.departmentIds.length > 0 ||
                     filters.jobRoles.length > 0 ||
                     filters.levels.length > 0) && (
-                    <span className="w-2 h-2 bg-accent-700 rounded-full"/>
+                    <span className='w-2 h-2 bg-accent rounded-full'/>
                   )}
                 </button>
               </div>
@@ -458,7 +458,7 @@ export default function TeamDirectory() {
         {/* Employee Grid/List */}
         {isPending ? (
           <div className="flex justify-center items-center h-64">
-            <Loader2 className="w-8 h-8 animate-spin text-accent-700"/>
+            <Loader2 className='w-8 h-8 animate-spin text-accent'/>
           </div>
         ) : (
           <>
@@ -488,7 +488,7 @@ export default function TeamDirectory() {
                             <div
                               className={`w-full h-full rounded-full ${getRandomColor(
                                 employee.fullName
-                              )} flex items-center justify-center text-white text-lg font-semibold`}
+                              )} flex items-center justify-center text-inverse text-lg font-semibold`}
                             >
                               {getInitials(employee.fullName)}
                             </div>
@@ -530,7 +530,7 @@ export default function TeamDirectory() {
                               href={`mailto:${employee.personalEmail}`}
                               onClick={(e) => e.stopPropagation()}
                               aria-label={`Email ${employee.fullName}`}
-                              className="p-2 bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400 rounded-lg hover:bg-accent-100 dark:hover:bg-accent-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                              className='p-2 bg-accent-subtle text-accent rounded-lg hover:bg-accent-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2'
                             >
                               <Mail className="w-4 h-4"/>
                             </a>
@@ -540,7 +540,7 @@ export default function TeamDirectory() {
                               href={`tel:${employee.phoneNumber}`}
                               onClick={(e) => e.stopPropagation()}
                               aria-label={`Call ${employee.fullName}`}
-                              className="p-2 bg-success-50 dark:bg-success-950/30 text-success-600 dark:text-success-400 rounded-lg hover:bg-success-100 dark:hover:bg-success-900/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2"
+                              className='p-2 bg-status-success-bg text-status-success-text rounded-lg hover:bg-status-success-bg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2'
                             >
                               <Phone className="w-4 h-4"/>
                             </a>
@@ -579,7 +579,7 @@ export default function TeamDirectory() {
                       </th>
                     </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                    <tbody className='divide-y divide-surface-100'>
                     {employees.map((employee, index) => (
                       <motion.tr
                         key={employee.id}
@@ -594,7 +594,7 @@ export default function TeamDirectory() {
                             <div
                               className={`w-10 h-10 rounded-full ${getRandomColor(
                                 employee.fullName
-                              )} flex items-center justify-center text-white font-medium`}
+                              )} flex items-center justify-center text-inverse font-medium`}
                             >
                               {getInitials(employee.fullName)}
                             </div>
@@ -640,7 +640,7 @@ export default function TeamDirectory() {
                                 href={`mailto:${employee.personalEmail}`}
                                 onClick={(e) => e.stopPropagation()}
                                 aria-label={`Email ${employee.fullName}`}
-                                className="p-2 text-[var(--text-muted)] hover:text-accent-600 dark:hover:text-accent-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
+                                className='p-2 text-[var(--text-muted)] hover:text-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md'
                               >
                                 <Mail className="w-4 h-4"/>
                               </a>
@@ -650,7 +650,7 @@ export default function TeamDirectory() {
                                 href={`tel:${employee.phoneNumber}`}
                                 onClick={(e) => e.stopPropagation()}
                                 aria-label={`Call ${employee.fullName}`}
-                                className="p-2 text-[var(--text-muted)] hover:text-success-600 dark:hover:text-success-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2 rounded-md"
+                                className='p-2 text-[var(--text-muted)] hover:text-status-success-text transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-success-500 focus-visible:ring-offset-2 rounded-md'
                               >
                                 <Phone className="w-4 h-4"/>
                               </a>
@@ -749,14 +749,14 @@ export default function TeamDirectory() {
                     aria-label="Close employee details"
                     className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                   >
-                    <X className="w-5 h-5 text-white"/>
+                    <X className='w-5 h-5 text-inverse'/>
                   </button>
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                     <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
                       <div
                         className={`w-full h-full rounded-full ${getRandomColor(
                           selectedEmployee.fullName
-                        )} flex items-center justify-center text-white text-xl font-bold`}
+                        )} flex items-center justify-center text-inverse text-xl font-bold`}
                       >
                         {getInitials(selectedEmployee.fullName)}
                       </div>
@@ -826,7 +826,7 @@ export default function TeamDirectory() {
                         </div>
                         <a
                           href={`tel:${selectedEmployee.phoneNumber}`}
-                          className="px-4 py-1.5 bg-success-600 text-white text-sm rounded-lg hover:bg-success-700 transition-colors"
+                          className='px-4 py-1.5 bg-status-success-bg text-inverse text-sm rounded-lg hover:bg-status-success-bg transition-colors'
                         >
                           Call
                         </a>

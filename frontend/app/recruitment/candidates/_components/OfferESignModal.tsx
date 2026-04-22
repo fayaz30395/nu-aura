@@ -132,7 +132,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
             <span>Expires: {new Date(req.expiresAt).toLocaleDateString()}</span>
           )}
           {req.completedAt && (
-            <span className="text-success-600">Signed: {new Date(req.completedAt).toLocaleDateString()}</span>
+            <span className='text-status-success-text'>Signed: {new Date(req.completedAt).toLocaleDateString()}</span>
           )}
         </div>
         {req.documentUrl && (
@@ -140,14 +140,13 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
             href={req.documentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 cursor-pointer"
+            className='inline-flex items-center gap-1 text-xs text-accent hover:text-accent cursor-pointer'
           >
             <ExternalLink className="h-3 w-3"/>
             View Document
           </a>
         )}
       </div>
-
       {/* Signer Statuses */}
       {approvals.length > 0 && (
         <div>
@@ -168,17 +167,17 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
                     {approval.signerEmail} · {approval.signerRole}
                   </p>
                   {approval.signedAt && (
-                    <p className="text-xs text-success-600 mt-0.5">
+                    <p className='text-xs text-status-success-text mt-0.5'>
                       Signed {new Date(approval.signedAt).toLocaleString()}
                     </p>
                   )}
                   {approval.declineReason && (
-                    <p className="text-xs text-danger-600 mt-0.5">
+                    <p className='text-xs text-status-danger-text mt-0.5'>
                       Declined: {approval.declineReason}
                     </p>
                   )}
                   {approval.viewedAt && !approval.signedAt && (
-                    <p className="text-xs text-warning-600 mt-0.5">
+                    <p className='text-xs text-status-warning-text mt-0.5'>
                       Viewed {new Date(approval.viewedAt).toLocaleString()}
                     </p>
                   )}
@@ -189,7 +188,6 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
           </div>
         </div>
       )}
-
       {/* Actions */}
       <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-main)]">
         <Button
@@ -218,7 +216,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
             variant="outline"
             onClick={() => onCancel(signatureRequestId)}
             disabled={isCancelling}
-            className="flex items-center gap-1.5 text-sm text-danger-600 border-danger-300 hover:bg-danger-50"
+            className='flex items-center gap-1.5 text-sm text-status-danger-text border-status-danger-border hover:bg-status-danger-bg'
           >
             <XCircle className="h-3.5 w-3.5"/>
             {isCancelling ? 'Cancelling…' : 'Cancel Request'}
@@ -330,7 +328,7 @@ export function OfferESignModal({
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                <FileSignature className="h-5 w-5 text-accent-500"/>
+                <FileSignature className='h-5 w-5 text-accent'/>
                 Offer Letter E-Sign
               </h2>
               <p className="text-body-muted mt-0.5">{candidate.fullName}</p>
@@ -347,22 +345,20 @@ export function OfferESignModal({
           {/* Body: Create or Track */}
           {!createdRequestId ? (
             /* ========== Create New Request Form ========== */
-            <form onSubmit={handleSubmit(handleCreate)} className="space-y-4">
+            (<form onSubmit={handleSubmit(handleCreate)} className="space-y-4">
               <p className="text-body-secondary">
                 Create an e-signature request for the offer letter. The candidate will receive a
                 secure link to review and sign.
               </p>
-
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Candidate Email *
                 </label>
                 <input type="email" {...register('signerEmail')} className={inputCls}/>
                 {errors.signerEmail && (
-                  <p className="text-xs text-danger-500 mt-1">{errors.signerEmail.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{errors.signerEmail.message}</p>
                 )}
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Document URL
@@ -376,10 +372,9 @@ export function OfferESignModal({
                   className={inputCls}
                 />
                 {errors.documentUrl && (
-                  <p className="text-xs text-danger-500 mt-1">{errors.documentUrl.message}</p>
+                  <p className='text-xs text-status-danger-text mt-1'>{errors.documentUrl.message}</p>
                 )}
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -393,7 +388,7 @@ export function OfferESignModal({
                     className={inputCls}
                   />
                   {errors.expiresInDays && (
-                    <p className="text-xs text-danger-500 mt-1">{errors.expiresInDays.message}</p>
+                    <p className='text-xs text-status-danger-text mt-1'>{errors.expiresInDays.message}</p>
                   )}
                 </div>
                 <div>
@@ -409,16 +404,14 @@ export function OfferESignModal({
                   />
                 </div>
               </div>
-
               <div
-                className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
+                className='p-4 bg-status-info-bg rounded-lg text-xs text-status-info-text flex gap-2'>
                 <Eye className="h-4 w-4 flex-shrink-0 mt-0.5"/>
                 <span>
                   The candidate will receive a secure, tokenized link by email to review and sign
                   the offer letter. You can track signature status here in real time.
                 </span>
               </div>
-
               <div className="flex gap-4 pt-2 border-t border-[var(--border-main)]">
                 <Button type="button" variant="outline" onClick={onClose} className="flex-1">
                   Cancel
@@ -434,14 +427,14 @@ export function OfferESignModal({
                   )}
                 </Button>
               </div>
-            </form>
+            </form>)
           ) : (
             /* ========== Status Tracker ========== */
-            <StatusTracker
+            (<StatusTracker
               signatureRequestId={createdRequestId}
               onCancel={handleCancel}
               isCancelling={cancelMutation.isPending}
-            />
+            />)
           )}
         </div>
       </div>

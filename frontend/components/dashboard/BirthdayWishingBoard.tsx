@@ -141,7 +141,7 @@ function WisherAvatars({wishers}: WisherAvatarsProps) {
         return (
           <div
             key={i}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-accent-100 dark:bg-accent-900/40 text-2xs font-semibold text-accent-700 dark:text-accent-400 shadow-[var(--shadow-card)]"
+            className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--border-subtle)] dark:border-[var(--bg-card)] bg-accent-subtle text-2xs font-semibold text-accent shadow-[var(--shadow-card)]'
             title={w.name}
           >
             {w.avatarUrl ? (
@@ -172,7 +172,13 @@ interface BirthdayWishingBoardProps {
 
 export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
   const {user} = useAuth();
-  const {data: birthdays = []} = useUpcomingBirthdays(1);
+  // PERF-2: Use same `days=14` as CelebrationTabs + feed so all three share
+  // one React Query cache entry. Filter client-side for today's birthdays.
+  const {data: allBirthdays = []} = useUpcomingBirthdays(14);
+  const birthdays = useMemo(
+    () => (Array.isArray(allBirthdays) ? allBirthdays.filter(b => b.isToday) : []),
+    [allBirthdays]
+  );
   const [dismissed] = useState(false);
 
   // Check if today is the logged-in user's birthday
@@ -201,23 +207,21 @@ export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
       initial={{opacity: 0, scale: 0.95}}
       animate={{opacity: 1, scale: 1}}
       transition={{duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94]}}
-      className="relative overflow-hidden rounded-lg border border-accent-200 dark:border-accent-800/40 bg-gradient-to-br from-accent-50 via-white to-info-50 dark:from-accent-950/40 dark:via-[var(--bg-card)] dark:to-info-950/30"
+      className='relative overflow-hidden rounded-lg border border-[var(--accent-primary)] bg-gradient-to-br from-accent-50 via-white to-info-50 dark:via-[var(--bg-card)]'
     >
       {/* Decorative elements */}
       <BuntingFlags/>
       <FloatingBalloons/>
-
       {/* Confetti particles */}
       {Array.from({length: 8}).map((_, i) => (
         <ConfettiParticle key={i} delay={i * 0.4} left={`${10 + i * 10}%`}/>
       ))}
-
       {/* Content */}
       <div className="relative z-10 px-6 pt-20 pb-6 text-center">
         {/* Avatar with party hat effect */}
         <div className="relative inline-block mb-4">
           <div
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/40 text-xl font-bold text-accent-700 dark:text-accent-400 border-2 border-accent-300 dark:border-accent-700 shadow-[var(--shadow-dropdown)] mx-auto">
+            className='flex h-16 w-16 items-center justify-center rounded-full bg-accent-subtle text-xl font-bold text-accent border-2 border-[var(--accent-primary)] shadow-[var(--shadow-dropdown)] mx-auto'>
             {displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
           </div>
           <motion.div
@@ -225,15 +229,15 @@ export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
             animate={{rotate: [0, 10, -10, 0]}}
             transition={{duration: 2, repeat: Infinity, ease: 'easeInOut'}}
           >
-            <PartyPopper className="h-6 w-6 text-warning-500"/>
+            <PartyPopper className='h-6 w-6 text-status-warning-text'/>
           </motion.div>
         </div>
 
         {/* Birthday message */}
-        <h3 className="text-lg font-bold text-accent-900 dark:text-accent-200">
+        <h3 className='text-lg font-bold text-accent'>
           Happy birthday, {displayName}!
         </h3>
-        <p className="text-sm text-accent-700/70 dark:text-accent-400/70 mt-1 max-w-xs mx-auto">
+        <p className='text-sm text-accent-700/70 mt-1 max-w-xs mx-auto'>
           May this year bring you joy, success, and wonderful memories with the team!
         </p>
 
@@ -241,7 +245,7 @@ export function BirthdayWishingBoard({forceShow}: BirthdayWishingBoardProps) {
         <motion.button
           whileHover={{scale: 1.03}}
           whileTap={{scale: 0.97}}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-accent-300 dark:border-accent-700 bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-300 shadow-[var(--shadow-card)] hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          className='mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--accent-primary)] bg-[var(--bg-card)] px-4 py-2 text-sm font-medium text-accent shadow-[var(--shadow-card)] hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           onClick={() => {
             // Navigate to wishes view — for now, scroll to celebrations section
             const celebrationSection = document.querySelector('[data-section="celebrations"]');

@@ -123,7 +123,7 @@ export default function AttritionReportPage() {
 
         {error && (
           <div
-            className="mb-4 p-4 bg-warning-50 border border-warning-200 rounded-md text-sm text-warning-700 flex items-start gap-2">
+            className='mb-4 p-4 bg-status-warning-bg border border-status-warning-border rounded-md text-sm text-status-warning-text flex items-start gap-2'>
             <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5"/>
             {error}
           </div>
@@ -178,11 +178,12 @@ export default function AttritionReportPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+            <div
+              className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full'/>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 skeuo-card">
-            <Shield className="h-12 w-12 text-success-400 mx-auto mb-4"/>
+            <Shield className='h-12 w-12 text-status-success-text mx-auto mb-4'/>
             <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
             <p className="text-body-muted mt-1">Lower the minimum risk score to see more results</p>
           </div>
@@ -219,7 +220,7 @@ export default function AttritionReportPage() {
                           </span>
                           {pred.actionTaken && (
                             <span
-                              className="shrink-0 text-xs text-success-600 bg-success-50 border border-success-200 px-1.5 py-0.5 rounded">
+                              className='shrink-0 text-xs text-status-success-text bg-status-success-bg border border-status-success-border px-1.5 py-0.5 rounded'>
                               Action Taken
                             </span>
                           )}
@@ -249,7 +250,6 @@ export default function AttritionReportPage() {
                         </svg>
                       </div>
                     </button>
-
                     {expanded && (
                       <div className="px-6 pb-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -284,7 +284,7 @@ export default function AttritionReportPage() {
                               <ul className="space-y-1">
                                 {pred.recommendations.map((r, i) => (
                                   <li key={i} className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
-                                    <span className="text-accent-500 mt-0.5">•</span>
+                                    <span className='text-accent mt-0.5'>•</span>
                                     {r}
                                   </li>
                                 ))}
@@ -298,7 +298,7 @@ export default function AttritionReportPage() {
                             <button
                               onClick={() => markActionTaken(pred.id)}
                               disabled={markingAction === pred.id}
-                              className="text-xs px-4 py-1.5 bg-accent-600 text-white rounded-md hover:bg-accent-700 disabled:opacity-50"
+                              className='text-xs px-4 py-1.5 bg-accent text-inverse rounded-md hover:bg-accent disabled:opacity-50'
                             >
                               {markingAction === pred.id ? 'Saving…' : 'Mark Action Taken'}
                             </button>

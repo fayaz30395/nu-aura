@@ -99,13 +99,13 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
           {/* Error Alert */}
           {error && (
             <div
-              className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
-              <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-xl animate-in slide-in-from-top-2 duration-300'>
+              <AlertCircle className='w-5 h-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
               <div className="flex-1">
-                <p className="text-sm font-medium text-danger-800 dark:text-danger-400">
+                <p className='text-sm font-medium text-status-danger-text'>
                   Verification Failed
                 </p>
-                <p className="text-sm text-danger-700 dark:text-danger-400 mt-1">
+                <p className='text-sm text-status-danger-text mt-1'>
                   {error}
                 </p>
               </div>
@@ -114,7 +114,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
 
           {/* Code Input */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className='block text-sm font-medium text-secondary'>
               {useBackupCode ? 'Backup Code' : 'Authenticator Code'}
             </label>
             <input
@@ -159,7 +159,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
                 setCode('');
                 setError(null);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-accent hover:text-accent transition-colors group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <HelpCircle className="h-4 w-4"/>
               <span>Use a backup code instead</span>
@@ -195,8 +195,8 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({userId, onSucce
 
         {/* Help Text */}
         <div
-          className="mt-6 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-          <p className="text-xs text-accent-900 dark:text-accent-100 leading-relaxed">
+          className='mt-6 p-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg'>
+          <p className='text-xs text-accent leading-relaxed'>
             Enter the code from your authenticator app. If you can&apos;t access your app, use one of your backup codes
             instead.
           </p>

@@ -120,7 +120,7 @@ function CompensationSkeleton() {
         <Skeleton height={28} width={300}/>
       </div>
       {Array.from({length: 4}).map((_, i) => (
-        <div key={i} className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-6">
+        <div key={i} className='bg-[var(--bg-card)] rounded-lg border border-subtle p-6'>
           <div className="flex items-center gap-4">
             <Skeleton height={40} width={40} radius="xl"/>
             <div className="flex-1 space-y-2">
@@ -158,7 +158,7 @@ function RevisionCard({revision, isFirst}: { revision: SalaryRevision; isFirst: 
                   size={18}
                   className={
                     isFirst
-                      ? 'text-accent-700 dark:text-accent-400'
+                      ? 'text-accent'
                       : 'text-[var(--text-muted)]'
                   }
                 />
@@ -212,9 +212,9 @@ function RevisionCard({revision, isFirst}: { revision: SalaryRevision; isFirst: 
                 {revision.incrementPercentage != null && (
                   <div className="flex items-center gap-1 ml-2">
                     {isPositive ? (
-                      <TrendingUp size={14} className="text-success-600 dark:text-success-400"/>
+                      <TrendingUp size={14} className='text-status-success-text'/>
                     ) : (
-                      <TrendingDown size={14} className="text-danger-600 dark:text-danger-400"/>
+                      <TrendingDown size={14} className='text-status-danger-text'/>
                     )}
                     <span
                       className={`text-sm font-semibold ${
@@ -319,7 +319,7 @@ export default function EmployeeCompensationPage() {
         ) : isError ? (
           <Card>
             <CardContent className="p-8 text-center">
-              <p className="text-sm text-danger-600 dark:text-danger-400">
+              <p className='text-sm text-status-danger-text'>
                 Failed to load compensation history. Please try again.
               </p>
             </CardContent>

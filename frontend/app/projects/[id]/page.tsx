@@ -200,7 +200,7 @@ export default function ProjectDetailPage() {
     return (
       <AppLayout breadcrumbs={[{label: 'Projects', href: '/projects'}, {label: 'Project'}]}>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+          <Loader2 className='h-6 w-6 animate-spin text-accent'/>
           <span className="ml-2 text-body-muted">Loading project...</span>
         </div>
       </AppLayout>
@@ -271,10 +271,10 @@ export default function ProjectDetailPage() {
         </div>
 
         {projectError && (
-          <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
+          <Card className='border border-status-danger-border bg-status-danger-bg'>
             <CardContent className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-danger-700 dark:text-danger-400"/>
-              <p className="text-sm text-danger-700 dark:text-danger-400">{projectError}</p>
+              <XCircle className='h-4 w-4 text-status-danger-text'/>
+              <p className='text-sm text-status-danger-text'>{projectError}</p>
             </CardContent>
           </Card>
         )}
@@ -304,7 +304,6 @@ export default function ProjectDetailPage() {
           {activeTab === 'invoices' && project?.isBillable && <InvoicesTab projectId={projectId}/>}
         </div>
       </div>
-
       {/* Confirm Dialogs */}
       <ConfirmDialog
         isOpen={showActivateDialog}
@@ -316,7 +315,6 @@ export default function ProjectDetailPage() {
         type="info"
         loading={actionLoading}
       />
-
       <ConfirmDialog
         isOpen={showCloseDialog}
         onClose={() => setShowCloseDialog(false)}
@@ -327,7 +325,6 @@ export default function ProjectDetailPage() {
         type="warning"
         loading={actionLoading}
       />
-
       {/* Edit Project Modal */}
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} size="lg">
         <ModalHeader onClose={() => setShowEditModal(false)}>
@@ -337,7 +334,7 @@ export default function ProjectDetailPage() {
           <ModalBody className="space-y-4">
             {editError && (
               <div
-                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
                 {editError}
               </div>
             )}
@@ -354,14 +351,15 @@ export default function ProjectDetailPage() {
               </div>
               <div>
                 <Input label="Project name" {...editRegister('name')} />
-                {editErrors.name && <p className="text-sm text-danger-500 mt-1">{editErrors.name.message}</p>}
+                {editErrors.name && <p className='text-sm text-status-danger-text mt-1'>{editErrors.name.message}</p>}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start date" type="date" {...editRegister('startDate')} />
-                {editErrors.startDate && <p className="text-sm text-danger-500 mt-1">{editErrors.startDate.message}</p>}
+                {editErrors.startDate &&
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...editRegister('expectedEndDate')} />
@@ -403,7 +401,7 @@ export default function ProjectDetailPage() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                  className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   {...editRegister('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>

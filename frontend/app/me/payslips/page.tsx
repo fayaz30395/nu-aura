@@ -133,7 +133,8 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
+          <div
+            className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-700 rounded-full animate-spin'/>
         </div>
       </AppLayout>
     );
@@ -150,7 +151,7 @@ export default function MyPayslipsPage() {
           </p>
           <button
             onClick={() => router.push('/payroll')}
-            className="mt-6 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
+            className='mt-6 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent-hover transition-colors'
           >
             Go to Payroll Management
           </button>
@@ -177,7 +178,7 @@ export default function MyPayslipsPage() {
           {isAdmin && user?.employeeId && !isAdminView && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='flex items-center gap-2 px-4 py-2 bg-accent-subtle text-accent rounded-lg hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <Users className="h-4 w-4"/>
               View All Employees
@@ -186,7 +187,7 @@ export default function MyPayslipsPage() {
           {isAdminView && user?.employeeId && (
             <button
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='flex items-center gap-2 px-4 py-2 bg-accent-subtle text-accent rounded-lg hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <FileText className="h-4 w-4"/>
               View My Payslips
@@ -206,8 +207,8 @@ export default function MyPayslipsPage() {
                   </p>
                 </div>
                 <div
-                  className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  className='w-12 h-12 bg-accent-subtle rounded-full flex items-center justify-center'>
+                  <FileText className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -224,8 +225,8 @@ export default function MyPayslipsPage() {
                     </p>
                   </div>
                   <div
-                    className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                    className='w-12 h-12 bg-accent-subtle rounded-full flex items-center justify-center'>
+                    <Users className='h-6 w-6 text-accent'/>
                   </div>
                 </div>
               </CardContent>
@@ -244,8 +245,8 @@ export default function MyPayslipsPage() {
                   </p>
                 </div>
                 <div
-                  className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  className='w-12 h-12 bg-status-success-bg rounded-full flex items-center justify-center'>
+                  <TrendingUp className='h-6 w-6 text-status-success-text'/>
                 </div>
               </div>
             </CardContent>
@@ -263,8 +264,8 @@ export default function MyPayslipsPage() {
                   </p>
                 </div>
                 <div
-                  className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
+                  className='w-12 h-12 bg-accent-subtle rounded-full flex items-center justify-center'>
+                  <DollarSign className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -307,9 +308,9 @@ export default function MyPayslipsPage() {
         {/* Error Message */}
         {error && (
           <div
-            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600"/>
-            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
+            className='flex items-center gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg animate-in fade-in slide-in-from-top-2 duration-300'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text'/>
+            <p className='text-status-danger-text font-medium'>{error}</p>
           </div>
         )}
 
@@ -337,12 +338,12 @@ export default function MyPayslipsPage() {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex items-start gap-4">
                         <div
-                          className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                          className='w-12 h-12 bg-accent-subtle rounded-lg flex items-center justify-center flex-shrink-0'>
+                          <Calendar className='h-6 w-6 text-accent'/>
                         </div>
                         <div>
                           {isAdminView && payslip.employeeName && (
-                            <p className="text-sm font-medium text-accent-700 dark:text-accent-400 mb-1">
+                            <p className='text-sm font-medium text-accent mb-1'>
                               {payslip.employeeName}
                             </p>
                           )}
@@ -371,7 +372,7 @@ export default function MyPayslipsPage() {
                       <div className="flex flex-col md:items-end gap-2">
                         <div className="space-y-1">
                           <p className="text-body-secondary">Net Salary</p>
-                          <p className="text-xl font-bold text-success-600 dark:text-success-400">
+                          <p className='text-xl font-bold text-status-success-text'>
                             {formatCurrency(payslip.netAmount)}
                           </p>
                         </div>
@@ -446,7 +447,7 @@ export default function MyPayslipsPage() {
                                     <span className="text-[var(--text-secondary)]">
                                       {deduction.name}
                                     </span>
-                                    <span className="text-danger-600 dark:text-danger-400 font-medium">
+                                    <span className='text-status-danger-text font-medium'>
                                       -{formatCurrency(deduction.amount)}
                                     </span>
                                   </div>

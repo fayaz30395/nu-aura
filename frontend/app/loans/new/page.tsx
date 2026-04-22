@@ -138,9 +138,9 @@ export default function NewLoanPage() {
 
         {createLoanMutation.isError && (
           <div
-            className="p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
-            <p className="text-sm text-danger-700 dark:text-danger-400">
+            className='p-4 bg-status-danger-bg border border-status-danger-border rounded-xl flex items-center gap-4'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
+            <p className='text-sm text-status-danger-text'>
               Failed to create loan application. Please try again.
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function NewLoanPage() {
               ))}
             </select>
             {errors.loanType && (
-              <p className="mt-1 text-sm text-danger-500">{errors.loanType.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.loanType.message}</p>
             )}
           </div>
 
@@ -188,7 +188,7 @@ export default function NewLoanPage() {
               />
             </div>
             {errors.requestedAmount && (
-              <p className="mt-1 text-sm text-danger-500">{errors.requestedAmount.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.requestedAmount.message}</p>
             )}
           </div>
 
@@ -207,7 +207,7 @@ export default function NewLoanPage() {
               } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500`}
             />
             {errors.interestRate && (
-              <p className="mt-1 text-sm text-danger-500">{errors.interestRate.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.interestRate.message}</p>
             )}
           </div>
 
@@ -228,7 +228,7 @@ export default function NewLoanPage() {
               />
             </div>
             {errors.termMonths && (
-              <p className="mt-1 text-sm text-danger-500">{errors.termMonths.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.termMonths.message}</p>
             )}
           </div>
 
@@ -248,7 +248,7 @@ export default function NewLoanPage() {
               ))}
             </select>
             {errors.repaymentFrequency && (
-              <p className="mt-1 text-sm text-danger-500">{errors.repaymentFrequency.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.repaymentFrequency.message}</p>
             )}
           </div>
 
@@ -269,7 +269,7 @@ export default function NewLoanPage() {
               />
             </div>
             {errors.purpose && (
-              <p className="mt-1 text-sm text-danger-500">{errors.purpose.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.purpose.message}</p>
             )}
           </div>
 
@@ -285,13 +285,13 @@ export default function NewLoanPage() {
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             />
             {errors.notes && (
-              <p className="mt-1 text-sm text-danger-500">{errors.notes.message}</p>
+              <p className='mt-1 text-sm text-status-danger-text'>{errors.notes.message}</p>
             )}
           </div>
 
           {/* EMI Calculator */}
           {monthlyPayment > 0 && (
-            <div className="bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-white">
+            <div className='bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg p-6 text-inverse'>
               <div className="flex items-center gap-4 mb-4">
                 <Wallet className="h-6 w-6"/>
                 <h3 className="text-xl font-semibold">Estimated Monthly Payment</h3>
@@ -299,7 +299,7 @@ export default function NewLoanPage() {
               <div className="text-4xl font-bold mb-2">
                 {loanService.formatCurrency(monthlyPayment)}
               </div>
-              <p className="text-accent-100 text-sm">
+              <p className='text-accent text-sm'>
                 Based on {watchedRate}% interest rate for {watchedTerm} months
               </p>
             </div>
@@ -318,7 +318,7 @@ export default function NewLoanPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {isLoading ? (
                   <>

@@ -10,7 +10,7 @@ export default function Loading() {
         <Skeleton height={16} width="60%"/>
       </div>
       <div
-        className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-6">
+        className='bg-[var(--bg-card)] rounded-lg border border-subtle p-4 sm:p-6 space-y-6'>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({length: 6}).map((_, index) => (
             <div key={index} className="space-y-2">

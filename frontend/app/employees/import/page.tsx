@@ -265,11 +265,12 @@ export default function EmployeeImportPage() {
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 bg-danger-50 border border-danger-200 rounded-lg p-4 flex items-start">
-              <AlertCircle className="w-5 h-5 text-danger-600 mr-4 flex-shrink-0 mt-0.5"/>
+            <div
+              className='mb-6 bg-status-danger-bg border border-status-danger-border rounded-lg p-4 flex items-start'>
+              <AlertCircle className='w-5 h-5 text-status-danger-text mr-4 flex-shrink-0 mt-0.5'/>
               <div>
-                <h3 className="text-danger-800 font-medium">Error</h3>
-                <p className="text-danger-700 text-sm">{error}</p>
+                <h3 className='text-status-danger-text font-medium'>Error</h3>
+                <p className='text-status-danger-text text-sm'>{error}</p>
               </div>
             </div>
           )}
@@ -293,7 +294,7 @@ export default function EmployeeImportPage() {
                       disabled={loading}
                       className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
                     >
-                      <FileText className="w-5 h-5 mr-2 text-success-600"/>
+                      <FileText className='w-5 h-5 mr-2 text-status-success-text'/>
                       <span className="text-[var(--text-secondary)]">CSV Template</span>
                     </button>
                   </PermissionGate>
@@ -303,7 +304,7 @@ export default function EmployeeImportPage() {
                       disabled={loading}
                       className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
                     >
-                      <FileSpreadsheet className="w-5 h-5 mr-2 text-accent-700 dark:text-accent-400"/>
+                      <FileSpreadsheet className='w-5 h-5 mr-2 text-accent'/>
                       <span className="text-[var(--text-secondary)]">Excel Template</span>
                     </button>
                   </PermissionGate>
@@ -338,7 +339,7 @@ export default function EmployeeImportPage() {
 
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
-                      <CheckCircle className="w-12 h-12 text-success-500 mb-4"/>
+                      <CheckCircle className='w-12 h-12 text-status-success-text mb-4'/>
                       <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
@@ -352,7 +353,7 @@ export default function EmployeeImportPage() {
                             fileInputRef.current.value = '';
                           }
                         }}
-                        className="mt-4 text-sm text-danger-600 hover:text-danger-700"
+                        className='mt-4 text-sm text-status-danger-text hover:text-status-danger-text'
                       >
                         Remove file
                       </button>
@@ -368,7 +369,7 @@ export default function EmployeeImportPage() {
                       </p>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+                        className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
                       >
                         Browse Files
                       </button>
@@ -385,7 +386,7 @@ export default function EmployeeImportPage() {
                       <button
                         onClick={handlePreview}
                         disabled={loading}
-                        className="flex items-center px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex items-center px-6 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {loading ? (
                           <>
@@ -417,7 +418,7 @@ export default function EmployeeImportPage() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-4">
                     <div className="flex items-center">
-                      <Users className="w-8 h-8 text-accent-700 dark:text-accent-400 mr-4"/>
+                      <Users className='w-8 h-8 text-accent mr-4'/>
                       <div>
                         <p className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
                           {preview.totalRows}
@@ -428,27 +429,27 @@ export default function EmployeeImportPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-success-50 dark:bg-success-900/30 rounded-lg p-4">
+                  <div className='bg-status-success-bg rounded-lg p-4'>
                     <div className="flex items-center">
-                      <CheckCircle className="w-8 h-8 text-success-500 mr-4"/>
+                      <CheckCircle className='w-8 h-8 text-status-success-text mr-4'/>
                       <div>
-                        <p className="text-xl font-bold text-success-700 dark:text-success-400">
+                        <p className='text-xl font-bold text-status-success-text'>
                           {preview.validRows}
                         </p>
-                        <p className="text-sm text-success-600 dark:text-success-500">
+                        <p className='text-sm text-status-success-text'>
                           Valid Rows
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-danger-50 dark:bg-danger-900/30 rounded-lg p-4">
+                  <div className='bg-status-danger-bg rounded-lg p-4'>
                     <div className="flex items-center">
-                      <XCircle className="w-8 h-8 text-danger-500 mr-4"/>
+                      <XCircle className='w-8 h-8 text-status-danger-text mr-4'/>
                       <div>
-                        <p className="text-xl font-bold text-danger-700 dark:text-danger-400">
+                        <p className='text-xl font-bold text-status-danger-text'>
                           {preview.invalidRows}
                         </p>
-                        <p className="text-sm text-danger-600 dark:text-danger-500">
+                        <p className='text-sm text-status-danger-text'>
                           Invalid Rows
                         </p>
                       </div>
@@ -460,7 +461,7 @@ export default function EmployeeImportPage() {
               {/* Preview Table */}
               <div className="p-6">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
+                  <table className='min-w-full divide-y divide-surface-200'>
                     <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                     <tr>
                       <th
@@ -493,14 +494,14 @@ export default function EmployeeImportPage() {
                       </th>
                     </tr>
                     </thead>
-                    <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                    <tbody className='divide-y divide-surface-200'>
                     {preview.rows.map((row: EmployeeImportRowPreview) => (
                       <tr
                         key={row.rowNumber}
                         className={
                           row.isValid
                             ? ''
-                            : 'bg-danger-50 dark:bg-danger-900/10'
+                            : 'bg-status-danger-bg'
                         }
                       >
                         <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
@@ -508,9 +509,9 @@ export default function EmployeeImportPage() {
                         </td>
                         <td className="px-4 py-4">
                           {row.isValid ? (
-                            <CheckCircle className="w-5 h-5 text-success-500"/>
+                            <CheckCircle className='w-5 h-5 text-status-success-text'/>
                           ) : (
-                            <XCircle className="w-5 h-5 text-danger-500"/>
+                            <XCircle className='w-5 h-5 text-status-danger-text'/>
                           )}
                         </td>
                         <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
@@ -527,7 +528,7 @@ export default function EmployeeImportPage() {
                         </td>
                         <td className="px-4 py-4 text-sm">
                           {row.rowErrors.length > 0 ? (
-                            <div className="text-danger-600 dark:text-danger-400">
+                            <div className='text-status-danger-text'>
                               {row.rowErrors.map((err, idx) => (
                                 <div key={idx} className="text-xs">
                                   {err}
@@ -548,11 +549,11 @@ export default function EmployeeImportPage() {
               {/* Import Options */}
               {preview.hasErrors && (
                 <div
-                  className="px-6 py-4 bg-warning-50 dark:bg-warning-900/20 border-t border-warning-200 dark:border-warning-800">
+                  className='px-6 py-4 bg-status-warning-bg border-t border-status-warning-border'>
                   <div className="flex items-start">
-                    <AlertTriangle className="w-5 h-5 text-warning-600 mr-4 flex-shrink-0 mt-0.5"/>
+                    <AlertTriangle className='w-5 h-5 text-status-warning-text mr-4 flex-shrink-0 mt-0.5'/>
                     <div className="flex-1">
-                      <p className="text-sm text-warning-800 dark:text-warning-200">
+                      <p className='text-sm text-status-warning-text'>
                         Some rows have validation errors. You can either fix the file and re-upload,
                         or proceed with importing only the valid rows.
                       </p>
@@ -561,7 +562,7 @@ export default function EmployeeImportPage() {
                           type="checkbox"
                           checked={skipInvalid}
                           onChange={(e) => setSkipInvalid(e.target.checked)}
-                          className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-500 focus:ring-accent-500"
+                          className='rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         <span className="ml-2 text-body-secondary">
                         Skip invalid rows and import only valid employees ({preview.validRows} employees)
@@ -584,7 +585,7 @@ export default function EmployeeImportPage() {
                   <button
                     onClick={handleExecuteImport}
                     disabled={loading || (preview.hasErrors && !skipInvalid) || preview.validRows === 0}
-                    className="flex items-center px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='flex items-center px-6 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {loading ? (
                       <>
@@ -610,11 +611,11 @@ export default function EmployeeImportPage() {
               {/* Result Header */}
               <div className="text-center mb-8">
                 {result.status === 'COMPLETED' ? (
-                  <CheckCircle className="w-16 h-16 text-success-500 mx-auto mb-4"/>
+                  <CheckCircle className='w-16 h-16 text-status-success-text mx-auto mb-4'/>
                 ) : result.status === 'PARTIAL_SUCCESS' ? (
-                  <AlertTriangle className="w-16 h-16 text-warning-500 mx-auto mb-4"/>
+                  <AlertTriangle className='w-16 h-16 text-status-warning-text mx-auto mb-4'/>
                 ) : (
-                  <XCircle className="w-16 h-16 text-danger-500 mx-auto mb-4"/>
+                  <XCircle className='w-16 h-16 text-status-danger-text mx-auto mb-4'/>
                 )}
                 <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Import {result.status === 'COMPLETED' ? 'Completed' : result.status === 'PARTIAL_SUCCESS' ? 'Partially Completed' : 'Failed'}
@@ -630,27 +631,27 @@ export default function EmployeeImportPage() {
 
               {/* Result Summary */}
               <div className="grid grid-cols-3 gap-4 mb-8">
-                <div className="bg-accent-50 dark:bg-accent-950/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-accent-700 dark:text-accent-400">
+                <div className='bg-accent-subtle rounded-lg p-4 text-center'>
+                  <p className='text-3xl font-bold text-accent'>
                     {result.totalProcessed}
                   </p>
-                  <p className="text-sm text-accent-700 dark:text-accent-400">
+                  <p className='text-sm text-accent'>
                     Total Processed
                   </p>
                 </div>
-                <div className="bg-success-50 dark:bg-success-900/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-success-700 dark:text-success-400">
+                <div className='bg-status-success-bg rounded-lg p-4 text-center'>
+                  <p className='text-3xl font-bold text-status-success-text'>
                     {result.successCount}
                   </p>
-                  <p className="text-sm text-success-600 dark:text-success-500">
+                  <p className='text-sm text-status-success-text'>
                     Successfully Imported
                   </p>
                 </div>
-                <div className="bg-danger-50 dark:bg-danger-900/30 rounded-lg p-4 text-center">
-                  <p className="text-3xl font-bold text-danger-700 dark:text-danger-400">
+                <div className='bg-status-danger-bg rounded-lg p-4 text-center'>
+                  <p className='text-3xl font-bold text-status-danger-text'>
                     {result.failedCount}
                   </p>
-                  <p className="text-sm text-danger-600 dark:text-danger-500">Failed</p>
+                  <p className='text-sm text-status-danger-text'>Failed</p>
                 </div>
               </div>
 
@@ -661,7 +662,7 @@ export default function EmployeeImportPage() {
                     Imported Employees
                   </h3>
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
+                    <table className='min-w-full divide-y divide-surface-200'>
                       <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                       <tr>
                         <th
@@ -678,7 +679,7 @@ export default function EmployeeImportPage() {
                         </th>
                       </tr>
                       </thead>
-                      <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                      <tbody className='divide-y divide-surface-200'>
                       {result.importedEmployees.slice(0, 10).map((emp) => (
                         <tr key={emp.employeeId}>
                           <td className="px-4 py-4 text-sm text-[var(--text-primary)]">
@@ -709,19 +710,19 @@ export default function EmployeeImportPage() {
                   <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                     Failed Imports
                   </h3>
-                  <div className="bg-danger-50 dark:bg-danger-900/20 rounded-lg p-4">
+                  <div className='bg-status-danger-bg rounded-lg p-4'>
                     {result.failedImports.map((fail, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start py-2 border-b border-danger-200 dark:border-danger-800 last:border-0"
+                        className='flex items-start py-2 border-b border-status-danger-border last:border-0'
                       >
-                        <XCircle className="w-4 h-4 text-danger-500 mr-2 flex-shrink-0 mt-0.5"/>
+                        <XCircle className='w-4 h-4 text-status-danger-text mr-2 flex-shrink-0 mt-0.5'/>
                         <div>
-                        <span className="text-sm font-medium text-danger-800 dark:text-danger-200">
+                        <span className='text-sm font-medium text-status-danger-text'>
                           Row {fail.rowNumber}
                           {fail.employeeCode && ` (${fail.employeeCode})`}:
                         </span>
-                          <span className="text-sm text-danger-700 dark:text-danger-300 ml-1">
+                          <span className='text-sm text-status-danger-text ml-1'>
                           {fail.reason}
                         </span>
                         </div>
@@ -741,7 +742,7 @@ export default function EmployeeImportPage() {
                 </button>
                 <button
                   onClick={() => router.push('/employees')}
-                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700"
+                  className='px-6 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
                 >
                   View Employees
                 </button>

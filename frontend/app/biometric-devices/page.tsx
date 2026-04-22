@@ -98,7 +98,7 @@ export default function BiometricDevicesPage() {
           <div className="row-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-                <Fingerprint className="h-7 w-7 text-accent-700"/>
+                <Fingerprint className='h-7 w-7 text-accent'/>
                 Biometric Devices
               </h1>
               <p className="mt-1 text-body-muted">
@@ -210,17 +210,17 @@ function DeviceListPanel({
       {/* Actions Row */}
       <div className="row-between">
         <p className="text-body-muted">
-          {data ? `${data.totalElements} device(s) registered` : <span className="skeleton-aura inline-block h-4 w-32 rounded" />}
+          {data ? `${data.totalElements} device(s) registered` :
+            <span className="skeleton-aura inline-block h-4 w-32 rounded"/>}
         </p>
         <Button
           onClick={() => setShowRegisterModal(true)}
-          className="bg-accent-700 hover:bg-accent-800 text-white"
+          className='bg-accent hover:bg-accent-hover text-inverse'
         >
           <Plus className="mr-2 h-4 w-4"/>
           Register Device
         </Button>
       </div>
-
       {/* Device Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -276,12 +276,10 @@ function DeviceListPanel({
           )}
         </>
       )}
-
       {/* Register Modal */}
       {showRegisterModal && (
         <RegisterDeviceModal onClose={() => setShowRegisterModal(false)}/>
       )}
-
       {/* Device Logs Drawer */}
       {selectedDeviceId && (
         <DeviceLogsDrawer
@@ -325,7 +323,7 @@ function DeviceCard({
                 {device.deviceName}
               </h3>
               {device.isOnline ? (
-                <Wifi className="h-4 w-4 text-success-500 flex-shrink-0"/>
+                <Wifi className='h-4 w-4 text-status-success-text flex-shrink-0'/>
               ) : (
                 <WifiOff className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
               )}
@@ -347,14 +345,14 @@ function DeviceCard({
             </p>
             <p className="text-2xs text-[var(--text-muted)]">Today</p>
           </div>
-          <div className="rounded-lg bg-danger-50 dark:bg-danger-900/20 p-2 text-center">
-            <p className="text-lg font-bold text-danger-600 dark:text-danger-400">
+          <div className='rounded-lg bg-status-danger-bg p-2 text-center'>
+            <p className='text-lg font-bold text-status-danger-text'>
               {device.failedPunchesToday}
             </p>
             <p className="text-2xs text-[var(--text-muted)]">Failed</p>
           </div>
-          <div className="rounded-lg bg-warning-50 dark:bg-warning-900/20 p-2 text-center">
-            <p className="text-lg font-bold text-warning-600 dark:text-warning-400">
+          <div className='rounded-lg bg-status-warning-bg p-2 text-center'>
+            <p className='text-lg font-bold text-status-warning-text'>
               {device.pendingPunches}
             </p>
             <p className="text-2xs text-[var(--text-muted)]">Pending</p>
@@ -376,14 +374,14 @@ function DeviceCard({
         <div className="mt-4 flex items-center gap-2 border-t border-[var(--border-subtle)] pt-4">
           <button
             onClick={onViewLogs}
-            className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
+            className='flex items-center gap-1 text-xs text-accent hover:text-accent font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1'
           >
             <Eye className="h-3.5 w-3.5"/>
             Logs
           </button>
           <button
             onClick={onSync}
-            className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 dark:text-accent-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
+            className='flex items-center gap-1 text-xs text-accent hover:text-accent font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1'
           >
             <RefreshCw className="h-3.5 w-3.5"/>
             Sync
@@ -391,7 +389,7 @@ function DeviceCard({
           {device.isActive && (
             <button
               onClick={onDeactivate}
-              className="flex items-center gap-1 text-xs text-danger-500 hover:text-danger-600 font-medium ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1"
+              className='flex items-center gap-1 text-xs text-status-danger-text hover:text-status-danger-text font-medium ml-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded px-2 py-1'
             >
               <XCircle className="h-3.5 w-3.5"/>
               Deactivate
@@ -450,7 +448,7 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
               placeholder="e.g., Main Entrance Scanner"
             />
             {errors.deviceName && (
-              <p className="mt-1 text-xs text-danger-500">{errors.deviceName.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.deviceName.message}</p>
             )}
           </div>
 
@@ -470,7 +468,7 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
               ))}
             </select>
             {errors.deviceType && (
-              <p className="mt-1 text-xs text-danger-500">{errors.deviceType.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.deviceType.message}</p>
             )}
           </div>
 
@@ -485,7 +483,7 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
               placeholder="e.g., ZK-2024-001"
             />
             {errors.serialNumber && (
-              <p className="mt-1 text-xs text-danger-500">{errors.serialNumber.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.serialNumber.message}</p>
             )}
           </div>
 
@@ -558,7 +556,7 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
             <Button
               type="submit"
               disabled={isSubmitting || registerMutation.isPending}
-              className="bg-accent-700 hover:bg-accent-800 text-white"
+              className='bg-accent hover:bg-accent-hover text-inverse'
             >
               {registerMutation.isPending ? 'Registering...' : 'Register Device'}
             </Button>
@@ -592,7 +590,7 @@ function DeviceLogsDrawer({
       >
         <div className="sticky top-0 z-10 row-between divider-b bg-[var(--bg-surface)] px-6 py-4">
           <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
-            <Activity className="h-5 w-5 text-accent-700"/>
+            <Activity className='h-5 w-5 text-accent'/>
             Punch Logs
           </h3>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -659,7 +657,7 @@ function PunchLogRow({log}: { log: BiometricPunchLog }) {
         : Clock;
 
   return (
-    <div className={`rounded-lg border p-4 ${status.bg} dark:bg-opacity-20`}>
+    <div className={`rounded-lg border p-4 ${status.bg}`}>
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <StatusIcon className={`h-4 w-4 ${status.text}`}/>
@@ -682,7 +680,7 @@ function PunchLogRow({log}: { log: BiometricPunchLog }) {
         </span>
       </div>
       {log.errorMessage && (
-        <p className="mt-1.5 text-xs text-danger-500 dark:text-danger-400 pl-6">
+        <p className='mt-1.5 text-xs text-status-danger-text pl-6'>
           {log.errorMessage}
         </p>
       )}
@@ -706,19 +704,19 @@ function PendingPunchesPanel({
     <div className="space-y-4">
       <div className="row-between">
         <p className="text-body-muted">
-          {data ? `${data.totalElements} unprocessed punch(es)` : <span className="skeleton-aura inline-block h-4 w-40 rounded" />}
+          {data ? `${data.totalElements} unprocessed punch(es)` :
+            <span className="skeleton-aura inline-block h-4 w-40 rounded"/>}
         </p>
         <Button
           onClick={() => reprocessMutation.mutate()}
           disabled={reprocessMutation.isPending}
           variant="outline"
-          className="border-accent-700 text-accent-700 hover:bg-accent-50"
+          className='border-[var(--accent-primary)] text-accent hover:bg-accent-subtle'
         >
           <RefreshCw className={`mr-2 h-4 w-4 ${reprocessMutation.isPending ? 'animate-spin' : ''}`}/>
           Reprocess Failed
         </Button>
       </div>
-
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -728,7 +726,7 @@ function PendingPunchesPanel({
       ) : data?.content.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <CheckCircle className="h-12 w-12 text-success-500 mb-4"/>
+            <CheckCircle className='h-12 w-12 text-status-success-text mb-4'/>
             <p className="text-[var(--text-muted)]">All punches have been processed</p>
           </CardContent>
         </Card>
@@ -786,28 +784,27 @@ function ApiKeysPanel({
     <div className="space-y-4">
       <div className="row-between">
         <p className="text-body-muted">
-          {keys ? `${keys.length} API key(s)` : <span className="skeleton-aura inline-block h-4 w-28 rounded" />}
+          {keys ? `${keys.length} API key(s)` : <span className="skeleton-aura inline-block h-4 w-28 rounded"/>}
         </p>
         <Button
           onClick={() => setShowModal(true)}
-          className="bg-accent-700 hover:bg-accent-800 text-white"
+          className='bg-accent hover:bg-accent-hover text-inverse'
         >
           <Plus className="mr-2 h-4 w-4"/>
           Generate Key
         </Button>
       </div>
-
       {/* New Key Banner */}
       {newKey && (
         <div
-          className="rounded-lg border-2 border-success-300 bg-success-50 p-4 dark:bg-success-900/20 dark:border-success-700">
+          className='rounded-lg border-2 border-status-success-border bg-status-success-bg p-4'>
           <div className="flex items-start gap-2">
-            <Key className="h-5 w-5 text-success-600 flex-shrink-0 mt-0.5"/>
+            <Key className='h-5 w-5 text-status-success-text flex-shrink-0 mt-0.5'/>
             <div>
-              <p className="text-sm font-semibold text-success-800 dark:text-success-300">
+              <p className='text-sm font-semibold text-status-success-text'>
                 API Key Generated - Copy it now!
               </p>
-              <p className="mt-1 text-xs text-success-700 dark:text-success-400">
+              <p className='mt-1 text-xs text-status-success-text'>
                 This key will not be shown again.
               </p>
               <code
@@ -829,7 +826,6 @@ function ApiKeysPanel({
           </div>
         </div>
       )}
-
       {/* Keys List */}
       {isLoading ? (
         <div className="space-y-4">
@@ -863,7 +859,7 @@ function ApiKeysPanel({
                   {key.lastUsedAt && (
                     <span>Last used: {new Date(key.lastUsedAt).toLocaleDateString()}</span>
                   )}
-                  <span className={key.isActive ? 'text-success-600' : 'text-danger-500'}>
+                  <span className={key.isActive ? 'text-status-success-text' : 'text-status-danger-text'}>
                     {key.isActive ? 'Active' : 'Revoked'}
                   </span>
                 </div>
@@ -872,7 +868,7 @@ function ApiKeysPanel({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-danger-500 hover:text-danger-600 hover:bg-danger-50"
+                  className='text-status-danger-text hover:text-status-danger-text hover:bg-status-danger-bg'
                   onClick={() => revokeMutation.mutate(key.id)}
                   disabled={revokeMutation.isPending}
                 >
@@ -883,7 +879,6 @@ function ApiKeysPanel({
           ))}
         </div>
       )}
-
       {/* Generate Key Modal */}
       {showModal && (
         <GenerateApiKeyModal
@@ -947,12 +942,12 @@ function GenerateApiKeyModal({
               placeholder="e.g., Main Entrance Device Key"
             />
             {errors.keyName && (
-              <p className="mt-1 text-xs text-danger-500">{errors.keyName.message}</p>
+              <p className='mt-1 text-xs text-status-danger-text'>{errors.keyName.message}</p>
             )}
           </div>
 
           <p
-            className="text-xs text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-900/20 rounded-lg p-4">
+            className='text-xs text-status-warning-text bg-status-warning-bg rounded-lg p-4'>
             The API key will only be shown once after generation. Make sure to copy and store it securely.
           </p>
 
@@ -963,7 +958,7 @@ function GenerateApiKeyModal({
             <Button
               type="submit"
               disabled={generateMutation.isPending}
-              className="bg-accent-700 hover:bg-accent-800 text-white"
+              className='bg-accent hover:bg-accent-hover text-inverse'
             >
               {generateMutation.isPending ? 'Generating...' : 'Generate'}
             </Button>

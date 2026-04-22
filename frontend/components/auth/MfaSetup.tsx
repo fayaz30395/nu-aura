@@ -119,16 +119,15 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
       <ModalHeader onClose={step !== 'loading' && step !== 'verify' ? handleCancel : undefined}
                    showCloseButton={step !== 'loading' && step !== 'verify'}>
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-accent-700"/>
+          <Shield className='h-5 w-5 text-accent'/>
           <span>Set Up Two-Factor Authentication</span>
         </div>
       </ModalHeader>
-
       <ModalBody className="space-y-6">
         {/* Loading State */}
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 text-accent-700 animate-spin mb-4"/>
+            <Loader2 className='h-8 w-8 text-accent animate-spin mb-4'/>
             <p className="text-[var(--text-secondary)]">Loading setup information...</p>
           </div>
         )}
@@ -167,7 +166,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
                   aria-label="Copy secret"
                 >
                   {copiedSecret ? (
-                    <Check className="h-5 w-5 text-success-600"/>
+                    <Check className='h-5 w-5 text-status-success-text'/>
                   ) : (
                     <Copy className="h-5 w-5 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"/>
                   )}
@@ -187,9 +186,9 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
             {/* Error Alert */}
             {error && (
               <div
-                className="flex items-start gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg">
-                <AlertCircle className="h-5 w-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5"/>
-                <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
+                className='flex items-start gap-2 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg'>
+                <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
+                <p className='text-sm text-status-danger-text'>{error}</p>
               </div>
             )}
 
@@ -241,13 +240,13 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
         {step === 'backup' && (
           <div className="space-y-4">
             <div
-              className="flex items-start gap-2 p-4 bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-2 p-4 bg-status-warning-bg border border-status-warning-border rounded-lg'>
+              <AlertCircle className='h-5 w-5 text-status-warning-text flex-shrink-0 mt-0.5'/>
               <div className="flex-1">
-                <p className="text-sm font-medium text-warning-900 dark:text-warning-100">
+                <p className='text-sm font-medium text-status-warning-text'>
                   Save your backup codes
                 </p>
-                <p className="text-xs text-warning-800 dark:text-warning-300 mt-1">
+                <p className='text-xs text-status-warning-text mt-1'>
                   Store these codes in a safe place. You can use them to access your account if you lose access to your
                   authenticator.
                 </p>
@@ -270,7 +269,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
                       {code}
                     </code>
                     {copiedIndex === index ? (
-                      <Check className="h-4 w-4 text-success-600 flex-shrink-0"/>
+                      <Check className='h-4 w-4 text-status-success-text flex-shrink-0'/>
                     ) : (
                       <Copy
                         className="h-4 w-4 text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-shrink-0"/>
@@ -281,10 +280,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
             </div>
 
             <div
-              className="flex items-start gap-2 p-4 bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800 rounded-lg">
-              <Key className="h-5 w-5 text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
+              className='flex items-start gap-2 p-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg'>
+              <Key className='h-5 w-5 text-accent flex-shrink-0 mt-0.5'/>
               <div className="flex-1">
-                <p className="text-xs text-accent-900 dark:text-accent-100">
+                <p className='text-xs text-accent'>
                   We recommend downloading or printing these codes and storing them in a secure location separate from
                   your authenticator.
                 </p>
@@ -297,8 +296,8 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
         {step === 'complete' && (
           <div className="flex flex-col items-center justify-center py-8">
             <div
-              className="flex items-center justify-center w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-              <Check className="h-8 w-8 text-success-600 dark:text-success-400"/>
+              className='flex items-center justify-center w-16 h-16 bg-status-success-bg rounded-full mb-4'>
+              <Check className='h-8 w-8 text-status-success-text'/>
             </div>
             <p className="text-lg font-semibold text-[var(--text-primary)]">
               Two-Factor Authentication Enabled
@@ -309,7 +308,6 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
           </div>
         )}
       </ModalBody>
-
       {/* Footer with Action Buttons */}
       {(step === 'scan' || step === 'backup') && (
         <ModalFooter>

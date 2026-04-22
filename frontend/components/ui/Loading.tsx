@@ -227,7 +227,7 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: NuAuraLoad
 
           {/* Radial glow behind logo */}
           <div
-            className="absolute inset-6 rounded-full bg-accent-500/12 dark:bg-accent-400/10 blur-2xl nuaura-breathe"/>
+            className='absolute inset-6 rounded-full bg-accent-500/12 blur-2xl nuaura-breathe'/>
 
           {/* Floating particles */}
           {PARTICLES.map((p, i) => (
@@ -288,13 +288,12 @@ export function NuAuraLoader({message = 'Loading your workspace...'}: NuAuraLoad
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-2 h-2 rounded-full bg-accent-500 dark:bg-accent-400"
+              className='w-2 h-2 rounded-full bg-accent'
               style={{animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both`}}
             />
           ))}
         </div>
       </div>
-
       {/* ── Keyframes ─────────────────────────────────────────── */}
       <style>{`
         /* Slow breathing pulse for logo + glow */

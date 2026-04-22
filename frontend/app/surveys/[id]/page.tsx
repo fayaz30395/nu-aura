@@ -178,7 +178,7 @@ export default function SurveyDetailPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className={typography.pageTitle}>
-                  {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded" /> : survey?.title}
+                  {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
                 </h1>
                 {survey && (
                   <Badge variant={toBadgeVariant(survey.status)}>{survey.status}</Badge>
@@ -221,8 +221,8 @@ export default function SurveyDetailPage() {
             <Card className="card-aura">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  <div className='rounded-lg bg-accent-subtle p-4'>
+                    <Users className='h-6 w-6 text-accent'/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Target</p>
@@ -236,8 +236,8 @@ export default function SurveyDetailPage() {
             <Card className="card-aura">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                    <Hash className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  <div className='rounded-lg bg-status-success-bg p-4'>
+                    <Hash className='h-6 w-6 text-status-success-text'/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Responses</p>
@@ -249,8 +249,8 @@ export default function SurveyDetailPage() {
             <Card className="card-aura">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                    <Calendar className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  <div className='rounded-lg bg-accent-subtle p-4'>
+                    <Calendar className='h-6 w-6 text-accent'/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Status</p>
@@ -262,8 +262,8 @@ export default function SurveyDetailPage() {
             <Card className="card-aura">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                    <ToggleLeft className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                  <div className='rounded-lg bg-status-warning-bg p-4'>
+                    <ToggleLeft className='h-6 w-6 text-status-warning-text'/>
                   </div>
                   <div>
                     <p className={typography.bodySecondary}>Anonymous</p>
@@ -326,7 +326,7 @@ export default function SurveyDetailPage() {
                         className="flex items-center gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 transition-colors hover:bg-[var(--bg-card-hover)]"
                       >
                         <span
-                          className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                          className='flex h-8 w-8 items-center justify-center rounded-full bg-accent-subtle text-sm font-semibold text-accent'>
                           {index + 1}
                         </span>
                         <GripVertical className="h-4 w-4 text-[var(--text-muted)]"/>
@@ -354,7 +354,7 @@ export default function SurveyDetailPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+                              className='text-status-danger-text hover:bg-status-danger-bg'
                               onClick={() => setDeleteConfirmId(question.id)}
                             >
                               <Trash2 className={iconSize.button}/>
@@ -407,7 +407,7 @@ export default function SurveyDetailPage() {
                     rows={3}
                   />
                   {errors.questionText && (
-                    <p className="mt-1 text-sm text-danger-600">
+                    <p className='mt-1 text-sm text-status-danger-text'>
                       {errors.questionText.message}
                     </p>
                   )}
@@ -425,7 +425,7 @@ export default function SurveyDetailPage() {
                     ))}
                   </Select>
                   {errors.questionType && (
-                    <p className="mt-1 text-sm text-danger-600">
+                    <p className='mt-1 text-sm text-status-danger-text'>
                       {errors.questionType.message}
                     </p>
                   )}
@@ -442,7 +442,7 @@ export default function SurveyDetailPage() {
                       className="input-aura"
                     />
                     {errors.options && (
-                      <p className="mt-1 text-sm text-danger-600">
+                      <p className='mt-1 text-sm text-status-danger-text'>
                         {errors.options.message}
                       </p>
                     )}
@@ -459,7 +459,7 @@ export default function SurveyDetailPage() {
                           type="checkbox"
                           checked={field.value}
                           onChange={field.onChange}
-                          className="rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                          className='rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                         />
                         <span className="text-sm font-medium text-[var(--text-secondary)]">
                           Required question

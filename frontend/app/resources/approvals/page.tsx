@@ -240,13 +240,13 @@ export default function ApprovalsPage() {
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-4 text-center">
                         <div>
-                          <p className="text-lg font-semibold text-accent-700 dark:text-accent-400">
+                          <p className='text-lg font-semibold text-accent'>
                             +{formatAllocationPercentage(selectedRequest.requestedAllocation)}
                           </p>
                           <p className="text-caption">Requested</p>
                         </div>
                         <div>
-                          <p className="text-lg font-semibold text-danger-600 dark:text-danger-400">
+                          <p className='text-lg font-semibold text-status-danger-text'>
                             {formatAllocationPercentage(selectedRequest.resultingAllocation)}
                           </p>
                           <p className="text-caption">Resulting Total</p>
@@ -276,7 +276,7 @@ export default function ApprovalsPage() {
                     <div className="flex gap-4">
                       <Button
                         variant="outline"
-                        className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400"
+                        className='flex-1 border-status-danger-border text-status-danger-text hover:bg-status-danger-bg'
                         onClick={() => setShowRejectModal(true)}
                       >
                         <XCircle className="mr-2 h-4 w-4"/>
@@ -298,11 +298,10 @@ export default function ApprovalsPage() {
           </div>
         )}
       </div>
-
       {/* Approve Modal */}
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
-          <div className="flex items-center gap-2 text-success-600 dark:text-success-400">
+          <div className='flex items-center gap-2 text-status-success-text'>
             <CheckCircle className="h-5 w-5"/>
             Approve Over-Allocation
           </div>
@@ -314,7 +313,7 @@ export default function ApprovalsPage() {
           </p>
           <p className="mt-2 text-body-muted">
             This will allow them to be allocated at{' '}
-            <strong className="text-danger-600">
+            <strong className='text-status-danger-text'>
               {selectedRequest && formatAllocationPercentage(selectedRequest.resultingAllocation)}
             </strong>{' '}
             total capacity.
@@ -327,7 +326,7 @@ export default function ApprovalsPage() {
               value={approveComment}
               onChange={(e) => setApproveComment(e.target.value)}
               placeholder="Add a comment for the requester..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className='mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'
               rows={3}
             />
           </div>
@@ -341,11 +340,10 @@ export default function ApprovalsPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Reject Modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
-          <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+          <div className='flex items-center gap-2 text-status-danger-text'>
             <XCircle className="h-5 w-5"/>
             Reject Over-Allocation
           </div>
@@ -357,13 +355,13 @@ export default function ApprovalsPage() {
           </p>
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
-              Reason <span className="text-danger-500">*</span>
+              Reason <span className='text-status-danger-text'>*</span>
             </label>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Explain why this request is being rejected..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
+              className='mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]'
               rows={3}
               required
             />
@@ -375,7 +373,7 @@ export default function ApprovalsPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-danger-600 hover:bg-danger-700"
+            className='bg-status-danger-bg hover:bg-status-danger-bg'
             onClick={handleReject}
             disabled={rejectMutation.isPending || !rejectReason.trim()}
           >
@@ -417,8 +415,8 @@ function RequestCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30">
-              <User className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+              className='flex h-10 w-10 items-center justify-center rounded-full bg-accent-subtle'>
+              <User className='h-5 w-5 text-accent'/>
             </div>
             <div>
               <p className="font-medium text-[var(--text-primary)]">
@@ -435,7 +433,7 @@ function RequestCard({
         <div className="mt-4 row-between text-sm">
           <span className="text-[var(--text-muted)]">
             +{formatAllocationPercentage(request.requestedAllocation)} → {' '}
-            <span className="font-medium text-danger-600 dark:text-danger-400">
+            <span className='font-medium text-status-danger-text'>
               {formatAllocationPercentage(request.resultingAllocation)} total
             </span>
           </span>
@@ -446,7 +444,7 @@ function RequestCard({
 
         {request.status === 'PENDING' && onApprove && onReject && (
           <div className="mt-4 flex gap-2" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="sm" className="flex-1 text-danger-600" onClick={onReject}>
+            <Button variant="ghost" size="sm" className='flex-1 text-status-danger-text' onClick={onReject}>
               Reject
             </Button>
             <Button variant="primary" size="sm" className="flex-1" onClick={onApprove}>

@@ -31,7 +31,7 @@ export function OAuthPanel({
         <div className="flex items-center gap-4">
           <div
             className="w-12 h-12 rounded-xl bg-gradient-to-br from-danger-500 to-warning-500 flex items-center justify-center">
-            <Mail className="h-6 w-6 text-white"/>
+            <Mail className='h-6 w-6 text-inverse'/>
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Nu-Mail</h1>
@@ -50,7 +50,7 @@ export function OAuthPanel({
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
               <span
-                className="px-2 py-1 bg-danger-100 dark:bg-danger-950 text-danger-600 dark:text-danger-400 rounded-full text-sm font-medium">
+                className='px-2 py-1 bg-status-danger-bg text-status-danger-text rounded-full text-sm font-medium'>
                 {unreadCount} unread
               </span>
             )}
@@ -74,19 +74,18 @@ export function OAuthPanel({
               variant="ghost"
               size="sm"
               onClick={onDisconnect}
-              className="text-[var(--text-muted)] hover:text-danger-600"
+              className='text-[var(--text-muted)] hover:text-status-danger-text'
             >
               Disconnect
             </Button>
           </div>
         )}
       </div>
-
       {/* Error State */}
       {error && (
-        <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
+        <Card className='border-status-danger-border bg-status-danger-bg'>
           <CardContent className="py-4">
-            <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
+            <div className='flex items-center gap-4 text-status-danger-text'>
               <AlertCircle className="h-5 w-5"/>
               <span>{error}</span>
               <Button variant="ghost" size="sm" onClick={onConnect} className="ml-auto">
@@ -96,15 +95,14 @@ export function OAuthPanel({
           </CardContent>
         </Card>
       )}
-
       {/* Connect Card (shown when not connected) */}
       {!isConnected && (
         <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
           <CardContent className="py-16">
             <div className="text-center">
               <div
-                className="w-20 h-20 rounded-full bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center mx-auto mb-6">
-                <Mail className="h-10 w-10 text-danger-600 dark:text-danger-400"/>
+                className='w-20 h-20 rounded-full bg-status-danger-bg flex items-center justify-center mx-auto mb-6'>
+                <Mail className='h-10 w-10 text-status-danger-text'/>
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Connect to Gmail

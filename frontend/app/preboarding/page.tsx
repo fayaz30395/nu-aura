@@ -79,23 +79,25 @@ function PreBoardingModal({onClose, createMutation}: PreBoardingModalProps) {
           <div className="space-y-4">
             <div>
               <Input placeholder="First Name *" {...register('firstName')} />
-              {errors.firstName && <span className="text-danger-500 text-sm">{errors.firstName.message}</span>}
+              {errors.firstName && <span className='text-status-danger-text text-sm'>{errors.firstName.message}</span>}
             </div>
             <div>
               <Input placeholder="Last Name" {...register('lastName')} />
-              {errors.lastName && <span className="text-danger-500 text-sm">{errors.lastName.message}</span>}
+              {errors.lastName && <span className='text-status-danger-text text-sm'>{errors.lastName.message}</span>}
             </div>
             <div>
               <Input type="email" placeholder="Email *" {...register('email')} />
-              {errors.email && <span className="text-danger-500 text-sm">{errors.email.message}</span>}
+              {errors.email && <span className='text-status-danger-text text-sm'>{errors.email.message}</span>}
             </div>
             <div>
               <Input type="date" {...register('joiningDate')} />
-              {errors.joiningDate && <span className="text-danger-500 text-sm">{errors.joiningDate.message}</span>}
+              {errors.joiningDate &&
+                <span className='text-status-danger-text text-sm'>{errors.joiningDate.message}</span>}
             </div>
             <div>
               <Input placeholder="Designation" {...register('designation')} />
-              {errors.designation && <span className="text-danger-500 text-sm">{errors.designation.message}</span>}
+              {errors.designation &&
+                <span className='text-status-danger-text text-sm'>{errors.designation.message}</span>}
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-6">
@@ -176,11 +178,11 @@ export default function PreboardingPage() {
 
         {/* Error State */}
         {isError && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4 row-between">
               <div className="flex items-center gap-4">
-                <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
-                <p className="text-sm text-danger-600 dark:text-danger-400">
+                <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0'/>
+                <p className='text-sm text-status-danger-text'>
                   {error instanceof Error ? error.message : 'Failed to load pre-boarding data'}
                 </p>
               </div>
@@ -196,8 +198,8 @@ export default function PreboardingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+              <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                <Users className='h-6 w-6 text-accent'/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Total Candidates</p>
@@ -209,8 +211,8 @@ export default function PreboardingPage() {
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div
-                className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-900/20 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                className='w-12 h-12 rounded-xl bg-status-warning-bg flex items-center justify-center'>
+                <Mail className='h-6 w-6 text-status-warning-text'/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Invited</p>
@@ -221,8 +223,8 @@ export default function PreboardingPage() {
 
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-900/20 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+              <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                <Clock className='h-6 w-6 text-accent'/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">In Progress</p>
@@ -234,8 +236,8 @@ export default function PreboardingPage() {
           <Card>
             <CardContent className="p-4 flex items-center gap-4">
               <div
-                className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-900/20 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center'>
+                <CheckCircle2 className='h-6 w-6 text-status-success-text'/>
               </div>
               <div>
                 <p className="text-sm font-medium text-[var(--text-muted)]">Completed</p>
@@ -286,15 +288,15 @@ export default function PreboardingPage() {
                 <p className="text-[var(--text-muted)] mt-1">Invite a new candidate to get started</p>
               </div>
             ) : (
-              <div className="divide-y divide-surface-100 dark:divide-surface-700">
+              <div className='divide-y divide-surface-100'>
                 {filteredCandidates.map((candidate) => (
                   <div key={candidate.id}
                        className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                     <div className="row-between">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400">
+                          className='w-10 h-10 rounded-full bg-accent-subtle flex items-center justify-center'>
+                          <span className='text-sm font-medium text-accent'>
                             {candidate.firstName[0]}{candidate.lastName?.[0] || ''}
                           </span>
                         </div>
@@ -316,7 +318,7 @@ export default function PreboardingPage() {
                         <div className="flex items-center gap-2">
                           <div className="w-24 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                             <div
-                              className="bg-accent-500 h-2 rounded-full transition-all"
+                              className='bg-accent h-2 rounded-full transition-all'
                               style={{width: `${candidate.completionPercentage}%`}}
                             />
                           </div>
@@ -350,7 +352,6 @@ export default function PreboardingPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* Invite Modal */}
       {showInviteModal &&
         <PreBoardingModal onClose={() => setShowInviteModal(false)} createMutation={createCandidateMutation}/>}

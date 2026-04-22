@@ -252,7 +252,7 @@ export default function WikiPage() {
               <div className="flex items-center gap-4 mb-2">
                 <div
                   className="flex items-center justify-center rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 p-2">
-                  <BookOpen className={`${iconSize.pageHeader} text-white`}/>
+                  <BookOpen className={`${iconSize.pageHeader} text-inverse`}/>
                 </div>
                 <h1 className={typography.pageTitle}>Wiki Pages</h1>
               </div>
@@ -289,7 +289,7 @@ export default function WikiPage() {
                         whileHover={{scale: 1.1}}
                         whileTap={{scale: 0.9}}
                         onClick={handleOpenCreateSpace}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                         aria-label="Create new space"
                       >
                         <Plus className="h-4 w-4"/>
@@ -359,7 +359,7 @@ export default function WikiPage() {
                         >
                           <div className="flex items-center gap-2">
                             <span
-                              className="flex items-center justify-center w-6 h-6 rounded text-sm text-white flex-shrink-0"
+                              className='flex items-center justify-center w-6 h-6 rounded text-sm text-inverse flex-shrink-0'
                               style={{backgroundColor: space.color || '#3e63dd'}}
                             >
                               {space.icon || '📁'}
@@ -406,7 +406,7 @@ export default function WikiPage() {
                                 whileHover={{scale: 1.15}}
                                 whileTap={{scale: 0.9}}
                                 onClick={(e) => handleOpenDeleteSpace(space, e)}
-                                className="flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-danger-600 hover:border-danger-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                className='flex items-center justify-center w-6 h-6 rounded-md bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-status-danger-text hover:border-status-danger-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                 aria-label="Delete space"
                               >
                                 <Trash2 className="h-3 w-3"/>
@@ -576,7 +576,7 @@ export default function WikiPage() {
                                 />
                               ) : null}
                               <div
-                                className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-inverse text-xs font-medium ${page.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {authorInitials}
                               </div>
                               <span
@@ -596,7 +596,6 @@ export default function WikiPage() {
           </div>
         </div>
       </motion.div>
-
       {/* ═══ Space Form Drawer ═══ */}
       <SpaceFormDrawer
         opened={spaceDrawerOpen}
@@ -608,7 +607,6 @@ export default function WikiPage() {
         editingSpace={editingSpace}
         isSubmitting={createSpace.isPending || updateSpace.isPending}
       />
-
       {/* ═══ Delete Space Modal ═══ */}
       <DeleteSpaceModal
         opened={deleteModalOpen}
@@ -621,7 +619,6 @@ export default function WikiPage() {
         onConfirmDelete={handleConfirmDelete}
         isDeleting={deleteSpace.isPending}
       />
-
       {/* ═══ Space Permissions Drawer ═══ */}
       <SpacePermissionsDrawer
         opened={permissionsDrawerOpen}

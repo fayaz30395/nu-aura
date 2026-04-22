@@ -168,7 +168,8 @@ export default function PreboardingPortalPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-accent-500 border-t-transparent"/>
+        <div
+          className='animate-spin rounded-full h-8 w-8 border-2 border-[var(--accent-primary)] border-t-transparent'/>
       </div>
     );
   }
@@ -178,7 +179,7 @@ export default function PreboardingPortalPage() {
       <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <AlertCircle className="h-12 w-12 text-danger-500 mx-auto mb-4"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text mx-auto mb-4'/>
             <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Error</h2>
             <p className="text-[var(--text-muted)]">{error}</p>
           </CardContent>
@@ -198,12 +199,12 @@ export default function PreboardingPortalPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+      className='min-h-screen bg-gradient-to-br from-accent-50 to-surface-100 py-8 px-4'>
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-lg bg-accent-500 flex items-center justify-center mx-auto mb-4">
-            <Building2 className="h-8 w-8 text-white"/>
+          <div className='w-16 h-16 rounded-lg bg-accent flex items-center justify-center mx-auto mb-4'>
+            <Building2 className='h-8 w-8 text-inverse'/>
           </div>
           <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">Welcome, {data.firstName}!</h1>
           <p className="text-[var(--text-muted)] mt-1">Complete your pre-boarding checklist before joining
@@ -215,7 +216,7 @@ export default function PreboardingPortalPage() {
           <CardContent className="p-4">
             <div className="row-between mb-2">
               <span className="text-sm font-medium text-[var(--text-secondary)]">Overall Progress</span>
-              <span className="text-sm font-bold text-accent-700">{data.completionPercentage}%</span>
+              <span className='text-sm font-bold text-accent'>{data.completionPercentage}%</span>
             </div>
             <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-3">
               <div
@@ -269,13 +270,13 @@ export default function PreboardingPortalPage() {
                     <label className="block text-sm font-medium mb-1">Date of Birth *</label>
                     <Input type="date" {...registerPersonalInfo('dateOfBirth')} />
                     {personalInfoErrors.dateOfBirth &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.dateOfBirth.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.dateOfBirth.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Phone Number</label>
                     <Input placeholder="+91 9876543210" {...registerPersonalInfo('phoneNumber')} />
                     {personalInfoErrors.phoneNumber &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.phoneNumber.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.phoneNumber.message}</span>}
                   </div>
                 </div>
                 <div>
@@ -286,28 +287,28 @@ export default function PreboardingPortalPage() {
                     {...registerPersonalInfo('address')}
                   />
                   {personalInfoErrors.address &&
-                    <span className="text-danger-500 text-sm">{personalInfoErrors.address.message}</span>}
+                    <span className='text-status-danger-text text-sm'>{personalInfoErrors.address.message}</span>}
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <Input placeholder="City" {...registerPersonalInfo('city')} />
                     {personalInfoErrors.city &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.city.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.city.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="State" {...registerPersonalInfo('state')} />
                     {personalInfoErrors.state &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.state.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.state.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="Postal Code" {...registerPersonalInfo('postalCode')} />
                     {personalInfoErrors.postalCode &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.postalCode.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.postalCode.message}</span>}
                   </div>
                   <div>
                     <Input placeholder="Country" {...registerPersonalInfo('country')} />
                     {personalInfoErrors.country &&
-                      <span className="text-danger-500 text-sm">{personalInfoErrors.country.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{personalInfoErrors.country.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -315,13 +316,13 @@ export default function PreboardingPortalPage() {
                     <label className="block text-sm font-medium mb-1">Emergency Contact Name</label>
                     <Input {...registerPersonalInfo('emergencyContactName')} />
                     {personalInfoErrors.emergencyContactName && <span
-                      className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactName.message}</span>}
+                      className='text-status-danger-text text-sm'>{personalInfoErrors.emergencyContactName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Emergency Contact Number</label>
                     <Input {...registerPersonalInfo('emergencyContactNumber')} />
                     {personalInfoErrors.emergencyContactNumber && <span
-                      className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactNumber.message}</span>}
+                      className='text-status-danger-text text-sm'>{personalInfoErrors.emergencyContactNumber.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-end pt-4">
@@ -341,13 +342,14 @@ export default function PreboardingPortalPage() {
                     <label className="block text-sm font-medium mb-1">Bank Name *</label>
                     <Input {...registerBankDetails('bankName')} />
                     {bankDetailsErrors.bankName &&
-                      <span className="text-danger-500 text-sm">{bankDetailsErrors.bankName.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{bankDetailsErrors.bankName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Account Number *</label>
                     <Input {...registerBankDetails('bankAccountNumber')} />
                     {bankDetailsErrors.bankAccountNumber &&
-                      <span className="text-danger-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
+                      <span
+                        className='text-status-danger-text text-sm'>{bankDetailsErrors.bankAccountNumber.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -355,13 +357,13 @@ export default function PreboardingPortalPage() {
                     <label className="block text-sm font-medium mb-1">IFSC Code *</label>
                     <Input {...registerBankDetails('bankIfscCode')} />
                     {bankDetailsErrors.bankIfscCode &&
-                      <span className="text-danger-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{bankDetailsErrors.bankIfscCode.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">PAN Number *</label>
                     <Input placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
                     {bankDetailsErrors.taxId &&
-                      <span className="text-danger-500 text-sm">{bankDetailsErrors.taxId.message}</span>}
+                      <span className='text-status-danger-text text-sm'>{bankDetailsErrors.taxId.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-between pt-4">
@@ -381,7 +383,7 @@ export default function PreboardingPortalPage() {
                   <Card
                     className={`p-4 border-2 ${data.photoUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
+                      {data.photoUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
                         <p className="font-medium">Passport Photo</p>
@@ -392,7 +394,7 @@ export default function PreboardingPortalPage() {
                   <Card
                     className={`p-4 border-2 ${data.idProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
+                      {data.idProofUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
                         <p className="font-medium">ID Proof</p>
@@ -403,7 +405,7 @@ export default function PreboardingPortalPage() {
                   <Card
                     className={`p-4 border-2 ${data.addressProofUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
+                      {data.addressProofUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
                         <p className="font-medium">Address Proof</p>
@@ -414,7 +416,7 @@ export default function PreboardingPortalPage() {
                   <Card
                     className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-4">
-                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
+                      {data.educationDocsUploaded ? <CheckCircle2 className='h-6 w-6 text-status-success-text'/> :
                         <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
                         <p className="font-medium">Education Docs</p>
@@ -441,7 +443,7 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-xl font-semibold mb-4">Offer Letter</h2>
                 {data.offerLetterSigned ? (
                   <div className="text-center py-8">
-                    <CheckCircle2 className="h-16 w-16 text-success-500 mx-auto mb-4"/>
+                    <CheckCircle2 className='h-16 w-16 text-status-success-text mx-auto mb-4'/>
                     <h3 className="text-xl font-bold text-[var(--text-primary)]">All Done!</h3>
                     <p className="text-[var(--text-muted)] mt-2">You have completed your pre-boarding checklist. See you
                       on {new Date(data.expectedJoiningDate).toLocaleDateString()}!</p>
@@ -450,7 +452,7 @@ export default function PreboardingPortalPage() {
                   <>
                     <Card className="p-4 bg-[var(--bg-secondary)]/50">
                       <div className="flex items-start gap-4">
-                        <FileText className="h-6 w-6 text-accent-500 mt-1"/>
+                        <FileText className='h-6 w-6 text-accent mt-1'/>
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>
                           <p className="text-body-muted mt-1">

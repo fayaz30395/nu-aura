@@ -432,7 +432,7 @@ export default function LettersPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letters">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading letters...</span>
         </div>
       </AppLayout>
@@ -470,9 +470,9 @@ export default function LettersPage() {
 
         {/* Error Alert */}
         {lettersError && (
-          <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-900/20">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-danger-600 dark:text-danger-400">
+              <div className='flex items-center gap-2 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{lettersError instanceof Error ? lettersError.message : 'Failed to load letters'}</span>
                 <Button size="sm" variant="outline" onClick={() => refetchLetters()} className="ml-auto">
@@ -488,8 +488,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
-                  <Files className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <Files className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Total Letters</p>
@@ -514,8 +514,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
-                  <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                <div className='rounded-lg bg-status-warning-bg p-4'>
+                  <Clock className='h-6 w-6 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Pending Approval</p>
@@ -527,8 +527,8 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
-                  <FileCheck className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                <div className='rounded-lg bg-status-success-bg p-4'>
+                  <FileCheck className='h-6 w-6 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary">Issued</p>
@@ -657,7 +657,7 @@ export default function LettersPage() {
                               <div
                                 className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-accent-100 dark:bg-accent-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
                                 {letter.candidateId ? (
-                                  <UserPlus className="h-4 w-4 text-accent-700 dark:text-accent-400"/>
+                                  <UserPlus className='h-4 w-4 text-accent'/>
                                 ) : (
                                   <User className="h-4 w-4 text-[var(--text-secondary)]"/>
                                 )}
@@ -667,7 +667,7 @@ export default function LettersPage() {
                                     {letter.candidateName || letter.employeeName || 'N/A'}
                                   </span>
                                 {letter.candidateId && (
-                                  <p className="text-xs text-accent-700 dark:text-accent-400">Candidate</p>
+                                  <p className='text-xs text-accent'>Candidate</p>
                                 )}
                               </div>
                             </div>
@@ -717,7 +717,7 @@ export default function LettersPage() {
                                   <PermissionGate permission={Permissions.LETTER_APPROVE} fallback={<div/>}>
                                     <button
                                       onClick={() => handleApproveLetter(letter)}
-                                      className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 dark:hover:bg-success-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                      className='w-full px-4 py-2 text-left text-sm text-status-success-text hover:bg-status-success-bg flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                     >
                                       <CheckCircle className="h-4 w-4"/>
                                       Approve
@@ -729,7 +729,7 @@ export default function LettersPage() {
                                     <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div/>}>
                                       <button
                                         onClick={() => handleIssueLetter(letter)}
-                                        className="w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                        className='w-full px-4 py-2 text-left text-sm text-accent hover:bg-accent-subtle flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                       >
                                         <FileCheck className="h-4 w-4"/>
                                         Issue Letter
@@ -739,7 +739,7 @@ export default function LettersPage() {
                                       <PermissionGate permission={Permissions.LETTER_ISSUE} fallback={<div/>}>
                                         <button
                                           onClick={() => handleIssueWithESign(letter)}
-                                          className="w-full px-4 py-2 text-left text-sm text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                          className='w-full px-4 py-2 text-left text-sm text-accent hover:bg-accent-subtle flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                         >
                                           <PenTool className="h-4 w-4"/>
                                           Issue with E-Sign
@@ -776,7 +776,7 @@ export default function LettersPage() {
                                 {letter.status === LetterStatus.ISSUED && (
                                   <button
                                     onClick={() => handleRevokeLetter(letter)}
-                                    className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                                    className='w-full px-4 py-2 text-left text-sm text-status-danger-text hover:bg-status-danger-bg flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                                   >
                                     <XCircle className="h-4 w-4"/>
                                     Revoke
@@ -851,8 +851,8 @@ export default function LettersPage() {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                          <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                        <div className='rounded-lg bg-accent-subtle p-2'>
+                          <FileText className='h-5 w-5 text-accent'/>
                         </div>
                         <div>
                           <p className="text-caption font-mono">{template.code}</p>
@@ -867,7 +867,7 @@ export default function LettersPage() {
                     </p>
                     <div className="row-between">
                       <span
-                        className="px-2 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                        className='px-2 py-1 text-xs font-medium rounded-full bg-accent-subtle text-accent'>
                         {getCategoryLabel(template.category)}
                       </span>
                       {template.requiresApproval && (
@@ -923,7 +923,7 @@ export default function LettersPage() {
                   </select>
                   {generateLetterForm.formState.errors.templateId && (
                     <p
-                      className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
+                      className='text-status-danger-text text-xs mt-1'>{generateLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-caption">{selectedTemplate.description}</p>
@@ -942,7 +942,7 @@ export default function LettersPage() {
                   />
                   {generateLetterForm.formState.errors.employeeId && (
                     <p
-                      className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
+                      className='text-status-danger-text text-xs mt-1'>{generateLetterForm.formState.errors.employeeId.message}</p>
                   )}
                 </div>
 
@@ -970,7 +970,7 @@ export default function LettersPage() {
                     />
                     {generateLetterForm.formState.errors.letterDate && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{generateLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -1031,8 +1031,8 @@ export default function LettersPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-4">
-              <div className="rounded-lg bg-accent-100 p-2 dark:bg-accent-900">
-                <FileText className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+              <div className='rounded-lg bg-accent-subtle p-2'>
+                <FileText className='h-6 w-6 text-accent'/>
               </div>
               <div>
                 <p className="text-body-muted font-mono">{selectedLetter?.referenceNumber}</p>
@@ -1051,7 +1051,7 @@ export default function LettersPage() {
                     {getStatusLabel(selectedLetter.status)}
                   </span>
                   <span
-                    className="px-4 py-1 text-sm font-medium rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-300">
+                    className='px-4 py-1 text-sm font-medium rounded-full bg-accent-subtle text-accent'>
                     {getCategoryLabel(selectedLetter.category)}
                   </span>
                 </div>
@@ -1113,8 +1113,8 @@ export default function LettersPage() {
                 )}
 
                 {selectedLetter.approvedByName && (
-                  <div className="p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
-                    <p className="text-sm text-success-600 dark:text-success-400 flex items-center gap-2">
+                  <div className='p-4 bg-status-success-bg rounded-lg'>
+                    <p className='text-sm text-status-success-text flex items-center gap-2'>
                       <CheckCircle className="h-4 w-4"/>
                       Approved By
                     </p>
@@ -1199,7 +1199,7 @@ export default function LettersPage() {
                   </select>
                   {offerLetterForm.formState.errors.templateId && (
                     <p
-                      className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
+                      className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.templateId.message}</p>
                   )}
                   {selectedTemplate && (
                     <p className="mt-1 text-caption">{selectedTemplate.description}</p>
@@ -1224,10 +1224,11 @@ export default function LettersPage() {
                   </select>
                   {offerLetterForm.formState.errors.candidateId && (
                     <p
-                      className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
+                      className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.candidateId.message}</p>
                   )}
                   {eligibleCandidates.length === 0 && (
-                    <p className="mt-1 text-xs text-warning-600">No eligible candidates. Candidates must be in SELECTED
+                    <p className='mt-1 text-xs text-status-warning-text'>No eligible candidates. Candidates must be in
+                      SELECTED
                       status.</p>
                   )}
                 </div>
@@ -1257,7 +1258,7 @@ export default function LettersPage() {
                     />
                     {offerLetterForm.formState.errors.offeredDesignation && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.offeredDesignation.message}</p>
                     )}
                   </div>
                   <div>
@@ -1273,7 +1274,7 @@ export default function LettersPage() {
                     />
                     {offerLetterForm.formState.errors.offeredCtc && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.offeredCtc.message}</p>
                     )}
                   </div>
                 </div>
@@ -1290,7 +1291,7 @@ export default function LettersPage() {
                     />
                     {offerLetterForm.formState.errors.proposedJoiningDate && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
                     )}
                   </div>
                   <div>
@@ -1304,7 +1305,7 @@ export default function LettersPage() {
                     />
                     {offerLetterForm.formState.errors.letterDate && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{offerLetterForm.formState.errors.letterDate.message}</p>
                     )}
                   </div>
                 </div>
@@ -1337,7 +1338,7 @@ export default function LettersPage() {
                     <input
                       type="checkbox"
                       {...offerLetterForm.register('submitForApproval')}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                      className='rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent focus:ring-accent-500'
                     />
                     <span className="text-body-secondary">Submit for approval</span>
                   </label>
@@ -1345,7 +1346,7 @@ export default function LettersPage() {
                     <input
                       type="checkbox"
                       {...offerLetterForm.register('sendForESign')}
-                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                      className='rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-accent focus:ring-accent-500'
                     />
                     <span className="text-body-secondary">Send for e-signature</span>
                   </label>

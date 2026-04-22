@@ -36,7 +36,7 @@ export default function ContractDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center p-16">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
         </div>
       </AppLayout>
     );

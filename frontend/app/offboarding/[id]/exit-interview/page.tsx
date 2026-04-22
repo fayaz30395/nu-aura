@@ -220,7 +220,7 @@ export default function ExitInterviewPage() {
                 <IconArrowLeft size={20}/>
               </ActionIcon>
               <div>
-                <Title order={2} className="text-surface-900 dark:text-surface-50">
+                <Title order={2} className='text-primary'>
                   Exit Interview
                 </Title>
                 <Text size="sm" c="dimmed">
@@ -367,7 +367,7 @@ export default function ExitInterviewPage() {
                         <Group justify="space-between">
                           <Text fw={600}>Average Rating</Text>
                           <Group gap="xs">
-                            <IconStarFilled size={16} className="text-warning-500"/>
+                            <IconStarFilled size={16} className='text-status-warning-text'/>
                             <Text fw={700} size="lg">{interview.averageRating.toFixed(1)}/5</Text>
                           </Group>
                         </Group>

@@ -190,7 +190,8 @@ export default function SearchPage() {
       <AppLayout>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <div
+              className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
             <p className="text-[var(--text-muted)] font-medium">Loading search...</p>
           </div>
         </div>
@@ -233,7 +234,7 @@ export default function SearchPage() {
           <h1 className={`${typography.pageTitle} skeuo-emboss flex items-center gap-4`}>
             <div
               className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
-              <Search className={`${iconSize.pageHeader} text-white`}/>
+              <Search className={`${iconSize.pageHeader} text-inverse`}/>
             </div>
             Search NU-Fluence
           </h1>
@@ -355,7 +356,7 @@ export default function SearchPage() {
               Filters
               {hasActiveFilters && (
                 <span
-                  className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--accent-700)] text-white text-xs font-bold">
+                  className='inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--accent-700)] text-inverse text-xs font-bold'>
                   {[selectedType, selectedVisibility].filter(Boolean).length}
                 </span>
               )}

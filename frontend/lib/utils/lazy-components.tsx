@@ -10,10 +10,10 @@ import {Skeleton} from '@/components/ui/Skeleton';
 const DefaultLoadingFallback = () => (
   <div className="flex items-center justify-center p-8">
     <div className="animate-pulse flex space-x-4">
-      <div className="h-10 w-10 bg-surface-200 rounded-full"/>
+      <div className='h-10 w-10 bg-elevated rounded-full'/>
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-surface-200 rounded w-3/4"/>
-        <div className="h-4 bg-surface-200 rounded w-1/2"/>
+        <div className='h-4 bg-elevated rounded w-3/4'/>
+        <div className='h-4 bg-elevated rounded w-1/2'/>
       </div>
     </div>
   </div>
@@ -94,7 +94,7 @@ export const LazyPieChart = dynamic(
  */
 export const EditorLoadingFallback = () => (
   <div
-    className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] dark:border-surface-700 flex items-center justify-center"
+    className='w-full rounded-lg border border-[var(--border-strong)] bg-[var(--bg-card)] flex items-center justify-center'
     style={{minHeight: '300px'}}>
     <div className="space-y-4 w-full p-6">
       <Skeleton className="h-10 w-full rounded"/>

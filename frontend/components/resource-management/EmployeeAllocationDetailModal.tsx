@@ -132,10 +132,10 @@ export function EmployeeAllocationDetailModal({
             <User className="h-6 w-6"/>
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+            <h2 className='text-xl font-semibold text-primary'>
               {employee.employeeName}
             </h2>
-            <div className="flex items-center gap-2 text-sm text-surface-500">
+            <div className='flex items-center gap-2 text-sm text-muted'>
               <span>{employee.employeeCode}</span>
               {employee.designation && (
                 <>
@@ -147,15 +147,14 @@ export function EmployeeAllocationDetailModal({
           </div>
         </div>
       </ModalHeader>
-
       <ModalBody className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div
-            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            className='rounded-lg border border-subtle bg-base p-4'>
             <div className="flex items-center gap-2">
-              <Percent className="h-4 w-4 text-surface-400"/>
-              <span className="text-xs text-surface-500">Active Allocation</span>
+              <Percent className='h-4 w-4 text-muted'/>
+              <span className='text-xs text-muted'>Active Allocation</span>
             </div>
             <p
               className="mt-1 text-xl font-bold"
@@ -166,10 +165,10 @@ export function EmployeeAllocationDetailModal({
           </div>
 
           <div
-            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            className='rounded-lg border border-subtle bg-base p-4'>
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-surface-400"/>
-              <span className="text-xs text-surface-500">Available</span>
+              <TrendingUp className='h-4 w-4 text-muted'/>
+              <span className='text-xs text-muted'>Available</span>
             </div>
             <p className={`mt-1 text-xl font-bold ${availableCapacity > 0 ? 'text-success-600' : 'text-danger-600'}`}>
               {formatAllocationPercentage(availableCapacity)}
@@ -177,23 +176,23 @@ export function EmployeeAllocationDetailModal({
           </div>
 
           <div
-            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            className='rounded-lg border border-subtle bg-base p-4'>
             <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-surface-400"/>
-              <span className="text-xs text-surface-500">Active Projects</span>
+              <Briefcase className='h-4 w-4 text-muted'/>
+              <span className='text-xs text-muted'>Active Projects</span>
             </div>
-            <p className="mt-1 text-xl font-bold text-surface-900 dark:text-surface-50">
+            <p className='mt-1 text-xl font-bold text-primary'>
               {activeProjectCount}
             </p>
           </div>
 
           <div
-            className="rounded-lg border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-800">
+            className='rounded-lg border border-subtle bg-base p-4'>
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-accent-500"/>
-              <span className="text-xs text-surface-500">Planned</span>
+              <Clock className='h-4 w-4 text-accent'/>
+              <span className='text-xs text-muted'>Planned</span>
             </div>
-            <p className="mt-1 text-xl font-bold text-accent-600 dark:text-accent-400">
+            <p className='mt-1 text-xl font-bold text-accent'>
               {formatAllocationPercentage(plannedAllocation)}
             </p>
           </div>
@@ -202,12 +201,12 @@ export function EmployeeAllocationDetailModal({
         {/* Allocation Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-surface-600 dark:text-surface-400">Current Capacity Utilization</span>
+            <span className='text-secondary'>Current Capacity Utilization</span>
             <span className="font-medium" style={{color: statusColor}}>
               {formatAllocationPercentage(activeAllocation)} / 100%
             </span>
           </div>
-          <div className="relative h-3 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+          <div className='relative h-3 w-full overflow-hidden rounded-full bg-elevated'>
             {/* Active allocation */}
             <div
               className={`absolute left-0 top-0 h-full transition-all ${
@@ -218,7 +217,7 @@ export function EmployeeAllocationDetailModal({
             {/* Planned allocation (shown in blue after active) */}
             {plannedAllocation > 0 && (
               <div
-                className="absolute top-0 h-full bg-accent-400"
+                className='absolute top-0 h-full bg-accent-subtle'
                 style={{
                   left: `${(activeAllocation / 150) * 100}%`,
                   width: `${(plannedAllocation / 150) * 100}%`,
@@ -227,18 +226,18 @@ export function EmployeeAllocationDetailModal({
             )}
             {/* 100% marker */}
             <div
-              className="absolute top-0 h-full w-0.5 bg-surface-600"
+              className='absolute top-0 h-full w-0.5 bg-inverse'
               style={{left: '66.67%'}}
             />
           </div>
-          <div className="row-between text-xs text-surface-500">
+          <div className='row-between text-xs text-muted'>
             <span>0%</span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-success-500"></span> Active
+                <span className='h-2 w-2 rounded-full bg-status-success-bg'></span> Active
               </span>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-accent-400"></span> Planned
+                <span className='h-2 w-2 rounded-full bg-accent-subtle'></span> Planned
               </span>
             </div>
             <span>150%</span>
@@ -246,7 +245,7 @@ export function EmployeeAllocationDetailModal({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-surface-200 dark:border-surface-700">
+        <div className='border-b border-subtle'>
           <nav className="-mb-px flex gap-6">
             <button
               onClick={() => setActiveTab('current')}
@@ -328,7 +327,6 @@ export function EmployeeAllocationDetailModal({
           )}
         </div>
       </ModalBody>
-
       <ModalFooter>
         <Button variant="outline" onClick={onClose}>
           Close
@@ -466,7 +464,7 @@ function AllocationCard({
   if (isEditing) {
     return (
       <div
-        className="rounded-lg border border-accent-300 bg-accent-50 p-4 dark:border-accent-700 dark:bg-accent-900/20">
+        className='rounded-lg border border-[var(--accent-primary)] bg-accent-subtle p-4'>
         <div className="flex items-start gap-2">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-lg ${statusStyle.icon}`}
@@ -475,19 +473,19 @@ function AllocationCard({
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-surface-900 dark:text-surface-50">
+              <h4 className='font-medium text-primary'>
                 {allocation.projectName}
               </h4>
-              <span className="text-xs text-surface-500">Editing</span>
+              <span className='text-xs text-muted'>Editing</span>
             </div>
-            <p className="text-sm text-surface-500">
+            <p className='text-sm text-muted'>
               {allocation.projectCode} • {allocation.role}
             </p>
 
             {/* Edit Form */}
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label className='mb-1 block text-xs font-medium text-secondary'>
                   Start Date
                 </label>
                 <Input
@@ -498,7 +496,7 @@ function AllocationCard({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label className='mb-1 block text-xs font-medium text-secondary'>
                   End Date
                 </label>
                 <Input
@@ -509,7 +507,7 @@ function AllocationCard({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label className='mb-1 block text-xs font-medium text-secondary'>
                   Allocation % (max: {maxAllowedPercentage}%)
                 </label>
                 <Input
@@ -525,7 +523,7 @@ function AllocationCard({
 
             {/* Validation Error */}
             {validationError && (
-              <div className="mt-2 flex items-center gap-1 text-xs text-danger-600 dark:text-danger-400">
+              <div className='mt-2 flex items-center gap-1 text-xs text-status-danger-text'>
                 <AlertTriangle className="h-3 w-3"/>
                 {validationError}
               </div>
@@ -568,21 +566,21 @@ function AllocationCard({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-medium text-surface-900 dark:text-surface-50">
+              <h4 className='font-medium text-primary'>
                 {allocation.projectName}
               </h4>
               {allocation.isPendingApproval && (
                 <span
-                  className="inline-flex items-center gap-1 rounded-full bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700 dark:bg-warning-900/30 dark:text-warning-400">
+                  className='inline-flex items-center gap-1 rounded-full bg-status-warning-bg px-2 py-0.5 text-xs font-medium text-status-warning-text'>
                   <Clock className="h-3 w-3"/>
                   Pending
                 </span>
               )}
             </div>
-            <p className="text-sm text-surface-500">
+            <p className='text-sm text-muted'>
               {allocation.projectCode} • {allocation.role}
             </p>
-            <div className="mt-2 flex items-center gap-4 text-xs text-surface-500">
+            <div className='mt-2 flex items-center gap-4 text-xs text-muted'>
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3"/>
                 {format(new Date(allocation.startDate), 'MMM d, yyyy')}
@@ -598,10 +596,10 @@ function AllocationCard({
         </div>
         <div className="flex items-start gap-2">
           <div className="text-right">
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className='text-2xl font-bold text-primary'>
               {formatAllocationPercentage(allocation.allocationPercentage)}
             </p>
-            {onClick && <ChevronRight className="ml-auto mt-1 h-4 w-4 text-surface-400"/>}
+            {onClick && <ChevronRight className='ml-auto mt-1 h-4 w-4 text-muted'/>}
           </div>
           {canEdit && isEditable && (
             <button
@@ -609,7 +607,7 @@ function AllocationCard({
                 e.stopPropagation();
                 onEdit?.();
               }}
-              className="rounded-lg p-2 text-surface-400 transition-colors hover:bg-surface-100 hover:text-surface-600 dark:hover:bg-surface-700 dark:hover:text-surface-300"
+              className='rounded-lg p-2 text-muted transition-colors hover:bg-surface hover:text-secondary'
               title="Edit allocation"
             >
               <Pencil className="h-4 w-4"/>
@@ -640,21 +638,21 @@ function HistoryCard({request}: HistoryCardProps) {
   };
 
   return (
-    <div className="rounded-lg border border-surface-200 bg-[var(--bg-card)] p-4 dark:border-surface-700">
+    <div className='rounded-lg border border-subtle bg-[var(--bg-card)] p-4'>
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-surface-900 dark:text-surface-50">
+            <h4 className='font-medium text-primary'>
               {request.projectName}
             </h4>
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getStatusStyle(request.status)}`}>
               {request.status}
             </span>
           </div>
-          <p className="mt-1 text-sm text-surface-500">
+          <p className='mt-1 text-sm text-muted'>
             Requested: {formatAllocationPercentage(request.requestedAllocation)} allocation
           </p>
-          <div className="mt-2 flex items-center gap-4 text-xs text-surface-500">
+          <div className='mt-2 flex items-center gap-4 text-xs text-muted'>
             <span className="flex items-center gap-1">
               <User className="h-3 w-3"/>
               By {request.requestedByName}
@@ -665,19 +663,19 @@ function HistoryCard({request}: HistoryCardProps) {
             </span>
           </div>
           {request.approvalComment && (
-            <p className="mt-2 text-sm italic text-surface-600 dark:text-surface-400">
+            <p className='mt-2 text-sm italic text-secondary'>
               &quot;{request.approvalComment}&quot;
             </p>
           )}
           {request.rejectionReason && (
-            <p className="mt-2 text-sm italic text-danger-600 dark:text-danger-400">
+            <p className='mt-2 text-sm italic text-status-danger-text'>
               Reason: {request.rejectionReason}
             </p>
           )}
         </div>
         <div className="text-right">
-          <p className="text-sm text-surface-500">Result</p>
-          <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+          <p className='text-sm text-muted'>Result</p>
+          <p className='text-lg font-semibold text-primary'>
             {formatAllocationPercentage(request.resultingAllocation)}
           </p>
         </div>

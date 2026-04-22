@@ -276,13 +276,14 @@ export default function LeaveTypesManagementPage() {
 
         {/* Error Message */}
         {(uiError || queryError) && (
-          <div className="mb-4 bg-danger-50 border border-danger-200 text-danger-700 px-4 py-4 rounded relative">
+          <div
+            className='mb-4 bg-status-danger-bg border border-status-danger-border text-status-danger-text px-4 py-4 rounded relative'>
             <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
             <button
               onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-4"
             >
-              <span className="text-danger-500 text-xl">&times;</span>
+              <span className='text-status-danger-text text-xl'>&times;</span>
             </button>
           </div>
         )}
@@ -363,17 +364,17 @@ export default function LeaveTypesManagementPage() {
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
                       {leaveType.isCarryForwardAllowed && (
-                        <span className="px-2 py-1 text-xs bg-accent-100 text-accent-800 rounded">Carry Forward</span>
+                        <span className='px-2 py-1 text-xs bg-accent-subtle text-accent rounded'>Carry Forward</span>
                       )}
                       {leaveType.isEncashable && (
-                        <span className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">Encashable</span>
+                        <span className='px-2 py-1 text-xs bg-accent-subtle text-accent rounded'>Encashable</span>
                       )}
                       {leaveType.requiresDocument && (
-                        <span className="px-2 py-1 text-xs bg-warning-100 text-warning-800 rounded">Requires Doc</span>
+                        <span className='px-2 py-1 text-xs bg-status-warning-bg text-status-warning-text rounded'>Requires Doc</span>
                       )}
                       {leaveType.genderSpecific && leaveType.genderSpecific !== 'ALL' && (
                         <span
-                          className="px-2 py-1 text-xs bg-accent-300 text-accent-900 rounded">{leaveType.genderSpecific}</span>
+                          className='px-2 py-1 text-xs bg-accent-subtle text-accent rounded'>{leaveType.genderSpecific}</span>
                       )}
                     </div>
                   </td>
@@ -386,19 +387,19 @@ export default function LeaveTypesManagementPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => handleEdit(leaveType)}
-                      className="text-accent-700 hover:text-accent-900 mr-4"
+                      className='text-accent hover:text-accent mr-4'
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleToggleActive(leaveType)}
-                      className="text-warning-600 hover:text-warning-900 mr-4"
+                      className='text-status-warning-text hover:text-status-warning-text mr-4'
                     >
                       {leaveType.isActive ? 'Deactivate' : 'Activate'}
                     </button>
                     <button
                       onClick={() => handleDelete(leaveType)}
-                      className="text-danger-600 hover:text-danger-900"
+                      className='text-status-danger-text hover:text-status-danger-text'
                     >
                       Delete
                     </button>
@@ -462,7 +463,8 @@ export default function LeaveTypesManagementPage() {
                           placeholder="AL, SL, CL"
                         />
                         {form.formState.errors.leaveCode && (
-                          <p className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveCode.message}</p>
+                          <p
+                            className='mt-1 text-xs text-status-danger-text'>{form.formState.errors.leaveCode.message}</p>
                         )}
                       </div>
                       <div>
@@ -476,7 +478,8 @@ export default function LeaveTypesManagementPage() {
                           placeholder="Annual Leave, Sick Leave"
                         />
                         {form.formState.errors.leaveName && (
-                          <p className="mt-1 text-xs text-danger-500">{form.formState.errors.leaveName.message}</p>
+                          <p
+                            className='mt-1 text-xs text-status-danger-text'>{form.formState.errors.leaveName.message}</p>
                         )}
                       </div>
                     </div>
@@ -509,7 +512,7 @@ export default function LeaveTypesManagementPage() {
                           <input
                             type="checkbox"
                             {...form.register('isPaid')}
-                            className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                            className='h-4 w-4 text-accent focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded'
                           />
                           <span className="ml-2 text-body-secondary">Paid Leave</span>
                         </label>
@@ -637,7 +640,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isCarryForwardAllowed')}
-                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className='h-4 w-4 text-accent focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded'
                         />
                         <span className="ml-2 text-body-secondary">Allow Carry Forward</span>
                       </label>
@@ -661,7 +664,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isEncashable')}
-                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className='h-4 w-4 text-accent focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded'
                         />
                         <span className="ml-2 text-body-secondary">Encashable</span>
                       </label>
@@ -670,7 +673,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('requiresDocument')}
-                          className="h-4 w-4 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                          className='h-4 w-4 text-accent focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded'
                         />
                         <span className="ml-2 text-body-secondary">Requires Supporting Document</span>
                       </label>

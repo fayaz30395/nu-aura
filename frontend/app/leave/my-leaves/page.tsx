@@ -111,7 +111,7 @@ export default function MyLeavesPage() {
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='text-accent hover:text-accent flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             ← Back
           </button>
@@ -151,14 +151,14 @@ export default function MyLeavesPage() {
         {/* Error State */}
         {error && (
           <div
-            className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
+            className='mb-6 bg-status-danger-bg border border-status-danger-border rounded-lg p-4 flex items-start gap-4'>
+            <AlertCircle className='w-5 h-5 text-status-danger-text mt-0.5 flex-shrink-0'/>
             <div className="flex-1">
-              <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
+              <p className='text-sm text-status-danger-text'>{error}</p>
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='text-status-danger-text hover:text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <RefreshCw
                 className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
@@ -172,7 +172,7 @@ export default function MyLeavesPage() {
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div
-                  className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin"
+                  className='w-8 h-8 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'
                   aria-label="Loading leave requests"/>
                 <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
@@ -221,7 +221,7 @@ export default function MyLeavesPage() {
                     </th>
                   </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className='divide-y divide-surface-200'>
                   {requests.map((request: LeaveRequest) => (
                     <tr key={request.id}
                         className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
@@ -253,7 +253,7 @@ export default function MyLeavesPage() {
                         {request.status === 'PENDING' && (
                           <button
                             onClick={() => handleCancelClick(request.id)}
-                            className="text-danger-600 dark:text-danger-500 hover:text-danger-700 dark:hover:text-danger-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='text-status-danger-text hover:text-status-danger-text font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           >
                             Cancel
                           </button>
@@ -261,7 +261,7 @@ export default function MyLeavesPage() {
                         {request.status === 'REJECTED' && request.rejectionReason && (
                           <button
                             onClick={() => toast.error(`Rejection Reason: ${request.rejectionReason}`)}
-                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='text-accent hover:text-accent font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           >
                             View Reason
                           </button>
@@ -355,5 +355,6 @@ export default function MyLeavesPage() {
           </ModalFooter>
         </Modal>
       </motion.div>
-    </AppLayout>);
+    </AppLayout>
+  );
 }

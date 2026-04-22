@@ -112,7 +112,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({article, onView}) => {
             <FileText className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-1"/>
             <div className="flex-1 min-w-0">
               <h3
-                className="text-base font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors truncate">
+                className='text-base font-semibold text-[var(--text-primary)] group-hover:text-accent transition-colors truncate'>
                 {article.title}
               </h3>
               <Badge
@@ -190,7 +190,6 @@ const ArticleDetailModal: React.FC<{
           </div>
         </div>
       </ModalHeader>
-
       <ModalBody>
         <div className="space-y-6">
           {/* Article Content */}
@@ -210,7 +209,7 @@ const ArticleDetailModal: React.FC<{
 
             {submitStatus === 'success' && (
               <div
-                className="p-4 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300 flex gap-2 mb-4 text-sm">
+                className='p-4 rounded-lg bg-status-success-bg text-status-success-text flex gap-2 mb-4 text-sm'>
                 <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5"/>
                 Thank you for your feedback!
               </div>
@@ -222,7 +221,7 @@ const ArticleDetailModal: React.FC<{
                 size="sm"
                 onClick={() => handleHelpful(true)}
                 disabled={feedbackMutation.isPending || isHelpful === true}
-                className={isHelpful === true ? 'bg-success-600 hover:bg-success-700' : ''}
+                className={isHelpful === true ? 'bg-status-success-bg hover:bg-status-success-bg' : ''}
               >
                 <ThumbsUp className="h-4 w-4 mr-2"/>
                 Helpful
@@ -232,7 +231,7 @@ const ArticleDetailModal: React.FC<{
                 size="sm"
                 onClick={() => handleHelpful(false)}
                 disabled={feedbackMutation.isPending || isHelpful === false}
-                className={isHelpful === false ? 'bg-danger-600 hover:bg-danger-700' : ''}
+                className={isHelpful === false ? 'bg-status-danger-bg hover:bg-status-danger-bg' : ''}
               >
                 <ThumbsDown className="h-4 w-4 mr-2"/>
                 Not Helpful
@@ -253,7 +252,6 @@ const ArticleDetailModal: React.FC<{
           </div>
         </div>
       </ModalBody>
-
       <ModalFooter>
         <Button variant="outline" onClick={onClose}>
           Close
@@ -541,7 +539,6 @@ export default function KnowledgeBasePage() {
           </div>
         </div>
       </div>
-
       {/* Modals */}
       <ArticleDetailModal
         article={selectedArticle}
@@ -549,7 +546,6 @@ export default function KnowledgeBasePage() {
         onClose={handleCloseDetail}
         onSubmitTicket={handleSubmitTicket}
       />
-
       {/* Create Article Modal (Admin Only) */}
       {isAdmin && (
         <Modal isOpen={showCreateModal} onClose={() => {
@@ -574,8 +570,8 @@ export default function KnowledgeBasePage() {
             <ModalBody>
               <div className="py-8 text-center">
                 <div
-                  className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400"/>
+                  className='w-16 h-16 bg-status-success-bg rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <CheckCircle className='h-8 w-8 text-status-success-text'/>
                 </div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Article Created
@@ -600,7 +596,7 @@ export default function KnowledgeBasePage() {
                       {...registerArticle('title')}
                     />
                     {articleErrors.title && (
-                      <p className="text-sm text-danger-500 mt-1">{articleErrors.title.message}</p>
+                      <p className='text-sm text-status-danger-text mt-1'>{articleErrors.title.message}</p>
                     )}
                   </div>
 
@@ -616,7 +612,7 @@ export default function KnowledgeBasePage() {
                       ))}
                     </select>
                     {articleErrors.category && (
-                      <p className="text-sm text-danger-500 mt-1">{articleErrors.category.message}</p>
+                      <p className='text-sm text-status-danger-text mt-1'>{articleErrors.category.message}</p>
                     )}
                   </div>
 
@@ -631,7 +627,7 @@ export default function KnowledgeBasePage() {
                       {...registerArticle('content')}
                     />
                     {articleErrors.content && (
-                      <p className="text-sm text-danger-500 mt-1">{articleErrors.content.message}</p>
+                      <p className='text-sm text-status-danger-text mt-1'>{articleErrors.content.message}</p>
                     )}
                   </div>
                 </div>
@@ -658,7 +654,6 @@ export default function KnowledgeBasePage() {
           )}
         </Modal>
       )}
-
       {/* Submit Ticket Modal */}
       <Modal isOpen={showTicketModal} onClose={() => {
         setShowTicketModal(false);
@@ -682,8 +677,8 @@ export default function KnowledgeBasePage() {
           <ModalBody>
             <div className="py-8 text-center">
               <div
-                className="w-16 h-16 bg-success-100 dark:bg-success-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-400"/>
+                className='w-16 h-16 bg-status-success-bg rounded-full flex items-center justify-center mx-auto mb-4'>
+                <CheckCircle className='h-8 w-8 text-status-success-text'/>
               </div>
               <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                 Ticket Submitted
@@ -708,7 +703,7 @@ export default function KnowledgeBasePage() {
                     {...registerTicket('subject')}
                   />
                   {ticketErrors.subject && (
-                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.subject.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{ticketErrors.subject.message}</p>
                   )}
                 </div>
 
@@ -723,7 +718,7 @@ export default function KnowledgeBasePage() {
                     {...registerTicket('description')}
                   />
                   {ticketErrors.description && (
-                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.description.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{ticketErrors.description.message}</p>
                   )}
                 </div>
 
@@ -741,7 +736,7 @@ export default function KnowledgeBasePage() {
                     <option value="URGENT">Urgent</option>
                   </select>
                   {ticketErrors.priority && (
-                    <p className="text-sm text-danger-500 mt-1">{ticketErrors.priority.message}</p>
+                    <p className='text-sm text-status-danger-text mt-1'>{ticketErrors.priority.message}</p>
                   )}
                 </div>
               </div>

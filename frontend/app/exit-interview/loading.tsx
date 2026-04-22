@@ -4,7 +4,7 @@ import {Skeleton} from '@mantine/core';
 
 export default function ExitInterviewLoading() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-surface-50 dark:bg-surface-900 p-4">
+    <div className='flex items-center justify-center min-h-screen bg-base p-4'>
       <div className="w-full max-w-2xl space-y-6">
         {/* Header skeleton */}
         <div className="text-center space-y-2 mb-8">
@@ -13,7 +13,7 @@ export default function ExitInterviewLoading() {
         </div>
 
         {/* Card container skeleton */}
-        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6 sm:p-8">
+        <div className='bg-[var(--bg-input)] rounded-lg border border-subtle p-6 sm:p-8'>
           {/* Progress indicator skeleton */}
           <div className="row-between mb-8">
             {Array.from({length: 4}).map((_, index) => (

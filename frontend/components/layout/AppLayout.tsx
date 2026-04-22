@@ -1,25 +1,46 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
-import { AuthGuard } from '@/components/auth/AuthGuard';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
+import {useRouter, usePathname} from 'next/navigation';
+import {logger} from '@/lib/utils/logger';
+import {AuthGuard} from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
-import { cn } from '@/lib/utils';
-import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '@/components/ui';
-import { Header } from './Header';
-import type { HeaderProps } from './Header';
-import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { useApprovalInboxCount } from '@/lib/hooks/queries/useApprovals';
-import { useActiveApp } from '@/lib/hooks/useActiveApp';
-import { APP_SIDEBAR_SECTIONS } from '@/lib/config/apps';
-import { buildMenuSections } from './menuSections';
-import { ErrorBoundary } from '@/components/errors';
-import { FluenceChatWidget } from '@/components/fluence/FluenceChatWidget';
-import { Home, Users, Calendar, CheckSquare, User, Briefcase, UserPlus, ClipboardList, BookOpen, Target, FileText, Edit, MessageCircle } from 'lucide-react';
-import type { NavItem } from '@/components/ui/MobileBottomNav';
+import {cn} from '@/lib/utils';
+import {
+  Sidebar,
+  SidebarItem,
+  SidebarSection,
+  MobileBottomNav,
+  SIDEBAR_WIDTH_EXPANDED,
+  SIDEBAR_WIDTH_COLLAPSED
+} from '@/components/ui';
+import {Header} from './Header';
+import type {HeaderProps} from './Header';
+import {Breadcrumbs, type BreadcrumbItem} from './Breadcrumbs';
+import {useAuth} from '@/lib/hooks/useAuth';
+import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
+import {useApprovalInboxCount} from '@/lib/hooks/queries/useApprovals';
+import {useActiveApp} from '@/lib/hooks/useActiveApp';
+import {APP_SIDEBAR_SECTIONS} from '@/lib/config/apps';
+import {buildMenuSections} from './menuSections';
+import {ErrorBoundary} from '@/components/errors';
+import {FluenceChatWidget} from '@/components/fluence/FluenceChatWidget';
+import {
+  Home,
+  Users,
+  Calendar,
+  CheckSquare,
+  User,
+  Briefcase,
+  UserPlus,
+  ClipboardList,
+  BookOpen,
+  Target,
+  FileText,
+  Edit,
+  MessageCircle
+} from 'lucide-react';
+import type {NavItem} from '@/components/ui/MobileBottomNav';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -62,29 +83,29 @@ function getBestRoleLabel(roles?: Array<{ code: string; name: string }>): string
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
-  children,
-  breadcrumbs = [],
-  headerProps = {},
-  className,
-  showBreadcrumbs = true,
-  sidebarCollapsed: initialCollapsed,
-  onSidebarCollapsedChange,
-  activeMenuItem = 'dashboard',
-  onMenuItemClick,
-}) => {
+                                               children,
+                                               breadcrumbs = [],
+                                               headerProps = {},
+                                               className,
+                                               showBreadcrumbs = true,
+                                               sidebarCollapsed: initialCollapsed,
+                                               onSidebarCollapsedChange,
+                                               activeMenuItem = 'dashboard',
+                                               onMenuItemClick,
+                                             }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { logout, user } = useAuth();
-  const { permissions, roles, hasPermission, isReady } = usePermissions();
+  const {logout, user} = useAuth();
+  const {permissions, roles, hasPermission, isReady} = usePermissions();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
     [roles]
   );
 
-  const { appCode } = useActiveApp();
+  const {appCode} = useActiveApp();
 
   // Approval inbox count for sidebar badge (polls every 30s)
-  const { data: inboxCounts } = useApprovalInboxCount();
+  const {data: inboxCounts} = useApprovalInboxCount();
   const pendingApprovalCount = inboxCounts?.pending ?? 0;
 
   // Initialize with server-safe default to avoid hydration mismatch.
@@ -194,7 +215,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           return null;
         }
 
-        return { ...item, children: visibleChildren };
+        return {...item, children: visibleChildren};
       }
 
       return item;
@@ -222,7 +243,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Flatten sections to items for backward compatibility (memoized)
   const menuItems: SidebarItem[] = useMemo(() =>
-    filteredSections.flatMap(section => section.items),
+      filteredSections.flatMap(section => section.items),
     [filteredSections]
   );
 
@@ -231,32 +252,32 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     // Approval count for badge
     const appNavConfig: Record<string, NavItem[]> = {
       HRMS: [
-        { label: 'Home', href: '/me/dashboard', icon: Home },
-        { label: 'Team', href: '/employees', icon: Users },
-        { label: 'Leave', href: '/leave', icon: Calendar },
-        { label: 'Approvals', href: '/approvals', icon: CheckSquare, badge: pendingApprovalCount || undefined },
-        { label: 'Me', href: '/me/profile', icon: User },
+        {label: 'Home', href: '/me/dashboard', icon: Home},
+        {label: 'Team', href: '/employees', icon: Users},
+        {label: 'Leave', href: '/leave', icon: Calendar},
+        {label: 'Approvals', href: '/approvals', icon: CheckSquare, badge: pendingApprovalCount || undefined},
+        {label: 'Me', href: '/me/profile', icon: User},
       ],
       HIRE: [
-        { label: 'Home', href: '/recruitment', icon: Home },
-        { label: 'Jobs', href: '/recruitment/jobs', icon: Briefcase },
-        { label: 'Candidates', href: '/recruitment/candidates', icon: Users },
-        { label: 'Onboarding', href: '/onboarding', icon: UserPlus },
-        { label: 'Me', href: '/me/profile', icon: User },
+        {label: 'Home', href: '/recruitment', icon: Home},
+        {label: 'Jobs', href: '/recruitment/jobs', icon: Briefcase},
+        {label: 'Candidates', href: '/recruitment/candidates', icon: Users},
+        {label: 'Onboarding', href: '/onboarding', icon: UserPlus},
+        {label: 'Me', href: '/me/profile', icon: User},
       ],
       GROW: [
-        { label: 'Home', href: '/performance', icon: Home },
-        { label: 'Performance', href: '/performance/reviews', icon: ClipboardList },
-        { label: 'Learning', href: '/learning', icon: BookOpen },
-        { label: 'OKRs', href: '/okr', icon: Target },
-        { label: 'Me', href: '/me/profile', icon: User },
+        {label: 'Home', href: '/performance', icon: Home},
+        {label: 'Performance', href: '/performance/reviews', icon: ClipboardList},
+        {label: 'Learning', href: '/learning', icon: BookOpen},
+        {label: 'OKRs', href: '/okr', icon: Target},
+        {label: 'Me', href: '/me/profile', icon: User},
       ],
       FLUENCE: [
-        { label: 'Home', href: '/fluence/dashboard', icon: Home },
-        { label: 'Wiki', href: '/fluence/wiki', icon: FileText },
-        { label: 'Blogs', href: '/fluence/blogs', icon: Edit },
-        { label: 'Wall', href: '/fluence/wall', icon: MessageCircle },
-        { label: 'Me', href: '/me/profile', icon: User },
+        {label: 'Home', href: '/fluence/dashboard', icon: Home},
+        {label: 'Wiki', href: '/fluence/wiki', icon: FileText},
+        {label: 'Blogs', href: '/fluence/blogs', icon: Edit},
+        {label: 'Wall', href: '/fluence/wall', icon: MessageCircle},
+        {label: 'Me', href: '/me/profile', icon: User},
       ],
     };
     return appNavConfig[appCode] || appNavConfig.HRMS;
@@ -334,7 +355,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               borderBottom: '1px solid var(--border-subtle)',
             }}
           >
-            <Breadcrumbs items={breadcrumbs} />
+            <Breadcrumbs items={breadcrumbs}/>
           </div>
         )}
 
@@ -365,9 +386,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       </div>
 
       {/* Fluence AI Chat Widget — only on Fluence routes */}
-      {appCode === 'FLUENCE' && <FluenceChatWidget />}
+      {appCode === 'FLUENCE' && <FluenceChatWidget/>}
     </div>
   );
 };
 
-export { AppLayout };
+export {AppLayout};

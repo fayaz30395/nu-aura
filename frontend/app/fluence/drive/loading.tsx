@@ -13,21 +13,18 @@ export default function Loading() {
           <Skeleton height={16} width={280}/>
         </div>
       </div>
-
       {/* Quick actions skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {Array.from({length: 3}).map((_, i) => (
           <Skeleton key={i} height={96} radius="lg"/>
         ))}
       </div>
-
       {/* Tabs skeleton */}
-      <div className="flex gap-4 border-b border-surface-200 dark:border-surface-800">
+      <div className='flex gap-4 border-b border-subtle'>
         {Array.from({length: 3}).map((_, i) => (
           <Skeleton key={i} height={40} width={130}/>
         ))}
       </div>
-
       {/* Content skeleton */}
       <Skeleton height={240} radius="lg"/>
     </div>

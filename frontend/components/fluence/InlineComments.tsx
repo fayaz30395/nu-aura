@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+import {useState, useEffect} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
 import {
   useInlineComments,
   useCreateInlineComment,
@@ -14,7 +14,7 @@ import {
   useResolveInlineComment,
   useDeleteInlineComment,
 } from '@/lib/hooks/queries/useFluence';
-import { WikiInlineComment } from '@/lib/types/platform/fluence';
+import {WikiInlineComment} from '@/lib/types/platform/fluence';
 import {
   MessageSquare,
   Send,
@@ -95,7 +95,7 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
     await replyMutation.mutateAsync({
       commentId: comment.id,
       pageId,
-      data: { content: values.content },
+      data: {content: values.content},
     });
     form.reset();
     setShowReply(false);
@@ -110,8 +110,8 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
       <div className={`py-2 ${isResolved ? 'opacity-60' : ''}`}>
         {/* Comment Header */}
         <div className="flex items-center gap-2 mb-1">
-          <div className="h-6 w-6 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-2xs font-medium text-accent-700 dark:text-accent-400">
+          <div className='h-6 w-6 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+            <span className='text-2xs font-medium text-accent'>
               {(comment.authorName || 'U')[0].toUpperCase()}
             </span>
           </div>
@@ -126,7 +126,8 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
 
         {/* Anchor context */}
         {comment.anchorText && depth === 0 && (
-          <div className="mb-1 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border-l-2 border-warning-400 rounded-r text-2xs text-[var(--text-secondary)] italic truncate">
+          <div
+            className='mb-1 px-2 py-1 bg-status-warning-bg border-l-2 border-status-warning-border rounded-r text-2xs text-[var(--text-secondary)] italic truncate'>
             &ldquo;{comment.anchorText}&rdquo;
           </div>
         )}
@@ -142,27 +143,27 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
             <>
               <button
                 onClick={() => setShowReply(!showReply)}
-                className="flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-accent-600 cursor-pointer"
+                className='flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-accent cursor-pointer'
               >
-                <Reply className="h-3 w-3" />
+                <Reply className="h-3 w-3"/>
                 Reply
               </button>
               <button
-                onClick={() => resolveMutation.mutate({ commentId: comment.id, pageId })}
-                className="flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-success-600 cursor-pointer"
+                onClick={() => resolveMutation.mutate({commentId: comment.id, pageId})}
+                className='flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-status-success-text cursor-pointer'
                 disabled={resolveMutation.isPending}
               >
-                <CheckCircle className="h-3 w-3" />
+                <CheckCircle className="h-3 w-3"/>
                 Resolve
               </button>
             </>
           )}
           <button
-            onClick={() => deleteMutation.mutate({ commentId: comment.id, pageId })}
-            className="flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-danger-600 cursor-pointer"
+            onClick={() => deleteMutation.mutate({commentId: comment.id, pageId})}
+            className='flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-status-danger-text cursor-pointer'
             disabled={deleteMutation.isPending}
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-3 w-3"/>
             Delete
           </button>
         </div>
@@ -177,12 +178,11 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
               autoFocus
             />
             <Button type="submit" disabled={replyMutation.isPending} className="px-2 py-2">
-              <Send className="h-3.5 w-3.5" />
+              <Send className="h-3.5 w-3.5"/>
             </Button>
           </form>
         )}
       </div>
-
       {/* Replies */}
       {hasReplies && (
         <>
@@ -190,7 +190,7 @@ function CommentThread({comment, pageId, depth = 0}: CommentThreadProps) {
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-1 text-2xs text-[var(--text-muted)] hover:text-[var(--text-primary)] mb-1 cursor-pointer"
           >
-            {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            {expanded ? <ChevronUp className="h-3 w-3"/> : <ChevronDown className="h-3 w-3"/>}
             {comment.replies!.length} {comment.replies!.length === 1 ? 'reply' : 'replies'}
           </button>
           {expanded &&
@@ -216,7 +216,7 @@ interface InlineCommentsPanelProps {
   onToggle: () => void;
 }
 
-export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineCommentsPanelProps) {
+export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPanelProps) {
   const [showNewForm, setShowNewForm] = useState(false);
   const [selectedText, setSelectedText] = useState<TextSelection | null>(null);
   const [showResolved, setShowResolved] = useState(false);
@@ -275,27 +275,26 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
         className="fixed right-4 bottom-20 z-40 flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-elevated)] hover:bg-[var(--bg-secondary)] cursor-pointer"
         aria-label="Toggle inline comments"
       >
-        <MessageSquare className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+        <MessageSquare className='h-4 w-4 text-accent'/>
         Comments
         {openComments.length > 0 && (
           <Badge variant="info" size="sm">{openComments.length}</Badge>
         )}
       </button>
-
       {/* Sidebar Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: 340, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 340, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            initial={{x: 340, opacity: 0}}
+            animate={{x: 0, opacity: 1}}
+            exit={{x: 340, opacity: 0}}
+            transition={{type: 'spring', damping: 25, stiffness: 300}}
             className="fixed right-0 top-0 bottom-0 w-[340px] z-50 bg-[var(--bg-card)] border-l border-[var(--border-main)] shadow-[var(--shadow-elevated)] flex flex-col"
           >
             {/* Panel Header */}
             <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                <MessageCircle className='h-4 w-4 text-accent'/>
                 <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                   Inline Comments
                 </h3>
@@ -308,18 +307,21 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
                 className="p-1.5 rounded-md hover:bg-[var(--bg-secondary)] cursor-pointer"
                 aria-label="Close comments panel"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4"/>
               </button>
             </div>
 
             {/* New Comment Button */}
             <div className="px-4 py-2 border-b border-[var(--border-subtle)]">
               <Button
-                onClick={() => { setShowNewForm(true); setSelectedText(null); }}
+                onClick={() => {
+                  setShowNewForm(true);
+                  setSelectedText(null);
+                }}
                 variant="outline"
                 className="w-full flex items-center gap-2 text-sm"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-3.5 w-3.5"/>
                 New Comment
               </Button>
               <p className="text-2xs text-[var(--text-muted)] mt-1 text-center">
@@ -331,13 +333,14 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
             <AnimatePresence>
               {showNewForm && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
+                  initial={{height: 0, opacity: 0}}
+                  animate={{height: 'auto', opacity: 1}}
+                  exit={{height: 0, opacity: 0}}
                   className="px-4 py-2 border-b border-[var(--border-subtle)] overflow-hidden"
                 >
                   {selectedText && (
-                    <div className="mb-2 px-2 py-1 bg-warning-50 dark:bg-warning-900/20 border-l-2 border-warning-400 rounded-r text-2xs italic truncate">
+                    <div
+                      className='mb-2 px-2 py-1 bg-status-warning-bg border-l-2 border-status-warning-border rounded-r text-2xs italic truncate'>
                       &ldquo;{selectedText.text}&rdquo;
                     </div>
                   )}
@@ -350,7 +353,7 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
                       autoFocus
                     />
                     {form.formState.errors.content && (
-                      <p className="text-xs text-danger-600">
+                      <p className='text-xs text-status-danger-text'>
                         {form.formState.errors.content.message}
                       </p>
                     )}
@@ -358,7 +361,10 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => { setShowNewForm(false); setSelectedText(null); }}
+                        onClick={() => {
+                          setShowNewForm(false);
+                          setSelectedText(null);
+                        }}
                         className="px-4 py-2 text-xs"
                       >
                         Cancel
@@ -394,16 +400,16 @@ export function InlineCommentsPanel({ pageId, isOpen, onToggle }: InlineComments
             <div className="flex-1 overflow-y-auto px-4 pb-4">
               {commentsQuery.isLoading ? (
                 <div className="space-y-4 pt-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
+                  {Array.from({length: 3}).map((_, i) => (
                     <div key={i} className="animate-pulse">
-                      <div className="h-4 bg-[var(--bg-secondary)] rounded w-24 mb-2" />
-                      <div className="h-8 bg-[var(--bg-secondary)] rounded" />
+                      <div className="h-4 bg-[var(--bg-secondary)] rounded w-24 mb-2"/>
+                      <div className="h-8 bg-[var(--bg-secondary)] rounded"/>
                     </div>
                   ))}
                 </div>
               ) : displayComments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <MessageSquare className="h-8 w-8 text-[var(--text-muted)] mb-2" />
+                  <MessageSquare className="h-8 w-8 text-[var(--text-muted)] mb-2"/>
                   <p className="text-sm text-[var(--text-muted)]">
                     {showResolved ? 'No comments yet' : 'No open comments'}
                   </p>

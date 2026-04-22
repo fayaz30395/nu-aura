@@ -89,7 +89,7 @@ export default function CreateSalaryStructurePage() {
                 </Text>
               </div>
               <div className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700">
-                <Banknote className="h-5 w-5 text-white"/>
+                <Banknote className='h-5 w-5 text-inverse'/>
               </div>
             </Group>
 
@@ -103,7 +103,7 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="employeeId"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Employee ID <span className="text-danger-500">*</span>
+                      Employee ID <span className='text-status-danger-text'>*</span>
                     </label>
                     <input
                       id="employeeId"
@@ -113,7 +113,7 @@ export default function CreateSalaryStructurePage() {
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.employeeId && (
-                      <p className="mt-1 text-xs text-danger-500">{errors.employeeId.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{errors.employeeId.message}</p>
                     )}
                   </div>
 
@@ -123,7 +123,7 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="effectiveDate"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Effective From <span className="text-danger-500">*</span>
+                      Effective From <span className='text-status-danger-text'>*</span>
                     </label>
                     <input
                       id="effectiveDate"
@@ -132,7 +132,7 @@ export default function CreateSalaryStructurePage() {
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.effectiveDate && (
-                      <p className="mt-1 text-xs text-danger-500">{errors.effectiveDate.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{errors.effectiveDate.message}</p>
                     )}
                   </div>
 
@@ -142,7 +142,7 @@ export default function CreateSalaryStructurePage() {
                       htmlFor="baseSalary"
                       className="block text-sm font-medium text-[var(--text-primary)] mb-1.5"
                     >
-                      Base Salary (₹) <span className="text-danger-500">*</span>
+                      Base Salary (₹) <span className='text-status-danger-text'>*</span>
                     </label>
                     <input
                       id="baseSalary"
@@ -154,7 +154,7 @@ export default function CreateSalaryStructurePage() {
                       className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:ring-offset-2 transition-colors"
                     />
                     {errors.baseSalary && (
-                      <p className="mt-1 text-xs text-danger-500">{errors.baseSalary.message}</p>
+                      <p className='mt-1 text-xs text-status-danger-text'>{errors.baseSalary.message}</p>
                     )}
                   </div>
 
@@ -189,7 +189,7 @@ export default function CreateSalaryStructurePage() {
                     <button
                       type="submit"
                       disabled={isPending}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {isPending ? (
                         <Loader size="xs" color="white"/>

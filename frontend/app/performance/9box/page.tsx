@@ -407,7 +407,7 @@ export default function NineBoxPage() {
                     <select
                       value={selectedCycleId}
                       onChange={e => setSelectedCycleId(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                      className='w-full px-4 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                     >
                       <option value="">Select a cycle</option>
                       {cycles.map(c => (
@@ -426,9 +426,9 @@ export default function NineBoxPage() {
 
             {/* Info Banner */}
             <div
-              className="flex items-start gap-4 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg px-4 py-4">
-              <Info size={16} className="text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
-              <p className="text-sm text-accent-800 dark:text-accent-300">
+              className='flex items-start gap-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg px-4 py-4'>
+              <Info size={16} className='text-accent flex-shrink-0 mt-0.5'/>
+              <p className='text-sm text-accent'>
                 <strong>X-axis:</strong> Performance = manager review rating.
                 <strong className="ml-4">Y-axis:</strong> Potential = derived from self vs manager gap. Click cells to
                 view
@@ -441,8 +441,8 @@ export default function NineBoxPage() {
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-lg bg-accent-300 dark:bg-accent-900/30 flex items-center justify-center">
-                    <Users className="text-accent-800 dark:text-accent-600" size={20}/>
+                    className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                    <Users className='text-accent' size={20}/>
                   </div>
                   <div>
                     <p className="text-caption">Total Plotted</p>
@@ -454,8 +454,8 @@ export default function NineBoxPage() {
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                    <TrendingUp className="text-success-600 dark:text-success-400" size={20}/>
+                    className='w-10 h-10 rounded-lg bg-status-success-bg flex items-center justify-center'>
+                    <TrendingUp className='text-status-success-text' size={20}/>
                   </div>
                   <div>
                     <p className="text-caption">Stars</p>
@@ -467,8 +467,8 @@ export default function NineBoxPage() {
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                    <Target className="text-accent-600 dark:text-accent-400" size={20}/>
+                    className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                    <Target className='text-accent' size={20}/>
                   </div>
                   <div>
                     <p className="text-caption">High Performers</p>
@@ -480,8 +480,8 @@ export default function NineBoxPage() {
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                    <Grid3x3 className="text-success-600 dark:text-success-400" size={20}/>
+                    className='w-10 h-10 rounded-lg bg-status-success-bg flex items-center justify-center'>
+                    <Grid3x3 className='text-status-success-text' size={20}/>
                   </div>
                   <div>
                     <p className="text-caption">High Potential</p>
@@ -493,7 +493,7 @@ export default function NineBoxPage() {
 
             {reviewsLoading ? (
               <div className="flex items-center justify-center py-20">
-                <RefreshCw size={24} className="animate-spin text-accent-500 mr-4"/>
+                <RefreshCw size={24} className='animate-spin text-accent mr-4'/>
                 <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
             ) : points.length === 0 && selectedCycleId ? (
@@ -555,7 +555,7 @@ export default function NineBoxPage() {
                           </th>
                         </tr>
                         </thead>
-                        <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                        <tbody className='divide-y divide-surface-100'>
                         {selectedBoxPoints.map(p => (
                           <tr key={p.employeeId}
                               className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
@@ -581,7 +581,7 @@ export default function NineBoxPage() {
                                     }));
                                   }
                                 }}
-                                className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                                className='w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                               />
                             </td>
                           </tr>
@@ -611,7 +611,7 @@ export default function NineBoxPage() {
                         placeholder="Search..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        className="ml-auto w-full md:w-64 pl-10 pr-4 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                        className='ml-auto w-full md:w-64 pl-10 pr-4 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                       />
                     </div>
                   </div>
@@ -624,7 +624,7 @@ export default function NineBoxPage() {
                         <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => setSortField(sortField === 'name' ? 'name' : 'name')}
-                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                            className='hover:text-[var(--text-primary)] transition-colors'
                           >
                             Employee {sortField === 'name' ? '↑' : ''}
                           </button>
@@ -632,7 +632,7 @@ export default function NineBoxPage() {
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => setSortField(sortField === 'performance' ? 'performance' : 'performance')}
-                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                            className='hover:text-[var(--text-primary)] transition-colors'
                           >
                             Performance {sortField === 'performance' ? '↑' : ''}
                           </button>
@@ -640,7 +640,7 @@ export default function NineBoxPage() {
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => setSortField(sortField === 'potential' ? 'potential' : 'potential')}
-                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
+                            className='hover:text-[var(--text-primary)] transition-colors'
                           >
                             Potential {sortField === 'potential' ? '↑' : ''}
                           </button>
@@ -650,7 +650,7 @@ export default function NineBoxPage() {
                         </th>
                       </tr>
                       </thead>
-                      <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+                      <tbody className='divide-y divide-surface-100'>
                       {filteredAndSorted.map(p => {
                         const key = boxKey(p.performance, p.potential);
                         const meta = BOX_CONFIG[key];
@@ -679,7 +679,7 @@ export default function NineBoxPage() {
                                     }));
                                   }
                                 }}
-                                className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                                className='w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                               />
                             </td>
                             <td className="px-4 py-2.5 text-center">

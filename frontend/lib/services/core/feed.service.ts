@@ -13,6 +13,11 @@ import type {
   WorkAnniversaryResponse,
   NewJoineeResponse,
 } from './home.service';
+import { getQueryClient } from '@/lib/queryClient';
+import { homeKeys } from '@/lib/hooks/queries/useHome';
+
+const CELEBRATION_DAYS = 14;
+const CELEBRATION_STALE_TIME_MS = 60 * 60 * 1000; // mirror useHome.ts
 
 /**
  * Feed Service — aggregates announcements, celebrations, and recognitions
@@ -133,7 +138,13 @@ class FeedService {
 
   private async fetchBirthdays(): Promise<FeedItem[]> {
     try {
-      const birthdaysRaw = await homeService.getUpcomingBirthdays(14);
+      // PERF-2: Route through React Query cache so this shares a single request
+      // with the dashboard's useUpcomingBirthdays(14) hook.
+      const birthdaysRaw = await getQueryClient().fetchQuery({
+        queryKey: homeKeys.birthdaysList(CELEBRATION_DAYS),
+        queryFn: () => homeService.getUpcomingBirthdays(CELEBRATION_DAYS),
+        staleTime: CELEBRATION_STALE_TIME_MS,
+      });
       const birthdays = Array.isArray(birthdaysRaw) ? birthdaysRaw : (Array.isArray((birthdaysRaw as Record<string, unknown>)?.content) ? (birthdaysRaw as Record<string, unknown>).content as BirthdayResponse[] : []);
       return birthdays.map((b: BirthdayResponse): FeedItem => ({
         id: `birthday-${b.employeeId}`,
@@ -156,7 +167,11 @@ class FeedService {
 
   private async fetchAnniversaries(): Promise<FeedItem[]> {
     try {
-      const anniversariesRaw = await homeService.getUpcomingAnniversaries(14);
+      const anniversariesRaw = await getQueryClient().fetchQuery({
+        queryKey: homeKeys.anniversariesList(CELEBRATION_DAYS),
+        queryFn: () => homeService.getUpcomingAnniversaries(CELEBRATION_DAYS),
+        staleTime: CELEBRATION_STALE_TIME_MS,
+      });
       const anniversaries = Array.isArray(anniversariesRaw) ? anniversariesRaw : (Array.isArray((anniversariesRaw as Record<string, unknown>)?.content) ? (anniversariesRaw as Record<string, unknown>).content as WorkAnniversaryResponse[] : []);
       return anniversaries.map((a: WorkAnniversaryResponse): FeedItem => ({
         id: `anniversary-${a.employeeId}`,

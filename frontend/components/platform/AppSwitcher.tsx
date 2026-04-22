@@ -101,7 +101,7 @@ export default function AppSwitcher() {
         className="flex items-center gap-4 px-4 py-2 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-main)] transition-colors duration-150 shadow-card"
       >
         <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
-          <CurrentIcon className="w-5 h-5 text-white"/>
+          <CurrentIcon className='w-5 h-5 text-inverse'/>
         </div>
         <div className="hidden sm:flex flex-col items-start">
           <span className="text-sm font-semibold text-[var(--text-primary)]">
@@ -114,7 +114,6 @@ export default function AppSwitcher() {
         {/* Waffle grid icon */}
         <LayoutGrid className="w-4 h-4 text-[var(--text-muted)]"/>
       </button>
-
       {/* Waffle Grid Dropdown */}
       <AnimatePresence>
         {isOpen && (
@@ -129,7 +128,7 @@ export default function AppSwitcher() {
             <div className="px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--dropdown-divider)]">
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-                  <LayoutGrid className="w-4 h-4 text-white"/>
+                  <LayoutGrid className='w-4 h-4 text-inverse'/>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[var(--dropdown-text)]">
@@ -184,12 +183,12 @@ export default function AppSwitcher() {
                             transition-transform duration-150
                           `}
                         >
-                          <Icon className="w-6 h-6 text-white"/>
+                          <Icon className='w-6 h-6 text-inverse'/>
 
                           {/* Lock overlay */}
                           {isLocked && (
                             <div className="absolute inset-0 rounded-lg bg-black/40 flex items-center justify-center">
-                              <Lock className="w-4 h-4 text-white"/>
+                              <Lock className='w-4 h-4 text-inverse'/>
                             </div>
                           )}
 
@@ -197,7 +196,7 @@ export default function AppSwitcher() {
                           {isActive && (
                             <div
                               className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border-2 border-[var(--bg-dropdown)] flex items-center justify-center">
-                              <Check className="w-2.5 h-2.5 text-white"/>
+                              <Check className='w-2.5 h-2.5 text-inverse'/>
                             </div>
                           )}
                         </div>

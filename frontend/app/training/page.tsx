@@ -291,7 +291,7 @@ export default function TrainingPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
         </div>
       </AppLayout>
     );
@@ -315,14 +315,14 @@ export default function TrainingPage() {
         {/* Notifications */}
         {error && (
           <div
-            className="p-4 bg-danger-100 dark:bg-danger-900/30 border border-danger-300 dark:border-danger-700 rounded-lg flex items-center gap-2 text-danger-800 dark:text-danger-300">
+            className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-center gap-2 text-status-danger-text'>
             <AlertCircle className="w-5 h-5"/>
             {error}
           </div>
         )}
         {success && (
           <div
-            className="p-4 bg-success-100 dark:bg-success-900/30 border border-success-300 dark:border-success-700 rounded-lg flex items-center gap-2 text-success-800 dark:text-success-300">
+            className='p-4 bg-status-success-bg border border-status-success-border rounded-lg flex items-center gap-2 text-status-success-text'>
             <CheckCircle className="w-5 h-5"/>
             {success}
           </div>

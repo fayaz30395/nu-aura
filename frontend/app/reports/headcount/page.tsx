@@ -118,12 +118,13 @@ export default function HeadcountReportPage() {
 
         {error && (
           <div
-            className="mb-4 p-4 bg-danger-50 border border-danger-200 rounded-md text-sm text-danger-600">{error}</div>
+            className='mb-4 p-4 bg-status-danger-bg border border-status-danger-border rounded-md text-sm text-status-danger-text'>{error}</div>
         )}
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+            <div
+              className='animate-spin h-8 w-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full'/>
           </div>
         ) : (
           <>
@@ -145,20 +146,20 @@ export default function HeadcountReportPage() {
               </div>
               <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingUp className="h-3.5 w-3.5 text-success-500"/>
+                  <TrendingUp className='h-3.5 w-3.5 text-status-success-text'/>
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">New Hires
                     (Month)</p>
                 </div>
                 <p
-                  className="text-3xl font-bold text-success-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
+                  className='text-3xl font-bold text-status-success-text mt-1'>{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
               </div>
               <div className="skeuo-card p-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingDown className="h-3.5 w-3.5 text-danger-500"/>
+                  <TrendingDown className='h-3.5 w-3.5 text-status-danger-text'/>
                   <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Exits (Month)</p>
                 </div>
                 <p
-                  className="text-3xl font-bold text-danger-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
+                  className='text-3xl font-bold text-status-danger-text mt-1'>{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
                 {orgHealth?.turnover?.annualTurnoverRate != null && (
                   <p className="text-caption mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
                 )}
@@ -169,7 +170,7 @@ export default function HeadcountReportPage() {
               {/* By Department */}
               <div className="skeuo-card p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Building2 className="h-4 w-4 text-accent-600"/>
+                  <Building2 className='h-4 w-4 text-accent'/>
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">Headcount by Department</h2>
                 </div>
                 {metrics?.byDepartment && metrics.byDepartment.length > 0 ? (
@@ -184,7 +185,7 @@ export default function HeadcountReportPage() {
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-accent-500 rounded-full"
+                              className='h-full bg-accent rounded-full'
                               style={{width: `${(dept.count / maxDeptCount) * 100}%`}}
                             />
                           </div>
@@ -203,7 +204,7 @@ export default function HeadcountReportPage() {
                           </div>
                           <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-accent-500 rounded-full"
+                              className='h-full bg-accent rounded-full'
                               style={{width: `${(count / maxDeptCount) * 100}%`}}
                             />
                           </div>
@@ -218,7 +219,7 @@ export default function HeadcountReportPage() {
               {/* Headcount Trend */}
               <div className="skeuo-card p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Users className="h-4 w-4 text-accent-600"/>
+                  <Users className='h-4 w-4 text-accent'/>
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">12-Month Headcount Trend</h2>
                 </div>
                 {trend.length > 0 ? (
@@ -228,7 +229,7 @@ export default function HeadcountReportPage() {
                         <span className="text-caption w-16 shrink-0">{t.month}</span>
                         <div className="flex-1 h-5 bg-[var(--bg-surface)] rounded overflow-hidden relative">
                           <div
-                            className="h-full bg-accent-500 rounded"
+                            className='h-full bg-accent rounded'
                             style={{width: `${(t.headcount / maxTrendCount) * 100}%`}}
                           />
                         </div>

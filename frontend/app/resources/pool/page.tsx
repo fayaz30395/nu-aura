@@ -122,8 +122,8 @@ export default function ResourcePoolPage() {
     return (
       <AppLayout activeMenuItem="resources" breadcrumbs={[{label: 'Resources', href: '/resources'}, {label: 'Pool'}]}>
         <div className="p-6 flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-14 h-14 rounded-full bg-warning-50 flex items-center justify-center mb-4">
-            <Info size={24} className="text-warning-600"/>
+          <div className='w-14 h-14 rounded-full bg-status-warning-bg flex items-center justify-center mb-4'>
+            <Info size={24} className='text-status-warning-text'/>
           </div>
           <h2 className="text-xl font-semibold text-[var(--text-secondary)] mb-2">Resource Management API Not
             Available</h2>
@@ -180,7 +180,7 @@ export default function ResourcePoolPage() {
 
         {error && (
           <div
-            className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4 flex items-center gap-2">
+            className='bg-status-danger-bg border border-status-danger-border text-status-danger-text text-sm rounded-lg px-4 py-4 flex items-center gap-2'>
             <AlertTriangle size={15}/>
             {error instanceof Error ? error.message : String(error)}
           </div>
@@ -243,14 +243,14 @@ export default function ResourcePoolPage() {
               placeholder="Search by name, code, role..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 w-64"
+              className='pl-8 pr-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] w-64'
             />
           </div>
 
           <select
             value={deptFilter}
             onChange={e => setDeptFilter(e.target.value)}
-            className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+            className='px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-card)] focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
           >
             <option value="ALL">All Departments</option>
             {departments.map(d => (
@@ -316,8 +316,8 @@ export default function ResourcePoolPage() {
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-4">
                           <div
-                            className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-accent-700">
+                            className='w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+                              <span className='text-xs font-bold text-accent'>
                                 {(emp.employeeName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                               </span>
                           </div>

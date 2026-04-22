@@ -355,7 +355,7 @@ function MultiOwnerTypeahead({
             {values.map((owner, index) => (
               <div
                 key={owner.id}
-                className="flex items-center gap-1.5 rounded-md bg-accent-50 px-2.5 py-1.5 text-sm text-accent-700 dark:bg-accent-900/30 dark:text-accent-300"
+                className='flex items-center gap-1.5 rounded-md bg-accent-subtle px-2.5 py-1.5 text-sm text-accent'
               >
                 <span>
                   {buildEmployeeName(owner)}
@@ -364,7 +364,7 @@ function MultiOwnerTypeahead({
                 <button
                   type="button"
                   onClick={() => handleRemove(owner.id)}
-                  className="ml-1 hover:text-accent-900 dark:hover:text-accent-100"
+                  className='ml-1 hover:text-accent'
                   aria-label={`Remove ${buildEmployeeName(owner)}`}
                 >
                   <X className="h-3.5 w-3.5"/>
@@ -702,7 +702,7 @@ export default function ProjectsPage() {
               e.stopPropagation();
               router.push(`/projects/${project.id}`);
             }}
-            className="font-semibold text-[var(--text-primary)] hover:text-accent-700 dark:hover:text-accent-400 transition-colors text-left"
+            className='font-semibold text-[var(--text-primary)] hover:text-accent transition-colors text-left'
           >
             {project.name}
           </button>
@@ -810,7 +810,7 @@ export default function ProjectsPage() {
               e.stopPropagation();
               router.push(`/projects/${project.id}`);
             }}
-            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
+            className='rounded-lg p-2 text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle transition-colors'
             aria-label={`View ${project.name}`}
           >
             <Eye className="h-4 w-4"/>
@@ -821,7 +821,7 @@ export default function ProjectsPage() {
               e.stopPropagation();
               handleOpenEdit(project);
             }}
-            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors"
+            className='rounded-lg p-2 text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle transition-colors'
             aria-label={`Edit ${project.name}`}
           >
             <Edit2 className="h-4 w-4"/>
@@ -888,9 +888,9 @@ export default function ProjectsPage() {
         </div>
 
         {error && (
-          <Card className="border border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-900/20">
+          <Card className='border border-status-danger-border bg-status-danger-bg'>
             <CardContent className="row-between gap-4">
-              <p className="text-sm text-danger-700 dark:text-danger-400">{error?.message ?? String(error)}</p>
+              <p className='text-sm text-status-danger-text'>{error?.message ?? String(error)}</p>
               <Button variant="outline" size="sm" onClick={() => {
                 void refetch();
               }}>
@@ -1018,7 +1018,6 @@ export default function ProjectsPage() {
           </CardContent>
         </Card>
       </div>
-
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="lg">
         <ModalHeader onClose={() => setShowCreateModal(false)}>
           Create Project
@@ -1027,7 +1026,7 @@ export default function ProjectsPage() {
           <ModalBody className="space-y-4">
             {formErrorDetails.length > 0 && (
               <div
-                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
                 <ul className="space-y-1">
                   {formErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -1043,7 +1042,8 @@ export default function ProjectsPage() {
                   placeholder="e.g. PRJ-2024-001"
                   {...register('projectCode')}
                 />
-                {errors.projectCode && <p className="text-sm text-danger-500 mt-1">{errors.projectCode.message}</p>}
+                {errors.projectCode &&
+                  <p className='text-sm text-status-danger-text mt-1'>{errors.projectCode.message}</p>}
               </div>
               <div>
                 <Input
@@ -1051,7 +1051,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. Mobile app revamp"
                   {...register('name')}
                 />
-                {errors.name && <p className="text-sm text-danger-500 mt-1">{errors.name.message}</p>}
+                {errors.name && <p className='text-sm text-status-danger-text mt-1'>{errors.name.message}</p>}
               </div>
             </div>
 
@@ -1061,7 +1061,7 @@ export default function ProjectsPage() {
                   <option value="CLIENT">Client</option>
                   <option value="INTERNAL">Internal</option>
                 </Select>
-                {errors.type && <p className="text-sm text-danger-500 mt-1">{errors.type.message}</p>}
+                {errors.type && <p className='text-sm text-status-danger-text mt-1'>{errors.type.message}</p>}
               </div>
               <MultiOwnerTypeahead
                 label="Owner(s)"
@@ -1075,12 +1075,12 @@ export default function ProjectsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start date" type="date" {...register('startDate')} />
-                {errors.startDate && <p className="text-sm text-danger-500 mt-1">{errors.startDate.message}</p>}
+                {errors.startDate && <p className='text-sm text-status-danger-text mt-1'>{errors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...register('expectedEndDate')} />
                 {errors.expectedEndDate &&
-                  <p className="text-sm text-danger-500 mt-1">{errors.expectedEndDate.message}</p>}
+                  <p className='text-sm text-status-danger-text mt-1'>{errors.expectedEndDate.message}</p>}
               </div>
             </div>
 
@@ -1091,7 +1091,7 @@ export default function ProjectsPage() {
                   <option value="IN_PROGRESS">In Progress</option>
                   <option value="ON_HOLD">On Hold</option>
                 </Select>
-                {errors.status && <p className="text-sm text-danger-500 mt-1">{errors.status.message}</p>}
+                {errors.status && <p className='text-sm text-status-danger-text mt-1'>{errors.status.message}</p>}
               </div>
               <div>
                 <Select label="Priority" {...register('priority')}>
@@ -1100,13 +1100,13 @@ export default function ProjectsPage() {
                   <option value="HIGH">High</option>
                   <option value="CRITICAL">Critical</option>
                 </Select>
-                {errors.priority && <p className="text-sm text-danger-500 mt-1">{errors.priority.message}</p>}
+                {errors.priority && <p className='text-sm text-status-danger-text mt-1'>{errors.priority.message}</p>}
               </div>
             </div>
 
             <div>
               <Input label="Client name" placeholder="e.g. Acme Corp" {...register('clientName')} />
-              {errors.clientName && <p className="text-sm text-danger-500 mt-1">{errors.clientName.message}</p>}
+              {errors.clientName && <p className='text-sm text-status-danger-text mt-1'>{errors.clientName.message}</p>}
             </div>
 
             {/* Billing toggle */}
@@ -1114,7 +1114,7 @@ export default function ProjectsPage() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-500"
+                  className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-500'
                   {...register('isBillable')}
                 />
                 <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
@@ -1149,7 +1149,8 @@ export default function ProjectsPage() {
                 Description (optional)
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
-              {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
+              {errors.description &&
+                <p className='text-sm text-status-danger-text mt-1'>{errors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>
@@ -1162,7 +1163,6 @@ export default function ProjectsPage() {
           </ModalFooter>
         </form>
       </Modal>
-
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} size="lg">
         <ModalHeader onClose={() => setShowEditModal(false)}>
           Edit Project
@@ -1171,7 +1171,7 @@ export default function ProjectsPage() {
           <ModalBody className="space-y-4">
             {editFormErrorDetails.length > 0 && (
               <div
-                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
                 <ul className="space-y-1">
                   {editFormErrorDetails.map((detail, index) => (
                     <li key={`${index}-${detail}`}>{detail}</li>
@@ -1196,7 +1196,7 @@ export default function ProjectsPage() {
                   placeholder="e.g. Mobile app revamp"
                   {...editRegister('name')}
                 />
-                {editErrors.name && <p className="text-sm text-danger-500 mt-1">{editErrors.name.message}</p>}
+                {editErrors.name && <p className='text-sm text-status-danger-text mt-1'>{editErrors.name.message}</p>}
               </div>
             </div>
 
@@ -1212,19 +1212,21 @@ export default function ProjectsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start date" type="date" {...editRegister('startDate')} />
-                {editErrors.startDate && <p className="text-sm text-danger-500 mt-1">{editErrors.startDate.message}</p>}
+                {editErrors.startDate &&
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="Expected end date" type="date" {...editRegister('expectedEndDate')} />
                 {editErrors.expectedEndDate &&
-                  <p className="text-sm text-danger-500 mt-1">{editErrors.expectedEndDate.message}</p>}
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.expectedEndDate.message}</p>}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Actual end date" type="date" {...editRegister('endDate')} />
-                {editErrors.endDate && <p className="text-sm text-danger-500 mt-1">{editErrors.endDate.message}</p>}
+                {editErrors.endDate &&
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.endDate.message}</p>}
               </div>
               <div>
                 <Select label="Status" {...editRegister('status')}>
@@ -1235,7 +1237,8 @@ export default function ProjectsPage() {
                   <option value="COMPLETED">Completed</option>
                   <option value="CANCELLED">Cancelled</option>
                 </Select>
-                {editErrors.status && <p className="text-sm text-danger-500 mt-1">{editErrors.status.message}</p>}
+                {editErrors.status &&
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.status.message}</p>}
               </div>
             </div>
 
@@ -1247,13 +1250,15 @@ export default function ProjectsPage() {
                   <option value="HIGH">High</option>
                   <option value="CRITICAL">Critical</option>
                 </Select>
-                {editErrors.priority && <p className="text-sm text-danger-500 mt-1">{editErrors.priority.message}</p>}
+                {editErrors.priority &&
+                  <p className='text-sm text-status-danger-text mt-1'>{editErrors.priority.message}</p>}
               </div>
             </div>
 
             <div>
               <Input label="Client name" placeholder="e.g. Acme Corp" {...editRegister('clientName')} />
-              {editErrors.clientName && <p className="text-sm text-danger-500 mt-1">{editErrors.clientName.message}</p>}
+              {editErrors.clientName &&
+                <p className='text-sm text-status-danger-text mt-1'>{editErrors.clientName.message}</p>}
             </div>
 
             <div>
@@ -1262,7 +1267,7 @@ export default function ProjectsPage() {
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...editRegister('description')} />
               {editErrors.description &&
-                <p className="text-sm text-danger-500 mt-1">{editErrors.description.message}</p>}
+                <p className='text-sm text-status-danger-text mt-1'>{editErrors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>

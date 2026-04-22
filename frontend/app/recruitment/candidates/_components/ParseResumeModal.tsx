@@ -104,7 +104,7 @@ export function ParseResumeModal({
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent-500"/>
+              <Sparkles className='h-5 w-5 text-accent'/>
               AI Resume Parser
             </h2>
             <button
@@ -167,7 +167,7 @@ export function ParseResumeModal({
                     />
                     {selectedFile ? (
                       <>
-                        <FileText className="h-8 w-8 text-accent-500"/>
+                        <FileText className='h-8 w-8 text-accent'/>
                         <div className="text-center">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{selectedFile.name}</p>
                           <p className="text-caption mt-0.5">
@@ -193,7 +193,7 @@ export function ParseResumeModal({
                     )}
                   </div>
                   {fileError && (
-                    <div className="flex items-center gap-1.5 text-xs text-danger-600">
+                    <div className='flex items-center gap-1.5 text-xs text-status-danger-text'>
                       <AlertCircle className="h-3.5 w-3.5"/>
                       {fileError}
                     </div>
@@ -232,7 +232,7 @@ export function ParseResumeModal({
                       className={inputCls}
                     />
                     {resumeParseForm.formState.errors.resumeText && (
-                      <p className="text-xs text-danger-500 mt-1">
+                      <p className='text-xs text-status-danger-text mt-1'>
                         {resumeParseForm.formState.errors.resumeText.message}
                       </p>
                     )}
@@ -266,7 +266,7 @@ export function ParseResumeModal({
                       className={inputCls}
                     />
                     {resumeParseForm.formState.errors.resumeUrl && (
-                      <p className="text-xs text-danger-500 mt-1">
+                      <p className='text-xs text-status-danger-text mt-1'>
                         {resumeParseForm.formState.errors.resumeUrl.message}
                       </p>
                     )}
@@ -288,14 +288,13 @@ export function ParseResumeModal({
             </div>
           ) : (
             /* ==================== Confirmation View ==================== */
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 p-4 bg-success-50 dark:bg-success-900/20 rounded-lg">
-                <CheckCircle className="h-4 w-4 text-success-600 flex-shrink-0"/>
-                <p className="text-sm text-success-700 dark:text-success-300">
+            (<div className="space-y-4">
+              <div className='flex items-center gap-2 p-4 bg-status-success-bg rounded-lg'>
+                <CheckCircle className='h-4 w-4 text-status-success-text flex-shrink-0'/>
+                <p className='text-sm text-status-success-text'>
                   Resume parsed successfully. Review the extracted data below before applying.
                 </p>
               </div>
-
               <div
                 className="border border-[var(--border-main)] rounded-xl overflow-hidden divide-y divide-[var(--border-main)]">
                 {/* Basic Info */}
@@ -344,7 +343,7 @@ export function ParseResumeModal({
                       {parsedResume.skills.map((skill, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 text-xs rounded-full bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-300"
+                          className='px-2 py-0.5 text-xs rounded-full bg-accent-subtle text-accent'
                         >
                           {skill}
                         </span>
@@ -361,7 +360,7 @@ export function ParseResumeModal({
                     </p>
                     <div className="space-y-4">
                       {parsedResume.experience.map((exp, idx) => (
-                        <div key={idx} className="pl-4 border-l-2 border-accent-300 dark:border-accent-700">
+                        <div key={idx} className='pl-4 border-l-2 border-[var(--accent-primary)]'>
                           <p className="text-sm font-medium text-[var(--text-primary)]">{exp.designation}</p>
                           <p className="text-caption">
                             {exp.company}
@@ -384,7 +383,7 @@ export function ParseResumeModal({
                     </p>
                     <div className="space-y-2">
                       {parsedResume.education.map((edu, idx) => (
-                        <div key={idx} className="pl-4 border-l-2 border-info-300 dark:border-info-700">
+                        <div key={idx} className='pl-4 border-l-2 border-status-info-border'>
                           <p className="text-sm font-medium text-[var(--text-primary)]">{edu.degree}</p>
                           <p className="text-caption">
                             {edu.institution}
@@ -432,7 +431,6 @@ export function ParseResumeModal({
                   </div>
                 ) : null}
               </div>
-
               <div className="flex gap-4 pt-2 border-t border-[var(--border-main)]">
                 <Button type="button" variant="outline" onClick={onClose} className="flex-1">
                   Discard
@@ -441,7 +439,7 @@ export function ParseResumeModal({
                   Apply to Form
                 </Button>
               </div>
-            </div>
+            </div>)
           )}
         </div>
       </div>

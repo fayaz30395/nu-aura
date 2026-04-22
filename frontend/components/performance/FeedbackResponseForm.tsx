@@ -198,29 +198,28 @@ export default function FeedbackResponseForm({
           </div>
           <div className="text-right">
             <div className="text-body-muted">Progress</div>
-            <div className="text-2xl font-bold text-accent-600">{progressPercentage}%</div>
+            <div className='text-2xl font-bold text-accent'>{progressPercentage}%</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="mt-4 h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
           <div
-            className="h-full bg-accent-500 transition-all duration-300"
+            className='h-full bg-accent transition-all duration-300'
             style={{width: `${progressPercentage}%`}}
           />
         </div>
 
         {/* Anonymous Notice */}
         {isAnonymous && reviewerType !== 'SELF' && (
-          <div className="mt-4 p-4 bg-accent-250 border border-accent-400 rounded-lg">
-            <p className="text-xs text-accent-900 flex items-center gap-2">
+          <div className='mt-4 p-4 bg-accent-subtle border border-[var(--accent-primary)] rounded-lg'>
+            <p className='text-xs text-accent flex items-center gap-2'>
               <AlertCircle className="h-4 w-4"/>
               Your feedback will be anonymous and combined with other responses
             </p>
           </div>
         )}
       </div>
-
       {/* Tab Navigation */}
       <div className="border-b border-[var(--border-main)] px-6">
         <nav className="-mb-px flex gap-6">
@@ -247,13 +246,12 @@ export default function FeedbackResponseForm({
           </button>
         </nav>
       </div>
-
       <div className="px-6 py-6">
         {/* Ratings Section */}
         {activeSection === 'ratings' && (
           <div className="space-y-6">
             {/* Overall Rating */}
-            <div className="p-4 bg-accent-50 rounded-lg border border-accent-100">
+            <div className='p-4 bg-accent-subtle rounded-lg border border-[var(--accent-primary)]'>
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)]">Overall Performance</h3>
@@ -317,7 +315,7 @@ export default function FeedbackResponseForm({
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Key Strengths <span className="text-danger-500">*</span>
+                Key Strengths <span className='text-status-danger-text'>*</span>
               </label>
               <p className="text-caption mb-2">
                 What does this person do particularly well? Provide specific examples.
@@ -336,7 +334,7 @@ export default function FeedbackResponseForm({
 
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Areas for Improvement <span className="text-danger-500">*</span>
+                Areas for Improvement <span className='text-status-danger-text'>*</span>
               </label>
               <p className="text-caption mb-2">
                 What areas could this person develop or improve?
@@ -389,13 +387,13 @@ export default function FeedbackResponseForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mt-6 p-4 bg-danger-50 border border-danger-200 rounded-lg flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0 mt-0.5"/>
-            <p className="text-sm text-danger-700">{error}</p>
+          <div
+            className='mt-6 p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-start gap-2'>
+            <AlertCircle className='h-5 w-5 text-status-danger-text flex-shrink-0 mt-0.5'/>
+            <p className='text-sm text-status-danger-text'>{error}</p>
           </div>
         )}
       </div>
-
       {/* Actions */}
       <div
         className="px-6 py-4 border-t border-[var(--border-main)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">

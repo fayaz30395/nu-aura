@@ -101,7 +101,8 @@ function FluenceDriveContent() {
       <AppLayout>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <div
+              className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
             <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
           </div>
         </div>
@@ -127,7 +128,7 @@ function FluenceDriveContent() {
         <div className="flex items-center gap-4">
           <div
             className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
-            <HardDrive className="h-8 w-8 text-white"/>
+            <HardDrive className='h-8 w-8 text-inverse'/>
           </div>
           <div>
             <h1 className="text-xl font-bold skeuo-emboss">
@@ -169,7 +170,7 @@ function FluenceDriveContent() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-4 font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2',
                   activeCategory === cat.id
-                    ? 'text-accent-600 dark:text-accent-400 border-accent-600 dark:border-accent-400'
+                    ? 'text-accent border-[var(--accent-primary)]'
                     : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
                 )}
               >
@@ -188,7 +189,8 @@ function FluenceDriveContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+                <div
+                  className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
                 <p className="text-[var(--text-muted)]">Loading files...</p>
               </div>
             </CardContent>
@@ -203,10 +205,10 @@ function FluenceDriveContent() {
 
         {/* Upload Tip */}
         {attachments.length === 0 && !isLoading && (
-          <Card className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
+          <Card className='bg-accent-subtle border border-[var(--accent-primary)]'>
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
-                <Upload className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+                <Upload className='h-5 w-5 text-accent'/>
                 Getting Started
               </h3>
               <p className="text-body-secondary">

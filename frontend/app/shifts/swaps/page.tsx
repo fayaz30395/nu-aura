@@ -58,12 +58,12 @@ function SwapCard({
     <motion.div
       initial={{opacity: 0, y: 10}}
       animate={{opacity: 1, y: 0}}
-      className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 p-4"
+      className='bg-[var(--bg-card)] rounded-xl border border-subtle p-4'
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <ArrowLeftRight className="w-4 h-4 text-accent-700 dark:text-accent-400"/>
-          <span className="text-sm font-medium text-surface-900 dark:text-white">
+          <ArrowLeftRight className='w-4 h-4 text-accent'/>
+          <span className='text-sm font-medium text-primary'>
             {swap.swapType}
           </span>
         </div>
@@ -71,8 +71,7 @@ function SwapCard({
           {status.label}
         </span>
       </div>
-
-      <div className="space-y-2 text-sm text-surface-600 dark:text-surface-300">
+      <div className='space-y-2 text-sm text-secondary'>
         <div className="flex justify-between">
           <span>Requester Date:</span>
           <span className="font-medium">{swap.requesterShiftDate}</span>
@@ -85,11 +84,11 @@ function SwapCard({
         )}
         {swap.reason && (
           <div>
-            <span className="text-surface-400">Reason: </span>
+            <span className='text-muted'>Reason: </span>
             <span>{swap.reason}</span>
           </div>
         )}
-        <div className="text-xs text-surface-400">
+        <div className='text-xs text-muted'>
           Requested {new Date(swap.requestedAt).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
@@ -98,13 +97,12 @@ function SwapCard({
         })}
         </div>
       </div>
-
       {showActions && (swap.status === 'PENDING' || swap.status === 'PENDING_APPROVAL') && (
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-surface-100 dark:border-surface-700">
+        <div className='flex items-center gap-2 mt-4 pt-4 border-t border-subtle'>
           <button
             onClick={onAccept}
             disabled={actionPending}
-            className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/20 hover:bg-success-100 dark:hover:bg-success-900/30 rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-status-success-text bg-status-success-bg hover:bg-status-success-bg rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             <Check className="w-3.5 h-3.5"/>
             {showActions === 'target' ? 'Accept' : 'Approve'}
@@ -112,17 +110,16 @@ function SwapCard({
           <button
             onClick={onReject}
             disabled={actionPending}
-            className="flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-900/20 hover:bg-danger-100 dark:hover:bg-danger-900/30 rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='flex items-center gap-1 px-4 py-1.5 text-xs font-medium text-status-danger-text bg-status-danger-bg hover:bg-status-danger-bg rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
           >
             <X className="w-3.5 h-3.5"/>
             {showActions === 'target' ? 'Decline' : 'Reject'}
           </button>
         </div>
       )}
-
       {swap.rejectionReason && (
         <div
-          className="mt-2 p-2 bg-danger-50 dark:bg-danger-900/10 rounded text-xs text-danger-600 dark:text-danger-400">
+          className='mt-2 p-2 bg-status-danger-bg rounded text-xs text-status-danger-text'>
           Rejection reason: {swap.rejectionReason}
         </div>
       )}
@@ -161,20 +158,20 @@ export default function ShiftSwapsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/shifts')}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
+            className='p-2 hover:bg-surface rounded-lg'
           >
-            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
+            <ChevronLeft className='w-5 h-5 text-secondary'/>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Swaps</h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <h1 className='text-2xl font-bold text-primary'>Shift Swaps</h1>
+            <p className='text-sm text-muted'>
               Manage shift swap requests
             </p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
+        <div className='flex items-center gap-1 bg-surface rounded-lg p-1'>
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -189,7 +186,7 @@ export default function ShiftSwapsPage() {
               {tab.label}
               {tab.count > 0 && (
                 <span
-                  className="px-1.5 py-0.5 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400 rounded-full text-xs">
+                  className='px-1.5 py-0.5 bg-accent-subtle text-accent rounded-full text-xs'>
                   {tab.count}
                 </span>
               )}
@@ -201,7 +198,7 @@ export default function ShiftSwapsPage() {
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({length: 5}).map((_, i) => (
-              <SkeletonListItem key={i} />
+              <SkeletonListItem key={i}/>
             ))}
           </div>
         ) : (
@@ -210,7 +207,7 @@ export default function ShiftSwapsPage() {
               <>
                 {mySwaps.length === 0 ? (
                   <EmptyState
-                    icon={<Send className="w-12 h-12 text-surface-400"/>}
+                    icon={<Send className='w-12 h-12 text-muted'/>}
                     title="No Swap Requests"
                     description="You haven't submitted any shift swap requests yet."
                   />
@@ -228,7 +225,7 @@ export default function ShiftSwapsPage() {
               <>
                 {incomingSwaps.length === 0 ? (
                   <EmptyState
-                    icon={<Inbox className="w-12 h-12 text-surface-400"/>}
+                    icon={<Inbox className='w-12 h-12 text-muted'/>}
                     title="No Incoming Requests"
                     description="No one has sent you a shift swap request."
                   />
@@ -264,7 +261,7 @@ export default function ShiftSwapsPage() {
               <PermissionGate permission={Permissions.ATTENDANCE_APPROVE}>
                 {pendingApproval.length === 0 ? (
                   <EmptyState
-                    icon={<Shield className="w-12 h-12 text-surface-400"/>}
+                    icon={<Shield className='w-12 h-12 text-muted'/>}
                     title="No Pending Approvals"
                     description="All shift swap requests have been processed."
                   />

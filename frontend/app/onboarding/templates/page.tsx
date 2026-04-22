@@ -38,10 +38,10 @@ export default function TemplatesPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-accent-500/10 rounded-xl">
-                <Layout className="h-6 w-6 text-accent-700"/>
+                <Layout className='h-6 w-6 text-accent'/>
               </div>
               <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-                Checklist <span className="text-accent-700">Templates</span>
+                Checklist <span className='text-accent'>Templates</span>
               </h1>
             </div>
             <p className="text-[var(--text-muted)] font-bold max-w-md">
@@ -109,16 +109,16 @@ export default function TemplatesPage() {
                         <CardContent className="p-6 h-full flex flex-col">
                           <div className="flex justify-between items-start mb-4">
                             <div className="p-4 bg-accent-500/10 rounded-lg">
-                              <ClipboardList className="h-6 w-6 text-accent-600"/>
+                              <ClipboardList className='h-6 w-6 text-accent'/>
                             </div>
                             <Badge variant="outline"
-                                   className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                                   className='rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent'>
                               Blueprint
                             </Badge>
                           </div>
 
                           <h3
-                            className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent-700 transition-colors">
+                            className='text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-accent transition-colors'>
                             {template.name}
                           </h3>
                           <p className="text-body-muted font-bold mb-6 flex-grow line-clamp-2">
@@ -145,7 +145,7 @@ export default function TemplatesPage() {
                               </PermissionGate>
                               <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                                 <Button size="sm" variant="outline"
-                                        className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
+                                        className='h-8 w-8 p-0 rounded-xl text-status-danger-text border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all'>
                                   <Trash2 className="h-3.5 w-3.5"/>
                                 </Button>
                               </PermissionGate>

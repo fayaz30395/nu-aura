@@ -143,7 +143,7 @@ export default function TemplateDetailPage() {
             <button
               onClick={() => router.back()}
               aria-label="Go back"
-              className="mb-4 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+              className='mb-4 flex items-center gap-2 text-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]'
             >
               <ArrowLeft className="w-4 h-4"/>
               Back to Templates
@@ -173,7 +173,7 @@ export default function TemplateDetailPage() {
           <div className="flex gap-2">
             <Button
               onClick={() => setShowInstantiateModal(true)}
-              className="gap-2 bg-accent-600 hover:bg-accent-700"
+              className='gap-2 bg-accent hover:bg-accent'
             >
               <Copy className="w-4 h-4"/>
               Use Template
@@ -257,7 +257,6 @@ export default function TemplateDetailPage() {
           </div>
         </motion.div>
       </div>
-
       {/* Instantiate Modal */}
       <Modal
         opened={showInstantiateModal}
@@ -301,7 +300,7 @@ export default function TemplateDetailPage() {
             <Button
               type="submit"
               disabled={instantiate.isPending}
-              className="gap-2 bg-accent-600 hover:bg-accent-700"
+              className='gap-2 bg-accent hover:bg-accent'
             >
               <Copy className="w-4 h-4"/>
               {instantiate.isPending ? 'Creating...' : 'Create Page'}
@@ -309,7 +308,6 @@ export default function TemplateDetailPage() {
           </div>
         </form>
       </Modal>
-
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}

@@ -69,9 +69,9 @@ const TYPE_COLORS: Record<ComponentType, string> = {
 };
 
 function TypeIcon({type}: { type: ComponentType }) {
-  if (type === 'EARNING') return <TrendingUp className="h-4 w-4 text-success-500"/>;
-  if (type === 'DEDUCTION') return <TrendingDown className="h-4 w-4 text-danger-500"/>;
-  return <Building2 className="h-4 w-4 text-info-500"/>;
+  if (type === 'EARNING') return <TrendingUp className='h-4 w-4 text-status-success-text'/>;
+  if (type === 'DEDUCTION') return <TrendingDown className='h-4 w-4 text-status-danger-text'/>;
+  return <Building2 className='h-4 w-4 text-status-info-text'/>;
 }
 
 // ─── Component form modal ─────────────────────────────────────────────────────
@@ -305,7 +305,7 @@ function ComponentsTable({
               </Table.Td>
               <Table.Td>
                 {c.formula ? (
-                  <code className="text-xs text-accent-600 dark:text-accent-400 font-mono">
+                  <code className='text-xs text-accent font-mono'>
                     {c.formula}
                   </code>
                 ) : c.defaultValue != null ? (
@@ -533,7 +533,7 @@ export default function PayrollComponentsPage() {
                   className="flex items-center gap-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg px-4 py-1.5"
                 >
                   <span className="text-caption">{label}:</span>
-                  <code className="text-xs text-accent-600 dark:text-accent-400 font-mono">{formula}</code>
+                  <code className='text-xs text-accent font-mono'>{formula}</code>
                 </div>
               ))}
             </div>

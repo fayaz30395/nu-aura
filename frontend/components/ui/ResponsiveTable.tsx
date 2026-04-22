@@ -103,16 +103,16 @@ function ResponsiveTable<T>({
         {/* Desktop skeleton */}
         <div className="hidden md:block">
           <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-surface-200 dark:bg-surface-700 rounded"/>
+            <div className='h-12 bg-elevated rounded'/>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-surface-100 dark:bg-surface-800 rounded"/>
+              <div key={i} className='h-16 bg-surface rounded'/>
             ))}
           </div>
         </div>
         {/* Mobile skeleton */}
         <div className="md:hidden space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg animate-pulse"/>
+            <div key={i} className='h-32 bg-surface rounded-lg animate-pulse'/>
           ))}
         </div>
       </div>
@@ -124,8 +124,8 @@ function ResponsiveTable<T>({
     return (
       <div className={cn('w-full', className)}>
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          {emptyIcon && <div className="mb-4 text-surface-400">{emptyIcon}</div>}
-          <p className="text-surface-500 dark:text-surface-400">{emptyMessage}</p>
+          {emptyIcon && <div className='mb-4 text-muted'>{emptyIcon}</div>}
+          <p className='text-muted'>{emptyMessage}</p>
         </div>
       </div>
     );
@@ -142,14 +142,14 @@ function ResponsiveTable<T>({
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-          <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+          <tr className='border-b border-subtle bg-base'>
             {selectable && (
               <th className="w-12 px-4 py-2 text-left">
                 <input
                   type="checkbox"
                   checked={selectedKeys.size === data.length && data.length > 0}
                   onChange={handleSelectAll}
-                  className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
+                  className='rounded border-subtle text-accent focus:ring-accent-500'
                 />
               </th>
             )}
@@ -157,8 +157,8 @@ function ResponsiveTable<T>({
               <th
                 key={column.key}
                 className={cn(
-                  'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300',
-                  column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
+                  'px-4 py-4 text-left text-sm font-semibold text-secondary',
+                  column.sortable && 'cursor-pointer select-none hover:bg-surface',
                   column.width
                 )}
                 onClick={() => column.sortable && onSort?.(column.key)}
@@ -170,7 +170,7 @@ function ResponsiveTable<T>({
               </th>
             ))}
             {renderRowActions && (
-              <th className="w-16 px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+              <th className='w-16 px-4 py-2 text-right text-sm font-semibold text-secondary'>
                 Actions
               </th>
             )}
@@ -186,9 +186,9 @@ function ResponsiveTable<T>({
               <tr
                 key={key}
                 className={cn(
-                  'border-b border-surface-100 dark:border-surface-800 transition-colors',
-                  onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                  isSelected && 'bg-accent-50 dark:bg-accent-900/20',
+                  'border-b border-subtle transition-colors',
+                  onRowClick && 'cursor-pointer hover:bg-base',
+                  isSelected && 'bg-accent-subtle',
                   computedRowClassName
                 )}
                 onClick={() => onRowClick?.(row)}
@@ -199,14 +199,14 @@ function ResponsiveTable<T>({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleSelectRow(key)}
-                      className="rounded border-surface-300 text-accent-700 focus:ring-accent-500"
+                      className='rounded border-subtle text-accent focus:ring-accent-500'
                     />
                   </td>
                 )}
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={cn('px-4 py-4 text-sm text-surface-900 dark:text-surface-100', column.width)}
+                    className={cn('px-4 py-4 text-sm text-primary', column.width)}
                   >
                     {column.accessor(row)}
                   </td>
@@ -222,7 +222,6 @@ function ResponsiveTable<T>({
           </tbody>
         </table>
       </div>
-
       {/* Mobile Card View */}
       <div className="md:hidden space-y-4">
         {data.map((row) => {
@@ -255,10 +254,10 @@ function ResponsiveTable<T>({
             <div
               key={key}
               className={cn(
-                'bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4',
+                'bg-[var(--bg-input)] rounded-lg border border-subtle p-4',
                 'transition-all duration-200',
                 onRowClick && 'cursor-pointer active:scale-[0.98]',
-                isSelected && 'ring-2 ring-accent-500 border-accent-500'
+                isSelected && 'ring-2 ring-accent-500 border-[var(--accent-primary)]'
               )}
               onClick={() => onRowClick?.(row)}
             >
@@ -269,7 +268,7 @@ function ResponsiveTable<T>({
                     .filter((c) => c.mobilePriority === 'primary')
                     .map((column) => (
                       <div key={column.key} className="mb-2">
-                        <div className="font-medium text-surface-900 dark:text-surface-100">
+                        <div className='font-medium text-primary'>
                           {column.accessor(row)}
                         </div>
                       </div>
@@ -281,10 +280,10 @@ function ResponsiveTable<T>({
                       .filter((c) => c.mobilePriority === 'secondary')
                       .map((column) => (
                         <div key={column.key} className="flex items-center gap-2 text-sm">
-                          <span className="text-surface-500 dark:text-surface-400 shrink-0">
+                          <span className='text-muted shrink-0'>
                             {column.mobileLabel || column.header}:
                           </span>
-                          <span className="text-surface-700 dark:text-surface-300 truncate">
+                          <span className='text-secondary truncate'>
                             {column.accessor(row)}
                           </span>
                         </div>
@@ -303,7 +302,7 @@ function ResponsiveTable<T>({
                         handleSelectRow(key);
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      className="rounded border-surface-300 text-accent-700 focus:ring-accent-500 mt-1"
+                      className='rounded border-subtle text-accent focus:ring-accent-500 mt-1'
                     />
                   )}
                   {renderRowActions && (
@@ -344,22 +343,21 @@ export function TablePagination({
 
   return (
     <div
-      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-surface-200 dark:border-surface-700">
+      className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-subtle'>
       {/* Info */}
-      <div className="text-sm text-surface-500 dark:text-surface-400 order-2 sm:order-1">
+      <div className='text-sm text-muted order-2 sm:order-1'>
         Showing {startItem} to {endItem} of {totalItems} results
       </div>
-
       {/* Controls */}
       <div className="flex items-center gap-4 order-1 sm:order-2">
         {/* Page size selector */}
         {onPageSizeChange && (
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-sm text-surface-500 dark:text-surface-400">Show:</span>
+            <span className='text-sm text-muted'>Show:</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="text-sm border border-surface-300 dark:border-surface-600 rounded px-2 py-1 bg-[var(--bg-input)]"
+              className='text-sm border border-subtle rounded px-2 py-1 bg-[var(--bg-input)]'
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -375,7 +373,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(0)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='p-2 rounded hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             aria-label="First page"
           >
             <span className="text-sm">First</span>
@@ -383,20 +381,20 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 0}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='p-2 rounded hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             aria-label="Previous page"
           >
             <span className="text-sm">Prev</span>
           </button>
 
-          <span className="px-4 py-1 text-sm text-surface-700 dark:text-surface-300">
+          <span className='px-4 py-1 text-sm text-secondary'>
             {currentPage + 1} / {totalPages || 1}
           </span>
 
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='p-2 rounded hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             aria-label="Next page"
           >
             <span className="text-sm">Next</span>
@@ -404,7 +402,7 @@ export function TablePagination({
           <button
             onClick={() => onPageChange(totalPages - 1)}
             disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='p-2 rounded hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             aria-label="Last page"
           >
             <span className="text-sm">Last</span>

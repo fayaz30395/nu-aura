@@ -61,11 +61,11 @@ export default function NewTemplatePage() {
             className="rounded-lg h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
             onClick={() => router.back()}
           >
-            <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
+            <ArrowLeft className='h-5 w-5 text-[var(--text-muted)] group-hover:text-accent transition-colors'/>
           </Button>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)] skeuo-emboss">
-              New <span className="text-accent-700">Template</span>
+              New <span className='text-accent'>Template</span>
             </h1>
             <p className="text-[var(--text-muted)] font-bold">Define the core metadata for your onboarding
               blueprint.</p>
@@ -90,7 +90,7 @@ export default function NewTemplatePage() {
                     className="input-aura rounded-lg bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-accent-500"
                     {...register('name')}
                   />
-                  {errors.name && <p className="text-danger-500 text-sm">{errors.name.message}</p>}
+                  {errors.name && <p className='text-status-danger-text text-sm'>{errors.name.message}</p>}
                 </div>
 
                 <div className="space-y-4">
@@ -105,7 +105,8 @@ export default function NewTemplatePage() {
                     className="w-full rounded-lg bg-[var(--bg-input)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-accent-500 outline-none"
                     {...register('description')}
                   />
-                  {errors.description && <p className="text-danger-500 text-sm">{errors.description.message}</p>}
+                  {errors.description &&
+                    <p className='text-status-danger-text text-sm'>{errors.description.message}</p>}
                 </div>
 
                 <div
@@ -128,14 +129,14 @@ export default function NewTemplatePage() {
         </motion.div>
 
         {/* Info Card */}
-        <Card className="border-0 bg-accent-500/5 dark:bg-accent-500/10 border-l-4 border-accent-500 rounded-lg">
+        <Card className='border-0 bg-accent-500/5 border-l-4 border-[var(--accent-primary)] rounded-lg'>
           <CardContent className="p-6 flex gap-4">
-            <CheckCircle2 className="h-6 w-6 text-accent-500 shrink-0 mt-1"/>
+            <CheckCircle2 className='h-6 w-6 text-accent shrink-0 mt-1'/>
             <div>
               <p
-                className="font-black text-accent-900 dark:text-accent-100 uppercase tracking-widest text-xs mb-1">Standardization
+                className='font-black text-accent uppercase tracking-widest text-xs mb-1'>Standardization
                 Tip</p>
-              <p className="text-sm font-bold text-accent-700 dark:text-accent-300">
+              <p className='text-sm font-bold text-accent'>
                 Creating specialized templates for different roles (e.g., &quot;Software Engineer&quot; vs &quot;Account
                 Executive&quot;) ensures that every new hire gets the exact resources they need from day one.
               </p>

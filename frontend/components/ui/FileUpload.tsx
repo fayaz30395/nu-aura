@@ -211,7 +211,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         {uploading && selectedFile ? (
           <div className="w-full max-w-xs">
             <div className="flex items-center gap-2 mb-4">
-              <FileIcon className="h-8 w-8 text-accent-500"/>
+              <FileIcon className='h-8 w-8 text-accent'/>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{selectedFile.name}</p>
                 <p className="text-caption">{formatFileSize(selectedFile.size)}</p>
@@ -226,9 +226,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 <X className="h-4 w-4"/>
               </button>
             </div>
-            <div className="relative h-2 bg-[var(--border-main)] dark:bg-surface-700 rounded-full overflow-hidden">
+            <div className='relative h-2 bg-[var(--border-main)] rounded-full overflow-hidden'>
               <div
-                className="absolute inset-y-0 left-0 bg-accent-500 transition-all duration-300"
+                className='absolute inset-y-0 left-0 bg-accent transition-all duration-300'
                 style={{width: `${progress}%`}}
               />
             </div>

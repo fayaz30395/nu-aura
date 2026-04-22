@@ -51,8 +51,8 @@ export function ResourceAvailabilityCalendar({
   if (employees.length === 0) {
     return (
       <div
-        className="flex h-48 items-center justify-center rounded-lg border border-dashed border-surface-300 dark:border-surface-600">
-        <p className="text-surface-500 dark:text-surface-400">No employees to display</p>
+        className='flex h-48 items-center justify-center rounded-lg border border-dashed border-subtle'>
+        <p className='text-muted'>No employees to display</p>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export function ResourceAvailabilityCalendar({
           <thead>
           <tr>
             <th
-              className="sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-surface-700 dark:text-surface-300">
+              className='sticky left-0 z-10 min-w-[200px] bg-[var(--bg-card)] px-4 py-2 text-left text-sm font-medium text-secondary'>
               Employee
             </th>
             {dates.map((date) => {
@@ -77,9 +77,9 @@ export function ResourceAvailabilityCalendar({
                   className={cn(
                     'min-w-[40px] px-1 py-2 text-center text-xs',
                     weekend
-                      ? 'bg-surface-50 text-surface-400 dark:bg-surface-800/50'
-                      : 'text-surface-600 dark:text-surface-400',
-                    isToday && 'bg-accent-50 dark:bg-accent-900/20'
+                      ? 'bg-base text-muted'
+                      : 'text-secondary',
+                    isToday && 'bg-accent-subtle'
                   )}
                 >
                   <div className="flex flex-col items-center">
@@ -89,7 +89,7 @@ export function ResourceAvailabilityCalendar({
                     <span
                       className={cn(
                         'mt-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
-                        isToday && 'bg-accent-700 text-white'
+                        isToday && 'bg-accent text-inverse'
                       )}
                     >
                         {format(date, 'd')}
@@ -115,7 +115,6 @@ export function ResourceAvailabilityCalendar({
           </tbody>
         </table>
       </div>
-
       {/* Legend */}
       <div className="mt-4 flex flex-wrap items-center justify-end gap-4">
         {Object.entries(AVAILABILITY_COLORS).map(([status, color]) => (
@@ -124,7 +123,7 @@ export function ResourceAvailabilityCalendar({
               className="h-4 w-4 rounded"
               style={{backgroundColor: color}}
             />
-            <span className="text-surface-600 dark:text-surface-400">
+            <span className='text-secondary'>
               {getAvailabilityStatusLabel(status as AvailabilityStatus)}
             </span>
           </div>
@@ -160,8 +159,8 @@ function EmployeeRow({employee, dates, onDayClick, onEmployeeClick}: EmployeeRow
       <td
         className={cn(
           'sticky left-0 z-10 bg-[var(--bg-card)] px-4 py-2',
-          'border-b border-surface-100 dark:border-surface-800',
-          onEmployeeClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800'
+          'border-b border-subtle',
+          onEmployeeClick && 'cursor-pointer hover:bg-base'
         )}
         onClick={() => onEmployeeClick?.(employee.employeeId)}
       >
@@ -177,21 +176,20 @@ function EmployeeRow({employee, dates, onDayClick, onEmployeeClick}: EmployeeRow
             />
           ) : (
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-400">
+              className='flex h-8 w-8 items-center justify-center rounded-full bg-accent-subtle text-accent'>
               <User className="h-4 w-4"/>
             </div>
           )}
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-surface-900 dark:text-surface-50">
+            <p className='truncate text-sm font-medium text-primary'>
               {employee.employeeName}
             </p>
-            <p className="truncate text-xs text-surface-500 dark:text-surface-400">
+            <p className='truncate text-xs text-muted'>
               {employee.departmentName || employee.employeeCode}
             </p>
           </div>
         </div>
       </td>
-
       {/* Day cells */}
       {dates.map((date) => {
         const dateStr = format(date, 'yyyy-MM-dd');
@@ -258,7 +256,7 @@ function AvailabilityCell({
   return (
     <td
       className={cn(
-        'border-b border-surface-100 px-0.5 py-1 dark:border-surface-800',
+        'border-b border-subtle px-0.5 py-1',
         onClick && 'cursor-pointer'
       )}
       onClick={onClick}
@@ -291,7 +289,7 @@ function AvailabilityCell({
 
         {/* Show indicator for holiday */}
         {status === 'HOLIDAY' && (
-          <span className="text-surface-400">H</span>
+          <span className='text-muted'>H</span>
         )}
       </div>
     </td>

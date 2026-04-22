@@ -109,13 +109,13 @@ const getProgressColor = (progress: number) => {
 const getKeyResultStatusIcon = (status: string) => {
   switch (status) {
     case 'COMPLETED':
-      return <CheckCircle className="h-4 w-4 text-success-500"/>;
+      return <CheckCircle className='h-4 w-4 text-status-success-text'/>;
     case 'ON_TRACK':
-      return <CheckCircle className="h-4 w-4 text-accent-500"/>;
+      return <CheckCircle className='h-4 w-4 text-accent'/>;
     case 'AT_RISK':
-      return <AlertTriangle className="h-4 w-4 text-warning-500"/>;
+      return <AlertTriangle className='h-4 w-4 text-status-warning-text'/>;
     case 'BEHIND':
-      return <AlertTriangle className="h-4 w-4 text-danger-500"/>;
+      return <AlertTriangle className='h-4 w-4 text-status-danger-text'/>;
     default:
       return <Clock className="h-4 w-4 text-[var(--text-muted)]"/>;
   }
@@ -277,7 +277,7 @@ export default function OKRPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600"></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
         </div>
       </AppLayout>
     );
@@ -300,7 +300,7 @@ export default function OKRPage() {
                 setEditingObjective(null);
                 setShowObjectiveModal(true);
               }}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-white bg-accent-600 hover:bg-accent-700"
+              className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-[var(--shadow-card)] text-sm font-medium text-inverse bg-accent hover:bg-accent'
             >
               <Plus className="h-5 w-5 mr-2"/>
               New Objective
@@ -398,7 +398,7 @@ export default function OKRPage() {
                           <h3 className="text-lg font-medium text-[var(--text-primary)]">{objective.title}</h3>
                           {objective.isStretchGoal && (
                             <span
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent-300 text-accent-900">
+                              className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent-subtle text-accent'>
                             Stretch
                           </span>
                           )}
@@ -439,7 +439,7 @@ export default function OKRPage() {
                           <PermissionGate permission={Permissions.OKR_UPDATE}>
                             <button
                               onClick={() => openEditObjective(objective)}
-                              className="p-2 text-[var(--text-muted)] hover:text-accent-600"
+                              className='p-2 text-[var(--text-muted)] hover:text-accent'
                             >
                               <Pencil className="h-5 w-5"/>
                             </button>
@@ -447,7 +447,7 @@ export default function OKRPage() {
                           <PermissionGate permission={Permissions.OKR_DELETE}>
                             <button
                               onClick={() => setDeleteObjectiveConfirm(objective.id)}
-                              className="p-2 text-[var(--text-muted)] hover:text-danger-600"
+                              className='p-2 text-[var(--text-muted)] hover:text-status-danger-text'
                             >
                               <Trash2 className="h-5 w-5"/>
                             </button>
@@ -469,7 +469,7 @@ export default function OKRPage() {
                         <PermissionGate permission={Permissions.OKR_UPDATE}>
                           <button
                             onClick={() => openAddKeyResult(objective.id)}
-                            className="text-sm text-accent-600 hover:text-accent-700 flex items-center"
+                            className='text-sm text-accent hover:text-accent flex items-center'
                           >
                             <Plus className="h-4 w-4 mr-1"/>
                             Add Key Result
@@ -531,7 +531,7 @@ export default function OKRPage() {
                                         <PermissionGate permission={Permissions.OKR_DELETE}>
                                           <button
                                             onClick={() => setDeleteKeyResultConfirm(kr.id)}
-                                            className="p-1 text-[var(--text-muted)] hover:text-danger-600"
+                                            className='p-1 text-[var(--text-muted)] hover:text-status-danger-text'
                                           >
                                             <Trash2 className="h-4 w-4"/>
                                           </button>
@@ -579,7 +579,8 @@ export default function OKRPage() {
                     placeholder="What do you want to achieve?"
                   />
                   {objectiveForm.formState.errors.title && (
-                    <p className="text-danger-500 text-xs mt-1">{objectiveForm.formState.errors.title.message}</p>
+                    <p
+                      className='text-status-danger-text text-xs mt-1'>{objectiveForm.formState.errors.title.message}</p>
                   )}
                 </div>
                 <div>
@@ -650,7 +651,7 @@ export default function OKRPage() {
                     type="checkbox"
                     id="isStretchGoal"
                     {...objectiveForm.register('isStretchGoal')}
-                    className="h-4 w-4 text-accent-600 border-[var(--border-strong)] rounded"
+                    className='h-4 w-4 text-accent border-[var(--border-strong)] rounded'
                   />
                   <label htmlFor="isStretchGoal" className="ml-2 text-sm text-[var(--text-primary)]">
                     This is a stretch goal (ambitious target)
@@ -671,7 +672,7 @@ export default function OKRPage() {
                 <button
                   onClick={objectiveForm.handleSubmit(editingObjective ? handleUpdateObjective : handleCreateObjective)}
                   disabled={!objectiveForm.formState.isValid && objectiveForm.formState.isSubmitted}
-                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-2 text-sm font-medium text-inverse bg-accent rounded-md hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {editingObjective ? 'Update' : 'Create'}
                 </button>
@@ -700,7 +701,8 @@ export default function OKRPage() {
                     placeholder="What measurable outcome will you achieve?"
                   />
                   {keyResultForm.formState.errors.title && (
-                    <p className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.title.message}</p>
+                    <p
+                      className='text-status-danger-text text-xs mt-1'>{keyResultForm.formState.errors.title.message}</p>
                   )}
                 </div>
                 <div>
@@ -763,7 +765,7 @@ export default function OKRPage() {
                     />
                     {keyResultForm.formState.errors.targetValue && (
                       <p
-                        className="text-danger-500 text-xs mt-1">{keyResultForm.formState.errors.targetValue.message}</p>
+                        className='text-status-danger-text text-xs mt-1'>{keyResultForm.formState.errors.targetValue.message}</p>
                     )}
                   </div>
                   <div>
@@ -805,7 +807,7 @@ export default function OKRPage() {
                 <button
                   onClick={keyResultForm.handleSubmit(handleAddKeyResult)}
                   disabled={!keyResultForm.formState.isValid && keyResultForm.formState.isSubmitted}
-                  className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='px-4 py-2 text-sm font-medium text-inverse bg-accent rounded-md hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   Add Key Result
                 </button>
@@ -814,7 +816,6 @@ export default function OKRPage() {
           </div>
         )}
       </div>
-
       {/* Delete Objective Confirmation */}
       <ConfirmDialog
         isOpen={!!deleteObjectiveConfirm}
@@ -830,7 +831,6 @@ export default function OKRPage() {
         confirmText="Delete"
         type="danger"
       />
-
       {/* Delete Key Result Confirmation */}
       <ConfirmDialog
         isOpen={!!deleteKeyResultConfirm}

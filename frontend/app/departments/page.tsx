@@ -280,8 +280,8 @@ export default function DepartmentsPage() {
                   <p className="text-xl font-bold skeuo-emboss">{departments.length}</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Building2 className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                  className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Building2 className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -295,8 +295,8 @@ export default function DepartmentsPage() {
                   <p className="text-xl font-bold skeuo-emboss">{activeDepartments}</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                  <ToggleRight className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center'>
+                  <ToggleRight className='h-6 w-6 text-status-success-text'/>
                 </div>
               </div>
             </CardContent>
@@ -310,8 +310,8 @@ export default function DepartmentsPage() {
                   <p className="text-xl font-bold skeuo-emboss">{totalEmployees}</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Users className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -321,9 +321,9 @@ export default function DepartmentsPage() {
         {/* Error Message */}
         {error && (
           <div
-            className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl row-between">
+            className='bg-status-danger-bg border border-status-danger-border text-status-danger-text px-4 py-4 rounded-xl row-between'>
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
+            <button onClick={() => setError(null)} className='text-status-danger-text hover:text-status-danger-text'>
               <X className="h-5 w-5"/>
             </button>
           </div>
@@ -382,13 +382,13 @@ export default function DepartmentsPage() {
                   </th>
                 </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                <tbody className='divide-y divide-surface-200'>
                 {isLoading ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center gap-4">
                         <div
-                          className="w-8 h-8 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"
+                          className='w-8 h-8 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'
                           aria-label="Loading departments"/>
                         <span className="text-[var(--text-muted)]">Loading departments...</span>
                       </div>
@@ -418,8 +418,8 @@ export default function DepartmentsPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div
-                            className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                            <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                            className='w-10 h-10 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                            <Building2 className='h-5 w-5 text-accent'/>
                           </div>
                           <div>
                             <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
@@ -430,7 +430,7 @@ export default function DepartmentsPage() {
                       <td className="px-6 py-4">
                         {dept.type ? (
                           <span
-                            className="px-2.5 py-1 text-xs font-medium rounded-full bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400">
+                            className='px-2.5 py-1 text-xs font-medium rounded-full bg-accent-subtle text-accent'>
                               {dept.type}
                             </span>
                         ) : (
@@ -462,7 +462,7 @@ export default function DepartmentsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEdit(dept)}
-                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 rounded-lg text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Edit"
                             aria-label="Edit department"
                           >
@@ -470,7 +470,7 @@ export default function DepartmentsPage() {
                           </button>
                           <button
                             onClick={() => handleToggleClick(dept)}
-                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 rounded-lg text-[var(--text-muted)] hover:text-status-warning-text hover:bg-status-warning-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title={dept.isActive ? 'Deactivate' : 'Activate'}
                             aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
                           >
@@ -478,7 +478,7 @@ export default function DepartmentsPage() {
                           </button>
                           <button
                             onClick={() => handleDeleteClick(dept.id)}
-                            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 rounded-lg text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Delete"
                             aria-label="Delete department"
                           >
@@ -504,8 +504,8 @@ export default function DepartmentsPage() {
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
                     <div
-                      className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                      className='w-10 h-10 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                      <Building2 className='h-5 w-5 text-accent'/>
                     </div>
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {editingDepartment ? 'Edit Department' : 'Add New Department'}
@@ -537,7 +537,7 @@ export default function DepartmentsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
                     />
-                    {errors.code && <p className="text-danger-500 text-sm mt-1">{errors.code.message}</p>}
+                    {errors.code && <p className='text-status-danger-text text-sm mt-1'>{errors.code.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -549,7 +549,7 @@ export default function DepartmentsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Engineering"
                     />
-                    {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className='text-status-danger-text text-sm mt-1'>{errors.name.message}</p>}
                   </div>
                 </div>
 
@@ -563,7 +563,8 @@ export default function DepartmentsPage() {
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
                     placeholder="Department description..."
                   />
-                  {errors.description && <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>}
+                  {errors.description &&
+                    <p className='text-status-danger-text text-sm mt-1'>{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -586,7 +587,7 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
+                    {errors.type && <p className='text-status-danger-text text-sm mt-1'>{errors.type.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -612,7 +613,7 @@ export default function DepartmentsPage() {
                       )}
                     />
                     {errors.parentDepartmentId &&
-                      <p className="text-danger-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
+                      <p className='text-status-danger-text text-sm mt-1'>{errors.parentDepartmentId.message}</p>}
                   </div>
                 </div>
 
@@ -638,7 +639,8 @@ export default function DepartmentsPage() {
                         </select>
                       )}
                     />
-                    {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
+                    {errors.managerId &&
+                      <p className='text-status-danger-text text-sm mt-1'>{errors.managerId.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -650,7 +652,8 @@ export default function DepartmentsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
                     />
-                    {errors.location && <p className="text-danger-500 text-sm mt-1">{errors.location.message}</p>}
+                    {errors.location &&
+                      <p className='text-status-danger-text text-sm mt-1'>{errors.location.message}</p>}
                   </div>
                 </div>
 
@@ -665,7 +668,8 @@ export default function DepartmentsPage() {
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="CC-1001"
                     />
-                    {errors.costCenter && <p className="text-danger-500 text-sm mt-1">{errors.costCenter.message}</p>}
+                    {errors.costCenter &&
+                      <p className='text-status-danger-text text-sm mt-1'>{errors.costCenter.message}</p>}
                   </div>
                   <div className="flex items-end">
                     <Controller
@@ -678,7 +682,7 @@ export default function DepartmentsPage() {
                             type="checkbox"
                             checked={value}
                             onChange={(e) => onChange(e.target.checked)}
-                            className="h-5 w-5 text-accent-700 focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
+                            className='h-5 w-5 text-accent focus:ring-accent-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded'
                           />
                           <span
                             className="ml-4 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>

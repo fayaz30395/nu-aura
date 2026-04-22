@@ -42,7 +42,7 @@ function CustomTooltip({active, payload}: { active?: boolean; payload?: Array<{ 
         {d.name} · {new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
       </div>
       {d.isHoliday ? (
-        <div className="flex items-center gap-1.5 text-xs text-accent-600"><Sun className="h-3 w-3"/> Holiday</div>
+        <div className='flex items-center gap-1.5 text-xs text-accent'><Sun className="h-3 w-3"/> Holiday</div>
       ) : d.isWeeklyOff ? (
         <div className="flex items-center gap-1.5 text-caption"><Moon className="h-3 w-3"/> Weekly Off</div>
       ) : d.hours > 0 ? (
@@ -65,8 +65,8 @@ function CustomTooltip({active, payload}: { active?: boolean; payload?: Array<{ 
           )}
           {d.overtime > 0 && (
             <div className="flex justify-between text-xs">
-              <span className="text-warning-600">Overtime</span>
-              <span className="font-bold text-warning-600">+{d.overtime}h</span>
+              <span className='text-status-warning-text'>Overtime</span>
+              <span className='font-bold text-status-warning-text'>+{d.overtime}h</span>
             </div>
           )}
           <div className="pt-1 border-t border-[var(--border-subtle)]">
@@ -108,7 +108,7 @@ export const AttendanceWeeklyChart = memo(function AttendanceWeeklyChart({
           <CardTitle className="flex items-center gap-2 text-card-title text-[var(--text-primary)]">
             <div
               className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-[var(--shadow-card)]">
-              <BarChart3 className="h-4 w-4 text-white"/>
+              <BarChart3 className='h-4 w-4 text-inverse'/>
             </div>
             Weekly Overview
           </CardTitle>

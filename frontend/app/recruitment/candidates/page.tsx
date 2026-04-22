@@ -720,7 +720,7 @@ function CandidatesPage() {
                     </th>
                   </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className='divide-y divide-surface-200'>
                   {filteredCandidates.map((candidate) => (
                     <CandidateTableRow
                       key={candidate.id}

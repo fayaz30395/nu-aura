@@ -67,7 +67,7 @@ export default function TemplatesPage() {
             <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
               <div
                 className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
-                <FileText className={`${iconSize.pageHeader} text-white`}/>
+                <FileText className={`${iconSize.pageHeader} text-inverse`}/>
               </div>
               Templates
             </h1>
@@ -78,7 +78,7 @@ export default function TemplatesPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
             <Button
               onClick={handleCreateTemplate}
-              className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150 flex-shrink-0"
+              className='gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150 flex-shrink-0'
             >
               <Plus className={iconSize.button}/>
               Create Template
@@ -152,7 +152,7 @@ export default function TemplatesPage() {
                   <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
                     <Button
                       onClick={handleCreateTemplate}
-                      className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150"
+                      className='gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-inverse shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150'
                     >
                       <Plus className={iconSize.button}/>
                       Create Template

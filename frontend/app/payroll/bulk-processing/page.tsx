@@ -23,7 +23,7 @@ export default function BulkProcessingPage() {
       <AppLayout activeMenuItem="payroll">
         <div className="p-6 space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse" />
+            <div key={i} className="h-6 bg-[var(--skeleton-base)] rounded animate-pulse"/>
           ))}
         </div>
       </AppLayout>
@@ -34,7 +34,7 @@ export default function BulkProcessingPage() {
     return (
       <AppLayout activeMenuItem="payroll">
         <div className="p-6">
-          <p className="text-danger-600">You do not have permission to process payroll.</p>
+          <p className='text-status-danger-text'>You do not have permission to process payroll.</p>
         </div>
       </AppLayout>
     );

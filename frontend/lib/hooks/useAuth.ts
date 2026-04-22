@@ -8,36 +8,14 @@ import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/core/auth
 import { clearGoogleToken } from '../utils/googleToken';
 import { getQueryClient } from '../queryClient';
 
-/**
- * P0-SESSION: Persist user to a SEPARATE sessionStorage key ('nu-aura-user').
- * We can't rely on the Zustand persist middleware's partialize config because:
- * 1. HMR doesn't re-create the store singleton — old partialize stays in memory
- * 2. Even if fixed, every Zustand set() call overwrites sessionStorage with
- *    partialize output, erasing any user data we inject directly
- *
- * On page load, the onRehydrateStorage callback reads this key and merges the
- * user back into the Zustand state, making it immediately available.
- */
-const USER_STORAGE_KEY = 'nu-aura-user';
+// HIGH-3: User PII (employeeId, tenantId, name, email, roles) is no longer
+// persisted to sessionStorage. Identity is rehydrated via restoreSession()
+// from the httpOnly refresh cookie on mount.
+const LEGACY_USER_STORAGE_KEY = 'nu-aura-user';
 
-function persistUserToStorage(user: User): void {
+function clearLegacyUserFromStorage(): void {
   if (typeof window === 'undefined') return;
-  try {
-    sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
-  } catch { /* ignore */ }
-}
-
-function readUserFromStorage(): User | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = sessionStorage.getItem(USER_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-
-function clearUserFromStorage(): void {
-  if (typeof window === 'undefined') return;
-  try { sessionStorage.removeItem(USER_STORAGE_KEY); } catch { /* ignore */ }
+  try { sessionStorage.removeItem(LEGACY_USER_STORAGE_KEY); } catch { /* ignore */ }
 }
 
 // Convert string roles to Role objects
@@ -118,7 +96,6 @@ export const useAuth = create<AuthState>()(
           };
 
           set({ user, isAuthenticated: true, isLoading: false });
-          persistUserToStorage(user);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -156,7 +133,6 @@ export const useAuth = create<AuthState>()(
           };
 
           set({ user, isAuthenticated: true, isLoading: false });
-          persistUserToStorage(user);
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -164,7 +140,7 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
-        clearUserFromStorage();
+        clearLegacyUserFromStorage();
         // Bug #5 FIX: deauthenticate FIRST so no new queries fire after this point,
         // then cancel in-flight queries before clearing cache. Previously, auth state
         // was cleared last — background intervals (notifications, workflow) fired 401s
@@ -235,7 +211,6 @@ export const useAuth = create<AuthState>()(
               };
 
               set({ user, isAuthenticated: true, isLoading: false });
-              persistUserToStorage(user);
               return true;
             })
             .catch(() => {
@@ -257,26 +232,16 @@ export const useAuth = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
-      // Persist both auth flag AND user object in sessionStorage. This eliminates
-      // the fragile restoreSession() dance on page loads — the user object is
-      // immediately available after Zustand hydrates, preventing the deadlock where
-      // isReady=false blocks restoreSession from ever being called, and the race
-      // condition where 401 interceptor and restoreSession compete for token refresh.
-      // The user object (name, email, roles) is non-sensitive — the same data is
-      // already in the JWT cookie and sent over the wire on every API call.
+      // HIGH-3: Only persist the `isAuthenticated` flag. User identity
+      // (employeeId, tenantId, name, email, roles) is rehydrated via
+      // restoreSession() against the httpOnly refresh cookie — no PII in
+      // sessionStorage.
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
-        user: state.user,
       }),
       onRehydrateStorage: () => (state) => {
-        // P0-SESSION: Restore user from the separate storage key if the
-        // Zustand persist didn't include it (old partialize still in runtime).
-        if (state && state.isAuthenticated && !state.user) {
-          const savedUser = readUserFromStorage();
-          if (savedUser) {
-            state.setUser(savedUser);
-          }
-        }
+        // Purge any legacy user object left over from the old persist scheme.
+        clearLegacyUserFromStorage();
         state?.setHasHydrated(true);
       },
     }

@@ -94,7 +94,7 @@ function EmployeeCard({
       {employee.retentionRisk && (
         <div className="mt-1 flex items-center gap-1">
           {employee.retentionRisk === 'HIGH' && (
-            <AlertTriangle className="h-3 w-3 text-danger-500"/>
+            <AlertTriangle className='h-3 w-3 text-status-danger-text'/>
           )}
           <span
             className={`text-xs ${
@@ -239,15 +239,15 @@ export default function CalibrationMatrix({
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">9-Box Grid Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-success-500"></div>
+            <div className='w-4 h-4 rounded bg-status-success-bg'></div>
             <span>Top Talent / Stars</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-warning-400"></div>
+            <div className='w-4 h-4 rounded bg-status-warning-bg'></div>
             <span>Development Needed</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-danger-500"></div>
+            <div className='w-4 h-4 rounded bg-status-danger-bg'></div>
             <span>Performance Concerns</span>
           </div>
         </div>
@@ -258,7 +258,6 @@ export default function CalibrationMatrix({
           </p>
         )}
       </div>
-
       {/* Matrix Grid */}
       <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)] overflow-x-auto">
         <div className="min-w-[800px]">
@@ -404,7 +403,6 @@ export default function CalibrationMatrix({
           </div>
         </div>
       </div>
-
       {/* Summary Statistics */}
       <div className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border-main)]">
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Distribution Summary</h3>
@@ -414,19 +412,19 @@ export default function CalibrationMatrix({
             <div className="text-caption">Total Employees</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-success-600">
+            <div className='text-2xl font-bold text-status-success-text'>
               {(distribution['3-3'] || 0) + (distribution['2-3'] || 0) + (distribution['3-2'] || 0)}
             </div>
             <div className="text-caption">Top Performers</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-warning-600">
+            <div className='text-2xl font-bold text-status-warning-text'>
               {(distribution['2-2'] || 0) + (distribution['2-1'] || 0) + (distribution['3-1'] || 0)}
             </div>
             <div className="text-caption">Solid Contributors</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-danger-600">
+            <div className='text-2xl font-bold text-status-danger-text'>
               {(distribution['1-1'] || 0) + (distribution['1-2'] || 0) + (distribution['1-3'] || 0)}
             </div>
             <div className="text-caption">Need Development</div>

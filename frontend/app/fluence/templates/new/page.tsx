@@ -216,7 +216,7 @@ export default function CreateTemplatePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='inline-flex items-center gap-2 text-sm font-medium text-inverse bg-accent hover:bg-accent disabled:opacity-50 px-4 py-2 rounded-lg transition-colors shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 <Send className="w-4 h-4"/>
                 {isSubmitting ? 'Saving...' : 'Save Template'}
@@ -241,7 +241,7 @@ export default function CreateTemplatePage() {
               autoFocus
             />
             {errors.name && (
-              <p className="text-xs text-danger-500 mt-1">
+              <p className='text-xs text-status-danger-text mt-1'>
                 {errors.name.message}
               </p>
             )}
@@ -303,7 +303,7 @@ export default function CreateTemplatePage() {
                   rows={3}
                 />
                 {errors.description && (
-                  <p className="text-xs text-danger-500 mt-1">
+                  <p className='text-xs text-status-danger-text mt-1'>
                     {errors.description.message}
                   </p>
                 )}
@@ -378,7 +378,7 @@ export default function CreateTemplatePage() {
                   type="button"
                   onClick={handleSave}
                   disabled={isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-700 disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors"
+                  className='w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-inverse bg-accent hover:bg-accent disabled:opacity-50 px-4 py-2.5 rounded-lg transition-colors'
                 >
                   <Save className="w-4 h-4"/>
                   {isSubmitting ? 'Saving...' : 'Save Template'}

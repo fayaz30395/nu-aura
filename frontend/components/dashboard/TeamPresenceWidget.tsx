@@ -45,7 +45,7 @@ function Avatar({name, size = 'md'}: AvatarProps) {
   const sizeClasses = size === 'sm' ? 'h-7 w-7 text-2xs' : 'h-9 w-9 text-xs';
   return (
     <div
-      className={`flex items-center justify-center rounded-full bg-accent-100 dark:bg-accent-900/30 font-semibold text-accent-700 dark:text-accent-400 ${sizeClasses}`}
+      className={`flex items-center justify-center rounded-full bg-accent-subtle font-semibold text-accent ${sizeClasses}`}
       title={name}
     >
       {initials}
@@ -77,12 +77,11 @@ export function OnLeaveTodayCard() {
       <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
         On Leave Today
       </h3>
-
       {isLoading ? (
         <SkeletonChips/>
       ) : onLeaveEmployees.length === 0 ? (
         <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-4 py-2.5">
-          <CheckCircle2 className="h-4 w-4 text-success-500"/>
+          <CheckCircle2 className='h-4 w-4 text-status-success-text'/>
           <p className="text-caption">Everyone is working today!</p>
         </div>
       ) : (
@@ -121,7 +120,6 @@ export function WorkingRemotelyCard() {
       <h3 className="skeuo-emboss text-sm font-semibold text-[var(--text-primary)] mb-4">
         Working Remotely
       </h3>
-
       {isLoading ? (
         <SkeletonChips/>
       ) : remoteWorkers.length === 0 ? (
@@ -142,7 +140,7 @@ export function WorkingRemotelyCard() {
               <div className="relative">
                 <Avatar name={e.employeeName}/>
                 <div
-                  className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-success-500"/>
+                  className='absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-card)] bg-status-success-bg'/>
               </div>
               <span className="text-2xs text-[var(--text-muted)] max-w-[56px] truncate text-center">
                 {e.employeeName.split(' ')[0]}

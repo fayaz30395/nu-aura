@@ -1,17 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonCard } from '@/components/ui/Skeleton';
-import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
-import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Permissions } from '@/lib/hooks/usePermissions';
+import {useMemo} from 'react';
+import {useParams, useRouter} from 'next/navigation';
+import {motion} from 'framer-motion';
+import {AppLayout} from '@/components/layout';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {Button} from '@/components/ui/Button';
+import {Badge} from '@/components/ui/Badge';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {SkeletonCard} from '@/components/ui/Skeleton';
+import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {
   useAgency,
   useAgencySubmissions,
@@ -39,12 +39,12 @@ import {
 } from 'lucide-react';
 
 const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  hidden: {opacity: 0},
+  visible: {opacity: 1, transition: {staggerChildren: 0.08, delayChildren: 0.1}},
 };
 const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  hidden: {opacity: 0, y: 16},
+  visible: {opacity: 1, y: 0, transition: {duration: 0.3}},
 };
 
 function getStatusVariant(status: AgencyStatus): 'success' | 'warning' | 'danger' | 'default' {
@@ -100,8 +100,8 @@ export default function AgencyDetailPage() {
     return (
       <AppLayout>
         <div className="space-y-6">
-          <SkeletonCard />
-          <SkeletonCard />
+          <SkeletonCard/>
+          <SkeletonCard/>
         </div>
       </AppLayout>
     );
@@ -134,7 +134,7 @@ export default function AgencyDetailPage() {
               onClick={() => router.push('/recruitment/agencies')}
               className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] mb-4 cursor-pointer"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4"/>
               Back to Agencies
             </button>
             <div className="flex items-center justify-between">
@@ -168,44 +168,44 @@ export default function AgencyDetailPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                  <Building2 className='h-4 w-4 text-accent'/>
                   Contact Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {agency.contactPerson && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                    <Users className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     <span>{agency.contactPerson}</span>
                   </div>
                 )}
                 {agency.email && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                    <Mail className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     <span>{agency.email}</span>
                   </div>
                 )}
                 {agency.phone && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                    <Phone className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     <span>{agency.phone}</span>
                   </div>
                 )}
                 {agency.website && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Globe className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                    <Globe className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     <span className="truncate">{agency.website}</span>
                   </div>
                 )}
                 {agency.address && (
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                    <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
                     <span>{agency.address}</span>
                   </div>
                 )}
                 {agency.rating && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-3.5 w-3.5 text-warning-500" />
+                    <Star className='h-3.5 w-3.5 text-status-warning-text'/>
                     <span>{agency.rating}/5</span>
                   </div>
                 )}
@@ -216,7 +216,7 @@ export default function AgencyDetailPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                  <DollarSign className='h-4 w-4 text-accent'/>
                   Contract & Fee
                 </CardTitle>
               </CardHeader>
@@ -248,15 +248,15 @@ export default function AgencyDetailPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                  <TrendingUp className='h-4 w-4 text-accent'/>
                   Performance
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {performanceQuery.isLoading ? (
                   <div className="animate-pulse space-y-2">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="h-4 bg-[var(--bg-secondary)] rounded" />
+                    {Array.from({length: 4}).map((_, i) => (
+                      <div key={i} className="h-4 bg-[var(--bg-secondary)] rounded"/>
                     ))}
                   </div>
                 ) : perf ? (
@@ -267,17 +267,17 @@ export default function AgencyDetailPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-muted)] flex items-center gap-1">
-                        <CheckCircle className="h-3 w-3 text-success-600" />
+                        <CheckCircle className='h-3 w-3 text-status-success-text'/>
                         Hired
                       </span>
-                      <span className="font-medium text-success-700 dark:text-success-400">{perf.hiredCount}</span>
+                      <span className='font-medium text-status-success-text'>{perf.hiredCount}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-muted)] flex items-center gap-1">
-                        <XCircle className="h-3 w-3 text-danger-600" />
+                        <XCircle className='h-3 w-3 text-status-danger-text'/>
                         Rejected
                       </span>
-                      <span className="font-medium text-danger-700 dark:text-danger-400">{perf.rejectedCount}</span>
+                      <span className='font-medium text-status-danger-text'>{perf.rejectedCount}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--text-muted)]">Hire Rate</span>
@@ -301,7 +301,7 @@ export default function AgencyDetailPage() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                    <FileText className='h-4 w-4 text-accent'/>
                     Notes
                   </CardTitle>
                 </CardHeader>
@@ -317,7 +317,7 @@ export default function AgencyDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                  <Users className='h-4 w-4 text-accent'/>
                   Candidate Submissions
                   {submissions.length > 0 && (
                     <Badge variant="default" size="sm">{submissions.length}</Badge>
@@ -327,13 +327,13 @@ export default function AgencyDetailPage() {
               <CardContent>
                 {submissionsQuery.isLoading ? (
                   <div className="animate-pulse space-y-2">
-                    {Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} className="h-12 bg-[var(--bg-secondary)] rounded" />
+                    {Array.from({length: 3}).map((_, i) => (
+                      <div key={i} className="h-12 bg-[var(--bg-secondary)] rounded"/>
                     ))}
                   </div>
                 ) : submissions.length === 0 ? (
                   <EmptyState
-                    icon={<Users className="h-8 w-8" />}
+                    icon={<Users className="h-8 w-8"/>}
                     title="No Submissions Yet"
                     description="This agency hasn't submitted any candidates"
                   />
@@ -341,42 +341,54 @@ export default function AgencyDetailPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-[var(--border-main)]">
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Candidate</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Job</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Status</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Invoice</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Fee</th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Submitted</th>
-                        </tr>
+                      <tr className="border-b border-[var(--border-main)]">
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Candidate
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Job
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Status
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Invoice
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Fee
+                        </th>
+                        <th
+                          className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Submitted
+                        </th>
+                      </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--border-subtle)]">
-                        {submissions.map((sub) => (
-                          <tr key={sub.id} className="hover:bg-[var(--bg-secondary)]/50">
-                            <td className="px-4 py-2 font-medium text-[var(--text-primary)]">
-                              {sub.candidateName || sub.candidateId}
-                            </td>
-                            <td className="px-4 py-2 text-[var(--text-secondary)]">
-                              {sub.jobTitle || sub.jobOpeningId}
-                            </td>
-                            <td className="px-4 py-2">
-                              <Badge variant={getSubmissionStatusVariant(sub.status)} size="sm">
-                                {sub.status}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-2">
-                              <Badge variant={getInvoiceVariant(sub.invoiceStatus)} size="sm">
-                                {sub.invoiceStatus?.replace(/_/g, ' ') ?? '-'}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-2 text-[var(--text-secondary)]">
-                              {formatCurrency(sub.feeAgreed, sub.feeCurrency)}
-                            </td>
-                            <td className="px-4 py-2 text-[var(--text-muted)]">
-                              {formatDate(sub.submittedAt)}
-                            </td>
-                          </tr>
-                        ))}
+                      {submissions.map((sub) => (
+                        <tr key={sub.id} className="hover:bg-[var(--bg-secondary)]/50">
+                          <td className="px-4 py-2 font-medium text-[var(--text-primary)]">
+                            {sub.candidateName || sub.candidateId}
+                          </td>
+                          <td className="px-4 py-2 text-[var(--text-secondary)]">
+                            {sub.jobTitle || sub.jobOpeningId}
+                          </td>
+                          <td className="px-4 py-2">
+                            <Badge variant={getSubmissionStatusVariant(sub.status)} size="sm">
+                              {sub.status}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-2">
+                            <Badge variant={getInvoiceVariant(sub.invoiceStatus)} size="sm">
+                              {sub.invoiceStatus?.replace(/_/g, ' ') ?? '-'}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-2 text-[var(--text-secondary)]">
+                            {formatCurrency(sub.feeAgreed, sub.feeCurrency)}
+                          </td>
+                          <td className="px-4 py-2 text-[var(--text-muted)]">
+                            {formatDate(sub.submittedAt)}
+                          </td>
+                        </tr>
+                      ))}
                       </tbody>
                     </table>
                   </div>

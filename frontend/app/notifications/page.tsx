@@ -42,8 +42,16 @@ interface FilterTab {
 const filterTabs: FilterTab[] = [
   {key: 'all', label: 'All'},
   {key: 'unread', label: 'Unread'},
-  {key: 'approvals', label: 'Approvals', types: ['TASK_ASSIGNED', 'APPROVAL_REQUIRED', 'APPROVAL_UPDATE', 'APPROVAL_ESCALATED', 'APPROVAL_APPROVED', 'APPROVAL_REJECTED']},
-  {key: 'leave', label: 'Leave & Attendance', types: ['LEAVE_APPROVED', 'LEAVE_REJECTED', 'LEAVE_PENDING', 'ATTENDANCE_MARKED', 'ATTENDANCE_ALERT']},
+  {
+    key: 'approvals',
+    label: 'Approvals',
+    types: ['TASK_ASSIGNED', 'APPROVAL_REQUIRED', 'APPROVAL_UPDATE', 'APPROVAL_ESCALATED', 'APPROVAL_APPROVED', 'APPROVAL_REJECTED']
+  },
+  {
+    key: 'leave',
+    label: 'Leave & Attendance',
+    types: ['LEAVE_APPROVED', 'LEAVE_REJECTED', 'LEAVE_PENDING', 'ATTENDANCE_MARKED', 'ATTENDANCE_ALERT']
+  },
   {key: 'payroll', label: 'Payroll', types: ['PAYROLL_GENERATED', 'EXPENSE_APPROVED', 'EXPENSE_REJECTED']},
   {key: 'system', label: 'System', types: ['ANNOUNCEMENT', 'SYSTEM_ALERT', 'SYSTEM', 'REMINDER', 'ROLE_UPDATED']},
 ];
@@ -54,35 +62,35 @@ function getNotificationIcon(type: string): React.ReactNode {
     case 'LEAVE_APPROVED':
     case 'LEAVE_REJECTED':
     case 'LEAVE_PENDING':
-      return <FileText className="h-4 w-4 text-accent-500"/>;
+      return <FileText className='h-4 w-4 text-accent'/>;
     case 'EXPENSE_APPROVED':
     case 'EXPENSE_REJECTED':
     case 'PAYROLL_GENERATED':
-      return <DollarSign className="h-4 w-4 text-success-500"/>;
+      return <DollarSign className='h-4 w-4 text-status-success-text'/>;
     case 'ATTENDANCE_MARKED':
     case 'ATTENDANCE_ALERT':
-      return <Clock className="h-4 w-4 text-warning-500"/>;
+      return <Clock className='h-4 w-4 text-status-warning-text'/>;
     case 'ANNOUNCEMENT':
-      return <Megaphone className="h-4 w-4 text-accent-700"/>;
+      return <Megaphone className='h-4 w-4 text-accent'/>;
     case 'BIRTHDAY':
     case 'ANNIVERSARY':
-      return <Gift className="h-4 w-4 text-accent-700"/>;
+      return <Gift className='h-4 w-4 text-accent'/>;
     case 'PERFORMANCE_REVIEW_DUE':
-      return <Award className="h-4 w-4 text-warning-500"/>;
+      return <Award className='h-4 w-4 text-status-warning-text'/>;
     case 'ROLE_UPDATED':
-      return <Shield className="h-4 w-4 text-accent-500"/>;
+      return <Shield className='h-4 w-4 text-accent'/>;
     case 'SYSTEM_ALERT':
     case 'SYSTEM':
-      return <Info className="h-4 w-4 text-danger-500"/>;
+      return <Info className='h-4 w-4 text-status-danger-text'/>;
     case 'TASK_ASSIGNED':
     case 'APPROVAL_REQUIRED':
     case 'APPROVAL_UPDATE':
     case 'APPROVAL_ESCALATED':
     case 'APPROVAL_APPROVED':
     case 'APPROVAL_REJECTED':
-      return <ClipboardCheck className="h-4 w-4 text-accent-600"/>;
+      return <ClipboardCheck className='h-4 w-4 text-accent'/>;
     default:
-      return <Bell className="h-4 w-4 text-accent-500"/>;
+      return <Bell className='h-4 w-4 text-accent'/>;
   }
 }
 
@@ -161,7 +169,7 @@ export default function NotificationsPage() {
             <button
               onClick={() => markAllReadMutation.mutate()}
               disabled={markAllReadMutation.isPending}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-accent-700 hover:text-accent-800 hover:bg-accent-50 rounded-lg transition-colors cursor-pointer"
+              className='flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-accent hover:text-accent hover:bg-accent-subtle rounded-lg transition-colors cursor-pointer'
             >
               <CheckCheck className="h-4 w-4"/>
               Mark all read
@@ -181,7 +189,7 @@ export default function NotificationsPage() {
               className={cn(
                 'px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors cursor-pointer',
                 activeTab === tab.key
-                  ? 'text-accent-700 border-b-2 border-accent-700'
+                  ? 'text-accent border-b-2 border-[var(--accent-primary)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               )}
             >
@@ -194,7 +202,7 @@ export default function NotificationsPage() {
         <div className="skeuo-card rounded-lg overflow-hidden border border-[var(--border-main)]">
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+              <Loader2 className='h-6 w-6 animate-spin text-accent'/>
               <span className="ml-2 text-sm text-[var(--text-muted)]">Loading notifications...</span>
             </div>
           ) : notifications.length === 0 ? (
@@ -211,7 +219,7 @@ export default function NotificationsPage() {
                   className={cn(
                     'flex items-start gap-4 px-4 py-4 transition-colors cursor-pointer',
                     !notification.isRead
-                      ? 'bg-accent-50/50 dark:bg-accent-900/10 hover:bg-accent-50 dark:hover:bg-accent-900/20'
+                      ? 'bg-accent-50/50 hover:bg-accent-subtle'
                       : 'hover:bg-[var(--bg-surface)]',
                     getPriorityStyles(notification.priority, notification.isRead)
                   )}
@@ -220,7 +228,7 @@ export default function NotificationsPage() {
                   <div className={cn(
                     'flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center',
                     !notification.isRead
-                      ? 'bg-accent-100 dark:bg-accent-900/30'
+                      ? 'bg-accent-subtle'
                       : 'bg-[var(--bg-surface)]'
                   )}>
                     {getNotificationIcon(notification.type)}
@@ -236,12 +244,14 @@ export default function NotificationsPage() {
                         {notification.title}
                       </p>
                       {notification.priority === 'URGENT' && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-danger-100 text-danger-700 rounded">
+                        <span
+                          className='px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-status-danger-bg text-status-danger-text rounded'>
                           Urgent
                         </span>
                       )}
                       {notification.priority === 'HIGH' && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-warning-100 text-warning-700 rounded">
+                        <span
+                          className='px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-status-warning-bg text-status-warning-text rounded'>
                           High
                         </span>
                       )}
@@ -259,7 +269,7 @@ export default function NotificationsPage() {
                     {!notification.isRead && (
                       <button
                         onClick={() => markReadMutation.mutate(notification.id)}
-                        className="p-1.5 text-accent-600 hover:text-accent-800 hover:bg-accent-50 rounded transition-colors cursor-pointer"
+                        className='p-1.5 text-accent hover:text-accent hover:bg-accent-subtle rounded transition-colors cursor-pointer'
                         aria-label="Mark as read"
                       >
                         <Check className="h-4 w-4"/>

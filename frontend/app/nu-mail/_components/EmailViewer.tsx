@@ -51,7 +51,7 @@ export function EmailViewer({
     return (
       <div className="p-6 flex items-center justify-center py-16">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-accent-500 animate-spin"/>
+          <Loader2 className='w-10 h-10 text-accent animate-spin'/>
           <p className="text-[var(--text-muted)]">Loading email content...</p>
         </div>
       </div>
@@ -108,13 +108,12 @@ export function EmailViewer({
             size="sm"
             onClick={() => onDelete(email.id)}
             title="Delete"
-            className="text-danger-500 hover:text-danger-600"
+            className='text-status-danger-text hover:text-status-danger-text'
           >
             <Trash2 className="h-4 w-4"/>
           </Button>
         </div>
       </div>
-
       {/* Email header */}
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
@@ -123,7 +122,7 @@ export function EmailViewer({
           </h2>
           <button
             onClick={() => onToggleStar(email.id, email.isStarred)}
-            className={email.isStarred ? 'text-warning-500' : 'text-[var(--text-muted)] hover:text-warning-500'}
+            className={email.isStarred ? 'text-status-warning-text' : 'text-[var(--text-muted)] hover:text-status-warning-text'}
           >
             <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`}/>
           </button>
@@ -131,8 +130,8 @@ export function EmailViewer({
 
         <div className="flex items-start gap-4">
           <div
-            className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center flex-shrink-0">
-            <User className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+            className='w-10 h-10 rounded-full bg-accent-subtle flex items-center justify-center flex-shrink-0'>
+            <User className='h-5 w-5 text-accent'/>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">

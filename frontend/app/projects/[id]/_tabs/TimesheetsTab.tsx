@@ -197,7 +197,7 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-accent-500"/>
+          <Loader2 className='h-6 w-6 animate-spin text-accent'/>
         </CardContent>
       </Card>
     );
@@ -220,7 +220,6 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
             </Button>
           </CardContent>
         </Card>
-
         <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="lg">
           <ModalHeader onClose={() => setShowCreateModal(false)}>
             Create Timesheet
@@ -233,7 +232,7 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
                 {...registerCreate('weekStartDate')}
               />
               {createErrors.weekStartDate && (
-                <p className="text-sm text-danger-500">{createErrors.weekStartDate.message}</p>
+                <p className='text-sm text-status-danger-text'>{createErrors.weekStartDate.message}</p>
               )}
             </ModalBody>
             <ModalFooter>
@@ -269,7 +268,7 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
 
           {timesheetsErrorMessage && (
             <div
-              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
               {timesheetsErrorMessage}
             </div>
           )}
@@ -283,7 +282,6 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
           />
         </CardContent>
       </Card>
-
       {/* Create Timesheet Modal */}
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="lg">
         <ModalHeader onClose={() => setShowCreateModal(false)}>
@@ -297,7 +295,7 @@ export function TimesheetsTab({projectId}: TimesheetsTabProps) {
               {...registerCreate('weekStartDate')}
             />
             {createErrors.weekStartDate && (
-              <p className="text-sm text-danger-500">{createErrors.weekStartDate.message}</p>
+              <p className='text-sm text-status-danger-text'>{createErrors.weekStartDate.message}</p>
             )}
           </ModalBody>
           <ModalFooter>

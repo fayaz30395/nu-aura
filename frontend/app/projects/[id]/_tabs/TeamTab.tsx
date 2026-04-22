@@ -433,7 +433,7 @@ export function TeamTab({projectId}: TeamTabProps) {
 
           {allocationsErrorMessage && (
             <div
-              className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+              className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
               {allocationsErrorMessage}
             </div>
           )}
@@ -461,7 +461,6 @@ export function TeamTab({projectId}: TeamTabProps) {
           )}
         </CardContent>
       </Card>
-
       {/* Add Member Modal */}
       <Modal isOpen={showAddMemberModal} onClose={() => setShowAddMemberModal(false)} size="lg">
         <ModalHeader onClose={() => setShowAddMemberModal(false)}>
@@ -471,13 +470,14 @@ export function TeamTab({projectId}: TeamTabProps) {
           <ModalBody className="space-y-4">
             {addMemberError && (
               <div
-                className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-4 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                className='rounded-lg border border-status-danger-border bg-status-danger-bg px-4 py-4 text-sm text-status-danger-text'>
                 {addMemberError}
               </div>
             )}
 
             {!selectedEmployee && (
-              <div className="rounded-lg border border-warning-200 bg-warning-50 px-4 py-4 text-sm text-warning-700">
+              <div
+                className='rounded-lg border border-status-warning-border bg-status-warning-bg px-4 py-4 text-sm text-status-warning-text'>
                 Please select an employee
               </div>
             )}
@@ -498,7 +498,8 @@ export function TeamTab({projectId}: TeamTabProps) {
                     </option>
                   ))}
                 </Select>
-                {addMemberErrors.role && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.role.message}</p>}
+                {addMemberErrors.role &&
+                  <p className='text-sm text-status-danger-text mt-1'>{addMemberErrors.role.message}</p>}
               </div>
 
               <div>
@@ -511,7 +512,8 @@ export function TeamTab({projectId}: TeamTabProps) {
                   {...registerAddMember('allocationPercentage')}
                 />
                 {addMemberErrors.allocationPercentage &&
-                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+                  <p
+                    className='text-sm text-status-danger-text mt-1'>{addMemberErrors.allocationPercentage.message}</p>}
               </div>
             </div>
 
@@ -519,12 +521,12 @@ export function TeamTab({projectId}: TeamTabProps) {
               <div>
                 <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
                 {addMemberErrors.startDate &&
-                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.startDate.message}</p>}
+                  <p className='text-sm text-status-danger-text mt-1'>{addMemberErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
                 {addMemberErrors.endDate &&
-                  <p className="text-sm text-danger-500 mt-1">{addMemberErrors.endDate.message}</p>}
+                  <p className='text-sm text-status-danger-text mt-1'>{addMemberErrors.endDate.message}</p>}
               </div>
             </div>
           </ModalBody>
@@ -538,7 +540,6 @@ export function TeamTab({projectId}: TeamTabProps) {
           </ModalFooter>
         </form>
       </Modal>
-
       {/* End Allocation Confirm Dialog */}
       <ConfirmDialog
         isOpen={Boolean(endAllocationTarget)}

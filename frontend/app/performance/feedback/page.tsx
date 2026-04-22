@@ -157,7 +157,7 @@ export default function FeedbackPage() {
     return (
       <AppLayout activeMenuItem="performance">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600"></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]'></div>
         </div>
       </AppLayout>
     );
@@ -174,7 +174,7 @@ export default function FeedbackPage() {
                 resetFormHandler();
                 setShowModal(true);
               }}
-              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
+              className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
             >
               Give Feedback
             </button>
@@ -186,13 +186,13 @@ export default function FeedbackPage() {
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('received')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-[var(--accent-primary)] text-accent' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Received Feedback ({receivedFeedback.length})
             </button>
             <button
               onClick={() => setActiveTab('given')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-[var(--accent-primary)] text-accent' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Given Feedback ({givenFeedback.length})
             </button>
@@ -235,7 +235,7 @@ export default function FeedbackPage() {
                     resetFormHandler();
                     setShowModal(true);
                   }}
-                  className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
+                  className='px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent'
                 >
                   Give Your First Feedback
                 </button>
@@ -260,12 +260,12 @@ export default function FeedbackPage() {
                         </span>
                       )}
                       {feedback.isAnonymous && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-300 text-accent-900">
+                        <span className='px-2 py-1 rounded text-xs font-medium bg-accent-subtle text-accent'>
                           Anonymous
                         </span>
                       )}
                       {feedback.isPublic && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-100 text-accent-800">
+                        <span className='px-2 py-1 rounded text-xs font-medium bg-accent-subtle text-accent'>
                           Public
                         </span>
                       )}
@@ -291,7 +291,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_UPDATE}>
                       <button
                         onClick={() => openEditModal(feedback)}
-                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                        className='flex-1 px-4 py-2 bg-accent-subtle text-accent rounded hover:bg-accent-subtle text-sm font-medium'
                       >
                         Edit
                       </button>
@@ -299,7 +299,7 @@ export default function FeedbackPage() {
                     <PermissionGate permission={Permissions.REVIEW_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(feedback)}
-                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
+                        className='flex-1 px-4 py-2 bg-status-danger-bg text-status-danger-text rounded hover:bg-status-danger-bg text-sm font-medium'
                       >
                         Delete
                       </button>
@@ -332,7 +332,7 @@ export default function FeedbackPage() {
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.recipientId && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.recipientId.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.recipientId.message}</p>
                       )}
                     </div>
 
@@ -350,7 +350,7 @@ export default function FeedbackPage() {
                         <option value="REQUEST">Request</option>
                       </select>
                       {errors.feedbackType && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackType.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.feedbackType.message}</p>
                       )}
                     </div>
 
@@ -365,7 +365,7 @@ export default function FeedbackPage() {
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.category && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.category.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.category.message}</p>
                       )}
                     </div>
 
@@ -380,7 +380,7 @@ export default function FeedbackPage() {
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       {errors.feedbackText && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackText.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.feedbackText.message}</p>
                       )}
                     </div>
 
@@ -389,7 +389,7 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isAnonymous')}
-                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
+                          className='w-4 h-4 text-accent border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500'
                         />
                         <span className="ml-2 text-body-secondary">
                           Submit as anonymous
@@ -400,7 +400,7 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isPublic')}
-                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
+                          className='w-4 h-4 text-accent border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500'
                         />
                         <span className="ml-2 text-body-secondary">
                           Make this feedback public
@@ -425,7 +425,7 @@ export default function FeedbackPage() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex-1 px-4 py-2 bg-accent text-inverse rounded-lg hover:bg-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
                       </button>
@@ -458,7 +458,7 @@ export default function FeedbackPage() {
                   <button
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
-                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    className='flex-1 px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                   >
                     {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                   </button>

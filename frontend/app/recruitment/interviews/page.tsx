@@ -136,7 +136,7 @@ function SearchableSelect({
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-4 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+          className='w-full px-4 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
         />
         <ChevronDown
           className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none"/>
@@ -152,7 +152,7 @@ function SearchableSelect({
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   option.value === value ? 'bg-accent-50 text-accent-700' : 'text-[var(--text-primary)]'
                 }`}
               >
@@ -165,7 +165,7 @@ function SearchableSelect({
           )}
         </div>
       )}
-      {error && <p className="text-danger-500 text-xs mt-1">{error}</p>}
+      {error && <p className='text-status-danger-text text-xs mt-1'>{error}</p>}
     </div>
   );
 }
@@ -638,8 +638,8 @@ function InterviewsPage() {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-accent-700"/>
+                <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Calendar className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-muted">Total</p>
@@ -651,8 +651,8 @@ function InterviewsPage() {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-50 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-600"/>
+                <div className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Clock className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-muted">Scheduled</p>
@@ -664,8 +664,8 @@ function InterviewsPage() {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-success-50 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600"/>
+                <div className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center'>
+                  <CheckCircle className='h-6 w-6 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-body-muted">Completed</p>
@@ -677,8 +677,8 @@ function InterviewsPage() {
           <Card className="bg-[var(--bg-card)] skeuo-card">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-warning-50 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-warning-600"/>
+                <div className='w-12 h-12 rounded-xl bg-status-warning-bg flex items-center justify-center'>
+                  <AlertCircle className='h-6 w-6 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-body-muted">Pending Decision</p>
@@ -700,13 +700,13 @@ function InterviewsPage() {
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                  className='w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+                className='px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)]'
               >
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
@@ -771,8 +771,8 @@ function InterviewsPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <div
-                            className="flex-shrink-0 h-10 w-10 bg-accent-100 rounded-xl flex items-center justify-center">
-                            <User className="h-5 w-5 text-accent-700"/>
+                            className='flex-shrink-0 h-10 w-10 bg-accent-subtle rounded-xl flex items-center justify-center'>
+                            <User className='h-5 w-5 text-accent'/>
                           </div>
                           <div className="ml-4">
                             <div
@@ -803,7 +803,7 @@ function InterviewsPage() {
                             href={interview.googleMeetLink || interview.meetingLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"
+                            className='inline-flex items-center gap-1 mt-1 text-xs text-accent hover:underline'
                           >
                             <Video className="h-3 w-3"/>
                             Join Meet
@@ -825,7 +825,7 @@ function InterviewsPage() {
                               </span>
                           )}
                           {interview.rating && (
-                            <span className="flex items-center gap-1 text-sm text-warning-600">
+                            <span className='flex items-center gap-1 text-sm text-status-warning-text'>
                                 <Star className="h-4 w-4 fill-current"/>
                               {interview.rating}/5
                               </span>
@@ -837,7 +837,7 @@ function InterviewsPage() {
                           {interview.status === 'SCHEDULED' && (
                             <button
                               onClick={() => handleProvideFeedback(interview)}
-                              className="p-2 text-[var(--text-muted)] hover:text-success-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              className='p-2 text-[var(--text-muted)] hover:text-status-success-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                               title="Provide Feedback"
                               aria-label="Provide feedback"
                             >
@@ -846,7 +846,7 @@ function InterviewsPage() {
                           )}
                           <button
                             onClick={() => handleEdit(interview)}
-                            className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 text-[var(--text-muted)] hover:text-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Edit"
                             aria-label="Edit interview"
                           >
@@ -857,7 +857,7 @@ function InterviewsPage() {
                               setInterviewToDelete(interview);
                               setShowDeleteModal(true);
                             }}
-                            className="p-2 text-[var(--text-muted)] hover:text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='p-2 text-[var(--text-muted)] hover:text-status-danger-text transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             title="Delete"
                             aria-label="Delete interview"
                           >
@@ -973,7 +973,7 @@ function InterviewsPage() {
                         className="input-aura"
                       />
                       {errorsCreate.scheduledAt &&
-                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
+                        <p className='text-status-danger-text text-xs mt-1'>{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration
@@ -986,7 +986,7 @@ function InterviewsPage() {
                         className="input-aura"
                       />
                       {errorsCreate.durationMinutes &&
-                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
+                        <p className='text-status-danger-text text-xs mt-1'>{errorsCreate.durationMinutes.message}</p>}
                     </div>
                   </div>
 
@@ -1009,7 +1009,7 @@ function InterviewsPage() {
                     <div
                       className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
                       <div className="flex items-center gap-2 flex-1">
-                        <Video className="h-5 w-5 text-accent-500"/>
+                        <Video className='h-5 w-5 text-accent'/>
                         <div>
                           <span
                             className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
@@ -1055,7 +1055,7 @@ function InterviewsPage() {
                   {/* Time Slot Preview when Google Meet is enabled */}
                   {createMeetToggle && watchCreate('scheduledAt') && (
                     <div
-                      className="px-4 py-2 rounded-lg bg-accent-50 border border-accent-200 text-xs text-accent-700 flex items-center gap-2">
+                      className='px-4 py-2 rounded-lg bg-accent-subtle border border-[var(--accent-primary)] text-xs text-accent flex items-center gap-2'>
                       <Calendar className="h-3.5 w-3.5 flex-shrink-0"/>
                       <span>
                         Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', {
@@ -1081,12 +1081,12 @@ function InterviewsPage() {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 ${
+                        className={`w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-[var(--accent-primary)] ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
                       {errorsCreate.meetingLink &&
-                        <p className="text-danger-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
+                        <p className='text-status-danger-text text-xs mt-1'>{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
@@ -1106,7 +1106,7 @@ function InterviewsPage() {
                         type="button"
                         onClick={handleGenerateQuestions}
                         disabled={generateQuestionsMutation.isPending}
-                        className="flex items-center gap-1 text-xs text-accent-700 hover:text-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                        className='flex items-center gap-1 text-xs text-accent hover:text-accent disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                       >
                         <Sparkles className="h-3 w-3"/>
                         Generate AI Questions
@@ -1209,7 +1209,7 @@ function InterviewsPage() {
                       className="input-aura"
                     />
                     {errorsFeedback.feedback &&
-                      <p className="text-danger-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
+                      <p className='text-status-danger-text text-xs mt-1'>{errorsFeedback.feedback.message}</p>}
                   </div>
 
                   <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
@@ -1236,8 +1236,9 @@ function InterviewsPage() {
             <div
               className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6 border border-[var(--border-main)] shadow-[var(--shadow-dropdown)]">
               <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-danger-100 flex items-center justify-center">
-                  <Trash2 className="h-6 w-6 text-danger-600"/>
+                <div
+                  className='flex-shrink-0 h-12 w-12 rounded-xl bg-status-danger-bg flex items-center justify-center'>
+                  <Trash2 className='h-6 w-6 text-status-danger-text'/>
                 </div>
                 <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
@@ -1270,7 +1271,7 @@ function InterviewsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-accent-500"/>
+                    <Sparkles className='h-5 w-5 text-accent'/>
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
                   <button onClick={() => {

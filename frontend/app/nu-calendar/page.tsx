@@ -436,7 +436,8 @@ function CalendarContent() {
       <div
         className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+          <div
+            className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
           <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
@@ -454,7 +455,7 @@ function CalendarContent() {
           <div className="flex items-center gap-4">
             <div
               className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center">
-              <CalendarIcon className="h-6 w-6 text-white"/>
+              <CalendarIcon className='h-6 w-6 text-inverse'/>
             </div>
             <div>
               <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">NU-Calendar</h1>
@@ -491,7 +492,7 @@ function CalendarContent() {
                 variant="ghost"
                 size="sm"
                 onClick={clearToken}
-                className="text-[var(--text-muted)] hover:text-danger-600"
+                className='text-[var(--text-muted)] hover:text-status-danger-text'
               >
                 Disconnect
               </Button>
@@ -501,9 +502,9 @@ function CalendarContent() {
 
         {/* Error State */}
         {error && (
-          <Card className="border-danger-200 dark:border-danger-900 bg-danger-50 dark:bg-danger-950/30">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="py-4">
-              <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
+              <div className='flex items-center gap-4 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
                 <Button variant="ghost" size="sm" onClick={handleConnectClick} className="ml-auto">
@@ -516,12 +517,12 @@ function CalendarContent() {
 
         {!accessToken ? (
           /* Connect Card */
-          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
+          (<Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
                 <div
-                  className="w-20 h-20 rounded-full bg-accent-250 dark:bg-accent-900/30 flex items-center justify-center mx-auto mb-6">
-                  <CalendarIcon className="h-10 w-10 text-accent-800 dark:text-accent-600"/>
+                  className='w-20 h-20 rounded-full bg-accent-subtle flex items-center justify-center mx-auto mb-6'>
+                  <CalendarIcon className='h-10 w-10 text-accent'/>
                 </div>
                 <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Google Calendar
@@ -540,7 +541,7 @@ function CalendarContent() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card>)
         ) : (
           <>
             {/* Calendar Header */}
@@ -641,7 +642,7 @@ function CalendarContent() {
                                   setSelectedEvent(event);
                                   setShowEventModal(true);
                                 }}
-                                className={`px-1.5 py-0.5 rounded text-xs text-white truncate cursor-pointer hover:opacity-80 ${getEventColor(event)}`}
+                                className={`px-1.5 py-0.5 rounded text-xs text-inverse truncate cursor-pointer hover:opacity-80 ${getEventColor(event)}`}
                               >
                                 {event.start.dateTime && (
                                   <span className="mr-1">{formatTime(event.start.dateTime)}</span>
@@ -666,7 +667,7 @@ function CalendarContent() {
             {/* Agenda View */}
             {viewMode === 'agenda' && (
               <Card>
-                <CardContent className="divide-y divide-surface-100 dark:divide-surface-800">
+                <CardContent className='divide-y divide-surface-100'>
                   {events.length === 0 ? (
                     <div className="py-12 text-center text-[var(--text-muted)]">
                       No events found for this period
@@ -768,7 +769,7 @@ function CalendarContent() {
                         </p>
                       </div>
                       {event.hangoutLink && (
-                        <Video className="h-4 w-4 text-accent-500"/>
+                        <Video className='h-4 w-4 text-accent'/>
                       )}
                     </div>
                   ))}
@@ -778,7 +779,6 @@ function CalendarContent() {
           </>
         )}
       </div>
-
       {/* Event Details Modal */}
       {showEventModal && selectedEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
@@ -885,7 +885,7 @@ function CalendarContent() {
                   onClick={() => {
                     deleteEvent(selectedEvent.id);
                   }}
-                  className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30"
+                  className='text-status-danger-text hover:bg-status-danger-bg'
                   leftIcon={<Trash2 className="h-4 w-4"/>}
                 >
                   Delete
@@ -895,7 +895,6 @@ function CalendarContent() {
           </Card>
         </div>
       )}
-
       {/* Create Event Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
@@ -1036,7 +1035,6 @@ function CalendarContent() {
           </Card>
         </div>
       )}
-
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         onClose={() => {

@@ -59,7 +59,7 @@ function ProgressBar({value}: { value: number }) {
   return (
     <div className="w-full bg-[var(--bg-muted)] rounded-full h-2">
       <div
-        className="bg-accent-600 h-2 rounded-full transition-all duration-300"
+        className='bg-accent h-2 rounded-full transition-all duration-300'
         style={{width: `${Math.min(100, Math.max(0, value))}%`}}
       />
     </div>
@@ -113,7 +113,7 @@ function VideoPlayer({
       </video>
       {hasCompleted && (
         <div
-          className="absolute top-3 right-3 flex items-center gap-1 bg-success-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+          className='absolute top-3 right-3 flex items-center gap-1 bg-status-success-bg text-inverse text-xs font-medium px-2 py-1 rounded-full'>
           <CheckCircle className="h-3.5 w-3.5"/>
           Completed
         </div>
@@ -160,7 +160,7 @@ function ScormLauncher({
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-accent-600 hover:underline flex items-center gap-1"
+              className='text-xs text-accent hover:underline flex items-center gap-1'
             >
               <ExternalLink className="h-3 w-3"/>
               Open in new tab
@@ -203,7 +203,7 @@ function TextContent({content, onComplete}: { content: string; onComplete: () =>
         </Button>
       )}
       {read && (
-        <div className="flex items-center gap-2 text-success-600 text-sm font-medium">
+        <div className='flex items-center gap-2 text-status-success-text text-sm font-medium'>
           <CheckCircle className="h-4 w-4"/>
           Marked as read
         </div>
@@ -249,7 +249,7 @@ function ContentViewer({
             href={content.documentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-accent-600 hover:underline text-sm"
+            className='flex items-center gap-2 text-accent hover:underline text-sm'
           >
             <FileText className="h-4 w-4"/>
             Open Document
@@ -275,7 +275,7 @@ function ContentViewer({
             href={content.documentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-accent-600 hover:underline text-sm"
+            className='flex items-center gap-2 text-accent hover:underline text-sm'
           >
             <ExternalLink className="h-4 w-4"/>
             Open External Link
@@ -354,11 +354,10 @@ function ModuleItem({
             {completedCount}/{totalCount}
           </span>
           {moduleProgress === 100 && (
-            <CheckCircle className="h-4 w-4 text-success-500"/>
+            <CheckCircle className='h-4 w-4 text-status-success-text'/>
           )}
         </div>
       </button>
-
       {/* Module body */}
       {expanded && (
         <div className="border-t border-[var(--border-main)]">
@@ -387,14 +386,13 @@ function ModuleItem({
                       <span className="flex-1 text-sm text-[var(--text-primary)] truncate">{content.title}</span>
                       {content.isMandatory && (
                         <span
-                          className="text-xs text-danger-600 bg-danger-50 px-1.5 py-0.5 rounded shrink-0">Required</span>
+                          className='text-xs text-status-danger-text bg-status-danger-bg px-1.5 py-0.5 rounded shrink-0'>Required</span>
                       )}
                       {content.durationMinutes && (
                         <span className="text-caption shrink-0">{content.durationMinutes}m</span>
                       )}
                       {!enrollmentId && <Lock className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0"/>}
                     </button>
-
                     {/* Inline player */}
                     {isActive && (
                       <div className="px-4 py-4 bg-[var(--bg-muted)] border-t border-[var(--border-main)]">
@@ -533,13 +531,13 @@ export default function CourseDetailPage() {
                 className="h-40 w-full md:w-56 shrink-0 bg-gradient-to-br from-accent-50 to-accent-100 rounded-lg flex items-center justify-center overflow-hidden">
                 {course.thumbnailUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  (<img
                     src={course.thumbnailUrl}
                     alt={course.title}
                     className="w-full h-full object-cover rounded-lg"
-                  />
+                  />)
                 ) : (
-                  <GraduationCap className="h-16 w-16 text-accent-300"/>
+                  <GraduationCap className='h-16 w-16 text-accent'/>
                 )}
               </div>
 
@@ -584,7 +582,7 @@ export default function CourseDetailPage() {
                   </span>
                   {course.avgRating && (
                     <span className="flex items-center gap-1.5">
-                      <Star className="h-4 w-4 text-warning-400 fill-warning-400"/>
+                      <Star className='h-4 w-4 text-status-warning-text fill-warning-400'/>
                       {course.avgRating.toFixed(1)} ({course.totalRatings} ratings)
                     </span>
                   )}
@@ -602,7 +600,7 @@ export default function CourseDetailPage() {
                     <Loader2 className="h-5 w-5 animate-spin text-[var(--text-muted)]"/>
                   ) : isEnrolled ? (
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="flex items-center gap-2 text-success-600 text-sm font-medium">
+                      <div className='flex items-center gap-2 text-status-success-text text-sm font-medium'>
                         <CheckCircle className="h-5 w-5"/>
                         Enrolled
                       </div>
@@ -614,7 +612,7 @@ export default function CourseDetailPage() {
                         <ProgressBar value={overallProgress}/>
                       </div>
                       {enrollment?.status === 'COMPLETED' && (
-                        <div className="flex items-center gap-1.5 text-success-600 text-sm font-medium">
+                        <div className='flex items-center gap-1.5 text-status-success-text text-sm font-medium'>
                           <Award className="h-5 w-5"/>
                           Completed!
                         </div>
@@ -687,7 +685,7 @@ export default function CourseDetailPage() {
                     <ProgressBar value={overallProgress}/>
                   </div>
                   {enrollment?.status === 'COMPLETED' && (
-                    <div className="flex items-center gap-2 text-success-600 text-sm font-medium">
+                    <div className='flex items-center gap-2 text-status-success-text text-sm font-medium'>
                       <Award className="h-5 w-5"/>
                       Course Complete!
                     </div>

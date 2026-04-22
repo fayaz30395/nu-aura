@@ -39,8 +39,8 @@ export function ViewCandidateModal({
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div
-                className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-accent-700 dark:text-accent-300">
+                className='w-16 h-16 bg-accent-subtle rounded-xl flex items-center justify-center'>
+                <span className='text-2xl font-bold text-accent'>
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
               </div>

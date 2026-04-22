@@ -51,7 +51,7 @@ export function MobileBottomNav({
         // Only show on mobile
         'fixed bottom-0 left-0 right-0 z-50 md:hidden',
         // Background and border
-        'bg-[var(--bg-card)] border-t border-surface-200 dark:border-surface-700',
+        'bg-[var(--bg-card)] border-t border-subtle',
         // Safe area for devices with home indicator
         'pb-safe',
         className
@@ -73,8 +73,8 @@ export function MobileBottomNav({
                 'transition-colors duration-200',
                 'touch-manipulation', // Optimize for touch
                 active
-                  ? 'text-accent-700 dark:text-accent-400'
-                  : 'text-surface-500 dark:text-surface-400 active:text-surface-700 dark:active:text-surface-300'
+                  ? 'text-accent'
+                  : 'text-muted active:text-secondary'
               )}
               aria-current={active ? 'page' : undefined}
             >
@@ -88,7 +88,7 @@ export function MobileBottomNav({
                 />
                 {item.badge !== undefined && item.badge > 0 && (
                   <span
-                    className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-white bg-danger-500 rounded-full">
+                    className='absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-semibold text-inverse bg-status-danger-bg rounded-full'>
                     {item.badge > 99 ? '99+' : item.badge}
                   </span>
                 )}
@@ -111,8 +111,8 @@ export function MobileBottomNav({
             onClick={onMoreClick}
             className={cn(
               'flex flex-col items-center justify-center min-w-[64px] h-full px-4 py-2',
-              'text-surface-500 dark:text-surface-400',
-              'active:text-surface-700 dark:active:text-surface-300',
+              'text-muted',
+              'active:text-secondary',
               'transition-colors duration-200 touch-manipulation'
             )}
             aria-label="More options"

@@ -131,9 +131,9 @@ export default function UtilizationReportsPage() {
             {trend && (
               <div className="flex items-center gap-1">
                 {trendDirection === 'up' ? (
-                  <ArrowUpRight className="h-4 w-4 text-success-500"/>
+                  <ArrowUpRight className='h-4 w-4 text-status-success-text'/>
                 ) : (
-                  <ArrowDownRight className="h-4 w-4 text-danger-500"/>
+                  <ArrowDownRight className='h-4 w-4 text-status-danger-text'/>
                 )}
                 <span
                   className={`text-sm font-medium ${trendDirection === 'up' ? 'text-success-500' : 'text-danger-500'
@@ -145,7 +145,7 @@ export default function UtilizationReportsPage() {
             )}
           </div>
           <div className={`p-4 rounded-xl ${color}`}>
-            <Icon className="h-6 w-6 text-white"/>
+            <Icon className='h-6 w-6 text-inverse'/>
           </div>
         </div>
       </CardContent>
@@ -222,7 +222,7 @@ export default function UtilizationReportsPage() {
     return (
       <AppLayout activeMenuItem="reports">
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
-          <AlertCircle className="w-16 h-16 text-danger-500 mb-4"/>
+          <AlertCircle className='w-16 h-16 text-status-danger-text mb-4'/>
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Failed to load data</h2>
           <p
             className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as Error).message : 'Unknown error occurred'}</p>
@@ -316,11 +316,11 @@ export default function UtilizationReportsPage() {
           <motion.div
             initial={{opacity: 0, y: -10}}
             animate={{opacity: 1, y: 0}}
-            className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg flex items-center gap-4"
+            className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg flex items-center gap-4'
           >
-            <AlertCircle className="h-5 w-5 text-danger-500"/>
+            <AlertCircle className='h-5 w-5 text-status-danger-text'/>
             <span
-              className="text-danger-700 dark:text-danger-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
+              className='text-status-danger-text'>{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
           </motion.div>
         )}
 
@@ -400,7 +400,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowUpRight className="h-5 w-5 text-success-500"/>
+                    <ArrowUpRight className='h-5 w-5 text-status-success-text'/>
                     Top Performers
                   </CardTitle>
                 </CardHeader>
@@ -412,7 +412,7 @@ export default function UtilizationReportsPage() {
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div
-                          className="flex items-center justify-center w-8 h-8 rounded-full bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400 text-sm font-bold">
+                          className='flex items-center justify-center w-8 h-8 rounded-full bg-status-success-bg text-status-success-text text-sm font-bold'>
                           {index + 1}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -441,7 +441,7 @@ export default function UtilizationReportsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowDownRight className="h-5 w-5 text-danger-500"/>
+                    <ArrowDownRight className='h-5 w-5 text-status-danger-text'/>
                     Under-Utilized Resources
                   </CardTitle>
                 </CardHeader>
@@ -453,8 +453,8 @@ export default function UtilizationReportsPage() {
                         className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div
-                          className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                          <User className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
+                          className='w-10 h-10 rounded-full bg-status-danger-bg flex items-center justify-center'>
+                          <User className='h-5 w-5 text-status-danger-text'/>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-[var(--text-primary)] truncate">
@@ -482,7 +482,7 @@ export default function UtilizationReportsPage() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-accent-500"/>
+                    <Building2 className='h-5 w-5 text-accent'/>
                     Department Utilization
                   </CardTitle>
                 </CardHeader>
@@ -491,7 +491,7 @@ export default function UtilizationReportsPage() {
                     {dashboardData.byDepartment.map((dept) => (
                       <div
                         key={dept.departmentId}
-                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
+                        className='p-4 rounded-lg border border-[var(--border-main)] hover:border-[var(--accent-primary)] transition-colors'
                       >
                         <div className="row-between mb-4">
                           <h4 className="font-medium text-[var(--text-primary)]">
@@ -555,7 +555,7 @@ export default function UtilizationReportsPage() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-4">
                             <div
-                              className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-700 dark:text-accent-300 text-sm font-medium">
+                              className='w-8 h-8 rounded-full bg-accent-subtle flex items-center justify-center text-accent text-sm font-medium'>
                               {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
                             <div>
@@ -613,7 +613,7 @@ export default function UtilizationReportsPage() {
                         <div
                           className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-success-500 rounded-full"
+                            className='h-full bg-status-success-bg rounded-full'
                             style={{width: `${(dept.billableHours / dept.totalHours) * 100}%`}}
                           />
                         </div>
@@ -629,7 +629,7 @@ export default function UtilizationReportsPage() {
                         <div
                           className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-warning-500 rounded-full"
+                            className='h-full bg-status-warning-bg rounded-full'
                             style={{width: `${((dept.totalHours - dept.billableHours) / dept.totalHours) * 100}%`}}
                           />
                         </div>
@@ -680,8 +680,8 @@ export default function UtilizationReportsPage() {
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-4">
                             <div
-                              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                              <FolderOpen className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+                              className='w-10 h-10 rounded-lg bg-accent-subtle flex items-center justify-center'>
+                              <FolderOpen className='h-5 w-5 text-accent'/>
                             </div>
                             <span className="font-medium text-[var(--text-primary)]">
                                 {project.projectName}
@@ -700,7 +700,7 @@ export default function UtilizationReportsPage() {
                         <td className="py-4 px-4">
                           <UtilizationBar rate={project.utilizationRate}/>
                         </td>
-                        <td className="py-4 px-4 text-right font-semibold text-success-600 dark:text-success-400">
+                        <td className='py-4 px-4 text-right font-semibold text-status-success-text'>
                           {formatCurrency(project.billedAmount)}
                         </td>
                       </tr>

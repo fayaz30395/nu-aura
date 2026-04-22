@@ -98,7 +98,7 @@ export default function TimeEntryDetailPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+            <Loader2 className='h-8 w-8 animate-spin text-accent'/>
             <p className="text-[var(--text-secondary)]">Loading time entry...</p>
           </div>
         </div>
@@ -111,13 +111,13 @@ export default function TimeEntryDetailPage() {
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <AlertCircle className="h-12 w-12 text-danger-500"/>
+            <AlertCircle className='h-12 w-12 text-status-danger-text'/>
             <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Time entry not found'}
             </p>
             <button
               onClick={() => router.push('/time-tracking')}
-              className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"
+              className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors'
             >
               Back to Time Tracking
             </button>
@@ -168,8 +168,8 @@ export default function TimeEntryDetailPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
-                <Timer className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
+              <div className='p-2 rounded-lg bg-accent-subtle'>
+                <Timer className='h-5 w-5 text-accent'/>
               </div>
               <span className="text-body-muted">Hours Worked</span>
             </div>
@@ -180,8 +180,8 @@ export default function TimeEntryDetailPage() {
 
           <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400"/>
+              <div className='p-2 rounded-lg bg-status-success-bg'>
+                <DollarSign className='h-5 w-5 text-status-success-text'/>
               </div>
               <span className="text-body-muted">Billable Hours</span>
             </div>
@@ -195,8 +195,8 @@ export default function TimeEntryDetailPage() {
           {entry.billingAmount && (
             <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30">
-                  <DollarSign className="h-5 w-5 text-success-600 dark:text-success-400"/>
+                <div className='p-2 rounded-lg bg-status-success-bg'>
+                  <DollarSign className='h-5 w-5 text-status-success-text'/>
                 </div>
                 <span className="text-body-muted">
                   Billing Amount
@@ -305,14 +305,14 @@ export default function TimeEntryDetailPage() {
         {/* Rejection Reason */}
         {entry.status === 'REJECTED' && entry.rejectionReason && (
           <div
-            className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-lg p-6">
+            className='bg-status-danger-bg border border-status-danger-border rounded-lg p-6'>
             <div className="flex items-center gap-4 mb-4">
-              <XCircle className="h-5 w-5 text-danger-500"/>
-              <h3 className="text-xl font-semibold text-danger-700 dark:text-danger-400">
+              <XCircle className='h-5 w-5 text-status-danger-text'/>
+              <h3 className='text-xl font-semibold text-status-danger-text'>
                 Rejection Reason
               </h3>
             </div>
-            <p className="text-danger-600 dark:text-danger-300">{entry.rejectionReason}</p>
+            <p className='text-status-danger-text'>{entry.rejectionReason}</p>
           </div>
         )}
 
@@ -330,7 +330,7 @@ export default function TimeEntryDetailPage() {
               <button
                 onClick={() => setDeleteConfirm(true)}
                 disabled={deleteMutation.isPending}
-                className="px-6 py-4 bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-400 rounded-xl font-medium hover:bg-danger-200 dark:hover:bg-danger-900/50 transition-colors disabled:opacity-50"
+                className='px-6 py-4 bg-status-danger-bg text-status-danger-text rounded-xl font-medium hover:bg-status-danger-bg transition-colors disabled:opacity-50'
               >
                 Delete
               </button>
@@ -344,7 +344,7 @@ export default function TimeEntryDetailPage() {
               <button
                 onClick={handleSubmit}
                 disabled={submitMutation.isPending}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 {submitMutation.isPending ? (
                   <>
@@ -362,7 +362,6 @@ export default function TimeEntryDetailPage() {
           )}
         </div>
       </div>
-
       {/* Delete Time Entry Confirmation */}
       <ConfirmDialog
         isOpen={deleteConfirm}

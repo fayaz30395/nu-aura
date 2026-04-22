@@ -252,7 +252,7 @@ export default function AnnouncementsPage() {
             <div className="row-between">
               <div>
                 <h1 className="text-xl font-bold skeuo-emboss">
-                  <Megaphone className="w-8 h-8 text-accent-700"/>
+                  <Megaphone className='w-8 h-8 text-accent'/>
                   Announcements
                 </h1>
                 <p className="text-[var(--text-secondary)] mt-2 skeuo-deboss">
@@ -262,7 +262,7 @@ export default function AnnouncementsPage() {
               <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
+                  className='flex items-center gap-2 px-4 py-2.5 bg-accent text-inverse rounded-xl hover:bg-accent-hover transition-colors font-medium shadow-[var(--shadow-card)]'
                 >
                   <Plus className="w-5 h-5"/>
                   New Announcement
@@ -280,7 +280,7 @@ export default function AnnouncementsPage() {
               className="mb-8"
             >
               <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Pin className="w-5 h-5 text-warning-500"/>
+                <Pin className='w-5 h-5 text-status-warning-text'/>
                 Pinned
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,11 +293,11 @@ export default function AnnouncementsPage() {
                       animate={{opacity: 1, x: 0}}
                       transition={{delay: index * 0.1}}
                       onClick={() => handleAnnouncementClick(announcement)}
-                      className="bg-gradient-to-r from-warning-50 to-warning-50 dark:from-warning-950/20 dark:to-warning-950/20 border border-warning-200 dark:border-warning-800 rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group"
+                      className='bg-gradient-to-r from-warning-50 to-warning-50 border border-status-warning-border rounded-xl p-6 cursor-pointer hover:shadow-[var(--shadow-dropdown)] transition-all group'
                     >
                       <div className="flex items-start gap-4">
-                        <div className="p-4 bg-warning-100 dark:bg-warning-900/30 rounded-lg">
-                          <Icon className="w-6 h-6 text-warning-600"/>
+                        <div className='p-4 bg-status-warning-bg rounded-lg'>
+                          <Icon className='w-6 h-6 text-status-warning-text'/>
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -313,7 +313,7 @@ export default function AnnouncementsPage() {
                             ) : null}
                           </div>
                           <h3
-                            className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-warning-600 transition-colors">
+                            className='font-semibold text-[var(--text-primary)] text-lg group-hover:text-status-warning-text transition-colors'>
                             {announcement.title}
                           </h3>
                           <p className="text-body-secondary mt-1 line-clamp-2">
@@ -331,7 +331,7 @@ export default function AnnouncementsPage() {
                           </div>
                         </div>
                         <ChevronRight
-                          className="w-5 h-5 text-[var(--text-muted)] group-hover:text-warning-600 transition-colors"/>
+                          className='w-5 h-5 text-[var(--text-muted)] group-hover:text-status-warning-text transition-colors'/>
                       </div>
                     </motion.div>
                   );
@@ -397,13 +397,13 @@ export default function AnnouncementsPage() {
             transition={{delay: 0.3}}
           >
             <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-accent-700"/>
+              <Bell className='w-5 h-5 text-accent'/>
               All Announcements
             </h2>
 
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-accent-700"/>
+                <Loader2 className='w-8 h-8 animate-spin text-accent'/>
               </div>
             ) : filteredAnnouncements.length === 0 ? (
               <EmptyState
@@ -446,13 +446,13 @@ export default function AnnouncementsPage() {
                           </span>
                             {!announcement.isRead && (
                               <span
-                                className="px-2 py-0.5 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400">
+                                className='px-2 py-0.5 text-xs font-medium rounded-full bg-accent-subtle text-accent'>
                               New
                             </span>
                             )}
                           </div>
                           <h3
-                            className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent-700 transition-colors">
+                            className='font-semibold text-[var(--text-primary)] text-lg group-hover:text-accent transition-colors'>
                             {announcement.title}
                           </h3>
                           <p className="text-body-secondary mt-1 line-clamp-2">
@@ -477,7 +477,7 @@ export default function AnnouncementsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           {announcement.isPinned && (
-                            <Pin className="w-4 h-4 text-warning-500"/>
+                            <Pin className='w-4 h-4 text-status-warning-text'/>
                           )}
                           {canEditAnnouncement(announcement) && (
                             <div
@@ -485,7 +485,7 @@ export default function AnnouncementsPage() {
                               <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
                                 <button
                                   onClick={(e) => handleEditAnnouncement(announcement, e)}
-                                  className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
+                                  className='p-1.5 text-[var(--text-muted)] hover:text-accent hover:bg-accent-subtle rounded-lg transition-colors'
                                   title="Edit"
                                 >
                                   <Edit2 className="w-4 h-4"/>
@@ -497,7 +497,7 @@ export default function AnnouncementsPage() {
                                     e.stopPropagation();
                                     setShowDeleteConfirm(announcement.id);
                                   }}
-                                  className="p-1.5 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors"
+                                  className='p-1.5 text-[var(--text-muted)] hover:text-status-danger-text hover:bg-status-danger-bg rounded-lg transition-colors'
                                   title="Delete"
                                 >
                                   <Trash2 className="w-4 h-4"/>
@@ -506,7 +506,7 @@ export default function AnnouncementsPage() {
                             </div>
                           )}
                           <ChevronRight
-                            className="w-5 h-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
+                            className='w-5 h-5 text-[var(--text-muted)] group-hover:text-accent transition-colors'/>
                         </div>
                       </div>
                     </motion.div>
@@ -562,27 +562,27 @@ export default function AnnouncementsPage() {
                       onClick={() => setSelectedAnnouncement(null)}
                       className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
                     >
-                      <X className="w-5 h-5 text-white"/>
+                      <X className='w-5 h-5 text-inverse'/>
                     </button>
                     <div className="flex items-center gap-4">
                       {(() => {
                         const Icon = getCategoryIcon(selectedAnnouncement.category);
                         return (
                           <div className="p-4 bg-white/20 rounded-lg">
-                            <Icon className="w-6 h-6 text-white"/>
+                            <Icon className='w-6 h-6 text-inverse'/>
                           </div>
                         );
                       })()}
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
+                        <span className='px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-inverse'>
                           {getCategoryLabel(selectedAnnouncement.category)}
                         </span>
-                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-white">
+                          <span className='px-2 py-0.5 text-xs font-medium rounded-full bg-white/20 text-inverse'>
                           {priorityLabels[selectedAnnouncement.priority]}
                         </span>
                         </div>
-                        <h2 className="text-xl font-bold text-white">
+                        <h2 className='text-xl font-bold text-inverse'>
                           {selectedAnnouncement.title}
                         </h2>
                       </div>
@@ -601,7 +601,7 @@ export default function AnnouncementsPage() {
                         {selectedAnnouncement.readCount} views
                     </span>
                       {selectedAnnouncement.isPinned && (
-                        <span className="flex items-center gap-1 text-warning-600">
+                        <span className='flex items-center gap-1 text-status-warning-text'>
                         <Pin className="w-4 h-4"/>
                         Pinned
                       </span>
@@ -619,7 +619,7 @@ export default function AnnouncementsPage() {
                           href={selectedAnnouncement.attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
+                          className='text-accent hover:text-accent font-medium flex items-center gap-2'
                         >
                           <BookOpen className="w-4 h-4"/>
                           View Attachment
@@ -631,7 +631,7 @@ export default function AnnouncementsPage() {
                   {/* Modal Footer */}
                   <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between items-center">
                     <div className="flex items-center gap-2 text-body-muted">
-                      <CheckCircle className="w-4 h-4 text-success-500"/>
+                      <CheckCircle className='w-4 h-4 text-status-success-text'/>
                       Marked as read
                     </div>
                     <div className="flex items-center gap-2">
@@ -644,7 +644,7 @@ export default function AnnouncementsPage() {
                                 setSelectedAnnouncement(null);
                                 setShowCreateModal(true);
                               }}
-                              className="flex items-center gap-2 px-4 py-2 text-accent-600 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-900/50 rounded-lg transition-colors font-medium"
+                              className='flex items-center gap-2 px-4 py-2 text-accent bg-accent-subtle hover:bg-accent-subtle rounded-lg transition-colors font-medium'
                             >
                               <Edit2 className="w-4 h-4"/>
                               Edit
@@ -655,7 +655,7 @@ export default function AnnouncementsPage() {
                               onClick={() => {
                                 setShowDeleteConfirm(selectedAnnouncement.id);
                               }}
-                              className="flex items-center gap-2 px-4 py-2 text-danger-600 bg-danger-50 dark:bg-danger-900/30 hover:bg-danger-100 dark:hover:bg-danger-900/50 rounded-lg transition-colors font-medium"
+                              className='flex items-center gap-2 px-4 py-2 text-status-danger-text bg-status-danger-bg hover:bg-status-danger-bg rounded-lg transition-colors font-medium'
                             >
                               <Trash2 className="w-4 h-4"/>
                               Delete
@@ -842,7 +842,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Title <span className="text-danger-500">*</span>
+                Title <span className='text-status-danger-text'>*</span>
               </label>
               <input
                 type="text"
@@ -852,13 +852,13 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                 }`}
                 placeholder="Enter announcement title"
               />
-              {errors.title && <p className="text-xs text-danger-500 mt-1">{errors.title.message}</p>}
+              {errors.title && <p className='text-xs text-status-danger-text mt-1'>{errors.title.message}</p>}
             </div>
 
             {/* Content */}
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Content <span className="text-danger-500">*</span>
+                Content <span className='text-status-danger-text'>*</span>
               </label>
               <textarea
                 {...register('content')}
@@ -868,7 +868,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                 }`}
                 placeholder="Enter announcement content"
               />
-              {errors.content && <p className="text-xs text-danger-500 mt-1">{errors.content.message}</p>}
+              {errors.content && <p className='text-xs text-status-danger-text mt-1'>{errors.content.message}</p>}
             </div>
 
             {/* Category and Priority */}
@@ -912,7 +912,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
               </label>
               <select
                 {...register('targetAudience')}
-                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-[var(--bg-secondary)] dark:text-white"
+                className='w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-[var(--bg-secondary)]'
               >
                 <option value="ALL_EMPLOYEES">All Employees</option>
                 <option value="SPECIFIC_DEPARTMENTS">Specific Departments</option>
@@ -925,11 +925,11 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {watchTargetAudience === 'SPECIFIC_DEPARTMENTS' && (
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Select Departments <span className="text-danger-500">*</span>
+                  Select Departments <span className='text-status-danger-text'>*</span>
                 </label>
                 {loadingDepartments ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin text-accent-700"/>
+                    <Loader2 className='w-5 h-5 animate-spin text-accent'/>
                     <span className="ml-2 text-body-muted">Loading departments...</span>
                   </div>
                 ) : departments.length === 0 ? (
@@ -950,7 +950,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                           type="checkbox"
                           checked={targetDepartmentIds.includes(dept.id)}
                           onChange={() => toggleDepartment(dept.id)}
-                          className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
+                          className='w-4 h-4 text-accent rounded focus:ring-accent-600'
                         />
                         <span className="text-body-secondary truncate">
                           {dept.name}
@@ -960,7 +960,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                   </div>
                 )}
                 {targetDepartmentIds.length > 0 && (
-                  <p className="mt-2 text-xs text-accent-700 dark:text-accent-400">
+                  <p className='mt-2 text-xs text-accent'>
                     {targetDepartmentIds.length} department{targetDepartmentIds.length > 1 ? 's' : ''} selected
                   </p>
                 )}
@@ -973,7 +973,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                 <input
                   type="checkbox"
                   {...register('isPinned')}
-                  className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
+                  className='w-4 h-4 text-accent rounded focus:ring-accent-600'
                 />
                 <span className="text-body-secondary">Pin this announcement</span>
               </label>
@@ -981,7 +981,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
                 <input
                   type="checkbox"
                   {...register('sendEmail')}
-                  className="w-4 h-4 text-accent-700 rounded focus:ring-accent-600"
+                  className='w-4 h-4 text-accent rounded focus:ring-accent-600'
                 />
                 <span className="text-body-secondary">Send email notification</span>
               </label>
@@ -990,7 +990,7 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
             {/* Error */}
             {error && (
               <div
-                className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg text-sm text-danger-600 dark:text-danger-400">
+                className='p-4 bg-status-danger-bg border border-status-danger-border rounded-lg text-sm text-status-danger-text'>
                 {error}
               </div>
             )}

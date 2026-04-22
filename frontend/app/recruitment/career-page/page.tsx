@@ -137,7 +137,7 @@ function JobPostingsPanel() {
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-success-600">{openJobs.length}</p>
+            <p className='text-2xl font-bold text-status-success-text'>{openJobs.length}</p>
             <p className="text-caption mt-1">Live on Career Page</p>
           </CardContent>
         </Card>
@@ -155,7 +155,6 @@ function JobPostingsPanel() {
           </CardContent>
         </Card>
       </div>
-
       {/* Refresh */}
       <div className="flex justify-end">
         <Button type="button" variant="outline" onClick={() => refetch()} className="flex items-center gap-1.5 text-xs">
@@ -163,7 +162,6 @@ function JobPostingsPanel() {
           Refresh
         </Button>
       </div>
-
       {/* Job List */}
       {jobs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)]">
@@ -346,14 +344,13 @@ function CareerContentEditor() {
   return (
     <form onSubmit={handleSubmit(onSave)} className="space-y-6">
       <div
-        className="p-4 bg-info-50 dark:bg-info-900/20 rounded-lg text-xs text-info-700 dark:text-info-300 flex gap-2">
+        className='p-4 bg-status-info-bg rounded-lg text-xs text-status-info-text flex gap-2'>
         <Info className="h-4 w-4 flex-shrink-0 mt-0.5"/>
         <span>
           This content is stored locally in your browser session. To persist it across devices and
           make it available on the public careers page, a backend CMS endpoint is needed.
         </span>
       </div>
-
       {fields.map(({name, label, placeholder, rows = 3, Icon}) => (
         <div key={name}>
           <label className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -375,11 +372,10 @@ function CareerContentEditor() {
             />
           )}
           {errors[name] && (
-            <p className="text-xs text-danger-500 mt-1">{errors[name]?.message as string}</p>
+            <p className='text-xs text-status-danger-text mt-1'>{errors[name]?.message as string}</p>
           )}
         </div>
       ))}
-
       <div className="flex items-center gap-4 pt-4 border-t border-[var(--border-main)]">
         <Button
           type="submit"
@@ -393,7 +389,7 @@ function CareerContentEditor() {
           )}
         </Button>
         {isDirty && (
-          <p className="text-xs text-warning-600">Unsaved changes</p>
+          <p className='text-xs text-status-warning-text'>Unsaved changes</p>
         )}
       </div>
     </form>
@@ -419,7 +415,7 @@ export default function CareerPageCMS() {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-[var(--text-muted)]">
-          <XCircle className="h-10 w-10 mb-4 text-danger-400"/>
+          <XCircle className='h-10 w-10 mb-4 text-status-danger-text'/>
           <p className="text-sm font-medium">You don&apos;t have permission to view this page.</p>
         </div>
       </AppLayout>
@@ -438,7 +434,7 @@ export default function CareerPageCMS() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <Globe className="h-6 w-6 text-accent-500"/>
+              <Globe className='h-6 w-6 text-accent'/>
               Career Page CMS
             </h1>
             <p className="text-body-muted mt-1">

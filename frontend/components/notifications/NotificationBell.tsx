@@ -191,21 +191,20 @@ export const NotificationBell: React.FC = () => {
         <Bell className="h-6 w-6"/>
         {unreadCount > 0 && (
           <span
-            className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-danger-600 rounded-full">
+            className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-inverse bg-status-danger-bg rounded-full'>
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
-
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          className='absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-elevated)] border border-[var(--border-main)] z-50 animate-in fade-in slide-in-from-top-2 duration-200'>
           <div className="row-between p-4 border-b">
             <h3 className="text-xl font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button onClick={handleMarkAllAsRead}
-                        className="text-sm text-accent-600 hover:text-accent-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded">
+                        className='text-sm text-accent hover:text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'>
                   <CheckCheck className="h-4 w-4"/>
                 </button>
               )}
@@ -226,7 +225,7 @@ export const NotificationBell: React.FC = () => {
                 return (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b dark:border-surface-700 transition-colors ${
+                    className={`p-4 border-b transition-colors ${
                       !notification.isRead
                         ? 'bg-accent-50 dark:bg-accent-900/20'
                         : 'hover:bg-[var(--bg-surface)] '
@@ -254,7 +253,7 @@ export const NotificationBell: React.FC = () => {
                         {!notification.isRead && (
                           <button
                             onClick={() => handleMarkAsRead(notification.id)}
-                            className="p-1 text-accent-600 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+                            className='p-1 text-accent hover:text-accent'
                             title="Mark as read"
                           >
                             <Check className="h-4 w-4"/>
@@ -262,7 +261,7 @@ export const NotificationBell: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleDelete(notification.id)}
-                          className="p-1 text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-300"
+                          className='p-1 text-status-danger-text hover:text-status-danger-text'
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4"/>
@@ -281,7 +280,7 @@ export const NotificationBell: React.FC = () => {
                 setIsOpen(false);
                 router.push('/notifications');
               }}
-              className="w-full text-center text-sm font-medium text-accent-600 hover:text-accent-800 py-2 rounded hover:bg-accent-50 transition-colors cursor-pointer"
+              className='w-full text-center text-sm font-medium text-accent hover:text-accent py-2 rounded hover:bg-accent-subtle transition-colors cursor-pointer'
             >
               View all notifications
             </button>

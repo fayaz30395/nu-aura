@@ -17,7 +17,6 @@ export default function NotFound() {
         style={{background: 'var(--bg-pattern)', backgroundSize: 'var(--bg-pattern-size)'}}
         aria-hidden="true"
       />
-
       <div className="relative z-10 w-full max-w-md text-center">
         {/* 404 number — large, muted, brand tonal */}
         <p
@@ -34,8 +33,8 @@ export default function NotFound() {
 
         {/* Icon + heading */}
         <div className="flex items-center justify-center gap-2 -mt-6 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-warning-100 dark:bg-warning-950/30 flex items-center justify-center">
-            <IconMapPin size={20} className="text-warning-600 dark:text-warning-400"/>
+          <div className='w-10 h-10 rounded-xl bg-status-warning-bg flex items-center justify-center'>
+            <IconMapPin size={20} className='text-status-warning-text'/>
           </div>
           <h1 className="font-display text-xl font-bold text-[var(--text-primary)]">
             Page not found
@@ -52,7 +51,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/me/dashboard"
-            className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-white transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className='inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl font-medium text-sm text-inverse transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             style={{background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover))'}}
           >
             <IconHome size={18}/>

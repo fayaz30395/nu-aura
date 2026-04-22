@@ -34,6 +34,7 @@ function safeFixed(val: number | null | undefined, digits: number, fallback = '-
   if (val === null || val === undefined || isNaN(val)) return fallback;
   return val.toFixed(digits);
 }
+
 import type {
   AnalyticsInsight,
   AttritionPrediction,
@@ -47,14 +48,14 @@ import type {
 // bundle is excluded from the initial page JS.
 
 const ChartSkeleton = () => (
-  <div className="h-[300px] w-full animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg"/>
+  <div className='h-[300px] w-full animate-pulse bg-surface rounded-lg'/>
 );
 
 const AttritionTrendChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.AttritionTrendChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -62,7 +63,7 @@ const DepartmentRiskHeatmap = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.DepartmentRiskHeatmap})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -70,7 +71,7 @@ const TopRiskFactorsChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.TopRiskFactorsChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -78,7 +79,7 @@ const HeadcountForecastChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.HeadcountForecastChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -86,7 +87,7 @@ const CostProjectionChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.CostProjectionChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -94,7 +95,7 @@ const EngagementTrendChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.EngagementTrendChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -102,7 +103,7 @@ const PerformanceDistributionChart = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.PerformanceDistributionChart})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -110,7 +111,7 @@ const FlightRiskRadar = dynamic(
   () => import('./PredictiveCharts').then(m => ({default: m.FlightRiskRadar})),
   {
     ssr: false,
-    loading: () => <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-6"><ChartSkeleton/>
+    loading: () => <div className='rounded-lg border border-subtle p-6'><ChartSkeleton/>
     </div>
   }
 );
@@ -151,9 +152,9 @@ const _SEVERITY_COLORS = {
 // ==================== Sub-components ====================
 
 function TrendIcon({trend}: { trend: 'UP' | 'DOWN' | 'STABLE' }) {
-  if (trend === 'UP') return <ArrowUpRight className="h-4 w-4 text-success-500"/>;
-  if (trend === 'DOWN') return <ArrowDownRight className="h-4 w-4 text-danger-500"/>;
-  return <Minus className="h-4 w-4 text-surface-400"/>;
+  if (trend === 'UP') return <ArrowUpRight className='h-4 w-4 text-status-success-text'/>;
+  if (trend === 'DOWN') return <ArrowDownRight className='h-4 w-4 text-status-danger-text'/>;
+  return <Minus className='h-4 w-4 text-muted'/>;
 }
 
 function RiskBadge({level}: { level: string }) {
@@ -194,28 +195,28 @@ function AttritionRiskCards({summary}: { summary: PredictiveAnalyticsDashboard['
       count: summary.criticalRiskCount,
       color: 'text-danger-600',
       bg: 'bg-danger-50 dark:bg-danger-950/30',
-      icon: <ShieldAlert className="h-5 w-5 text-danger-500"/>
+      icon: <ShieldAlert className='h-5 w-5 text-status-danger-text'/>
     },
     {
       label: 'High Risk',
       count: summary.highRiskCount,
       color: 'text-warning-600',
       bg: 'bg-warning-50 dark:bg-warning-950/30',
-      icon: <AlertTriangle className="h-5 w-5 text-warning-500"/>
+      icon: <AlertTriangle className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Medium Risk',
       count: summary.mediumRiskCount,
       color: 'text-warning-600',
       bg: 'bg-warning-50 dark:bg-warning-950/30',
-      icon: <AlertCircle className="h-5 w-5 text-warning-500"/>
+      icon: <AlertCircle className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Low Risk',
       count: summary.lowRiskCount,
       color: 'text-success-600',
       bg: 'bg-success-50 dark:bg-success-950/30',
-      icon: <UserCheck className="h-5 w-5 text-success-500"/>
+      icon: <UserCheck className='h-5 w-5 text-status-success-text'/>
     },
   ];
 
@@ -262,16 +263,16 @@ function SkillGapsSection({summary}: { summary: PredictiveAnalyticsDashboard['sk
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg bg-danger-50 dark:bg-danger-950/20">
-                <p className="text-xl font-bold text-danger-600">{summary.criticalGaps}</p>
+              <div className='text-center p-4 rounded-lg bg-status-danger-bg'>
+                <p className='text-xl font-bold text-status-danger-text'>{summary.criticalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Critical Gaps</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-warning-50 dark:bg-warning-950/20">
-                <p className="text-xl font-bold text-warning-600">{summary.highPriorityGaps}</p>
+              <div className='text-center p-4 rounded-lg bg-status-warning-bg'>
+                <p className='text-xl font-bold text-status-warning-text'>{summary.highPriorityGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">High Priority</p>
               </div>
-              <div className="text-center p-4 rounded-lg bg-accent-50 dark:bg-accent-950/20">
-                <p className="text-xl font-bold text-accent-600">{summary.totalGaps}</p>
+              <div className='text-center p-4 rounded-lg bg-accent-subtle'>
+                <p className='text-xl font-bold text-accent'>{summary.totalGaps}</p>
                 <p className="text-xs text-[var(--text-secondary)]">Total Gaps</p>
               </div>
             </div>
@@ -311,7 +312,6 @@ function SkillGapsSection({summary}: { summary: PredictiveAnalyticsDashboard['sk
           </div>
         </CardContent>
       </Card>
-
       {/* Category Breakdown Chart — lazy-loaded from PredictiveCharts.tsx */}
       <Card>
         <CardHeader>
@@ -382,7 +382,7 @@ function CriticalInsightsPanel({insights, total, pending}: {
           </div>
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
+              className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-status-danger-bg text-status-danger-text'>
               {pending} pending
             </span>
           </div>
@@ -398,11 +398,11 @@ function CriticalInsightsPanel({insights, total, pending}: {
                  className="flex items-start gap-4 p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
               <div className="mt-0.5">
                 {insight.severity === 'CRITICAL' ? (
-                  <AlertCircle className="h-5 w-5 text-danger-500"/>
+                  <AlertCircle className='h-5 w-5 text-status-danger-text'/>
                 ) : insight.severity === 'WARNING' ? (
-                  <AlertTriangle className="h-5 w-5 text-warning-500"/>
+                  <AlertTriangle className='h-5 w-5 text-status-warning-text'/>
                 ) : (
-                  <Activity className="h-5 w-5 text-accent-500"/>
+                  <Activity className='h-5 w-5 text-accent'/>
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -412,7 +412,7 @@ function CriticalInsightsPanel({insights, total, pending}: {
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{insight.description}</p>
                 {insight.recommendation && (
-                  <p className="text-xs text-accent-600 dark:text-accent-400 mt-1 flex items-center gap-1">
+                  <p className='text-xs text-accent mt-1 flex items-center gap-1'>
                     <Target className="h-3 w-3"/>
                     {insight.recommendation}
                   </p>
@@ -506,43 +506,44 @@ function WorkforceSummaryPanel({summary}: { summary: PredictiveAnalyticsDashboar
     {
       label: 'Current Headcount',
       value: summary.currentHeadcount?.toLocaleString() ?? '-',
-      icon: <Users className="h-5 w-5 text-accent-500"/>
+      icon: <Users className='h-5 w-5 text-accent'/>
     },
     {
       label: 'YTD Hires',
       value: summary.yearToDateHires?.toString() ?? '-',
-      icon: <UserCheck className="h-5 w-5 text-success-500"/>
+      icon: <UserCheck className='h-5 w-5 text-status-success-text'/>
     },
     {
       label: 'YTD Attrition Rate',
       value: `${safeFixed(summary.yearToDateAttritionRate, 1)}%`,
-      icon: <TrendingDown className="h-5 w-5 text-danger-500"/>
+      icon: <TrendingDown className='h-5 w-5 text-status-danger-text'/>
     },
     {
       label: 'Avg Tenure',
       value: `${safeFixed((summary.avgTenureMonths ?? 0) / 12, 1)} yrs`,
-      icon: <Briefcase className="h-5 w-5 text-warning-500"/>
+      icon: <Briefcase className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Avg Engagement',
       value: `${safeFixed(summary.avgEngagementScore, 1)}/5`,
-      icon: <Activity className="h-5 w-5 text-accent-500"/>
+      icon: <Activity className='h-5 w-5 text-accent'/>
     },
     {
       label: 'Open Positions',
       value: summary.openPositions?.toString() ?? '-',
-      icon: <Target className="h-5 w-5 text-accent-500"/>
+      icon: <Target className='h-5 w-5 text-accent'/>
     },
     {
       label: 'Avg Time to Fill',
       value: `${safeFixed(summary.avgTimeToFill, 0)} days`,
-      icon: <GraduationCap className="h-5 w-5 text-warning-500"/>
+      icon: <GraduationCap className='h-5 w-5 text-status-warning-text'/>
     },
     {
       label: 'Headcount Trend',
       value: `${trendDirection === 'UP' ? '+' : trendDirection === 'DOWN' ? '-' : ''}${summary.headcountTrend?.changeCount ?? 0}`,
-      icon: trendDirection === 'UP' ? <TrendingUp className="h-5 w-5 text-success-500"/> : trendDirection === 'DOWN' ?
-        <TrendingDown className="h-5 w-5 text-danger-500"/> : <Minus className="h-5 w-5 text-surface-400"/>,
+      icon: trendDirection === 'UP' ?
+        <TrendingUp className='h-5 w-5 text-status-success-text'/> : trendDirection === 'DOWN' ?
+          <TrendingDown className='h-5 w-5 text-status-danger-text'/> : <Minus className='h-5 w-5 text-muted'/>,
     },
   ];
 
@@ -610,7 +611,8 @@ export default function PredictiveAnalyticsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+          <div
+            className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
           <p className="text-[var(--text-muted)] font-medium">Loading predictive analytics...</p>
         </div>
       </div>
@@ -624,7 +626,7 @@ export default function PredictiveAnalyticsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-4 text-danger-600">
+              <div className='flex items-center gap-4 text-status-danger-text'>
                 <AlertCircle className="h-6 w-6"/>
                 <CardTitle>Error Loading Analytics</CardTitle>
               </div>
@@ -743,14 +745,14 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-danger-600">{safeFixed(attritionSummary.predictedAttritionRate, 1)}%</p>
+                    className='text-3xl font-bold text-status-danger-text'>{safeFixed(attritionSummary.predictedAttritionRate, 1)}%</p>
                   <p className="text-body-muted">Predicted Attrition Rate</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-accent-600">{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
+                    className='text-3xl font-bold text-accent'>{attritionSummary.totalEmployees?.toLocaleString() ?? '-'}</p>
                   <p className="text-body-muted">Total Employees Analyzed</p>
                 </CardContent>
               </Card>
@@ -802,20 +804,20 @@ export default function PredictiveAnalyticsPage() {
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-accent-600">{safeFixed(workforceSummary.avgEngagementScore, 1)}</p>
+                    className='text-3xl font-bold text-accent'>{safeFixed(workforceSummary.avgEngagementScore, 1)}</p>
                   <p className="text-body-muted">Avg Engagement (out of 5)</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <p
-                    className="text-3xl font-bold text-success-600">{safeFixed(workforceSummary.avgPerformanceRating, 1)}</p>
+                    className='text-3xl font-bold text-status-success-text'>{safeFixed(workforceSummary.avgPerformanceRating, 1)}</p>
                   <p className="text-body-muted">Avg Performance Rating</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-accent-600">
+                  <p className='text-3xl font-bold text-accent'>
                     {trends.length > 0 ? (trends[trends.length - 1].highPerformersCount ?? 0) : '-'}
                   </p>
                   <p className="text-body-muted">High Performers</p>
@@ -823,7 +825,7 @@ export default function PredictiveAnalyticsPage() {
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
-                  <p className="text-3xl font-bold text-warning-600">
+                  <p className='text-3xl font-bold text-status-warning-text'>
                     {trends.length > 0 ? (trends[trends.length - 1].lowPerformersCount ?? 0) : '-'}
                   </p>
                   <p className="text-body-muted">Needs Improvement</p>

@@ -346,7 +346,7 @@ export default function OffboardingPage() {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+          <Loader2 className='h-8 w-8 animate-spin text-accent'/>
           <span className="ml-2 text-[var(--text-secondary)]">Loading exit processes...</span>
         </div>
       </AppLayout>
@@ -376,9 +376,9 @@ export default function OffboardingPage() {
 
         {/* Error Alert */}
         {error && (
-          <Card className="border-danger-200 bg-danger-50">
+          <Card className='border-status-danger-border bg-status-danger-bg'>
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-danger-600">
+              <div className='flex items-center gap-2 text-status-danger-text'>
                 <AlertCircle className="h-5 w-5"/>
                 <span>{error}</span>
               </div>
@@ -391,8 +391,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4">
-                  <UserMinus className="h-6 w-6 text-accent-700"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <UserMinus className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Total Exits</p>
@@ -404,8 +404,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-100 p-4">
-                  <Clock className="h-6 w-6 text-accent-600"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <Clock className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Initiated</p>
@@ -417,8 +417,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-warning-100 p-4">
-                  <Clock className="h-6 w-6 text-warning-600"/>
+                <div className='rounded-lg bg-status-warning-bg p-4'>
+                  <Clock className='h-6 w-6 text-status-warning-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">In Progress</p>
@@ -430,8 +430,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-accent-300 p-4">
-                  <FileText className="h-6 w-6 text-accent-800"/>
+                <div className='rounded-lg bg-accent-subtle p-4'>
+                  <FileText className='h-6 w-6 text-accent'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Clearance Pending</p>
@@ -443,8 +443,8 @@ export default function OffboardingPage() {
           <Card className="skeuo-card">
             <CardContent className="p-4 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="rounded-lg bg-success-100 p-4">
-                  <CheckCircle className="h-6 w-6 text-success-600"/>
+                <div className='rounded-lg bg-status-success-bg p-4'>
+                  <CheckCircle className='h-6 w-6 text-status-success-text'/>
                 </div>
                 <div>
                   <p className="text-body-secondary skeuo-deboss">Completed</p>
@@ -571,9 +571,9 @@ export default function OffboardingPage() {
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         {process.rehireEligible ? (
-                          <CheckCircle className="h-5 w-5 text-success-500"/>
+                          <CheckCircle className='h-5 w-5 text-status-success-text'/>
                         ) : (
-                          <XCircle className="h-5 w-5 text-danger-500"/>
+                          <XCircle className='h-5 w-5 text-status-danger-text'/>
                         )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-right">
@@ -627,7 +627,7 @@ export default function OffboardingPage() {
                               <PermissionGate permission={Permissions.EXIT_APPROVE} fallback={<div/>}>
                                 <button
                                   onClick={() => handleStatusChange(process, ExitStatus.COMPLETED)}
-                                  className="w-full px-4 py-2 text-left text-sm text-success-600 hover:bg-success-50 flex items-center gap-2"
+                                  className='w-full px-4 py-2 text-left text-sm text-status-success-text hover:bg-status-success-bg flex items-center gap-2'
                                 >
                                   <CheckCircle className="h-4 w-4"/>
                                   Complete
@@ -637,7 +637,7 @@ export default function OffboardingPage() {
                             <PermissionGate permission={Permissions.EXIT_MANAGE} fallback={<div/>}>
                               <button
                                 onClick={() => handleDeleteClick(process)}
-                                className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 flex items-center gap-2"
+                                className='w-full px-4 py-2 text-left text-sm text-status-danger-text hover:bg-status-danger-bg flex items-center gap-2'
                               >
                                 <Trash2 className="h-4 w-4"/>
                                 Delete
@@ -699,7 +699,8 @@ export default function OffboardingPage() {
                     placeholder="Enter employee ID"
                     {...register('employeeId')}
                   />
-                  {errors.employeeId && <span className="text-danger-500 text-sm">{errors.employeeId.message}</span>}
+                  {errors.employeeId &&
+                    <span className='text-status-danger-text text-sm'>{errors.employeeId.message}</span>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -717,7 +718,8 @@ export default function OffboardingPage() {
                       <option value={ExitType.END_OF_CONTRACT}>End of Contract</option>
                       <option value={ExitType.ABSCONDING}>Absconding</option>
                     </select>
-                    {errors.exitType && <span className="text-danger-500 text-sm">{errors.exitType.message}</span>}
+                    {errors.exitType &&
+                      <span className='text-status-danger-text text-sm'>{errors.exitType.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
@@ -733,7 +735,7 @@ export default function OffboardingPage() {
                       <option value={ExitStatus.COMPLETED}>Completed</option>
                       <option value={ExitStatus.CANCELLED}>Cancelled</option>
                     </select>
-                    {errors.status && <span className="text-danger-500 text-sm">{errors.status.message}</span>}
+                    {errors.status && <span className='text-status-danger-text text-sm'>{errors.status.message}</span>}
                   </div>
                 </div>
 
@@ -771,7 +773,7 @@ export default function OffboardingPage() {
                     {...register('noticePeriodDays')}
                   />
                   {errors.noticePeriodDays &&
-                    <span className="text-danger-500 text-sm">{errors.noticePeriodDays.message}</span>}
+                    <span className='text-status-danger-text text-sm'>{errors.noticePeriodDays.message}</span>}
                 </div>
 
                 <div>
@@ -815,7 +817,7 @@ export default function OffboardingPage() {
                   <input
                     type="checkbox"
                     id="rehireEligible"
-                    className="w-4 h-4 text-accent-700 border-[var(--border-main)] rounded focus:ring-accent-500"
+                    className='w-4 h-4 text-accent border-[var(--border-main)] rounded focus:ring-accent-500'
                     {...register('rehireEligible')}
                   />
                   <label htmlFor="rehireEligible" className="text-body-secondary">

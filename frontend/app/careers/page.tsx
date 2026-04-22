@@ -91,7 +91,7 @@ const JobCard: React.FC<JobCardProps> = ({job, onViewDetails}) => {
       <div className="flex flex-col gap-4">
         <div>
           <h3
-            className="text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent-700 dark:group-hover:text-accent-400 transition-colors">
+            className='text-xl font-semibold text-[var(--text-primary)] group-hover:text-accent transition-colors'>
             {job.title}
           </h3>
           <p className="text-body-secondary mt-1">
@@ -117,7 +117,7 @@ const JobCard: React.FC<JobCardProps> = ({job, onViewDetails}) => {
           <span className="text-caption" suppressHydrationWarning>
             {formatDate(job.postedDate)}
           </span>
-          <ArrowRight className="h-4 w-4 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
+          <ArrowRight className='h-4 w-4 text-[var(--text-muted)] group-hover:text-accent transition-colors'/>
         </div>
       </div>
     </Card>
@@ -144,7 +144,6 @@ const JobDetailModal: React.FC<{
           </p>
         </div>
       </ModalHeader>
-
       <ModalBody>
         <div className="space-y-6">
           {/* Meta Info */}
@@ -197,7 +196,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.responsibilities.map((resp, idx) => (
                 <li key={idx} className="flex gap-4 text-body-secondary">
-                  <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
+                  <span className='text-accent font-bold'>•</span>
                   {resp}
                 </li>
               ))}
@@ -212,7 +211,7 @@ const JobDetailModal: React.FC<{
             <ul className="space-y-2">
               {job.requirements.map((req, idx) => (
                 <li key={idx} className="flex gap-4 text-body-secondary">
-                  <span className="text-accent-700 dark:text-accent-400 font-bold">•</span>
+                  <span className='text-accent font-bold'>•</span>
                   {req}
                 </li>
               ))}
@@ -220,14 +219,13 @@ const JobDetailModal: React.FC<{
           </div>
         </div>
       </ModalBody>
-
       <ModalFooter>
         <Button variant="outline" onClick={onClose}>
           Close
         </Button>
         <Button
           onClick={() => onApply(job)}
-          className="btn-primary bg-accent-700 hover:bg-accent-700 text-white"
+          className='btn-primary bg-accent hover:bg-accent text-inverse'
         >
           Apply Now
           <Send className="h-4 w-4 ml-2"/>
@@ -320,7 +318,6 @@ const ApplicationModal: React.FC<{
           </p>
         </div>
       </ModalHeader>
-
       <ModalBody>
         {submitStatus !== 'idle' && (
           <div className={`p-4 rounded-lg mb-4 flex gap-4 ${
@@ -344,7 +341,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('fullName')}
             />
-            {errors.fullName && <p className="text-danger-500 text-sm mt-1">{errors.fullName.message}</p>}
+            {errors.fullName && <p className='text-status-danger-text text-sm mt-1'>{errors.fullName.message}</p>}
           </div>
 
           <div>
@@ -357,7 +354,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('email')}
             />
-            {errors.email && <p className="text-danger-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && <p className='text-status-danger-text text-sm mt-1'>{errors.email.message}</p>}
           </div>
 
           <div>
@@ -370,7 +367,7 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('phone')}
             />
-            {errors.phone && <p className="text-danger-500 text-sm mt-1">{errors.phone.message}</p>}
+            {errors.phone && <p className='text-status-danger-text text-sm mt-1'>{errors.phone.message}</p>}
           </div>
 
           <div>
@@ -415,7 +412,7 @@ const ApplicationModal: React.FC<{
               className="input-aura"
               {...register('coverLetter')}
             />
-            {errors.coverLetter && <p className="text-danger-500 text-sm mt-1">{errors.coverLetter.message}</p>}
+            {errors.coverLetter && <p className='text-status-danger-text text-sm mt-1'>{errors.coverLetter.message}</p>}
           </div>
 
           <div>
@@ -428,11 +425,10 @@ const ApplicationModal: React.FC<{
               className="w-full"
               {...register('linkedInUrl')}
             />
-            {errors.linkedInUrl && <p className="text-danger-500 text-sm mt-1">{errors.linkedInUrl.message}</p>}
+            {errors.linkedInUrl && <p className='text-status-danger-text text-sm mt-1'>{errors.linkedInUrl.message}</p>}
           </div>
         </form>
       </ModalBody>
-
       <ModalFooter>
         <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
           Cancel
@@ -440,7 +436,7 @@ const ApplicationModal: React.FC<{
         <Button
           onClick={handleSubmit(handleFormSubmit)}
           disabled={isSubmitting}
-          className="btn-primary bg-accent-700 hover:bg-accent-700 text-white"
+          className='btn-primary bg-accent hover:bg-accent text-inverse'
         >
           {isSubmitting ? (
             <>
@@ -535,14 +531,14 @@ export default function CareersPage() {
       <div className="bg-gradient-to-br from-accent-700 via-accent-600 to-accent-700 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-block mb-4 px-4 py-2 rounded-full bg-white/10 border border-white/20">
-            <span className="text-sm font-medium text-white">
+            <span className='text-sm font-medium text-inverse'>
               We&apos;re Hiring
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 skeuo-emboss" suppressHydrationWarning>
+          <h1 className='text-5xl sm:text-6xl font-bold text-inverse mb-6 skeuo-emboss' suppressHydrationWarning>
             Join Our Talented Team
           </h1>
-          <p className="text-xl text-accent-100 mb-8 max-w-2xl mx-auto">
+          <p className='text-xl text-accent mb-8 max-w-2xl mx-auto'>
             Explore exciting career opportunities and be part of something great. Help us build the future of HR
             management.
           </p>
@@ -562,7 +558,6 @@ export default function CareersPage() {
           </div>
         </div>
       </div>
-
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -682,7 +677,7 @@ export default function CareersPage() {
                     setSelectedLocation('');
                     setSelectedType('');
                   }}
-                  className="bg-accent-700 hover:bg-accent-700"
+                  className='bg-accent hover:bg-accent'
                 >
                   Clear Filters
                 </Button>
@@ -721,7 +716,7 @@ export default function CareersPage() {
                           onClick={() => setCurrentPage(page)}
                           className={
                             page === currentPage
-                              ? 'bg-accent-700 hover:bg-accent-700'
+                              ? 'bg-accent hover:bg-accent'
                               : ''
                           }
                         >
@@ -752,7 +747,6 @@ export default function CareersPage() {
           </div>
         </div>
       </div>
-
       {/* Modals */}
       <JobDetailModal
         job={selectedJob}
@@ -760,7 +754,6 @@ export default function CareersPage() {
         onClose={handleCloseJobDetail}
         onApply={handleApply}
       />
-
       <ApplicationModal
         job={selectedJob}
         isOpen={showApplicationModal}

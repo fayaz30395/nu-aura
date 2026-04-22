@@ -235,7 +235,6 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           className="w-full px-4 py-2.5 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-700)]/40 focus:border-[var(--accent-700)] text-sm transition-all duration-200 resize-none leading-relaxed"
           style={{minHeight: '42px'}}
         />
-
         {/* Mention hint */}
         {!mentionActive && value.length === 0 && (
           <div
@@ -244,7 +243,6 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
             <span className="text-xs">mention</span>
           </div>
         )}
-
         {/* Mention dropdown */}
         <AnimatePresence>
           {mentionActive && filteredUsers.length > 0 && (
@@ -283,7 +281,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
                     aria-label={`Select ${user.fullName}`}
                   >
                     <div
-                      className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${getUserColor(user.id)} flex items-center justify-center text-white text-xs font-semibold`}
+                      className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${getUserColor(user.id)} flex items-center justify-center text-inverse text-xs font-semibold`}
                     >
                       {getInitials(user.fullName)}
                     </div>
@@ -307,7 +305,6 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* Empty state for mention */}
         <AnimatePresence>
           {mentionActive && filteredUsers.length === 0 && (

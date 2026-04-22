@@ -153,7 +153,8 @@ export default function FluenceAnalyticsPage() {
       <AppLayout>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <div
+              className='w-12 h-12 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
             <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
           </div>
         </div>
@@ -191,7 +192,7 @@ export default function FluenceAnalyticsPage() {
         >
           <div className="flex items-start gap-4 mb-2">
             <div className="p-4 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
-              <TrendingUp className={`${iconSize.pageHeader} text-white`}/>
+              <TrendingUp className={`${iconSize.pageHeader} text-inverse`}/>
             </div>
             <div className="flex-1">
               <h1 className={typography.pageTitle}>Content Analytics</h1>
@@ -263,7 +264,7 @@ export default function FluenceAnalyticsPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className={`${iconSize.cardInline} text-accent-600`}/>
+                  <TrendingUp className={`${iconSize.cardInline} text-accent`}/>
                   <CardTitle className={typography.cardTitle}>Activity Trend</CardTitle>
                 </div>
               </CardHeader>
@@ -311,7 +312,7 @@ export default function FluenceAnalyticsPage() {
             <Card className={card.base}>
               <CardHeader className="pb-4 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-2">
-                  <FileText className={`${iconSize.cardInline} text-success-600`}/>
+                  <FileText className={`${iconSize.cardInline} text-status-success-text`}/>
                   <CardTitle className={typography.cardTitle}>Distribution</CardTitle>
                 </div>
               </CardHeader>
@@ -360,7 +361,7 @@ export default function FluenceAnalyticsPage() {
           <Card className={card.base}>
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <BookOpen className={`${iconSize.cardInline} text-accent-600`}/>
+                <BookOpen className={`${iconSize.cardInline} text-accent`}/>
                 <CardTitle className={typography.cardTitle}>Top Content</CardTitle>
               </div>
             </CardHeader>
@@ -454,7 +455,7 @@ export default function FluenceAnalyticsPage() {
           <Card className={card.base}>
             <CardHeader className="pb-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-2">
-                <TrendingUp className={`${iconSize.cardInline} text-info-600`}/>
+                <TrendingUp className={`${iconSize.cardInline} text-status-info-text`}/>
                 <CardTitle className={typography.cardTitle}>Recent Activity</CardTitle>
               </div>
             </CardHeader>

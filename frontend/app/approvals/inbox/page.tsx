@@ -326,7 +326,8 @@ export default function ApprovalInboxPage() {
     return (
       <AppLayout activeMenuItem="approvals">
         <div className="flex h-full items-center justify-center p-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent-500 border-t-transparent" />
+          <div
+            className='h-8 w-8 animate-spin rounded-full border-4 border-[var(--accent-primary)] border-t-transparent'/>
         </div>
       </AppLayout>
     );
@@ -340,7 +341,7 @@ export default function ApprovalInboxPage() {
             title="Access denied"
             description="You do not have permission to view the approval inbox."
             icon={<XCircle
-              className="h-12 w-12 text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>}
+              className='h-12 w-12 text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>}
           />
         </div>
       </AppLayout>
@@ -368,11 +369,11 @@ export default function ApprovalInboxPage() {
           <div className="flex items-center gap-2">
             {activeDelegationsCount > 0 && (
               <div
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
+                className='inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-accent-subtle border border-[var(--accent-primary)]'>
                 <Zap
-                  className="h-4 w-4 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
+                  className='h-4 w-4 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'/>
                 <span
-                  className="text-sm font-medium text-accent-700 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='text-sm font-medium text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   {activeDelegationsCount} active {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
                 </span>
               </div>
@@ -471,7 +472,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='input-aura w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] py-2 pl-9 pr-4 text-sm text-[var(--text-primary)] shadow-[var(--shadow-card)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
             />
           </div>
         </div>
@@ -539,7 +540,7 @@ export default function ApprovalInboxPage() {
                       <div className="mt-4 flex gap-4">
                         <Button
                           variant="outline"
-                          className="flex-1 border-danger-300 text-danger-700 hover:bg-danger-50 dark:border-danger-700 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='flex-1 border-status-danger-border text-status-danger-text hover:bg-status-danger-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           onClick={() => {
                             setComments('');
                             setShowRejectModal(true);
@@ -551,7 +552,7 @@ export default function ApprovalInboxPage() {
                         </Button>
                         <Button
                           variant="outline"
-                          className="flex-1 border-warning-300 text-warning-700 hover:bg-warning-50 dark:border-warning-700 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className='flex-1 border-status-warning-border text-status-warning-text hover:bg-status-warning-bg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           onClick={() => {
                             setComments('');
                             setShowReturnModal(true);
@@ -617,12 +618,11 @@ export default function ApprovalInboxPage() {
           </>
         )}
       </motion.div>
-
       {/* Approve modal */}
       <Modal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} size="md">
         <ModalHeader onClose={() => setShowApproveModal(false)}>
           <div
-            className="flex items-center gap-2 text-success-600 dark:text-success-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className='flex items-center gap-2 text-status-success-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
             <CheckCircle className="h-5 w-5"/>
             Approve request
           </div>
@@ -640,7 +640,7 @@ export default function ApprovalInboxPage() {
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               rows={3}
             />
           </div>
@@ -662,12 +662,11 @@ export default function ApprovalInboxPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Reject modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} size="md">
         <ModalHeader onClose={() => setShowRejectModal(false)}>
           <div
-            className="flex items-center gap-2 text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className='flex items-center gap-2 text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
             <XCircle className="h-5 w-5"/>
             Reject request
           </div>
@@ -680,13 +679,13 @@ export default function ApprovalInboxPage() {
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Reason <span
-              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              className='text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               rows={3}
             />
           </div>
@@ -701,7 +700,7 @@ export default function ApprovalInboxPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-danger-600 hover:bg-danger-700"
+            className='bg-status-danger-bg hover:bg-status-danger-bg'
             onClick={handleReject}
             disabled={rejectMutation.isPending || !comments.trim()}
           >
@@ -709,12 +708,11 @@ export default function ApprovalInboxPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Return for Modification modal (DEF-44) */}
       <Modal isOpen={showReturnModal} onClose={() => setShowReturnModal(false)} size="md">
         <ModalHeader onClose={() => setShowReturnModal(false)}>
           <div
-            className="flex items-center gap-2 text-warning-600 dark:text-warning-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className='flex items-center gap-2 text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
             <RotateCcw className="h-5 w-5"/>
             Return for modification
           </div>
@@ -728,13 +726,13 @@ export default function ApprovalInboxPage() {
           <div className="mt-4">
             <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Reason <span
-              className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+              className='text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain what needs to be corrected..."
-              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+              className='mt-1 w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               rows={3}
             />
           </div>
@@ -749,7 +747,7 @@ export default function ApprovalInboxPage() {
           </Button>
           <Button
             variant="primary"
-            className="bg-warning-600 hover:bg-warning-700"
+            className='bg-status-warning-bg hover:bg-status-warning-bg'
             onClick={handleReturn}
             disabled={returnMutation.isPending || !comments.trim()}
           >
@@ -757,12 +755,11 @@ export default function ApprovalInboxPage() {
           </Button>
         </ModalFooter>
       </Modal>
-
       {/* Delegation modal */}
       <Modal isOpen={showDelegationModal} onClose={() => setShowDelegationModal(false)} size="md">
         <ModalHeader onClose={() => setShowDelegationModal(false)}>
           <div
-            className="flex items-center gap-2 text-accent-600 dark:text-accent-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+            className='flex items-center gap-2 text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
             <Zap className="h-5 w-5"/>
             Delegate approvals
           </div>
@@ -792,7 +789,7 @@ export default function ApprovalInboxPage() {
               />
               {delegationForm.formState.errors.delegateId && (
                 <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='mt-1.5 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   {delegationForm.formState.errors.delegateId.message}
                 </p>
               )}
@@ -802,16 +799,16 @@ export default function ApprovalInboxPage() {
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Start date <span
-                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+                className='text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               />
               {delegationForm.formState.errors.startDate && (
                 <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='mt-1.5 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   {delegationForm.formState.errors.startDate.message}
                 </p>
               )}
@@ -821,16 +818,16 @@ export default function ApprovalInboxPage() {
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 End date <span
-                className="text-danger-500 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">*</span>
+                className='text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-2 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
               />
               {delegationForm.formState.errors.endDate && (
                 <p
-                  className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+                  className='mt-1.5 text-sm text-status-danger-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
                   {delegationForm.formState.errors.endDate.message}
                 </p>
               )}
@@ -844,7 +841,7 @@ export default function ApprovalInboxPage() {
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500"
+                className='w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-4 text-sm focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-accent-500'
                 rows={3}
               />
             </div>
@@ -921,7 +918,7 @@ function InboxListItem({
       <CardContent className="flex items-start gap-4 p-4">
         {/* Avatar */}
         <div
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-100 text-xs font-semibold text-accent-700 dark:bg-accent-900/40 dark:text-accent-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+          className='flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-subtle text-xs font-semibold text-accent cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
           {getInitials(item.requesterName)}
         </div>
 
@@ -945,7 +942,7 @@ function InboxListItem({
         <div className="flex flex-col items-end gap-1 text-xs flex-shrink-0">
           {item.deadline && (
             <span
-              className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
+              className='inline-flex items-center gap-1 rounded-full bg-status-warning-bg px-2 py-0.5 text-status-warning-text cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'>
               <Clock className="h-3 w-3"/>
               {format(new Date(item.deadline), 'MMM d')}
             </span>

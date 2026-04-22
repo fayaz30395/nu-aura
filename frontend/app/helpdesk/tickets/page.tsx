@@ -231,7 +231,7 @@ export default function TicketListPage() {
             Filters
             {hasActiveFilters && (
               <span
-                className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-accent-700 text-white rounded-full">
+                className='ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-accent text-inverse rounded-full'>
                 {[statusFilter, priorityFilter].filter(Boolean).length}
               </span>
             )}
@@ -295,7 +295,7 @@ export default function TicketListPage() {
           </Card>
         ) : isTicketsError ? (
           <Card className="p-12 text-center">
-            <AlertTriangle className="h-12 w-12 text-danger-400 mx-auto mb-4"/>
+            <AlertTriangle className='h-12 w-12 text-status-danger-text mx-auto mb-4'/>
             <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
               Failed to load tickets
             </h3>
@@ -399,7 +399,6 @@ export default function TicketListPage() {
           </Card>
         )}
       </div>
-
       {/* Create Ticket Modal */}
       <Modal isOpen={showCreateModal} onClose={() => {
         setShowCreateModal(false);
@@ -425,7 +424,7 @@ export default function TicketListPage() {
                   className="input-aura w-full"
                   {...register('subject')}
                 />
-                {errors.subject && <p className="text-sm text-danger-500 mt-1">{errors.subject.message}</p>}
+                {errors.subject && <p className='text-sm text-status-danger-text mt-1'>{errors.subject.message}</p>}
               </div>
 
               <div>
@@ -436,7 +435,8 @@ export default function TicketListPage() {
                   className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-700 text-sm"
                   {...register('description')}
                 />
-                {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
+                {errors.description &&
+                  <p className='text-sm text-status-danger-text mt-1'>{errors.description.message}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -512,7 +512,7 @@ function TicketRow({ticket, onStatusChange, formatDate}: TicketRowProps) {
       <td className="px-4 py-4 whitespace-nowrap">
         <Link
           href={detailHref}
-          className="text-sm font-mono text-accent-700 dark:text-accent-400 hover:underline"
+          className='text-sm font-mono text-accent hover:underline'
         >
           {ticket.ticketNumber || ticket.id.slice(0, 8)}
         </Link>

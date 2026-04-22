@@ -134,7 +134,7 @@ export default function CustomFieldsSection({
 
   if (error) {
     return (
-      <div className={`text-danger-500 dark:text-danger-400 ${className}`}>
+      <div className={`text-status-danger-text ${className}`}>
         {error}
       </div>
     );
@@ -150,7 +150,7 @@ export default function CustomFieldsSection({
         Object.entries(groupedDefinitions).map(([group, defs]) => (
           <div key={group} className="mb-6">
             <h3
-              className="text-xl font-semibold text-[var(--text-primary)] mb-4 pb-2 border-b border-[var(--border-main)] dark:border-surface-700">
+              className='text-xl font-semibold text-[var(--text-primary)] mb-4 pb-2 border-b border-[var(--border-main)]'>
               {group}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

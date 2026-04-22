@@ -10,3 +10,21 @@ export type {BreadcrumbItem} from './Breadcrumbs';
 export type {HeaderProps} from './Header';
 export type {AppLayoutProps} from './AppLayout';
 export type {AdminPageContentProps} from './AdminPageContent';
+
+// Page-shell primitives (Phase 3)
+export {
+  PageContainer,
+  PageHeader,
+  ListPageLayout,
+  DetailPageLayout,
+  FormPageLayout,
+  EmptyPageState,
+} from './page';
+export type {
+  PageContainerProps,
+  PageHeaderProps,
+  ListPageLayoutProps,
+  DetailPageLayoutProps,
+  FormPageLayoutProps,
+  EmptyPageStateProps,
+} from './page';

@@ -19,7 +19,7 @@ export function FileGridView({files, onFileClick, onContextMenu}: FileGridViewPr
           key={file.id}
           onClick={() => onFileClick(file)}
           onContextMenu={(e) => onContextMenu(e, file)}
-          className="group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-accent-300 dark:hover:border-accent-700 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer relative"
+          className='group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer relative'
         >
           <button
             onClick={(e) => onContextMenu(e, file)}
@@ -30,7 +30,7 @@ export function FileGridView({files, onFileClick, onContextMenu}: FileGridViewPr
           </button>
           <div className="flex flex-col items-center text-center">
             <div
-              className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-accent-50 dark:group-hover:bg-accent-950/30 transition-colors">
+              className='mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-accent-subtle transition-colors'>
               {getFileIcon(file.mimeType)}
             </div>
             <p className="text-sm font-medium text-[var(--text-primary)] truncate w-full">
@@ -43,7 +43,7 @@ export function FileGridView({files, onFileClick, onContextMenu}: FileGridViewPr
             )}
             <div className="flex items-center gap-1 mt-1">
               {file.starred && (
-                <Star className="h-3 w-3 text-warning-500 fill-warning-500"/>
+                <Star className='h-3 w-3 text-status-warning-text fill-warning-500'/>
               )}
               {file.shared && (
                 <Users className="h-3 w-3 text-[var(--text-muted)]"/>

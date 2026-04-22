@@ -39,7 +39,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
         transition={{duration: 0.2}}
       >
         <Card
-          className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer"
+          className='border border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:shadow-[var(--shadow-elevated)] transition-all cursor-pointer'
           onClick={() => onClick(employee.id)}
         >
           <CardContent className="p-4">
@@ -47,7 +47,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
               {/* Avatar */}
               <div className="flex-shrink-0">
                 <div
-                  className="h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white font-semibold">
+                  className='h-12 w-12 rounded-lg bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-inverse font-semibold'>
                   {employee.firstName?.[0]}{employee.lastName?.[0]}
                 </div>
               </div>
@@ -71,7 +71,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
                 <div className="flex items-center gap-1.5 text-[var(--text-secondary)] truncate">
                   <Mail className="h-3.5 w-3.5 flex-shrink-0"/>
                   <a href={`mailto:${employee.workEmail}`}
-                     className="text-accent-700 dark:text-accent-400 hover:underline truncate"
+                     className='text-accent hover:underline truncate'
                      onClick={e => e.stopPropagation()}>
                     {employee.workEmail}
                   </a>
@@ -92,14 +92,14 @@ function EmployeeCard({employee, viewMode, onClick}: {
       transition={{duration: 0.2}}
     >
       <Card
-        className="border border-[var(--border-main)] hover:border-accent-400 hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer h-full flex flex-col"
+        className='border border-[var(--border-main)] hover:border-[var(--accent-primary)] hover:shadow-[var(--shadow-dropdown)] transition-all cursor-pointer h-full flex flex-col'
         onClick={() => onClick(employee.id)}
       >
         <CardContent className="p-4 flex flex-col h-full">
           {/* Avatar */}
           <div className="flex justify-center mb-4">
             <div
-              className="h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-white text-2xl font-semibold">
+              className='h-20 w-20 rounded-xl bg-gradient-to-br from-accent-400 to-accent-700 flex items-center justify-center text-inverse text-2xl font-semibold'>
               {employee.firstName?.[0]}{employee.lastName?.[0]}
             </div>
           </div>
@@ -130,7 +130,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
                 <Mail className="h-3.5 w-3.5 flex-shrink-0"/>
                 <a
                   href={`mailto:${employee.workEmail}`}
-                  className="text-accent-700 dark:text-accent-400 hover:underline truncate"
+                  className='text-accent hover:underline truncate'
                   onClick={e => e.stopPropagation()}
                 >
                   {employee.workEmail}
@@ -142,7 +142,7 @@ function EmployeeCard({employee, viewMode, onClick}: {
                 <Phone className="h-3.5 w-3.5 flex-shrink-0"/>
                 <a
                   href={`tel:${employee.phoneNumber}`}
-                  className="text-accent-700 dark:text-accent-400 hover:underline"
+                  className='text-accent hover:underline'
                   onClick={e => e.stopPropagation()}
                 >
                   {employee.phoneNumber}

@@ -311,11 +311,9 @@ export default function GoalsPage() {
                       </div>
                     </div>
                   </div>
-
                   {goal.description && (
                     <p className="text-body-secondary mb-4 line-clamp-2">{goal.description}</p>
                   )}
-
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-[var(--text-secondary)]">Progress</span>
@@ -323,7 +321,7 @@ export default function GoalsPage() {
                     </div>
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
-                        className="bg-accent-500 h-2 rounded-full transition-all duration-300"
+                        className='bg-accent h-2 rounded-full transition-all duration-300'
                         style={{width: progress + '%'}}
                       ></div>
                     </div>
@@ -332,17 +330,15 @@ export default function GoalsPage() {
                       <span>{goal.targetValue} {goal.unit}</span>
                     </div>
                   </div>
-
                   <div className="text-body-secondary mb-4">
                     <div>Start: {goal.startDate ? new Date(goal.startDate).toLocaleDateString() : 'N/A'}</div>
                     <div>End: {goal.endDate ? new Date(goal.endDate).toLocaleDateString() : 'N/A'}</div>
                   </div>
-
                   <div className="flex gap-2">
                     <PermissionGate permission={Permissions.GOAL_UPDATE}>
                       <button
                         onClick={() => openEditModal(goal)}
-                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
+                        className='flex-1 px-4 py-2 bg-accent-subtle text-accent rounded hover:bg-accent-subtle text-sm font-medium'
                       >
                         Edit
                       </button>
@@ -350,7 +346,7 @@ export default function GoalsPage() {
                     <PermissionGate permission={Permissions.GOAL_DELETE}>
                       <button
                         onClick={() => openDeleteConfirm(goal)}
-                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
+                        className='flex-1 px-4 py-2 bg-status-danger-bg text-status-danger-text rounded hover:bg-status-danger-bg text-sm font-medium'
                       >
                         Delete
                       </button>
@@ -381,7 +377,7 @@ export default function GoalsPage() {
                         className="input-aura"
                       />
                       {errors.title && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.title.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.title.message}</p>
                       )}
                     </div>
 
@@ -395,7 +391,7 @@ export default function GoalsPage() {
                         className="input-aura"
                       />
                       {errors.description && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
+                        <p className='text-status-danger-text text-sm mt-1'>{errors.description.message}</p>
                       )}
                     </div>
 
@@ -416,7 +412,7 @@ export default function GoalsPage() {
                           <option value="ORGANIZATION">Organization</option>
                         </select>
                         {errors.goalType && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.goalType.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.goalType.message}</p>
                         )}
                       </div>
 
@@ -436,7 +432,7 @@ export default function GoalsPage() {
                           <option value="ON_HOLD">On Hold</option>
                         </select>
                         {errors.status && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.status.message}</p>
                         )}
                       </div>
                     </div>
@@ -452,7 +448,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.targetValue && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.targetValue.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.targetValue.message}</p>
                         )}
                       </div>
 
@@ -466,7 +462,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.currentValue && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.currentValue.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.currentValue.message}</p>
                         )}
                       </div>
 
@@ -481,7 +477,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.unit && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.unit.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.unit.message}</p>
                         )}
                       </div>
                     </div>
@@ -497,7 +493,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.startDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.startDate.message}</p>
                         )}
                       </div>
 
@@ -511,7 +507,7 @@ export default function GoalsPage() {
                           className="input-aura"
                         />
                         {errors.endDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
+                          <p className='text-status-danger-text text-sm mt-1'>{errors.endDate.message}</p>
                         )}
                       </div>
                     </div>
@@ -562,7 +558,7 @@ export default function GoalsPage() {
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className='flex-1 px-4 py-2 bg-status-danger-bg text-inverse rounded-lg hover:bg-status-danger-bg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

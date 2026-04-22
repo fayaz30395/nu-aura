@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { fluenceService } from '@/lib/services/platform/fluence.service';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useEffect, useRef, useState, useCallback} from 'react';
+import {fluenceService} from '@/lib/services/platform/fluence.service';
 import {
   WikiPage,
   EditLockResponse,
@@ -31,7 +31,7 @@ export const fluenceKeys = {
   // Wiki pages
   wikiPages: () => [...fluenceKeys.all, 'wiki-pages'] as const,
   wikiPageList: (spaceId?: string, page?: number, size?: number) =>
-    [...fluenceKeys.wikiPages(), { spaceId, page, size }] as const,
+    [...fluenceKeys.wikiPages(), {spaceId, page, size}] as const,
   wikiPageDetail: (id: string) =>
     [...fluenceKeys.wikiPages(), 'detail', id] as const,
   wikiPageBySlug: (spaceId: string, slug: string) =>
@@ -45,13 +45,13 @@ export const fluenceKeys = {
   // Wiki spaces
   wikiSpaces: () => [...fluenceKeys.all, 'wiki-spaces'] as const,
   wikiSpaceList: (page?: number, size?: number) =>
-    [...fluenceKeys.wikiSpaces(), { page, size }] as const,
+    [...fluenceKeys.wikiSpaces(), {page, size}] as const,
   wikiSpaceDetail: (id: string) =>
     [...fluenceKeys.wikiSpaces(), 'detail', id] as const,
   // Blog posts
   blogPosts: () => [...fluenceKeys.all, 'blog-posts'] as const,
   blogPostList: (categoryId?: string, page?: number, size?: number) =>
-    [...fluenceKeys.blogPosts(), { categoryId, page, size }] as const,
+    [...fluenceKeys.blogPosts(), {categoryId, page, size}] as const,
   blogPostDetail: (id: string) =>
     [...fluenceKeys.blogPosts(), 'detail', id] as const,
   blogPostBySlug: (slug: string) =>
@@ -63,7 +63,7 @@ export const fluenceKeys = {
   // Templates
   templates: () => [...fluenceKeys.all, 'templates'] as const,
   templateList: (categoryId?: string, page?: number, size?: number) =>
-    [...fluenceKeys.templates(), { categoryId, page, size }] as const,
+    [...fluenceKeys.templates(), {categoryId, page, size}] as const,
   templateDetail: (id: string) =>
     [...fluenceKeys.templates(), 'detail', id] as const,
   // Comments
@@ -73,7 +73,7 @@ export const fluenceKeys = {
   // Search
   search: () => [...fluenceKeys.all, 'search'] as const,
   searchResults: (query: string, type?: string) =>
-    [...fluenceKeys.search(), { query, type }] as const,
+    [...fluenceKeys.search(), {query, type}] as const,
   // Favorites
   favorites: () => [...fluenceKeys.all, 'favorites'] as const,
   // View tracking
@@ -81,15 +81,15 @@ export const fluenceKeys = {
     [...fluenceKeys.all, 'viewers', contentType, contentId] as const,
   // My content
   myWikiPages: (page?: number, size?: number, status?: string) =>
-    [...fluenceKeys.all, 'my-wiki-pages', { page, size, status }] as const,
+    [...fluenceKeys.all, 'my-wiki-pages', {page, size, status}] as const,
   myBlogPosts: (page?: number, size?: number, status?: string) =>
-    [...fluenceKeys.all, 'my-blog-posts', { page, size, status }] as const,
+    [...fluenceKeys.all, 'my-blog-posts', {page, size, status}] as const,
   // Activity feed
   activities: () => [...fluenceKeys.all, 'activities'] as const,
   activityFeed: (page?: number, size?: number, contentType?: string) =>
-    [...fluenceKeys.activities(), { page, size, contentType }] as const,
+    [...fluenceKeys.activities(), {page, size, contentType}] as const,
   myActivity: (page?: number, size?: number) =>
-    [...fluenceKeys.activities(), 'me', { page, size }] as const,
+    [...fluenceKeys.activities(), 'me', {page, size}] as const,
   // Attachments
   attachments: () => [...fluenceKeys.all, 'attachments'] as const,
   attachmentList: (contentType: string, contentId: string) =>
@@ -176,10 +176,10 @@ export function useMovePageMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ pageId, parentPageId }: { pageId: string; parentPageId: string | null }) =>
+    mutationFn: ({pageId, parentPageId}: { pageId: string; parentPageId: string | null }) =>
       fluenceService.movePage(pageId, parentPageId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -327,7 +327,7 @@ export function useCreateWikiPage() {
   return useMutation({
     mutationFn: (data: CreateWikiPageRequest) => fluenceService.createWikiPage(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -336,10 +336,10 @@ export function useUpdateWikiPage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWikiPageRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateWikiPageRequest }) =>
       fluenceService.updateWikiPage(id, data),
-    onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
+    onMutate: async ({id, data}) => {
+      await queryClient.cancelQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
       const previousPage = queryClient.getQueryData<WikiPage>(
         fluenceKeys.wikiPageDetail(id)
       );
@@ -351,16 +351,16 @@ export function useUpdateWikiPage() {
         });
       }
 
-      return { previousPage };
+      return {previousPage};
     },
-    onError: (_err, { id }, context) => {
+    onError: (_err, {id}, context) => {
       if (context?.previousPage) {
         queryClient.setQueryData(fluenceKeys.wikiPageDetail(id), context.previousPage);
       }
     },
-    onSettled: (_, _error, { id }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+    onSettled: (_, _error, {id}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -371,7 +371,7 @@ export function useDeleteWikiPage() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.deleteWikiPage(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -384,7 +384,7 @@ export function useCreateWikiSpace() {
   return useMutation({
     mutationFn: (data: CreateWikiSpaceRequest) => fluenceService.createWikiSpace(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiSpaces() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
     },
   });
 }
@@ -393,10 +393,10 @@ export function useUpdateWikiSpace() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWikiSpaceRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateWikiSpaceRequest }) =>
       fluenceService.updateWikiSpace(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiSpaces() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
     },
   });
 }
@@ -407,7 +407,7 @@ export function useDeleteWikiSpace() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.deleteWikiSpace(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiSpaces() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
     },
   });
 }
@@ -420,7 +420,7 @@ export function useCreateBlogPost() {
   return useMutation({
     mutationFn: (data: CreateBlogPostRequest) => fluenceService.createBlogPost(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -429,10 +429,10 @@ export function useUpdateBlogPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateBlogPostRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateBlogPostRequest }) =>
       fluenceService.updateBlogPost(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -443,7 +443,7 @@ export function useDeleteBlogPost() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.deleteBlogPost(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -454,8 +454,8 @@ export function useLikeBlogPost() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.likeBlogPost(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(id) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPostDetail(id)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -466,8 +466,8 @@ export function useUnlikeBlogPost() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.unlikeBlogPost(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(id) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPostDetail(id)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -478,8 +478,8 @@ export function useLikeWikiPage() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.likeWikiPage(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -490,8 +490,8 @@ export function useUnlikeWikiPage() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.unlikeWikiPage(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(id) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -505,7 +505,7 @@ export function useCreateBlogCategory() {
     mutationFn: (data: CreateBlogCategoryRequest) =>
       fluenceService.createBlogCategory(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogCategories() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogCategories()});
     },
   });
 }
@@ -518,7 +518,7 @@ export function useCreateFluenceTemplate() {
   return useMutation({
     mutationFn: (data: CreateTemplateRequest) => fluenceService.createTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.templates() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.templates()});
     },
   });
 }
@@ -527,10 +527,10 @@ export function useUpdateFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTemplateRequest }) =>
+    mutationFn: ({id, data}: { id: string; data: UpdateTemplateRequest }) =>
       fluenceService.updateTemplate(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.templates() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.templates()});
     },
   });
 }
@@ -541,7 +541,7 @@ export function useDeleteFluenceTemplate() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.deleteTemplate(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.templates() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.templates()});
     },
   });
 }
@@ -553,7 +553,7 @@ export function useInstantiateTemplate() {
     mutationFn: (data: InstantiateTemplateRequest) =>
       fluenceService.instantiateTemplate(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -565,15 +565,15 @@ export function useCreateComment() {
 
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-      data,
-    }: {
+                   contentId,
+                   contentType,
+                   data,
+                 }: {
       contentId: string;
       contentType: 'WIKI' | 'BLOG';
       data: CreateCommentRequest;
     }) => fluenceService.createComment(contentId, contentType, data),
-    onSuccess: (_data, { contentId, contentType }) => {
+    onSuccess: (_data, {contentId, contentType}) => {
       queryClient.invalidateQueries({
         queryKey: fluenceKeys.commentList(contentId, contentType),
       });
@@ -586,17 +586,17 @@ export function useUpdateComment() {
 
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-      commentId,
-      data,
-    }: {
+                   contentId,
+                   contentType,
+                   commentId,
+                   data,
+                 }: {
       contentId: string;
       contentType: 'WIKI' | 'BLOG';
       commentId: string;
       data: UpdateCommentRequest;
     }) => fluenceService.updateComment(contentId, contentType, commentId, data),
-    onSuccess: (_data, { contentId, contentType }) => {
+    onSuccess: (_data, {contentId, contentType}) => {
       queryClient.invalidateQueries({
         queryKey: fluenceKeys.commentList(contentId, contentType),
       });
@@ -609,15 +609,15 @@ export function useDeleteComment() {
 
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-      commentId,
-    }: {
+                   contentId,
+                   contentType,
+                   commentId,
+                 }: {
       contentId: string;
       contentType: 'WIKI' | 'BLOG';
       commentId: string;
     }) => fluenceService.deleteComment(contentId, contentType, commentId),
-    onSuccess: (_data, { contentId, contentType }) => {
+    onSuccess: (_data, {contentId, contentType}) => {
       queryClient.invalidateQueries({
         queryKey: fluenceKeys.commentList(contentId, contentType),
       });
@@ -630,9 +630,9 @@ export function useDeleteComment() {
 export function useRecordView() {
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-    }: {
+                   contentId,
+                   contentType,
+                 }: {
       contentId: string;
       contentType: 'WIKI' | 'BLOG';
     }) => fluenceService.recordView(contentId, contentType),
@@ -668,17 +668,17 @@ export function useAddFavorite() {
 
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-    }: {
+                   contentId,
+                   contentType,
+                 }: {
       contentId: string;
       contentType: FavoriteContentType;
     }) => fluenceService.addFavorite(contentId, contentType),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.favorites() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.favorites()});
       // Also refresh the detail pages so isFavoritedByCurrentUser updates
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -688,16 +688,16 @@ export function useRemoveFavorite() {
 
   return useMutation({
     mutationFn: ({
-      contentId,
-      contentType,
-    }: {
+                   contentId,
+                   contentType,
+                 }: {
       contentId: string;
       contentType: FavoriteContentType;
     }) => fluenceService.removeFavoriteByContent(contentId, contentType),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.favorites() });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPosts() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.favorites()});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
   });
 }
@@ -738,10 +738,10 @@ export function useUpdateWikiPageEditors() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ pageId, editorIds }: { pageId: string; editorIds: string[] }) =>
+    mutationFn: ({pageId, editorIds}: { pageId: string; editorIds: string[] }) =>
       fluenceService.updateWikiPageEditors(pageId, editorIds),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(pageId) });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(pageId)});
     },
   });
 }
@@ -750,10 +750,10 @@ export function useUpdateBlogPostEditors() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, editorIds }: { postId: string; editorIds: string[] }) =>
+    mutationFn: ({postId, editorIds}: { postId: string; editorIds: string[] }) =>
       fluenceService.updateBlogPostEditors(postId, editorIds),
-    onSuccess: (_data, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.blogPostDetail(postId) });
+    onSuccess: (_data, {postId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.blogPostDetail(postId)});
     },
   });
 }
@@ -787,15 +787,15 @@ export function useUploadAttachment() {
 
   return useMutation({
     mutationFn: ({
-      contentType,
-      contentId,
-      file,
-    }: {
+                   contentType,
+                   contentId,
+                   file,
+                 }: {
       contentType: string;
       contentId: string;
       file: File;
     }) => fluenceService.uploadAttachment(contentType, contentId, file),
-    onSuccess: (_data, { contentType, contentId }) => {
+    onSuccess: (_data, {contentType, contentId}) => {
       queryClient.invalidateQueries({
         queryKey: fluenceKeys.attachmentList(contentType, contentId),
       });
@@ -812,7 +812,7 @@ export function useDeleteAttachment() {
   return useMutation({
     mutationFn: (id: string) => fluenceService.deleteAttachment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.attachments() });
+      queryClient.invalidateQueries({queryKey: fluenceKeys.attachments()});
     },
   });
 }
@@ -852,12 +852,12 @@ export function useRestoreWikiPageRevision() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ pageId, revisionId }: { pageId: string; revisionId: string }) =>
+    mutationFn: ({pageId, revisionId}: { pageId: string; revisionId: string }) =>
       fluenceService.restoreWikiPageRevision(pageId, revisionId),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageDetail(pageId) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPageRevisions(pageId) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.wikiPages() });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(pageId)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageRevisions(pageId)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
     },
   });
 }
@@ -959,7 +959,7 @@ export function useToggleWatchWikiPage() {
   return useMutation({
     mutationFn: (pageId: string) => fluenceService.toggleWatchWikiPage(pageId),
     onSuccess: (_data, pageId) => {
-      queryClient.invalidateQueries({ queryKey: watchKeys.wikiWatch(pageId) });
+      queryClient.invalidateQueries({queryKey: watchKeys.wikiWatch(pageId)});
     },
   });
 }
@@ -984,16 +984,16 @@ export function useAddSpaceMemberMutation() {
 
   return useMutation({
     mutationFn: ({
-      spaceId,
-      userId,
-      role,
-    }: {
+                   spaceId,
+                   userId,
+                   role,
+                 }: {
       spaceId: string;
       userId: string;
       role: SpaceMemberRole;
     }) => fluenceService.addSpaceMember(spaceId, userId, role),
-    onSuccess: (_data, { spaceId }) => {
-      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    onSuccess: (_data, {spaceId}) => {
+      queryClient.invalidateQueries({queryKey: spaceMemberKeys.members(spaceId)});
     },
   });
 }
@@ -1003,16 +1003,16 @@ export function useUpdateSpaceMemberRoleMutation() {
 
   return useMutation({
     mutationFn: ({
-      spaceId,
-      userId,
-      role,
-    }: {
+                   spaceId,
+                   userId,
+                   role,
+                 }: {
       spaceId: string;
       userId: string;
       role: SpaceMemberRole;
     }) => fluenceService.updateSpaceMemberRole(spaceId, userId, role),
-    onSuccess: (_data, { spaceId }) => {
-      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    onSuccess: (_data, {spaceId}) => {
+      queryClient.invalidateQueries({queryKey: spaceMemberKeys.members(spaceId)});
     },
   });
 }
@@ -1022,14 +1022,14 @@ export function useRemoveSpaceMemberMutation() {
 
   return useMutation({
     mutationFn: ({
-      spaceId,
-      userId,
-    }: {
+                   spaceId,
+                   userId,
+                 }: {
       spaceId: string;
       userId: string;
     }) => fluenceService.removeSpaceMember(spaceId, userId),
-    onSuccess: (_data, { spaceId }) => {
-      queryClient.invalidateQueries({ queryKey: spaceMemberKeys.members(spaceId) });
+    onSuccess: (_data, {spaceId}) => {
+      queryClient.invalidateQueries({queryKey: spaceMemberKeys.members(spaceId)});
     },
   });
 }
@@ -1058,15 +1058,15 @@ export function useCreateInlineComment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      pageId,
-      data,
-    }: {
+                   pageId,
+                   data,
+                 }: {
       pageId: string;
       data: CreateInlineCommentRequest;
     }) => fluenceService.createInlineComment(pageId, data),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.inlineComments(pageId)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.openInlineComments(pageId)});
     },
   });
 }
@@ -1079,8 +1079,8 @@ export function useReplyToInlineComment() {
       pageId: string;
       data: ReplyToInlineCommentRequest;
     }) => fluenceService.replyToInlineComment(vars.commentId, vars.data),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.inlineComments(pageId)});
     },
   });
 }
@@ -1092,9 +1092,9 @@ export function useResolveInlineComment() {
       commentId: string;
       pageId: string;
     }) => fluenceService.resolveInlineComment(vars.commentId),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.inlineComments(pageId)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.openInlineComments(pageId)});
     },
   });
 }
@@ -1106,9 +1106,9 @@ export function useDeleteInlineComment() {
       commentId: string;
       pageId: string;
     }) => fluenceService.deleteInlineComment(vars.commentId),
-    onSuccess: (_data, { pageId }) => {
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.inlineComments(pageId) });
-      queryClient.invalidateQueries({ queryKey: fluenceKeys.openInlineComments(pageId) });
+    onSuccess: (_data, {pageId}) => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.inlineComments(pageId)});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.openInlineComments(pageId)});
     },
   });
 }

@@ -18,7 +18,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-500"/>
+        <Loader2 className='h-8 w-8 animate-spin text-accent'/>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
                     </div>
                     <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
-                        className="bg-accent-500 h-2 rounded-full transition-all duration-300"
+                        className='bg-accent h-2 rounded-full transition-all duration-300'
                         style={{width: `${enrollment.attendancePercentage || 0}%`}}
                       />
                     </div>

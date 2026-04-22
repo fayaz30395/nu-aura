@@ -204,7 +204,7 @@ export default function ProbationPage() {
     return (
       <AppLayout>
         <div className="p-6 space-y-4">
-          <SkeletonTable rows={5} columns={5} />
+          <SkeletonTable rows={5} columns={5}/>
         </div>
       </AppLayout>
     );
@@ -297,7 +297,7 @@ export default function ProbationPage() {
                     <p className="text-caption">
                       {probation.durationMonths} months
                       {probation.extensionCount > 0 && (
-                        <span className="text-warning-600 dark:text-warning-400">
+                        <span className='text-status-warning-text'>
                             {' '}(+{probation.totalExtensionDays}d ext.)
                           </span>
                       )}
@@ -312,7 +312,7 @@ export default function ProbationPage() {
                     </span>
                   {probation.isOverdue && (
                     <span
-                      className="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-400">
+                      className='ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-status-danger-bg text-status-danger-text'>
                         Overdue
                       </span>
                   )}
@@ -340,7 +340,7 @@ export default function ProbationPage() {
                 <td className="px-6 py-4">
                   {probation.averageRating ? (
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-warning-500 fill-warning-500"/>
+                      <Star className='h-4 w-4 text-status-warning-text fill-warning-500'/>
                       <span className="text-sm font-medium text-[var(--text-primary)]">
                           {probation.averageRating.toFixed(1)}
                         </span>
@@ -356,7 +356,7 @@ export default function ProbationPage() {
                         <>
                           <button
                             onClick={() => handleStartEvaluation(probation)}
-                            className="text-xs px-2.5 py-1 rounded-lg bg-accent-100 text-accent-700 hover:bg-accent-200 dark:bg-accent-900/30 dark:text-accent-400 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            className='text-xs px-2.5 py-1 rounded-lg bg-accent-subtle text-accent hover:bg-accent-subtle transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                           >
                             Evaluate
                           </button>
@@ -369,7 +369,7 @@ export default function ProbationPage() {
                                 })
                               }
                               disabled={confirmEmployee.isPending}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                              className='text-xs px-2.5 py-1 rounded-lg bg-status-success-bg text-status-success-text hover:bg-status-success-bg transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                             >
                               Confirm
                             </button>
@@ -478,7 +478,7 @@ export default function ProbationPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-4 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                    <stat.icon className="h-5 w-5 text-white"/>
+                    <stat.icon className='h-5 w-5 text-inverse'/>
                   </div>
                   <div>
                     <p className="text-xs text-[var(--text-secondary)]">{stat.label}</p>
@@ -527,7 +527,7 @@ export default function ProbationPage() {
         {activeTab === 'active' && (
           <div>
             {isActiveLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !activeData || activeData.content.length === 0 ? (
               <EmptyState
                 title="No active probations"
@@ -547,7 +547,7 @@ export default function ProbationPage() {
         {activeTab === 'upcoming' && (
           <div>
             {isUpcomingLoading ? (
-              <SkeletonTable rows={5} columns={4} />
+              <SkeletonTable rows={5} columns={4}/>
             ) : endingSoon.length === 0 ? (
               <EmptyState
                 title="No upcoming reviews"
@@ -569,7 +569,7 @@ export default function ProbationPage() {
         {activeTab === 'history' && (
           <div>
             {isHistoryLoading ? (
-              <SkeletonTable rows={5} columns={5} />
+              <SkeletonTable rows={5} columns={5}/>
             ) : !historyData || historyData.content.length === 0 ? (
               <EmptyState
                 title="No completed probations"
@@ -591,9 +591,9 @@ export default function ProbationPage() {
             <div className="max-w-3xl">
               {submitSuccess ? (
                 <div
-                  className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-xl p-6 text-center">
-                  <CheckCircle className="h-12 w-12 text-success-600 mx-auto mb-4"/>
-                  <h3 className="text-xl font-semibold text-success-800 dark:text-success-300">
+                  className='bg-status-success-bg border border-status-success-border rounded-xl p-6 text-center'>
+                  <CheckCircle className='h-12 w-12 text-status-success-text mx-auto mb-4'/>
+                  <h3 className='text-xl font-semibold text-status-success-text'>
                     Evaluation Submitted Successfully!
                   </h3>
                 </div>
@@ -633,7 +633,7 @@ export default function ProbationPage() {
                         )}
                       </select>
                       {errors.evaluationType && (
-                        <p className="text-sm text-danger-500 mt-1">{errors.evaluationType.message}</p>
+                        <p className='text-sm text-status-danger-text mt-1'>{errors.evaluationType.message}</p>
                       )}
                     </div>
 
@@ -655,7 +655,7 @@ export default function ProbationPage() {
                         ))}
                       </select>
                       {errors.recommendation && (
-                        <p className="text-sm text-danger-500 mt-1">{errors.recommendation.message}</p>
+                        <p className='text-sm text-status-danger-text mt-1'>{errors.recommendation.message}</p>
                       )}
                     </div>
                   </div>
@@ -688,7 +688,7 @@ export default function ProbationPage() {
                             ))}
                           </select>
                           {errors[field.name] && (
-                            <p className="text-sm text-danger-500 mt-1">{errors[field.name]?.message}</p>
+                            <p className='text-sm text-status-danger-text mt-1'>{errors[field.name]?.message}</p>
                           )}
                         </div>
                       ))}
@@ -739,7 +739,7 @@ export default function ProbationPage() {
                       type="checkbox"
                       {...register('isFinalEvaluation')}
                       id="isFinal"
-                      className="h-4 w-4 rounded border-[var(--border-main)] text-accent-700 focus:ring-accent-700"
+                      className='h-4 w-4 rounded border-[var(--border-main)] text-accent focus:ring-accent-700'
                     />
                     <label
                       htmlFor="isFinal"
@@ -764,14 +764,14 @@ export default function ProbationPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting || addEvaluation.isPending}
-                      className="px-6 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className='px-6 py-2 text-sm font-medium text-inverse bg-accent hover:bg-accent-hover rounded-xl shadow-[var(--shadow-dropdown)] shadow-accent-700/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
                     >
                       {addEvaluation.isPending ? 'Submitting...' : 'Submit Evaluation'}
                     </button>
                   </div>
 
                   {addEvaluation.isError && (
-                    <p className="text-sm text-danger-500 mt-2">
+                    <p className='text-sm text-status-danger-text mt-2'>
                       Failed to submit evaluation. Please try again.
                     </p>
                   )}

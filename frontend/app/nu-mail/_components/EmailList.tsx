@@ -69,18 +69,18 @@ export function EmailList({
           </div>
         </div>
       </div>
-
       {/* Loading State */}
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
+            <div
+              className='w-10 h-10 border-4 border-[var(--accent-primary)] border-t-accent-500 rounded-full animate-spin'/>
             <p className="text-[var(--text-muted)]">Loading emails...</p>
           </div>
         </div>
       ) : emails.length === 0 ? (
         /* Empty State */
-        <div className="py-16">
+        (<div className="py-16">
           <div className="text-center">
             <MailOpen className="h-16 w-16 text-[var(--text-muted)] mx-auto mb-4"/>
             <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
@@ -92,10 +92,10 @@ export function EmailList({
                 : `Your ${selectedLabel.toLowerCase()} is empty`}
             </p>
           </div>
-        </div>
+        </div>)
       ) : (
         /* Email List */
-        <div className="divide-y divide-surface-100 dark:divide-surface-800">
+        (<div className='divide-y divide-surface-100'>
           {emails.map((email) => (
             <div
               key={email.id}
@@ -149,7 +149,7 @@ export function EmailList({
               </div>
             </div>
           ))}
-        </div>
+        </div>)
       )}
     </>
   );

@@ -156,7 +156,8 @@ export default function EmployeeDashboardPage() {
     return (
       <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
         <div className="space-y-6">
-          <div className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+          <div
+            className="flex items-center gap-4 p-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
             <AlertCircle className="h-5 w-5 text-[var(--status-warning-text)] flex-shrink-0"/>
             <p className="text-sm text-[var(--text-secondary)] flex-1">
               Dashboard data is temporarily unavailable. Some metrics may not be displayed.
@@ -229,13 +230,13 @@ export default function EmployeeDashboardPage() {
                   <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
                     {data.attendanceSummary.currentMonth.present}
                   </p>
-                  <p className="text-xs text-success-600 dark:text-success-400 mt-1">
+                  <p className='text-xs text-status-success-text mt-1'>
                     {data.attendanceSummary.currentMonth.attendancePercentage}% attendance
                   </p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400"/>
+                  className='w-12 h-12 rounded-xl bg-status-success-bg flex items-center justify-center'>
+                  <CheckCircle className='h-6 w-6 text-status-success-text'/>
                 </div>
               </div>
             </CardContent>
@@ -254,8 +255,8 @@ export default function EmployeeDashboardPage() {
                   <p className="text-caption mt-1">This year</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Palmtree className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
+                  className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Palmtree className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -274,8 +275,8 @@ export default function EmployeeDashboardPage() {
                   <p className="text-caption mt-1">Remaining</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-warning-600 dark:text-warning-400"/>
+                  className='w-12 h-12 rounded-xl bg-status-warning-bg flex items-center justify-center'>
+                  <Calendar className='h-6 w-6 text-status-warning-text'/>
                 </div>
               </div>
             </CardContent>
@@ -294,8 +295,8 @@ export default function EmployeeDashboardPage() {
                   <p className="text-caption mt-1">Per day</p>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                  className='w-12 h-12 rounded-xl bg-accent-subtle flex items-center justify-center'>
+                  <Clock className='h-6 w-6 text-accent'/>
                 </div>
               </div>
             </CardContent>
@@ -421,8 +422,8 @@ export default function EmployeeDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
-                    <Target className="h-8 w-8 text-accent-700 dark:text-accent-400 mx-auto"/>
+                  <div className='text-center p-4 bg-accent-subtle rounded-xl'>
+                    <Target className='h-8 w-8 text-accent mx-auto'/>
                     <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.currentGoals.length}
                     </p>
@@ -430,8 +431,8 @@ export default function EmployeeDashboardPage() {
                       Active Goals
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-success-50 dark:bg-success-950/30 rounded-xl">
-                    <Award className="h-8 w-8 text-success-600 dark:text-success-400 mx-auto"/>
+                  <div className='text-center p-4 bg-status-success-bg rounded-xl'>
+                    <Award className='h-8 w-8 text-status-success-text mx-auto'/>
                     <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.recentReviews.length}
                     </p>
@@ -439,8 +440,8 @@ export default function EmployeeDashboardPage() {
                       Reviews
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-accent-50 dark:bg-accent-950/30 rounded-xl">
-                    <GraduationCap className="h-8 w-8 text-accent-600 dark:text-accent-400 mx-auto"/>
+                  <div className='text-center p-4 bg-accent-subtle rounded-xl'>
+                    <GraduationCap className='h-8 w-8 text-accent mx-auto'/>
                     <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.completedTrainings}
                     </p>
@@ -448,8 +449,8 @@ export default function EmployeeDashboardPage() {
                       Completed
                     </p>
                   </div>
-                  <div className="text-center p-4 bg-warning-50 dark:bg-warning-950/30 rounded-xl">
-                    <Briefcase className="h-8 w-8 text-warning-600 dark:text-warning-400 mx-auto"/>
+                  <div className='text-center p-4 bg-status-warning-bg rounded-xl'>
+                    <Briefcase className='h-8 w-8 text-status-warning-text mx-auto'/>
                     <p className="text-xl font-bold text-[var(--text-primary)] mt-2">
                       {data.careerProgress.upcomingTrainings}
                     </p>
@@ -490,7 +491,7 @@ export default function EmployeeDashboardPage() {
                           <div
                             className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-accent-500 rounded-full transition-all"
+                              className='h-full bg-accent rounded-full transition-all'
                               style={{width: `${goal.progress}%`}}
                             />
                           </div>
@@ -553,7 +554,7 @@ export default function EmployeeDashboardPage() {
                         />
                       </div>
                       {balance.pending > 0 && (
-                        <p className="text-xs text-warning-600 dark:text-warning-400 mt-1">
+                        <p className='text-xs text-status-warning-text mt-1'>
                           {balance.pending} pending approval
                         </p>
                       )}

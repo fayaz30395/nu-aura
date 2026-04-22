@@ -101,7 +101,7 @@ export default function BlogsPage() {
             <div className="flex items-center gap-4 mb-2">
               <div
                 className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
-                <Pen className="w-6 h-6 text-white"/>
+                <Pen className='w-6 h-6 text-inverse'/>
               </div>
               <h1 className={`${typography.pageTitle} text-[var(--text-primary)]`}>
                 Blog & Articles
@@ -114,7 +114,7 @@ export default function BlogsPage() {
           <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
             <Button
               onClick={handleNewPost}
-              className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+              className='gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-inverse shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all'
             >
               <Plus className="w-4 h-4"/>
               New Post
@@ -170,7 +170,7 @@ export default function BlogsPage() {
                 All Posts
                 {selectedCategoryId === undefined && (
                   <motion.div
-                    className="absolute bottom-0 left-0 h-0.5 bg-accent-300"
+                    className='absolute bottom-0 left-0 h-0.5 bg-accent-subtle'
                     layoutId="category-indicator"
                     transition={{type: 'spring', stiffness: 380, damping: 40}}
                   />
@@ -192,7 +192,7 @@ export default function BlogsPage() {
                   {category.name}
                   {selectedCategoryId === category.id && (
                     <motion.div
-                      className="absolute bottom-0 left-0 h-0.5 bg-accent-300"
+                      className='absolute bottom-0 left-0 h-0.5 bg-accent-subtle'
                       layoutId="category-indicator"
                       transition={{type: 'spring', stiffness: 380, damping: 40}}
                     />
@@ -235,8 +235,8 @@ export default function BlogsPage() {
                   transition={{type: 'spring', stiffness: 200, damping: 20}}
                 >
                   <div
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-warning-100 to-warning-100 dark:from-warning-900/20 dark:to-warning-900/20 flex items-center justify-center mx-auto mb-4">
-                    <Pen className="w-8 h-8 text-warning-600 dark:text-warning-400"/>
+                    className='w-16 h-16 rounded-full bg-gradient-to-br from-warning-100 to-warning-100 flex items-center justify-center mx-auto mb-4'>
+                    <Pen className='w-8 h-8 text-status-warning-text'/>
                   </div>
                 </motion.div>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
@@ -248,7 +248,7 @@ export default function BlogsPage() {
                 <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
                   <Button
                     onClick={handleNewPost}
-                    className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+                    className='gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-inverse shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all'
                   >
                     <Plus className="w-4 h-4"/>
                     Create First Post
@@ -301,11 +301,11 @@ export default function BlogsPage() {
                         <div>
                           <div className="flex items-center gap-4 mb-4">
                             <motion.div
-                              className="px-4 py-1 rounded-full bg-gradient-to-r from-warning-100 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30"
+                              className='px-4 py-1 rounded-full bg-gradient-to-r from-warning-100 to-warning-100'
                               whileHover={{scale: 1.05}}
                             >
                               <span
-                                className="text-xs font-bold text-warning-700 dark:text-warning-300 uppercase tracking-wide">
+                                className='text-xs font-bold text-status-warning-text uppercase tracking-wide'>
                                 ⭐ Featured
                               </span>
                             </motion.div>
@@ -345,7 +345,7 @@ export default function BlogsPage() {
                                 />
                               ) : null}
                               <div
-                                className={`w-10 h-10 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`w-10 h-10 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-inverse font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(featuredPost)}
                               </div>
                               <div>
@@ -416,7 +416,7 @@ export default function BlogsPage() {
                 </p>
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="text-warning-600 dark:text-warning-400 hover:underline text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                  className='text-status-warning-text hover:underline text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded'
                 >
                   Clear search
                 </button>
@@ -528,7 +528,7 @@ export default function BlogsPage() {
                                 />
                               ) : null}
                               <div
-                                className={`w-8 h-8 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`w-8 h-8 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-inverse font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(post)}
                               </div>
                               <div className="flex-1 min-w-0">
