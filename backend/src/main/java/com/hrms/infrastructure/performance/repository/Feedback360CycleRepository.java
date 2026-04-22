@@ -22,7 +22,7 @@ public interface Feedback360CycleRepository extends JpaRepository<Feedback360Cyc
 
     List<Feedback360Cycle> findAllByTenantIdAndStatus(UUID tenantId, CycleStatus status);
 
-    @Query("SELECT c FROM Feedback360Cycle c WHERE c.tenantId = :tenantId AND c.status = 'ACTIVE'")
+    @Query("SELECT c FROM Feedback360Cycle c WHERE c.tenantId = :tenantId AND c.status IN (com.hrms.domain.performance.Feedback360Cycle.CycleStatus.NOMINATION_OPEN, com.hrms.domain.performance.Feedback360Cycle.CycleStatus.IN_PROGRESS)")
     List<Feedback360Cycle> findActiveCycles(@Param("tenantId") UUID tenantId);
 
     @Query("SELECT c FROM Feedback360Cycle c WHERE c.tenantId = :tenantId ORDER BY c.startDate DESC")

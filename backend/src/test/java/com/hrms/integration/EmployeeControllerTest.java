@@ -136,6 +136,9 @@ class EmployeeControllerTest {
         UUID createdId = UUID.fromString(
                 objectMapper.readTree(createBody).get("id").asText());
 
+        // Re-initialise thread-locals: filters may clear them after the POST dispatch
+        setUpSuperAdminContext();
+
         // HR updates designation (admin field)
         UpdateEmployeeRequest updateReq = new UpdateEmployeeRequest();
         updateReq.setDesignation("Senior Engineer");
@@ -272,6 +275,9 @@ class EmployeeControllerTest {
 
         UUID createdId = UUID.fromString(
                 objectMapper.readTree(createBody).get("id").asText());
+
+        // Re-initialise thread-locals: filters may clear them after the POST dispatch
+        setUpSuperAdminContext();
 
         mockMvc.perform(get("/api/v1/employees/" + createdId + "/hierarchy"))
                 .andExpect(status().isOk());

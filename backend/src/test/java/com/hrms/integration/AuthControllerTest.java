@@ -172,6 +172,7 @@ class AuthControllerTest {
     // ========================= UC-AUTH-003: MFA =========================
 
     @Test
+    @org.springframework.security.test.context.support.WithMockUser
     @DisplayName("UC-AUTH-003: MFA setup returns 200 with QR code data")
     void ucAuth003_mfaSetup_returns200WithQr() throws Exception {
         MfaSetupResponse setupResp = MfaSetupResponse.builder()
@@ -188,6 +189,7 @@ class AuthControllerTest {
     }
 
     @Test
+    @org.springframework.security.test.context.support.WithMockUser
     @DisplayName("UC-AUTH-003: valid TOTP code enables MFA — returns 200 verified=true")
     void ucAuth003_mfaVerify_validCode_returns200Verified() throws Exception {
         MfaVerifyRequest req = new MfaVerifyRequest();
@@ -208,6 +210,7 @@ class AuthControllerTest {
     }
 
     @Test
+    @org.springframework.security.test.context.support.WithMockUser
     @DisplayName("UC-AUTH-003: wrong TOTP code returns 401")
     void ucAuth003_mfaVerify_wrongCode_returns401() throws Exception {
         MfaVerifyRequest req = new MfaVerifyRequest();

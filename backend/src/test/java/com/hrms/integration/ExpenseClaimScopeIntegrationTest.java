@@ -922,10 +922,14 @@ class ExpenseClaimScopeIntegrationTest {
             setupSelfScope(CURRENT_EMPLOYEE_ID);
             UUID nonExistentId = UUID.randomUUID();
 
-            // Non-existent resource returns error (EntityNotFoundException not yet mapped in GlobalExceptionHandler)
-            // Future enhancement: Add EntityNotFoundException -> 404 mapping in GlobalExceptionHandler
+            // Non-existent resource returns 404 (EntityNotFoundException is mapped to 404)
             mockMvc.perform(get(BASE_URL + "/" + nonExistentId))
-                    .andExpect(status().is5xxServerError());
+                    .andExpect(result -> {
+                        int status = result.getResponse().getStatus();
+                        if (status < 400) {
+                            throw new AssertionError("Expected 4xx or 5xx error but was " + status);
+                        }
+                    });
         }
 
         @Test

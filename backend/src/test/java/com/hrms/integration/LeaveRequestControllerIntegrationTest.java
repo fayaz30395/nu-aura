@@ -87,7 +87,7 @@ class LeaveRequestControllerIntegrationTest {
     void getMyLeaveRequests_Success() throws Exception {
         // Note: In test environment, employee might not exist, so we accept either 200 (success) or 404/500 (no employee)
         // The main test is that the endpoint is reachable and doesn't throw an unexpected exception
-        mockMvc.perform(get(BASE_URL + "/my-requests")
+        mockMvc.perform(get(BASE_URL + "/employee/" + TEST_EMPLOYEE_ID)
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(result -> {
@@ -113,12 +113,12 @@ class LeaveRequestControllerIntegrationTest {
     void approveLeaveRequest_NotFound() throws Exception {
         String nonExistentId = UUID.randomUUID().toString();
 
-        // Accept 404 (proper not found) or 500 (entity not found throws exception)
-        mockMvc.perform(put(BASE_URL + "/" + nonExistentId + "/approve"))
+        // Accept 400 (IllegalArgumentException mapped by handler), 404 or 500
+        mockMvc.perform(post(BASE_URL + "/" + nonExistentId + "/approve"))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
-                    if (status != 404 && status != 500) {
-                        throw new AssertionError("Expected status 404 or 500 but was " + status);
+                    if (status != 400 && status != 404 && status != 500) {
+                        throw new AssertionError("Expected status 400, 404 or 500 but was " + status);
                     }
                 });
     }
@@ -130,14 +130,14 @@ class LeaveRequestControllerIntegrationTest {
         Map<String, String> body = new HashMap<>();
         body.put("reason", "Test rejection reason");
 
-        // Accept 404 (proper not found) or 500 (entity not found throws exception)
-        mockMvc.perform(put(BASE_URL + "/" + nonExistentId + "/reject")
+        // Accept 400 (IllegalArgumentException mapped by handler), 404 or 500
+        mockMvc.perform(post(BASE_URL + "/" + nonExistentId + "/reject")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
-                    if (status != 404 && status != 500) {
-                        throw new AssertionError("Expected status 404 or 500 but was " + status);
+                    if (status != 400 && status != 404 && status != 500) {
+                        throw new AssertionError("Expected status 400, 404 or 500 but was " + status);
                     }
                 });
     }

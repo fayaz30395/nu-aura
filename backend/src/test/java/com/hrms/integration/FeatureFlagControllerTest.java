@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Feature Flag Controller Integration Tests")
 class FeatureFlagControllerTest {
 
-    private static final String BASE_URL = "/api/v1/feature-flags";
+    private static final String BASE_URL = "/api/v1/admin/feature-flags";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");

@@ -49,6 +49,29 @@ spring:
       - attendanceMetrics
       - leaveMetrics
       - payrollMetrics
+      - holidays
+      - employees
+      - employeeWithDetails
+      - employeeBasic
+      - leaveTypes
+      - leaveBalances
+      - departments
+      - designations
+      - officeLocations
+      - shiftPolicies
+      - benefitPlans
+      - tenantSettings
+      - tenantAttendanceConfig
+      - permissions
+      - roles
+      - rolePermissions
+      - webhooks
+      - activeWebhooks
+      - featureFlags
+      - analyticsSummary
+      - upcomingBirthdays
+      - upcomingAnniversaries
+      - workflowInboxCount
 
   kafka:
     bootstrap-servers: localhost:9092

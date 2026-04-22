@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,8 @@ class ExpenseClaimControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUpSuperAdminContext() {
@@ -56,6 +59,23 @@ class ExpenseClaimControllerTest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
         TenantContext.setCurrentTenant(TENANT_ID);
+        ensureTestEmployeeExists();
+    }
+
+    private void ensureTestEmployeeExists() {
+        // Insert a minimal User+Employee row if not already present (H2 test DB starts empty)
+        jdbcTemplate.update(
+            "MERGE INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, " +
+            "auth_provider, mfa_enabled, is_deleted, version, created_at, updated_at) " +
+            "KEY(id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+            USER_ID.toString(), TENANT_ID.toString(), "test.admin@nulogic.test",
+            "Test", "Admin", "$2a$10$placeholder", "ACTIVE", "LOCAL", false);
+        jdbcTemplate.update(
+            "MERGE INTO employees (id, tenant_id, user_id, employee_code, first_name, last_name, " +
+            "joining_date, status, employment_type, is_deleted, version, created_at, updated_at) " +
+            "KEY(id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+            EMPLOYEE_ID.toString(), TENANT_ID.toString(), USER_ID.toString(),
+            "EMP-TEST-001", "Test", "Employee", LocalDate.now().toString(), "ACTIVE", "FULL_TIME");
     }
 
     // ========================= UC-EXP-001: Submit expense claim =========================

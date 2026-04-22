@@ -93,7 +93,7 @@ class MySpaceUseCaseIntegrationTest {
 
     @Test
     void ucMy001_myLeaveRequests_returns200() throws Exception {
-        mockMvc.perform(get("/api/v1/leave-requests/my-requests")
+        mockMvc.perform(get("/api/v1/leave-requests/employee/{employeeId}", EMPLOYEE_ID)
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(result -> {

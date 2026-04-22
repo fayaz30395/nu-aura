@@ -36,9 +36,6 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Cycle createCycle(Feedback360Cycle cycle) {
-        if (cycle.getId() == null) {
-            cycle.setId(UUID.randomUUID());
-        }
         if (cycle.getStatus() == null) {
             cycle.setStatus(CycleStatus.DRAFT);
         }
@@ -110,9 +107,6 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Request createRequest(Feedback360Request request) {
-        if (request.getId() == null) {
-            request.setId(UUID.randomUUID());
-        }
         if (request.getStatus() == null) {
             request.setStatus(RequestStatus.PENDING);
         }
@@ -167,9 +161,6 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Response createOrUpdateResponse(Feedback360Response response) {
-        if (response.getId() == null) {
-            response.setId(UUID.randomUUID());
-        }
         if (response.getCreatedAt() == null) {
             response.setCreatedAt(LocalDateTime.now());
         }
@@ -237,7 +228,6 @@ public class Feedback360Service {
 
         Feedback360Summary summary = existing.orElseGet(() -> {
             Feedback360Summary newSummary = new Feedback360Summary();
-            newSummary.setId(UUID.randomUUID());
             newSummary.setTenantId(tenantId);
             newSummary.setCycleId(cycleId);
             newSummary.setSubjectEmployeeId(subjectEmployeeId);
