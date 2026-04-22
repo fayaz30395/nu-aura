@@ -318,7 +318,6 @@ public class ScheduledReportExecutionJob {
     /**
      * Parse parameters JSON string to Map.
      */
-    @SuppressWarnings("unchecked")
     private Map<String, Object> parseParameters(String parametersJson) {
         if (parametersJson == null || parametersJson.isBlank()) {
             return new HashMap<>();
@@ -335,7 +334,6 @@ public class ScheduledReportExecutionJob {
     /**
      * Parse recipients JSON array string to List.
      */
-    @SuppressWarnings("unchecked")
     private List<String> parseRecipients(String recipientsJson) {
         if (recipientsJson == null || recipientsJson.isBlank()) {
             return List.of();

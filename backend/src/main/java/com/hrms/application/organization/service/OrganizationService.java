@@ -330,6 +330,7 @@ public class OrganizationService {
     }
 
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public NineBoxDataResponse getNineBoxData() {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -43,6 +44,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class JobBoardIntegrationService {
+
+    private static final ParameterizedTypeReference<Map<String, Object>> MAP_TYPE =
+            new ParameterizedTypeReference<Map<String, Object>>() {};
 
     private final JobBoardPostingRepository jobBoardPostingRepository;
     private final JobOpeningRepository jobOpeningRepository;
@@ -254,8 +258,8 @@ public class JobBoardIntegrationService {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    naukriApiUrl + "/jobs", HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    naukriApiUrl + "/jobs", HttpMethod.POST, entity, MAP_TYPE);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Object jobId = response.getBody().get("jobId");
@@ -277,8 +281,8 @@ public class JobBoardIntegrationService {
                 "clientId", naukriClientId,
                 "clientSecret", naukriClientSecret);
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(creds, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(
-                naukriApiUrl + "/auth/token", HttpMethod.POST, entity, Map.class);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                naukriApiUrl + "/auth/token", HttpMethod.POST, entity, MAP_TYPE);
         if (response.getBody() != null && response.getBody().containsKey("access_token")) {
             return response.getBody().get("access_token").toString();
         }
@@ -331,8 +335,8 @@ public class JobBoardIntegrationService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    indeedApiUrl, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    indeedApiUrl, HttpMethod.POST, entity, MAP_TYPE);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 @SuppressWarnings("unchecked")
@@ -396,8 +400,8 @@ public class JobBoardIntegrationService {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    linkedinApiUrl + "/simpleJobPostings", HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    linkedinApiUrl + "/simpleJobPostings", HttpMethod.POST, entity, MAP_TYPE);
 
             if (response.getHeaders().getLocation() != null) {
                 String location = response.getHeaders().getLocation().toString();
@@ -445,9 +449,9 @@ public class JobBoardIntegrationService {
             String token = getNaukriAuthToken();
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     naukriApiUrl + "/jobs/" + posting.getExternalJobId() + "/stats",
-                    HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+                    HttpMethod.GET, new HttpEntity<>(headers), MAP_TYPE);
             if (response.getBody() != null) {
                 Object apps = response.getBody().get("applicationsCount");
                 Object views = response.getBody().get("viewsCount");
@@ -466,9 +470,9 @@ public class JobBoardIntegrationService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(indeedAccessToken);
             String query = "{ jobStats(jobId: \"" + posting.getExternalJobId() + "\") { applications views } }";
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     indeedApiUrl, HttpMethod.POST,
-                    new HttpEntity<>(Map.of("query", query), headers), Map.class);
+                    new HttpEntity<>(Map.of("query", query), headers), MAP_TYPE);
             if (response.getBody() != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
@@ -494,9 +498,9 @@ public class JobBoardIntegrationService {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(linkedinAccessToken);
             headers.set("LinkedIn-Version", "202401");
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     linkedinApiUrl + "/simpleJobPostings/" + posting.getExternalJobId() + "/analytics",
-                    HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+                    HttpMethod.GET, new HttpEntity<>(headers), MAP_TYPE);
             if (response.getBody() != null) {
                 Object apps = response.getBody().get("applications");
                 Object views = response.getBody().get("impressions");

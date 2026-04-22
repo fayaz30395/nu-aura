@@ -171,6 +171,7 @@ public class ResourceAllocationService {
      * Returns employees who have capacity (total allocation < 100%).
      */
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public List<AvailableResourceResponse> getAvailableResources(int minAvailablePercent) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         List<ProjectEmployee> active = projectEmployeeRepository.findAllActiveAssignments(tenantId);

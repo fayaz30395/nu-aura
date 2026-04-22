@@ -253,7 +253,6 @@ public class AuditLogService {
 
     @Transactional(readOnly = true)
     public List<String> getDistinctEntityTypes() {
-        UUID tenantId = TenantContext.getCurrentTenant();
         // Return common entity types
         return Arrays.asList(
                 "USER", "EMPLOYEE", "DEPARTMENT", "LEAVE_REQUEST", "ATTENDANCE",

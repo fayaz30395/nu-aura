@@ -71,9 +71,6 @@ public class MobileNotificationService {
     @Transactional
     public MobileNotificationDto.MarkReadResponse markNotificationsAsRead(
             MobileNotificationDto.MarkReadRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
-
         int updatedCount = 0;
 
         if (Boolean.TRUE.equals(request.getMarkAllAsRead())) {

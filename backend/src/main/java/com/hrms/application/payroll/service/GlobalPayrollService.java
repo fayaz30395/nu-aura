@@ -264,7 +264,7 @@ public class GlobalPayrollService {
         run = payrollRunRepository.save(run);
 
         // Process employee records
-        List<EmployeePayrollRecord> records = recordRepository.findByPayrollRun(runId);
+        List<EmployeePayrollRecord> records = recordRepository.findByTenantIdAndPayrollRun(tenantId, runId);
         String baseCurrency = run.getBaseCurrency();
         LocalDate rateDate = run.getPayPeriodEnd();
 
@@ -441,7 +441,8 @@ public class GlobalPayrollService {
 
     @Transactional(readOnly = true)
     public List<EmployeePayrollRecordDto> getEmployeeRecords(UUID runId) {
-        return recordRepository.findByPayrollRun(runId).stream()
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return recordRepository.findByTenantIdAndPayrollRun(tenantId, runId).stream()
                 .map(EmployeePayrollRecordDto::fromEntity)
                 .collect(Collectors.toList());
     }

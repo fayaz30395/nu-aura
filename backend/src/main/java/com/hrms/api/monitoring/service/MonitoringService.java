@@ -336,6 +336,7 @@ public class MonitoringService {
                 .build();
     }
 
+    @SuppressWarnings("null")
     private Map<String, Long> getRequestsByModule() {
         Map<String, Long> moduleRequests = new HashMap<>();
 
@@ -356,6 +357,7 @@ public class MonitoringService {
         return moduleRequests;
     }
 
+    @SuppressWarnings("null")
     private Map<String, Long> getErrorsByType() {
         Map<String, Long> errorsByType = new HashMap<>();
 

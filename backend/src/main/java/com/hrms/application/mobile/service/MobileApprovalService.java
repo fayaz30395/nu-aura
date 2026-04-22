@@ -73,9 +73,6 @@ public class MobileApprovalService {
     @Transactional
     public MobileApprovalDto.ApprovalActionResponse bulkActionApprovals(
             MobileApprovalDto.BulkApprovalRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
-
         // Process bulk approval actions
         // This is a placeholder - integrate with actual approval service
         String status = "APPROVED".equalsIgnoreCase(request.getAction()) ? "APPROVED" : "REJECTED";

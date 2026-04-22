@@ -70,7 +70,7 @@ public class ApprovalNotificationListener {
             String actionUrl = buildActionUrl(entityType);
 
             // 1. Create persistent notification in database
-            Notification persistentNotification = notificationService.createNotification(
+            notificationService.createNotification(
                     assignedToUserId,
                     Notification.NotificationType.TASK_ASSIGNED,
                     title,

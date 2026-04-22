@@ -450,7 +450,6 @@ public class ManagerDashboardService {
      */
     @Transactional(readOnly = true)
     public TeamProjectsResponse getTeamProjects() {
-        UUID tenantId = TenantContext.getCurrentTenant();
         UUID managerId = SecurityContext.getCurrentEmployeeId();
 
         if (managerId == null) {

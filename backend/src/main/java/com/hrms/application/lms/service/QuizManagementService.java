@@ -101,7 +101,7 @@ public class QuizManagementService {
      */
     @Transactional
     public QuizQuestion addQuestionToQuiz(UUID quizId, QuizQuestion question, UUID tenantId) {
-        Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
+        quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
 
         question.setId(null);

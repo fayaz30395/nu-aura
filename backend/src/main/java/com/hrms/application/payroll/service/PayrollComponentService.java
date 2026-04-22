@@ -345,6 +345,7 @@ public class PayrollComponentService {
      * @return components ordered by evaluation dependency (leaves first)
      * @throws BusinessException if a circular dependency is detected
      */
+    @SuppressWarnings("null")
     List<PayrollComponent> topologicalSort(List<PayrollComponent> components) {
         if (components == null || components.isEmpty()) {
             return Collections.emptyList();

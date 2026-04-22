@@ -211,8 +211,6 @@ public class KekaImportService {
      */
     @Transactional(readOnly = true)
     public KekaImportHistoryEntry getImportDetails(String importId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-
         // In a real implementation, you'd look up the import by ID
         // For now, this is a placeholder
         return KekaImportHistoryEntry.builder()

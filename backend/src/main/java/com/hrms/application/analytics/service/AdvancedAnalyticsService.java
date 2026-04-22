@@ -486,6 +486,7 @@ public class AdvancedAnalyticsService {
         return Math.round((count * 100.0 / total) * 100.0) / 100.0;
     }
 
+    @SuppressWarnings("null")
     private Map<String, Integer> calculateAgeDistribution(List<Employee> employees) {
         Map<String, Integer> distribution = new LinkedHashMap<>();
         distribution.put("18-25", 0);
@@ -525,6 +526,7 @@ public class AdvancedAnalyticsService {
         return Math.round((ages.stream().mapToInt(Integer::intValue).average().orElse(0)) * 10.0) / 10.0;
     }
 
+    @SuppressWarnings("null")
     private Map<String, Integer> calculateTenureDistribution(List<Employee> employees) {
         Map<String, Integer> distribution = new LinkedHashMap<>();
         distribution.put("0-1 years", 0);

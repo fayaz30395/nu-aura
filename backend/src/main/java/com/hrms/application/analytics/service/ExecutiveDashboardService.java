@@ -167,8 +167,6 @@ public class ExecutiveDashboardService {
     }
 
     private FinancialSummary buildFinancialSummary(UUID tenantId, int year, int month) {
-        YearMonth currentMonth = YearMonth.of(year, month);
-
         // Monthly Payroll
         BigDecimal monthlyPayroll = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
                 tenantId, year, month);

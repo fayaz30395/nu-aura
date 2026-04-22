@@ -137,6 +137,7 @@ public class TimeTrackingReportService {
 
     // ==================== Report Building Methods ====================
 
+    @SuppressWarnings("null")
     private TimeSummaryReport buildTimeSummaryReport(
             List<TimeEntry> entries,
             LocalDate startDate,

@@ -144,7 +144,7 @@ public class TrainingManagementService {
                 .orElseThrow(() -> new IllegalArgumentException("Training program not found"));
 
         // Check if employee exists
-        Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check for duplicate enrollment

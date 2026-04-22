@@ -131,7 +131,7 @@ public class BudgetPlanningService {
         HeadcountBudgetResponse response = HeadcountBudgetResponse.fromEntity(budget);
 
         // Load positions
-        List<HeadcountPosition> positions = positionRepository.findByBudgetId(budgetId);
+        List<HeadcountPosition> positions = positionRepository.findByBudgetIdAndTenantId(budgetId, tenantId);
         response.setPositions(positions.stream()
                 .map(HeadcountPositionResponse::fromEntity)
                 .collect(Collectors.toList()));
@@ -346,7 +346,8 @@ public class BudgetPlanningService {
 
     @Transactional(readOnly = true)
     public List<HeadcountPositionResponse> getPositionsByBudget(UUID budgetId) {
-        return positionRepository.findByBudgetId(budgetId).stream()
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return positionRepository.findByBudgetIdAndTenantId(budgetId, tenantId).stream()
                 .map(HeadcountPositionResponse::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -569,6 +570,7 @@ public class BudgetPlanningService {
         return BigDecimal.ZERO;
     }
 
+    @SuppressWarnings("null")
     private Map<HeadcountPosition.PositionStatus, Long> aggregatePositionCounts(List<HeadcountBudget> budgets) {
         Map<HeadcountPosition.PositionStatus, Long> positionCountsByStatus = new HashMap<>();
         for (HeadcountBudget budget : budgets) {

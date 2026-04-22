@@ -190,7 +190,7 @@ public class SamlAuthenticationHandler {
         Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
 
         // Load app permissions and roles
-        Optional<UserAppAccess> appAccess = userAppAccessRepository
+        userAppAccessRepository
                 .findByUserIdAndAppCodeWithPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
 
         Set<String> appRoles = user.getRoles().stream()

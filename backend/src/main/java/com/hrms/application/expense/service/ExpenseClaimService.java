@@ -826,7 +826,6 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     private void notifyExpenseApproved(ExpenseClaim claim) {
         try {
-            UUID tenantId = TenantContext.getCurrentTenant();
             String amountFormatted = String.format("%s %s", claim.getAmount(), claim.getCurrency());
 
             // Send persistent notification
@@ -860,7 +859,6 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
     private void notifyExpenseRejected(ExpenseClaim claim, String reason) {
         try {
-            UUID tenantId = TenantContext.getCurrentTenant();
             String amountFormatted = String.format("%s %s", claim.getAmount(), claim.getCurrency());
             String rejectionReason = reason != null ? reason : "No reason provided";
 
