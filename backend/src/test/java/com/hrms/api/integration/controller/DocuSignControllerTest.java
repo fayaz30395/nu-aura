@@ -124,16 +124,6 @@ class DocuSignControllerTest {
         sampleEnvelope.setEntityId(UUID.randomUUID());
         sampleEnvelope.setStatus("SENT");
         sampleEnvelope.setSentAt(Instant.now());
-
-        sampleEnvelopeResponse = DocuSignEnvelopeResponse.builder()
-                .id(ENVELOPE_DB_ID)
-                .envelopeId(DOCUSIGN_ENVELOPE_ID)
-                .entityType("OfferLetter")
-                .status("SENT")
-                .sentAt(Instant.now())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
     }
 
     @AfterEach

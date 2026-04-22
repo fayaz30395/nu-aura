@@ -146,7 +146,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(savedContract);
 
             // When
-            contractService.createContract(request);
+            ContractDto result = contractService.createContract(request);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -186,7 +186,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(savedContract);
 
             // When
-            ContractDto result = contractService.createContract(request);
+            contractService.createContract(request);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -256,7 +256,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(existingContract);
 
             // When
-            ContractDto result = contractService.updateContract(CONTRACT_ID, request);
+            contractService.updateContract(CONTRACT_ID, request);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -420,7 +420,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
             // When
-            ContractDto result = contractService.markAsPendingReview(CONTRACT_ID);
+            contractService.markAsPendingReview(CONTRACT_ID);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -443,7 +443,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
             // When
-            ContractDto result = contractService.markAsActive(CONTRACT_ID);
+            contractService.markAsActive(CONTRACT_ID);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -466,7 +466,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
             // When
-            ContractDto result = contractService.terminateContract(CONTRACT_ID);
+            contractService.terminateContract(CONTRACT_ID);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -497,7 +497,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(contract);
 
             // When
-            ContractDto result = contractService.renewContract(CONTRACT_ID);
+            contractService.renewContract(CONTRACT_ID);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());
@@ -523,7 +523,7 @@ class ContractServiceTest {
                     .thenReturn(Optional.of(contract));
 
             // When
-            ContractDto result = contractService.renewContract(CONTRACT_ID);
+            contractService.renewContract(CONTRACT_ID);
 
             // Then
             verify(contractRepository, never()).save(any(Contract.class));

@@ -70,7 +70,6 @@ class ESignatureControllerTest {
     void setUp() {
         requestId = UUID.randomUUID();
         creatorId = UUID.randomUUID();
-        approvalId = UUID.randomUUID();
 
         signatureResponse = SignatureRequestResponse.builder()
                 .id(requestId)

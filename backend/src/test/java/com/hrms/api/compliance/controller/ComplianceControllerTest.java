@@ -68,7 +68,6 @@ class ComplianceControllerTest {
     @BeforeEach
     void setUp() {
         policyId = UUID.randomUUID();
-        employeeId = UUID.randomUUID();
         alertId = UUID.randomUUID();
 
         policy = new CompliancePolicy();
@@ -80,8 +79,6 @@ class ComplianceControllerTest {
         policy.setEffectiveDate(LocalDate.now());
         policy.setPolicyVersion(1);
         policy.setRequiresAcknowledgment(true);
-
-        policyResponse = CompliancePolicyResponse.from(policy);
     }
 
     @Test

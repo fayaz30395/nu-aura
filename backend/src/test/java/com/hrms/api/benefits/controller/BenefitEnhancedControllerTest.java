@@ -70,8 +70,6 @@ class BenefitEnhancedControllerTest {
     void setUp() {
         planId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
-        enrollmentId = UUID.randomUUID();
-        claimId = UUID.randomUUID();
 
         planResponse = BenefitPlanEnhancedResponse.builder()
                 .id(planId)

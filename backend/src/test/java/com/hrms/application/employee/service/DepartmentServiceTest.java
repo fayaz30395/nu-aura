@@ -61,7 +61,6 @@ class DepartmentServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         departmentId = UUID.randomUUID();
-        parentDepartmentId = UUID.randomUUID();
         managerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);

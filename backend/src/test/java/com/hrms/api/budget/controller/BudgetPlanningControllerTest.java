@@ -69,8 +69,6 @@ class BudgetPlanningControllerTest {
     void setUp() {
         budgetId = UUID.randomUUID();
         departmentId = UUID.randomUUID();
-        positionId = UUID.randomUUID();
-        scenarioId = UUID.randomUUID();
 
         budgetResponse = HeadcountBudgetResponse.builder()
                 .id(budgetId)

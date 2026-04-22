@@ -259,7 +259,7 @@ class AttendanceRecordServiceTest {
         @Test
         @DisplayName("Should check out successfully when check-in exists for same day")
         void shouldCheckOutSuccessfully() {
-            checkOutTime.toLocalDate();
+            LocalDate checkOutDate = checkOutTime.toLocalDate();
             attendanceRecord.checkIn(checkInTime, "WEB", "Office", "192.168.1.1");
 
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(

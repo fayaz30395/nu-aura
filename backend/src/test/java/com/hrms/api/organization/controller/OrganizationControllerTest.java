@@ -64,9 +64,7 @@ class OrganizationControllerTest {
     @BeforeEach
     void setUp() {
         unitId = UUID.randomUUID();
-        positionId = UUID.randomUUID();
         planId = UUID.randomUUID();
-        poolId = UUID.randomUUID();
     }
 
     @Test

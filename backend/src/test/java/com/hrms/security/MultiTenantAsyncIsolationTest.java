@@ -41,12 +41,6 @@ public class MultiTenantAsyncIsolationTest {
         tenantA = UUID.randomUUID();
         tenantB = UUID.randomUUID();
 
-        // Create users for each tenant
-        userA1 = UUID.randomUUID(); // Tenant A - Manager
-        userA2 = UUID.randomUUID(); // Tenant A - Employee
-        userB1 = UUID.randomUUID(); // Tenant B - Manager
-        userB2 = UUID.randomUUID(); // Tenant B - Employee
-
         // Clear any existing tenant context
         TenantContext.clear();
     }

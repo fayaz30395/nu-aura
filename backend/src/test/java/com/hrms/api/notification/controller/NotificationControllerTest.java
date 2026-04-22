@@ -79,17 +79,6 @@ class NotificationControllerTest {
         notification.setPriority(Notification.Priority.NORMAL);
         notification.setIsRead(false);
         notification.setCreatedAt(LocalDateTime.now());
-
-        notificationResponse = NotificationResponse.builder()
-                .id(notificationId)
-                .userId(userId)
-                .title("Leave Approved")
-                .message("Your leave request has been approved.")
-                .type(Notification.NotificationType.LEAVE_APPROVED.name())
-                .priority(Notification.Priority.NORMAL.name())
-                .isRead(false)
-                .createdAt(LocalDateTime.now())
-                .build();
     }
 
     @AfterEach

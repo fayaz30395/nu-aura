@@ -85,7 +85,6 @@ class ResourceManagementServiceTest {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         projectId = UUID.randomUUID();
-        managerId = UUID.randomUUID();
 
         employee = Employee.builder()
                 .employeeCode("EMP001")

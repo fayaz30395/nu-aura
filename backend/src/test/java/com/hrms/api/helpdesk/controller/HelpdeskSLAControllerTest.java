@@ -71,7 +71,6 @@ class HelpdeskSLAControllerTest {
         tenantId = UUID.randomUUID();
         slaId = UUID.randomUUID();
         ticketId = UUID.randomUUID();
-        userId = UUID.randomUUID();
 
         ticketSLA = new TicketSLA();
         ticketSLA.setId(slaId);

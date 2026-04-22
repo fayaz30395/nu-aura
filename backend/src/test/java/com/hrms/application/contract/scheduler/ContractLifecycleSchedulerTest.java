@@ -135,7 +135,7 @@ class ContractLifecycleSchedulerTest {
             when(contractRepository.findActiveContractsPastEndDate(TENANT_A))
                     .thenReturn(List.of(contract));
 
-            scheduler.autoExpireContracts(TENANT_A);
+            int result = scheduler.autoExpireContracts(TENANT_A);
 
             assertThat(result).isEqualTo(1);
             verify(contractRepository).save(contractCaptor.capture());
@@ -326,7 +326,7 @@ class ContractLifecycleSchedulerTest {
             when(reminderRepository.existsPendingReminder(any(), any(), any()))
                     .thenReturn(false);
 
-            int result = scheduler.createExpiryReminders(TENANT_A);
+            scheduler.createExpiryReminders(TENANT_A);
 
             verify(reminderRepository, atLeastOnce()).save(reminderCaptor.capture());
             List<ContractReminder> saved = reminderCaptor.getAllValues();

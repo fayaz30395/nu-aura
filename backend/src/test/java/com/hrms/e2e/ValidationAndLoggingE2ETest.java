@@ -85,6 +85,7 @@ class ValidationAndLoggingE2ETest {
     @Order(4)
     @DisplayName("E2E: InputSanitizer allows safe input")
     void inputSanitizer_AllowsSafeInput() {
+        String safeInput = "Hello, world!";
         assertThat(inputSanitizer.containsXss(safeInput)).isFalse();
     }
 

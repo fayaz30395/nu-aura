@@ -100,7 +100,7 @@ class ContractTemplateServiceTest {
             when(templateRepository.save(any(ContractTemplate.class))).thenReturn(savedTemplate);
 
             // When
-            templateService.createTemplate(request);
+            var result = templateService.createTemplate(request);
 
             // Then
             verify(templateRepository).save(templateCaptor.capture());
@@ -241,7 +241,7 @@ class ContractTemplateServiceTest {
             request.setContent(Map.of("updated", "content"));
 
             // When
-            ContractTemplateDto result = templateService.updateTemplate(TEMPLATE_ID, request);
+            templateService.updateTemplate(TEMPLATE_ID, request);
 
             // Then
             verify(templateRepository).save(templateCaptor.capture());
@@ -316,7 +316,7 @@ class ContractTemplateServiceTest {
                     .thenAnswer(inv -> inv.getArgument(0));
 
             // When
-            ContractTemplateDto result = templateService.toggleActive(TEMPLATE_ID);
+            templateService.toggleActive(TEMPLATE_ID);
 
             // Then
             verify(templateRepository).save(templateCaptor.capture());
@@ -335,7 +335,7 @@ class ContractTemplateServiceTest {
                     .thenAnswer(inv -> inv.getArgument(0));
 
             // When
-            ContractTemplateDto result = templateService.toggleActive(TEMPLATE_ID);
+            templateService.toggleActive(TEMPLATE_ID);
 
             // Then
             verify(templateRepository).save(templateCaptor.capture());

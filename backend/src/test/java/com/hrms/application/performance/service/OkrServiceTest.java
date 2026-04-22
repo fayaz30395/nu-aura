@@ -115,7 +115,7 @@ class OkrServiceTest {
             return saved;
         });
 
-        okrService.createObjective(newObjective);
+        Objective result = okrService.createObjective(newObjective);
 
         assertNotNull(result.getId());
         assertEquals(ObjectiveStatus.DRAFT, result.getStatus());
@@ -382,7 +382,7 @@ class OkrServiceTest {
                 .thenReturn(List.of(testKeyResult));
         when(objectiveRepository.save(any(Objective.class))).thenReturn(testObjective);
 
-        KeyResult result = okrService.updateKeyResultProgress(tenantId, keyResultId, newValue, "Good progress");
+        okrService.updateKeyResultProgress(tenantId, keyResultId, newValue, "Good progress");
 
         verify(checkInRepository).save(any(OkrCheckIn.class));
         verify(objectiveRepository).save(any(Objective.class));

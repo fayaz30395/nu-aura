@@ -1,7 +1,5 @@
 package com.hrms.api.attendance.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hrms.api.attendance.dto.*;
 import com.hrms.application.attendance.service.BiometricIntegrationService;
 import com.hrms.domain.attendance.BiometricApiKey;
@@ -28,7 +26,7 @@ class BiometricDeviceControllerTest {
 
     private static final UUID TENANT_ID = UUID.randomUUID();
     private static final UUID DEVICE_ID = UUID.randomUUID();
-            .registerModule(new JavaTimeModule());
+
     @Mock
     private BiometricIntegrationService biometricService;
     @InjectMocks

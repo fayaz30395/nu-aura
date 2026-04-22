@@ -291,7 +291,7 @@ class OfferLetterWorkflowIntegrationTest {
                     .letterTitle("Offer Letter - " + candidate.getFullName())
                     .build();
 
-            MvcResult result = mockMvc.perform(post("/api/v1/letters/generate-offer")
+            mockMvc.perform(post("/api/v1/letters/generate-offer")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())

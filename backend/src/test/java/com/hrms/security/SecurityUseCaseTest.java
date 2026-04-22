@@ -119,7 +119,7 @@ class SecurityUseCaseTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(result -> {
-                    result.getResponse().getStatus();
+                    int status = result.getResponse().getStatus();
                     // Not 403 CSRF error — confirms CSRF is disabled
                     assertThat(status).isNotEqualTo(403);
                 });
