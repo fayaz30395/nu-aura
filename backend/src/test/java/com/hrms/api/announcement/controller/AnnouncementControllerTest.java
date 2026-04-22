@@ -276,15 +276,14 @@ class AnnouncementControllerTest {
                     List.of(announcementDto), Pageable.ofSize(20), 1
             );
 
-            when(announcementService.getActiveAnnouncements(eq(employeeId), any(Pageable.class)))
+            when(announcementService.getActiveAnnouncements(isNull(), any(Pageable.class)))
                     .thenReturn(page);
 
-            mockMvc.perform(get(BASE_URL + "/active")
-                            .param("employeeId", employeeId.toString()))
+            mockMvc.perform(get(BASE_URL + "/active"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content", hasSize(1)));
 
-            verify(announcementService).getActiveAnnouncements(eq(employeeId), any(Pageable.class));
+            verify(announcementService).getActiveAnnouncements(isNull(), any(Pageable.class));
         }
     }
 
@@ -325,7 +324,7 @@ class AnnouncementControllerTest {
         @Test
         @DisplayName("Should return announcement by ID without employee context")
         void shouldReturnAnnouncementByIdWithoutEmployeeContext() throws Exception {
-            when(announcementService.getAnnouncementById(announcementId, null))
+            when(announcementService.getAnnouncementById(eq(announcementId), isNull()))
                     .thenReturn(announcementDto);
 
             mockMvc.perform(get(BASE_URL + "/{announcementId}", announcementId))
@@ -333,7 +332,7 @@ class AnnouncementControllerTest {
                     .andExpect(jsonPath("$.id").value(announcementId.toString()))
                     .andExpect(jsonPath("$.title").value("Company Holiday Notice"));
 
-            verify(announcementService).getAnnouncementById(announcementId, null);
+            verify(announcementService).getAnnouncementById(eq(announcementId), isNull());
         }
 
         @Test
@@ -343,15 +342,15 @@ class AnnouncementControllerTest {
                     .isRead(true)
                     .build();
 
-            when(announcementService.getAnnouncementById(announcementId, employeeId))
+            // Controller reads employeeId from SecurityContext (null in test), not from query param
+            when(announcementService.getAnnouncementById(eq(announcementId), isNull()))
                     .thenReturn(withReadStatus);
 
-            mockMvc.perform(get(BASE_URL + "/{announcementId}", announcementId)
-                            .param("employeeId", employeeId.toString()))
+            mockMvc.perform(get(BASE_URL + "/{announcementId}", announcementId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.isRead").value(true));
 
-            verify(announcementService).getAnnouncementById(announcementId, employeeId);
+            verify(announcementService).getAnnouncementById(eq(announcementId), isNull());
         }
     }
 
@@ -410,25 +409,25 @@ class AnnouncementControllerTest {
         @Test
         @DisplayName("Should mark announcement as read")
         void shouldMarkAnnouncementAsRead() throws Exception {
-            doNothing().when(announcementService).markAsRead(announcementId, employeeId);
+            // Controller reads employeeId from SecurityContext (null in test), not from query param
+            doNothing().when(announcementService).markAsRead(eq(announcementId), isNull());
 
-            mockMvc.perform(post(BASE_URL + "/{announcementId}/read", announcementId)
-                            .param("employeeId", employeeId.toString()))
+            mockMvc.perform(post(BASE_URL + "/{announcementId}/read", announcementId))
                     .andExpect(status().isOk());
 
-            verify(announcementService).markAsRead(announcementId, employeeId);
+            verify(announcementService).markAsRead(eq(announcementId), isNull());
         }
 
         @Test
         @DisplayName("Should accept announcement when requires acceptance")
         void shouldAcceptAnnouncement() throws Exception {
-            doNothing().when(announcementService).acceptAnnouncement(announcementId, employeeId);
+            // Controller reads employeeId from SecurityContext (null in test), not from query param
+            doNothing().when(announcementService).acceptAnnouncement(eq(announcementId), isNull());
 
-            mockMvc.perform(post(BASE_URL + "/{announcementId}/accept", announcementId)
-                            .param("employeeId", employeeId.toString()))
+            mockMvc.perform(post(BASE_URL + "/{announcementId}/accept", announcementId))
                     .andExpect(status().isOk());
 
-            verify(announcementService).acceptAnnouncement(announcementId, employeeId);
+            verify(announcementService).acceptAnnouncement(eq(announcementId), isNull());
         }
     }
 

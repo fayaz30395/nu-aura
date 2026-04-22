@@ -22,6 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -190,27 +193,29 @@ class RoleControllerTest {
         @Test
         @DisplayName("Should return list of roles with HTTP 200")
         void getAllRoles_returnsRoleList() throws Exception {
-            when(roleManagementService.getAllRoles()).thenReturn(List.of(sampleRoleResponse));
+            when(roleManagementService.getAllRoles(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(sampleRoleResponse)));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].code").value("HR_MANAGER"))
-                    .andExpect(jsonPath("$[0].name").value("HR Manager"));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(1))
+                    .andExpect(jsonPath("$.content[0].code").value("HR_MANAGER"))
+                    .andExpect(jsonPath("$.content[0].name").value("HR Manager"));
 
-            verify(roleManagementService).getAllRoles();
+            verify(roleManagementService).getAllRoles(any(Pageable.class));
         }
 
         @Test
         @DisplayName("Should return empty list when no roles exist")
         void getAllRoles_returnsEmptyList() throws Exception {
-            when(roleManagementService.getAllRoles()).thenReturn(List.of());
+            when(roleManagementService.getAllRoles(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(0));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0));
         }
     }
 

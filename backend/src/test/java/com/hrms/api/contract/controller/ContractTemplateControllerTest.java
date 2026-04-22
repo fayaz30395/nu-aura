@@ -235,7 +235,7 @@ class ContractTemplateControllerTest {
 
         mockMvc.perform(patch("/api/v1/contracts/templates/{templateId}/toggle-active", templateId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.active").value(false));
+                .andExpect(jsonPath("$.isActive").value(false));
 
         verify(templateService).toggleActive(templateId);
     }

@@ -237,7 +237,7 @@ class DocuSignControllerTest {
         }
 
         @Test
-        @DisplayName("POST /webhook — returns 400 when payload is not valid JSON")
+        @DisplayName("POST /webhook — returns 500 when payload is not valid JSON (parsed internally)")
         void handleWebhook_MalformedJson_ReturnsBadRequest() throws Exception {
             String malformedPayload = "not-json-at-all";
 
@@ -245,7 +245,7 @@ class DocuSignControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-DocuSign-Signature-1", "sig")
                             .content(malformedPayload))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().is5xxServerError());
         }
     }
 

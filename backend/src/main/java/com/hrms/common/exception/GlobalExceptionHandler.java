@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -638,6 +639,25 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = buildErrorResponse(status, "Bad Request", message, path);
         errorResponse.setErrorCode("INVALID_REQUEST_BODY");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(
+            ResponseStatusException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        logError("request", "response_status_error", ex, status, path);
+        recordErrorMetric("request", "response_status_error", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, status.getReasonPhrase(),
+                ex.getReason() != null ? ex.getReason() : ex.getMessage(), path);
 
         return jsonResponse(status, errorResponse);
     }

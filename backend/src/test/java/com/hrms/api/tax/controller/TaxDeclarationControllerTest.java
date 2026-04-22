@@ -296,23 +296,27 @@ class TaxDeclarationControllerTest {
                     .approvedAt(LocalDateTime.now())
                     .build();
 
-            when(taxDeclarationService.approveTaxDeclaration(eq(declarationId), eq(approverId)))
+            when(taxDeclarationService.approveTaxDeclaration(eq(declarationId), isNull()))
                     .thenReturn(approved);
 
-            mockMvc.perform(patch(BASE_URL + "/{id}/approve", declarationId)
-                            .param("approverId", approverId.toString()))
+            mockMvc.perform(patch(BASE_URL + "/{id}/approve", declarationId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("APPROVED"))
-                    .andExpect(jsonPath("$.approvedBy").value(approverId.toString()));
+                    .andExpect(jsonPath("$.status").value("APPROVED"));
 
-            verify(taxDeclarationService).approveTaxDeclaration(declarationId, approverId);
+            verify(taxDeclarationService).approveTaxDeclaration(eq(declarationId), isNull());
         }
 
         @Test
-        @DisplayName("Should return 400 when approverId param is missing")
+        @DisplayName("Should return 200 when approverId comes from security context")
         void shouldReturn400WhenApproverIdMissing() throws Exception {
+            TaxDeclarationResponse approved = TaxDeclarationResponse.builder()
+                    .id(declarationId)
+                    .status(TaxDeclaration.DeclarationStatus.APPROVED)
+                    .build();
+            when(taxDeclarationService.approveTaxDeclaration(eq(declarationId), isNull()))
+                    .thenReturn(approved);
             mockMvc.perform(patch(BASE_URL + "/{id}/approve", declarationId))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
         }
 
         @Test
@@ -349,17 +353,16 @@ class TaxDeclarationControllerTest {
                     .build();
 
             when(taxDeclarationService.rejectTaxDeclaration(eq(declarationId),
-                    eq(rejectorId), eq("Documentation incomplete")))
+                    isNull(), eq("Documentation incomplete")))
                     .thenReturn(rejected);
 
             mockMvc.perform(patch(BASE_URL + "/{id}/reject", declarationId)
-                            .param("rejectedBy", rejectorId.toString())
                             .param("reason", "Documentation incomplete"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("REJECTED"));
 
             verify(taxDeclarationService).rejectTaxDeclaration(
-                    eq(declarationId), eq(rejectorId), eq("Documentation incomplete"));
+                    eq(declarationId), isNull(), eq("Documentation incomplete"));
         }
 
         @Test
@@ -556,18 +559,17 @@ class TaxDeclarationControllerTest {
                     .status(com.hrms.domain.tax.TaxProof.ProofStatus.SUBMITTED)
                     .build();
 
-            when(taxDeclarationService.addTaxProof(eq(employeeId), any(TaxProofRequest.class)))
+            when(taxDeclarationService.addTaxProof(isNull(), any(TaxProofRequest.class)))
                     .thenReturn(proofResponse);
 
             mockMvc.perform(post(BASE_URL + "/proofs")
-                            .param("employeeId", employeeId.toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(proofRequest)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(proofId.toString()))
                     .andExpect(jsonPath("$.status").value("SUBMITTED"));
 
-            verify(taxDeclarationService).addTaxProof(eq(employeeId), any(TaxProofRequest.class));
+            verify(taxDeclarationService).addTaxProof(isNull(), any(TaxProofRequest.class));
         }
 
         @Test

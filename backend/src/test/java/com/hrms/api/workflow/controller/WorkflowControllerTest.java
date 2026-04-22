@@ -460,7 +460,7 @@ class WorkflowControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.delegateId").value(delegateId.toString()))
-                    .andExpect(jsonPath("$.isActive").value(true));
+                    .andExpect(jsonPath("$.active").value(true));
 
             verify(workflowService).createDelegation(any(ApprovalDelegateRequest.class));
         }
@@ -495,7 +495,7 @@ class WorkflowControllerTest {
             mockMvc.perform(get(BASE_URL + "/delegations/my"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$[0].isActive").value(true));
+                    .andExpect(jsonPath("$[0].active").value(true));
 
             verify(workflowService).getMyDelegations();
         }

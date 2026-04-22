@@ -129,7 +129,7 @@ class CompOffControllerTest {
             mockMvc.perform(post("/api/v1/comp-off/request")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isConflict());
         }
     }
 
@@ -281,7 +281,7 @@ class CompOffControllerTest {
             mockMvc.perform(post("/api/v1/comp-off/{requestId}/approve", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isConflict());
         }
     }
 

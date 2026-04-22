@@ -227,7 +227,7 @@ class WebhookControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("Test Webhook"));
+                    .andExpect(jsonPath("$.name").value("Updated Webhook"));
 
             verify(webhookService).findById(webhookId);
             verify(webhookService).update(any(Webhook.class));

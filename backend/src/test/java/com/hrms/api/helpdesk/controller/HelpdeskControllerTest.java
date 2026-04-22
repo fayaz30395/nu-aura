@@ -566,35 +566,35 @@ class HelpdeskControllerTest {
         }
 
         @Test
-        @DisplayName("updateTicket should require SYSTEM_ADMIN permission")
-        void updateTicketShouldRequireSystemAdmin() throws Exception {
+        @DisplayName("updateTicket should require HELPDESK_TICKET_RESOLVE permission")
+        void updateTicketShouldRequireHelpdeskTicketResolve() throws Exception {
             var method = HelpdeskController.class.getMethod(
                     "updateTicket", UUID.class, TicketRequest.class);
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.HELPDESK_TICKET_RESOLVE));
         }
 
         @Test
-        @DisplayName("assignTicket should require SYSTEM_ADMIN permission")
-        void assignTicketShouldRequireSystemAdmin() throws Exception {
+        @DisplayName("assignTicket should require HELPDESK_TICKET_ASSIGN permission")
+        void assignTicketShouldRequireHelpdeskTicketAssign() throws Exception {
             var method = HelpdeskController.class.getMethod(
                     "assignTicket", UUID.class, UUID.class);
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.HELPDESK_TICKET_ASSIGN));
         }
 
         @Test
-        @DisplayName("deleteTicket should require SYSTEM_ADMIN permission")
-        void deleteTicketShouldRequireSystemAdmin() throws Exception {
+        @DisplayName("deleteTicket should require HELPDESK_TICKET_MANAGE permission")
+        void deleteTicketShouldRequireHelpdeskTicketManage() throws Exception {
             var method = HelpdeskController.class.getMethod("deleteTicket", UUID.class);
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
             Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.SYSTEM_ADMIN));
+                    java.util.Arrays.asList(annotation.value()[0]).contains(Permission.HELPDESK_TICKET_MANAGE));
         }
     }
 }

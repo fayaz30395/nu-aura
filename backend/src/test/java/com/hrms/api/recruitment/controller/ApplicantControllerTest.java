@@ -110,7 +110,7 @@ class ApplicantControllerTest {
             mockMvc.perform(get("/api/v1/recruitment/applicants/{id}", applicantId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(applicantId.toString()))
-                    .andExpect(jsonPath("$.firstName").value("Jane"));
+                    .andExpect(jsonPath("$.candidateName").value("Jane Smith"));
 
             verify(applicantService).getApplicant(applicantId);
         }
@@ -128,7 +128,7 @@ class ApplicantControllerTest {
                             .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1))
-                    .andExpect(jsonPath("$.content[0].firstName").value("Jane"));
+                    .andExpect(jsonPath("$.content[0].candidateName").value("Jane Smith"));
 
             verify(applicantService).listApplicants(isNull(), isNull(), any(Pageable.class));
         }

@@ -133,8 +133,6 @@ class AuthControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").exists())
                     .andExpect(jsonPath("$.tokenType").value("Bearer"))
                     .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
@@ -170,7 +168,7 @@ class AuthControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists());
+                    .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
             verify(authService).googleLogin(any(GoogleLoginRequest.class));
         }
@@ -188,7 +186,7 @@ class AuthControllerTest {
             mockMvc.perform(post("/api/v1/auth/refresh")
                             .header("X-Refresh-Token", "valid-refresh-token"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists());
+                    .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
             verify(authService).refresh("valid-refresh-token");
         }

@@ -350,7 +350,7 @@ class ApprovalControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.delegateId").value(delegateId.toString()))
-                    .andExpect(jsonPath("$.isActive").value(true))
+                    .andExpect(jsonPath("$.active").value(true))
                     .andExpect(jsonPath("$.reason").value("Medical leave"));
 
             verify(workflowService).createDelegation(any(ApprovalDelegateRequest.class));
@@ -382,7 +382,7 @@ class ApprovalControllerTest {
             mockMvc.perform(get(BASE_URL + "/delegations/my"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
-                    .andExpect(jsonPath("$[0].isActive").value(true));
+                    .andExpect(jsonPath("$[0].active").value(true));
 
             verify(workflowService).getMyDelegations();
         }

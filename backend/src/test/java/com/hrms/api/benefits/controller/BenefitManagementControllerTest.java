@@ -78,6 +78,7 @@ class BenefitManagementControllerTest {
         @DisplayName("Should create benefit plan successfully")
         void shouldCreateBenefitPlanSuccessfully() throws Exception {
             BenefitPlanRequest request = new BenefitPlanRequest();
+            request.setPlanCode("HEALTH-001");
             request.setPlanName("Health Insurance");
             request.setBenefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE);
 
@@ -163,6 +164,7 @@ class BenefitManagementControllerTest {
         @DisplayName("Should update benefit plan")
         void shouldUpdateBenefitPlan() throws Exception {
             BenefitPlanRequest request = new BenefitPlanRequest();
+            request.setPlanCode("HEALTH-001");
             request.setPlanName("Updated Health Insurance");
             request.setBenefitType(BenefitPlan.BenefitType.HEALTH_INSURANCE);
 

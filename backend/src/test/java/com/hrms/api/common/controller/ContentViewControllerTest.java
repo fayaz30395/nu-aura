@@ -88,8 +88,8 @@ class ContentViewControllerTest {
         void shouldRecordView() throws Exception {
             try (MockedStatic<SecurityContext> ctx = mockStatic(SecurityContext.class)) {
                 ctx.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
-                doNothing().when(contentViewService).recordView(
-                        eq(ContentType.DOCUMENT), eq(contentId), eq(employeeId), isNull());
+                when(contentViewService.recordView(
+                        eq(ContentType.DOCUMENT), eq(contentId), eq(employeeId), isNull())).thenReturn(null);
 
                 mockMvc.perform(post("/api/v1/views/DOCUMENT/{contentId}", contentId))
                         .andExpect(status().isOk());
