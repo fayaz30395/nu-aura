@@ -391,20 +391,32 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
                 <configuration>
-                    <!-- Parallel Execution Configuration -->
+                    <!-- Parallel Execution: 4 forks × 2 intra-fork threads = 8 concurrent classes. -->
+                    <!-- Sized for 10-core / 16GB: 4 × 1536m heap ≈ 6GB, leaves headroom. -->
+                    <!-- reuseForks=true keeps Spring TestContextCache warm across classes in a fork. -->
+                    <forkCount>4</forkCount>
+                    <reuseForks>true</reuseForks>
                     <parallel>classes</parallel>
                     <threadCount>2</threadCount>
-                    <forkCount>0.5C</forkCount>
-                    <reuseForks>true</reuseForks>
                     <perCoreThreadCount>false</perCoreThreadCount>
+                    <forkedProcessTimeoutInSeconds>900</forkedProcessTimeoutInSeconds>
 
                     <!-- Memory Configuration (JaCoCo argLine is automatically prepended) -->
-                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
+                    <argLine>@{argLine} -Xmx1536m -Xms512m -XX:MaxMetaspaceSize=384m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -XX:TieredStopAtLevel=1 --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
                     </argLine>
 
                     <!-- Test Stability -->
                     <trimStackTrace>false</trimStackTrace>
                     <useSystemClassLoader>true</useSystemClassLoader>
+
+                    <!-- Skip JaCoCo during local parallel runs for speed -->
+                    <systemPropertyVariables>
+                        <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
+                        <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+                        <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                        <junit.jupiter.execution.parallel.config.strategy>fixed</junit.jupiter.execution.parallel.config.strategy>
+                        <junit.jupiter.execution.parallel.config.fixed.parallelism>2</junit.jupiter.execution.parallel.config.fixed.parallelism>
+                    </systemPropertyVariables>
 
                     <!-- Reports -->
                     <reportFormat>plain</reportFormat>
