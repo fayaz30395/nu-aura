@@ -6,7 +6,6 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.analytics.AttritionPrediction;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.analytics.repository.AttritionPredictionRepository;
-import com.hrms.infrastructure.analytics.repository.WorkforceTrendRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;

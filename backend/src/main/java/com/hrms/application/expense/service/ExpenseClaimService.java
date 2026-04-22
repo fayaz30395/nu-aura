@@ -787,6 +787,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
                 .orElse(false);
     }
 
+    @SuppressWarnings("null")
     private boolean isInCustomTargets(UUID employeeId, String permission) {
         // Check if employee is directly in custom employee targets
         Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);

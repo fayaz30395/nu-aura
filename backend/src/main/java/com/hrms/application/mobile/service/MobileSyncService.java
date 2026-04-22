@@ -48,6 +48,7 @@ public class MobileSyncService {
     /**
      * Helper method to fetch employee data changes since lastSyncAt
      */
+    @SuppressWarnings("unused")
     private void fetchEmployeeDataChanges(UUID tenantId, LocalDateTime lastSyncAt,
                                           List<MobileSyncDto.SyncResponse.EmployeeDataChange> changes) {
         // Query employee table for changes (created, updated, deleted) since lastSyncAt
@@ -57,6 +58,7 @@ public class MobileSyncService {
     /**
      * Helper method to fetch leave balance changes
      */
+    @SuppressWarnings("unused")
     private void fetchLeaveBalanceChanges(UUID userId, LocalDateTime lastSyncAt,
                                           List<MobileSyncDto.SyncResponse.LeaveBalanceChange> changes) {
         // Query leave balance table for changes since lastSyncAt
@@ -66,6 +68,7 @@ public class MobileSyncService {
     /**
      * Helper method to fetch attendance record changes
      */
+    @SuppressWarnings("unused")
     private void fetchAttendanceChanges(UUID userId, LocalDateTime lastSyncAt,
                                         List<MobileSyncDto.SyncResponse.AttendanceRecordChange> changes) {
         // Query attendance records for changes since lastSyncAt
@@ -75,6 +78,7 @@ public class MobileSyncService {
     /**
      * Helper method to fetch approval status changes
      */
+    @SuppressWarnings("unused")
     private void fetchApprovalChanges(UUID userId, LocalDateTime lastSyncAt,
                                       List<MobileSyncDto.SyncResponse.ApprovalChange> changes) {
         // Query approval instances for status changes since lastSyncAt
@@ -84,6 +88,7 @@ public class MobileSyncService {
     /**
      * Helper method to fetch new notifications
      */
+    @SuppressWarnings("unused")
     private void fetchNotificationChanges(UUID userId, LocalDateTime lastSyncAt,
                                           List<MobileSyncDto.SyncResponse.NotificationChange> changes) {
         // Query notifications for new/updated notifications since lastSyncAt

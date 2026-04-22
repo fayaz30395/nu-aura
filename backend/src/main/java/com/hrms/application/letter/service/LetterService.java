@@ -623,7 +623,8 @@ public class LetterService {
     }
 
     private String formatCurrency(java.math.BigDecimal amount) {
-        java.text.NumberFormat formatter = java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("en", "IN"));
+        java.util.Locale inLocale = new java.util.Locale.Builder().setLanguage("en").setRegion("IN").build();
+        java.text.NumberFormat formatter = java.text.NumberFormat.getCurrencyInstance(inLocale);
         return formatter.format(amount);
     }
 

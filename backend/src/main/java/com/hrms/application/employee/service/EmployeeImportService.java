@@ -264,7 +264,7 @@ public class EmployeeImportService {
                                     Map<String, UUID> departmentCodeToId,
                                     Map<String, UUID> employeeCodeToId) {
         // Build employee with required fields
-        Employee.EmployeeBuilder employeeBuilder = Employee.builder()
+        Employee.EmployeeBuilder<?, ?> employeeBuilder = Employee.builder()
                 .employeeCode(row.getEmployeeCode())
                 .user(user)
                 .firstName(row.getFirstName())

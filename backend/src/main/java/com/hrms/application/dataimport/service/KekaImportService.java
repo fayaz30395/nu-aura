@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service for KEKA HRMS data import
@@ -123,13 +122,9 @@ public class KekaImportService {
         String status = "SUCCESS";
         String importId = UUID.randomUUID().toString();
 
-        // Get default role
-        Role defaultRole = roleRepository.findByCodeAndTenantId(DEFAULT_ROLE_CODE, tenantId)
+        // Pre-flight: ensure default role exists (throws if missing)
+        roleRepository.findByCodeAndTenantId(DEFAULT_ROLE_CODE, tenantId)
                 .orElseThrow(() -> new IllegalStateException("Default EMPLOYEE role not found"));
-
-        // Create mapping lookup
-        Map<String, String> mappingLookup = request.getMappings().stream()
-                .collect(Collectors.toMap(KekaColumnMapping::getSourceColumn, KekaColumnMapping::getTargetField));
 
         try {
             // In a real implementation, you would:
@@ -255,6 +250,7 @@ public class KekaImportService {
     /**
      * Helper: Create or get user for employee
      */
+    @SuppressWarnings("unused")
     private User createOrGetUser(String email, String firstName, String lastName, UUID tenantId, Role defaultRole) {
         Optional<User> existingUser = userRepository.findByEmailAndTenantId(email, tenantId);
 
@@ -303,6 +299,7 @@ public class KekaImportService {
     /**
      * Helper: Create employee from mapped data
      */
+    @SuppressWarnings("unused")
     private Employee createEmployee(Map<String, String> rowData, User user, UUID tenantId,
                                     Map<String, String> mappingLookup) {
         String employeeCode = rowData.get(mappingLookup.get("employeeNumber"));

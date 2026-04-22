@@ -6,7 +6,6 @@ import com.hrms.application.platform.service.HrmsPermissionInitializer;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.domain.auth.SamlIdentityProvider;
 import com.hrms.domain.employee.Employee;
-import com.hrms.domain.platform.UserAppAccess;
 import com.hrms.domain.user.*;
 import com.hrms.infrastructure.auth.repository.SamlIdentityProviderRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;

@@ -314,7 +314,7 @@ public class GlobalPayrollService {
         run.setTotalNetBase(totalNet);
         run.setTotalEmployerCostBase(totalEmployerCost);
         run.setEmployeeCount(records.size());
-        run.setLocationCount(recordRepository.countDistinctLocationsByPayrollRun(runId));
+        run.setLocationCount(recordRepository.countDistinctLocationsByTenantIdAndPayrollRun(tenantId, runId));
         run.setErrorCount(errorCount);
         run.setProcessedAt(LocalDateTime.now());
         run.setProcessedBy(currentUserId);
@@ -348,8 +348,8 @@ public class GlobalPayrollService {
         run = payrollRunRepository.save(run);
 
         // Update all records to approved
-        List<EmployeePayrollRecord> records = recordRepository.findByPayrollRunAndStatus(
-                runId, EmployeePayrollRecord.RecordStatus.CALCULATED);
+        List<EmployeePayrollRecord> records = recordRepository.findByTenantIdAndPayrollRunAndStatus(
+                tenantId, runId, EmployeePayrollRecord.RecordStatus.CALCULATED);
         for (EmployeePayrollRecord record : records) {
             record.setStatus(EmployeePayrollRecord.RecordStatus.APPROVED);
             recordRepository.save(record);

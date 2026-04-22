@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @SQLRestriction("is_deleted = false")
@@ -21,7 +20,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class LeaveType extends TenantAware implements Serializable {
+public class LeaveType extends TenantAware {
 
     @Serial
     private static final long serialVersionUID = 1L;
