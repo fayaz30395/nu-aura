@@ -184,7 +184,6 @@ public class QuizManagementService {
 
         List<QuizQuestion> questions = questionRepository.findByQuizIdAndTenantIdOrderByOrderIndexAsc(quizId, tenantId);
         quiz.setQuestions(questions);
-        return quiz;
     }
 
     /**

@@ -85,7 +85,6 @@ class ValidationAndLoggingE2ETest {
     @Order(4)
     @DisplayName("E2E: InputSanitizer allows safe input")
     void inputSanitizer_AllowsSafeInput() {
-        String safeInput = "This is a normal text input with numbers 123 and symbols @#$";
         assertThat(inputSanitizer.containsXss(safeInput)).isFalse();
     }
 

@@ -3,7 +3,7 @@ package com.hrms.domain.payment;
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "payment_transactions", indexes = {
         @Index(name = "idx_payment_transaction_tenant", columnList = "tenantId"),

@@ -4,7 +4,6 @@ import com.hrms.common.config.CookieConfig;
 import com.hrms.common.config.DistributedRateLimiter;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -369,7 +368,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             limit = requestsPerMinute * 5;       // API keys: 5× limit
         }
 
-        Bandwidth bandwidth = Bandwidth.classic(limit, Refill.intervally(limit, Duration.ofMinutes(1)));
+        Bandwidth bandwidth = Bandwidth.builder()
+                .capacity(limit)
+                .refillIntervally(limit, Duration.ofMinutes(1))
+                .build();
         return Bucket.builder().addLimit(bandwidth).build();
     }
 

@@ -2,7 +2,7 @@ package com.hrms.domain.leave;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 // now cause an ObjectOptimisticLockingFailureException instead of a silent
 // last-write-wins race that can over-spend leave balances.
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "leave_balances", indexes = {
         @Index(name = "idx_leave_balances_tenant_id", columnList = "tenantId"),

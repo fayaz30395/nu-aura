@@ -184,8 +184,6 @@ public class EmployeeLifecycleConsumer {
             }
 
             // Assign onboarding tasks via OnboardingManagementService
-            UUID onboardingManagerId = null;
-            UUID mentorId = null;
             if (metadata != null) {
                 Object mgr = metadata.get("onboardingManagerId");
                 Object mentor = metadata.get("mentorId");
@@ -465,7 +463,7 @@ public class EmployeeLifecycleConsumer {
             }
 
             // Notify team and manager
-            UUID managerId = event.getManagerId();
+            event.getManagerId();
             try {
                 // In production, would call notificationService.notifyOffboarding()
                 log.debug("Notified team of employee offboarding: {}", employeeId);

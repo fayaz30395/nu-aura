@@ -193,7 +193,7 @@ class AuditLogServiceTest {
                         return log;
                     });
 
-            String longUserAgent = "A".repeat(600);
+            "A".repeat(600);
 
             // Act
             AuditLog result = auditLogService.logAction(

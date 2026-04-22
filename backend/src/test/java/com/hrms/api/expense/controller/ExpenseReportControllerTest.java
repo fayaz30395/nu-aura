@@ -55,8 +55,8 @@ class ExpenseReportControllerTest {
         @Test
         @DisplayName("Should generate expense report for date range")
         void shouldGenerateExpenseReportForDateRange() throws Exception {
-            LocalDate startDate = LocalDate.of(2024, 1, 1);
-            LocalDate endDate = LocalDate.of(2024, 1, 31);
+            LocalDate.of(2024, 1, 1);
+            LocalDate.of(2024, 1, 31);
 
             Map<String, Object> report = new HashMap<>();
             report.put("totalExpenses", 15000.00);

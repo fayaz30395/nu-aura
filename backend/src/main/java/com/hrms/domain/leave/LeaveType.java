@@ -2,7 +2,7 @@ package com.hrms.domain.leave;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "leave_types", indexes = {
         @Index(name = "idx_leave_types_tenant_id", columnList = "tenantId"),

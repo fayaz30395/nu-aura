@@ -57,7 +57,6 @@ public class CacheMetricsConfig {
         CacheStats stats = getOrCreateStats(cacheName);
 
         long startTime = System.nanoTime();
-        boolean wasHit = false;
 
         try {
             // Execute the method - Spring Cache will handle the caching

@@ -146,7 +146,7 @@ class ContractServiceTest {
             when(contractRepository.save(any(Contract.class))).thenReturn(savedContract);
 
             // When
-            ContractDto result = contractService.createContract(request);
+            contractService.createContract(request);
 
             // Then
             verify(contractRepository).save(contractCaptor.capture());

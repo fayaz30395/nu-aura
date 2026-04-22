@@ -2,7 +2,7 @@ package com.hrms.domain.engagement;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "one_on_one_meetings", indexes = {
         @Index(name = "idx_meeting_tenant", columnList = "tenant_id"),

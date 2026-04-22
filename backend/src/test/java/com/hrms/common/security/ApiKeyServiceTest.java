@@ -85,7 +85,6 @@ class ApiKeyServiceTest {
         @DisplayName("should use prefix-based lookup, not findAll()")
         void validateApiKey_UsesPrefixLookup_NotFindAll() {
             String rawKey = API_KEY_PREFIX + "12345678abcdefghijklmnop";
-            String keyWithoutPrefix = "12345678abcdefghijklmnop";
             String keyPrefix = "12345678";
 
             when(apiKeyRepository.findActiveByKeyPrefix(keyPrefix))

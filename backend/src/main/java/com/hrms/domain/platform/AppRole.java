@@ -2,7 +2,7 @@ package com.hrms.domain.platform;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -16,7 +16,7 @@ import java.util.Set;
  * A user can have different roles in different applications.
  * Example: Admin in HRMS, Viewer in CRM
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "app_roles", indexes = {
         @Index(name = "idx_app_role_tenant", columnList = "tenantId"),

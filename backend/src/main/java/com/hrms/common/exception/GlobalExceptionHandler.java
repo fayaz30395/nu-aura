@@ -579,7 +579,7 @@ public class GlobalExceptionHandler {
      * BUG-007 FIX: Handle Hibernate ObjectNotFoundException.
      *
      * <p>Thrown when an eagerly-loaded {@code @OneToOne} or {@code @ManyToOne}
-     * association references a row that is excluded by {@code @Where(clause = "is_deleted = false")}.
+     * association references a row that is excluded by {@code @SQLRestriction("is_deleted = false")}.
      * Hibernate cannot satisfy the non-nullable join and throws this instead of
      * returning {@code null}. Without this handler it falls through to the generic
      * {@code Exception} handler and returns 500.</p>

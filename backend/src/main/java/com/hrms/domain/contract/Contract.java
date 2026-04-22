@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Contract entity representing employment, vendor, NDA, and other contracts
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "contracts", indexes = {
         @Index(name = "idx_contracts_tenant_id", columnList = "tenant_id"),

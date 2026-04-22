@@ -309,7 +309,11 @@ public class MonitoringService {
                 .stream()
                 .mapToDouble(t -> {
                     try {
-                        return t.percentile(0.95, TimeUnit.MILLISECONDS);
+                        return java.util.Arrays.stream(t.takeSnapshot().percentileValues())
+                                .filter(v -> Math.abs(v.percentile() - 0.95) < 0.001)
+                                .mapToDouble(v -> v.value(TimeUnit.MILLISECONDS))
+                                .findFirst()
+                                .orElseGet(() -> t.mean(TimeUnit.MILLISECONDS));
                     } catch (Exception e) { // Intentional broad catch — health check error boundary
                         return t.mean(TimeUnit.MILLISECONDS);
                     }

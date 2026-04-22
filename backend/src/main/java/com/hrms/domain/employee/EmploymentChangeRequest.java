@@ -2,7 +2,7 @@ package com.hrms.domain.employee;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * When Admin/Super Admin edits employment details, a change request is created
  * and must be approved by HR Manager before the changes are applied.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "employment_change_requests")
 @Getter

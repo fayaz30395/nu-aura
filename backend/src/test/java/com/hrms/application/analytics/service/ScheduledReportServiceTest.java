@@ -645,7 +645,7 @@ class ScheduledReportServiceTest {
                     .thenReturn(List.of());
 
             // When
-            ScheduledReportResponse response = scheduledReportService.toggleStatus(reportId, createdBy);
+            scheduledReportService.toggleStatus(reportId, createdBy);
 
             // Then
             ArgumentCaptor<ScheduledReport> captor = ArgumentCaptor.forClass(ScheduledReport.class);

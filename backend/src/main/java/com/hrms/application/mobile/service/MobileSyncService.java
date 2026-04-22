@@ -24,7 +24,7 @@ public class MobileSyncService {
      * Supports offline-first mobile patterns
      */
     public MobileSyncDto.SyncResponse deltaSync(MobileSyncDto.SyncRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
         LocalDateTime now = LocalDateTime.now();
 

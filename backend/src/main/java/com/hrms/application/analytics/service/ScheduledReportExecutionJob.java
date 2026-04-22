@@ -115,7 +115,6 @@ public class ScheduledReportExecutionJob {
             // Parse parameters
             Map<String, Object> params = parseParameters(scheduledReport.getParameters());
             String reportType = (String) params.getOrDefault("reportType", "ANALYTICS");
-            String exportFormat = (String) params.getOrDefault("exportFormat", "EXCEL");
 
             // Generate the report
             ReportGenerationService.ReportResult reportResult = generateReport(

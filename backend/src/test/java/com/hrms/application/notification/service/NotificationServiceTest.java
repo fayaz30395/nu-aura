@@ -151,7 +151,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should get user notifications with pagination")
         void shouldGetUserNotificationsWithPagination() {
-            Pageable pageable = PageRequest.of(0, 10);
+            PageRequest.of(0, 10);
             Page<Notification> page = new PageImpl<>(List.of(notification));
             when(notificationRepository.findByTenantIdAndUserIdOrderByCreatedAtDesc(eq(tenantId), eq(userId), any(Pageable.class)))
                     .thenReturn(page);

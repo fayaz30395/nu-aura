@@ -2,11 +2,11 @@ package com.hrms.domain.knowledge;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "template_instantiations", indexes = {
         @Index(name = "idx_template_instantiations_tenant", columnList = "tenantId"),

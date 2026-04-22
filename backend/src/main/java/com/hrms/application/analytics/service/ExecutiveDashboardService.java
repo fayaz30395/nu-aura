@@ -47,7 +47,7 @@ public class ExecutiveDashboardService {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
         int currentYear = today.getYear();
-        int currentMonth = today.getMonthValue();
+        today.getMonthValue();
 
         log.info("Building executive dashboard for tenant: {}", tenantId);
 
@@ -83,7 +83,7 @@ public class ExecutiveDashboardService {
                 .build());
 
         // 2. Monthly Payroll Cost
-        YearMonth currentMonth = YearMonth.now();
+        YearMonth.now();
         BigDecimal monthlyPayroll = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
                 tenantId, currentMonth.getYear(), currentMonth.getMonthValue());
         if (monthlyPayroll == null) monthlyPayroll = BigDecimal.ZERO;

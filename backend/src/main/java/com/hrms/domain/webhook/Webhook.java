@@ -3,7 +3,7 @@ package com.hrms.domain.webhook;
 import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
  * <p>Allows external systems to receive real-time notifications
  * for events occurring within the HRMS platform.</p>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "webhooks", indexes = {
         @Index(name = "idx_webhook_tenant", columnList = "tenantId"),

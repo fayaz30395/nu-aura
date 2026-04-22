@@ -2,7 +2,7 @@ package com.hrms.domain.attendance;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,7 +12,7 @@ import java.time.LocalDate;
  * A restricted (optional) holiday that employees can choose from a predefined list.
  * Each tenant defines which holidays are available; employees select within their quota.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "restricted_holidays", indexes = {
         @Index(name = "idx_restricted_holidays_tenant_id", columnList = "tenantId"),

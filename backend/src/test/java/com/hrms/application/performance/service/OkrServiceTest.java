@@ -115,7 +115,7 @@ class OkrServiceTest {
             return saved;
         });
 
-        Objective result = okrService.createObjective(newObjective);
+        okrService.createObjective(newObjective);
 
         assertNotNull(result.getId());
         assertEquals(ObjectiveStatus.DRAFT, result.getStatus());

@@ -16,6 +16,7 @@ import com.hrms.application.integration.service.IntegrationConnectorConfigServic
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -433,9 +434,9 @@ public class DocuSignController {
         }
 
         // Compute the expected signature
-        String expectedSignature = HmacUtils.hmacSha256Hex(
-                hmacSecret.getBytes(StandardCharsets.UTF_8),
-                payload.getBytes(StandardCharsets.UTF_8));
+        String expectedSignature = new HmacUtils(HmacAlgorithms.HMAC_SHA_256,
+                hmacSecret.getBytes(StandardCharsets.UTF_8))
+                .hmacHex(payload.getBytes(StandardCharsets.UTF_8));
 
         // Compare signatures (constant-time comparison to prevent timing attacks)
         return MessageDigestUtils.constantTimeEquals(docuSignSignature, expectedSignature);

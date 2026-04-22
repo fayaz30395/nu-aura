@@ -2,7 +2,7 @@ package com.hrms.domain.platform;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Represents a tenant's subscription/access to an NU application.
  * Controls which applications are enabled for each tenant.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "tenant_applications", indexes = {
         @Index(name = "idx_tenant_app_tenant", columnList = "tenantId"),

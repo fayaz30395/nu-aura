@@ -32,7 +32,7 @@ public class PaymentConfigController {
             @Valid @RequestBody PaymentConfigDto request) {
 
         paymentFeatureGuard.requirePaymentsEnabled();
-        PaymentConfig config = request.toEntity();
+        request.toEntity();
         PaymentConfig saved = paymentService.savePaymentConfig(config);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -46,7 +46,7 @@ public class PaymentConfigController {
     @RequiresPermission(Permission.PAYMENT_CONFIG_MANAGE)
     public ResponseEntity<String> testConnection(@Valid @RequestBody PaymentConfigDto request) {
         paymentFeatureGuard.requirePaymentsEnabled();
-        PaymentConfig config = request.toEntity();
+        request.toEntity();
         // In real implementation, call adapter to test connection
         return ResponseEntity.ok("Connection test initiated. Check logs for results.");
     }

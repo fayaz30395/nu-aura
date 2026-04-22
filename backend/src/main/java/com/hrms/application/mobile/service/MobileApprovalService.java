@@ -24,8 +24,8 @@ public class MobileApprovalService {
      */
     @Transactional(readOnly = true)
     public MobileApprovalDto.PendingApprovalsResponse getPendingApprovals() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
+        TenantContext.getCurrentTenant();
+        SecurityContext.getCurrentUserId();
 
         // Fetch pending approvals from ApprovalService
         // This is a placeholder - integrate with actual approval service
@@ -53,8 +53,8 @@ public class MobileApprovalService {
     @Transactional
     public MobileApprovalDto.ApprovalActionResponse actionApproval(
             MobileApprovalDto.ApprovalActionRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
+        TenantContext.getCurrentTenant();
+        SecurityContext.getCurrentUserId();
 
         // Process approval action through ApprovalService
         // This is a placeholder - integrate with actual approval service

@@ -135,7 +135,7 @@ class ContractLifecycleSchedulerTest {
             when(contractRepository.findActiveContractsPastEndDate(TENANT_A))
                     .thenReturn(List.of(contract));
 
-            int result = scheduler.autoExpireContracts(TENANT_A);
+            scheduler.autoExpireContracts(TENANT_A);
 
             assertThat(result).isEqualTo(1);
             verify(contractRepository).save(contractCaptor.capture());

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.domain.integration.ConnectorConfig;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -185,13 +184,13 @@ public class DocuSignAuthService {
             String tokenEndpoint = baseUrl.replaceAll("/+$", "") + "/oauth/token";
 
             return Jwts.builder()
-                    .setIssuer(integrationKey)
-                    .setSubject(userId)
-                    .setAudience(tokenEndpoint)
-                    .setIssuedAt(now)
-                    .setExpiration(expiration)
+                    .issuer(integrationKey)
+                    .subject(userId)
+                    .audience().add(tokenEndpoint).and()
+                    .issuedAt(now)
+                    .expiration(expiration)
                     .claim("scope", "signature impersonation")
-                    .signWith(privateKey, SignatureAlgorithm.RS256)
+                    .signWith(privateKey, Jwts.SIG.RS256)
                     .compact();
         } catch (Exception e) { // Intentional broad catch — DocuSign API integration
             log.error("Failed to create JWT assertion", e);

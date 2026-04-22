@@ -3,7 +3,7 @@ package com.hrms.domain.platform;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
  * <p>
  * A single user can have access to multiple applications with different roles.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "user_app_access", indexes = {
         @Index(name = "idx_user_app_user", columnList = "user_id"),

@@ -106,7 +106,7 @@ public class WikiInlineCommentController {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        UUID tenantId = TenantContext.getCurrentTenant();
+        TenantContext.getCurrentTenant();
         Map<UUID, Employee> authorsByUserId = authorUserIds.isEmpty()
                 ? Map.of()
                 : employeeRepository.findAllByUserIdIn(authorUserIds).stream()
@@ -143,7 +143,7 @@ public class WikiInlineCommentController {
         String avatarUrl = null;
 
         if (comment.getCreatedBy() != null) {
-            UUID tenantId = TenantContext.getCurrentTenant();
+            TenantContext.getCurrentTenant();
             Employee author = employeeRepository.findByUserIdWithUser(comment.getCreatedBy(), tenantId)
                     .orElse(null);
             if (author != null) {

@@ -254,7 +254,7 @@ public class RecognitionService {
         // Upcoming milestones
         LocalDate today = LocalDate.now();
         LocalDate nextWeek = today.plusDays(7);
-        List<Milestone> upcomingMilestones = milestoneRepository.findUpcoming(tenantId, today, nextWeek);
+        milestoneRepository.findUpcoming(tenantId, today, nextWeek);
 
         return EngagementDashboardResponse.builder()
                 .totalRecognitionsThisMonth(monthlyRecognitions.size())

@@ -1,0 +1,847 @@
+[
+  {
+    "id": "mem-MEMORY-product-vision",
+    "key": "product-vision",
+    "content": "- [Product Vision](project_product_vision.md) — Internal platform for NULogic; NU-HRMS replaces KEKA; distributed workforce",
+    "summary": "Product Vision",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333982
+  },
+  {
+    "id": "mem-MEMORY-workflow-preferences",
+    "key": "workflow-preferences",
+    "content": "- [Always work on main branch](feedback_always_main_branch.md) — no feature branches\n- [Compact desktop-first UI sizing](feedback_compact_sizing.md) — 36px buttons, text-xs labels, w-8 icons\n- [Always remove git index.lock](feedback_git_lock_removal.md) — multi-agent workflows create stale locks, always rm -f",
+    "summary": "Workflow Preferences",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333982
+  },
+  {
+    "id": "mem-MEMORY-active-state",
+    "key": "active-state",
+    "content": "- [Production Readiness (2026-04-08)](project_production_readiness_2026_04_07.md) — 21 bugs fixed, 27 cataloged, RBAC verified across 6 roles\n- [Flyway Migration Status](project_flyway_status.md) — Next: V129, latest: V128 (deleted_at fix for 20 tables)\n- [QA Test Plan & Results](project_qa_test_plan.md) — 93/349 tested, 51 pass, result files in docs/qa/",
+    "summary": "Active State",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333982
+  },
+  {
+    "id": "mem-MEMORY-recent-work",
+    "key": "recent-work",
+    "content": "- [NU-Hire + NU-Fluence Gap Closure](project_hire_fluence_gaps_2026_04_05.md) — Agencies, inline comments, wall trending, all gaps closed\n- [Design System Overhaul](project_design_system_overhaul.md) — Blue monochrome + skeuomorphism + full consistency sweep\n- [Sonar Issue Fixes](project_sonar_fixes_2026_03_30.md) — Lint cleanup + Sonar remediation across frontend & backend",
+    "summary": "Recent Work",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333982
+  },
+  {
+    "id": "mem-MEMORY-platform-architecture",
+    "key": "platform-architecture",
+    "content": "NU-AURA is a **bundle app platform** with 4 sub-applications:\n- **NU-HRMS** (~98%) — 261 pages, 170+ controllers, 360 entities — production-ready\n- **NU-Hire** (~97%) — Recruitment, agencies, scorecards (new API), onboarding, career page, e-sign\n- **NU-Grow** (~92%) — Reviews, OKRs, 360 feedback, LMS, training, surveys, wellness\n- **NU-Fluence** (~90%) — Wiki (18 routes, 30+ components), blogs, templates, search, AI chat, wall\n\n**Codebase:** 261 routes | 170+ controllers | 206+ services | 360+ e",
+    "summary": "Platform Architecture",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333982
+  },
+  {
+    "id": "mem-feedback_always_main_branch----",
+    "key": "-",
+    "content": "name: Always work on main branch\ndescription: User prefers all commits directly on main branch — do not create feature branches\ntype: feedback\n---\n\nAlways commit directly to `main` branch. Do not create feature branches unless explicitly asked.\n\n**Why:** User prefers a simpler workflow without branch management overhead.\n\n**How to apply:** Skip the branch creation step in commit workflows. Commit directly to whatever branch is current (which should be `main`).",
+    "summary": "---",
+    "namespace": "feedback_always_main_branch",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/feedback_always_main_branch.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333983
+  },
+  {
+    "id": "mem-feedback_compact_sizing----",
+    "key": "-",
+    "content": "name: Compact desktop-first UI sizing\ndescription: NU-AURA is desktop-first — never apply mobile 44px touch targets or inflate component sizes based on mobile UX audits\ntype: feedback\n---\n\nAlways use compact, professional sizing for NU-AURA components. This is a desktop-first internal HR tool.\n\n**Why:** Generic UX audit tools apply mobile/consumer app standards (44px touch targets, larger text) that make NU-AURA look bloated and unprofessional. User explicitly rejected inflated sizes after an au",
+    "summary": "---",
+    "namespace": "feedback_compact_sizing",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/feedback_compact_sizing.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333984
+  },
+  {
+    "id": "mem-feedback_git_lock_removal----",
+    "key": "-",
+    "content": "name: Always allow git index.lock removal\ndescription: Always remove .git/index.lock without asking — multi-agent workflows create stale locks\ntype: feedback\noriginSessionId: e09b1b84-8f5f-4e3e-8d54-a3d4a992ff97\n---\nAlways remove `.git/index.lock` without hesitation when it blocks git operations.\n\n**Why:** Multi-agent QA+DEV loops frequently leave stale lock files when background agents crash or timeout mid-git-operation. The user runs parallel agents that all touch the same repo, so lock confli",
+    "summary": "---",
+    "namespace": "feedback_git_lock_removal",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/feedback_git_lock_removal.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333985
+  },
+  {
+    "id": "mem-project_design_system_overhaul----",
+    "key": "-",
+    "content": "name: design-system-overhaul\ndescription: Full blue monochrome + skeuomorphism design system migration (April 2026) — color rules, file list, scan results\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_design_system_overhaul",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_design_system_overhaul.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333985
+  },
+  {
+    "id": "mem-project_design_system_overhaul-design-system-overhaul---april",
+    "key": "design-system-overhaul-april-1-2-2026",
+    "content": "Complete migration from mixed-palette (Lapis Blue/Teal/Purple) to blue monochrome (hue ~228) with skeuomorphism.\n\n**Why:** The original palette mixed teal, purple, and blue creating visual inconsistency. The user wanted a \"simple clean elegant professional\" look following NULogic's blue branding.\n\n**How to apply:** All frontend colors, shadows, borders, backgrounds, and spacing are defined in `frontend/app/globals.css` CSS variables. Components reference these via `var(--token)` or Tailwind toke",
+    "summary": "Design System Overhaul — April 1-2, 2026",
+    "namespace": "project_design_system_overhaul",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_design_system_overhaul.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333986
+  },
+  {
+    "id": "mem-project_flyway_status----",
+    "key": "-",
+    "content": "name: Flyway Migration Status\ndescription: Current Flyway migration version tracking — next available version and recent migrations\ntype: project\noriginSessionId: 83501c76-d0e4-4024-8a1b-9e7472e90780\n---",
+    "summary": "---",
+    "namespace": "project_flyway_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_flyway_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333986
+  },
+  {
+    "id": "mem-project_flyway_status-flyway-status--as-of-april-10-",
+    "key": "flyway-status-as-of-april-10-2026-",
+    "content": "**Latest applied:** V137__add_payroll_recalculation_flag.sql\n**Next available:** V138\n**Total files on disk:** 129 (V0–V128, some gaps in numbering)\n\n### Recent Migrations (V120–V128, all from QA+DEV sessions)\n- **V120** — Password history table\n- **V121** — Reset demo user passwords (tenant 660e8400)\n- **V122** — Reset ALL demo passwords across ALL tenants\n- **V123** — Fix recognitions missing columns\n- **V124** — Fix expense_claims missing columns (title, policy_id, etc.)\n- **V125** — Add is_d",
+    "summary": "Flyway Status (as of April 10, 2026)",
+    "namespace": "project_flyway_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_flyway_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333986
+  },
+  {
+    "id": "mem-project_forensic_wave12_status----",
+    "key": "-",
+    "content": "name: Wave 12 Forensic Analysis & Fixes Status\ndescription: Status of the 9-agent forensic analysis, security fixes, feature gaps, and QA verification completed 2026-03-27/28\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_forensic_wave12_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_forensic_wave12_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333987
+  },
+  {
+    "id": "mem-project_forensic_wave12_status-wave-12---forensic-analysis---",
+    "key": "wave-12-forensic-analysis-production-hardening-202",
+    "content": "**Status: 100% COMPLETE**\n\n### What Was Done (33 agents total)\n\n**Phase 1: Forensic Analysis (9 agents) — COMPLETE**\n- 267 findings across all layers (48 CRITICAL, 99 HIGH, 78 MEDIUM, 42 LOW)\n- Report at `docs/forensic-analysis-report.md`\n- KEKA gap analysis at `/tmp/nu-aura-analysis/keka-gap-analysis.md` (82% feature parity)\n\n**Phase 2: P0 Security Fixes (5 agents) — COMPLETE, PUSHED**\n- SpEL injection (RCE) → SimpleEvaluationContext in PayrollComponentService\n- Payslip IDOR → scope-based acces",
+    "summary": "Wave 12 — Forensic Analysis & Production Hardening (2026-03-27/28)",
+    "namespace": "project_forensic_wave12_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_forensic_wave12_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333987
+  },
+  {
+    "id": "mem-project_forensic_wave12_status-waves-13-17---keka-gap-feature",
+    "key": "waves-13-17-keka-gap-features-schema-extensions-20",
+    "content": "**Status: COMPLETE**\n\n**Migrations added (V82-V89):**\n- V82: LWF (Labour Welfare Fund) statutory deduction tables\n- V83: Default letter templates seed data\n- V84: SAML identity provider tables (SSO integration)\n- V85: Restricted holidays tables\n- V86: Biometric device integration tables\n- V87: Statutory filing tables\n- V88: Expense management extension tables\n- V89: Shift management enhancement tables\n\n**Codebase growth (Wave 12 baseline -> post-Wave 17):**\n- Entities: 265 -> 297 (+32)\n- Reposit",
+    "summary": "Waves 13-17 — KEKA Gap Features & Schema Extensions (2026-03-28/29)",
+    "namespace": "project_forensic_wave12_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_forensic_wave12_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333987
+  },
+  {
+    "id": "mem-project_hire_fluence_gaps_2026_04_05----",
+    "key": "-",
+    "content": "name: NU-Hire and NU-Fluence Gap Closure\ndescription: Feature gap tracking for NU-Hire (scorecards, diversity, agencies) and NU-Fluence (pages, permissions, export, inline comments)\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_hire_fluence_gaps_2026_04_05",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_hire_fluence_gaps_2026_04_05.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333988
+  },
+  {
+    "id": "mem-project_hire_fluence_gaps_2026_04_05-nu-hire-status--as-of-2026-04-",
+    "key": "nu-hire-status-as-of-2026-04-07-",
+    "content": "1. **Structured Interview Scorecards** — DONE. V116 migration, entities, frontend views.\n2. **EEOC/Diversity Tracking** — DONE. V116 migration, optional self-reported fields.\n3. **Agency Portal** — DONE. V118 migration (agencies + submissions tables). Backend: entity, controller, service, DTOs, 5 permissions. Frontend: list page (CRUD modal, stats, search/filter), detail page (contact, contract, performance metrics, submissions table), sidebar nav, hooks, service, types.",
+    "summary": "NU-Hire Status (as of 2026-04-07)",
+    "namespace": "project_hire_fluence_gaps_2026_04_05",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_hire_fluence_gaps_2026_04_05.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333988
+  },
+  {
+    "id": "mem-project_hire_fluence_gaps_2026_04_05-nu-fluence-status--as-of-2026-",
+    "key": "nu-fluence-status-as-of-2026-04-07-",
+    "content": "1. **Nested Page Hierarchy** — DONE. Tree queries, breadcrumbs, movePage, WikiPageTree component.\n2. **Per-Space Permissions** — DONE. V117 migration, SpaceMember entity, SpacePermissionsDrawer.\n3. **PDF/Word Export** — DONE. WikiExportService, export button in wiki view.\n4. **Inline Comments** — DONE. V119 migration, WikiInlineComment entity, REST API, InlineCommentsPanel component (text selection, threaded replies, resolve/delete), integrated into wiki page view.\n5. **Macros** — DONE. MacroRen",
+    "summary": "NU-Fluence Status (as of 2026-04-07)",
+    "namespace": "project_hire_fluence_gaps_2026_04_05",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_hire_fluence_gaps_2026_04_05.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333988
+  },
+  {
+    "id": "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
+    "key": "remaining-gaps",
+    "content": "**NU-Hire:**\n- Agency self-service portal (external agency user login) — not started, lower priority\n\n**NU-Fluence:**\n- Real-time WebSocket updates for inline comments — not started\n- Inline comment notifications/mentions — not started\n- Advanced Drive features (folders, sharing) — basic file upload done\n\n**Why:** NU-Hire agencies needed for vendor management parity. NU-Fluence inline comments needed for Confluence parity.\n**How to apply:** Frontend is now ~90% complete for Fluence. Focus remain",
+    "summary": "Remaining Gaps",
+    "namespace": "project_hire_fluence_gaps_2026_04_05",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_hire_fluence_gaps_2026_04_05.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333988
+  },
+  {
+    "id": "mem-project_platform_readiness_plan----",
+    "key": "-",
+    "content": "name: Platform Readiness Plan (April 2026)\ndescription: 30-decision grill-me session results — RBAC lockdown + feature completion plan with 3 parallel streams\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_platform_readiness_plan",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_platform_readiness_plan.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333989
+  },
+  {
+    "id": "mem-project_platform_readiness_plan-platform-readiness-plan---lock",
+    "key": "platform-readiness-plan-locked-april-1-2026",
+    "content": "**Goal:** NU-AURA production-ready with complete RBAC + core features working. Option B+C from grill-me session.\n\n**Plan file:** `docs/superpowers/plans/2026-04-01-platform-readiness-rbac-features.md`\n\n### Key Decisions\n\n1. **HR_ADMIN** is a real backend role (rank 85, between TENANT_ADMIN and HR_MANAGER). Needs Flyway V94 + RoleHierarchy.java update.\n2. **Permission canonical source:** `Permission.java` (backend). Frontend derives from it. DB format: `module.action`. Frontend normalizes to `MOD",
+    "summary": "Platform Readiness Plan — Locked April 1, 2026",
+    "namespace": "project_platform_readiness_plan",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_platform_readiness_plan.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333989
+  },
+  {
+    "id": "mem-project_product_vision----",
+    "key": "-",
+    "content": "name: NU-AURA Product Vision\ndescription: Product vision — internal platform for NULogic, NU-HRMS replaces KEKA, distributed workforce across regions/timezones/projects\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_product_vision",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_product_vision.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333990
+  },
+  {
+    "id": "mem-project_product_vision-product-vision--corrected-2026",
+    "key": "product-vision-corrected-2026-04-02-",
+    "content": "### What NU-AURA Actually Is\n**NU-AURA is an internal platform**, not a SaaS product for sale. It provides shared SSO, RBAC (500+ permissions), and common infrastructure for multiple internal applications at NULogic.\n\n**Why:** Previously misunderstood as a multi-tenant SaaS product. Corrected by the user: this is built by NULogic, for NULogic.\n\n### Why NU-HRMS Exists\nNULogic currently pays for KEKA. NU-HRMS is being built as a direct replacement to eliminate that cost. This is the #1 priority — ",
+    "summary": "Product Vision (corrected 2026-04-02)",
+    "namespace": "project_product_vision",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_product_vision.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333990
+  },
+  {
+    "id": "mem-project_production_readiness_2026_04_07----",
+    "key": "-",
+    "content": "name: Production Readiness Assessment\ndescription: QA+DEV loop results — 3 phases complete, 21 bugs fixed, 27 cataloged, RBAC verified across 6 roles\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_production_readiness_2026_04_07",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_production_readiness_2026_04_07.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333990
+  },
+  {
+    "id": "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u",
+    "key": "assessment-date-2026-04-08-updated-from-2026-04-07",
+    "content": "### QA+DEV Loop Results (3 Phases)\n\n#### Phase 1 — Page Rendering (Super Admin)\n- 55 pages browser-tested + 45 API endpoints via curl\n- 8 bugs found and fixed (4 frontend, 4 backend)\n- 0 remaining failures\n\n#### Phase 2 — RBAC (6 roles × 32 endpoints)\n- Super Admin: 49/49 pass\n- Tenant Admin: 32/32 pass\n- HR Admin: 28/32 pass (4 fixed)\n- HR Manager: 26/32 pass (3 fixed)\n- Team Lead: 14/32 pass (permission gaps — many expected)\n- Employee: 30/31 pass (contract data leak fixed)\n- 5 RBAC bugs fixed",
+    "summary": "Assessment Date: 2026-04-08 (updated from 2026-04-07)",
+    "namespace": "project_production_readiness_2026_04_07",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_production_readiness_2026_04_07.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333990
+  },
+  {
+    "id": "mem-project_qa_test_plan----",
+    "key": "-",
+    "content": "name: QA Test Plan and Results\ndescription: 349 use cases across 38 modules — execution status, result files, and test accounts\ntype: reference\n---",
+    "summary": "---",
+    "namespace": "project_qa_test_plan",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_qa_test_plan.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333991
+  },
+  {
+    "id": "mem-project_qa_test_plan-qa-test-document",
+    "key": "qa-test-document",
+    "content": "**File:** `docs/qa/NU-AURA-QA-USE-CASES.md` (6,900+ lines, 349 use cases)\n**RBAC Test Plan:** `docs/TEST-PLAN-RBAC-USECASES.md` (130+ RBAC-specific checks across 6 roles)\n\n### Execution Status (as of 2026-04-08)\n\n| Phase | Tested | Pass | Fail | Blocked |\n|-------|--------|------|------|---------|\n| Phase 1 (Pages) | 55 browser + 45 curl | 53 | 2 (fixed) | 0 |\n| Phase 2 (RBAC) | 207 checks across 6 roles | 179 | 20 (5 fixed) | 8 |\n| Phase 3 (Use Cases) | 93/349 | 51 | 22 | 12 |\n\n### Result Files",
+    "summary": "QA Test Document",
+    "namespace": "project_qa_test_plan",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_qa_test_plan.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333991
+  },
+  {
+    "id": "mem-project_sonar_fixes_2026_03_30----",
+    "key": "-",
+    "content": "name: Sonar Issue Fixes (2026-03-30)\ndescription: Comprehensive lint and SonarQube-category issue remediation across frontend and backend\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_sonar_fixes_2026_03_30",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_sonar_fixes_2026_03_30.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333995
+  },
+  {
+    "id": "mem-project_sonar_fixes_2026_03_30-lint-cleanup--phase-1---eslint",
+    "key": "lint-cleanup-phase-1-eslint-",
+    "content": "Fixed ~90 ESLint warnings across 44 frontend files:\n- **Unused imports/variables**: 32 files, ~70 items removed\n- **React hooks exhaustive-deps**: 6 files, wrapped logical expressions in `useMemo`\n- **`<img>` → `next/image`**: 6 files, 10 replacements (with `unoptimized` for external URLs)\n- **Design grid violations**: 5 files, `p-3`→`p-4`, `gap-3`→`gap-4` (8px grid)\n\n**Why:** ESLint was reporting ~90 warnings. All resolved to zero.",
+    "summary": "Lint Cleanup (Phase 1 — ESLint)",
+    "namespace": "project_sonar_fixes_2026_03_30",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_sonar_fixes_2026_03_30.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333995
+  },
+  {
+    "id": "mem-project_sonar_fixes_2026_03_30-sonar-remediation--phase-2-",
+    "key": "sonar-remediation-phase-2-",
+    "content": "### Backend Fixes\n1. **Exception swallowing (P0)**: Added SLF4J logging to 8 silent catch blocks across 5 files (EmployeeDashboardService, AttendanceController, ContractLifecycleScheduler, KekaMigrationService, AttendanceImportService)\n2. **Public fields (P2)**: PaymentGatewayAdapter inner classes — fields made private, added `@Data`, updated 33 accessor calls across 4 files\n3. **Wildcard imports (P2)**: Replaced `import java.util.*` with explicit imports in 5 security/core files (JwtTokenProvid",
+    "summary": "Sonar Remediation (Phase 2)",
+    "namespace": "project_sonar_fixes_2026_03_30",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/memory/project_sonar_fixes_2026_03_30.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333995
+  },
+  {
+    "id": "mem-MEMORY----architecture--project-archi",
+    "key": "-architecture-project-architecture-md-stack-key-fi",
+    "content": "- [Status](project_status.md) — Completed work, remaining gaps, env keys needed, multi-org DB state\n- [User](user_fayaz.md) — Fayaz's role, preferences, testing habits\n- [Feedback](feedback_patterns.md) — Do/don't patterns, key gotchas, lessons learned",
+    "summary": "- [Architecture](project_architecture.md) — Stack, key files, schema, API routes, dashboard tabs",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333997
+  },
+  {
+    "id": "mem-feedback_patterns----",
+    "key": "-",
+    "content": "name: Development Feedback Patterns\ndescription: Lessons learned and patterns to follow/avoid in this project\ntype: feedback\n---",
+    "summary": "---",
+    "namespace": "feedback_patterns",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/feedback_patterns.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333997
+  },
+  {
+    "id": "mem-feedback_patterns-do",
+    "key": "do",
+    "content": "- Use parallel agents in isolated worktrees for independent work streams\n- Always run typecheck + test + build before committing\n- Clear .next cache when webpack errors appear (rm -rf .next)\n- Use `pnpm dev:full` not just `pnpm dev` — Inngest dev server needed for background jobs\n- Check which volume/org the dashboard is showing — user has multiple\n- Seed test data when API keys aren't available to unblock testing\n- Make tooltips and labels business-friendly, not technical",
+    "summary": "Do",
+    "namespace": "feedback_patterns",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/feedback_patterns.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333997
+  },
+  {
+    "id": "mem-feedback_patterns-don-t",
+    "key": "don-t",
+    "content": "- Don't use `org_members`, `org_invites`, `org_invite_links` — they're legacy. Use `memberships` and `invites`\n- Don't add `?skip=flow` bypasses — was flagged as production security issue\n- Don't query Supabase directly from client components — use API routes for org isolation\n- Don't assume Next.js 16 patterns — this is Next.js 14 (no proxy.ts, no async searchParams)\n- Don't use `.svg` for Perplexity logo — only `.png` exists\n- Don't cache empty map results — leads to \"map looks broken\" during ",
+    "summary": "Don't",
+    "namespace": "feedback_patterns",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/feedback_patterns.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333997
+  },
+  {
+    "id": "mem-feedback_patterns-key-gotchas",
+    "key": "key-gotchas",
+    "content": "- React Strict Mode double-mount in dev causes `availableDatesFetchedRef` to block the dates fetch — fixed with `availableDates.length > 0` guard\n- Response Map needs base map + dates API to return data before it renders — if either fails silently, map shows infinite spinner\n- Labeling requires BOTH Anthropic (brands) AND OpenAI (sentiment) keys — if either is missing/expired, responses stay unlabeled\n- BrightData scraping creates responses but labeling is a separate Inngest job — responses can ",
+    "summary": "Key Gotchas",
+    "namespace": "feedback_patterns",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/feedback_patterns.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333997
+  },
+  {
+    "id": "mem-project_architecture----",
+    "key": "-",
+    "content": "name: NuLogic GEO Architecture\ndescription: Core architecture, tech stack, key files, and data flow for the NuLogic GEO SaaS app\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_architecture-stack",
+    "key": "stack",
+    "content": "- **Framework**: Next.js 14.2.28 (App Router) — NOT 16, don't use proxy.ts or async searchParams\n- **Database**: Supabase (Postgres + Auth + RLS)\n- **Payments**: Stripe (checkout, portal, webhooks, metered billing)\n- **Background Jobs**: Inngest (scraping, labeling, email notifications)\n- **Scraping**: BrightData bulk API (ChatGPT, Perplexity, Gemini, Grok)\n- **AI**: Anthropic Claude (brand analysis, labeling), OpenAI (sentiment via logprobs)\n- **Email**: Resend\n- **Charts**: Recharts\n- **Icons*",
+    "summary": "Stack",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_architecture-key-directories",
+    "key": "key-directories",
+    "content": "- `app/api/` — API routes (all org-scoped via getOrgContext)\n- `app/(dashboard)/dashboard/` — Dashboard pages (responses, sources, products, improve, prompts, settings)\n- `components/references/map-tab.tsx` — 5000+ line Response Map component (very large, edit carefully)\n- `lib/auth/org-context.ts` — Auth helper (derives org_id from memberships, never from request)\n- `lib/supabase/middleware.ts` — Flow state routing (no_org → onboarding, scrape_running → progress, ready → dashboard)\n- `lib/innge",
+    "summary": "Key Directories",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_architecture-database-schema--key-tables-",
+    "key": "database-schema-key-tables-",
+    "content": "- `organizations` — billing_tier, stripe_customer_id, subscription_status\n- `memberships` — user_id, org_id, role (NOT \"org_members\" — that's legacy)\n- `invites` — email, token, accepted_at (NOT \"org_invites\" — that's legacy)\n- `volumes` — monitoring units (one brand per volume)\n- `prompts` — questions sent to AI models\n- `responses` — AI answers with brands[], sentiment, cited_domains[], response_references JSONB\n- `scrape_runs` — execution tracking\n- `tracked_brands` — primary + competitor bra",
+    "summary": "Database Schema (key tables)",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_architecture-dashboard-tabs--responses-page",
+    "key": "dashboard-tabs-responses-page-",
+    "content": "8 tabs: Response Map, Overview, Response List, Brand Report, AI Insights, Heatmap, Scorecard, Improvement Plan",
+    "summary": "Dashboard Tabs (Responses page)",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_architecture-api-routes-for-dashboard-views",
+    "key": "api-routes-for-dashboard-views",
+    "content": "- `/api/references` — Citation analytics (drives Overview tab)\n- `/api/references/map` — Response Map graph data\n- `/api/references/dates` — Available dates for date picker\n- `/api/references/brand-report` — Brand Report + AI Insights data\n- `/api/references/heatmap` — Heatmap + Scorecard data\n- `/api/references/improvement-plan` — Improvement Plan recommendations\n\n**Why:** Understanding the architecture prevents re-discovering file locations and avoids legacy table name mistakes.\n**How to apply",
+    "summary": "API Routes for dashboard views",
+    "namespace": "project_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_status----",
+    "key": "-",
+    "content": "name: NuLogic GEO Current Status\ndescription: What's been done, what's remaining, and known issues as of 2026-03-29\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_status-completed-work--2026-03-28-29-",
+    "key": "completed-work-2026-03-28-29-",
+    "content": "### Productization (Round 1 — 5 agents)\n- Settings queries migrated from legacy tables (org_members → memberships, org_invites → invites)\n- Prompt CRUD API (POST/PATCH/DELETE/bulk) implemented\n- Response analytics grounded (removed Math.random, wired real data)\n- Billing hardened (removed placeholder email, price ID validation, subscription status)\n- 4 CRITICAL security fixes (org isolation in /api/improve/* routes)\n\n### Quality Audit (Round 2 — 5 agents)\n- 7 bugs fixed (empty .in() data leaks, ",
+    "summary": "Completed Work (2026-03-28/29)",
+    "namespace": "project_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_status-environment-keys-required",
+    "key": "environment-keys-required",
+    "content": "- `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` + `SUPABASE_SERVICE_ROLE_KEY`\n- `ANTHROPIC_PROMPT_AGENT_API_KEY` (+ LABELING + INSIGHTS — can be same key)\n- `OPENAI_API_KEY` (for sentiment scoring)\n- `BRIGHTDATA_API_KEY` (for scraping AI models)\n- `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` + `STRIPE_WEBHOOK_SECRET`\n- `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY` (production only — local uses dev server)\n- `RESEND_API_KEY` (email notifications)",
+    "summary": "Environment Keys Required",
+    "namespace": "project_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_status-known-remaining-gaps",
+    "key": "known-remaining-gaps",
+    "content": "1. Manual prompt run not implemented (needs /api/scrape/trigger endpoint)\n2. No error tracking SDK (Sentry) — operational concern\n3. In-memory rate limiting won't persist across serverless instances\n4. Position tracking fields zeroed (schema doesn't have position data)\n5. Dashboard home page is a placeholder (static cards, no metrics)\n6. Model filter on Responses page tracks state but doesn't filter data\n7. Dead duplicate processStripeWebhook in lib/inngest/functions.ts\n8. Some email domains sti",
+    "summary": "Known Remaining Gaps",
+    "namespace": "project_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-project_status-multiple-orgs-volumes-in-db",
+    "key": "multiple-orgs-volumes-in-db",
+    "content": "User has multiple accounts:\n- fayaz.m@nulogic.io (c2e02a17) — Nulogic org\n- fayaz30395@gmail.com (d15fbbb9) — Nulogic org\n- deenfayaz2@gmail.com (23401b07) — Sephora org (40 real responses from BrightData)\n\n**Why:** Track what's done vs remaining to avoid re-doing work.\n**How to apply:** Check this before starting any new work to understand current state.",
+    "summary": "Multiple Orgs/Volumes in DB",
+    "namespace": "project_status",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/project_status.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-user_fayaz----",
+    "key": "-",
+    "content": "name: User Profile — Fayaz\ndescription: User preferences, role, and working style for Fayaz (project owner)\ntype: user\n---\n\n- Project owner and lead engineer for NuLogic GEO\n- Prefers hands-on testing in browser — tests in Safari primarily\n- Wants business-friendly views that non-technical users can understand\n- Values visual data presentation (maps, heatmaps, scorecards) over raw tables\n- Prefers parallel agent execution for speed\n- Likes to see things working end-to-end before committing\n- Use",
+    "summary": "---",
+    "namespace": "user_fayaz",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-penumbra-geo/memory/user_fayaz.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881333998
+  },
+  {
+    "id": "mem-MEMORY----cart-sync-fix--project-cart",
+    "key": "-cart-sync-fix-project-cart-sync-fix-md-complete-b",
+    "content": "- [UPPAbaby Architecture](project_uppababy_architecture.md) — Multi-repo structure, local dev ports, communication channels, session linking",
+    "summary": "- [Cart Sync Fix](project_cart_sync_fix.md) — Complete bidirectional cart sync: sync, CRUD, checkout, synthetic fallback. Clean changelist in `CART-SYNC-CHANGES.md` at project root",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334000
+  },
+  {
+    "id": "mem-project_cart_sync_fix----",
+    "key": "-",
+    "content": "name: Cart Sync Fix — Storefront <-> Agent Chat (Complete)\ndescription: Bidirectional cart sync between Shopware storefront (3000) and NULogic agent chat (3009). Covers sync, CRUD, checkout display, synthetic fallback, and price conversion. Final clean changelist in CART-SYNC-CHANGES.md at project root.\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_cart_sync_fix-what-was-done",
+    "key": "what-was-done",
+    "content": "Fixed full bidirectional cart sync between the UPPAbaby Shopware storefront and the NULogic AI agent chat widget, including CRUD operations and checkout flow.\n\n**Why:** Cart updates on the storefront weren't reflecting in the agent chat, and vice versa. Checkout from the agent showed \"cart is empty\" on new sessions.\n\n**How to apply:** Clean changelist is in `CART-SYNC-CHANGES.md` at the project root (`/Users/fayaz.m/IdeaProjects/nulogic/uppababy/CART-SYNC-CHANGES.md`). It lists only the cart syn",
+    "summary": "What was done",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_cart_sync_fix-issues-fixed--in-order-",
+    "key": "issues-fixed-in-order-",
+    "content": "1. **No `onCartChanged` callback** — `useStorefrontBridge()` was called without callbacks, storefront→agent sync was dead\n2. **No postMessage path** — cross-origin local dev (different ports) can't use BroadcastChannel\n3. **New session: empty cart from backend** — agent backend has no `sw-context-token`, returns empty. Fixed with synthetic checkout fallback from storefront data\n4. **No product details in cart UI** — ShoppingCanvas cart tab only showed count/total. Added line item rendering with ",
+    "summary": "Issues Fixed (in order)",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_cart_sync_fix-files-changed--6-files-",
+    "key": "files-changed-6-files-",
+    "content": "| File | Repo | Key Changes |\n|------|------|-------------|\n| `frontend/App.tsx` | nu-agent-uppababy | Bridge callbacks, refs, NULOGIC_CART_CHANGED handler, CRUD interceptors, synthetic checkout, checkout button guards |\n| `frontend/hooks/useStorefrontBridge.ts` | nu-agent-uppababy | +`imageUrl` to `StorefrontCartItem` |\n| `frontend/components/ShoppingCanvas.tsx` | nu-agent-uppababy | +`CartLineItem` type, +`cartItems` prop, line item rendering |\n| `composables/useAgentBridgeSync.ts` | uppababy-",
+    "summary": "Files Changed (6 files)",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_cart_sync_fix-key-architecture-decisions",
+    "key": "key-architecture-decisions",
+    "content": "- **`storefront-sync` sentinel ID**: synthetic checkout uses `id: 'storefront-sync'` to distinguish from backend-provided checkouts. All CRUD and checkout button handlers check this to route correctly.\n- **Dual channel**: every message sent via BroadcastChannel AND postMessage to cover both same-origin (production) and cross-origin (local dev).\n- **Price convention**: storefront sends decimal line totals (e.g., 5399.94 for 6×899.99). Agent `Checkout` type uses cents unit prices (89999). Syntheti",
+    "summary": "Key Architecture Decisions",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_cart_sync_fix-known-limitation",
+    "key": "known-limitation",
+    "content": "The agent backend session is NOT linked to Shopware in cross-origin local dev. The `SessionInjectorMiddleware` requires `x-nulogic-sid` header (only set by Nuxt server middleware in same-origin mode). The `session/init` endpoint injects the token but the A2A handler uses a different session context. This is why the synthetic checkout fallback exists — it bypasses the backend entirely for storefront-synced carts.",
+    "summary": "Known Limitation",
+    "namespace": "project_cart_sync_fix",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_cart_sync_fix.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture----",
+    "key": "-",
+    "content": "name: UPPAbaby Repo Architecture & Local Dev Setup\ndescription: Multi-repo structure, local dev ports, communication channels, and key architectural patterns for the UPPAbaby NULogic agent integration.\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture-repo-structure",
+    "key": "repo-structure",
+    "content": "This is a multi-repo platform. The `uppababy` folder contains:\n\n| Directory | Purpose | Tech |\n|-----------|---------|------|\n| `uppababy-migration-fe/` | Shopware 6 storefront (Nuxt 3) | Vue/Nuxt, Shopware Frontends |\n| `nu-agent-uppababy/` | UPPAbaby-specific agent (brand config + frontend) | Python backend (FastAPI) + React frontend (Vite) |\n| `nu-shopping-agent/` | Core platform engine (shared across all brands) | Python |\n| `uppababy-migration-be/` | Shopware 6 backend plugins | PHP |",
+    "summary": "Repo Structure",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture-local-dev-ports",
+    "key": "local-dev-ports",
+    "content": "| Service | Port | Description |\n|---------|------|-------------|\n| Storefront (Nuxt) | 3000 | `uppababy-migration-fe` |\n| Agent Frontend (Vite) | 3009 | `nu-agent-uppababy/frontend` |\n| Agent Backend (Python) | 11003 | `nu-agent-uppababy` (FastAPI) |",
+    "summary": "Local Dev Ports",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture-key-environment-variables",
+    "key": "key-environment-variables",
+    "content": "In `uppababy-migration-fe/.env`:\n- `NUXT_PUBLIC_AGENT_URL=\"http://localhost:3009\"` — forces cross-origin iframe (set to `\"\"` for same-origin via `/chat/` proxy)\n- `AGENT_BACKEND_URL` — Python backend URL (default: `http://localhost:11003`)\n\nIn `nu-agent-uppababy/frontend`:\n- `VITE_BACKEND_PORT` — Python backend port (default: 11003)\n- `VITE_BASE_URL` — Set to `/chat/` when running behind Nuxt proxy",
+    "summary": "Key Environment Variables",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture-communication-architecture",
+    "key": "communication-architecture",
+    "content": "The agent chat widget is embedded as an **iframe** inside the Nuxt storefront.\n\n**Production (same-origin):** Agent served at `uppababy.com/chat/` via Nuxt `routeRules` proxy. BroadcastChannel works.\n\n**Local dev (cross-origin):** Agent at `localhost:3009`, storefront at `localhost:3000`. Uses postMessage fallback.\n\n### Key bridge files:\n- `uppababy-migration-fe/plugins/agent-bridge.client.ts` — BroadcastChannel bridge (storefront side)\n- `uppababy-migration-fe/composables/useAgentBridgeSync.ts`",
+    "summary": "Communication Architecture",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-project_uppababy_architecture-production-deploy",
+    "key": "production-deploy",
+    "content": "Push to `main` on `nu-agent-uppababy` triggers immediate Cloud Run (backend) + Vercel (frontend) deploy. **No staging gate.** Test locally before pushing.",
+    "summary": "Production Deploy",
+    "namespace": "project_uppababy_architecture",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-nulogic-uppababy/memory/project_uppababy_architecture.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334001
+  },
+  {
+    "id": "mem-MEMORY----orch-promo-enhancements--pr",
+    "key": "-orch-promo-enhancements-project-orch-promo-enhanc",
+    "content": "- [PME Coupon Auto-Release](project_pme_coupon_autorelease.md) — PME-1457/1458/1459/1460/1461 implementation details, architecture mapping, fixes applied\n- [Architecture Diagram](reference_architecture_diagram.md) — System diagram: Talonone → Optimove → Orch Ops → DB/PVS/SFTP/Batch/GCP channels",
+    "summary": "- [Orch Promo Enhancements](project_orch_promo_enhancements.md) — OPE initiative: 8 PRD requirements, 6 workstreams, build Apr-Jul 2026",
+    "namespace": "core",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-sephora-data-platform-services-p13n-orch-ops-app/memory/MEMORY.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334005
+  },
+  {
+    "id": "mem-project_orch_promo_enhancements----",
+    "key": "-",
+    "content": "name: Orchestration Promo Enhancements Initiative\ndescription: Full context for the OPE initiative - 8 PRD requirements across 6 workstreams, timelines, and current status\ntype: project\n---\n\nThe P13N Marketing Experiences POD is running the Orchestration Promo Enhancements (OPE) initiative to address Segmentation Feedback Loop bottlenecks. Build phase: Apr 1 - Jul 22, 2026. UAT: May 15 - Aug 19.\n\n**Why:** Loop takes 3 hours (12:30-3:30 PM PST), capped at 4M audience, strands coupons on failure, ",
+    "summary": "---",
+    "namespace": "project_orch_promo_enhancements",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-sephora-data-platform-services-p13n-orch-ops-app/memory/project_orch_promo_enhancements.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334005
+  },
+  {
+    "id": "mem-project_pme_coupon_autorelease----",
+    "key": "-",
+    "content": "name: PME Coupon Auto-Release Implementation Details\ndescription: Technical details of PME-1457/1458/1459/1460/1461 coupon auto-unreservation on branch PME-1460, including architecture mapping and fixes applied\ntype: project\n---",
+    "summary": "---",
+    "namespace": "project_pme_coupon_autorelease",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-sephora-data-platform-services-p13n-orch-ops-app/memory/project_pme_coupon_autorelease.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334006
+  },
+  {
+    "id": "mem-project_pme_coupon_autorelease-pme-1457-1458-1459-1460-1461--",
+    "key": "pme-1457-1458-1459-1460-1461-coupon-auto-release",
+    "content": "**Why:** When campaigns fail (ET5 batch errors or ET14 timeout), reserved external coupons were stranded in `orch_external_coupon_reservation` and never released back to the pool.\n\n**How to apply:** These changes are on branch `PME-1460`. Reference when working on any coupon reservation/unreservation logic.\n\n### What Each Ticket Does\n\n- **PME-1459**: Added `action_name` + `channel_id` columns to `orch_external_coupon_reservation` table + composite index. Enables triplet-key (action_name, campaig",
+    "summary": "PME-1457/1458/1459/1460/1461 — Coupon Auto-Release",
+    "namespace": "project_pme_coupon_autorelease",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-sephora-data-platform-services-p13n-orch-ops-app/memory/project_pme_coupon_autorelease.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334006
+  },
+  {
+    "id": "mem-reference_architecture_diagram----",
+    "key": "-",
+    "content": "name: Orch Ops System Architecture Diagram\ndescription: Reference to the system architecture diagram showing full Orch Ops flow — Talonone, Optimove, Kafka, p13n_orch DB, PVS, Segmentation, SFTP, batch-app, GCP channels\ntype: reference\n---\n\nUser shared a system architecture diagram (image) on 2026-04-09 showing the full P13N Orch Ops data flow:\n\n1. **Talonone** → Omni Promo Service (promotion CRUD webhooks)\n2. Omni Promo Service → Kafka topics (Promotions, Coupons) → **Orch Ops** consumes\n3. **O",
+    "summary": "---",
+    "namespace": "reference_architecture_diagram",
+    "type": "semantic",
+    "metadata": {
+      "sourceFile": "/Users/fayaz.m/.claude/projects/-Users-fayaz-m-IdeaProjects-sephora-data-platform-services-p13n-orch-ops-app/memory/reference_architecture_diagram.md",
+      "bootstrapped": true
+    },
+    "createdAt": 1776881334006
+  }
+]

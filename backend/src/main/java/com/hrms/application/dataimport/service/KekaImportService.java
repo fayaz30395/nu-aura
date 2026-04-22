@@ -109,7 +109,7 @@ public class KekaImportService {
     public KekaImportResult executeKekaImport(KekaImportExecuteRequest request) {
         log.info("Executing KEKA import with file ID: {}", request.getFileId());
 
-        UUID tenantId = TenantContext.getCurrentTenant();
+        TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -200,7 +200,7 @@ public class KekaImportService {
      */
     @Transactional(readOnly = true)
     public Page<KekaImportHistoryEntry> getImportHistory(Pageable pageable) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        TenantContext.getCurrentTenant();
 
         return historyRepository.findByTenantIdOrderByUploadedAtDesc(tenantId, pageable)
                 .map(this::toHistoryEntry);
@@ -225,7 +225,7 @@ public class KekaImportService {
      */
     private List<String> extractHeadersFromCSV(MultipartFile file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).build())) {
 
             if (csvParser.getRecordNumber() == 0) {
                 return new ArrayList<>();

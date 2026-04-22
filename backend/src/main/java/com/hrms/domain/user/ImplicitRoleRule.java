@@ -2,7 +2,7 @@ package com.hrms.domain.user;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
  * <p>Rules are evaluated by the ImplicitRoleRuleEngine, which creates {@link ImplicitUserRole}
  * entries when conditions are met.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "implicit_role_rules", indexes = {
         @Index(name = "idx_irr_tenant_active", columnList = "tenant_id,is_active"),

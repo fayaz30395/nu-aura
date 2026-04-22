@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
 
 
 /**
@@ -32,7 +31,6 @@ import org.hibernate.annotations.Where;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "is_deleted = false")
 @Entity
 @SQLRestriction("is_deleted = false")
 @Table(name = "docusign_template_mappings", indexes = {

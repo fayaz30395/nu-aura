@@ -2,7 +2,7 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
  * Examples: overtime earnings, expense reimbursements, LOP deductions,
  * performance-linked increments, mileage reimbursements.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "payroll_adjustments", indexes = {
         @Index(name = "idx_pa_tenant_employee", columnList = "tenantId, employee_id"),

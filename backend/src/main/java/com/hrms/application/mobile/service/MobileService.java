@@ -275,10 +275,6 @@ public class MobileService {
                         anniversaryThisYear = anniversaryThisYear.plusYears(1);
                     }
                     if (!anniversaryThisYear.isAfter(endDate)) {
-                        int years = today.getYear() - emp.getJoiningDate().getYear();
-                        if (anniversaryThisYear.getYear() > today.getYear()) {
-                            years++;
-                        }
                         reminders.add(MobileDashboardResponse.EmployeeReminder.builder()
                                 .employeeName(emp.getFullName())
                                 .type("WORK_ANNIVERSARY")

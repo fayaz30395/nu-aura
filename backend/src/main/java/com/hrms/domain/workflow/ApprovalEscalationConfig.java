@@ -3,7 +3,7 @@ package com.hrms.domain.workflow;
 import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.EscalationType;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -26,7 +26,7 @@ import java.util.UUID;
  *
  * <p>The system tracks escalation count per approval instance to prevent infinite loops.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "approval_escalation_config")
 @Getter

@@ -280,7 +280,7 @@ class DepartmentControllerTest {
                     .isActive(false)
                     .build();
 
-            List<DepartmentResponse> inactiveDepts = Collections.singletonList(inactiveResponse);
+            Collections.singletonList(inactiveResponse);
 
             when(departmentService.getActiveDepartments())
                     .thenReturn(Collections.emptyList());

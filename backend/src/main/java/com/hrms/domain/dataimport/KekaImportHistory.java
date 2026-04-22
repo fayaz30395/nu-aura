@@ -2,7 +2,7 @@ package com.hrms.domain.dataimport;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * Track history of KEKA imports
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "keka_import_history", indexes = {
         @Index(name = "idx_keka_import_tenant", columnList = "tenantId"),

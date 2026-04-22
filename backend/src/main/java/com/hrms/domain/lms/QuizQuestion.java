@@ -2,13 +2,13 @@ package com.hrms.domain.lms;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "lms_quiz_questions", indexes = {
         @Index(name = "idx_lms_question_tenant", columnList = "tenantId"),

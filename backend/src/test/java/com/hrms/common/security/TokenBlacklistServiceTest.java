@@ -341,7 +341,7 @@ class TokenBlacklistServiceTest {
             fallbackService.blacklistToken(TEST_JTI, expiration);
 
             // Then - Should be blacklisted via in-memory
-            boolean isBlacklisted = fallbackService.isBlacklisted(TEST_JTI);
+            fallbackService.isBlacklisted(TEST_JTI);
             // Note: In this mock setup, it tries Redis first which fails
             // The implementation falls back to in-memory
         }

@@ -2,7 +2,6 @@ package com.hrms.common.config;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -90,26 +89,34 @@ public class RateLimitConfig {
     }
 
     private Bucket createAuthBucket() {
-        Bandwidth limit = Bandwidth.classic(authCapacity,
-                Refill.greedy(authRefillTokens, Duration.ofMinutes(authRefillMinutes)));
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(authCapacity)
+                .refillGreedy(authRefillTokens, Duration.ofMinutes(authRefillMinutes))
+                .build();
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createApiBucket() {
-        Bandwidth limit = Bandwidth.classic(apiCapacity,
-                Refill.greedy(apiRefillTokens, Duration.ofMinutes(apiRefillMinutes)));
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(apiCapacity)
+                .refillGreedy(apiRefillTokens, Duration.ofMinutes(apiRefillMinutes))
+                .build();
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createExportBucket() {
-        Bandwidth limit = Bandwidth.classic(exportCapacity,
-                Refill.greedy(exportRefillTokens, Duration.ofMinutes(exportRefillMinutes)));
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(exportCapacity)
+                .refillGreedy(exportRefillTokens, Duration.ofMinutes(exportRefillMinutes))
+                .build();
         return Bucket.builder().addLimit(limit).build();
     }
 
     private Bucket createWallBucket() {
-        Bandwidth limit = Bandwidth.classic(wallCapacity,
-                Refill.greedy(wallRefillTokens, Duration.ofMinutes(wallRefillMinutes)));
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(wallCapacity)
+                .refillGreedy(wallRefillTokens, Duration.ofMinutes(wallRefillMinutes))
+                .build();
         return Bucket.builder().addLimit(limit).build();
     }
 

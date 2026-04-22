@@ -80,7 +80,7 @@ class DashboardAnalyticsServiceTest {
                     .targetEmployeeIds(null)
                     .build();
 
-            LocalDate today = LocalDate.now();
+            LocalDate.now();
 
             // Mock employee count
             when(employeeRepository.countByTenantIdAndStatus(eq(tenantId), eq(Employee.EmployeeStatus.ACTIVE)))

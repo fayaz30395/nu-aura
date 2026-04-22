@@ -139,7 +139,7 @@ public class WorkflowService {
     @Transactional
     public WorkflowDefinitionResponse createWorkflowDefinition(WorkflowDefinitionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        UUID currentUser = SecurityContext.getCurrentUserId();
+        SecurityContext.getCurrentUserId();
 
         if (workflowDefinitionRepository.existsByTenantIdAndNameAndIsActiveTrue(tenantId, request.getName())) {
             throw new BusinessException("Workflow with name '" + request.getName() + "' already exists");
@@ -257,7 +257,7 @@ public class WorkflowService {
     @Transactional
     public WorkflowDefinitionResponse updateWorkflowDefinition(UUID id, WorkflowDefinitionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        UUID currentUser = SecurityContext.getCurrentUserId();
+        SecurityContext.getCurrentUserId();
 
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new BusinessException(WORKFLOW_DEF_NOT_FOUND));

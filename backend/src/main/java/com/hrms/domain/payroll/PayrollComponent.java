@@ -2,7 +2,7 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,7 +25,7 @@ import java.math.BigDecimal;
  *   <li>EMPLOYER_CONTRIBUTION — employer-side cost, not deducted from employee pay</li>
  * </ul>
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "payroll_components", indexes = {
         @Index(name = "idx_payroll_comp_tenant", columnList = "tenantId"),

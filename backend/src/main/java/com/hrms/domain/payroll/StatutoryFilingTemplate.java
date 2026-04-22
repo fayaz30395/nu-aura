@@ -2,7 +2,7 @@ package com.hrms.domain.payroll;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
  * Each template describes the filing type, output format, and version.
  * Templates are seeded via Flyway migration and configurable per tenant.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "statutory_filing_templates", indexes = {
         @Index(name = "idx_sft_tenant", columnList = "tenantId"),

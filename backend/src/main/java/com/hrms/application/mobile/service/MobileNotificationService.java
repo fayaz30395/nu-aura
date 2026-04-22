@@ -24,8 +24,8 @@ public class MobileNotificationService {
      */
     @Transactional
     public void registerDevice(MobileNotificationDto.DeviceRegistrationRequest request) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
+        TenantContext.getCurrentTenant();
+        SecurityContext.getCurrentUserId();
 
         log.info("Registering device for user={}, deviceType={}, appVersion={}",
                 userId, request.getDeviceType(), request.getAppVersion());
@@ -40,8 +40,8 @@ public class MobileNotificationService {
      */
     @Transactional(readOnly = true)
     public MobileNotificationDto.UnreadNotificationsResponse getUnreadNotifications() {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        UUID userId = SecurityContext.getCurrentUserId();
+        TenantContext.getCurrentTenant();
+        SecurityContext.getCurrentUserId();
 
         // Fetch unread notifications from database
         // This is a placeholder - integrate with actual notification service

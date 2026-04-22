@@ -69,7 +69,7 @@ class SecurityUseCaseTest {
 
         // Thread 1 sets tenant A
         TenantContext.setCurrentTenant(tenantA);
-        UUID thread1Tenant = SecurityContext.getCurrentTenantId();
+        SecurityContext.getCurrentTenantId();
 
         // Simulating thread 2 overriding on same thread (worst case — shared context)
         // In production, each request has its own thread
@@ -119,7 +119,7 @@ class SecurityUseCaseTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(result -> {
-                    int status = result.getResponse().getStatus();
+                    result.getResponse().getStatus();
                     // Not 403 CSRF error — confirms CSRF is disabled
                     assertThat(status).isNotEqualTo(403);
                 });

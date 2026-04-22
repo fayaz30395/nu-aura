@@ -2,7 +2,7 @@ package com.hrms.domain.overtime;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Records actual overtime worked by an employee, linked to attendance records.
  * Supports approval workflows and payroll integration.
  */
-@Where(clause = "is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Entity
 @Table(name = "overtime_records")
 @Getter

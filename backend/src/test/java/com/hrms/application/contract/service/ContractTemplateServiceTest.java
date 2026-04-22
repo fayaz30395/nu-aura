@@ -100,7 +100,7 @@ class ContractTemplateServiceTest {
             when(templateRepository.save(any(ContractTemplate.class))).thenReturn(savedTemplate);
 
             // When
-            ContractTemplateDto result = templateService.createTemplate(request);
+            templateService.createTemplate(request);
 
             // Then
             verify(templateRepository).save(templateCaptor.capture());

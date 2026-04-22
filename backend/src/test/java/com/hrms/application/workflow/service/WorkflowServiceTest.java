@@ -429,7 +429,7 @@ class WorkflowServiceTest {
             // Given
             UUID executionId = UUID.randomUUID();
             WorkflowExecution execution = createApprovableExecution(executionId);
-            StepExecution currentStep = execution.getCurrentStepExecution();
+            execution.getCurrentStepExecution();
 
             when(workflowExecutionRepository.findByIdAndTenantId(executionId, TENANT_ID))
                     .thenReturn(Optional.of(execution));
