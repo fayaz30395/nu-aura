@@ -78,12 +78,19 @@ class RbacAnnotationCoverageTest {
             // access is gated by authentication (JWT required) but no specific
             // permission is needed because every logged-in user can view their own profile.
             "UserController#getCurrentUser",
+            // /employees/me — returns the current user's own employee record;
+            // gated by JWT authentication, no specific RBAC permission required.
+            "EmployeeController#getMyEmployee",
             // /exit/interview/public/{token} — public exit interview form
             "FnFController#getPublicInterview",
             "FnFController#submitPublicInterview",
             // /feature-flags/check/{featureKey} — any authenticated user can check
             // whether a feature is enabled; the frontend needs this to toggle UI.
-            "FeatureFlagController#checkFeature"
+            "FeatureFlagController#checkFeature",
+            // Slack integration endpoints — verified by Slack request signature, not user session.
+            "SlackCommandController#handleSlashCommand",
+            "SlackCommandController#handleInteraction",
+            "SlackCommandController#handleEvent"
     );
 
     /**

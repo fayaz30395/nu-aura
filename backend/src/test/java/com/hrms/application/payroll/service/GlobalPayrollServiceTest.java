@@ -516,7 +516,7 @@ class GlobalPayrollServiceTest {
             UUID runId = UUID.randomUUID();
             GlobalPayrollRun run = createTestPayrollRun(runId, GlobalPayrollRun.PayrollRunStatus.APPROVED);
 
-            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(run));
 
             // When/Then
             assertThatThrownBy(() -> globalPayrollService.processPayrollRun(runId))
@@ -551,7 +551,7 @@ class GlobalPayrollServiceTest {
             UUID runId = UUID.randomUUID();
             GlobalPayrollRun run = createTestPayrollRun(runId, GlobalPayrollRun.PayrollRunStatus.DRAFT);
 
-            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(run));
 
             // When/Then
             assertThatThrownBy(() -> globalPayrollService.approvePayrollRun(runId))

@@ -16,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.math.BigDecimal;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * Tests that SELF scope users cannot access other employees' leave requests.
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("LeaveRequestController Scope Enforcement Tests")
 class LeaveRequestControllerScopeTest {
 

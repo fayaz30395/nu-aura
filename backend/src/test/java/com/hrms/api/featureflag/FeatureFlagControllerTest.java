@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("FeatureFlagController Unit Tests")
 class FeatureFlagControllerTest {
 
-    private static final String BASE_URL = "/api/v1/feature-flags";
+    private static final String BASE_URL = "/api/v1/admin/feature-flags";
     private static final UUID USER_ID = UUID.randomUUID();
     private static final UUID EMPLOYEE_ID = UUID.randomUUID();
     private static final UUID TENANT_ID = UUID.randomUUID();

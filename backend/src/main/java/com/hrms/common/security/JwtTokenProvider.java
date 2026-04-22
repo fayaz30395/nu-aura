@@ -64,7 +64,7 @@ public class JwtTokenProvider {
         if (byteLength < 32) {
             throw new IllegalStateException(
                     String.format(
-                            "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
+                            "JWT_SECRET is weak — too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
                                     "Generate a secure secret with: openssl rand -base64 48", byteLength
                     )
             );
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
 
         if (knownWeakSecrets.contains(jwtSecret.toLowerCase().trim())) {
             throw new IllegalStateException(
-                    "JWT_SECRET is a known weak/placeholder value. " +
+                    "JWT_SECRET is a known weak/placeholder value — using a weak secret allows token forgery. " +
                             "Generate a secure secret with: openssl rand -base64 48"
             );
         }

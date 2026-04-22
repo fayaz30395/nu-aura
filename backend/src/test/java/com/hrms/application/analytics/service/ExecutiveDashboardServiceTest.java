@@ -122,9 +122,9 @@ class ExecutiveDashboardServiceTest {
                     eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED.name()),
                     any(LocalDate.class), any(LocalDate.class));
 
-            // Verify NO per-month payroll queries were made (would be 12 otherwise)
-            verify(payslipRepository, never()).sumNetSalaryByTenantIdAndYearMonthRange(
-                    any(), anyInt(), anyInt(), anyInt(), anyInt());
+            // Verify the batch range query was the only payroll trend query (not 12 individual ones)
+            verify(payslipRepository, times(1)).sumNetSalaryByTenantIdAndYearMonthRange(
+                    eq(TENANT_ID), anyInt(), anyInt(), anyInt(), anyInt());
         }
 
         @Test

@@ -6,6 +6,7 @@ import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.leave.LeaveBalance;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,6 +47,9 @@ class LeaveBalanceControllerTest {
 
     @MockitoBean
     private LeaveBalanceService leaveBalanceService;
+
+    @MockitoBean
+    private LeaveTypeRepository leaveTypeRepository;
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;

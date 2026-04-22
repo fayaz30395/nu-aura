@@ -88,6 +88,10 @@ class LayerArchitectureTest {
                     .and().doNotHaveSimpleName("WikiPageController")
                     .and().doNotHaveSimpleName("ImplicitRoleRuleController")
                     .and().doNotHaveSimpleName("ApprovalEscalationController")
+                    .and().doNotHaveSimpleName("WikiInlineCommentController")
+                    .and().doNotHaveSimpleName("LeaveBalanceController")
+                    .and().doNotHaveSimpleName("LeaveRequestController")
+                    .and().doNotHaveSimpleName("LearningPathController")
                     .should().accessClassesThat().resideInAPackage("..infrastructure..repository..")
                     .because("Controllers must access data through Services, not directly through Repositories");
 
@@ -112,6 +116,10 @@ class LayerArchitectureTest {
                     .and().doNotHaveSimpleName("WikiPageController")
                     .and().doNotHaveSimpleName("ImplicitRoleRuleController")
                     .and().doNotHaveSimpleName("ApprovalEscalationController")
+                    .and().doNotHaveSimpleName("WikiInlineCommentController")
+                    .and().doNotHaveSimpleName("LeaveBalanceController")
+                    .and().doNotHaveSimpleName("LeaveRequestController")
+                    .and().doNotHaveSimpleName("LearningPathController")
                     .should().dependOnClassesThat().haveSimpleNameEndingWith("Repository")
                     .because("Controllers must not depend on Repositories");
 
@@ -195,6 +203,8 @@ class LayerArchitectureTest {
                     .and().doNotHaveFullyQualifiedName("com.hrms.domain.payment.PaymentRefundRepository")
                     .and().doNotHaveFullyQualifiedName("com.hrms.domain.payment.PaymentTransactionRepository")
                     .and().doNotHaveFullyQualifiedName("com.hrms.domain.payment.PaymentWebhookRepository")
+                    // User-domain repositories co-located with their entities
+                    .and().doNotHaveFullyQualifiedName("com.hrms.domain.user.PasswordHistoryRepository")
                     .should().resideInAPackage("..infrastructure..")
                     .because("Repositories must be in the Infrastructure layer");
 

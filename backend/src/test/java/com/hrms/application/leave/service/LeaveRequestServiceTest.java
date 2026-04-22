@@ -152,10 +152,8 @@ class LeaveRequestServiceTest {
         void shouldThrowExceptionWhenInsufficientBalance() {
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(Collections.emptyList());
-            when(leaveRequestRepository.save(any(LeaveRequest.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
-            when(leaveBalanceService.getOrCreateBalance(any(), any(), anyInt()))
-                    .thenThrow(new IllegalStateException("Insufficient leave balance"));
+            doThrow(new IllegalStateException("Insufficient leave balance"))
+                    .when(leaveBalanceService).addPendingLeave(any(), any(), any());
 
             assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
                     .isInstanceOf(IllegalStateException.class)

@@ -179,14 +179,14 @@ class OkrServiceTest {
     void getObjectivesByOwnerList_LoadsKeyResults() {
         when(objectiveRepository.findAllByTenantIdAndOwnerIdList(tenantId, ownerId))
                 .thenReturn(List.of(testObjective));
-        when(keyResultRepository.findAllByObjectiveId(objectiveId))
+        when(keyResultRepository.findAllByObjectiveIdIn(List.of(objectiveId)))
                 .thenReturn(List.of(testKeyResult));
 
         List<Objective> result = okrService.getObjectivesByOwnerList(tenantId, ownerId);
 
         assertEquals(1, result.size());
         assertEquals(1, result.get(0).getKeyResults().size());
-        verify(keyResultRepository).findAllByObjectiveId(objectiveId);
+        verify(keyResultRepository).findAllByObjectiveIdIn(List.of(objectiveId));
     }
 
     @Test

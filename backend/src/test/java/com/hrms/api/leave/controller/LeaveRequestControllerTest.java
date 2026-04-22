@@ -97,8 +97,10 @@ class LeaveRequestControllerTest {
         void shouldCreateLeaveRequestSuccessfully() throws Exception {
             LeaveRequestRequest request = new LeaveRequestRequest();
             request.setEmployeeId(employeeId);
+            request.setLeaveTypeId(UUID.randomUUID());
             request.setStartDate(LocalDate.now().plusDays(1));
             request.setEndDate(LocalDate.now().plusDays(3));
+            request.setReason("Annual vacation");
 
             when(leaveRequestService.createLeaveRequest(any(LeaveRequest.class)))
                     .thenReturn(leaveRequest);
@@ -293,8 +295,10 @@ class LeaveRequestControllerTest {
         void shouldUpdateLeaveRequest() throws Exception {
             LeaveRequestRequest request = new LeaveRequestRequest();
             request.setEmployeeId(employeeId);
+            request.setLeaveTypeId(UUID.randomUUID());
             request.setStartDate(LocalDate.now().plusDays(2));
             request.setEndDate(LocalDate.now().plusDays(4));
+            request.setReason("Updated vacation plans");
 
             LeaveRequest updated = new LeaveRequest();
             updated.setId(leaveRequestId);

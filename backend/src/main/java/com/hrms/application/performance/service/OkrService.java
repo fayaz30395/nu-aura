@@ -35,14 +35,8 @@ public class OkrService {
 
     @Transactional
     public Objective createObjective(Objective objective) {
-        if (objective.getId() == null) {
-            objective.setId(UUID.randomUUID());
-        }
         if (objective.getStatus() == null) {
             objective.setStatus(ObjectiveStatus.DRAFT);
-        }
-        if (objective.getCreatedAt() == null) {
-            objective.setCreatedAt(LocalDateTime.now());
         }
 
         log.info("Creating objective: {} for owner: {}", objective.getTitle(), objective.getOwnerId());
@@ -171,14 +165,8 @@ public class OkrService {
 
     @Transactional
     public KeyResult createKeyResult(KeyResult keyResult) {
-        if (keyResult.getId() == null) {
-            keyResult.setId(UUID.randomUUID());
-        }
         if (keyResult.getStatus() == null) {
             keyResult.setStatus(KeyResult.KeyResultStatus.NOT_STARTED);
-        }
-        if (keyResult.getCreatedAt() == null) {
-            keyResult.setCreatedAt(LocalDateTime.now());
         }
 
         KeyResult saved = keyResultRepository.save(keyResult);
@@ -254,7 +242,6 @@ public class OkrService {
                 .notes(notes)
                 .checkInType(OkrCheckIn.CheckInType.PROGRESS_UPDATE)
                 .build();
-        checkIn.setId(UUID.randomUUID());
         checkIn.setTenantId(tenantId);
         checkInRepository.save(checkIn);
 
@@ -279,12 +266,6 @@ public class OkrService {
 
     @Transactional
     public OkrCheckIn createCheckIn(OkrCheckIn checkIn) {
-        if (checkIn.getId() == null) {
-            checkIn.setId(UUID.randomUUID());
-        }
-        if (checkIn.getCreatedAt() == null) {
-            checkIn.setCreatedAt(LocalDateTime.now());
-        }
         return checkInRepository.save(checkIn);
     }
 

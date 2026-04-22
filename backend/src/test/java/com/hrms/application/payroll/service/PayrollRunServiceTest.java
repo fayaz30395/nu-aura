@@ -422,7 +422,7 @@ class PayrollRunServiceTest {
 
             assertThatThrownBy(() -> payrollRunService.processPayrollRun(runId, userId))
                     .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("draft payroll runs can be processed");
+                    .hasMessageContaining("DRAFT or PROCESSING");
         }
 
         @Test

@@ -282,9 +282,9 @@ public class GlobalExceptionHandler {
             BusinessException ex, WebRequest request) {
 
         String path = extractPath(request);
-        // F-08 FIX: BusinessException is a rejected business rule (e.g. "dept has employees"),
-        // which is a 400 Bad Request, not a 409 Conflict (reserved for resource version conflicts).
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        // BusinessException is a rejected business rule (e.g. "dept has employees"),
+        // which maps to 409 CONFLICT — a state conflict that prevents the operation.
+        HttpStatus status = HttpStatus.CONFLICT;
 
         logError("business", "business_rule_violation", ex, status, path);
         recordErrorMetric("business", "business_rule_violation", status);

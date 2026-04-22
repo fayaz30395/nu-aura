@@ -64,7 +64,7 @@ class FluenceChatControllerTest {
 
             Map<String, Object> request = Map.of(
                     "message", "How do I set up a wiki space?",
-                    "conversationId", "conv-123"
+                    "conversationId", "00000000-0000-0000-0000-000000000001"
             );
 
             mockMvc.perform(post("/api/v1/fluence/chat")
