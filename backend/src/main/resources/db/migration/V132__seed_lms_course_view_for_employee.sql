@@ -10,7 +10,7 @@
 INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES (gen_random_uuid(), 'LMS:COURSE_VIEW', 'LMS Course View', 'View LMS courses and content', 'lms', 'course_view',
         NOW(), NOW(), 0, false)
-ON CONFLICT (code) DO NOTHING;
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 -- EMPLOYEE role
 INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)

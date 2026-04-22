@@ -174,8 +174,8 @@
     "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u": {
       "id": "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u",
       "category": "project_production_readiness_2026_04_07",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6300000000000001,
+      "accessCount": 3,
       "createdAt": 1776803776147
     },
     "mem-project_qa_test_plan----": {
@@ -258,8 +258,8 @@
     "mem-project_architecture-stack": {
       "id": "mem-project_architecture-stack",
       "category": "project_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6300000000000001,
+      "accessCount": 3,
       "createdAt": 1776803776151
     },
     "mem-project_architecture-key-directories": {
@@ -356,8 +356,8 @@
     "mem-project_cart_sync_fix-issues-fixed--in-order-": {
       "id": "mem-project_cart_sync_fix-issues-fixed--in-order-",
       "category": "project_cart_sync_fix",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6000000000000001,
+      "accessCount": 2,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix-files-changed--6-files-": {
@@ -370,8 +370,8 @@
     "mem-project_cart_sync_fix-key-architecture-decisions": {
       "id": "mem-project_cart_sync_fix-key-architecture-decisions",
       "category": "project_cart_sync_fix",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6300000000000001,
+      "accessCount": 3,
       "createdAt": 1776803776154
     },
     "mem-project_cart_sync_fix-known-limitation": {
@@ -391,8 +391,8 @@
     "mem-project_uppababy_architecture-repo-structure": {
       "id": "mem-project_uppababy_architecture-repo-structure",
       "category": "project_uppababy_architecture",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6300000000000001,
+      "accessCount": 3,
       "createdAt": 1776803776154
     },
     "mem-project_uppababy_architecture-local-dev-ports": {

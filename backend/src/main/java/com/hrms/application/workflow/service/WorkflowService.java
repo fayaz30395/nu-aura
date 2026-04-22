@@ -431,6 +431,15 @@ public class WorkflowService {
                 .findFirst()
                 .orElse(workflow.getSteps().get(0));
 
+        // Top-of-chain requester (e.g. SUPER_ADMIN with no managerId) → auto-approve
+        if (firstStep.getApproverType() == com.hrms.domain.workflow.ApprovalStep.ApproverType.REPORTING_MANAGER
+                && findReportingManager(execution.getRequesterId(), execution.getTenantId()) == null) {
+            execution.approve();
+            WorkflowExecution saved = workflowExecutionRepository.save(execution);
+            invokeCallback(saved, execution.getRequesterId(), "Auto-approved: requester has no reporting manager");
+            return;
+        }
+
         UUID assigneeId = determineApprover(execution, firstStep);
 
         StepExecution stepExecution = StepExecution.builder()

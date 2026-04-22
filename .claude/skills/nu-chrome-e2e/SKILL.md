@@ -25,9 +25,100 @@ curl -s http://localhost:8080/actuator/health | grep '"status":"UP"'
 
 Also probe the Chrome DevTools MCP (`mcp__claude-in-chrome__tabs_context_mcp`).
 
-On failure: attempt `docker-compose up -d && cd backend && ./start-backend.sh &
-&& cd frontend && npm run dev &`, wait up to 120s for health, then abort with
-full log in `qa-reports/nu-chrome-e2e/<run>/ABORTED.md`.
+**If any probe fails, run the Bootstrap Phase below — do NOT abort yet.** Only
+abort after Bootstrap + Bootstrap Medic have exhausted every documented repair
+strategy. Write the full transcript to
+`qa-reports/nu-chrome-e2e/<run>/bootstrap.log`.
+
+---
+
+### Bootstrap Phase (authoritative startup sequence)
+
+Run these in order. Each step has a health gate; the loop does NOT advance
+until the gate passes (or the Medic repairs it). Every command's output is
+appended to `bootstrap.log` with a timestamp prefix.
+
+```
+Step 0. Create run directory
+        mkdir -p qa-reports/nu-chrome-e2e/<run>/{locks,screenshots}
+
+Step 1. Docker daemon
+        gate:  docker info >/dev/null 2>&1
+        fix:   open -a Docker ; poll `docker info` every 5s for up to 90s
+        fail:  if still down → ABORT with reason=docker_daemon_unavailable
+
+Step 2. Infra containers (redis, kafka, zookeeper, elasticsearch, prometheus)
+        gate:  docker compose ps --status running | wc -l ≥ 5
+               AND `docker exec hrms-redis redis-cli ping` == PONG
+               AND `docker exec hrms-kafka kafka-topics --bootstrap-server localhost:9092 --list` exits 0
+        fix:   docker-compose up -d ; poll each container healthcheck up to 120s
+        fail:  if any container unhealthy → Bootstrap Medic → ABORT if unresolved
+
+Step 3. Backend (Spring Boot)
+        gate:  curl -s http://localhost:8080/actuator/health | jq -r .status == "UP"
+        fix:   cd backend && nohup ./start-backend.sh > /tmp/nu-aura-backend.log 2>&1 &
+               poll health every 5s for up to 180s (cold start incl. Flyway)
+        fail:  grep Spring startup failure in log → classify → Bootstrap Medic
+
+Step 4. Frontend (Next.js)
+        gate:  curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 == 200
+        fix:   cd frontend && nohup npm run dev > /tmp/nu-aura-frontend.log 2>&1 &
+               poll every 3s for up to 90s (waits for compile)
+        fail:  ABORT with reason=frontend_compile_failed (rare)
+
+Step 5. Chrome DevTools MCP
+        gate:  mcp__claude-in-chrome__tabs_context_mcp({createIfEmpty:true}) returns a tab
+        fix:   none — extension must be installed by user
+        fail:  downgrade tool fallback chain to Playwright
+```
+
+Track each step's state in `bootstrap.log`:
+`[BOOT] step=3 gate=fail attempt=1 fix=start-backend.sh` etc.
+
+---
+
+### Bootstrap Medic (Persona 0) — runs BEFORE the 7-persona QA loop
+
+When Step 2 or Step 3 fails, do NOT abort until the Medic has tried the full
+playbook below. The Medic is allowed a looser change budget than
+Developer-Lead (startup blockers often require new migration files), but each
+repair must be **minimal, reversible, and documented in `bootstrap.log`**.
+
+Classify the failure first, then apply the matching strategy.
+
+| Symptom (from backend log / docker logs) | Class | Strategy |
+|------------------------------------------|-------|----------|
+| `Flyway ... Script V\d+.*failed` + `column ".*" of relation ".*" does not exist` | **FLYWAY_MISSING_COLUMN** | Inspect `pg_trigger` for `NEW.<col>` references. If a stale trigger uses the missing column → drop it in a new `V{n+1}a__medic_drop_stale_trigger.sql` repair migration. If the migration itself forgot the column → add `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` to a pre-V{n} repair migration. |
+| `Flyway ... failed` + `relation ".*" does not exist` | **FLYWAY_MISSING_TABLE** | Search earlier migrations for the CREATE TABLE; if missing, add `CREATE TABLE IF NOT EXISTS` in a repair migration that sorts BEFORE the failing version. |
+| `Flyway ... failed` + `duplicate key value` on `flyway_schema_history` | **FLYWAY_DIRTY_HISTORY** | Run `UPDATE flyway_schema_history SET success=true WHERE version='...' AND checksum IS NULL;` ONLY if the underlying change is already applied; verify via information_schema first. |
+| `Flyway ... failed` + `syntax error` | **FLYWAY_SQL_ERROR** | Open the failing SQL, apply a ≤3-line fix (typo, missing semicolon, wrong quoting). Document the exact edit. |
+| Flyway reports `Migrations have failed validation` / checksum mismatch | **FLYWAY_CHECKSUM** | `mvn -pl backend flyway:repair` (safe). Never `flyway:clean`. |
+| `Port 8080 already in use` | **PORT_CONFLICT** | `lsof -ti tcp:8080 \| xargs kill -9` (only stale java/node dev processes — never user shells). |
+| `Cannot connect to Neon` / `SSL error` / DNS timeout | **DB_UNREACHABLE** | Ping Neon host, check VPN, wait 30 s and retry twice. If still down → ABORT reason=neon_unreachable. |
+| `redis-cli ping` returns error | **REDIS_DOWN** | `docker restart hrms-redis` ; wait 10 s ; retry. |
+| `kafka-topics` times out | **KAFKA_DOWN** | `docker restart hrms-kafka hrms-zookeeper` ; wait 30 s ; retry. |
+| Backend stuck on `Started HrmsApplication` > 60 s without `Tomcat started` | **BEAN_DEADLOCK** | Dump thread via `jstack <pid>` ; grep for BLOCKED on Redis/ES ; if infra is the cause, recycle Step 2 then retry Step 3. |
+| Elasticsearch refuses connections | **ES_DOWN** | `docker restart hrms-elasticsearch` ; wait 45 s ; retry. |
+
+After every Medic repair:
+
+1. Write what changed + why to `bootstrap.log`.
+2. If the repair produced a new file (repair migration, etc.) — record its
+   path so the user can review / commit it.
+3. Re-run the failed step's gate. If it passes, advance. If not, try the
+   next strategy. Max **3 strategies per failure class**, then ABORT with
+   full diagnosis.
+
+### Bootstrap output contract
+
+At the end of Bootstrap (success OR abort), emit:
+
+```
+[BOOT] summary: docker=ok infra=ok backend=ok frontend=ok mcp=ok  → proceed
+[BOOT] summary: docker=ok infra=ok backend=FAILED  → ABORT reason=flyway_v132_unresolved
+```
+
+Only on a fully green summary does the 7-persona QA loop start.
 
 ### Defaults
 
@@ -169,17 +260,27 @@ FAIL otherwise → severity as declared → fix protocol kicks in per autonomy b
 
 ---
 
-## Internal Role Model — 7 Personas
+## Internal Role Model — 8 Personas (Bootstrap Medic + 7 QA)
 
-The skill orchestrates itself as seven named personas. They are not separate
+The skill orchestrates itself as eight named personas. They are not separate
 agents — they are named checkpoints in the loop that the single skill runs
-through. Every bug touches all seven in order.
+through. Persona 0 (Bootstrap Medic) runs once before the QA loop. Every bug
+found after that touches personas 1–7 in order.
 
 ```
+[0. Bootstrap Medic] (startup only; repeats until all gates green OR abort)
+          │
+          ▼
 [1. Orchestrator] → [2. QA] → [3. Bug Validator] → [4. QA Lead]
   → [5. Developer Lead] → [6. Developer] → [7. Compiler & Composer]
   → (PASS → loop back to Orchestrator; still FAIL → back to Bug Validator)
 ```
+
+**Persona 0 responsibility:** run the Bootstrap Phase + apply Bootstrap Medic
+strategies until all five health gates (docker / infra / backend / frontend /
+MCP) are green, or until every strategy in the playbook is exhausted. Outputs
+`bootstrap.log` and the `[BOOT] summary:` line. No other persona may run until
+Persona 0 reports green.
 
 | # | Persona | Responsibility | Outputs |
 |--:|---------|----------------|---------|
@@ -396,16 +497,21 @@ deferred MCP tools.
 
 ## Error handling
 
-| Scenario                | Action                                      |
-|-------------------------|---------------------------------------------|
-| Service not running     | Attempt to start; abort if > 120s to health |
-| Login fails             | Abort entire loop — auth is prerequisite    |
-| Rate limit 429          | Wait 60s, retry                             |
-| Fix causes TS errors    | Revert immediately; try alternative once    |
-| Fix breaks other routes | Revert; mark UNRESOLVED                     |
-| Network timeout         | Retry once; then mark infrastructure issue  |
-| Chrome MCP disconnect   | Fall back to Playwright for remaining cases |
-| Git lock file           | Remove `.git/HEAD.lock` and retry commit    |
+| Scenario                | Action                                                   |
+|-------------------------|----------------------------------------------------------|
+| Docker daemon down      | `open -a Docker`, poll 90 s; if still down → ABORT      |
+| Infra container down    | `docker-compose up -d`, per-container healthcheck poll   |
+| Backend down            | Bootstrap Medic classifies log; apply matching strategy  |
+| Flyway migration fails  | Bootstrap Medic: inspect triggers → repair migration    |
+| Port 8080 in use        | `lsof -ti :8080 \| xargs kill -9` (stale dev only)       |
+| Frontend compile fails  | Read log, fix ≤3-line TS/CSS error, restart              |
+| Login fails             | Abort entire loop — auth is prerequisite                 |
+| Rate limit 429          | Wait 60s, retry                                          |
+| Fix causes TS errors    | Revert immediately; try alternative once                 |
+| Fix breaks other routes | Revert; mark UNRESOLVED                                  |
+| Network timeout         | Retry once; then mark infrastructure issue               |
+| Chrome MCP disconnect   | Fall back to Playwright for remaining cases              |
+| Git lock file           | Remove `.git/HEAD.lock` and retry commit                 |
 
 ---
 

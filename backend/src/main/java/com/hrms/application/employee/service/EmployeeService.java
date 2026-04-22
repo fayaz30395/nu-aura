@@ -11,6 +11,7 @@ import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
@@ -456,13 +457,21 @@ public class EmployeeService {
         // Build a tenant filter + data-scope filter via JPA Specifications
         Specification<Employee> tenantSpec = (root, query, cb) ->
                 cb.equal(root.get("tenantId"), tenantId);
-        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(resolveEmployeeViewPermission());
         Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
 
         Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);
         Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
 
         return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
+    }
+
+    /** B-0005: pick the narrowest VIEW permission the caller actually holds so DataScope applies the right filter. */
+    private String resolveEmployeeViewPermission() {
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) return Permission.EMPLOYEE_VIEW_ALL;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_DEPARTMENT)) return Permission.EMPLOYEE_VIEW_DEPARTMENT;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) return Permission.EMPLOYEE_VIEW_TEAM;
+        return Permission.EMPLOYEE_VIEW_SELF;
     }
 
     /**
@@ -489,7 +498,7 @@ public class EmployeeService {
                     cb.like(cb.lower(root.get("employeeCode")), pattern)
             );
         };
-        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(resolveEmployeeViewPermission());
         Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(searchSpec).and(scopeSpec);
 
         Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);

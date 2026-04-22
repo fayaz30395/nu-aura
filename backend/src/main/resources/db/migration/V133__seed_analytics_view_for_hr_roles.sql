@@ -8,7 +8,7 @@
 INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES (gen_random_uuid(), 'ANALYTICS:VIEW', 'Analytics View', 'View analytics and org health dashboards', 'analytics',
         'view', NOW(), NOW(), 0, false)
-ON CONFLICT (code) DO NOTHING;
+ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 -- HR_MANAGER role
 INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
