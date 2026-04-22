@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link FluenceActivityService}.
- *
+ * <p>
  * Covers the F-02 regression: feed endpoint must cleanly return an empty page
  * when the database has zero rows (no 500, no NPE).
  */

@@ -43,18 +43,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ProjectTimesheetController Unit Tests")
 class ProjectTimesheetControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @MockitoBean private ProjectTimesheetService projectTimesheetService;
-    @MockitoBean private TimeTrackingReportService reportService;
-    @MockitoBean private ApiKeyService apiKeyService;
-    @MockitoBean private JwtTokenProvider jwtTokenProvider;
-    @MockitoBean private UserDetailsService userDetailsService;
-    @MockitoBean private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean private RateLimitFilter rateLimitFilter;
-    @MockitoBean private RateLimitingFilter rateLimitingFilter;
-    @MockitoBean private TenantFilter tenantFilter;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private ProjectTimesheetService projectTimesheetService;
+    @MockitoBean
+    private TimeTrackingReportService reportService;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     private UUID entryId;
     private UUID projectId;
@@ -90,14 +102,6 @@ class ProjectTimesheetControllerTest {
                 .allocationPercentage(new BigDecimal("100"))
                 .isActive(true)
                 .build();
-    }
-
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
     }
 
     @Test
@@ -271,5 +275,13 @@ class ProjectTimesheetControllerTest {
                 .andExpect(jsonPath("$[0].status").value("DRAFT"));
 
         verify(projectTimesheetService).getTimeEntriesByStatus(TimeEntry.TimeEntryStatus.DRAFT);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

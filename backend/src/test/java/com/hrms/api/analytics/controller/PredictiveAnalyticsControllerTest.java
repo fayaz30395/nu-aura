@@ -57,16 +57,6 @@ class PredictiveAnalyticsControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
-    // ==================== Dashboard ====================
-
     @Test
     @DisplayName("Should return predictive analytics dashboard")
     void shouldReturnDashboard() throws Exception {
@@ -79,7 +69,7 @@ class PredictiveAnalyticsControllerTest {
         verify(analyticsService).getDashboard();
     }
 
-    // ==================== Attrition Predictions ====================
+    // ==================== Dashboard ====================
 
     @Test
     @DisplayName("Should return high-risk employees with default threshold")
@@ -93,6 +83,8 @@ class PredictiveAnalyticsControllerTest {
 
         verify(analyticsService).getHighRiskEmployees(new BigDecimal("70"));
     }
+
+    // ==================== Attrition Predictions ====================
 
     @Test
     @DisplayName("Should return high-risk employees with custom threshold")
@@ -176,8 +168,6 @@ class PredictiveAnalyticsControllerTest {
         verify(analyticsService).recordActualOutcome(eq(predictionId), eq("LEFT"), eq(leaveDate));
     }
 
-    // ==================== Workforce Trends ====================
-
     @Test
     @DisplayName("Should return organization trends by year")
     void shouldReturnOrganizationTrends() throws Exception {
@@ -191,6 +181,8 @@ class PredictiveAnalyticsControllerTest {
 
         verify(analyticsService).getOrganizationTrends(2026);
     }
+
+    // ==================== Workforce Trends ====================
 
     @Test
     @DisplayName("Should return department trends")
@@ -235,8 +227,6 @@ class PredictiveAnalyticsControllerTest {
         verify(analyticsService).generateTrend(eq(2026), eq(4), isNull());
     }
 
-    // ==================== Analytics Insights ====================
-
     @Test
     @DisplayName("Should return paginated insights")
     void shouldReturnPaginatedInsights() throws Exception {
@@ -254,6 +244,8 @@ class PredictiveAnalyticsControllerTest {
 
         verify(analyticsService).getAllInsights(any(Pageable.class));
     }
+
+    // ==================== Analytics Insights ====================
 
     @Test
     @DisplayName("Should return insights by category")
@@ -335,8 +327,6 @@ class PredictiveAnalyticsControllerTest {
         );
     }
 
-    // ==================== Skill Gaps ====================
-
     @Test
     @DisplayName("Should return latest skill gaps")
     void shouldReturnLatestSkillGaps() throws Exception {
@@ -348,6 +338,8 @@ class PredictiveAnalyticsControllerTest {
 
         verify(analyticsService).getLatestSkillGaps();
     }
+
+    // ==================== Skill Gaps ====================
 
     @Test
     @DisplayName("Should return skill gaps by priority")
@@ -385,5 +377,13 @@ class PredictiveAnalyticsControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)));
 
         verify(analyticsService).getTrainableHighPriorityGaps();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

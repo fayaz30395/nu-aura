@@ -64,7 +64,7 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
      * excluded paths, but still run the filter so the XSRF-TOKEN cookie is set.
      * The actual validation skip is now handled inside doFilterInternal via
      * isValidationExcluded().
-     *
+     * <p>
      * Auth endpoints (login, Google OAuth, refresh) are excluded from validation
      * (they need to work without a prior CSRF token) but the filter still runs
      * so that the response includes the XSRF-TOKEN cookie for subsequent requests.
@@ -75,17 +75,17 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
         // Only skip the filter entirely for non-browser paths that will never
         // need CSRF cookies: webhooks, actuator, WebSocket, SAML, API-key calls.
         return path.startsWith("/actuator/") ||
-               path.startsWith("/api/v1/webhooks/") ||
-               path.startsWith("/api/v1/integrations/docusign/") ||
-               path.startsWith("/api/v1/integrations/slack/") ||
-               path.startsWith("/api/v1/payments/webhooks/") ||
-               path.startsWith("/api/v1/esignature/external/") ||
-               path.startsWith("/api/v1/biometric/") ||
-               path.startsWith("/ws/") ||
-               path.startsWith("/saml2/") ||
-               path.startsWith("/login/saml2/") ||
-               path.startsWith("/logout/saml2/") ||
-               request.getHeader("X-API-Key") != null;
+                path.startsWith("/api/v1/webhooks/") ||
+                path.startsWith("/api/v1/integrations/docusign/") ||
+                path.startsWith("/api/v1/integrations/slack/") ||
+                path.startsWith("/api/v1/payments/webhooks/") ||
+                path.startsWith("/api/v1/esignature/external/") ||
+                path.startsWith("/api/v1/biometric/") ||
+                path.startsWith("/ws/") ||
+                path.startsWith("/saml2/") ||
+                path.startsWith("/login/saml2/") ||
+                path.startsWith("/logout/saml2/") ||
+                request.getHeader("X-API-Key") != null;
     }
 
     /**
@@ -95,16 +95,16 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
     private boolean isValidationExcluded(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.startsWith("/api/v1/auth/login") ||
-               path.startsWith("/api/v1/auth/google") ||
-               path.startsWith("/api/v1/auth/refresh") ||
-               path.startsWith("/api/v1/auth/mfa-login") ||
-               path.startsWith("/api/v1/auth/forgot-password") ||
-               path.startsWith("/api/v1/auth/reset-password") ||
-               path.startsWith("/api/v1/public/") ||
-               path.startsWith("/api/public/") ||
-               path.startsWith("/api/v1/exit/interview/public/") ||
-               path.startsWith("/api/v1/preboarding/portal/") ||
-               path.startsWith("/api/v1/tenants/register");
+                path.startsWith("/api/v1/auth/google") ||
+                path.startsWith("/api/v1/auth/refresh") ||
+                path.startsWith("/api/v1/auth/mfa-login") ||
+                path.startsWith("/api/v1/auth/forgot-password") ||
+                path.startsWith("/api/v1/auth/reset-password") ||
+                path.startsWith("/api/v1/public/") ||
+                path.startsWith("/api/public/") ||
+                path.startsWith("/api/v1/exit/interview/public/") ||
+                path.startsWith("/api/v1/preboarding/portal/") ||
+                path.startsWith("/api/v1/tenants/register");
     }
 
     private void setCsrfCookie(HttpServletRequest request, HttpServletResponse response, String token) {

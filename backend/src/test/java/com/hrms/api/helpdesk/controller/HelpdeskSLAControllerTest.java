@@ -88,14 +88,6 @@ class HelpdeskSLAControllerTest {
         ticketSLA.setCreatedAt(LocalDateTime.now());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create SLA policy successfully")
     void shouldCreateSLASuccessfully() throws Exception {
@@ -250,6 +242,14 @@ class HelpdeskSLAControllerTest {
                     .andExpect(status().isOk());
 
             verify(slaService).recordCSAT(eq(tenantId), eq(ticketId), eq(5), eq("Excellent support"));
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
         }
     }
 }

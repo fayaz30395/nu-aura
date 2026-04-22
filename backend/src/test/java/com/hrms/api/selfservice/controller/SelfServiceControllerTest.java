@@ -73,14 +73,6 @@ class SelfServiceControllerTest {
         requestId = UUID.randomUUID();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create profile update request successfully")
     void shouldCreateProfileUpdateRequest() throws Exception {
@@ -220,5 +212,13 @@ class SelfServiceControllerTest {
         mockMvc.perform(get("/api/v1/self-service/document-types"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThan(0))));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

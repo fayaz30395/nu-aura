@@ -31,30 +31,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ResourcePoolController Unit Tests")
 class ResourcePoolControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @MockitoBean private ApiKeyService apiKeyService;
-    @MockitoBean private JwtTokenProvider jwtTokenProvider;
-    @MockitoBean private UserDetailsService userDetailsService;
-    @MockitoBean private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean private RateLimitFilter rateLimitFilter;
-    @MockitoBean private RateLimitingFilter rateLimitingFilter;
-    @MockitoBean private TenantFilter tenantFilter;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     private UUID poolId;
 
     @BeforeEach
     void setUp() {
         poolId = UUID.randomUUID();
-    }
-
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
     }
 
     @Test
@@ -159,5 +161,13 @@ class ResourcePoolControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.poolType").value("SHARED"))
                 .andExpect(jsonPath("$.memberCount").value(0));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

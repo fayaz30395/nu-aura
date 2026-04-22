@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * REST controller for employee skill CRUD operations.
  * Supports the Competency Matrix frontend feature in NU-Grow.
- *
+ * <p>
  * Note: No dedicated SKILL permission constants exist — we use EMPLOYEE_VIEW_SELF
  * for reads (any authenticated user can view skills) and rely on service-layer
  * tenant isolation for security. SuperAdmin bypasses all checks via PermissionAspect.

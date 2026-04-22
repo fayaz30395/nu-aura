@@ -87,14 +87,6 @@ class FnFControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should get or calculate FnF settlement")
     void shouldGetOrCalculateFnF() throws Exception {
@@ -240,5 +232,13 @@ class FnFControllerTest {
                 .andExpect(jsonPath("$.content", hasSize(1)));
 
         verify(fnfService).getAll(any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

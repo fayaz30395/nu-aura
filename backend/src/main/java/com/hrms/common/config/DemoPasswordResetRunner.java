@@ -30,11 +30,11 @@ public class DemoPasswordResetRunner implements CommandLineRunner {
             String hash = passwordEncoder.encode("Welcome@123");
             log.info("DEMO PASSWORD RESET: Generated hash: {}", hash.substring(0, 20) + "...");
             int updated = jdbcTemplate.update(
-                "UPDATE users SET password_hash = ?, failed_login_attempts = 0, " +
-                "status = 'ACTIVE', auth_provider = 'LOCAL', " +
-                "password_changed_at = NOW(), updated_at = NOW() " +
-                "WHERE email LIKE '%@nulogic.io'",
-                hash
+                    "UPDATE users SET password_hash = ?, failed_login_attempts = 0, " +
+                            "status = 'ACTIVE', auth_provider = 'LOCAL', " +
+                            "password_changed_at = NOW(), updated_at = NOW() " +
+                            "WHERE email LIKE '%@nulogic.io'",
+                    hash
             );
             log.info("DEMO PASSWORD RESET: Updated {} demo user passwords", updated);
         } catch (Exception e) {

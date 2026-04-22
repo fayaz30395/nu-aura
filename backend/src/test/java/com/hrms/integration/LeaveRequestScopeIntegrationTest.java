@@ -128,7 +128,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== System Admin Tests ====================
@@ -141,7 +141,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setAllReporteeIds(reporteeIds);
     }
 
@@ -155,7 +155,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== CUSTOM Scope Tests ====================
@@ -166,7 +166,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== Super Admin Tests ====================
@@ -179,7 +179,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setCurrentLocationIds(locationIds);
     }
 
@@ -194,7 +194,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Set custom targets for leave view permissions
         if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
@@ -218,7 +218,7 @@ class LeaveRequestScopeIntegrationTest {
         permissions.put(Permission.LEAVE_REQUEST, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     @Nested

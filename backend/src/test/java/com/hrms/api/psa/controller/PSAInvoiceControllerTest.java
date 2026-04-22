@@ -36,17 +36,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("PSAInvoiceController Unit Tests")
 class PSAInvoiceControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @MockitoBean private PSAService psaService;
-    @MockitoBean private ApiKeyService apiKeyService;
-    @MockitoBean private JwtTokenProvider jwtTokenProvider;
-    @MockitoBean private UserDetailsService userDetailsService;
-    @MockitoBean private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean private RateLimitFilter rateLimitFilter;
-    @MockitoBean private RateLimitingFilter rateLimitingFilter;
-    @MockitoBean private TenantFilter tenantFilter;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private PSAService psaService;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     private UUID invoiceId;
     private UUID projectId;
@@ -62,14 +73,6 @@ class PSAInvoiceControllerTest {
         invoice = new PSAInvoice();
         invoice.setId(invoiceId);
         invoice.setStatus(PSAInvoice.InvoiceStatus.DRAFT);
-    }
-
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
     }
 
     @Test
@@ -197,5 +200,13 @@ class PSAInvoiceControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(psaService).approveInvoice(nonExistentId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

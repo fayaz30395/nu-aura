@@ -89,14 +89,6 @@ class PreboardingControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create preboarding invitation successfully")
     void shouldCreateInvitation() throws Exception {
@@ -254,5 +246,13 @@ class PreboardingControllerTest {
                 .andExpect(status().isOk());
 
         verify(preboardingService).markConverted(candidateId, employeeId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

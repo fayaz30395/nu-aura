@@ -94,14 +94,6 @@ class Feedback360ControllerTest {
         cycle.setCreatedAt(LocalDateTime.now());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create feedback 360 cycle successfully")
     void shouldCreateCycle() throws Exception {
@@ -256,6 +248,14 @@ class Feedback360ControllerTest {
                     .andExpect(jsonPath("$.pendingReviews").value(5));
 
             verify(feedback360Service).getDashboardStats(tenantId, employeeId);
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
         }
     }
 }

@@ -74,14 +74,6 @@ class OrganizationControllerTest {
         poolId = UUID.randomUUID();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should get organization unit by ID")
     void shouldGetUnitById() throws Exception {
@@ -206,5 +198,13 @@ class OrganizationControllerTest {
                 .andExpect(status().isOk());
 
         verify(organizationService).getNineBoxData();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

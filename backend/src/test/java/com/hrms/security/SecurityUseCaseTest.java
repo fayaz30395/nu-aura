@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.AccountLockoutService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
@@ -51,7 +52,7 @@ class SecurityUseCaseTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -67,19 +68,19 @@ class SecurityUseCaseTest {
         UUID tenantB = UUID.fromString("770e8400-e29b-41d4-a716-446655440001");
 
         // Thread 1 sets tenant A
-        SecurityContext.setCurrentTenantId(tenantA);
+        TenantContext.setCurrentTenant(tenantA);
         UUID thread1Tenant = SecurityContext.getCurrentTenantId();
 
         // Simulating thread 2 overriding on same thread (worst case — shared context)
         // In production, each request has its own thread
-        SecurityContext.setCurrentTenantId(tenantB);
+        TenantContext.setCurrentTenant(tenantB);
         UUID thread2Tenant = SecurityContext.getCurrentTenantId();
 
         // After override, the latest value should be tenant B
         assertThat(thread2Tenant).isEqualTo(tenantB);
 
         // Reset to test tenant
-        SecurityContext.setCurrentTenantId(tenantA);
+        TenantContext.setCurrentTenant(tenantA);
         assertThat(SecurityContext.getCurrentTenantId()).isEqualTo(tenantA);
     }
 

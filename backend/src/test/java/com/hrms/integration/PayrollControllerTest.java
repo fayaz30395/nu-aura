@@ -5,6 +5,7 @@ import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.application.payroll.service.*;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.payroll.PayrollComponent;
 import com.hrms.domain.payroll.PayrollRun;
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -53,19 +54,19 @@ class PayrollControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @MockBean
+    @MockitoBean
     private SalaryStructureService salaryStructureService;
-    @MockBean
+    @MockitoBean
     private PayrollRunService payrollRunService;
-    @MockBean
+    @MockitoBean
     private PayslipService payslipService;
-    @MockBean
+    @MockitoBean
     private PayslipPdfService payslipPdfService;
-    @MockBean
+    @MockitoBean
     private PayrollComponentService payrollComponentService;
-    @MockBean
+    @MockitoBean
     private EmployeeService employeeService;
-    @MockBean
+    @MockitoBean
     private EventPublisher eventPublisher;
 
     @BeforeEach
@@ -73,7 +74,7 @@ class PayrollControllerTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ========================= UC-PAY-001: Create Salary Structure =========================

@@ -97,14 +97,6 @@ class ScheduledReportControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create scheduled report and return 201")
     void shouldCreateScheduledReport() throws Exception {
@@ -259,5 +251,13 @@ class ScheduledReportControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(50));
 
         verify(scheduledReportService).getAllScheduledReports(any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

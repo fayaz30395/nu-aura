@@ -88,14 +88,6 @@ class BenefitEnhancedControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create benefit plan successfully")
     void shouldCreatePlanSuccessfully() throws Exception {
@@ -257,5 +249,13 @@ class BenefitEnhancedControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(benefitService).getPendingEnrollments();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

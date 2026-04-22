@@ -79,14 +79,6 @@ class ProvidentFundControllerTest {
         pfRecord.setTenantId(UUID.randomUUID());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create PF config successfully")
     void shouldCreatePFConfig() throws Exception {
@@ -192,5 +184,13 @@ class ProvidentFundControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)));
 
         verify(statutoryService).getActivePFConfigs();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

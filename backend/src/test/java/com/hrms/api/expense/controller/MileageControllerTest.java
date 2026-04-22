@@ -103,14 +103,6 @@ class MileageControllerTest {
         );
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create mileage log successfully")
     void shouldCreateMileageLogSuccessfully() throws Exception {
@@ -285,5 +277,13 @@ class MileageControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(25));
 
         verify(mileageService).getPendingApprovals(any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

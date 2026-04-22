@@ -3,6 +3,7 @@ package com.hrms.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
@@ -46,7 +47,7 @@ class DashboardUseCaseTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -86,7 +87,7 @@ class DashboardUseCaseTest {
         tenantAdminPerms.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL);
         tenantAdminPerms.put(Permission.ANALYTICS_VIEW, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("TENANT_ADMIN"), tenantAdminPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/dashboards/executive")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -106,7 +107,7 @@ class DashboardUseCaseTest {
         managerPerms.put(Permission.EMPLOYEE_VIEW_TEAM, RoleScope.TEAM);
         managerPerms.put(Permission.DASHBOARD_MANAGER, RoleScope.TEAM);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("MANAGER"), managerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Endpoint is accessible (no permission denial), but may return 400 when
         // the test employee is not present in the DB — that's expected in a clean test DB.
@@ -131,7 +132,7 @@ class DashboardUseCaseTest {
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         employeePerms.put(Permission.DASHBOARD_EMPLOYEE, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Accessible without permission denial; 404 expected when test employee absent from DB.
         mockMvc.perform(get("/api/v1/dashboards/employee")
@@ -154,7 +155,7 @@ class DashboardUseCaseTest {
         hrPerms.put(Permission.DASHBOARD_VIEW, RoleScope.ALL);
         hrPerms.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("HR_ADMIN"), hrPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/dashboards/hr-operations")
                         .contentType(MediaType.APPLICATION_JSON))

@@ -100,14 +100,6 @@ class OfficeLocationControllerTest {
         locationRequest.setGeofenceRadiusMeters(200);
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create office location successfully")
     void shouldCreateLocation() throws Exception {
@@ -263,5 +255,13 @@ class OfficeLocationControllerTest {
                 .andExpect(jsonPath("$.withinGeofence").value(false));
 
         verify(officeLocationService).validateGeofence(any(BigDecimal.class), any(BigDecimal.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

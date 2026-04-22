@@ -6,27 +6,32 @@
 -- Also ensures updated_by (lastModifiedBy) column exists on all affected tables.
 -- ============================================================================
 
-DO $$
+DO
+$$
 BEGIN
     -- =====================================================================
     -- 1. Add deleted_at to tables that may have been missed by V58
     -- =====================================================================
 
-    IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'employee_loans') THEN
+    IF
+EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'employee_loans') THEN
         EXECUTE 'ALTER TABLE employee_loans ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ';
-    END IF;
+END IF;
 
-    IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'travel_requests') THEN
+    IF
+EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'travel_requests') THEN
         EXECUTE 'ALTER TABLE travel_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ';
-    END IF;
+END IF;
 
-    IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'holidays') THEN
+    IF
+EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'holidays') THEN
         EXECUTE 'ALTER TABLE holidays ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ';
-    END IF;
+END IF;
 
-    IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'tickets') THEN
+    IF
+EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'tickets') THEN
         EXECUTE 'ALTER TABLE tickets ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ';
-    END IF;
+END IF;
 
     -- =====================================================================
     -- 2. Relax NOT NULL on created_at / updated_at so that JPA auditing
@@ -36,76 +41,85 @@ BEGIN
     -- =====================================================================
 
     -- employee_loans
-    IF EXISTS (
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'employee_loans'
           AND column_name = 'created_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN created_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN created_at DROP NOT NULL';
-    END IF;
-    IF EXISTS (
+EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN created_at DROP NOT NULL';
+END IF;
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'employee_loans'
           AND column_name = 'updated_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN updated_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN updated_at DROP NOT NULL';
-    END IF;
+EXECUTE 'ALTER TABLE employee_loans ALTER COLUMN updated_at DROP NOT NULL';
+END IF;
 
     -- travel_requests
-    IF EXISTS (
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'travel_requests'
           AND column_name = 'created_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN created_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN created_at DROP NOT NULL';
-    END IF;
-    IF EXISTS (
+EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN created_at DROP NOT NULL';
+END IF;
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'travel_requests'
           AND column_name = 'updated_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN updated_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN updated_at DROP NOT NULL';
-    END IF;
+EXECUTE 'ALTER TABLE travel_requests ALTER COLUMN updated_at DROP NOT NULL';
+END IF;
 
     -- holidays
-    IF EXISTS (
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'holidays'
           AND column_name = 'created_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE holidays ALTER COLUMN created_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE holidays ALTER COLUMN created_at DROP NOT NULL';
-    END IF;
-    IF EXISTS (
+EXECUTE 'ALTER TABLE holidays ALTER COLUMN created_at DROP NOT NULL';
+END IF;
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'holidays'
           AND column_name = 'updated_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE holidays ALTER COLUMN updated_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE holidays ALTER COLUMN updated_at DROP NOT NULL';
-    END IF;
+EXECUTE 'ALTER TABLE holidays ALTER COLUMN updated_at DROP NOT NULL';
+END IF;
 
     -- tickets
-    IF EXISTS (
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'tickets'
           AND column_name = 'created_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE tickets ALTER COLUMN created_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE tickets ALTER COLUMN created_at DROP NOT NULL';
-    END IF;
-    IF EXISTS (
+EXECUTE 'ALTER TABLE tickets ALTER COLUMN created_at DROP NOT NULL';
+END IF;
+    IF
+EXISTS (
         SELECT 1 FROM information_schema.columns
         WHERE table_schema = 'public' AND table_name = 'tickets'
           AND column_name = 'updated_at' AND is_nullable = 'NO'
     ) THEN
         EXECUTE 'ALTER TABLE tickets ALTER COLUMN updated_at SET DEFAULT NOW()';
-        EXECUTE 'ALTER TABLE tickets ALTER COLUMN updated_at DROP NOT NULL';
-    END IF;
+EXECUTE 'ALTER TABLE tickets ALTER COLUMN updated_at DROP NOT NULL';
+END IF;
 
-    RAISE NOTICE 'V131: Schema safety net applied for P1 POST endpoints';
+    RAISE
+NOTICE 'V131: Schema safety net applied for P1 POST endpoints';
 END $$;

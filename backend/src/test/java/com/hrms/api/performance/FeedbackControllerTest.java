@@ -84,14 +84,6 @@ class FeedbackControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should give feedback successfully")
     void shouldGiveFeedbackSuccessfully() throws Exception {
@@ -243,5 +235,13 @@ class FeedbackControllerTest {
                 .andExpect(jsonPath("$.isAnonymous").value(true));
 
         verify(feedbackService).giveFeedback(any(FeedbackRequest.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

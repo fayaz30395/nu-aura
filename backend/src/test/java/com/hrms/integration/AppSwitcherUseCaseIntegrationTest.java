@@ -3,6 +3,7 @@ package com.hrms.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
@@ -46,7 +47,7 @@ class AppSwitcherUseCaseIntegrationTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -89,7 +90,7 @@ class AppSwitcherUseCaseIntegrationTest {
         hiringPerms.put(Permission.RECRUITMENT_VIEW, RoleScope.ALL);
         hiringPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("RECRUITER"), hiringPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Hire app route — should be accessible
         mockMvc.perform(get("/api/v1/recruitment/job-openings")
@@ -103,7 +104,7 @@ class AppSwitcherUseCaseIntegrationTest {
         Map<String, RoleScope> recruiterPerms = new HashMap<>();
         recruiterPerms.put(Permission.RECRUITMENT_VIEW, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("RECRUITER"), recruiterPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/recruitment/job-openings")
                         .param("page", "0")
@@ -124,7 +125,7 @@ class AppSwitcherUseCaseIntegrationTest {
         employeePerms.put(Permission.TRAINING_VIEW, RoleScope.SELF);
         // NO LMS_COURSE_MANAGE (Grow admin permission)
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         Map<String, Object> courseRequest = new HashMap<>();
         courseRequest.put("title", "Hacker Course");
@@ -143,7 +144,7 @@ class AppSwitcherUseCaseIntegrationTest {
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         // NO RECRUITMENT_CREATE
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         Map<String, Object> jobRequest = new HashMap<>();
         jobRequest.put("title", "Software Engineer");

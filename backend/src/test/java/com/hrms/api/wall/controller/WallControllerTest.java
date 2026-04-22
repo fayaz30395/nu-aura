@@ -85,14 +85,6 @@ class WallControllerTest {
         postResponse.setCreatedAt(LocalDateTime.now());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create post successfully")
     void shouldCreatePostSuccessfully() throws Exception {
@@ -293,6 +285,14 @@ class WallControllerTest {
                     .andExpect(jsonPath("$.totalElements").value(0));
 
             verify(wallService).getPraiseForEmployee(eq(employeeId), any(Pageable.class), eq(employeeId));
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
         }
     }
 }

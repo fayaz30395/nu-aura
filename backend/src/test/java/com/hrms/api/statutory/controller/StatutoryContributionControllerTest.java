@@ -75,14 +75,6 @@ class StatutoryContributionControllerTest {
         contribution.setTenantId(UUID.randomUUID());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should return employee contributions")
     void shouldReturnEmployeeContributions() throws Exception {
@@ -182,5 +174,13 @@ class StatutoryContributionControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)));
 
         verify(statutoryService).getEmployeeContributions(employeeId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

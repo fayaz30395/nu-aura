@@ -79,14 +79,6 @@ class ESIControllerTest {
         esiRecord.setTenantId(UUID.randomUUID());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create ESI config successfully")
     void shouldCreateESIConfig() throws Exception {
@@ -162,5 +154,13 @@ class ESIControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(statutoryService).getActiveESIConfigs();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

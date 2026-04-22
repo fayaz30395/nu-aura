@@ -53,14 +53,6 @@ class OrganizationHealthControllerTest {
     @MockitoBean
     private TenantFilter tenantFilter;
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should return organization health successfully")
     void shouldReturnOrganizationHealth() throws Exception {
@@ -138,5 +130,13 @@ class OrganizationHealthControllerTest {
     void shouldRejectPutMethod() throws Exception {
         mockMvc.perform(put("/api/v1/analytics/org-health"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

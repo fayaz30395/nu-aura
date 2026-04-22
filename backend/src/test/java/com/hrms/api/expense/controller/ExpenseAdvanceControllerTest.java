@@ -94,14 +94,6 @@ class ExpenseAdvanceControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create expense advance successfully")
     void shouldCreateAdvanceSuccessfully() throws Exception {
@@ -267,5 +259,13 @@ class ExpenseAdvanceControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(1));
 
         verify(advanceService).getAllAdvances(any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

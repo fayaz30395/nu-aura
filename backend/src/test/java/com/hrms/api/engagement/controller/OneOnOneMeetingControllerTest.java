@@ -90,14 +90,6 @@ class OneOnOneMeetingControllerTest {
         meeting.setMeetingType(OneOnOneMeeting.MeetingType.REGULAR);
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create meeting successfully")
     void shouldCreateMeeting() throws Exception {
@@ -273,6 +265,14 @@ class OneOnOneMeetingControllerTest {
                     .andExpect(jsonPath("$.status").value("CANCELLED"));
 
             verify(meetingService).cancelMeeting(eq(meetingId), eq(managerId), any());
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
         }
     }
 }

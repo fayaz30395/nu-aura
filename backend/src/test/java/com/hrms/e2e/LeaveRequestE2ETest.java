@@ -164,7 +164,7 @@ class LeaveRequestE2ETest {
         permissions.put("HRMS:LEAVE:APPROVE", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 

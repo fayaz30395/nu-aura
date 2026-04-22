@@ -88,14 +88,6 @@ class TDSControllerTest {
         tdsDeclaration.setTenantId(UUID.randomUUID());
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create TDS slab successfully")
     void shouldCreateTDSSlab() throws Exception {
@@ -247,5 +239,13 @@ class TDSControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(statutoryService).getTDSSlabs("2020-21", TaxRegime.NEW_REGIME);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

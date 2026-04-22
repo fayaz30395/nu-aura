@@ -37,14 +37,18 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
     private static final int GCM_IV_LENGTH = 12;   // 96 bits — NIST recommended
     private static final int GCM_TAG_LENGTH = 128;  // bits
     private static final String ENV_KEY = "ENCRYPTION_KEY";
-    /** Alternate env var name used by start-backend.sh and render deployment. */
+    /**
+     * Alternate env var name used by start-backend.sh and render deployment.
+     */
     private static final String ENV_KEY_ALT = "APP_SECURITY_ENCRYPTION_KEY";
 
     /**
      * Lazily resolved key — avoids failing at class-load time in test contexts.
      */
     private volatile SecretKeySpec secretKey;
-    /** True when no encryption key is available. Avoids repeated log spam. */
+    /**
+     * True when no encryption key is available. Avoids repeated log spam.
+     */
     private volatile boolean keyMissing = false;
 
     private SecretKeySpec getKey() {

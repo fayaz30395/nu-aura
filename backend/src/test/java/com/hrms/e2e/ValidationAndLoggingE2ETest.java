@@ -51,7 +51,7 @@ class ValidationAndLoggingE2ETest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 

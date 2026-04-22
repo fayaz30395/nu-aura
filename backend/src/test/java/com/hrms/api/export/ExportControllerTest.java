@@ -76,14 +76,6 @@ class ExportControllerTest {
         exportedData = "mock-exported-bytes".getBytes();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should export employees as EXCEL")
     void shouldExportEmployeesAsExcel() throws Exception {
@@ -240,5 +232,13 @@ class ExportControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_LENGTH,
                         String.valueOf(exportedData.length)));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

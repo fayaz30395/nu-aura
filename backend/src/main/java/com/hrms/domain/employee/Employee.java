@@ -133,6 +133,7 @@ public class Employee extends TenantAware {
 
     // NEW-10: Flag for payroll recalculation after department transfer or other changes
     @Column(name = "payroll_recalculation_required")
+    @Builder.Default
     private Boolean payrollRecalculationRequired = false;
 
     @Convert(converter = EncryptedStringConverter.class)

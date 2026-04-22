@@ -119,7 +119,7 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
                 .entityId(buildSpEntityId(registrationId, idp))
                 .assertionConsumerServiceLocation(appBaseUrl + "/login/saml2/sso/" + registrationId)
                 .assertionConsumerServiceBinding(Saml2MessageBinding.POST)
-                .assertingPartyDetails(party -> {
+                .assertingPartyMetadata(party -> {
                     party.entityId(idp.getEntityId());
                     party.singleSignOnServiceLocation(idp.getSsoUrl());
                     party.singleSignOnServiceBinding(Saml2MessageBinding.REDIRECT);

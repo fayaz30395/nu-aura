@@ -144,7 +144,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("EMPLOYEE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== System Admin Tests ====================
@@ -158,7 +158,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setAllReporteeIds(reporteeIds);
     }
 
@@ -173,7 +173,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== DEPARTMENT Scope Tests ====================
@@ -184,7 +184,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== CUSTOM Scope Tests ====================
@@ -197,7 +197,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setCurrentLocationIds(locationIds);
     }
 
@@ -211,7 +211,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setOrgContext(null, departmentId, null);
     }
 
@@ -227,7 +227,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Set custom targets for expense view permissions
         if (customEmployeeIds != null || customDepartmentIds != null || customLocationIds != null) {
@@ -254,7 +254,7 @@ class ExpenseClaimScopeIntegrationTest {
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     @Nested
@@ -317,7 +317,7 @@ class ExpenseClaimScopeIntegrationTest {
             permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
             permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
             SecurityContext.setCurrentUser(UUID.randomUUID(), CURRENT_EMPLOYEE_ID, Set.of("EMPLOYEE"), permissions);
-            SecurityContext.setCurrentTenantId(TENANT_ID);
+            TenantContext.setCurrentTenant(TENANT_ID);
 
             // Test getAllExpenseClaims - should return only own expenses
             mockMvc.perform(get(BASE_URL)

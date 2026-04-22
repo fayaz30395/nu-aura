@@ -3,6 +3,7 @@ package com.hrms.config;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Profile;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.Permission;
 import jakarta.annotation.PostConstruct;
 
@@ -41,6 +42,6 @@ public class TestSecurityConfig {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL); // This bypasses all permission checks
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 }

@@ -46,6 +46,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
+
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
                                WebSocketNotificationService webSocketNotificationService,

@@ -88,14 +88,6 @@ class BudgetPlanningControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create budget successfully")
     void shouldCreateBudgetSuccessfully() throws Exception {
@@ -254,5 +246,13 @@ class BudgetPlanningControllerTest {
                 .andExpect(status().isOk());
 
         verify(budgetService).getDashboard(2026);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

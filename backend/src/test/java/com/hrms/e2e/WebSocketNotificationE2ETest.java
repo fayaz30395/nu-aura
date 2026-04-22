@@ -11,7 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,7 +41,7 @@ class WebSocketNotificationE2ETest {
     private static final UUID TEST_DEPARTMENT_ID = UUID.fromString("333e8400-e29b-41d4-a716-446655440099");
     @Autowired
     private WebSocketNotificationService webSocketNotificationService;
-    @SpyBean
+    @MockitoSpyBean
     private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
@@ -51,7 +51,7 @@ class WebSocketNotificationE2ETest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         // Reset mock

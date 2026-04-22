@@ -46,6 +46,18 @@ class StatutoryDeductionServiceTest {
 
     // ===== PF — Provident Fund Tests =====
 
+    private StatutoryDeductions calculate(String basic, String gross, String state) {
+        return service.calculate(
+                employeeId,
+                new BigDecimal(basic),
+                new BigDecimal(gross),
+                state,
+                1, 2025
+        );
+    }
+
+    // ===== ESI — Employee State Insurance Tests =====
+
     @Nested
     @DisplayName("PF (Provident Fund) Calculations")
     class PfTests {
@@ -106,7 +118,7 @@ class StatutoryDeductionServiceTest {
         }
     }
 
-    // ===== ESI — Employee State Insurance Tests =====
+    // ===== Professional Tax Tests =====
 
     @Nested
     @DisplayName("ESI (Employee State Insurance) Calculations")
@@ -153,7 +165,7 @@ class StatutoryDeductionServiceTest {
         }
     }
 
-    // ===== Professional Tax Tests =====
+    // ===== TDS — Tax Deducted at Source Tests =====
 
     @Nested
     @DisplayName("Professional Tax (State-wise)")
@@ -234,7 +246,7 @@ class StatutoryDeductionServiceTest {
         }
     }
 
-    // ===== TDS — Tax Deducted at Source Tests =====
+    // ===== Edge Cases =====
 
     @Nested
     @DisplayName("TDS (New Regime FY 2024-25)")
@@ -322,7 +334,7 @@ class StatutoryDeductionServiceTest {
         }
     }
 
-    // ===== Edge Cases =====
+    // ===== Helper =====
 
     @Nested
     @DisplayName("Edge Cases & Totals")
@@ -396,17 +408,5 @@ class StatutoryDeductionServiceTest {
             assertThat(result.getEmployeePf()).isEqualByComparingTo("6000.00");
             assertThat(result.getEmployerPf()).isEqualByComparingTo("1800");
         }
-    }
-
-    // ===== Helper =====
-
-    private StatutoryDeductions calculate(String basic, String gross, String state) {
-        return service.calculate(
-                employeeId,
-                new BigDecimal(basic),
-                new BigDecimal(gross),
-                state,
-                1, 2025
-        );
     }
 }

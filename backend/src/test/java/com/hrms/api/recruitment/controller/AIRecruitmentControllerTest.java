@@ -71,14 +71,6 @@ class AIRecruitmentControllerTest {
         jobOpeningId = UUID.randomUUID();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should parse resume from text successfully")
     void shouldParseResumeFromText() throws Exception {
@@ -309,5 +301,13 @@ class AIRecruitmentControllerTest {
                 .andExpect(jsonPath("$.candidateId").value(candidateId.toString()));
 
         verify(aiRecruitmentService).synthesizeInterviewFeedback(candidateId, jobOpeningId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

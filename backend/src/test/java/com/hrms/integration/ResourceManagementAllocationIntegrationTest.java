@@ -120,7 +120,7 @@ class ResourceManagementAllocationIntegrationTest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     private Employee createEmployee(String employeeCodePrefix) {

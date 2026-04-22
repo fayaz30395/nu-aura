@@ -6,6 +6,7 @@ import com.hrms.api.user.dto.CreateRoleRequest;
 import com.hrms.api.user.dto.UpdateRoleRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class RoleControllerIntegrationTest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         // Seed test permissions if not already present
         if (permissionRepository.findByCode("EMPLOYEE:READ").isEmpty()) {

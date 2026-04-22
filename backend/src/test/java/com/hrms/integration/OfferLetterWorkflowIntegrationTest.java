@@ -141,7 +141,7 @@ class OfferLetterWorkflowIntegrationTest {
         permissions.put(Permission.ESIGNATURE_MANAGE, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), currentEmployeeId, Set.of("ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ==================== E-Signature Tests ====================

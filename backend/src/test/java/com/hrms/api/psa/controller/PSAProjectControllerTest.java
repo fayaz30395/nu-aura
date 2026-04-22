@@ -36,17 +36,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("PSAProjectController Unit Tests")
 class PSAProjectControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @MockitoBean private PSAService psaService;
-    @MockitoBean private ApiKeyService apiKeyService;
-    @MockitoBean private JwtTokenProvider jwtTokenProvider;
-    @MockitoBean private UserDetailsService userDetailsService;
-    @MockitoBean private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean private RateLimitFilter rateLimitFilter;
-    @MockitoBean private RateLimitingFilter rateLimitingFilter;
-    @MockitoBean private TenantFilter tenantFilter;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private PSAService psaService;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     private UUID psaProjectId;
     private PSAProject psaProject;
@@ -58,14 +69,6 @@ class PSAProjectControllerTest {
         psaProject.setId(psaProjectId);
         psaProject.setProjectName("PSA Test Project");
         psaProject.setStatus(PSAProject.ProjectStatus.ACTIVE);
-    }
-
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
     }
 
     @Test
@@ -200,5 +203,13 @@ class PSAProjectControllerTest {
                 .andExpect(jsonPath("$.id").value(psaProjectId.toString()));
 
         verify(psaService).allocateResources(eq(psaProjectId), org.mockito.ArgumentMatchers.any(Map.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

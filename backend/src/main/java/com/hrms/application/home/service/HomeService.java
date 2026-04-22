@@ -54,7 +54,10 @@ public class HomeService {
     /**
      * Get upcoming birthdays for the next N days (default 7 days)
      */
-    @Cacheable(value = CacheConfig.UPCOMING_BIRTHDAYS)
+    @Cacheable(
+            value = CacheConfig.UPCOMING_BIRTHDAYS,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant().toString() + ':' + #days"
+    )
     @Transactional(readOnly = true)
     public List<BirthdayResponse> getUpcomingBirthdays(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -108,7 +111,10 @@ public class HomeService {
     /**
      * Get upcoming work anniversaries for the next N days (default 7 days)
      */
-    @Cacheable(value = CacheConfig.UPCOMING_ANNIVERSARIES)
+    @Cacheable(
+            value = CacheConfig.UPCOMING_ANNIVERSARIES,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant().toString() + ':' + #days"
+    )
     @Transactional(readOnly = true)
     public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();

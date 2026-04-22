@@ -95,14 +95,6 @@ class ExpenseCategoryControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create expense category successfully")
     void shouldCreateCategorySuccessfully() throws Exception {
@@ -265,5 +257,13 @@ class ExpenseCategoryControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(0));
 
         verify(categoryService).getAllCategories(any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

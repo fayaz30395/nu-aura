@@ -3,6 +3,7 @@ package com.hrms.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
@@ -16,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,7 +46,7 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -63,14 +63,15 @@ class RbacUseCaseBoundaryTest {
         selfPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         selfPerms.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), selfPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees/me")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     // Endpoint is accessible — EMPLOYEE has self-service access (no 403)
-                    // 200 = employee found, 404 = not in test DB, 400 = cache config gap in test profile
+                    // 200 = employee found, 404 = not in test DB, 400 = cache config gap in test
+                    // profile
                     org.junit.jupiter.api.Assertions.assertNotEquals(403, status,
                             "EMPLOYEE should not be forbidden from /me — got: " + status);
                 });
@@ -87,10 +88,10 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> selfPerms = new HashMap<>();
         selfPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), selfPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -105,10 +106,10 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> managerPerms = new HashMap<>();
         managerPerms.put(Permission.EMPLOYEE_VIEW_TEAM, RoleScope.TEAM);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("MANAGER"), managerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -121,7 +122,7 @@ class RbacUseCaseBoundaryTest {
     void ucRbac004_superAdmin_accessesEverything_returns200() throws Exception {
         // Already SUPER_ADMIN in @BeforeEach
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -130,7 +131,7 @@ class RbacUseCaseBoundaryTest {
     void ucRbac004_superAdmin_accessesPayroll_returns200() throws Exception {
         // Already SUPER_ADMIN in @BeforeEach
         mockMvc.perform(get("/api/v1/payroll/runs")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -147,10 +148,10 @@ class RbacUseCaseBoundaryTest {
         hrManagerPerms.put(Permission.ATTENDANCE_MANAGE, RoleScope.ALL);
         // NO PAYROLL permissions
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("HR_MANAGER"), hrManagerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/payroll/runs")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -164,17 +165,19 @@ class RbacUseCaseBoundaryTest {
     @Test
     @DisplayName("UC-RBAC-006: EMPLOYEE (non-admin) cannot access /api/v1/admin/system → 403")
     void ucRbac006_tenantAdmin_cannotAccessSuperAdminEndpoints_returns403() throws Exception {
-        // NOTE: TENANT_ADMIN has admin bypass — isTenantAdmin() returns true for that role.
-        // Using a plain EMPLOYEE with TENANT_MANAGE permission (but no SYSTEM_ADMIN permission)
+        // NOTE: TENANT_ADMIN has admin bypass — isTenantAdmin() returns true for that
+        // role.
+        // Using a plain EMPLOYEE with TENANT_MANAGE permission (but no SYSTEM_ADMIN
+        // permission)
         // to test that non-admin users are blocked from system admin endpoints.
         Map<String, RoleScope> nonAdminPerms = new HashMap<>();
         nonAdminPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         // NO SYSTEM_ADMIN permission, NO TENANT_ADMIN role
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), nonAdminPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/admin/system/overview")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -192,19 +195,18 @@ class RbacUseCaseBoundaryTest {
         managerPerms.put(Permission.LEAVE_APPROVE, RoleScope.TEAM);
         // Use the same EMPLOYEE_ID as both requester and approver
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("MANAGER"), managerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Attempt to approve — the leave request ID that belongs to the same employee
         // The backend should reject self-approval
         mockMvc.perform(post("/api/v1/leave/" + EMPLOYEE_ID + "/approve")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"comment\": \"Self approve attempt\"}"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"comment\": \"Self approve attempt\"}"))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     org.junit.jupiter.api.Assertions.assertTrue(
                             status == 400 || status == 403 || status == 404,
-                            "Expected 400, 403, or 404 but got: " + status
-                    );
+                            "Expected 400, 403, or 404 but got: " + status);
                 });
     }
 
@@ -219,13 +221,15 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> selfPerms = new HashMap<>();
         selfPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), selfPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
-        // /me has no @RequiresPermission — any authenticated user can access their own profile
+        // /me has no @RequiresPermission — any authenticated user can access their own
+        // profile
         // Accept 200 (found), 404 (not in test DB), 400 (cache miss in test profile)
-        // But NOT 403 (that would mean the endpoint is gating self-access with a permission)
+        // But NOT 403 (that would mean the endpoint is gating self-access with a
+        // permission)
         mockMvc.perform(get("/api/v1/employees/me")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> org.junit.jupiter.api.Assertions.assertNotEquals(
                         403, result.getResponse().getStatus(),
                         "MY SPACE /me should never return 403 for authenticated user"));
@@ -241,10 +245,10 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> noPerms = new HashMap<>();
         noPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), noPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").exists());
     }
@@ -260,22 +264,22 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> employeePerms = new HashMap<>();
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // First request — should be 403
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
 
         // Simulate role upgrade (cache invalidation by setting new context)
         Map<String, RoleScope> hrAdminPerms = new HashMap<>();
         hrAdminPerms.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("HR_ADMIN"), hrAdminPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // After role change, should be 200
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -291,13 +295,15 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> minimalPerms = new HashMap<>();
         minimalPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), minimalPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
-        // /me endpoint has no @RequiresPermission — available to all authenticated users.
-        // 200 = found, 404 = test DB empty, 400 = cache miss in test profile — all acceptable.
+        // /me endpoint has no @RequiresPermission — available to all authenticated
+        // users.
+        // 200 = found, 404 = test DB empty, 400 = cache miss in test profile — all
+        // acceptable.
         // The critical assertion is that access is NOT denied (no 403).
         mockMvc.perform(get("/api/v1/employees/me")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> org.junit.jupiter.api.Assertions.assertNotEquals(
                         403, result.getResponse().getStatus(),
                         "MY SPACE /me must not return 403 — no @RequiresPermission on this endpoint"));
@@ -312,7 +318,7 @@ class RbacUseCaseBoundaryTest {
     void ucRbac012_superAdmin_bypassesAllChecks_returns200() throws Exception {
         // Super admin context already set in @BeforeEach
         mockMvc.perform(get("/api/v1/admin/health")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -330,10 +336,10 @@ class RbacUseCaseBoundaryTest {
         hrAdminPerms.put(Permission.LEAVE_MANAGE, RoleScope.ALL);
         // No PAYROLL permissions — simulating cross-tenant restriction
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("HR_ADMIN"), hrAdminPerms);
-        SecurityContext.setCurrentTenantId(differentTenantId);
+        TenantContext.setCurrentTenant(differentTenantId);
 
         mockMvc.perform(get("/api/v1/payroll/runs")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -348,10 +354,10 @@ class RbacUseCaseBoundaryTest {
         newJoinerPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         // NO EMPLOYEE_VIEW_ALL, NO EMPLOYEE_CREATE
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("NEW_JOINER"), newJoinerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -369,7 +375,7 @@ class RbacUseCaseBoundaryTest {
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         // NO ROLE_MANAGE permission, plain EMPLOYEE role (not admin-bypassed)
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         Map<String, Object> roleRequest = new HashMap<>();
         roleRequest.put("name", "SUPER_ADMIN");
@@ -377,16 +383,15 @@ class RbacUseCaseBoundaryTest {
         roleRequest.put("description", "Attempted privilege escalation");
 
         mockMvc.perform(post("/api/v1/roles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(roleRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(roleRequest)))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     // 403 = permission denied, 400 = validation error before permission check fires
                     // Both are acceptable — neither allows the operation through
                     org.junit.jupiter.api.Assertions.assertTrue(
                             status == 400 || status == 403,
-                            "Expected 400 (validation) or 403 (forbidden) but got: " + status
-                    );
+                            "Expected 400 (validation) or 403 (forbidden) but got: " + status);
                 });
     }
 
@@ -400,10 +405,10 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> hrManagerPerms = new HashMap<>();
         hrManagerPerms.put(Permission.EMPLOYEE_VIEW_DEPARTMENT, RoleScope.DEPARTMENT);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("HR_MANAGER"), hrManagerPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -418,7 +423,7 @@ class RbacUseCaseBoundaryTest {
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         // NO EMPLOYEE_CREATE
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         Map<String, Object> newEmployee = new HashMap<>();
         newEmployee.put("firstName", "Test");
@@ -426,8 +431,8 @@ class RbacUseCaseBoundaryTest {
         newEmployee.put("email", "test@nulogic.test");
 
         mockMvc.perform(post("/api/v1/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newEmployee)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newEmployee)))
                 .andExpect(status().isForbidden());
     }
 
@@ -442,10 +447,10 @@ class RbacUseCaseBoundaryTest {
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         employeePerms.put(Permission.LEAVE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/payroll/runs")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -459,10 +464,10 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> employeePerms = new HashMap<>();
         employeePerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), employeePerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         mockMvc.perform(get("/api/v1/roles")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
@@ -477,11 +482,11 @@ class RbacUseCaseBoundaryTest {
         Map<String, RoleScope> noAdminPerms = new HashMap<>();
         noAdminPerms.put(Permission.EMPLOYEE_VIEW_SELF, RoleScope.SELF);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("EMPLOYEE"), noAdminPerms);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         // Attempt admin endpoint — should get 403 with proper error body
         mockMvc.perform(get("/api/v1/admin/stats")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").exists())
                 .andExpect(jsonPath("$.timestamp").exists());

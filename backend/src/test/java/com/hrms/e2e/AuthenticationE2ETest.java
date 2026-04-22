@@ -77,7 +77,7 @@ class AuthenticationE2ETest {
 
     @BeforeEach
     void setUp() {
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 
@@ -207,7 +207,7 @@ class AuthenticationE2ETest {
 
         // Set up security context with the test user ID
         SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Map.of());
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         String newPassword = "NewTestPassword456!";
@@ -266,7 +266,7 @@ class AuthenticationE2ETest {
 
         // Set up security context with the test user ID
         SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Map.of());
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         mockMvc.perform(post(BASE_URL + "/change-password")

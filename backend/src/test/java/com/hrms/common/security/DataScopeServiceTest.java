@@ -1,6 +1,7 @@
 package com.hrms.common.security;
 
 import com.hrms.domain.user.RoleScope;
+import com.hrms.common.security.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,13 +38,13 @@ class DataScopeServiceTest {
         SecurityContext.setCurrentUser(userId, employeeId,
                 Collections.emptySet(),
                 Map.of(permission, scope));
-        SecurityContext.setCurrentTenantId(tenantId);
+        TenantContext.setCurrentTenant(tenantId);
     }
 
     private void setupSecurityContextWithRoles(UUID userId, UUID employeeId, UUID tenantId,
                                                String permission, RoleScope scope, Set<String> roles) {
         SecurityContext.setCurrentUser(userId, employeeId, roles, Map.of(permission, scope));
-        SecurityContext.setCurrentTenantId(tenantId);
+        TenantContext.setCurrentTenant(tenantId);
     }
 
     @Test
@@ -245,7 +246,7 @@ class DataScopeServiceTest {
                         "TEST:VIEW", RoleScope.SELF,
                         Permission.SYSTEM_ADMIN, RoleScope.ALL
                 ));
-        SecurityContext.setCurrentTenantId(tenantId);
+        TenantContext.setCurrentTenant(tenantId);
 
         // Test
         Specification<?> spec = dataScopeService.getScopeSpecification("TEST:VIEW");

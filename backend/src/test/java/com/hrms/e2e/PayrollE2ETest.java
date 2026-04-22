@@ -112,7 +112,7 @@ class PayrollE2ETest {
         permissions.put("HRMS:PAYROLL:APPROVE", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_USER_ID, roles, permissions);
-        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 

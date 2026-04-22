@@ -90,14 +90,6 @@ class StatutoryFilingControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should return available filing types")
     void shouldReturnFilingTypes() throws Exception {
@@ -269,5 +261,13 @@ class StatutoryFilingControllerTest {
                 .andExpect(jsonPath("$.content", hasSize(1)));
 
         verify(statutoryFilingService).getFilingHistory(eq(FilingType.PF_ECR), any(Pageable.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

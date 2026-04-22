@@ -74,14 +74,6 @@ class ProfessionalTaxControllerTest {
         ptSlab.setIsActive(true);
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create professional tax slab successfully")
     void shouldCreatePTSlab() throws Exception {
@@ -174,5 +166,13 @@ class ProfessionalTaxControllerTest {
                 .andExpect(status().isInternalServerError());
 
         verify(statutoryService).createPTSlab(any(ProfessionalTaxSlab.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

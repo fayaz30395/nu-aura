@@ -92,14 +92,6 @@ class MobileAttendanceControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should check in successfully with valid GPS coordinates")
     void shouldCheckInSuccessfully() throws Exception {
@@ -269,5 +261,13 @@ class MobileAttendanceControllerTest {
                 .andExpect(jsonPath("$.mockLocationDetected").value(true));
 
         verify(mobileAttendanceService).mobileCheckIn(any(MobileCheckInRequest.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

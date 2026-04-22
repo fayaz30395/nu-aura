@@ -87,14 +87,6 @@ class OffboardingControllerTest {
         offboardingRequest.setLastWorkingDate(LocalDate.now().plusDays(30));
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create offboarding process successfully")
     void shouldCreateOffboarding() throws Exception {
@@ -221,5 +213,13 @@ class OffboardingControllerTest {
                 .andExpect(jsonPath("$.content", hasSize(1)));
 
         verify(exitService).getExitProcessesByStatus(ExitProcess.ExitStatus.INITIATED);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

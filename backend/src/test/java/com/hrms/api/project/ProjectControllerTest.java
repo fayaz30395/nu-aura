@@ -40,17 +40,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("ProjectController Unit Tests")
 class ProjectControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @MockitoBean private ProjectService projectService;
-    @MockitoBean private ApiKeyService apiKeyService;
-    @MockitoBean private JwtTokenProvider jwtTokenProvider;
-    @MockitoBean private UserDetailsService userDetailsService;
-    @MockitoBean private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-    @MockitoBean private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean private RateLimitFilter rateLimitFilter;
-    @MockitoBean private RateLimitingFilter rateLimitingFilter;
-    @MockitoBean private TenantFilter tenantFilter;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockitoBean
+    private ProjectService projectService;
+    @MockitoBean
+    private ApiKeyService apiKeyService;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+    @MockitoBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private RateLimitFilter rateLimitFilter;
+    @MockitoBean
+    private RateLimitingFilter rateLimitingFilter;
+    @MockitoBean
+    private TenantFilter tenantFilter;
 
     private UUID projectId;
     private UUID employeeId;
@@ -73,14 +84,6 @@ class ProjectControllerTest {
                 .currency("USD")
                 .createdAt(LocalDateTime.now())
                 .build();
-    }
-
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
     }
 
     @Test
@@ -259,5 +262,13 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Test Project"));
 
         verify(projectService).getEmployeeProjects(employeeId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

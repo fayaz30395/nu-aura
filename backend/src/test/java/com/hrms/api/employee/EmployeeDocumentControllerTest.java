@@ -61,14 +61,6 @@ class EmployeeDocumentControllerTest {
         employeeId = UUID.randomUUID();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should upload employee document successfully")
     void shouldUploadEmployeeDocumentSuccessfully() throws Exception {
@@ -206,5 +198,13 @@ class EmployeeDocumentControllerTest {
     void shouldReturn400WhenFileMissing() throws Exception {
         mockMvc.perform(multipart("/api/v1/employees/{id}/documents", employeeId))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

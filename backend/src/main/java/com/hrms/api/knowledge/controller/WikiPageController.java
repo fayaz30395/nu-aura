@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -74,8 +75,13 @@ public class WikiPageController {
      * instead of N+1 individual queries.
      */
     private Page<WikiPageDto> toDtoBatch(Page<WikiPage> pages) {
+        List<WikiPageDto> dtos = toDtoBatch(pages.getContent());
+        return new PageImpl<>(dtos, pages.getPageable(), pages.getTotalElements());
+    }
+
+    private List<WikiPageDto> toDtoBatch(List<WikiPage> pages) {
         // Collect unique author user IDs
-        Set<UUID> authorUserIds = pages.getContent().stream()
+        Set<UUID> authorUserIds = pages.stream()
                 .map(WikiPage::getCreatedBy)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
@@ -87,7 +93,7 @@ public class WikiPageController {
                   .filter(e -> e.getUser() != null)
                   .collect(Collectors.toMap(e -> e.getUser().getId(), Function.identity(), (a, b) -> a));
 
-        return pages.map(page -> {
+        return pages.stream().map(page -> {
             if (page.getCreatedBy() == null) {
                 return WikiPageDto.fromEntity(page, null, null);
             }
@@ -98,7 +104,7 @@ public class WikiPageController {
             String authorName = author.getFirstName() +
                     (author.getLastName() != null ? " " + author.getLastName() : "");
             return WikiPageDto.fromEntity(page, authorName, resolveAuthorAvatarUrl(author));
-        });
+        }).collect(Collectors.toList());
     }
 
     private String resolveAuthorAvatarUrl(Employee author) {
@@ -236,7 +242,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<List<WikiPageDto>> getRootPages(@PathVariable UUID spaceId) {
         List<WikiPage> rootPages = wikiPageService.getRootPages(spaceId);
-        return ResponseEntity.ok(rootPages.stream().map(this::toDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(toDtoBatch(rootPages));
     }
 
     @GetMapping("/{pageId}/children")
@@ -245,7 +251,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<List<WikiPageDto>> getChildPages(@PathVariable UUID pageId) {
         List<WikiPage> children = wikiPageService.getChildPages(pageId);
-        return ResponseEntity.ok(children.stream().map(this::toDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(toDtoBatch(children));
     }
 
     @GetMapping("/{pageId}/breadcrumbs")

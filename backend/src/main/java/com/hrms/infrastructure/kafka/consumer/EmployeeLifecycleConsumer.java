@@ -341,7 +341,7 @@ public class EmployeeLifecycleConsumer {
             // and cost center allocation.
             try {
                 log.info("Flagging payroll recalculation for transferred employee {} " +
-                        "(dept: {} -> {}, location: {} -> {})",
+                                "(dept: {} -> {}, location: {} -> {})",
                         employeeId, oldDepartment, newDepartment, oldLocation, newLocation);
                 // Mark employee's active payslip for recalculation in the next payroll run.
                 // The PayrollRunService will pick this up during batch processing.

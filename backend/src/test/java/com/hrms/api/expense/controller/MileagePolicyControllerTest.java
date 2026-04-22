@@ -95,14 +95,6 @@ class MileagePolicyControllerTest {
         );
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create mileage policy successfully")
     void shouldCreatePolicySuccessfully() throws Exception {
@@ -226,5 +218,13 @@ class MileagePolicyControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(mileagePolicyService).getActivePolicies();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

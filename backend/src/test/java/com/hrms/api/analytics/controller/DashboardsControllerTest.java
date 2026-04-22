@@ -71,14 +71,6 @@ class DashboardsControllerTest {
         employeeId = UUID.randomUUID();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should return executive dashboard successfully")
     void shouldReturnExecutiveDashboard() throws Exception {
@@ -241,6 +233,14 @@ class DashboardsControllerTest {
 
             mockMvc.perform(get("/api/v1/dashboards/widgets/attendance"))
                     .andExpect(status().isOk());
+        }
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
         }
     }
 }

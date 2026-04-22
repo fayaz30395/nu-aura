@@ -101,14 +101,6 @@ class ExpensePolicyControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create expense policy successfully")
     void shouldCreatePolicySuccessfully() throws Exception {
@@ -263,5 +255,13 @@ class ExpensePolicyControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         verify(policyService).validateClaimAgainstPolicies(eq(employeeId), any(BigDecimal.class));
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

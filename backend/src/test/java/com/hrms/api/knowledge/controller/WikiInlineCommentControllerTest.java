@@ -41,29 +41,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("WikiInlineCommentController Unit Tests")
 class WikiInlineCommentControllerTest {
 
+    private static MockedStatic<TenantContext> tenantContextMock;
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockitoBean
     private WikiInlineCommentService wikiInlineCommentService;
-
     @MockitoBean
     private EmployeeRepository employeeRepository;
-
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @MockitoBean
     private TenantFilter tenantFilter;
-
-    private static MockedStatic<TenantContext> tenantContextMock;
-
     private UUID pageId;
     private UUID commentId;
     private UUID tenantId;

@@ -196,7 +196,7 @@ class RecruitmentScopeIntegrationTest {
         permissions.put(Permission.CANDIDATE_VIEW, scope);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("USER"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         if (reporteeIds != null && !reporteeIds.isEmpty()) {
             SecurityContext.setAllReporteeIds(reporteeIds);
@@ -211,7 +211,7 @@ class RecruitmentScopeIntegrationTest {
         permissions.put(Permission.CANDIDATE_VIEW, RoleScope.CUSTOM);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("CUSTOM_ROLE"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
 
         SecurityContext.setCustomScopeTargets(Permission.RECRUITMENT_VIEW,
                 customEmployeeIds, Collections.emptySet(), Collections.emptySet());
@@ -225,7 +225,7 @@ class RecruitmentScopeIntegrationTest {
         permissions.put(Permission.CANDIDATE_VIEW, RoleScope.LOCATION);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setCurrentLocationIds(locationIds);
     }
 
@@ -235,7 +235,7 @@ class RecruitmentScopeIntegrationTest {
         permissions.put(Permission.CANDIDATE_VIEW, RoleScope.DEPARTMENT);
 
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
         SecurityContext.setOrgContext(null, departmentId, null);
     }
 

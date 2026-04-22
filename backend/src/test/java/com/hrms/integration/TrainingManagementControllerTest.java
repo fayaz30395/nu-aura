@@ -5,6 +5,7 @@ import com.hrms.api.training.dto.TrainingEnrollmentRequest;
 import com.hrms.api.training.dto.TrainingProgramRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.training.TrainingProgram;
 import com.hrms.domain.user.RoleScope;
@@ -55,7 +56,7 @@ class TrainingManagementControllerTest {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
-        SecurityContext.setCurrentTenantId(TENANT_ID);
+        TenantContext.setCurrentTenant(TENANT_ID);
     }
 
     // ─────────────────────────────────────────────────────────

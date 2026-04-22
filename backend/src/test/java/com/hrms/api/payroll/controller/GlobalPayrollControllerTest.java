@@ -106,14 +106,6 @@ class GlobalPayrollControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should return global payroll dashboard")
     void shouldReturnDashboard() throws Exception {
@@ -282,5 +274,13 @@ class GlobalPayrollControllerTest {
                 .andExpect(jsonPath("$[0].employeeName").value("Jane Doe"));
 
         verify(payrollService).getEmployeeRecords(runId);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

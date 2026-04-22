@@ -79,14 +79,6 @@ class ReferralControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should submit referral successfully")
     void shouldSubmitReferral() throws Exception {
@@ -225,5 +217,13 @@ class ReferralControllerTest {
                 .andExpect(status().isOk());
 
         verify(referralService).getDashboard();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }

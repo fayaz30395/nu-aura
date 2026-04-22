@@ -100,14 +100,6 @@ class TimeTrackingControllerTest {
                 .build();
     }
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
-            return () -> Optional.of(UUID.randomUUID());
-        }
-    }
-
     @Test
     @DisplayName("Should create time entry successfully")
     void shouldCreateTimeEntry() throws Exception {
@@ -272,5 +264,13 @@ class TimeTrackingControllerTest {
                 .andExpect(jsonPath("$.billableHours").value(35.0));
 
         verify(timeTrackingService).getTimeSummary(startDate, endDate);
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public org.springframework.data.domain.AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
     }
 }
