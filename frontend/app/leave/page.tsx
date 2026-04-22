@@ -2,8 +2,11 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import {AlertCircle, Plus} from 'lucide-react';
+import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
+import {SkeletonDashboard} from '@/components/ui/Skeleton';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
   useActiveLeaveTypes,
@@ -11,25 +14,9 @@ import {
   useEmployeeLeaveRequests,
 } from '@/lib/hooks/queries/useLeaves';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {motion} from 'framer-motion';
-import {EmptyState} from '@/components/ui/EmptyState';
-import {SkeletonDashboard} from '@/components/ui/Skeleton';
-import {
-  AlertCircle,
-  Baby,
-  Briefcase,
-  Calendar,
-  CalendarDays,
-  CheckCircle,
-  ChevronRight,
-  Clock,
-  FileText,
-  Heart,
-  HelpCircle,
-  Plus,
-  Umbrella,
-  XCircle,
-} from 'lucide-react';
+import {LeaveBalanceCards} from './_components/LeaveBalanceCards';
+import {LeaveRequestsTable} from './_components/LeaveRequestsTable';
+import {LeaveQuickActions} from './_components/LeaveQuickActions';
 
 export default function LeavePage() {
   const router = useRouter();
@@ -49,14 +36,18 @@ export default function LeavePage() {
   const year = new Date().getFullYear();
   const employeeId = user?.employeeId ?? '';
 
-  // React Query hooks
   const {
     data: balancesData = [],
     isLoading: isBalancesLoading,
     error: balancesError,
     fetchStatus: balancesFetchStatus,
   } = useEmployeeBalancesForYear(employeeId, year, !!employeeId);
-  const {data: leaveTypesData = [], isLoading: isTypesLoading, error: typesError, fetchStatus: typesFetchStatus} = useActiveLeaveTypes(!!employeeId);
+  const {
+    data: leaveTypesData = [],
+    isLoading: isTypesLoading,
+    error: typesError,
+    fetchStatus: typesFetchStatus,
+  } = useActiveLeaveTypes(!!employeeId);
   const {
     data: requestsData,
     isLoading: isRequestsLoading,
@@ -67,9 +58,7 @@ export default function LeavePage() {
   const balances = balancesData;
   const leaveTypes = leaveTypesData;
   const recentRequests = requestsData?.content || [];
-  // Derive error first so we can short-circuit the loading state when an error exists.
-  // Check all three queries for errors — typesError was previously ignored, which meant
-  // a failing leave-types endpoint kept the page in loading state through all retries.
+
   const error =
     balancesError instanceof Error
       ? balancesError.message
@@ -80,72 +69,14 @@ export default function LeavePage() {
           : !employeeId
             ? 'Employee ID not found'
             : null;
-  // Only show loading when there is NO error and at least one query is actively fetching.
-  // Checking fetchStatus !== 'idle' prevents infinite spinner when queries are disabled
-  // or paused between retries.
+
   const isAnyFetching = balancesFetchStatus === 'fetching' || typesFetchStatus === 'fetching' || requestsFetchStatus === 'fetching';
   const loading = !error && (isBalancesLoading || isTypesLoading || isRequestsLoading) && isAnyFetching;
-
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return {
-          bg: 'bg-success-100 dark:bg-success-900/30',
-          text: 'text-success-700 dark:text-success-400',
-          icon: CheckCircle,
-        };
-      case 'PENDING':
-        return {
-          bg: 'bg-warning-100 dark:bg-warning-900/30',
-          text: 'text-warning-700 dark:text-warning-400',
-          icon: Clock,
-        };
-      case 'REJECTED':
-        return {
-          bg: 'bg-danger-100 dark:bg-danger-900/30',
-          text: 'text-danger-700 dark:text-danger-400',
-          icon: XCircle,
-        };
-      case 'CANCELLED':
-        return {
-          bg: 'bg-[var(--bg-secondary)]',
-          text: 'text-[var(--text-secondary)]',
-          icon: AlertCircle,
-        };
-      default:
-        return {
-          bg: 'bg-accent-100 dark:bg-accent-900/30',
-          text: 'text-accent-700 dark:text-accent-400',
-          icon: HelpCircle,
-        };
-    }
-  };
-
-  const getLeaveTypeIcon = (leaveTypeName: string) => {
-    const name = leaveTypeName?.toLowerCase() || '';
-    if (name.includes('sick') || name.includes('medical')) return Heart;
-    if (name.includes('casual') || name.includes('vacation')) return Umbrella;
-    if (name.includes('maternity') || name.includes('paternity') || name.includes('parental')) return Baby;
-    if (name.includes('earned') || name.includes('privilege')) return Briefcase;
-    return Calendar;
-  };
-
-  const getLeaveTypeGradient = (colorCode: string | undefined, index: number) => {
-    const gradients = [
-      'from-accent-500 to-accent-700',
-      'from-success-500 to-success-600',
-      'from-warning-500 to-warning-600',
-      'from-accent-600 to-accent-700',
-      'from-accent-400 to-accent-600',
-      'from-accent-500 to-accent-600',
-    ];
-    return gradients[index % gradients.length];
-  };
 
   if (loading) {
     return (
       <AppLayout activeMenuItem="leave">
-        <SkeletonDashboard />
+        <SkeletonDashboard/>
       </AppLayout>
     );
   }
@@ -156,8 +87,8 @@ export default function LeavePage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
             <div
-              className="w-16 h-16 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-              <AlertCircle className="h-8 w-8 text-danger-500"/>
+              className='w-16 h-16 rounded-full bg-status-danger-bg flex items-center justify-center'>
+              <AlertCircle className='h-8 w-8 text-status-danger-text'/>
             </div>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Unable to load leave data
@@ -170,7 +101,7 @@ export default function LeavePage() {
             <div className="flex gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                className='px-4 py-2 bg-accent text-inverse rounded-xl hover:bg-accent transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
               >
                 Retry
               </button>
@@ -208,7 +139,7 @@ export default function LeavePage() {
           <PermissionGate anyOf={[Permissions.LEAVE_REQUEST, Permissions.LEAVE_MANAGE]}>
             <button
               onClick={() => router.push('/leave/apply')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-white rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              className='flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-500 to-accent-700 hover:from-accent-700 hover:to-accent-700 text-inverse rounded-xl font-medium shadow-[var(--shadow-dropdown)] shadow-accent-500/25 transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] hover:shadow-accent-500/30 skeuo-button cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2'
             >
               <Plus
                 className="h-5 w-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
@@ -217,258 +148,19 @@ export default function LeavePage() {
           </PermissionGate>
         </div>
 
-        {/* Leave Balance Cards */}
-        <div>
-          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4 skeuo-emboss">
-            Leave Balance ({new Date().getFullYear()})
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {balances.map((balance, index) => {
-              const leaveType = leaveTypes.find(t => t.id === balance.leaveTypeId);
-              const Icon = getLeaveTypeIcon(leaveType?.leaveName || '');
-              const gradient = getLeaveTypeGradient(leaveType?.colorCode, index);
-              const total = balance.openingBalance + balance.accrued;
-              const usedPercentage = total > 0 ? (balance.used / total) * 100 : 0;
+        <LeaveBalanceCards balances={balances} leaveTypes={leaveTypes}/>
 
-              return (
-                <div
-                  key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-[var(--shadow-dropdown)] transition-all duration-200 skeuo-card"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>
-                      <Icon className="h-5 w-5 text-white"/>
-                    </div>
-                    <span
-                      className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
-                      {leaveType?.leaveCode || 'N/A'}
-                    </span>
-                  </div>
+        <LeaveRequestsTable
+          requests={recentRequests}
+          leaveTypes={leaveTypes}
+          onViewAll={() => router.push('/leave/my-leaves')}
+        />
 
-                  <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    {leaveType?.leaveName || 'Leave'}
-                  </h3>
-
-                  <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-xl font-bold skeuo-emboss">
-                      {balance.available.toFixed(1)}
-                    </span>
-                    <span className="text-body-muted">
-                      / {total.toFixed(1)} days
-                    </span>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-4">
-                    <div
-                      className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-300`}
-                      style={{width: `${Math.min(usedPercentage, 100)}%`}}
-                    />
-                  </div>
-
-                  <div className="flex justify-between text-caption">
-                    <span>Used: {balance.used.toFixed(1)}</span>
-                    <span>Pending: {balance.pending.toFixed(1)}</span>
-                  </div>
-                </div>
-              );
-            })}
-
-            {balances.length === 0 && (
-              <div className="col-span-full text-center py-8 text-[var(--text-muted)]">
-                No leave balances found
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Recent Leave Requests */}
-        <div className="skeuo-card rounded-xl border border-[var(--border-main)] overflow-hidden">
-          <div className="row-between p-6 border-b border-[var(--border-main)]">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] skeuo-emboss">
-              Recent Leave Requests
-            </h2>
-            <button
-              onClick={() => router.push('/leave/my-leaves')}
-              className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              View All
-              <ChevronRight
-                className="h-4 w-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-            </button>
-          </div>
-
-          {recentRequests.length === 0 ? (
-            <EmptyState
-              icon={<CalendarDays className="h-12 w-12"/>}
-              title="No Leave Requests"
-              description="No leave requests to display"
-            />
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table-aura w-full">
-                <thead className="skeuo-table-header">
-                <tr>
-                  <th
-                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Request #
-                  </th>
-                  <th
-                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Leave Type
-                  </th>
-                  <th
-                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th
-                    className="px-6 py-2 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Days
-                  </th>
-                  <th
-                    className="px-6 py-2 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th
-                    className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Applied On
-                  </th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                {recentRequests.map((request) => {
-                  const leaveType = leaveTypes.find(t => t.id === request.leaveTypeId);
-                  const statusConfig = getStatusConfig(request.status);
-                  const StatusIcon = statusConfig.icon;
-
-                  return (
-                    <tr
-                      key={request.id}
-                      className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                          <span className="text-sm font-medium text-[var(--text-primary)]">
-                            {request.requestNumber}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4">
-                          <span className="text-body-secondary">
-                            {leaveType?.leaveName || 'N/A'}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4">
-                          <span className="text-body-secondary">
-                            {new Date(request.startDate).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                            })}{' '}
-                            -{' '}
-                            {new Date(request.endDate).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                          <span className="text-body-secondary">
-                            {request.totalDays}
-                            {request.isHalfDay && (
-                              <span className="ml-1 text-caption">(Half Day)</span>
-                            )}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                          <span
-                            className={`badge-status ${request.status === 'APPROVED' ? 'status-success' : request.status === 'PENDING' ? 'status-warning' : request.status === 'REJECTED' ? 'status-danger' : request.status === 'CANCELLED' ? 'status-neutral' : 'status-info'} inline-flex items-center gap-1.5 justify-center`}
-                          >
-                            <StatusIcon className="h-3.5 w-3.5"/>
-                            {request.status}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4">
-                          <span className="text-body-secondary">
-                            {new Date(request.appliedOn).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button
-            onClick={() => router.push('/leave/apply')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <div
-              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div
-                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <Plus className="h-5 w-5 text-white"/>
-              </div>
-              <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
-            </div>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
-              Apply for Leave
-            </h3>
-            <p className="text-body-secondary">
-              Submit a new leave request
-            </p>
-          </button>
-
-          <button
-            onClick={() => router.push('/leave/my-leaves')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-success-300 dark:hover:border-success-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <div
-              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div
-                className="p-4 rounded-xl bg-gradient-to-br from-success-500 to-success-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <FileText className="h-5 w-5 text-white"/>
-              </div>
-              <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-success-500 group-hover:translate-x-1 transition-all"/>
-            </div>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
-              My Leaves
-            </h3>
-            <p className="text-body-secondary">
-              View all your leave history
-            </p>
-          </button>
-
-          <button
-            onClick={() => router.push('/leave/calendar')}
-            className="group card-interactive bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:border-accent-300 dark:hover:border-accent-700 transition-all duration-200 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <div
-              className="row-between mb-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-              <div
-                className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <CalendarDays className="h-5 w-5 text-white"/>
-              </div>
-              <ChevronRight
-                className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-500 group-hover:translate-x-1 transition-all"/>
-            </div>
-            <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
-              Leave Calendar
-            </h3>
-            <p className="text-body-secondary">
-              View team leave calendar
-            </p>
-          </button>
-        </div>
+        <LeaveQuickActions
+          onApply={() => router.push('/leave/apply')}
+          onMyLeaves={() => router.push('/leave/my-leaves')}
+          onCalendar={() => router.push('/leave/calendar')}
+        />
       </motion.div>
     </AppLayout>
   );
