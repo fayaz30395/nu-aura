@@ -118,6 +118,53 @@ const AUTHENTICATED_ROUTES = [
   '/workflows',
 ];
 
+/**
+ * Role-scoped route guards. These run AFTER auth + expiry + SUPER_ADMIN bypass,
+ * and BEFORE the page renders. A user whose JWT roles do not intersect with a
+ * guard's allowed-role set is redirected to /me/dashboard (their canonical
+ * home). This closes the SSR-shell leak where e.g. an EMPLOYEE could receive
+ * the /admin/* layout HTML before client-side Zustand kicked them out.
+ *
+ * Notes:
+ * - SUPER_ADMIN always bypasses (see line further down). These guards do not
+ *   apply to SUPER_ADMIN.
+ * - Data is already safe — backend `@RequiresPermission` blocks every API call
+ *   from these pages for unauthorized roles. This guard is defense-in-depth +
+ *   a UX improvement (no flash of admin shell before the redirect).
+ * - Keep the matcher coarse. Fine-grained permission checks stay in the page
+ *   components (AuthGuard + usePermissions).
+ */
+const ROUTE_GUARDS: {prefix: string; allowed: string[]}[] = [
+  // Admin-only surfaces
+  {prefix: '/admin', allowed: ['TENANT_ADMIN', 'HR_ADMIN']},
+  // Payroll + adjacent financial surfaces — HR_MANAGER granted explicit access per V113
+  {
+    prefix: '/payroll',
+    allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'FINANCE_ADMIN'],
+  },
+  {
+    prefix: '/statutory',
+    allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'FINANCE_ADMIN'],
+  },
+  {
+    prefix: '/statutory-filings',
+    allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'FINANCE_ADMIN'],
+  },
+  {prefix: '/loans', allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'FINANCE_ADMIN']},
+  {prefix: '/benefits', allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'FINANCE_ADMIN']},
+  {
+    prefix: '/compensation',
+    allowed: ['TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'FINANCE_ADMIN'],
+  },
+];
+
+function findRouteGuard(path: string): {prefix: string; allowed: string[]} | null {
+  for (const g of ROUTE_GUARDS) {
+    if (path === g.prefix || path.startsWith(g.prefix + '/')) return g;
+  }
+  return null;
+}
+
 // API routes and static assets to skip
 const SKIP_PATTERNS = [
   '/api/',
@@ -349,6 +396,21 @@ export function middleware(request: NextRequest) {
   if (role === 'SUPER_ADMIN' || roles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
     return addSecurityHeaders(response);
+  }
+
+  // Role-scoped route guards — redirect unauthorized users before the shell renders.
+  // Closes the SSR-shell leak for /admin, /payroll, /statutory, /loans, /benefits,
+  // /compensation paths. Backend @RequiresPermission is still the data-level enforcer.
+  const guard = findRouteGuard(pathname);
+  if (guard) {
+    const effectiveRoles = [
+      ...(role ? [role] : []),
+      ...roles,
+    ];
+    const authorized = guard.allowed.some((r) => effectiveRoles.includes(r));
+    if (!authorized) {
+      return NextResponse.redirect(new URL('/me/dashboard', request.url));
+    }
   }
 
   // Token exists and is not expired - allow the request
