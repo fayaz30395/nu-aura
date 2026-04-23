@@ -59,14 +59,10 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
       >
         <button
           onClick={onToggleCollapsed}
-          className={cn(
-            'flex items-center gap-2 p-2 rounded-lg transition-all duration-200 ease-out cursor-pointer',
-            isCollapsed ? 'w-full justify-center' : 'w-full'
-          )}
+          className={`flex items-center gap-2 p-2 rounded-lg transition-all duration-200 ease-out cursor-pointer ${isCollapsed ? 'w-full justify-center' : 'w-full'}`}
           style={{color: 'var(--sidebar-text)'}}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
-          suppressHydrationWarning
         >
           {isCollapsed ? (
             <PanelLeft className="h-5 w-5 transition-transform duration-300"/>
