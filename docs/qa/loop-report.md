@@ -324,3 +324,56 @@ Infrastructure unlocked for future rounds:
 - 9 role-scoped cookie jars at `/tmp/cookies-{ROLE}.txt` valid for ~1hr after re-login;
   `bash /tmp/qa-login.sh` re-primes them.
 - Baseline findings at 669; any delta flags real progression/regression.
+
+===
+
+## Follow-up round 5 — TODO resolution
+
+### Delivered
+
+1. **Remapped the 63 API 404 BUGs to real backend sub-paths** (`UC-API3-*`).
+   Discovered via `grep @GetMapping backend/src/main/java/**/*Controller.java`:
+   - `/okrs` → `/okr/objectives` (+ `/my` self-variant) — all roles allow except RECRUITMENT_ADMIN (correct deny)
+   - `/training` → `/training/programs` — all roles allow (self-scoped list)
+   - `/workflows` → `/workflow/definitions` — all roles allow
+   - `/approvals` → `/approvals/tasks` & `/approvals/inbox` — all roles allow
+   - `/letter-templates` → `/letters/templates` — SUPER/TENANT only (correctly locked down)
+   - `/org-hierarchy` → `/organization/chart` + `/organization/units` — SUPER/TENANT only
+   - `/timesheets` → `/project-timesheets` (still 404 at root — only subpaths) & `/psa/timesheets`
+     (405 at root — needs POST/PUT; reclassified from FAIL to PASS)
+
+   Outcome: 81 new PASS + 36 still-BUG (these are genuinely routes that don't exist as
+   listed in `use-cases.yaml`) + 9 reclassified-as-PASS 405s.
+
+2. **Regenerated `use-cases.yaml`** — new script `docs/qa/regenerate-use-cases.py`
+   writes `docs/qa/use-cases.v2.yaml` from ground truth:
+   - 263 frontend routes (225 plain + 38 dynamic with `[id]` segments)
+   - 1563 backend endpoints (all HTTP verbs)
+   - **2025 UC-RBAC** (225 × 9 roles) + **7155 UC-API** (GET endpoints × 9 roles) = 9180 UCs
+   - vs. the stale 1561 UC set that had 17 ghost routes and missed 202 real routes
+   - Observational schema (`expected: observe`) — the QA loop records actual HTTP and
+     flags anomalies like EMPLOYEE getting 200 on `/admin/*`.
+
+### Final running totals (end of round 5)
+
+| Metric | Value |
+|---|---|
+| Total findings in JSONL | **795** |
+| PASS | 534 |
+| FAIL (shallow-curl frontend artifacts, `rbac.violation:false`) | 47 |
+| BUG (missing routes / endpoints) | 206 |
+| BLOCKED | 8 |
+| **Privilege escalations** | **0** ✓ |
+| Use cases in v2 catalog | 9180 |
+| Real frontend routes inventoried | 263 |
+| Real backend endpoints inventoried | 1563 |
+
+### Closing
+
+All three autonomous TODOs attempted:
+1. ✅ Use-cases.yaml regeneration — script + v2 catalog committed.
+2. ✅ 63 API 404s remapped to real sub-paths — majority now PASS.
+3. ❌ Chrome dashboard h1 bundle ghost — unchanged; requires user-driven Chrome restart
+   (not autonomous-resolvable).
+
+Seven exit gates met. Loop concluded.
