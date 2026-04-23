@@ -40,7 +40,7 @@ export function SkeletonDashboardHero({className}: {className?: string}) {
         </div>
         <Base height={36} width={112} className="rounded-md"/>
       </div>
-      <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
         {Array.from({length: 4}).map((_, i) => (
           <div key={i} className="space-y-1.5">
             <Base height={10} width={64}/>

@@ -110,7 +110,7 @@ export function SpaceFormDrawer({
       name: '',
       description: '',
       icon: '📁',
-      color: '#3e63dd',
+      color: 'var(--accent-primary)',
       visibility: 'ORGANIZATION',
     },
   });
@@ -123,7 +123,7 @@ export function SpaceFormDrawer({
           name: editingSpace.name,
           description: editingSpace.description || '',
           icon: editingSpace.icon || '📁',
-          color: editingSpace.color || '#3e63dd',
+          color: editingSpace.color || 'var(--accent-primary)',
           visibility: editingSpace.visibility,
         });
       } else {
@@ -131,7 +131,7 @@ export function SpaceFormDrawer({
           name: '',
           description: '',
           icon: '📁',
-          color: '#3e63dd',
+          color: 'var(--accent-primary)',
           visibility: 'ORGANIZATION',
         });
       }
@@ -149,7 +149,7 @@ export function SpaceFormDrawer({
         <div className="flex items-center gap-2">
           <div
             className='flex items-center justify-center w-8 h-8 rounded-lg text-inverse text-sm'
-            style={{backgroundColor: selectedColor || '#3e63dd'}}
+            style={{backgroundColor: selectedColor || 'var(--accent-primary)'}}
           >
             {selectedIcon || '📁'}
           </div>

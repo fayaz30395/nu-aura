@@ -33,7 +33,7 @@ const TOKEN_GROUPS: {label: string; vars: string[]}[] = [
 
 function Swatch({name}: {name: string}) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <div
         className="h-8 w-8 rounded-md border border-[var(--border-main)]"
         style={{background: `var(${name})`}}
@@ -80,7 +80,7 @@ export default function V2PreviewPage() {
       <section>
         <h2 className="text-sm uppercase tracking-wide text-[var(--text-muted)] mb-3">Buttons</h2>
         <Card>
-          <CardContent className="p-6 flex flex-wrap gap-3">
+          <CardContent className="p-6 flex flex-wrap gap-4">
             <Button variant="primary">Primary</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="outline">Outline</Button>

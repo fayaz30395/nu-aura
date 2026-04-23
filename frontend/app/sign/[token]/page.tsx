@@ -596,7 +596,7 @@ export default function SignPage() {
                       style={{
                         fontFamily: 'cursive',
                         fontSize: '2rem',
-                        color: '#1a1a1a',
+                        color: 'var(--text-primary)',
                         lineHeight: 1.2,
                       }}
                     >

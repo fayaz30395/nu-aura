@@ -389,11 +389,11 @@ export default function MyLeavesPage() {
                   <div className="row-between mb-4">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center"
-                      style={{backgroundColor: `${leaveType?.colorCode || '#6b7280'}20`}}
+                      style={{backgroundColor: leaveType?.colorCode ? `${leaveType.colorCode}20` : 'var(--bg-secondary)'}}
                     >
                       <Calendar
                         className="h-6 w-6"
-                        style={{color: leaveType?.colorCode || '#6b7280'}}
+                        style={{color: leaveType?.colorCode || 'var(--text-muted)'}}
                       />
                     </div>
                     {isEncashable && (

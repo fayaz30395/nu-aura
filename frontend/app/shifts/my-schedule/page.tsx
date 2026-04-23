@@ -184,7 +184,7 @@ export default function MySchedulePage() {
                         {entry ? (
                           <div
                             className='rounded px-1 py-0.5 text-inverse text-xs font-medium'
-                            style={{backgroundColor: entry.colorCode || '#6B7280'}}
+                            style={{backgroundColor: entry.colorCode || 'var(--text-muted)'}}
                           >
                             <div>{entry.shiftCode}</div>
                             <div className="opacity-80 text-2xs">
@@ -230,7 +230,7 @@ export default function MySchedulePage() {
                       >
                         <div
                           className="w-1.5 h-10 rounded-full flex-shrink-0"
-                          style={{backgroundColor: entry.colorCode || '#6B7280'}}
+                          style={{backgroundColor: entry.colorCode || 'var(--text-muted)'}}
                         />
                         <div className="flex-1 min-w-0">
                           <p className='text-sm font-medium text-primary'>

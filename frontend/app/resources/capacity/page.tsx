@@ -101,7 +101,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
               className='absolute top-0 right-0 h-full flex items-center justify-center text-inverse text-xs font-bold'
               style={{
                 width: `${Math.min(total - 100, 30)}%`,
-                background: 'repeating-linear-gradient(45deg, #ef4444, #ef4444 4px, #fca5a5 4px, #fca5a5 8px)',
+                background: 'repeating-linear-gradient(45deg, var(--chart-danger), var(--chart-danger) 4px, var(--status-danger-border) 4px, var(--status-danger-border) 8px)',
               }}
               title={`Over-allocated by ${total - 100}%`}
             />

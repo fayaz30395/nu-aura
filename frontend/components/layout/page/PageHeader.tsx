@@ -45,7 +45,7 @@ export const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
     >
       {breadcrumbs && <div className={cn(isV2 ? 'mb-1' : 'mb-2')}>{breadcrumbs}</div>}
       <div className="flex items-start justify-between gap-4">
-        <div className={cn('flex items-start min-w-0', isV2 ? 'gap-3' : 'gap-4')}>
+        <div className={cn('flex items-start min-w-0', isV2 ? 'gap-2' : 'gap-4')}>
           {Icon && (
             <span
               aria-hidden

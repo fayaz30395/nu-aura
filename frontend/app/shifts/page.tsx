@@ -149,7 +149,7 @@ export default function ShiftDashboardPage() {
                 <div key={shift.id} className="flex items-center gap-1.5">
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{backgroundColor: shift.colorCode || '#6B7280'}}
+                    style={{backgroundColor: shift.colorCode || 'var(--text-muted)'}}
                   />
                   <span className='text-xs text-secondary'>
                     {shift.shiftCode} ({formatTime(shift.startTime)}-{formatTime(shift.endTime)})
@@ -250,7 +250,7 @@ export default function ShiftDashboardPage() {
                             <div
                               className='inline-flex flex-col items-center px-2 py-1 rounded-lg text-inverse text-xs font-medium'
                               style={{
-                                backgroundColor: entry.colorCode || '#6B7280',
+                                backgroundColor: entry.colorCode || 'var(--text-muted)',
                               }}
                             >
                               <span>{entry.shiftCode}</span>

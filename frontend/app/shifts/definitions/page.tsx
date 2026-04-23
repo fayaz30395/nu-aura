@@ -241,7 +241,7 @@ export default function ShiftDefinitionsPage() {
                     <div className="flex items-center gap-2">
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{backgroundColor: shift.colorCode || '#6B7280'}}
+                        style={{backgroundColor: shift.colorCode || 'var(--text-muted)'}}
                       />
                       <div>
                         <h3 className='font-semibold text-primary text-sm'>

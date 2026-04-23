@@ -329,7 +329,7 @@ export default function FluenceAnalyticsPage() {
                         labelLine={false}
                         label={({name, value}) => `${name}: ${value}`}
                         outerRadius={80}
-                        fill="#8884d8"
+                        fill="var(--chart-secondary)"
                         dataKey="value"
                       >
                         {contentDistData.map((entry, index) => (

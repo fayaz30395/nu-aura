@@ -360,7 +360,7 @@ export default function WikiPage() {
                           <div className="flex items-center gap-2">
                             <span
                               className='flex items-center justify-center w-6 h-6 rounded text-sm text-inverse flex-shrink-0'
-                              style={{backgroundColor: space.color || '#3e63dd'}}
+                              style={{backgroundColor: space.color || 'var(--accent-primary)'}}
                             >
                               {space.icon || '📁'}
                             </span>

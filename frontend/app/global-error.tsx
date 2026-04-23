@@ -57,7 +57,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     iconWrapper: {
       width: '3.5rem',
       height: '3.5rem',
-      backgroundColor: '#fee2e2',
+      backgroundColor: 'var(--status-danger-border)',
       borderRadius: '50%',
       display: 'flex',
       alignItems: 'center',
@@ -67,17 +67,17 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     title: {
       fontSize: '1.5rem',
       fontWeight: '700',
-      color: '#050766',
+      color: 'var(--accent-primary)',
       margin: '0 0 0.5rem',
     },
     description: {
-      color: '#3E616A',
+      color: 'var(--text-muted)',
       margin: '0 0 1.5rem',
       lineHeight: '1.6',
     },
     errorBox: {
-      backgroundColor: '#fef2f2',
-      border: '1px solid #fecaca',
+      backgroundColor: 'var(--status-danger-bg)',
+      border: '1px solid var(--status-danger-border)',
       padding: '1rem',
       borderRadius: '0.5rem',
       marginBottom: '1.5rem',
@@ -86,13 +86,13 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     errorText: {
       fontSize: '0.875rem',
       fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-      color: '#991b1b',
+      color: 'var(--status-danger-text)',
       wordBreak: 'break-all' as const,
       margin: 0,
     },
     errorStack: {
       fontSize: '0.75rem',
-      color: '#7f1d1d',
+      color: 'var(--status-danger-text)',
       marginTop: '0.5rem',
       maxHeight: '150px',
       overflow: 'auto' as const,
@@ -119,8 +119,8 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
     secondaryButton: {
       width: '100%',
       padding: '0.75rem 1rem',
-      backgroundColor: '#d4d4f7',
-      color: '#050766',
+      backgroundColor: 'var(--accent-primary-subtle)',
+      color: 'var(--accent-primary)',
       border: '2px solid transparent',
       borderRadius: '0.5rem',
       fontSize: '0.875rem',
@@ -146,7 +146,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
             style={{width: '1.75rem', height: '1.75rem'}}
             fill="none"
             viewBox="0 0 24 24"
-            stroke="#dc2626"
+            stroke="var(--chart-danger)"
             strokeWidth="2"
           >
             <path
@@ -182,7 +182,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
         {!isDevelopment && error.digest && (
           <div
             style={{
-              backgroundColor: '#F4F5F6',
+              backgroundColor: 'var(--surface-2)',
               padding: '0.75rem',
               borderRadius: '0.375rem',
               marginBottom: '1.5rem',
@@ -192,7 +192,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
             <p
               style={{
                 fontSize: '0.75rem',
-                color: '#3E616A',
+                color: 'var(--text-muted)',
                 margin: '0 0 0.25rem',
               }}
             >
@@ -202,7 +202,7 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
               style={{
                 fontSize: '0.875rem',
                 fontFamily: 'monospace',
-                color: '#050766',
+                color: 'var(--accent-primary)',
                 margin: 0,
               }}
             >

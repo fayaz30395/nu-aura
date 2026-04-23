@@ -84,7 +84,7 @@ export default function SecuritySettingsLoading() {
 
             {/* Session List */}
             {[1, 2, 3].map((i) => (
-              <Group key={i} justify="space-between" align="center" pb="md" style={{borderBottom: '1px solid #eee'}}>
+              <Group key={i} justify="space-between" align="center" pb="md" style={{borderBottom: '1px solid var(--border-main)'}}>
                 <Stack gap="xs" style={{flex: 1}}>
                   <Skeleton height={16} width={200}/>
                   <Skeleton height={14} width={300}/>
@@ -104,7 +104,7 @@ export default function SecuritySettingsLoading() {
             {/* History List */}
             {[1, 2].map((i) => (
               <Group key={i} justify="space-between" align="flex-start" pb="md"
-                     style={{borderBottom: '1px solid #eee'}}>
+                     style={{borderBottom: '1px solid var(--border-main)'}}>
                 <Stack gap="xs" style={{flex: 1}}>
                   <Skeleton height={16} width={150}/>
                   <Skeleton height={14} width={250}/>

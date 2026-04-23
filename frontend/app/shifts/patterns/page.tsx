@@ -96,7 +96,7 @@ function PatternPreview({
               : pd.shift?.colorCode
                 ? pd.shift.colorCode + '30'
                 : 'var(--border-main)',
-            color: pd.isOff ? '#9CA3AF' : pd.shift?.colorCode || '#6B7280',
+            color: pd.isOff ? 'var(--text-muted)' : pd.shift?.colorCode || 'var(--text-muted)',
           }}
         >
           {pd.isOff ? 'OFF' : pd.shift?.shiftCode || '?'}

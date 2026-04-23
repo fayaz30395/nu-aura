@@ -268,7 +268,7 @@ function TextInput({label, value, onChange}: {
         style={{
           width: '100%',
           padding: '8px 12px',
-          border: '1px solid #dee2e6',
+          border: '1px solid var(--border-main)',
           borderRadius: 4,
           fontSize: 14,
         }}

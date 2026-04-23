@@ -101,7 +101,7 @@ export function DeleteSpaceModal({
               <div className="flex items-center gap-4 mb-4">
                 <div
                   className='flex items-center justify-center w-12 h-12 rounded-xl text-2xl text-inverse'
-                  style={{backgroundColor: space.color || '#3e63dd'}}
+                  style={{backgroundColor: space.color || 'var(--accent-primary)'}}
                 >
                   {space.icon || '📁'}
                 </div>
@@ -213,7 +213,7 @@ export function DeleteSpaceModal({
                   >
                     <div
                       className='flex items-center justify-center w-10 h-10 rounded-lg text-lg text-inverse flex-shrink-0'
-                      style={{backgroundColor: s.color || '#3e63dd'}}
+                      style={{backgroundColor: s.color || 'var(--accent-primary)'}}
                     >
                       {s.icon || '📁'}
                     </div>
@@ -242,7 +242,7 @@ export function DeleteSpaceModal({
               >
                 <div
                   className='flex items-center justify-center w-8 h-8 rounded-lg text-sm text-inverse'
-                  style={{backgroundColor: space.color || '#3e63dd'}}
+                  style={{backgroundColor: space.color || 'var(--accent-primary)'}}
                 >
                   {space.icon || '📁'}
                 </div>
@@ -256,7 +256,7 @@ export function DeleteSpaceModal({
                   className='flex items-center justify-center w-8 h-8 rounded-lg text-sm text-inverse'
                   style={{
                     backgroundColor:
-                      otherSpaces.find((s) => s.id === selectedTargetId)?.color || '#3e63dd',
+                      otherSpaces.find((s) => s.id === selectedTargetId)?.color || 'var(--accent-primary)',
                   }}
                 >
                   {otherSpaces.find((s) => s.id === selectedTargetId)?.icon || '📁'}

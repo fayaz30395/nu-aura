@@ -344,7 +344,7 @@ export default function LeaveTypesManagementPage() {
                     <div className="flex items-center">
                       <div
                         className="h-8 w-8 rounded-full mr-4"
-                        style={{backgroundColor: leaveType.colorCode || '#3B82F6'}}
+                        style={{backgroundColor: leaveType.colorCode || 'var(--accent-primary)'}}
                       />
                       <div>
                         <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>

@@ -120,7 +120,7 @@ export default function ProjectCalendarPage() {
           endDate: p.expectedEndDate ? new Date(p.expectedEndDate) : new Date(p.startDate),
           status: p.status,
           priority: toPriority(p.priority),
-          color: STATUS_COLORS[p.status] || '#3b82f6',
+          color: STATUS_COLORS[p.status] || 'var(--accent-primary)',
           description: p.description,
         });
       });
@@ -141,7 +141,7 @@ export default function ProjectCalendarPage() {
             endDate: new Date(t.dueDate),
             status: t.status,
             priority: toPriority(t.priority),
-            color: t.type === 'MILESTONE' ? '#f59e0b' : (STATUS_COLORS[t.status] || '#64748b'),
+            color: t.type === 'MILESTONE' ? 'var(--chart-warning)' : (STATUS_COLORS[t.status] || 'var(--text-muted)'),
             projectId: t.projectId,
             projectName: t.projectName,
           });
@@ -170,7 +170,7 @@ export default function ProjectCalendarPage() {
           progress: project.status === 'COMPLETED' ? 100 : project.status === 'IN_PROGRESS' ? 50 : 0,
           status: project.status,
           priority: project.priority,
-          color: STATUS_COLORS[project.status] || '#3b82f6',
+          color: STATUS_COLORS[project.status] || 'var(--accent-primary)',
           dependencies: [],
         });
 
@@ -192,7 +192,7 @@ export default function ProjectCalendarPage() {
                 progress: task.progressPercentage || 0,
                 status: task.status,
                 priority: task.priority,
-                color: STATUS_COLORS[task.status] || '#64748b',
+                color: STATUS_COLORS[task.status] || 'var(--text-muted)',
                 projectId: project.id,
                 dependencies: [],
               });
@@ -212,7 +212,7 @@ export default function ProjectCalendarPage() {
                 endDate: milestoneDate,
                 progress: milestone.progressPercentage || 0,
                 status: milestone.status,
-                color: '#fbbf24',
+                color: 'var(--chart-warning)',
                 projectId: project.id,
                 dependencies: [],
               });
