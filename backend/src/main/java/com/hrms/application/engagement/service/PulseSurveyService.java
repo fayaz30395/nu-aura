@@ -70,7 +70,6 @@ public class PulseSurveyService {
             survey.setTargetLocations(String.join(",", request.getTargetLocations()));
         }
 
-        survey.setId(UUID.randomUUID());
         survey.setTenantId(tenantId);
         survey = surveyRepository.save(survey);
 
@@ -233,7 +232,6 @@ public class PulseSurveyService {
             }
         }
 
-        question.setId(UUID.randomUUID());
         question.setTenantId(tenantId);
 
         return questionRepository.save(question);

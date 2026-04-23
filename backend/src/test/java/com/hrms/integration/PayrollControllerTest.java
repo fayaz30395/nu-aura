@@ -422,7 +422,7 @@ class PayrollControllerTest {
         payslip.setTenantId(TENANT_ID);
 
         when(payslipService.getPayslipsByEmployeeId(eq(EMPLOYEE_ID), any()))
-                .thenReturn(new PageImpl<>(List.of(payslip)));
+                .thenReturn(new PageImpl<>(List.of(payslip), PageRequest.of(0, 20), 1));
 
         mockMvc.perform(get(BASE_URL + "/payslips/employee/{employeeId}", EMPLOYEE_ID))
                 .andExpect(status().isOk());

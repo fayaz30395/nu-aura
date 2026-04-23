@@ -50,7 +50,6 @@ public class NotificationPreferencesService {
 
     private UserNotificationPreferences createDefaultPreferences(UUID userId, UUID tenantId) {
         UserNotificationPreferences preferences = new UserNotificationPreferences();
-        preferences.setId(UUID.randomUUID());
         preferences.setUserId(userId);
         preferences.setTenantId(tenantId);
         preferences.setEmailNotifications(true);

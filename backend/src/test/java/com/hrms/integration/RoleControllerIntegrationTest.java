@@ -106,9 +106,10 @@ class RoleControllerIntegrationTest {
     @Test
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void getAllRoles_Success() throws Exception {
+        // RoleController returns Page<RoleResponse>, not a plain array
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test

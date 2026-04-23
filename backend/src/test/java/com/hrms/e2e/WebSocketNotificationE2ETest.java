@@ -73,10 +73,10 @@ class WebSocketNotificationE2ETest {
 
         webSocketNotificationService.sendToUser(TEST_USER_ID, notification);
 
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(TEST_USER_ID.toString()),
-                eq("/queue/notifications"),
-                argThat(arg -> {
+        // sendToUser uses topic-based routing (convertAndSend), not convertAndSendToUser
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + TEST_USER_ID + "/notifications"),
+                (Object) argThat(arg -> {
                     NotificationMessage msg = (NotificationMessage) arg;
                     return "Test Notification".equals(msg.getTitle()) &&
                             msg.getId() != null &&
@@ -102,8 +102,8 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToUser(TEST_USER_ID, notification);
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                anyString(),
+        // sendToUser uses topic-based routing (convertAndSend), not convertAndSendToUser
+        verify(messagingTemplate).convertAndSend(
                 anyString(),
                 captor.capture()
         );
@@ -129,7 +129,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToTenant(TEST_TENANT_ID, notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -148,7 +148,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToCurrentTenant(notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -169,7 +169,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToDepartment(TEST_DEPARTMENT_ID, notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/department." + TEST_DEPARTMENT_ID + ".notifications"),
+                eq("/topic/department/" + TEST_DEPARTMENT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -189,8 +189,9 @@ class WebSocketNotificationE2ETest {
 
         webSocketNotificationService.broadcast(notification);
 
+        // broadcast() delegates to sendToCurrentTenant() → topic-based routing
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/broadcast"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -210,10 +211,10 @@ class WebSocketNotificationE2ETest {
                 "Jan 15-17, 2024"
         );
 
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(approverId.toString()),
-                eq("/queue/notifications"),
-                argThat(arg -> {
+        // notifyLeaveRequestSubmitted → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + approverId + "/notifications"),
+                (Object) argThat(arg -> {
                     NotificationMessage msg = (NotificationMessage) arg;
                     return "New Leave Request".equals(msg.getTitle()) &&
                             msg.getMessage().contains("John Doe") &&
@@ -236,9 +237,9 @@ class WebSocketNotificationE2ETest {
         );
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(employeeId.toString()),
-                eq("/queue/notifications"),
+        // notifyLeaveApproved → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + employeeId + "/notifications"),
                 captor.capture()
         );
 
@@ -263,9 +264,9 @@ class WebSocketNotificationE2ETest {
         );
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(employeeId.toString()),
-                eq("/queue/notifications"),
+        // notifyLeaveRejected → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + employeeId + "/notifications"),
                 captor.capture()
         );
 
@@ -286,9 +287,9 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.notifyAttendanceReminder(employeeId);
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(employeeId.toString()),
-                eq("/queue/notifications"),
+        // notifyAttendanceReminder → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + employeeId + "/notifications"),
                 captor.capture()
         );
 
@@ -309,9 +310,9 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.notifyPayslipAvailable(employeeId, "December", "2024");
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(employeeId.toString()),
-                eq("/queue/notifications"),
+        // notifyPayslipAvailable → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + employeeId + "/notifications"),
                 captor.capture()
         );
 
@@ -335,8 +336,9 @@ class WebSocketNotificationE2ETest {
                 NotificationMessage.Priority.HIGH
         );
 
+        // sendAnnouncement → sendToCurrentTenant → convertAndSend with slash-separated path
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -356,9 +358,9 @@ class WebSocketNotificationE2ETest {
         );
 
         ArgumentCaptor<NotificationMessage> captor = ArgumentCaptor.forClass(NotificationMessage.class);
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(adminId.toString()),
-                eq("/queue/notifications"),
+        // sendSystemAlert → sendToUser → convertAndSend (topic-based)
+        verify(messagingTemplate).convertAndSend(
+                eq("/topic/user/" + adminId + "/notifications"),
                 captor.capture()
         );
 
@@ -385,8 +387,9 @@ class WebSocketNotificationE2ETest {
             webSocketNotificationService.sendToUser(TEST_USER_ID, notification);
         }
 
+        // sendToUser uses topic-based routing (convertAndSend), not convertAndSendToUser
         verify(messagingTemplate, times(NotificationMessage.Priority.values().length))
-                .convertAndSendToUser(anyString(), anyString(), any(NotificationMessage.class));
+                .convertAndSend(anyString(), any(NotificationMessage.class));
     }
 
     // ==================== Notification Type Tests ====================
@@ -406,7 +409,8 @@ class WebSocketNotificationE2ETest {
             webSocketNotificationService.sendToUser(TEST_USER_ID, notification);
         }
 
+        // sendToUser uses topic-based routing (convertAndSend), not convertAndSendToUser
         verify(messagingTemplate, times(NotificationMessage.NotificationType.values().length))
-                .convertAndSendToUser(anyString(), anyString(), any(NotificationMessage.class));
+                .convertAndSend(anyString(), any(NotificationMessage.class));
     }
 }

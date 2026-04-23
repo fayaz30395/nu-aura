@@ -18,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -44,11 +46,14 @@ class TimesheetControllerTest {
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private static final UUID PROJECT_ID = UUID.fromString("aabbccdd-0000-0000-0000-000000000001");
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUpSuperAdminContext() {
@@ -56,6 +61,22 @@ class TimesheetControllerTest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
         TenantContext.setCurrentTenant(TENANT_ID);
+        ensureTestEmployeeExists();
+    }
+
+    private void ensureTestEmployeeExists() {
+        jdbcTemplate.update(
+            "MERGE INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, " +
+            "auth_provider, mfa_enabled, is_deleted, version, created_at, updated_at) " +
+            "KEY(id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+            USER_ID.toString(), TENANT_ID.toString(), "test.timesheet@nulogic.test",
+            "Test", "Admin", "$2a$10$placeholder", "ACTIVE", "LOCAL", false);
+        jdbcTemplate.update(
+            "MERGE INTO employees (id, tenant_id, user_id, employee_code, first_name, last_name, " +
+            "joining_date, status, employment_type, is_deleted, version, created_at, updated_at) " +
+            "KEY(id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+            EMPLOYEE_ID.toString(), TENANT_ID.toString(), USER_ID.toString(),
+            "EMP-TIME-001", "Test", "Employee", LocalDate.now().toString(), "ACTIVE", "FULL_TIME");
     }
 
     // ========================= UC-TIME-001: Log time =========================
@@ -158,6 +179,7 @@ class TimesheetControllerTest {
 
     private TimeEntryRequest buildValidTimeEntryRequest(double hours) {
         return TimeEntryRequest.builder()
+                .projectId(PROJECT_ID)
                 .employeeId(EMPLOYEE_ID)
                 .workDate(LocalDate.now())
                 .hoursWorked(new BigDecimal(hours))

@@ -25,14 +25,36 @@ public class TestCacheConfig {
     @ConditionalOnMissingBean(name = "cacheManager")
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager(
+                // Core HR caches
                 "employees",
+                "employeeBasic",
+                "employeeWithDetails",
                 "departments",
+                "designations",
+                "officeLocations",
                 "leaveTypes",
                 "leaveBalances",
                 "users",
                 "roles",
+                "rolePermissions",
                 "permissions",
-                "analytics"
+                "analytics",
+                // Settings / config caches
+                "tenantSettings",
+                "tenantAttendanceConfig",
+                "shiftPolicies",
+                "benefitPlans",
+                "holidays",
+                "featureFlags",
+                // Analytics / dashboard
+                "analyticsSummary",
+                "dashboardMetrics",
+                "upcomingBirthdays",
+                "upcomingAnniversaries",
+                "workflowInboxCount",
+                // Integration caches
+                "webhooks",
+                "activeWebhooks"
         );
     }
 

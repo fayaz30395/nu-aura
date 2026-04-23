@@ -166,7 +166,6 @@ public class TrainingManagementService {
         }
 
         TrainingEnrollment enrollment = new TrainingEnrollment();
-        enrollment.setId(UUID.randomUUID());
         enrollment.setTenantId(tenantId);
         enrollment.setProgramId(request.getProgramId());
         enrollment.setEmployeeId(request.getEmployeeId());

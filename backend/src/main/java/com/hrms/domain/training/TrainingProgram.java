@@ -110,6 +110,10 @@ public class TrainingProgram {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     @Version
     private Long version;
 

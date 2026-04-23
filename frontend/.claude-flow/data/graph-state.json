@@ -20,8 +20,8 @@
     "mem-MEMORY-active-state": {
       "id": "mem-MEMORY-active-state",
       "category": "core",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520077
     },
     "mem-MEMORY-recent-work": {
@@ -34,8 +34,8 @@
     "mem-MEMORY-platform-architecture": {
       "id": "mem-MEMORY-platform-architecture",
       "category": "core",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520077
     },
     "mem-feedback_always_main_branch----": {
@@ -132,8 +132,8 @@
     "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps": {
       "id": "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
       "category": "project_hire_fluence_gaps_2026_04_05",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520106
     },
     "mem-project_platform_readiness_plan----": {
@@ -146,8 +146,8 @@
     "mem-project_platform_readiness_plan-platform-readiness-plan---lock": {
       "id": "mem-project_platform_readiness_plan-platform-readiness-plan---lock",
       "category": "project_platform_readiness_plan",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520114
     },
     "mem-project_product_vision----": {
@@ -160,8 +160,8 @@
     "mem-project_product_vision-product-vision--corrected-2026": {
       "id": "mem-project_product_vision-product-vision--corrected-2026",
       "category": "project_product_vision",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520114
     },
     "mem-project_production_readiness_2026_04_07----": {
