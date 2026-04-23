@@ -223,6 +223,24 @@ public class AuthService {
     }
 
     @Transactional
+    public AuthResponse devLogin(String email) {
+        if (email == null || email.isBlank()) {
+            throw new AuthenticationException("email is required");
+        }
+        User user = userRepository.findByEmail(email).stream().findFirst()
+                .orElseThrow(() -> new AuthenticationException("User not found: " + email));
+        UUID tenantId = user.getTenantId();
+        com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+        user.recordSuccessfulLogin();
+        userRepository.save(user);
+        UserPrincipal principal = UserPrincipal.create(user);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
+        AuthContext ctx = buildAuthContext(user, tenantId);
+        return buildAuthResponse(user, tenantId, ctx);
+    }
+
+    @Transactional
     public AuthResponse googleLogin(GoogleLoginRequest request) {
         try {
             String email;

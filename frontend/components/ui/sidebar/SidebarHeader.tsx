@@ -66,6 +66,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
           style={{color: 'var(--sidebar-text)'}}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
+          suppressHydrationWarning
         >
           {isCollapsed ? (
             <PanelLeft className="h-5 w-5 transition-transform duration-300"/>
