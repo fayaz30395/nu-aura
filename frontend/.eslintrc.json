@@ -17,6 +17,7 @@
       }
     ],
     "nu-aura/no-ad-hoc-page-header": "warn",
+    "nu-aura/no-raw-hex-in-jsx": "warn",
     "no-restricted-syntax": [
       "warn",
       {
@@ -62,6 +63,28 @@
     ]
   },
   "overrides": [
+    {
+      "files": ["app/**/page.tsx", "app/**/layout.tsx"],
+      "rules": {
+        "nu-aura/no-ad-hoc-page-header": "error"
+      }
+    },
+    {
+      "files": [
+        "components/charts/**",
+        "app/**/*Chart*.tsx",
+        "app/**/charts/**"
+      ],
+      "rules": {
+        "no-restricted-syntax": [
+          "warn",
+          {
+            "selector": "Literal[value=/var\\(--mantine-color-[a-z]+-[0-9]\\)/]",
+            "message": "Mantine palette refs are banned in charts — use var(--chart-*) CSS variables. See themes/DESIGN_SYSTEM_COMPLIANCE_PLAN.md §2.6."
+          }
+        ]
+      }
+    },
     {
       "files": [
         "*.config.js",

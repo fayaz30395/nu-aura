@@ -17,6 +17,7 @@ import {
   FileText,
   Gift,
   HardDrive,
+  LayoutDashboard,
   Loader2,
   LogIn,
   LogOut,
@@ -32,6 +33,7 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
+import {PageContainer, PageHeader} from '@/components/layout/page';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {PremiumMetricCard} from '@/components/ui/PremiumMetricCard';
@@ -916,9 +918,41 @@ export default function DashboardPage() {
     });
   }
 
+  const headerDescription = (
+    <span className="flex flex-wrap items-center gap-2">
+      <span>Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}</span>
+      <span>•</span>
+      <span>{currentTime?.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) ?? ''}</span>
+      {safeAnalytics.viewType !== 'EMPLOYEE' && (
+        <span>
+          • {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'}
+        </span>
+      )}
+    </span>
+  );
+
+  const headerActions = (
+    <>
+      <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>
+      <span
+        className="text-sm font-medium text-[var(--text-primary)] rounded-md border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-2"
+        suppressHydrationWarning
+      >
+        {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
+      </span>
+    </>
+  );
+
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-      <div className="space-y-8">
+      <PageContainer padded={false} stacked={false} className="space-y-8">
+        <PageHeader
+          title="Dashboard"
+          icon={LayoutDashboard}
+          description={headerDescription}
+          actions={headerActions}
+        />
+
         {/* Inline analytics error banner — dashboard still usable */}
         {analyticsUnavailable && (
           <div
@@ -931,45 +965,6 @@ export default function DashboardPage() {
             <Button variant="outline" size="sm" onClick={() => refetchAnalytics()}>Retry</Button>
           </div>
         )}
-
-        {/* Header with greeting and time */}
-        <Card className="overflow-hidden skeuo-card v2-hero-card">
-          <CardContent className="p-6 sm:p-8 v2-hero-pad">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-4">
-                  <h1 className="text-page-title skeuo-emboss">
-                    Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
-                  </h1>
-                  <span className={`badge-status ${viewBadgeClass}`}>{safeAnalytics.viewLabel}</span>
-                </div>
-                <p className="text-body-secondary">
-                  {currentTime?.toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'}) ?? ''}
-                  {safeAnalytics.viewType !== 'EMPLOYEE' && (
-                    <span
-                      className="ml-2 text-caption">• {safeAnalytics.teamSize} {safeAnalytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
-                  )}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <div
-                  className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
-                  <p className="text-stat-medium" suppressHydrationWarning>
-                    {currentTime?.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}) ?? '--:--'}
-                  </p>
-                  <p className="text-caption">Current time</p>
-                </div>
-                {safeAnalytics.viewType !== 'EMPLOYEE' && (
-                  <div
-                    className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-4 min-w-[140px]">
-                    <p className="text-caption">Team size</p>
-                    <p className="text-stat-medium">{safeAnalytics.teamSize}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Attendance Widget */}
         <Card className="relative overflow-hidden skeuo-card v2-hero-card">
@@ -1086,7 +1081,7 @@ export default function DashboardPage() {
           dashboardId="main-dashboard"
           columns={2}
         />
-      </div>
+      </PageContainer>
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
