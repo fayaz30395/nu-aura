@@ -1,0 +1,19 @@
+{
+  "role": "EMPLOYEE",
+  "login": {"status": 200, "email": "saran@nulogic.io", "userId": "48000000-0e02-0000-0000-000000000002", "roles": ["EMPLOYEE"]},
+  "probes": [
+    {"path": "/api/v1/users/me", "method": "GET", "observed": 200, "expected": 200, "result": "PASS"},
+    {"path": "/api/v1/employees?page=0&size=1", "method": "GET", "observed": 403, "expected": 403, "result": "PASS"},
+    {"path": "/api/v1/payroll/runs?page=0&size=1", "method": "GET", "observed": 403, "expected": 403, "result": "PASS"},
+    {"path": "/api/v1/roles", "method": "GET", "observed": 403, "expected": 403, "result": "PASS"},
+    {"path": "/api/v1/permissions", "method": "GET", "observed": 403, "expected": 403, "result": "PASS"},
+    {"path": "/api/v1/recruitment/jobs?page=0&size=1", "method": "GET", "observed": 404, "expected": 403, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/attendance/me", "method": "GET", "observed": 404, "expected": 200, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/leaves/me", "method": "GET", "observed": 404, "expected": 200, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/tenants", "method": "GET", "observed": 404, "expected": 403, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/fluence/spaces", "method": "GET", "observed": 404, "expected": 200, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/approvals/tasks/me", "method": "GET", "observed": 404, "expected": 200, "result": "FAIL", "severity": "P3"},
+    {"path": "/api/v1/audit/events?page=0&size=1", "method": "GET", "observed": 404, "expected": 403, "result": "FAIL", "severity": "P3"}
+  ],
+  "summary": {"total": 12, "pass": 5, "fail": 7, "p0": 0, "p1": 0, "p2": 0, "p3": 7}
+}

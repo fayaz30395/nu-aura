@@ -1,0 +1,1 @@
+{"timestamp":"2026-04-23T19:10:29.522219","status":401,"error":"Authentication Failed","message":"Bad credentials","errors":null,"path":"/api/v1/auth/login","requestId":"103e76e7-de06-4cf6-82f1-62d6d283f009","tenantId":"550e8400-e29b-41d4-a716-446655440000","errorCode":"AUTHENTICATION_FAILED"}

@@ -1,0 +1,19 @@
+{
+  "role": "HR_MANAGER",
+  "login": {"status": 200, "actualRoles": ["SKIP_LEVEL_MANAGER", "REPORTING_MANAGER", "HR_MANAGER"], "email": "jagadeesh@nulogic.io"},
+  "probes": [
+    {"path": "/api/v1/users/me", "method": "GET", "obs": 200, "exp": 200, "result": "PASS"},
+    {"path": "/api/v1/employees?page=0&size=1", "method": "GET", "obs": 200, "exp": 200, "result": "PASS"},
+    {"path": "/api/v1/payroll/runs?page=0&size=1", "method": "GET", "obs": 200, "exp": 200, "result": "PASS"},
+    {"path": "/api/v1/roles", "method": "GET", "obs": 403, "exp": 403, "result": "PASS"},
+    {"path": "/api/v1/permissions", "method": "GET", "obs": 403, "exp": 403, "result": "PASS"},
+    {"path": "/api/v1/recruitment/jobs?page=0&size=1", "method": "GET", "obs": 404, "exp": 200, "result": "FAIL"},
+    {"path": "/api/v1/attendance/me", "method": "GET", "obs": 404, "exp": 200, "result": "FAIL"},
+    {"path": "/api/v1/leaves/me", "method": "GET", "obs": 404, "exp": 200, "result": "FAIL"},
+    {"path": "/api/v1/tenants", "method": "GET", "obs": 404, "exp": 403, "result": "FAIL"},
+    {"path": "/api/v1/fluence/spaces", "method": "GET", "obs": 404, "exp": 200, "result": "FAIL"},
+    {"path": "/api/v1/approvals/tasks/me", "method": "GET", "obs": 404, "exp": 200, "result": "FAIL"},
+    {"path": "/api/v1/audit/events?page=0&size=1", "method": "GET", "obs": 404, "exp": 403, "result": "FAIL"}
+  ],
+  "summary": {"total": 12, "pass": 5, "fail": 7}
+}

@@ -1,0 +1,20 @@
+{
+  "role": "SUPER_ADMIN",
+  "started": "2026-04-23T19:09:00Z",
+  "ended": "2026-04-23T19:10:00Z",
+  "results": [
+    {"endpoint": "/api/v1/users/me", "method": "GET", "observed": 200, "expected": 200, "verdict": "PASS"},
+    {"endpoint": "/api/v1/employees?page=0&size=1", "method": "GET", "observed": 200, "expected": 200, "verdict": "PASS"},
+    {"endpoint": "/api/v1/payroll/runs?page=0&size=1", "method": "GET", "observed": 200, "expected": 200, "verdict": "PASS"},
+    {"endpoint": "/api/v1/roles", "method": "GET", "observed": 200, "expected": 200, "verdict": "PASS"},
+    {"endpoint": "/api/v1/permissions", "method": "GET", "observed": 200, "expected": 200, "verdict": "PASS"},
+    {"endpoint": "/api/v1/recruitment/jobs?page=0&size=1", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/attendance/me", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/leaves/me", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/tenants", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/fluence/spaces", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/approvals/tasks/me", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"},
+    {"endpoint": "/api/v1/audit/events?page=0&size=1", "method": "GET", "observed": 404, "expected": 200, "verdict": "FAIL"}
+  ],
+  "summary": {"pass": 5, "fail": 7, "error": 0}
+}

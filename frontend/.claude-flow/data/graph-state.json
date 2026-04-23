@@ -20,8 +20,8 @@
     "mem-MEMORY-active-state": {
       "id": "mem-MEMORY-active-state",
       "category": "core",
-      "confidence": 0.5800000000000001,
-      "accessCount": 2,
+      "confidence": 0.6600000000000001,
+      "accessCount": 4,
       "createdAt": 1776852520077
     },
     "mem-MEMORY-recent-work": {
@@ -132,8 +132,8 @@
     "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps": {
       "id": "mem-project_hire_fluence_gaps_2026_04_05-remaining-gaps",
       "category": "project_hire_fluence_gaps_2026_04_05",
-      "confidence": 0.5800000000000001,
-      "accessCount": 2,
+      "confidence": 0.6600000000000001,
+      "accessCount": 4,
       "createdAt": 1776852520106
     },
     "mem-project_platform_readiness_plan----": {
@@ -160,22 +160,22 @@
     "mem-project_product_vision-product-vision--corrected-2026": {
       "id": "mem-project_product_vision-product-vision--corrected-2026",
       "category": "project_product_vision",
-      "confidence": 0.5800000000000001,
-      "accessCount": 2,
+      "confidence": 0.6600000000000001,
+      "accessCount": 4,
       "createdAt": 1776852520114
     },
     "mem-project_production_readiness_2026_04_07----": {
       "id": "mem-project_production_readiness_2026_04_07----",
       "category": "project_production_readiness_2026_04_07",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6300000000000001,
+      "accessCount": 3,
       "createdAt": 1776852520119
     },
     "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u": {
       "id": "mem-project_production_readiness_2026_04_07-assessment-date--2026-04-08--u",
       "category": "project_production_readiness_2026_04_07",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 1,
+      "accessCount": 22,
       "createdAt": 1776852520119
     },
     "mem-project_qa_test_plan----": {
@@ -188,8 +188,8 @@
     "mem-project_qa_test_plan-qa-test-document": {
       "id": "mem-project_qa_test_plan-qa-test-document",
       "category": "project_qa_test_plan",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.6000000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520126
     },
     "mem-project_sonar_fixes_2026_03_30----": {
@@ -307,8 +307,8 @@
     "mem-project_status-environment-keys-required": {
       "id": "mem-project_status-environment-keys-required",
       "category": "project_status",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.5800000000000001,
+      "accessCount": 2,
       "createdAt": 1776852520131
     },
     "mem-project_status-known-remaining-gaps": {

@@ -1,0 +1,13 @@
+{"role":"TEAM_LEAD","login":"ok","results":[
+{"path":"/api/v1/users/me","expected":200,"actual":200,"result":"PASS"},
+{"path":"/api/v1/employees?page=0&size=1","expected":200,"actual":200,"result":"PASS"},
+{"path":"/api/v1/payroll/runs?page=0&size=1","expected":403,"actual":403,"result":"PASS"},
+{"path":"/api/v1/roles","expected":403,"actual":403,"result":"PASS"},
+{"path":"/api/v1/permissions","expected":403,"actual":403,"result":"PASS"},
+{"path":"/api/v1/recruitment/jobs?page=0&size=1","expected":403,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/attendance/me","expected":200,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/leaves/me","expected":200,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/tenants","expected":403,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/fluence/spaces","expected":200,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/approvals/tasks/me","expected":200,"actual":404,"result":"FAIL"},
+{"path":"/api/v1/audit/events?page=0&size=1","expected":403,"actual":404,"result":"FAIL"}]}

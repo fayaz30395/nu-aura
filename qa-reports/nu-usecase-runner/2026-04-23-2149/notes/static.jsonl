@@ -1,0 +1,5 @@
+{"uc_id":"UC-XC-STATIC-DS","category":"CROSS_CUTTING","mode":"static","verdict":"PASS","severity_on_fail":"P2","static_notes":{"check":"no_banned_tailwind_in_source","hits":0}}
+{"uc_id":"UC-XC-STATIC-PERM","category":"CROSS_CUTTING","mode":"static","verdict":"PASS","severity_on_fail":"P0","static_notes":{"check":"every_controller_has_requirespermission","missing":0}}
+{"uc_id":"UC-XC-STATIC-SEC","category":"CROSS_CUTTING","mode":"static","verdict":"FAIL","severity_on_fail":"P0","static_notes":{"check":"secrets_not_in_logs","hits":5}}
+{"uc_id":"UC-XC-STATIC-TSC","category":"CROSS_CUTTING","mode":"static","verdict":"PASS","severity_on_fail":"P1","static_notes":{"check":"tsc_errors","count":0}}
+{"uc_id":"UC-XC-STATIC-GIT","category":"CROSS_CUTTING","mode":"static","verdict":"PASS","severity_on_fail":"P2","static_notes":{"check":"git_source_clean","dirty":0}}

@@ -1,0 +1,9 @@
+{
+  "role": "FINANCE_ADMIN",
+  "login": "success",
+  "actualRoles": ["SKIP_LEVEL_MANAGER","REPORTING_MANAGER","HR_MANAGER"],
+  "note": "Server returned HR_MANAGER-level roles for shared account; FINANCE_ADMIN expectations do not apply to session",
+  "pass": 5,
+  "fail": 7,
+  "results": [{"path":"/api/v1/users/me","expected":200,"actual":200,"status":"PASS"},{"path":"/api/v1/employees?page=0&size=1","expected":200,"actual":200,"status":"PASS"},{"path":"/api/v1/payroll/runs?page=0&size=1","expected":200,"actual":200,"status":"PASS"},{"path":"/api/v1/roles","expected":403,"actual":403,"status":"PASS"},{"path":"/api/v1/permissions","expected":403,"actual":403,"status":"PASS"},{"path":"/api/v1/recruitment/jobs?page=0&size=1","expected":403,"actual":404,"status":"FAIL"},{"path":"/api/v1/attendance/me","expected":200,"actual":404,"status":"FAIL"},{"path":"/api/v1/leaves/me","expected":200,"actual":404,"status":"FAIL"},{"path":"/api/v1/tenants","expected":403,"actual":404,"status":"FAIL"},{"path":"/api/v1/fluence/spaces","expected":200,"actual":404,"status":"FAIL"},{"path":"/api/v1/approvals/tasks/me","expected":200,"actual":404,"status":"FAIL"},{"path":"/api/v1/audit/events?page=0&size=1","expected":403,"actual":404,"status":"FAIL"}]
+}

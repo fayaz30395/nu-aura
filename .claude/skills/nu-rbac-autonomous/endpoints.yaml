@@ -1,0 +1,85 @@
+# RBAC endpoint matrix — authoritative role × endpoint × expected-status table.
+# Used by QA subagents to probe /api/v1/* as each of 9 roles and compare status.
+#
+# Expected values:
+#   200 = authorized, data returned
+#   302 = redirect (usually /login or /me/dashboard)
+#   403 = forbidden (RBAC enforced)
+#   404 = endpoint does not exist for this tenant/role (not necessarily a bug)
+#
+# Severity mapping (interpreted by parent, not subagent):
+#   P0 = lower privilege got 200 where table says 403
+#   P1 = higher privilege got 403 where table says 200
+#   P2 = 500
+#   P3 = 404 on expected endpoint
+
+roles:
+  - SUPER_ADMIN
+  - TENANT_ADMIN
+  - HR_ADMIN
+  - HR_MANAGER
+  - MANAGER
+  - TEAM_LEAD
+  - EMPLOYEE
+  - RECRUITMENT_ADMIN
+  - FINANCE_ADMIN
+
+endpoints:
+  # ── Self-access (every authenticated role can read own profile) ──
+  - path: /api/v1/users/me
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 200, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── HR core: employees list ──
+  - path: /api/v1/employees?page=0&size=1
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 403, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── Payroll: admin + finance only ──
+  - path: /api/v1/payroll/runs?page=0&size=1
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 403, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 403, FINANCE_ADMIN: 200}
+
+  # ── RBAC internals: super/tenant only ──
+  - path: /api/v1/roles
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 403, HR_MANAGER: 403, MANAGER: 403, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 403, FINANCE_ADMIN: 403}
+
+  - path: /api/v1/permissions
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 403, HR_MANAGER: 403, MANAGER: 403, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 403, FINANCE_ADMIN: 403}
+
+  # ── Hire module: recruiters + HR ──
+  - path: /api/v1/recruitment/jobs?page=0&size=1
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 403}
+
+  # ── Attendance: self always, team for managers, all for admins ──
+  - path: /api/v1/attendance/me
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 200, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── Leave: self always ──
+  - path: /api/v1/leaves/me
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 200, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── Tenants: super-admin only ──
+  - path: /api/v1/tenants
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 403, HR_ADMIN: 403, HR_MANAGER: 403, MANAGER: 403, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 403, FINANCE_ADMIN: 403}
+
+  # ── Fluence: all roles (knowledge management is open) ──
+  - path: /api/v1/fluence/spaces
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 200, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── Approvals: everyone can see own tasks ──
+  - path: /api/v1/approvals/tasks/me
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 200, HR_MANAGER: 200, MANAGER: 200, TEAM_LEAD: 200, EMPLOYEE: 200, RECRUITMENT_ADMIN: 200, FINANCE_ADMIN: 200}
+
+  # ── Audit log: admins only ──
+  - path: /api/v1/audit/events?page=0&size=1
+    method: GET
+    expected: {SUPER_ADMIN: 200, TENANT_ADMIN: 200, HR_ADMIN: 403, HR_MANAGER: 403, MANAGER: 403, TEAM_LEAD: 403, EMPLOYEE: 403, RECRUITMENT_ADMIN: 403, FINANCE_ADMIN: 403}
