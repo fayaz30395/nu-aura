@@ -118,3 +118,54 @@ change is sitting in the working tree — review and commit separately. Files:
 Recommended permission + commit guardrails: verify `spring.profiles.active` logic elsewhere
 treats `prod` as strictly non-dev, and that no CI/CD pipeline accidentally enables `dev`
 profile in staging.
+
+===
+
+## Follow-up round (post-commit 8bf7745f, continued autonomously)
+
+### Delivered in this round
+
+1. **Next.js dev-login proxy** — `frontend/app/api/dev-login/route.ts`. Verified end-to-end:
+   `POST /api/dev-login` returns 200 with `email: fayaz.m@nulogic.io`, rebinds Set-Cookie
+   to localhost:3000, subsequent `fetch('http://localhost:8080/api/v1/auth/me', {credentials:'include'})`
+   returns 200 authenticated. Cross-port cookie flow works.
+2. **Sidebar hydration suppression** — `frontend/components/ui/sidebar/SidebarHeader.tsx` got
+   `suppressHydrationWarning` on the collapse-toggle button (Zustand `isCollapsed` state
+   diverges SSR vs. client).
+3. **Cookie-domain experiment reverted** — set `app.cookie.domain=localhost` caused the
+   backend to return 500 on login (ResponseCookie rejects single-label domains). Reverted
+   the yaml change; Next.js proxy is the clean alternative.
+4. **Committed** as `feat(auth,qa): dev-only dev-login endpoint + Next.js proxy + QA loop`.
+
+### Open anomalies (not fixed this round)
+
+1. **Stale client bundle on /dashboard** — after `.next` wipe + dev restart, the running
+   CSR bundle still renders the OLD h1 (`<h1 class="text-page-title skeuo-emboss">Welcome
+   back, Fayaz!</h1>`) even though:
+   - `grep` of `frontend/.next/static/chunks/app/dashboard/page.js` shows 0 occurrences
+     of `text-page-title` or `skeuo-emboss`.
+   - `curl` of `/dashboard` returns SSR HTML with 0 h1 tags and 0 "Welcome back" text.
+   - File on disk at `frontend/app/dashboard/page.tsx` unambiguously uses `<PageHeader
+     title="Dashboard" icon={LayoutDashboard}/>`.
+
+   Evidence points at a browser-held cached JS module (sub-resource integrity / long-cached
+   chunk hash) that pre-dates the governance PR. Hard-reload, cache clear, SW unregister,
+   cache-buster query string — all failed to evict. Recommendation: reproduce in a fresh
+   incognito window after pulling `f424061c`; if the issue persists there, Next.js
+   production build (`npm run build && npm start`) should settle the question.
+
+2. **Hydration warning persists on Sidebar button** — despite `suppressHydrationWarning`
+   being added to the source and HMR reporting recompile, the warning still fires. Possibly
+   tied to the same stale-bundle issue above — the running bundle doesn't include the new
+   prop. Will re-verify after the bundle question is resolved.
+
+### What a clean next run looks like
+
+- Pull `f424061c` in a fresh checkout, `rm -rf frontend/.next frontend/node_modules/.cache`,
+  hard-start dev, open incognito Chrome.
+- `curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:3000/api/dev-login -H "Content-Type: application/json" -d '{"email":"fayaz.m@nulogic.io"}' -c /tmp/c.txt`
+  then navigate browser with `/tmp/c.txt` loaded.
+- Re-run the Chrome smoke pass on 5–10 top routes. If the stale-bundle issue does not
+  reproduce, sweep through the 360 RBAC UCs with real browser validation (this will flip
+  the 47 shallow-curl "deny_redirect" FAILs to PASS, since the client-side gating does
+  fire visibly in a real browser).
