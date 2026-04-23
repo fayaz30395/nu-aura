@@ -18,6 +18,7 @@ import {SidebarMenuItem} from './sidebar/SidebarMenuItem';
 import {SectionDivider} from './sidebar/SectionDivider';
 import {SidebarHeader} from './sidebar/SidebarHeader';
 import {SidebarFooter} from './sidebar/SidebarFooter';
+import {useShellDimensions} from '@/lib/theme/useShellDimensions';
 
 export {SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED, HEADER_HEIGHT};
 export type {SidebarItem, SidebarSection, SidebarProps};
@@ -43,6 +44,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const [openFlyoverId, setOpenFlyoverId] = useState<string | null>(null);
     const [flyoverTriggerRect, setFlyoverTriggerRect] = useState<DOMRect | null>(null);
     const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+    const shellDims = useShellDimensions();
 
     const sectionStorageKey = storageKeyPrefix
       ? `${storageKeyPrefix}-${STORAGE_KEY_COLLAPSED_SECTIONS}`
@@ -164,8 +166,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             backgroundColor: 'var(--bg-sidebar)',
             backgroundImage: 'var(--sidebar-gradient)',
             borderColor: 'var(--sidebar-border)',
-            width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-            minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+            width: isCollapsed ? shellDims.sidebarCollapsed : shellDims.sidebarExpanded,
+            minWidth: isCollapsed ? shellDims.sidebarCollapsed : shellDims.sidebarExpanded,
             boxShadow: 'inset -1px 0 0 rgba(255, 255, 255, 0.04)',
           }}
         >

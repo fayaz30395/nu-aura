@@ -933,8 +933,8 @@ export default function DashboardPage() {
         )}
 
         {/* Header with greeting and time */}
-        <Card className="overflow-hidden skeuo-card">
-          <CardContent className="p-6 sm:p-8">
+        <Card className="overflow-hidden skeuo-card v2-hero-card">
+          <CardContent className="p-6 sm:p-8 v2-hero-pad">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-4">
@@ -972,9 +972,9 @@ export default function DashboardPage() {
         </Card>
 
         {/* Attendance Widget */}
-        <Card className="relative overflow-hidden skeuo-card">
+        <Card className="relative overflow-hidden skeuo-card v2-hero-card">
           <div className="absolute left-0 top-0 h-full w-1.5 bg-[var(--accent-primary)]"/>
-          <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9">
+          <CardContent className="p-6 pl-7 sm:p-8 sm:pl-9 v2-hero-pad v2-hero-pad-l">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div

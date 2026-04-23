@@ -3,6 +3,7 @@
 import React from 'react';
 import {cn} from '@/lib/utils';
 import {alignClass, type DataTableColumn, resolveCellValue} from './types';
+import {useThemeVersion} from '@/lib/theme/ThemeVersionProvider';
 
 export interface DataTableBodyProps<T> {
   data: T[];
@@ -23,6 +24,10 @@ export function DataTableBody<T>({
                                    getRowKey,
                                    actions,
                                  }: DataTableBodyProps<T>) {
+  const isV2 = useThemeVersion() === 'v2';
+  const cellCls = isV2 ? 'px-4 py-1.5 h-9 text-sm text-[var(--text-primary)]' : 'px-4 py-2.5 h-11 text-sm text-[var(--text-primary)]';
+  const chkCls = isV2 ? 'w-12 px-4 py-1.5 h-9 sticky left-0 z-10 bg-inherit' : 'w-12 px-4 py-2.5 h-11 sticky left-0 z-10 bg-inherit';
+  const actCls = isV2 ? 'px-4 py-1.5 h-9 text-right whitespace-nowrap' : 'px-4 py-2.5 h-11 text-right whitespace-nowrap';
   return (
     <tbody>
     {data.map((row, rowIdx) => {
@@ -39,7 +44,7 @@ export function DataTableBody<T>({
           )}
         >
           {selectable && (
-            <td className="w-12 px-4 py-2.5 h-11 sticky left-0 z-10 bg-inherit">
+            <td className={chkCls}>
               <div className="flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -55,7 +60,7 @@ export function DataTableBody<T>({
             <td
               key={col.key}
               className={cn(
-                'px-4 py-2.5 h-11 text-sm text-[var(--text-primary)]',
+                cellCls,
                 alignClass(col.align),
                 colIdx === 0 && !selectable && 'sticky left-0 z-10 bg-inherit'
               )}
@@ -65,7 +70,7 @@ export function DataTableBody<T>({
             </td>
           ))}
           {actions && (
-            <td className="px-4 py-2.5 h-11 text-right whitespace-nowrap">
+            <td className={actCls}>
               {actions(row)}
             </td>
           )}

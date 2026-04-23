@@ -5,6 +5,7 @@ import {GoogleOAuthProvider} from '@react-oauth/google';
 import {useEffect, useState} from 'react';
 import {Notifications} from '@mantine/notifications';
 import {DarkModeProvider, MantineThemeProvider} from '@/components/layout';
+import {ThemeVersionProvider} from '@/lib/theme/ThemeVersionProvider';
 import {ErrorBoundary} from '@/components/ui/ErrorBoundary';
 import {ToastProvider} from '@/components/ui/Toast';
 import {ToastProvider as NotificationsToastProvider} from '@/components/notifications/ToastProvider';
@@ -50,14 +51,16 @@ export function Providers({children}: { children: React.ReactNode }) {
       <ToastProvider>
         <NotificationsToastProvider>
           <DarkModeProvider>
-            <MantineThemeProvider>
-              <Notifications position="top-right" autoClose={5000}/>
-              <WebSocketProvider>
-                <TokenRefreshManager>
-                  {children}
-                </TokenRefreshManager>
-              </WebSocketProvider>
-            </MantineThemeProvider>
+            <ThemeVersionProvider>
+              <MantineThemeProvider>
+                <Notifications position="top-right" autoClose={5000}/>
+                <WebSocketProvider>
+                  <TokenRefreshManager>
+                    {children}
+                  </TokenRefreshManager>
+                </WebSocketProvider>
+              </MantineThemeProvider>
+            </ThemeVersionProvider>
           </DarkModeProvider>
         </NotificationsToastProvider>
       </ToastProvider>

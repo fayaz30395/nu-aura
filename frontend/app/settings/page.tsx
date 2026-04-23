@@ -29,6 +29,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions} from '@/lib/hooks/usePermissions';
 import {useDarkMode} from '@/components/layout/DarkModeProvider';
+import {ThemeVersionToggle} from '@/components/ui/ThemeVersionToggle';
 // authApi removed — Google SSO only, no password change endpoint needed
 import {useNotificationPreferences, useUpdateNotificationPreferences} from '@/lib/hooks/queries/useNotifications';
 
@@ -257,6 +258,17 @@ export default function SettingsPage() {
                     }`}
                   />
                 </button>
+              </div>
+              <div className="row-between mt-6 pt-6 border-t border-[var(--border-subtle)]">
+                <div>
+                  <label className="text-sm font-medium text-[var(--text-primary)]">
+                    Design System
+                  </label>
+                  <p className="text-body-secondary mt-1">
+                    Preview the refined v2 design. Changes apply instantly platform-wide.
+                  </p>
+                </div>
+                <ThemeVersionToggle/>
               </div>
             </CardContent>
           </Card>

@@ -4,6 +4,8 @@ import React from 'react';
 import {motion} from 'framer-motion';
 import {cva, type VariantProps} from 'class-variance-authority';
 import {cn} from '@/lib/utils';
+import {useThemeVersion} from '@/lib/theme/ThemeVersionProvider';
+import {V2_DURATION, V2_EASE} from '@/lib/animations/v2';
 
 const cardVariants = cva(
   cn(
@@ -44,12 +46,21 @@ export interface CardProps
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({className, variant, padding, hover = false, isClickable = false, glow = false, ...props}, ref) => {
     const isHoverable = hover || isClickable;
+    const version = useThemeVersion();
+    const isV2 = version === 'v2';
+
+    const hoverMotion = isHoverable
+      ? isV2
+        ? {y: -1, transition: {duration: V2_DURATION.base, ease: V2_EASE}}
+        : {y: -3, transition: {type: 'spring' as const, stiffness: 400, damping: 25}}
+      : undefined;
+
+    const baseTransition = isV2
+      ? {duration: V2_DURATION.base, ease: V2_EASE}
+      : {type: 'spring' as const, stiffness: 300, damping: 30};
 
     return (
-      <motion.div
-        whileHover={isHoverable ? {y: -3, transition: {type: 'spring', stiffness: 400, damping: 25}} : undefined}
-        transition={{type: 'spring', stiffness: 300, damping: 30}}
-      >
+      <motion.div whileHover={hoverMotion} transition={baseTransition}>
         <div
           ref={ref}
           className={cn(

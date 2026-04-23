@@ -11,12 +11,12 @@ import {
   SidebarItem,
   SidebarSection,
   MobileBottomNav,
-  SIDEBAR_WIDTH_EXPANDED,
-  SIDEBAR_WIDTH_COLLAPSED
 } from '@/components/ui';
+import {useShellDimensions} from '@/lib/theme/useShellDimensions';
 import {Header} from './Header';
 import type {HeaderProps} from './Header';
 import {Breadcrumbs, type BreadcrumbItem} from './Breadcrumbs';
+import {AnimatedMain} from './AnimatedMain';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 import {useApprovalInboxCount} from '@/lib/hooks/queries/useApprovals';
@@ -112,6 +112,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   // localStorage is read in useEffect (client-only) to sync the persisted state.
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed ?? false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const shellDims = useShellDimensions();
   useEffect(() => {
     // Sync sidebar collapsed state from localStorage on client hydration
     const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
@@ -289,8 +290,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       <aside
         className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
         style={{
-          width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-          minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+          width: isCollapsed ? shellDims.sidebarCollapsed : shellDims.sidebarExpanded,
+          minWidth: isCollapsed ? shellDims.sidebarCollapsed : shellDims.sidebarExpanded,
         }}
       >
         <Sidebar
@@ -360,7 +361,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         )}
 
         {/* Content Area — scrollable, fills remaining vertical space */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent">
+        <AnimatedMain className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent">
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
               <div
@@ -376,7 +377,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               </div>
             </ErrorBoundary>
           </AuthGuard>
-        </main>
+        </AnimatedMain>
 
         {/* Mobile Bottom Navigation */}
         <MobileBottomNav

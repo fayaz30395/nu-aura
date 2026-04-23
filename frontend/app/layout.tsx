@@ -2,7 +2,9 @@ import type {Metadata, Viewport} from 'next';
 import {Montserrat, Open_Sans, Roboto_Mono} from 'next/font/google';
 import {ColorSchemeScript} from '@mantine/core';
 import {getThemeScript} from '@/lib/theme/theme-script';
+import {getThemeVersionScript} from '@/lib/theme/theme-version-script';
 import './globals.css';
+import './globals.v2.css';
 import {Providers} from './providers';
 
 const openSans = Open_Sans({
@@ -50,6 +52,7 @@ export default function RootLayout({
     <head>
       {/* FOUC prevention — runs synchronously before paint */}
       <script dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
+      <script dangerouslySetInnerHTML={{__html: getThemeVersionScript()}}/>
       <ColorSchemeScript defaultColorScheme="dark"/>
     </head>
     <body className={`${openSans.variable} ${montserrat.variable} ${robotoMono.variable} font-sans overflow-x-hidden`}>

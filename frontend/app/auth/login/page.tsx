@@ -668,7 +668,7 @@ function LoginPage() {
             </div>
 
             {/* Card */}
-            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8"
+            <div className="rounded-lg bg-[var(--bg-card)] border border-[var(--border-main)] p-8 v2-login-card"
                  style={{boxShadow: 'var(--shadow-elevated), 0 0 0 1px var(--border-subtle)'}}>
               <div className="text-center mb-7">
                 <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mb-2">

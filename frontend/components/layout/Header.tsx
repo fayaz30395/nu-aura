@@ -17,6 +17,7 @@ import {useWebSocket} from '@/lib/contexts/WebSocketContext';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
 import {NotificationDropdown} from './NotificationDropdown';
 import {UserMenu} from './UserMenu';
+import {useThemeVersion} from '@/lib/theme/ThemeVersionProvider';
 
 // ─── Props ────────────────────────────────────────────────────────────
 export interface HeaderProps {
@@ -48,6 +49,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isMounted, setIsMounted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const isV2 = useThemeVersion() === 'v2';
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   // Unread count: use the larger of WebSocket in-memory count vs REST API persisted count
@@ -81,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({
     <header
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 border-b transition-all duration-150',
-        'h-16 border-header-border',
+        isV2 ? 'h-14 border-header-border' : 'h-16 border-header-border',
         'glass-bg',
         className
       )}
