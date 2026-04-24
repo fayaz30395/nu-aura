@@ -13,6 +13,7 @@ import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.security.TokenBlacklistService;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.employee.*;
@@ -33,6 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -66,6 +68,7 @@ public class EmployeeService {
     private final AuditLogService auditLogService;
     private final DataScopeService dataScopeService;
     private final JdbcTemplate jdbcTemplate;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public EmployeeService(EmployeeRepository employeeRepository,
                            DepartmentRepository departmentRepository,
@@ -74,7 +77,8 @@ public class EmployeeService {
                            DomainEventPublisher eventPublisher,
                            AuditLogService auditLogService,
                            DataScopeService dataScopeService,
-                           JdbcTemplate jdbcTemplate) {
+                           JdbcTemplate jdbcTemplate,
+                           TokenBlacklistService tokenBlacklistService) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
@@ -83,6 +87,7 @@ public class EmployeeService {
         this.auditLogService = auditLogService;
         this.dataScopeService = dataScopeService;
         this.jdbcTemplate = jdbcTemplate;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     /**
@@ -414,6 +419,15 @@ public class EmployeeService {
                     request.getStatus().toString(),
                     "Employee status changed from " + oldStatus + " to " + request.getStatus()
             );
+            // SEC: revoke all active tokens on termination so the ex-employee can't keep
+            // using a JWT until its natural TTL expires.
+            if (request.getStatus() == Employee.EmployeeStatus.TERMINATED
+                    && employee.getUser() != null && employee.getUser().getId() != null) {
+                tokenBlacklistService.revokeAllTokensBefore(
+                        employee.getUser().getId().toString(),
+                        Instant.now()
+                );
+            }
         }
         if (request.getBankAccountNumber() != null && !Objects.equals(request.getBankAccountNumber(), employee.getBankAccountNumber())) {
             employee.setBankAccountNumber(request.getBankAccountNumber());
