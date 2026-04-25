@@ -94,3 +94,7 @@ deployment/kubernetes/secrets.yaml
 .claude/commands/
 .claude/helpers/
 .claude/skills/
+
+# QA sweep artifacts (regenerable; report + sentinels are the durable record)
+docs/qa/findings/
+docs/qa/queue/
