@@ -162,6 +162,7 @@ class ResourceManagementAllocationIntegrationTest {
     private ProjectEmployee createAssignment(UUID employeeId, UUID projectId, int allocation,
                                              LocalDate startDate, LocalDate endDate) {
         ProjectEmployee assignment = ProjectEmployee.builder()
+                .id(UUID.randomUUID())
                 .employeeId(employeeId)
                 .projectId(projectId)
                 .allocationPercentage(allocation)

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import jakarta.servlet.http.Cookie;
 
 import java.util.*;
 import java.util.Set;
@@ -96,16 +97,17 @@ class AuthenticationE2ETest {
                         .header("X-Tenant-ID", TEST_TENANT_ID.toString())
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").exists())
-                .andExpect(jsonPath("$.refreshToken").exists())
                 .andExpect(jsonPath("$.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.email").value(testUserEmail))
                 .andReturn();
 
-        // Store tokens for subsequent tests
-        String responseBody = result.getResponse().getContentAsString();
-        accessToken = objectMapper.readTree(responseBody).get("accessToken").asText();
-        refreshToken = objectMapper.readTree(responseBody).get("refreshToken").asText();
+        // Tokens are returned in httpOnly cookies (security best practice), not in body
+        Cookie accessCookie = result.getResponse().getCookie("access_token");
+        Cookie refreshCookie = result.getResponse().getCookie("refresh_token");
+        assertThat(accessCookie).isNotNull();
+        assertThat(refreshCookie).isNotNull();
+        accessToken = accessCookie.getValue();
+        refreshToken = refreshCookie.getValue();
 
         assertThat(accessToken).isNotEmpty();
         assertThat(refreshToken).isNotEmpty();
@@ -154,19 +156,17 @@ class AuthenticationE2ETest {
                         .header("X-Tenant-ID", TEST_TENANT_ID.toString())
                         .header("X-Refresh-Token", refreshToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").exists())
-                .andExpect(jsonPath("$.refreshToken").exists())
                 .andReturn();
 
-        // Verify new tokens are different
-        String responseBody = result.getResponse().getContentAsString();
-        String newAccessToken = objectMapper.readTree(responseBody).get("accessToken").asText();
-        String newRefreshToken = objectMapper.readTree(responseBody).get("refreshToken").asText();
+        // New tokens are returned in cookies (body fields are nulled for security)
+        Cookie newAccessCookie = result.getResponse().getCookie("access_token");
+        Cookie newRefreshCookie = result.getResponse().getCookie("refresh_token");
+        assertThat(newAccessCookie).isNotNull();
+        assertThat(newRefreshCookie).isNotNull();
 
-        assertThat(newAccessToken).isNotEmpty();
-        // Update tokens for future tests
-        accessToken = newAccessToken;
-        refreshToken = newRefreshToken;
+        accessToken = newAccessCookie.getValue();
+        refreshToken = newRefreshCookie.getValue();
+        assertThat(accessToken).isNotEmpty();
     }
 
     @Test
@@ -199,8 +199,8 @@ class AuthenticationE2ETest {
                     .andExpect(status().isOk())
                     .andReturn();
 
-            String responseBody = loginResult.getResponse().getContentAsString();
-            accessToken = objectMapper.readTree(responseBody).get("accessToken").asText();
+            Cookie c = loginResult.getResponse().getCookie("access_token");
+            accessToken = c != null ? c.getValue() : null;
         }
 
         assertThat(accessToken).isNotEmpty();
@@ -255,9 +255,8 @@ class AuthenticationE2ETest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String newAccessToken = objectMapper.readTree(
-                loginResult.getResponse().getContentAsString()
-        ).get("accessToken").asText();
+        Cookie newAccessCookie = loginResult.getResponse().getCookie("access_token");
+        String newAccessToken = newAccessCookie != null ? newAccessCookie.getValue() : "";
 
         Map<String, String> changePasswordRequest = new HashMap<>();
         changePasswordRequest.put("currentPassword", "WrongCurrentPassword123!");
@@ -326,12 +325,10 @@ class AuthenticationE2ETest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String logoutAccessToken = objectMapper.readTree(
-                loginResult.getResponse().getContentAsString()
-        ).get("accessToken").asText();
-        String logoutRefreshToken = objectMapper.readTree(
-                loginResult.getResponse().getContentAsString()
-        ).get("refreshToken").asText();
+        Cookie logoutAccessCookie = loginResult.getResponse().getCookie("access_token");
+        Cookie logoutRefreshCookie = loginResult.getResponse().getCookie("refresh_token");
+        String logoutAccessToken = logoutAccessCookie != null ? logoutAccessCookie.getValue() : "";
+        String logoutRefreshToken = logoutRefreshCookie != null ? logoutRefreshCookie.getValue() : "";
 
         // Perform logout
         Map<String, String> logoutRequest = new HashMap<>();

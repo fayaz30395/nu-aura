@@ -40,6 +40,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -123,7 +127,7 @@ class UserControllerTest {
         @Test
         @DisplayName("getAllUsers should require USER_VIEW permission")
         void getAllUsers_shouldRequireUserViewPermission() throws NoSuchMethodException {
-            Method method = UserController.class.getMethod("getAllUsers");
+            Method method = UserController.class.getMethod("getAllUsers", Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -160,7 +164,7 @@ class UserControllerTest {
     class GetAllUsersTests {
 
         @Test
-        @DisplayName("Should return list of users with HTTP 200")
+        @DisplayName("Should return paginated users with HTTP 200")
         void getAllUsers_returnsUserList() throws Exception {
             UserResponse secondUser = UserResponse.builder()
                     .id(UUID.randomUUID())
@@ -170,45 +174,50 @@ class UserControllerTest {
                     .userStatus("ACTIVE")
                     .build();
 
-            when(roleManagementService.getAllUsers()).thenReturn(List.of(sampleUserResponse, secondUser));
+            Page<UserResponse> page = new PageImpl<>(List.of(sampleUserResponse, secondUser));
+            when(roleManagementService.getAllUsers(any(Pageable.class))).thenReturn(page);
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(2))
-                    .andExpect(jsonPath("$[0].email").value("john.doe@example.com"))
-                    .andExpect(jsonPath("$[0].id").value(USER_ID.toString()));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(2))
+                    .andExpect(jsonPath("$.content[0].email").value("john.doe@example.com"))
+                    .andExpect(jsonPath("$.content[0].id").value(USER_ID.toString()))
+                    .andExpect(jsonPath("$.totalElements").value(2));
 
-            verify(roleManagementService).getAllUsers();
+            verify(roleManagementService).getAllUsers(any(Pageable.class));
         }
 
         @Test
-        @DisplayName("Should return empty list when no users exist")
+        @DisplayName("Should return empty page when no users exist")
         void getAllUsers_returnsEmptyList_whenNoUsers() throws Exception {
-            when(roleManagementService.getAllUsers()).thenReturn(List.of());
+            when(roleManagementService.getAllUsers(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(0));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0))
+                    .andExpect(jsonPath("$.totalElements").value(0));
 
-            verify(roleManagementService).getAllUsers();
+            verify(roleManagementService).getAllUsers(any(Pageable.class));
         }
 
         @Test
         @DisplayName("Should include user status in response")
         void getAllUsers_includesUserStatus() throws Exception {
-            when(roleManagementService.getAllUsers()).thenReturn(List.of(sampleUserResponse));
+            when(roleManagementService.getAllUsers(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(sampleUserResponse)));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].userStatus").value("ACTIVE"));
+                    .andExpect(jsonPath("$.content[0].userStatus").value("ACTIVE"));
         }
 
         @Test
         @DisplayName("Should return 500 when service throws unexpected exception")
         void getAllUsers_returns500_onServiceException() throws Exception {
-            when(roleManagementService.getAllUsers())
+            when(roleManagementService.getAllUsers(any(Pageable.class)))
                     .thenThrow(new RuntimeException("Unexpected DB error"));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))

@@ -8,6 +8,8 @@ import com.hrms.common.security.TenantFilter;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,11 +27,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 
 @WebMvcTest(FluenceChatController.class)
 @ContextConfiguration(classes = {FluenceChatController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ActiveProfiles("test")
 @DisplayName("FluenceChatController Unit Tests")
 class FluenceChatControllerTest {
@@ -64,13 +68,14 @@ class FluenceChatControllerTest {
 
             Map<String, Object> request = Map.of(
                     "message", "How do I set up a wiki space?",
-                    "conversationId", "conv-123"
+                    "conversationId", java.util.UUID.randomUUID().toString()
             );
 
             mockMvc.perform(post("/api/v1/fluence/chat")
+                            .accept(MediaType.TEXT_EVENT_STREAM)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(request().asyncStarted());
 
             verify(fluenceChatService).handleChatMessage(any(FluenceChatRequest.class));
         }
@@ -86,9 +91,10 @@ class FluenceChatControllerTest {
             );
 
             mockMvc.perform(post("/api/v1/fluence/chat")
+                            .accept(MediaType.TEXT_EVENT_STREAM)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(request().asyncStarted());
 
             verify(fluenceChatService).handleChatMessage(any(FluenceChatRequest.class));
         }

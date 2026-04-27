@@ -129,10 +129,69 @@ public class WorkloadAnalyticsService {
 
     @Transactional(readOnly = true)
     public List<DepartmentWorkload> getDepartmentWorkloads(LocalDate startDate, LocalDate endDate) {
-        WorkloadFilterOptions filters = new WorkloadFilterOptions();
-        filters.setStartDate(startDate);
-        filters.setEndDate(endDate);
-        return getWorkloadDashboard(filters).getDepartmentWorkloads();
+        // PERF FIX: Previously delegated to getWorkloadDashboard() which iterates
+        // every active employee with a per-employee getEmployeeWorkload() call (N+1)
+        // and caused >120s timeouts on tenants with many employees. The /workload/departments
+        // endpoint only needs lightweight per-department aggregates, so compute them
+        // directly from one bulk fetch of active project assignments.
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+
+        List<Employee> activeEmployees = employeeRepository.findByTenantId(tenantId).stream()
+                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .collect(Collectors.toList());
+
+        // Single query for all active assignments — avoids N+1.
+        List<ProjectEmployee> activeAssignments =
+                projectEmployeeRepository.findAllActiveAssignments(tenantId);
+
+        java.util.Map<UUID, Integer> totalAllocationByEmployee = new java.util.HashMap<>();
+        java.util.Map<UUID, Integer> projectCountByEmployee = new java.util.HashMap<>();
+        for (ProjectEmployee pe : activeAssignments) {
+            int alloc = pe.getAllocationPercentage() != null ? pe.getAllocationPercentage() : 0;
+            totalAllocationByEmployee.merge(pe.getEmployeeId(), alloc, Integer::sum);
+            projectCountByEmployee.merge(pe.getEmployeeId(), 1, Integer::sum);
+        }
+
+        return departmentRepository.findByTenantId(tenantId).stream().map(dept -> {
+            List<Employee> deptEmployees = activeEmployees.stream()
+                    .filter(e -> dept.getId().equals(e.getDepartmentId()))
+                    .collect(Collectors.toList());
+
+            if (deptEmployees.isEmpty()) {
+                return DepartmentWorkload.builder()
+                        .departmentId(dept.getId()).departmentName(dept.getName()).employeeCount(0)
+                        .averageAllocation(0.0)
+                        .overAllocatedCount(0).optimalCount(0).underUtilizedCount(0).unassignedCount(0)
+                        .activeProjects(0).totalAllocatedHours(0L).build();
+            }
+
+            int over = 0, optimal = 0, under = 0, unassigned = 0, projectSum = 0;
+            long totalAlloc = 0L;
+            for (Employee emp : deptEmployees) {
+                int a = totalAllocationByEmployee.getOrDefault(emp.getId(), 0);
+                int pc = projectCountByEmployee.getOrDefault(emp.getId(), 0);
+                projectSum += pc;
+                totalAlloc += a;
+                if (a == 0) unassigned++;
+                else if (a > 100) over++;
+                else if (a >= 70) optimal++;
+                else under++;
+            }
+            double avg = (double) totalAlloc / deptEmployees.size();
+
+            return DepartmentWorkload.builder()
+                    .departmentId(dept.getId())
+                    .departmentName(dept.getName())
+                    .employeeCount(deptEmployees.size())
+                    .averageAllocation(avg)
+                    .overAllocatedCount(over)
+                    .optimalCount(optimal)
+                    .underUtilizedCount(under)
+                    .unassignedCount(unassigned)
+                    .activeProjects(projectSum)
+                    .totalAllocatedHours((long) (avg * deptEmployees.size() * 1.6))
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

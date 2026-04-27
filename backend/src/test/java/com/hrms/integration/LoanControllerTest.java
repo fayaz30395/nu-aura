@@ -61,7 +61,7 @@ class LoanControllerTest {
     // ========================= UC-LOAN-001: Apply for loan =========================
 
     @Test
-    @DisplayName("ucLoanA1_applyForLoan_returns200")
+    @DisplayName("ucLoanA1_applyForLoan_returns201")
     void ucLoanA1_applyForLoan_returns200() throws Exception {
         CreateLoanRequest request = CreateLoanRequest.builder()
                 .loanType(LoanType.PERSONAL_LOAN)
@@ -75,9 +75,9 @@ class LoanControllerTest {
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.principalAmount").value(50000.00))
-                .andExpect(jsonPath("$.loanType").value("PERSONAL"));
+                .andExpect(jsonPath("$.loanType").value("PERSONAL_LOAN"));
     }
 
     @Test
@@ -124,7 +124,7 @@ class LoanControllerTest {
         String responseBody = mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
         String loanId = objectMapper.readTree(responseBody).get("id").asText();

@@ -9,6 +9,7 @@ import com.hrms.domain.engagement.PulseSurveyQuestion.QuestionCategory;
 import com.hrms.domain.engagement.PulseSurveyQuestion.QuestionType;
 import com.hrms.infrastructure.engagement.repository.*;
 import com.hrms.common.exception.BusinessException;
+import jakarta.persistence.EntityNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,8 @@ public class PulseSurveyService {
             survey.setTargetLocations(String.join(",", request.getTargetLocations()));
         }
 
-        survey.setId(UUID.randomUUID());
+        // Let JPA generate id+version (BaseEntity uses @GeneratedValue + @Version);
+        // pre-setting id without version causes Hibernate to treat the entity as detached.
         survey.setTenantId(tenantId);
         survey = surveyRepository.save(survey);
 
@@ -280,7 +282,7 @@ public class PulseSurveyService {
 
         // Check if survey is active
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + surveyId));
 
         if (!survey.isActive()) {
             throw new IllegalStateException("Survey is not currently active");
@@ -462,7 +464,7 @@ public class PulseSurveyService {
     public Map<String, Object> getSurveyAnalytics(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + surveyId));
 
         Map<String, Object> analytics = new HashMap<>();
         analytics.put("surveyId", surveyId);

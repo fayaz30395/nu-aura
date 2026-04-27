@@ -126,7 +126,9 @@ public class DocuSignController {
                 TenantContext.clear();
             }
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | java.io.IOException e) {
+            // IllegalArgumentException: envelope not found / known payload errors
+            // IOException (incl. JsonProcessingException): malformed JSON payload
             log.error("Invalid webhook payload", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) { // Intentional broad catch — DocuSign API integration
@@ -260,8 +262,16 @@ public class DocuSignController {
         log.debug("Listing DocuSign templates");
         UUID tenantId = TenantContext.requireCurrentTenant();
 
+        ConnectorConfig config;
         try {
-            ConnectorConfig config = configService.getConfig(tenantId, "docusign");
+            config = configService.getConfig(tenantId, "docusign");
+        } catch (IllegalArgumentException notConfigured) {
+            // DocuSign not configured for this tenant — return empty list rather than 500.
+            log.info("DocuSign not configured for tenant {} — returning empty templates list", tenantId);
+            return ResponseEntity.ok(Map.of());
+        }
+
+        try {
             List<DocuSignApiClient.TemplateResponse> templatesList = apiClient.listTemplates(config);
             Map<String, String> templates = templatesList.stream()
                     .collect(Collectors.toMap(
@@ -269,9 +279,9 @@ public class DocuSignController {
                             DocuSignApiClient.TemplateResponse::name
                     ));
             return ResponseEntity.ok(templates);
-        } catch (Exception e) { // Intentional broad catch — DocuSign API integration
+        } catch (Exception e) { // Intentional broad catch — upstream DocuSign API failure
             log.error("Failed to list DocuSign templates", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
     }
 

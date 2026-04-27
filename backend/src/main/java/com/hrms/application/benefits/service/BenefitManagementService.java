@@ -37,7 +37,6 @@ public class BenefitManagementService {
         }
 
         BenefitPlan plan = new BenefitPlan();
-        plan.setId(UUID.randomUUID());
         plan.setTenantId(tenantId);
         plan.setPlanCode(request.getPlanCode());
         plan.setPlanName(request.getPlanName());

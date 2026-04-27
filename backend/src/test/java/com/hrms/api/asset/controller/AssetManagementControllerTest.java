@@ -90,6 +90,7 @@ class AssetManagementControllerTest {
             AssetRequest request = new AssetRequest();
             request.setAssetName("MacBook Pro");
             request.setAssetCode("ASSET-001");
+            request.setCategory(Asset.AssetCategory.LAPTOP);
 
             when(assetService.createAsset(any(AssetRequest.class))).thenReturn(assetResponse);
 
@@ -176,6 +177,8 @@ class AssetManagementControllerTest {
         void shouldUpdateAssetSuccessfully() throws Exception {
             AssetRequest request = new AssetRequest();
             request.setAssetName("MacBook Pro 16");
+            request.setAssetCode("ASSET-001");
+            request.setCategory(Asset.AssetCategory.LAPTOP);
 
             AssetResponse updated = AssetResponse.builder()
                     .id(assetId)

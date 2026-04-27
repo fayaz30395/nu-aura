@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -45,7 +46,7 @@ public class QuizAssessmentService {
     public QuizAttemptResponse startQuizAttempt(UUID quizId, UUID employeeId, UUID tenantId) {
         // Verify quiz exists
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found: " + quizId));
 
         // Verify employee is enrolled in the course
         CourseEnrollment enrollment = enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(
@@ -330,7 +331,7 @@ public class QuizAssessmentService {
     @Transactional(readOnly = true)
     public QuizDetailResponse getQuizDetails(UUID quizId, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found: " + quizId));
 
         List<QuizQuestion> questions = questionRepository.findByQuizIdAndTenantIdOrderByOrderIndexAsc(quizId, tenantId);
 

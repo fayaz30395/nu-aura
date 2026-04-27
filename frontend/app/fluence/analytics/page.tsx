@@ -1,9 +1,10 @@
 'use client';
 
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {
   CartesianGrid,
   Cell,
@@ -26,17 +27,9 @@ import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} fr
  * NU-Fluence Analytics Dashboard
  * Track content performance metrics and activity across the platform.
  */
-export default function FluenceAnalyticsPage() {
+function FluenceAnalyticsPageContent() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
-
-  const hasAccess = hasPermission(Permissions.KNOWLEDGE_VIEW);
-
-  useEffect(() => {
-    if (isReady && !hasAccess) {
-      router.replace('/me/dashboard');
-    }
-  }, [isReady, hasAccess, router]);
+  // Permission gate handled by <PermissionGate> wrapper in default export.
 
   // Fetch data
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 100);
@@ -146,22 +139,6 @@ export default function FluenceAnalyticsPage() {
   const recentActivities = useMemo(() => {
     return (activityData?.content || []).slice(0, 10);
   }, [activityData]);
-
-  // Guard — all hooks are above this point
-  if (!isReady) {
-    return (
-      <AppLayout>
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-accent-200 border-t-accent-500 rounded-full animate-spin"/>
-            <p className="text-[var(--text-muted)] font-medium">Loading analytics...</p>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (!hasAccess) return null;
 
   const getActionColor = (action: string) => {
     switch (action) {
@@ -513,6 +490,14 @@ export default function FluenceAnalyticsPage() {
         </motion.div>
       </motion.div>
     </AppLayout>
+  );
+}
+
+export default function FluenceAnalyticsPage() {
+  return (
+    <PermissionGate permission={Permissions.KNOWLEDGE_VIEW} fallback={<PageDeniedFallback/>}>
+      <FluenceAnalyticsPageContent />
+    </PermissionGate>
   );
 }
 

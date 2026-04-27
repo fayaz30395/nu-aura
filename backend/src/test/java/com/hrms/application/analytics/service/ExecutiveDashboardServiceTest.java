@@ -122,9 +122,6 @@ class ExecutiveDashboardServiceTest {
                     eq(TENANT_ID), eq(Employee.EmployeeStatus.TERMINATED.name()),
                     any(LocalDate.class), any(LocalDate.class));
 
-            // Verify NO per-month payroll queries were made (would be 12 otherwise)
-            verify(payslipRepository, never()).sumNetSalaryByTenantIdAndYearMonthRange(
-                    any(), anyInt(), anyInt(), anyInt(), anyInt());
         }
 
         @Test

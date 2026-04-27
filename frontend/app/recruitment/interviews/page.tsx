@@ -2,7 +2,8 @@
 
 import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';
@@ -185,9 +186,18 @@ function InterviewsPageLoading() {
 // Wrap with Suspense for useSearchParams
 export default function InterviewsPageWrapper() {
   return (
-    <Suspense fallback={<InterviewsPageLoading/>}>
-      <InterviewsPage/>
-    </Suspense>
+    <PermissionGate
+      anyOf={[
+        Permissions.RECRUITMENT_VIEW,
+        Permissions.RECRUITMENT_VIEW_ALL,
+        Permissions.RECRUITMENT_MANAGE,
+      ]}
+      fallback={<PageDeniedFallback/>}
+    >
+      <Suspense fallback={<InterviewsPageLoading/>}>
+        <InterviewsPage/>
+      </Suspense>
+    </PermissionGate>
   );
 }
 
@@ -195,19 +205,7 @@ function InterviewsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
-  const {hasAnyPermission, isReady} = usePermissions();
-
-  const hasAccess = hasAnyPermission(
-    Permissions.RECRUITMENT_VIEW,
-    Permissions.RECRUITMENT_VIEW_ALL,
-    Permissions.RECRUITMENT_MANAGE,
-  );
-
-  useEffect(() => {
-    if (isReady && !hasAccess) {
-      router.replace('/me/dashboard');
-    }
-  }, [isReady, hasAccess, router]);
+  // Permission gate handled by <PermissionGate> wrapper in InterviewsPageWrapper.
 
   // Query hooks
   const {data: candidatesData} = useCandidates(0, 100);
@@ -268,8 +266,6 @@ function InterviewsPage() {
     resolver: zodResolver(createInterviewSchema),
     mode: 'onBlur',
   });
-
-  if (!isReady || !hasAccess) return null;
 
   const candidates = candidatesData?.content || [];
   const jobOpenings = jobOpeningsData?.content || [];

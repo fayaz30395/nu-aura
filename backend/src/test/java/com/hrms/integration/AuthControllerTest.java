@@ -16,6 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -56,6 +59,15 @@ class AuthControllerTest {
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
+        // Populate Spring SecurityContextHolder so @PreAuthorize("isAuthenticated()") on MfaController passes
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                USER_ID.toString(), "n/a", List.of(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    void clearSpringSecurity() {
+        SecurityContextHolder.clearContext();
     }
 
     // ========================= UC-AUTH-001: Email/Password Login =========================
@@ -196,7 +208,7 @@ class AuthControllerTest {
                 .enabled(true)
                 .verified(true)
                 .build();
-        doNothing().when(mfaService).verifyAndEnableMfa(any(UUID.class), anyString());
+        when(mfaService.verifyAndEnableMfa(any(UUID.class), anyString())).thenReturn(true);
         when(mfaService.getMfaStatus(any(UUID.class))).thenReturn(statusResp);
 
         mockMvc.perform(post(BASE_URL + "/mfa/verify")

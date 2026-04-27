@@ -27,11 +27,28 @@ public class TestCacheConfig {
         return new ConcurrentMapCacheManager(
                 "employees",
                 "departments",
+                "designations",
+                "officeLocations",
+                "shiftPolicies",
+                "benefitPlans",
+                "holidays",
+                "tenantSettings",
+                "employeeBasic",
                 "leaveTypes",
                 "leaveBalances",
                 "users",
                 "roles",
                 "permissions",
+                "rolePermissions",
+                "webhooks",
+                "activeWebhooks",
+                "employeeWithDetails",
+                "featureFlags",
+                "analyticsSummary",
+                "dashboardMetrics",
+                "tenantAttendanceConfig",
+                "upcomingBirthdays",
+                "upcomingAnniversaries",
                 "analytics"
         );
     }

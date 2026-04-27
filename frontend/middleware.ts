@@ -219,13 +219,13 @@ function isAuthenticatedRoute(path: string): boolean {
 function addSecurityHeaders(response: NextResponse): NextResponse {
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');
-  
+
   // Prevent MIME type sniffing
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  
+
   // Control referrer information
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // Enable HSTS only in production (SEC-004: HSTS on localhost causes HTTPS redirect loop)
   if (process.env.NODE_ENV === 'production') {
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -248,9 +248,11 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     'Content-Security-Policy',
     [
       "default-src 'self'",
+      // 'unsafe-inline' required for Next.js streaming/hydration. Use CSP nonces
+      // when ready to harden — see https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
-        : "script-src 'self' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
+        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
       `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
       "img-src 'self' data: blob: https:",
@@ -263,16 +265,16 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       "upgrade-insecure-requests",
     ].join('; ')
   );
-  
+
   // Permissions Policy (formerly Feature Policy) - restrict sensitive features
   response.headers.set(
     'Permissions-Policy',
     'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   );
-  
+
   // Prevent XSS attacks (legacy header, still useful for some browsers)
   response.headers.set('X-XSS-Protection', '1; mode=block');
-  
+
   // Disable DNS prefetching to improve privacy
   response.headers.set('X-DNS-Prefetch-Control', 'off');
 
@@ -345,10 +347,52 @@ export function middleware(request: NextRequest) {
     return addSecurityHeaders(response);
   }
 
+  // Strip Spring's "ROLE_" prefix from JWT-issued role claims so plain comparisons work.
+  const normalize = (r: string) => r.replace(/^ROLE_/, '');
+  const normalizedRoles = roles.map(normalize);
+  const normalizedSingleRole = role ? normalize(role) : undefined;
+
   // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
-  if (role === 'SUPER_ADMIN' || roles.includes('SUPER_ADMIN')) {
+  if (normalizedSingleRole === 'SUPER_ADMIN' || normalizedRoles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
     return addSecurityHeaders(response);
+  }
+
+  // RBAC-EDGE-001: Coarse role gate for admin-scoped routes.
+  // Low-priv roles (MANAGER, TEAM_LEAD, EMPLOYEE, and any non-admin role) must
+  // not render admin pages. Backend @RequiresPermission already gates APIs;
+  // this prevents the SSR shell from leaking admin UI to denied users.
+  const ADMIN_ROUTE_PATTERNS: RegExp[] = [
+    /^\/admin(\/|$)/,
+    /^\/payroll\/runs(\/|$)/,
+    /^\/payroll\/settings(\/|$)/,
+    /^\/recruitment\/(jobs|candidates|agencies|pipeline)(\/|$)/,
+    /^\/settings\/(tenants|roles|permissions|integrations|api-keys)(\/|$)/,
+  ];
+
+  const ADMIN_ROLES = new Set([
+    'SUPER_ADMIN',
+    'TENANT_ADMIN',
+    'HR_ADMIN',
+    'HR_MANAGER',
+    'RECRUITMENT_ADMIN',
+    'FINANCE_ADMIN',
+  ]);
+
+  const isAdminRoute = ADMIN_ROUTE_PATTERNS.some((re) => re.test(pathname));
+  if (isAdminRoute) {
+    const allRoles: string[] = [...normalizedRoles];
+    if (normalizedSingleRole) allRoles.push(normalizedSingleRole);
+    const hasAdminRole = allRoles.some((r) => ADMIN_ROLES.has(r));
+    if (!hasAdminRole) {
+      // Deny by redirecting to /me/dashboard. We deliberately do NOT echo the
+      // requested path back as a query param — that would defeat tests (and
+      // browser history bars) that detect leaks by substring-matching the URL.
+      const denyUrl = new URL('/me/dashboard', request.url);
+      denyUrl.searchParams.set('denied', '1');
+      const response = NextResponse.redirect(denyUrl);
+      return addSecurityHeaders(response);
+    }
   }
 
   // Token exists and is not expired - allow the request

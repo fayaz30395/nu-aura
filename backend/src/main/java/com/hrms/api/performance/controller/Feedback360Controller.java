@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +57,7 @@ public class Feedback360Controller {
         cycle.setTenantId(tenantId);
 
         Feedback360Cycle saved = feedback360Service.createCycle(cycle);
-        return ResponseEntity.ok(Feedback360CycleResponse.fromEntity(saved));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Feedback360CycleResponse.fromEntity(saved));
     }
 
     @GetMapping("/cycles")

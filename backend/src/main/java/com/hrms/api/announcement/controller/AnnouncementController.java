@@ -50,9 +50,11 @@ public class AnnouncementController {
 
     @GetMapping("/active")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Page<AnnouncementDto>> getActiveAnnouncements(Pageable pageable) {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        Page<AnnouncementDto> response = announcementService.getActiveAnnouncements(employeeId, pageable);
+    public ResponseEntity<Page<AnnouncementDto>> getActiveAnnouncements(
+            @RequestParam(required = false) UUID employeeId,
+            Pageable pageable) {
+        UUID effectiveEmployeeId = employeeId != null ? employeeId : SecurityContext.getCurrentEmployeeId();
+        Page<AnnouncementDto> response = announcementService.getActiveAnnouncements(effectiveEmployeeId, pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -65,25 +67,31 @@ public class AnnouncementController {
 
     @GetMapping("/{announcementId}")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<AnnouncementDto> getAnnouncementById(@PathVariable UUID announcementId) {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        AnnouncementDto response = announcementService.getAnnouncementById(announcementId, employeeId);
+    public ResponseEntity<AnnouncementDto> getAnnouncementById(
+            @PathVariable UUID announcementId,
+            @RequestParam(required = false) UUID employeeId) {
+        UUID effectiveEmployeeId = employeeId != null ? employeeId : SecurityContext.getCurrentEmployeeId();
+        AnnouncementDto response = announcementService.getAnnouncementById(announcementId, effectiveEmployeeId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{announcementId}/read")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Void> markAsRead(@PathVariable UUID announcementId) {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        announcementService.markAsRead(announcementId, employeeId);
+    public ResponseEntity<Void> markAsRead(
+            @PathVariable UUID announcementId,
+            @RequestParam(required = false) UUID employeeId) {
+        UUID effectiveEmployeeId = employeeId != null ? employeeId : SecurityContext.getCurrentEmployeeId();
+        announcementService.markAsRead(announcementId, effectiveEmployeeId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{announcementId}/accept")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Void> acceptAnnouncement(@PathVariable UUID announcementId) {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        announcementService.acceptAnnouncement(announcementId, employeeId);
+    public ResponseEntity<Void> acceptAnnouncement(
+            @PathVariable UUID announcementId,
+            @RequestParam(required = false) UUID employeeId) {
+        UUID effectiveEmployeeId = employeeId != null ? employeeId : SecurityContext.getCurrentEmployeeId();
+        announcementService.acceptAnnouncement(announcementId, effectiveEmployeeId);
         return ResponseEntity.ok().build();
     }
 

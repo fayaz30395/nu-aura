@@ -1,11 +1,11 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {AlertCircle, CheckCircle, ChevronDown, Clock, CreditCard, Filter, Search, XCircle,} from 'lucide-react';
-import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {usePayments, usePaymentStats} from '@/lib/hooks/queries/usePayments';
 import {paymentService} from '@/lib/services/core/payment.service';
 import {PaymentProvider, PaymentStatus, PaymentType,} from '@/lib/types/core/payment';
@@ -28,10 +28,8 @@ interface Filters {
   search: string;
 }
 
-export default function PaymentsPage() {
+function PaymentsPageContent() {
   const router = useRouter();
-  const {hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
   const {data: paymentsData, isLoading: paymentsLoading} = usePayments();
@@ -93,13 +91,7 @@ export default function PaymentsPage() {
     });
   }, [payments, activeTab, filters]);
 
-  // RBAC guard — payments requires PAYMENT_VIEW permission (DEF-57)
-  useEffect(() => {
-    if (!permReady) return;
-    if (!hasPermission(Permissions.PAYMENT_VIEW)) {
-      router.replace('/dashboard');
-    }
-  }, [permReady, hasPermission, router]);
+  // Permission gate handled by <PermissionGate> wrapper in default export.
 
   const clearFilters = () => {
     setFilters({
@@ -127,21 +119,6 @@ export default function PaymentsPage() {
         return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]"/>;
     }
   };
-
-  // RBAC guard — block render for unauthorized users (DEF-57)
-  if (!permReady || !hasPermission(Permissions.PAYMENT_VIEW)) {
-    return null;
-  }
-
-  if (!hasHydrated) {
-    return (
-      <AppLayout activeMenuItem="payments">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"/>
-        </div>
-      </AppLayout>
-    );
-  }
 
   return (
     <AppLayout activeMenuItem="payments">
@@ -501,5 +478,13 @@ export default function PaymentsPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function PaymentsPage() {
+  return (
+    <PermissionGate permission={Permissions.PAYMENT_VIEW} fallback={<PageDeniedFallback/>}>
+      <PaymentsPageContent/>
+    </PermissionGate>
   );
 }

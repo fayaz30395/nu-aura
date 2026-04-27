@@ -211,7 +211,15 @@ export default function ProbationPage() {
   }
   if (!isAuthenticated) {
     router.push('/auth/login');
-    return null;
+    return (
+      <AppLayout>
+        <div className="p-6">
+          <p className="text-sm text-[var(--text-muted)]" role="status">
+            Redirecting to sign in…
+          </p>
+        </div>
+      </AppLayout>
+    );
   }
 
   const tabs: { key: TabKey; label: string }[] = [

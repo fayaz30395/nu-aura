@@ -7,6 +7,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.performance.Goal;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.performance.repository.GoalRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GOAL_NOT_FOUND));
 
         if (request.getTitle() != null)
             goal.setTitle(request.getTitle());
@@ -103,7 +104,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GOAL_NOT_FOUND));
 
         return mapToResponse(goal);
     }
@@ -131,7 +132,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GOAL_NOT_FOUND));
 
         goal.setProgressPercentage(progressPercentage);
 
@@ -148,7 +149,7 @@ public class GoalService {
     public void deleteGoal(UUID goalId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GOAL_NOT_FOUND));
         goalRepository.delete(goal);
     }
 
@@ -157,7 +158,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException(GOAL_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(GOAL_NOT_FOUND));
 
         goal.setApprovedBy(approverId);
         goal.setStatus(Goal.GoalStatus.ACTIVE);

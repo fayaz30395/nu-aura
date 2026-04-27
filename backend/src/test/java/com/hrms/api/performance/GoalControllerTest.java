@@ -379,14 +379,13 @@ class GoalControllerTest {
                     .status(Goal.GoalStatus.ACTIVE)
                     .build();
 
-            when(goalService.approveGoal(goalId, approverId)).thenReturn(approvedResponse);
+            when(goalService.approveGoal(eq(goalId), nullable(UUID.class))).thenReturn(approvedResponse);
 
-            mockMvc.perform(put("/api/v1/goals/{id}/approve", goalId)
-                            .param("approverId", approverId.toString()))
+            mockMvc.perform(put("/api/v1/goals/{id}/approve", goalId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.approvedBy").value(approverId.toString()));
 
-            verify(goalService).approveGoal(goalId, approverId);
+            verify(goalService).approveGoal(eq(goalId), nullable(UUID.class));
         }
     }
 
@@ -406,20 +405,20 @@ class GoalControllerTest {
         @Test
         @DisplayName("approveGoal should have GOAL_APPROVE permission")
         void approveGoalShouldRequireGoalApprove() throws Exception {
-            var method = GoalController.class.getMethod("approveGoal", UUID.class, UUID.class);
+            var method = GoalController.class.getMethod("approveGoal", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "approveGoal must have @RequiresPermission");
             Assertions.assertEquals(Permission.GOAL_APPROVE, annotation.value()[0]);
         }
 
         @Test
-        @DisplayName("getAllGoals should have REVIEW_VIEW permission")
+        @DisplayName("getAllGoals should have GOAL_VIEW permission")
         void getAllGoalsShouldRequireReviewView() throws Exception {
             var method = GoalController.class.getMethod("getAllGoals",
                     int.class, int.class, String.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "getAllGoals must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_VIEW, annotation.value()[0]);
+            Assertions.assertEquals(Permission.GOAL_VIEW, annotation.value()[0]);
         }
     }
 }

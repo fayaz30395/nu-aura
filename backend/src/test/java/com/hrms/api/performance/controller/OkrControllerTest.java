@@ -432,6 +432,7 @@ class OkrControllerTest {
         void shouldReturn404WhenUpdatingNonExistentKeyResult() throws Exception {
             KeyResultRequest krRequest = KeyResultRequest.builder()
                     .title("Some Title")
+                    .targetValue(new BigDecimal("100"))
                     .build();
 
             when(okrService.getKeyResultById(tenantId, keyResultId)).thenReturn(Optional.empty());

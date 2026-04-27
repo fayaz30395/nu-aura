@@ -8,6 +8,7 @@ import com.hrms.domain.project.ProjectEmployee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
 import com.hrms.infrastructure.project.repository.ProjectEmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +98,7 @@ public class ResourceAllocationService {
         List<ProjectEmployee> all = projectEmployeeRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId);
 
         Employee emp = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found: " + employeeId));
 
         List<EmployeeTimelineResponse.TimelineSlot> slots = all.stream().map(pe -> {
                     String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)

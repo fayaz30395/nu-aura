@@ -6,6 +6,7 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.exit.ExitInterview;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.exit.repository.ExitInterviewRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +51,7 @@ public class ExitInterviewPublicService {
     @Transactional(readOnly = true)
     public ExitInterviewPublicResponse getByToken(String token) {
         ExitInterview interview = exitInterviewRepository.findByPublicToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
+                .orElseThrow(() -> new EntityNotFoundException("Invalid or expired exit interview token"));
 
         String empName = employeeRepository.findById(interview.getEmployeeId())
                 .map(Employee::getFullName)
@@ -83,7 +84,7 @@ public class ExitInterviewPublicService {
     @Transactional
     public void submitByToken(String token, ExitInterviewSubmitRequest req) {
         ExitInterview interview = exitInterviewRepository.findByPublicToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
+                .orElseThrow(() -> new EntityNotFoundException("Invalid or expired exit interview token"));
 
         if (interview.getStatus() == ExitInterview.InterviewStatus.COMPLETED) {
             throw new IllegalStateException("Exit interview already completed");

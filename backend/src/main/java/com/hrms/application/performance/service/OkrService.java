@@ -35,9 +35,10 @@ public class OkrService {
 
     @Transactional
     public Objective createObjective(Objective objective) {
-        if (objective.getId() == null) {
-            objective.setId(UUID.randomUUID());
-        }
+        // Note: Do NOT manually assign id/version here. BaseEntity uses
+        // @GeneratedValue(UUID) and @Version — pre-setting id without version
+        // makes Hibernate treat the entity as detached and rejects the save
+        // with DataIntegrityViolation.
         if (objective.getStatus() == null) {
             objective.setStatus(ObjectiveStatus.DRAFT);
         }

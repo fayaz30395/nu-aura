@@ -10,6 +10,7 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -59,6 +60,9 @@ class LeaveRequestControllerTest {
     private EmployeeService employeeService;
 
     @MockitoBean
+    private EmployeeRepository employeeRepository;
+
+    @MockitoBean
     private DataScopeService dataScopeService;
 
     @MockitoBean
@@ -93,8 +97,10 @@ class LeaveRequestControllerTest {
         void shouldCreateLeaveRequestSuccessfully() throws Exception {
             LeaveRequestRequest request = new LeaveRequestRequest();
             request.setEmployeeId(employeeId);
+            request.setLeaveTypeId(UUID.randomUUID());
             request.setStartDate(LocalDate.now().plusDays(1));
             request.setEndDate(LocalDate.now().plusDays(3));
+            request.setReason("Personal vacation time off");
 
             when(leaveRequestService.createLeaveRequest(any(LeaveRequest.class)))
                     .thenReturn(leaveRequest);
@@ -289,8 +295,10 @@ class LeaveRequestControllerTest {
         void shouldUpdateLeaveRequest() throws Exception {
             LeaveRequestRequest request = new LeaveRequestRequest();
             request.setEmployeeId(employeeId);
+            request.setLeaveTypeId(UUID.randomUUID());
             request.setStartDate(LocalDate.now().plusDays(2));
             request.setEndDate(LocalDate.now().plusDays(4));
+            request.setReason("Personal vacation time off");
 
             LeaveRequest updated = new LeaveRequest();
             updated.setId(leaveRequestId);

@@ -6,7 +6,10 @@ import com.hrms.application.user.service.ImplicitRoleService;
 import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
+import com.hrms.common.security.AccountLockoutService;
 import com.hrms.common.security.JwtTokenProvider;
+import com.hrms.common.config.PasswordPolicyConfig;
+import com.hrms.infrastructure.user.repository.PasswordHistoryRepository;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -66,6 +69,15 @@ class AuthServiceTest {
 
     @Mock
     private PasswordPolicyService passwordPolicyService;
+
+    @Mock
+    private AccountLockoutService accountLockoutService;
+
+    @Mock
+    private PasswordHistoryRepository passwordHistoryRepository;
+
+    @Mock
+    private PasswordPolicyConfig passwordPolicyConfig;
 
     @InjectMocks
     private AuthService authService;
@@ -206,7 +218,7 @@ class AuthServiceTest {
         @DisplayName("Should refresh token successfully")
         void shouldRefreshTokenSuccessfully() {
             String refreshToken = "valid-refresh-token";
-            when(tokenProvider.validateToken(refreshToken)).thenReturn(true);
+            when(tokenProvider.validateRefreshToken(refreshToken)).thenReturn(true);
             when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn("test@example.com");
             when(tokenProvider.getTenantIdFromToken(refreshToken)).thenReturn(tenantId);
             when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
@@ -234,7 +246,7 @@ class AuthServiceTest {
         @DisplayName("Should throw exception for invalid refresh token")
         void shouldThrowExceptionForInvalidRefreshToken() {
             String invalidToken = "invalid-token";
-            when(tokenProvider.validateToken(invalidToken)).thenReturn(false);
+            when(tokenProvider.validateRefreshToken(invalidToken)).thenReturn(false);
 
             assertThatThrownBy(() -> authService.refresh(invalidToken))
                     .isInstanceOf(AuthenticationException.class)

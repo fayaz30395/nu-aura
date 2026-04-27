@@ -4,6 +4,7 @@ import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.leave.service.LeaveBalanceService;
 import com.hrms.application.leave.service.LeaveRequestService;
 import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.leave.LeaveApprovedEvent;
@@ -75,6 +76,7 @@ class LeaveApprovalPayrollImpactTest {
         if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
             org.springframework.transaction.support.TransactionSynchronizationManager.clearSynchronization();
         }
+        SecurityContext.clear();
     }
 
     @BeforeEach
@@ -109,6 +111,14 @@ class LeaveApprovalPayrollImpactTest {
                 .build();
         leaveRequest.setId(UUID.randomUUID());
         leaveRequest.setTenantId(tenantId);
+
+        // Set the current security context as the owner so cancel() ownership check passes.
+        SecurityContext.setCurrentUser(
+                UUID.randomUUID(),
+                employeeId,
+                new java.util.HashSet<>(java.util.Arrays.asList("EMPLOYEE")),
+                new java.util.HashMap<>());
+        SecurityContext.setCurrentTenantId(tenantId);
     }
 
     @Test

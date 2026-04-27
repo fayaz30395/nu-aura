@@ -169,8 +169,8 @@ class WellnessControllerTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("name", name);
         req.put("description", "Wellness program: " + name);
-        req.put("programType", "FITNESS");
-        req.put("category", "PHYSICAL");
+        req.put("programType", "CAMPAIGN");
+        req.put("category", "PHYSICAL_FITNESS");
         req.put("startDate", LocalDate.now().toString());
         req.put("endDate", LocalDate.now().plusMonths(3).toString());
         req.put("maxParticipants", 50);
@@ -185,7 +185,7 @@ class WellnessControllerTest {
         req.put("name", name);
         req.put("description", "Challenge: " + name);
         req.put("challengeType", "STEPS");
-        req.put("trackingType", "DAILY");
+        req.put("trackingType", "MANUAL");
         req.put("startDate", LocalDate.now().toString());
         req.put("endDate", LocalDate.now().plusMonths(1).toString());
         req.put("targetValue", 10000.0);

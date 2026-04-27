@@ -61,14 +61,14 @@ class TravelServiceTest {
     // ========================= UC-TRAVEL-001: Submit travel request =========================
 
     @Test
-    @DisplayName("ucTravelA1_createRequest_returns200")
+    @DisplayName("ucTravelA1_createRequest_returns201")
     void ucTravelA1_createRequest_returns200() throws Exception {
         CreateTravelRequest request = buildValidTravelRequest();
 
         mockMvc.perform(post(BASE_URL + "/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.originCity").value("Mumbai"))
                 .andExpect(jsonPath("$.destinationCity").value("Bangalore"));
     }
@@ -98,7 +98,7 @@ class TravelServiceTest {
         String responseBody = mockMvc.perform(post(BASE_URL + "/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
         String requestId = objectMapper.readTree(responseBody).get("id").asText();
@@ -116,7 +116,7 @@ class TravelServiceTest {
         String createBody = mockMvc.perform(post(BASE_URL + "/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
         String requestId = objectMapper.readTree(createBody).get("id").asText();

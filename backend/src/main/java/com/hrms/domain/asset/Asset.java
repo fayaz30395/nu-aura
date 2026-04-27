@@ -64,6 +64,11 @@ public class Asset {
     private LocalDateTime updatedAt;
     @Version
     private Long version;
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public enum AssetCategory {
         LAPTOP, DESKTOP, MONITOR, PHONE, TABLET, FURNITURE, VEHICLE, SOFTWARE_LICENSE, OTHER

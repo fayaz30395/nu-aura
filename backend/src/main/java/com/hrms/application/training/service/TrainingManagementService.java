@@ -166,7 +166,8 @@ public class TrainingManagementService {
         }
 
         TrainingEnrollment enrollment = new TrainingEnrollment();
-        enrollment.setId(UUID.randomUUID());
+        // Do not setId manually — @GeneratedValue handles it. Setting it before save()
+        // makes Hibernate treat the entity as detached (since @Version is null).
         enrollment.setTenantId(tenantId);
         enrollment.setProgramId(request.getProgramId());
         enrollment.setEmployeeId(request.getEmployeeId());

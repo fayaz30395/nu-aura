@@ -60,17 +60,9 @@ public class JwtTokenProvider {
             );
         }
 
-        int byteLength = jwtSecret.getBytes(StandardCharsets.UTF_8).length;
-        if (byteLength < 32) {
-            throw new IllegalStateException(
-                    String.format(
-                            "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
-                                    "Generate a secure secret with: openssl rand -base64 48", byteLength
-                    )
-            );
-        }
-
-        // Reject well-known placeholder secrets that might be copy-pasted from docs/tutorials
+        // SEC: Reject well-known placeholder secrets BEFORE length check.
+        // Known-weak placeholders are dangerous regardless of length and the more specific
+        // error message helps developers identify copy-pasted-from-docs secrets.
         Set<String> knownWeakSecrets = Set.of(
                 "secret", "mysecret", "jwt-secret", "changeme", "password",
                 "your-secret-key", "my-secret-key", "test-secret", "development-secret",
@@ -81,6 +73,16 @@ public class JwtTokenProvider {
             throw new IllegalStateException(
                     "JWT_SECRET is a known weak/placeholder value. " +
                             "Generate a secure secret with: openssl rand -base64 48"
+            );
+        }
+
+        int byteLength = jwtSecret.getBytes(StandardCharsets.UTF_8).length;
+        if (byteLength < 32) {
+            throw new IllegalStateException(
+                    String.format(
+                            "JWT_SECRET is too short (%d bytes). HMAC-SHA256 requires at least 32 bytes (256 bits). " +
+                                    "Generate a secure secret with: openssl rand -base64 48", byteLength
+                    )
             );
         }
     }

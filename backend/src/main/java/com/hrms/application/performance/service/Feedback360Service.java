@@ -36,9 +36,7 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Cycle createCycle(Feedback360Cycle cycle) {
-        if (cycle.getId() == null) {
-            cycle.setId(UUID.randomUUID());
-        }
+        // Let JPA generate the ID — manual @Id assignment + null @Version causes "detached entity" errors
         if (cycle.getStatus() == null) {
             cycle.setStatus(CycleStatus.DRAFT);
         }

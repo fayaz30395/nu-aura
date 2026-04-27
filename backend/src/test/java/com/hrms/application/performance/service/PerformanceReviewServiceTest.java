@@ -1,5 +1,7 @@
 package com.hrms.application.performance.service;
 
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.application.performance.dto.CompetencyRequest;
 import com.hrms.application.performance.dto.CompetencyResponse;
 import com.hrms.application.performance.dto.ReviewRequest;
@@ -48,6 +50,10 @@ class PerformanceReviewServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private ReviewCycleRepository reviewCycleRepository;
+    @Mock
+    private DomainEventPublisher domainEventPublisher;
+    @Mock
+    private AuditLogService auditLogService;
     @InjectMocks
     private PerformanceReviewService performanceReviewService;
     private UUID tenantId;

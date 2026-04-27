@@ -1,6 +1,7 @@
 package com.hrms.api.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class MfaLoginRequest {
     /**
      * User ID from the initial login response.
      */
-    @NotBlank(message = "User ID is required")
+    @NotNull(message = "User ID is required")
     private UUID userId;
 
     /**

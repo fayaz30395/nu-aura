@@ -67,12 +67,12 @@ public class EmployeeImportController {
         log.info("Previewing employee import from file: {}", file.getOriginalFilename());
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Please select a file to upload");
+            return ResponseEntity.badRequest().build();
         }
 
         String filename = file.getOriginalFilename();
         if (filename == null || (!filename.endsWith(".csv") && !filename.endsWith(".xlsx") && !filename.endsWith(".xls"))) {
-            throw new IllegalArgumentException("Only CSV and Excel files are supported");
+            return ResponseEntity.badRequest().build();
         }
 
         EmployeeImportPreview preview = employeeImportService.previewImport(file);
@@ -92,12 +92,12 @@ public class EmployeeImportController {
         log.info("Executing employee import from file: {}, skipInvalid: {}", file.getOriginalFilename(), skipInvalid);
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Please select a file to upload");
+            return ResponseEntity.badRequest().build();
         }
 
         String filename = file.getOriginalFilename();
         if (filename == null || (!filename.endsWith(".csv") && !filename.endsWith(".xlsx") && !filename.endsWith(".xls"))) {
-            throw new IllegalArgumentException("Only CSV and Excel files are supported");
+            return ResponseEntity.badRequest().build();
         }
 
         EmployeeImportResult result = employeeImportService.executeImport(file, skipInvalid);

@@ -12,8 +12,8 @@ import {
   useRejectLeaveRequest
 } from '@/lib/hooks/queries/useLeaves';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {Permissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -21,23 +21,19 @@ import {Input} from '@/components/ui/Input';
 import {Button} from '@/components/ui/Button';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 
-export default function LeaveApprovalsPage() {
+function LeaveApprovalsPageContent() {
   const toast = useToast();
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
-
-  // BUG-L6-006: Page-level permission gate for leave approvals
+  // Permission gate handled by <PermissionGate> wrapper in default export.
+  // Auth (logged-in vs anonymous) is still our responsibility — PermissionGate
+  // doesn't redirect anonymous users to login.
   useEffect(() => {
-    if (!hasHydrated || !permissionsReady) return;
+    if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-      return;
     }
-    if (!hasPermission(Permissions.LEAVE_APPROVE)) {
-      router.replace('/me/dashboard');
-    }
-  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+  }, [hasHydrated, isAuthenticated, router]);
   const {data: pendingData, isError: isPendingError, fetchStatus: pendingFetchStatus} = useLeaveRequestsByStatus('PENDING', 0, 50);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
   const {data: employeeData} = useEmployees(0, 500);
@@ -119,11 +115,6 @@ export default function LeaveApprovalsPage() {
   const getLeaveTypeName = (leaveTypeId: string) => {
     return leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
   };
-
-  // Permission guard
-  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.LEAVE_APPROVE)) {
-    return null;
-  }
 
   return (
     <AppLayout activeMenuItem="leave">
@@ -364,5 +355,13 @@ export default function LeaveApprovalsPage() {
         </Modal>
       </motion.div>
     </AppLayout>
+  );
+}
+
+export default function LeaveApprovalsPage() {
+  return (
+    <PermissionGate permission={Permissions.LEAVE_APPROVE} fallback={<PageDeniedFallback/>}>
+      <LeaveApprovalsPageContent />
+    </PermissionGate>
   );
 }

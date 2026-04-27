@@ -17,6 +17,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -512,6 +513,23 @@ public class GlobalExceptionHandler {
         return jsonResponse(status, errorResponse);
     }
 
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ErrorResponse> handleMissingRequestHeader(
+            MissingRequestHeaderException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        logError("validation", "missing_header", ex, status, path);
+        recordErrorMetric("validation", "missing_header", status);
+
+        String message = String.format("Required header '%s' is missing", ex.getHeaderName());
+        ErrorResponse errorResponse = buildErrorResponse(status, "Missing Header", message, path);
+        errorResponse.setErrorCode("MISSING_HEADER");
+
+        return jsonResponse(status, errorResponse);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
@@ -638,6 +656,29 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = buildErrorResponse(status, "Bad Request", message, path);
         errorResponse.setErrorCode("INVALID_REQUEST_BODY");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
+     * BUG-P3 FIX: Spring's ResponseStatusException carries an explicit HTTP status
+     * (e.g. NOT_FOUND from controller `orElseThrow(() -> new ResponseStatusException(...))`).
+     * Without this handler it falls through to the generic Exception handler and
+     * is returned as 500 instead of the intended status.
+     */
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(
+            org.springframework.web.server.ResponseStatusException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+
+        logError("request", "response_status_exception", ex, status, path);
+        recordErrorMetric("request", "response_status_exception", status);
+
+        String message = ex.getReason() != null ? ex.getReason() : status.getReasonPhrase();
+        ErrorResponse errorResponse = buildErrorResponse(status, status.getReasonPhrase(), message, path);
+        errorResponse.setErrorCode(status.is4xxClientError() ? "CLIENT_ERROR" : "SERVER_ERROR");
 
         return jsonResponse(status, errorResponse);
     }

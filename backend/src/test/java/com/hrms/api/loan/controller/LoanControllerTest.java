@@ -113,14 +113,14 @@ class LoanControllerTest {
     class ApplyForLoanEndpoint {
 
         @Test
-        @DisplayName("Should return 200 with created loan on valid request")
+        @DisplayName("Should return 201 with created loan on valid request")
         void shouldReturn200WithCreatedLoan() throws Exception {
             when(loanService.applyForLoan(any(CreateLoanRequest.class))).thenReturn(loanDto);
 
             mockMvc.perform(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createRequest)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(loanId.toString()))
                     .andExpect(jsonPath("$.loanNumber").value("LN-2024-0001"))
                     .andExpect(jsonPath("$.loanType").value("PERSONAL_LOAN"))

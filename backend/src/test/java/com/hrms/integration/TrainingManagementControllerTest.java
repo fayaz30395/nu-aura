@@ -6,8 +6,13 @@ import com.hrms.api.training.dto.TrainingProgramRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.training.TrainingProgram;
+import com.hrms.domain.user.AuthProvider;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,20 +46,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TrainingManagementControllerTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
-    private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private UUID userId;
+    private UUID employeeId;
     private static final String BASE = "/api/v1/training";
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        // Seed user + employee with generated IDs (avoids Hibernate "detached" detection
+        // when @Id is assigned manually but @Version is null)
+        User user = User.builder()
+                .email("training-test-" + UUID.randomUUID() + "@example.com")
+                .firstName("Training")
+                .lastName("Tester")
+                .passwordHash("$2a$10$dummyhashfortestingonlydummyhashfortestingdummyha")
+                .status(User.UserStatus.ACTIVE)
+                .authProvider(AuthProvider.LOCAL)
+                .mfaEnabled(false)
+                .build();
+        user.setTenantId(TENANT_ID);
+        user = userRepository.save(user);
+        userId = user.getId();
+
+        Employee emp = Employee.builder()
+                .employeeCode("TRN-" + UUID.randomUUID().toString().substring(0, 6))
+                .user(user)
+                .firstName("Training")
+                .lastName("Tester")
+                .joiningDate(LocalDate.now().minusYears(1))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .build();
+        emp.setTenantId(TENANT_ID);
+        employeeId = employeeRepository.save(emp).getId();
+
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentUser(userId, employeeId, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
@@ -94,14 +130,14 @@ class TrainingManagementControllerTest {
 
         TrainingEnrollmentRequest enrollReq = new TrainingEnrollmentRequest();
         enrollReq.setProgramId(UUID.fromString(programId));
-        enrollReq.setEmployeeId(EMPLOYEE_ID);
+        enrollReq.setEmployeeId(employeeId);
         enrollReq.setEnrollmentDate(LocalDate.now());
 
         mockMvc.perform(post(BASE + "/enrollments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(enrollReq)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.employeeId").value(EMPLOYEE_ID.toString()));
+                .andExpect(jsonPath("$.employeeId").value(employeeId.toString()));
     }
 
     @Test
@@ -120,7 +156,7 @@ class TrainingManagementControllerTest {
 
         TrainingEnrollmentRequest enrollReq = new TrainingEnrollmentRequest();
         enrollReq.setProgramId(UUID.fromString(programId));
-        enrollReq.setEmployeeId(EMPLOYEE_ID);
+        enrollReq.setEmployeeId(employeeId);
         enrollReq.setEnrollmentDate(LocalDate.now());
 
         MvcResult enrollResult = mockMvc.perform(post(BASE + "/enrollments")
@@ -178,7 +214,7 @@ class TrainingManagementControllerTest {
         // Enroll employee
         TrainingEnrollmentRequest enrollReq = new TrainingEnrollmentRequest();
         enrollReq.setProgramId(UUID.fromString(programId));
-        enrollReq.setEmployeeId(EMPLOYEE_ID);
+        enrollReq.setEmployeeId(employeeId);
         enrollReq.setEnrollmentDate(LocalDate.now());
 
         MvcResult enrollResult = mockMvc.perform(post(BASE + "/enrollments")
@@ -266,7 +302,7 @@ class TrainingManagementControllerTest {
         // Try to enroll without completing prerequisite
         TrainingEnrollmentRequest enrollReq = new TrainingEnrollmentRequest();
         enrollReq.setProgramId(UUID.fromString(advId));
-        enrollReq.setEmployeeId(EMPLOYEE_ID);
+        enrollReq.setEmployeeId(employeeId);
         enrollReq.setEnrollmentDate(LocalDate.now());
 
         mockMvc.perform(post(BASE + "/enrollments")

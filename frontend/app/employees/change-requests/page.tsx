@@ -185,7 +185,16 @@ export default function EmploymentChangeRequestsPage() {
 
   // DEF-44: Don't render page content until permission is confirmed
   if (!hasPermission(Permissions.EMPLOYMENT_CHANGE_VIEW_ALL)) {
-    return null; // useEffect above handles the redirect to /employees
+    // Render visible message while useEffect above redirects to /employees.
+    return (
+      <AppLayout activeMenuItem="employees">
+        <div className="max-w-7xl mx-auto p-6">
+          <p className="text-sm text-[var(--text-muted)]" role="status">
+            Redirecting to employees…
+          </p>
+        </div>
+      </AppLayout>
+    );
   }
 
   return (

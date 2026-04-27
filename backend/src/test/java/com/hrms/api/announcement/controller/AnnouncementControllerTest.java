@@ -325,7 +325,9 @@ class AnnouncementControllerTest {
         @Test
         @DisplayName("Should return announcement by ID without employee context")
         void shouldReturnAnnouncementByIdWithoutEmployeeContext() throws Exception {
-            when(announcementService.getAnnouncementById(announcementId, null))
+            // Controller falls back to SecurityContext.getCurrentEmployeeId() when param missing,
+            // so the second arg may be null OR a stale ThreadLocal value — match with any()
+            when(announcementService.getAnnouncementById(eq(announcementId), nullable(UUID.class)))
                     .thenReturn(announcementDto);
 
             mockMvc.perform(get(BASE_URL + "/{announcementId}", announcementId))
@@ -333,7 +335,7 @@ class AnnouncementControllerTest {
                     .andExpect(jsonPath("$.id").value(announcementId.toString()))
                     .andExpect(jsonPath("$.title").value("Company Holiday Notice"));
 
-            verify(announcementService).getAnnouncementById(announcementId, null);
+            verify(announcementService).getAnnouncementById(eq(announcementId), nullable(UUID.class));
         }
 
         @Test

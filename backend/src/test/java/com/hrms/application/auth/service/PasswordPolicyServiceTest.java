@@ -12,6 +12,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * password history (last 5), consecutive chars, common passwords, and user info checks.
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("PasswordPolicyService Tests")
 class PasswordPolicyServiceTest {
 
@@ -176,7 +179,7 @@ class PasswordPolicyServiceTest {
         @DisplayName("Should collect multiple violations in a single throw")
         void shouldCollectMultipleViolationsInSingleThrow() {
             // Given — too short AND missing uppercase AND missing special
-            String bad = "alllowercase";
+            String bad = "alllower";
 
             // When / Then — single exception with combined violations
             assertThatThrownBy(() -> passwordPolicyService.validatePassword(bad))

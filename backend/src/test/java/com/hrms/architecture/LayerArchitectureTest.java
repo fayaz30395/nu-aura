@@ -88,6 +88,9 @@ class LayerArchitectureTest {
                     .and().doNotHaveSimpleName("WikiPageController")
                     .and().doNotHaveSimpleName("ImplicitRoleRuleController")
                     .and().doNotHaveSimpleName("ApprovalEscalationController")
+                    .and().doNotHaveSimpleName("LeaveBalanceController")
+                    .and().doNotHaveSimpleName("LeaveRequestController")
+                    .and().doNotHaveSimpleName("WikiInlineCommentController")
                     .should().accessClassesThat().resideInAPackage("..infrastructure..repository..")
                     .because("Controllers must access data through Services, not directly through Repositories");
 
@@ -112,6 +115,9 @@ class LayerArchitectureTest {
                     .and().doNotHaveSimpleName("WikiPageController")
                     .and().doNotHaveSimpleName("ImplicitRoleRuleController")
                     .and().doNotHaveSimpleName("ApprovalEscalationController")
+                    .and().doNotHaveSimpleName("LeaveBalanceController")
+                    .and().doNotHaveSimpleName("LeaveRequestController")
+                    .and().doNotHaveSimpleName("WikiInlineCommentController")
                     .should().dependOnClassesThat().haveSimpleNameEndingWith("Repository")
                     .because("Controllers must not depend on Repositories");
 

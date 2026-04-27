@@ -95,6 +95,45 @@ deployment/kubernetes/secrets.yaml
 .claude/helpers/
 .claude/skills/
 
-# QA sweep artifacts (regenerable; report + sentinels are the durable record)
+# QA sweep artifacts (regenerable; only the dated *report*.md is durable)
 docs/qa/findings/
 docs/qa/queue/
+docs/qa/playwright/runs/
+docs/qa/playwright/fixes/
+docs/qa/LOOP-DONE
+docs/qa/RBAC-DONE
+docs/qa/USECASE-DONE
+docs/qa/PLAYWRIGHT-DONE
+docs/qa/QA-DONE
+docs/qa/fixed.log
+docs/qa/dev-fixes.md
+docs/qa/chrome-qa-findings*.md
+docs/qa/QA-*-BUGS.md
+docs/qa/QA-*-STATUS.md
+docs/qa/autonomous-fix-stuck-*.md
+docs/qa/STUCK-*.md
+
+# Generated Playwright test data (regenerated from use-cases.v2.yaml)
+frontend/e2e/generated/routes.json
+frontend/e2e/generated/rbac-matrix.json
+frontend/e2e/generated/roles.json
+frontend/e2e/.auth/
+frontend/playwright/.auth/
+frontend/test-results/
+frontend/playwright-report/
+frontend/nu-rbac-report.json
+
+# Skill-emitted reports & runtime
+qa-reports/
+.claude-flow/
+backend/.claude-flow/
+backend/target/surefire-reports/
+
+# Local-only runtime logs (live in /tmp on dev boxes)
+/tmp/aura-*
+/tmp/backend.log
+/tmp/frontend.log
+
+
+docs/qa/*
+/docs/qa/*

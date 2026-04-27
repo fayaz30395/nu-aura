@@ -1,5 +1,6 @@
 package com.hrms.api.workflow.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hrms.domain.workflow.ApprovalDelegate;
 import com.hrms.domain.workflow.WorkflowDefinition;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class ApprovalDelegateResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private String reason;
+    @JsonProperty("isActive")
     private boolean isActive;
     private WorkflowDefinition.EntityType entityType;
     private UUID workflowDefinitionId;

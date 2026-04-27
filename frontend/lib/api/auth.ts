@@ -37,6 +37,16 @@ export const authApi = {
   },
 
   /**
+   * Fetch the current authenticated user using the access_token cookie.
+   * Does NOT rotate refresh tokens — safe to call on every page mount.
+   * Returns the same shape as login/refresh for use by restoreSession.
+   */
+  me: async (): Promise<AuthResponse> => {
+    const response = await apiClient.get<AuthResponse>('/auth/me');
+    return response.data;
+  },
+
+  /**
    * Change password for authenticated user.
    */
   changePassword: async (data: ChangePasswordRequest): Promise<void> => {

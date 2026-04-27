@@ -11,6 +11,7 @@ import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import com.hrms.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.hrms.infrastructure.report.repository.ReportTemplateRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class CustomReportService {
             if (dto.getId() != null) {
                 ReportTemplate existing = templateRepository
                         .findByIdAndTenantIdAndIsDeletedFalse(dto.getId(), tenantId)
-                        .orElseThrow(() -> new NoSuchElementException("Template not found"));
+                        .orElseThrow(() -> new EntityNotFoundException("Template not found"));
                 entity.setId(existing.getId());
                 entity.setCreatedAt(existing.getCreatedAt());
                 entity.setUpdatedAt(LocalDateTime.now());
@@ -90,7 +91,7 @@ public class CustomReportService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return toDto(templateRepository
                 .findByIdAndTenantIdAndIsDeletedFalse(id, tenantId)
-                .orElseThrow(() -> new NoSuchElementException("Template not found: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("Template not found: " + id)));
     }
 
     @Transactional
@@ -98,7 +99,7 @@ public class CustomReportService {
         UUID tenantId = TenantContext.getCurrentTenant();
         ReportTemplate template = templateRepository
                 .findByIdAndTenantIdAndIsDeletedFalse(id, tenantId)
-                .orElseThrow(() -> new NoSuchElementException("Template not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Template not found: " + id));
         template.setIsDeleted(true);
         templateRepository.save(template);
     }

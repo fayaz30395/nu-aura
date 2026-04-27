@@ -31,6 +31,23 @@ public class ResumeTextExtractor {
      * @throws IOException   if file cannot be read
      * @throws TikaException if text extraction fails
      */
+    /**
+     * Run Tika parsing with a graceful fallback. Tika's container detectors
+     * (e.g. DefaultZipContainerDetector) probe inputs for archive signatures and
+     * may throw checked archive/Tika exceptions on plain text payloads — the
+     * bytes are still valid text, so fall back to a UTF-8 decoding instead of
+     * losing the content.
+     */
+    private String parseWithTika(byte[] fileBytes, String fileName) {
+        try {
+            return tika.parseToString(new java.io.ByteArrayInputStream(fileBytes));
+        } catch (Exception e) {
+            log.debug("Tika parse failed for {} ({}); falling back to UTF-8 plain text",
+                    fileName, e.getMessage());
+            return new String(fileBytes, java.nio.charset.StandardCharsets.UTF_8);
+        }
+    }
+
     public String extractText(byte[] fileBytes, String fileName) throws IOException, TikaException {
         log.debug("Extracting text from file: {} ({} bytes)", fileName, fileBytes.length);
 
@@ -40,7 +57,7 @@ public class ResumeTextExtractor {
         }
 
         try {
-            String extractedText = tika.parseToString(new java.io.ByteArrayInputStream(fileBytes));
+            String extractedText = parseWithTika(fileBytes, fileName);
 
             if (extractedText == null || extractedText.isBlank()) {
                 log.warn("No text extracted from file: {}", fileName);
@@ -62,11 +79,8 @@ public class ResumeTextExtractor {
             log.debug("Successfully extracted {} characters from file: {}", extractedText.length(), fileName);
             return extractedText;
 
-        } catch (TikaException e) {
-            log.error("Tika parsing failed for file: {}: {}", fileName, e.getMessage());
-            throw e;
-        } catch (IOException e) {
-            log.error("IO error while reading file: {}: {}", fileName, e.getMessage());
+        } catch (RuntimeException e) {
+            log.error("Unexpected error while parsing file: {}: {}", fileName, e.getMessage());
             throw e;
         }
     }
@@ -82,37 +96,10 @@ public class ResumeTextExtractor {
      */
     public String extractText(InputStream inputStream, String fileName) throws IOException, TikaException {
         log.debug("Extracting text from input stream: {}", fileName);
-
-        try {
-            String extractedText = tika.parseToString(inputStream);
-
-            if (extractedText == null || extractedText.isBlank()) {
-                log.warn("No text extracted from stream: {}", fileName);
-                return "";
-            }
-
-            // Normalize whitespace and trim
-            extractedText = extractedText
-                    .replaceAll("\\s+", " ")
-                    .trim();
-
-            // Truncate to max length
-            if (extractedText.length() > MAX_TEXT_LENGTH) {
-                log.debug("Truncating extracted text from {} to {} chars for file: {}",
-                        extractedText.length(), MAX_TEXT_LENGTH, fileName);
-                extractedText = extractedText.substring(0, MAX_TEXT_LENGTH);
-            }
-
-            log.debug("Successfully extracted {} characters from stream: {}", extractedText.length(), fileName);
-            return extractedText;
-
-        } catch (TikaException e) {
-            log.error("Tika parsing failed for stream {}: {}", fileName, e.getMessage());
-            throw e;
-        } catch (IOException e) {
-            log.error("IO error while reading stream {}: {}", fileName, e.getMessage());
-            throw e;
-        }
+        // Buffer the stream so we can fall back to a raw UTF-8 decode if Tika's
+        // container detection blows up after partial reads.
+        byte[] buffered = inputStream.readAllBytes();
+        return extractText(buffered, fileName);
     }
 
     /**

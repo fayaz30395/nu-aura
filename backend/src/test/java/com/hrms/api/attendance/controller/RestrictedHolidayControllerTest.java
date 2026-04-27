@@ -572,7 +572,7 @@ class RestrictedHolidayControllerTest {
                     .thenThrow(new IllegalStateException("Annual quota exceeded"));
 
             mockMvc.perform(post("/api/v1/restricted-holidays/{holidayId}/select", HOLIDAY_ID))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isConflict());
         }
     }
 }

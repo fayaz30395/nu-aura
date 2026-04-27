@@ -133,8 +133,10 @@ class AuthControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists())
-                    .andExpect(jsonPath("$.refreshToken").exists())
+                    // SEC: Tokens are returned via httpOnly Set-Cookie, NOT response body
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(jsonPath("$.accessToken").doesNotExist())
+                    .andExpect(jsonPath("$.refreshToken").doesNotExist())
                     .andExpect(jsonPath("$.tokenType").value("Bearer"))
                     .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
@@ -170,7 +172,9 @@ class AuthControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists());
+                    // SEC: Tokens are returned via httpOnly Set-Cookie, NOT response body
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(jsonPath("$.accessToken").doesNotExist());
 
             verify(authService).googleLogin(any(GoogleLoginRequest.class));
         }
@@ -188,7 +192,9 @@ class AuthControllerTest {
             mockMvc.perform(post("/api/v1/auth/refresh")
                             .header("X-Refresh-Token", "valid-refresh-token"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.accessToken").exists());
+                    // SEC: Tokens are returned via httpOnly Set-Cookie, NOT response body
+                    .andExpect(header().exists("Set-Cookie"))
+                    .andExpect(jsonPath("$.accessToken").doesNotExist());
 
             verify(authService).refresh("valid-refresh-token");
         }

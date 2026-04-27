@@ -20,7 +20,7 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {PermissionGate} from '@/components/auth/PermissionGate';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -91,7 +91,7 @@ export default function BiometricDevicesPage() {
   const [page, setPage] = useState(0);
 
   return (
-    <PermissionGate permission={Permissions.ATTENDANCE_MANAGE}>
+    <PermissionGate permission={Permissions.ATTENDANCE_MANAGE} fallback={<PageDeniedFallback/>}>
       <AppLayout>
         <div className="space-y-6 p-6">
           {/* Header */}

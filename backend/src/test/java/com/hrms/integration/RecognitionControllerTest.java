@@ -77,7 +77,7 @@ class RecognitionControllerTest {
         MvcResult result = mockMvc.perform(post(BASE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andReturn();
 
         String body = result.getResponse().getContentAsString();
@@ -101,7 +101,7 @@ class RecognitionControllerTest {
         mockMvc.perform(post(BASE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         // Check the feed — kudos should appear
         mockMvc.perform(get(BASE + "/feed"))

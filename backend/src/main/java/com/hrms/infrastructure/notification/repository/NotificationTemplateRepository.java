@@ -25,10 +25,22 @@ public interface NotificationTemplateRepository extends JpaRepository<Notificati
 
     Page<NotificationTemplate> findByTenantId(UUID tenantId, Pageable pageable);
 
-    @Query("SELECT t FROM NotificationTemplate t WHERE t.tenantId = :tenantId AND t.isActive = true " +
-            "AND (:category IS NULL OR t.category = :category) " +
-            "AND (:search IS NULL OR LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(t.code) LIKE LOWER(CONCAT('%', :search, '%')))")
+    // FIX: PostgreSQL cannot infer parameter type for LOWER(:search) when :search is null
+    // (raises "function lower(bytea) does not exist"). Use native query with explicit
+    // text casts so the binding type is unambiguous.
+    @Query(value = "SELECT * FROM notification_templates t " +
+            "WHERE t.is_deleted = false AND t.tenant_id = :tenantId AND t.is_active = true " +
+            "AND (CAST(:category AS text) IS NULL OR t.category = CAST(:category AS text)) " +
+            "AND (CAST(:search AS text) IS NULL " +
+            "     OR LOWER(t.name) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')) " +
+            "     OR LOWER(t.code) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))",
+            countQuery = "SELECT COUNT(*) FROM notification_templates t " +
+                    "WHERE t.is_deleted = false AND t.tenant_id = :tenantId AND t.is_active = true " +
+                    "AND (CAST(:category AS text) IS NULL OR t.category = CAST(:category AS text)) " +
+                    "AND (CAST(:search AS text) IS NULL " +
+                    "     OR LOWER(t.name) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')) " +
+                    "     OR LOWER(t.code) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))",
+            nativeQuery = true)
     Page<NotificationTemplate> searchTemplates(
             @Param("tenantId") UUID tenantId,
             @Param("category") String category,

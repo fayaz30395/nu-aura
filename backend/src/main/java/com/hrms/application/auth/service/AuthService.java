@@ -13,7 +13,7 @@ import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.domain.user.PasswordHistory;
-import com.hrms.domain.user.PasswordHistoryRepository;
+import com.hrms.infrastructure.user.repository.PasswordHistoryRepository;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.UserPrincipal;
 import com.hrms.domain.employee.Employee;

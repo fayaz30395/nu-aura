@@ -12,6 +12,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.exit.repository.ExitProcessRepository;
 import com.hrms.infrastructure.exit.repository.FullAndFinalSettlementRepository;
 import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +53,7 @@ public class FnFCalculationService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         ExitProcess exitProcess = exitProcessRepository.findById(exitProcessId)
-                .orElseThrow(() -> new RuntimeException("Exit process not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Exit process not found: " + exitProcessId));
 
         // Return existing settlement if present
         return fnfRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)

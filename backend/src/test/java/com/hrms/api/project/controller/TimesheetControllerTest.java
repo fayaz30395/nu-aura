@@ -278,7 +278,7 @@ class TimesheetControllerTest {
         @Test
         @DisplayName("PATCH /entries/{id}/approve approves time entry and returns 200")
         void approveTimeEntry_returns200() throws Exception {
-            when(projectTimesheetService.approveTimeEntry(ENTRY_ID, APPROVER_ID))
+            when(projectTimesheetService.approveTimeEntry(eq(ENTRY_ID), any()))
                     .thenReturn(buildTimeEntryResponse(TimeEntry.TimeEntryStatus.APPROVED));
 
             mockMvc.perform(patch("/api/v1/project-timesheets/entries/{id}/approve", ENTRY_ID)
@@ -287,13 +287,13 @@ class TimesheetControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("APPROVED"));
 
-            verify(projectTimesheetService).approveTimeEntry(ENTRY_ID, APPROVER_ID);
+            verify(projectTimesheetService).approveTimeEntry(eq(ENTRY_ID), any());
         }
 
         @Test
         @DisplayName("PATCH /entries/{id}/reject rejects time entry with reason and returns 200")
         void rejectTimeEntry_returns200() throws Exception {
-            when(projectTimesheetService.rejectTimeEntry(ENTRY_ID, APPROVER_ID, "Missing task description"))
+            when(projectTimesheetService.rejectTimeEntry(eq(ENTRY_ID), any(), eq("Missing task description")))
                     .thenReturn(buildTimeEntryResponse(TimeEntry.TimeEntryStatus.REJECTED));
 
             mockMvc.perform(patch("/api/v1/project-timesheets/entries/{id}/reject", ENTRY_ID)
@@ -304,7 +304,7 @@ class TimesheetControllerTest {
                     .andExpect(jsonPath("$.status").value("REJECTED"));
 
             verify(projectTimesheetService)
-                    .rejectTimeEntry(ENTRY_ID, APPROVER_ID, "Missing task description");
+                    .rejectTimeEntry(eq(ENTRY_ID), any(), eq("Missing task description"));
         }
     }
 
@@ -507,7 +507,7 @@ class TimesheetControllerTest {
         @DisplayName("approveTimeEntry requires TIMESHEET:APPROVE")
         void approveTimeEntry_requiresTimesheetApprove() throws NoSuchMethodException {
             Method method = ProjectTimesheetController.class
-                    .getMethod("approveTimeEntry", UUID.class, UUID.class);
+                    .getMethod("approveTimeEntry", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -518,7 +518,7 @@ class TimesheetControllerTest {
         @DisplayName("rejectTimeEntry requires TIMESHEET:APPROVE")
         void rejectTimeEntry_requiresTimesheetApprove() throws NoSuchMethodException {
             Method method = ProjectTimesheetController.class
-                    .getMethod("rejectTimeEntry", UUID.class, UUID.class, String.class);
+                    .getMethod("rejectTimeEntry", UUID.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

@@ -6,15 +6,14 @@ import {Payslip} from '@/lib/types/hrms/payroll';
 import {PayslipCard} from '@/components/payroll/PayslipCard';
 import {Button} from '@/components/ui/Button';
 import {Download, Search} from 'lucide-react';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {usePayslips} from '@/lib/hooks/queries/usePayroll';
 import {payrollService} from '@/lib/services/hrms/payroll.service';
 
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 
-export default function PayslipsPage() {
-  const {hasPermission, isReady: permReady} = usePermissions();
-
+function PayslipsPageContent() {
   // Filters
   const [selectedMonth, setSelectedMonth] = useState<string>(
     new Date().toISOString().substring(0, 7)
@@ -34,10 +33,6 @@ export default function PayslipsPage() {
 
   const {data: response, isLoading: loading, error: fetchError} = usePayslips(currentPage, pageSize);
 
-  // RBAC guard — all hooks declared above; safe to return null after them
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
-  }
   const payslips = response?.content || [];
   const totalPages = response?.totalPages || 0;
   const totalElements = response?.totalElements || 0;
@@ -297,5 +292,13 @@ export default function PayslipsPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function PayslipsPage() {
+  return (
+    <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<PageDeniedFallback/>}>
+      <PayslipsPageContent/>
+    </PermissionGate>
   );
 }

@@ -57,6 +57,7 @@ class RbacAnnotationCoverageTest {
             // Webhooks — signature-verified, not session-based
             "PaymentWebhookController",
             "DocuSignController",           // DocuSign webhook callback
+            "SlackCommandController",       // Slack signing-secret verified webhook (events/interactions/commands)
             // External portals — token-based auth (no user session)
             "ESignatureController",         // /esignature/external/{token}/*
             "PreboardingController",        // /preboarding/portal/{token}/*
@@ -78,6 +79,10 @@ class RbacAnnotationCoverageTest {
             // access is gated by authentication (JWT required) but no specific
             // permission is needed because every logged-in user can view their own profile.
             "UserController#getCurrentUser",
+            // /employees/me — self-service: returns the authenticated user's own
+            // employee profile, resolved via SecurityContext. Authentication is
+            // sufficient gating (analogous to UserController#getCurrentUser).
+            "EmployeeController#getMyEmployee",
             // /exit/interview/public/{token} — public exit interview form
             "FnFController#getPublicInterview",
             "FnFController#submitPublicInterview",

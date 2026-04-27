@@ -205,27 +205,34 @@ class PayrollControllerTest {
     class ProcessPayrollRunTests {
 
         @Test
-        @DisplayName("Should process payroll run successfully")
+        @DisplayName("Should accept payroll run for async processing (202)")
         void shouldProcessPayrollRun() throws Exception {
-            PayrollRun processedRun = new PayrollRun();
-            processedRun.setId(payrollRunId);
-            processedRun.setStatus(PayrollRun.PayrollStatus.PROCESSED);
+            PayrollRun processingRun = new PayrollRun();
+            processingRun.setId(payrollRunId);
+            processingRun.setStatus(PayrollRun.PayrollStatus.PROCESSING);
+            processingRun.setPayPeriodMonth(4);
+            processingRun.setPayPeriodYear(2026);
 
-            when(payrollRunService.processPayrollRun(eq(payrollRunId), any()))
-                    .thenReturn(processedRun);
+            when(payrollRunService.initiateProcessing(eq(payrollRunId), any()))
+                    .thenReturn(processingRun);
+            when(eventPublisher.publishPayrollProcessingEvent(
+                    any(UUID.class), any(), any(), anyInt(), anyInt()))
+                    .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
 
             mockMvc.perform(post("/api/v1/payroll/runs/{id}/process", payrollRunId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("PROCESSED"));
+                    .andExpect(status().isAccepted())
+                    .andExpect(jsonPath("$.status").value("PROCESSING"));
 
-            verify(payrollRunService).processPayrollRun(eq(payrollRunId), any());
+            verify(payrollRunService).initiateProcessing(eq(payrollRunId), any());
+            verify(eventPublisher).publishPayrollProcessingEvent(
+                    eq(payrollRunId), any(), any(), anyInt(), anyInt());
         }
 
         @Test
         @DisplayName("Should throw when processing non-existent payroll run")
         void shouldReturn404ForNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();
-            when(payrollRunService.processPayrollRun(eq(nonExistentId), any()))
+            when(payrollRunService.initiateProcessing(eq(nonExistentId), any()))
                     .thenThrow(new IllegalArgumentException("Payroll run not found"));
 
             assertThrows(Exception.class, () ->
@@ -235,7 +242,7 @@ class PayrollControllerTest {
         @Test
         @DisplayName("Should throw when processing already processed payroll run")
         void shouldNotProcessAlreadyProcessedRun() throws Exception {
-            when(payrollRunService.processPayrollRun(eq(payrollRunId), any()))
+            when(payrollRunService.initiateProcessing(eq(payrollRunId), any()))
                     .thenThrow(new IllegalArgumentException("Payroll run has already been processed"));
 
             assertThrows(Exception.class, () ->

@@ -52,9 +52,9 @@ public class TaxDeclarationController {
 
     @PatchMapping("/{id}/approve")
     @RequiresPermission(Permission.TDS_APPROVE)
-    public ResponseEntity<TaxDeclarationResponse> approveTaxDeclaration(@PathVariable UUID id) {
-        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
-                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
+    public ResponseEntity<TaxDeclarationResponse> approveTaxDeclaration(
+            @PathVariable UUID id,
+            @RequestParam UUID approverId) {
         return ResponseEntity.ok(taxDeclarationService.approveTaxDeclaration(id, approverId));
     }
 
@@ -62,9 +62,8 @@ public class TaxDeclarationController {
     @RequiresPermission(Permission.TDS_APPROVE)
     public ResponseEntity<TaxDeclarationResponse> rejectTaxDeclaration(
             @PathVariable UUID id,
+            @RequestParam UUID rejectedBy,
             @NotBlank @Size(max = 1000) @RequestParam String reason) {
-        UUID rejectedBy = SecurityContext.getCurrentEmployeeId() != null
-                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
         return ResponseEntity.ok(taxDeclarationService.rejectTaxDeclaration(id, rejectedBy, reason));
     }
 
@@ -97,9 +96,9 @@ public class TaxDeclarationController {
 
     @PostMapping("/proofs")
     @RequiresPermission(Permission.TDS_DECLARE)
-    public ResponseEntity<TaxProofResponse> addTaxProof(@Valid @RequestBody TaxProofRequest request) {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId() != null
-                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
+    public ResponseEntity<TaxProofResponse> addTaxProof(
+            @RequestParam UUID employeeId,
+            @Valid @RequestBody TaxProofRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taxDeclarationService.addTaxProof(employeeId, request));
     }

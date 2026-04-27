@@ -181,10 +181,24 @@ export default function ReferralsPage() {
     [submitReferral, reset]
   );
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated) {
+    return (
+      <div className="p-6">
+        <p className="text-sm text-[var(--text-muted)]" role="status">
+          Loading referrals…
+        </p>
+      </div>
+    );
+  }
   if (!isAuthenticated) {
     router.push('/auth/login');
-    return null;
+    return (
+      <div className="p-6">
+        <p className="text-sm text-[var(--text-muted)]" role="status">
+          Redirecting to sign in…
+        </p>
+      </div>
+    );
   }
 
   const tabs: { key: TabKey; label: string; permission?: string }[] = [

@@ -75,6 +75,7 @@ class AssetManagementServiceTest {
         employeeId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
     }
 
     private Asset buildAsset(AssetStatus status) {

@@ -399,7 +399,8 @@
                     <perCoreThreadCount>false</perCoreThreadCount>
 
                     <!-- Memory Configuration (JaCoCo argLine is automatically prepended) -->
-                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
+                    <!-- add-opens required for EncryptedStringConverterTest which mutates ProcessEnvironment via reflection (JDK 17 module encapsulation) -->
+                    <argLine>@{argLine} -Xmx2048m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
                     </argLine>
 
                     <!-- Test Stability -->

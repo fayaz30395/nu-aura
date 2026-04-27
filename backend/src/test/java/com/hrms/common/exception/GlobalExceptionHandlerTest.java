@@ -194,17 +194,18 @@ class GlobalExceptionHandlerTest {
     }
 
     @Nested
-    @DisplayName("BusinessException → 409")
+    @DisplayName("BusinessException → 400 (F-08: rejected business rule, not version conflict)")
     class BusinessExceptionTests {
 
         @Test
-        @DisplayName("Returns HTTP 409 CONFLICT")
-        void returns409Status() {
+        @DisplayName("Returns HTTP 400 BAD_REQUEST")
+        void returns400Status() {
             BusinessException ex = new BusinessException("duplicate entry");
 
             ResponseEntity<ErrorResponse> response = handler.handleBusinessException(ex, webRequest);
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            // F-08: BusinessException maps to 400 (rejected business rule), not 409 (version conflict).
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody()).isNotNull();
             assertThat(response.getBody().getErrorCode()).isEqualTo("BUSINESS_RULE_VIOLATION");
         }

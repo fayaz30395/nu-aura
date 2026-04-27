@@ -51,6 +51,32 @@ interface PermissionGateProps {
  *   <HRSection />
  * </PermissionGate>
  */
+/**
+ * Visible "access denied" fallback for **page-level** gates. Use when wrapping
+ * an entire route shell (so smoke tests and assistive tech see the page mounted).
+ *
+ * For **inline** button/menu gates, do NOT pass this — let the default `null`
+ * fallback hide the gated element silently.
+ *
+ * @example
+ *   <PermissionGate permission={X} fallback={<PageDeniedFallback/>}>
+ *     <PageContent />
+ *   </PermissionGate>
+ */
+export function PageDeniedFallback({
+                                     message = 'You do not have access to this page.',
+                                   }: { message?: string }): ReactNode {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="p-6 text-sm text-[var(--text-muted)]"
+    >
+      {message}
+    </div>
+  );
+}
+
 export function PermissionGate({
                                  children,
                                  permission,
@@ -73,9 +99,20 @@ export function PermissionGate({
     isReady,
   } = usePermissions();
 
-  // Show nothing or loading state while auth is hydrating
+  // Show loading state while auth is hydrating. We render a visible
+  // placeholder (not null) so that smoke tests and assistive tech can
+  // observe that the page is mounted and waiting on auth.
   if (!isReady) {
-    return showWhileLoading ? children : null;
+    if (showWhileLoading) return children;
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="p-6 text-sm text-[var(--text-muted)]"
+      >
+        Loading...
+      </div>
+    );
   }
 
   // SuperAdmin / TenantAdmin bypasses ALL permission and role gates

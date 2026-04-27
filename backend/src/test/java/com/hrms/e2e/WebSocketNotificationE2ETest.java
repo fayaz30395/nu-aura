@@ -129,7 +129,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToTenant(TEST_TENANT_ID, notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -148,7 +148,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToCurrentTenant(notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -169,7 +169,7 @@ class WebSocketNotificationE2ETest {
         webSocketNotificationService.sendToDepartment(TEST_DEPARTMENT_ID, notification);
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/department." + TEST_DEPARTMENT_ID + ".notifications"),
+                eq("/topic/department/" + TEST_DEPARTMENT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -189,8 +189,9 @@ class WebSocketNotificationE2ETest {
 
         webSocketNotificationService.broadcast(notification);
 
+        // Broadcast delegates to tenant-scoped to enforce tenant isolation
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/broadcast"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }
@@ -336,7 +337,7 @@ class WebSocketNotificationE2ETest {
         );
 
         verify(messagingTemplate).convertAndSend(
-                eq("/topic/tenant." + TEST_TENANT_ID + ".notifications"),
+                eq("/topic/tenant/" + TEST_TENANT_ID + "/notifications"),
                 any(NotificationMessage.class)
         );
     }

@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconActivity, IconFlame, IconTrendingUp } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
-import { Permissions, usePermissions } from '@/lib/hooks/usePermissions';
+import { Permissions } from '@/lib/hooks/usePermissions';
+import { PermissionGate, PageDeniedFallback } from '@/components/auth/PermissionGate';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
 import { PostComposer } from '@/components/wall';
 import { useCreatePost } from '@/lib/hooks/queries/useWall';
@@ -174,36 +175,10 @@ function formatTimeAgo(dateString: string): string {
   });
 }
 
-export default function WallPage() {
+function WallPageContent() {
   const router = useRouter();
   const createPost = useCreatePost();
-  const { hasAnyPermission, isReady } = usePermissions();
-
-  const hasAccess = hasAnyPermission(
-    Permissions.KNOWLEDGE_VIEW,
-    Permissions.WALL_FLUENCE_VIEW,
-  );
-
-  useEffect(() => {
-    if (isReady && !hasAccess) {
-      router.replace('/me/dashboard');
-    }
-  }, [isReady, hasAccess, router]);
-
-  if (!isReady) {
-    return (
-      <AppLayout>
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <div className="flex flex-col items-center gap-4">
-            <IconActivity size={32} className="animate-pulse text-accent-500" />
-            <p className="text-[var(--text-secondary)]">Loading Activity Wall...</p>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (!hasAccess) return null;
+  // Permission gate handled by <PermissionGate> wrapper in default export.
 
   return (
     <AppLayout>
@@ -259,5 +234,13 @@ export default function WallPage() {
         </div>
       </div>
     </AppLayout>
+  );
+}
+
+export default function WallPage() {
+  return (
+    <PermissionGate anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WALL_FLUENCE_VIEW]} fallback={<PageDeniedFallback/>}>
+      <WallPageContent />
+    </PermissionGate>
   );
 }

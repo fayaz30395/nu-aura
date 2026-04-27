@@ -62,12 +62,14 @@ class PerformanceReviewControllerTest {
 
     private UUID reviewId;
     private UUID employeeId;
+    private UUID reviewerId;
     private ReviewResponse reviewResponse;
 
     @BeforeEach
     void setUp() {
         reviewId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
+        reviewerId = UUID.randomUUID();
 
         reviewResponse = ReviewResponse.builder()
                 .id(reviewId)
@@ -86,6 +88,7 @@ class PerformanceReviewControllerTest {
         void shouldCreateReview() throws Exception {
             ReviewRequest request = new ReviewRequest();
             request.setEmployeeId(employeeId);
+            request.setReviewerId(reviewerId);
 
             when(reviewService.createReview(any(ReviewRequest.class))).thenReturn(reviewResponse);
 
@@ -94,7 +97,7 @@ class PerformanceReviewControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(reviewId.toString()))
-                    .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+                    .andExpect(jsonPath("$.status").value("IN_REVIEW"));
 
             verify(reviewService).createReview(any(ReviewRequest.class));
         }
@@ -115,7 +118,7 @@ class PerformanceReviewControllerTest {
                             .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1))
-                    .andExpect(jsonPath("$.content[0].status").value("IN_PROGRESS"));
+                    .andExpect(jsonPath("$.content[0].status").value("IN_REVIEW"));
 
             verify(reviewService).getAllReviews(any(Pageable.class));
         }
@@ -154,6 +157,7 @@ class PerformanceReviewControllerTest {
         void shouldUpdateReview() throws Exception {
             ReviewRequest request = new ReviewRequest();
             request.setEmployeeId(employeeId);
+            request.setReviewerId(reviewerId);
 
             ReviewResponse updated = ReviewResponse.builder()
                     .id(reviewId)

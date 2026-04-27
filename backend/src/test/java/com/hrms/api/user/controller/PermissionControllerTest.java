@@ -27,7 +27,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -105,7 +110,7 @@ class PermissionControllerTest {
         @Test
         @DisplayName("getAllPermissions should require PERMISSION_MANAGE")
         void getAllPermissions_shouldRequirePermissionManage() throws NoSuchMethodException {
-            Method method = PermissionController.class.getMethod("getAllPermissions");
+            Method method = PermissionController.class.getMethod("getAllPermissions", Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -131,7 +136,7 @@ class PermissionControllerTest {
         @Test
         @DisplayName("Neither endpoint should have revalidate=true (read-only operations)")
         void permissionEndpoints_shouldNotHaveRevalidation() throws NoSuchMethodException {
-            Method listAll = PermissionController.class.getMethod("getAllPermissions");
+            Method listAll = PermissionController.class.getMethod("getAllPermissions", Pageable.class);
             Method byResource = PermissionController.class.getMethod("getPermissionsByResource", String.class);
 
             assertThat(listAll.getAnnotation(RequiresPermission.class).revalidate()).isFalse();
@@ -146,50 +151,54 @@ class PermissionControllerTest {
     class GetAllPermissionsTests {
 
         @Test
-        @DisplayName("Should return all permissions with HTTP 200")
+        @DisplayName("Should return paginated permissions with HTTP 200")
         void getAllPermissions_returnsPermissionList() throws Exception {
-            when(permissionService.getAllPermissions())
-                    .thenReturn(List.of(employeeReadPerm, employeeCreatePerm));
+            when(permissionService.getAllPermissions(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(employeeReadPerm, employeeCreatePerm)));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(2))
-                    .andExpect(jsonPath("$[0].code").value("EMPLOYEE:READ"))
-                    .andExpect(jsonPath("$[1].code").value("EMPLOYEE:CREATE"));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(2))
+                    .andExpect(jsonPath("$.content[0].code").value("EMPLOYEE:READ"))
+                    .andExpect(jsonPath("$.content[1].code").value("EMPLOYEE:CREATE"))
+                    .andExpect(jsonPath("$.totalElements").value(2));
 
-            verify(permissionService).getAllPermissions();
+            verify(permissionService).getAllPermissions(any(Pageable.class));
         }
 
         @Test
-        @DisplayName("Should return empty list when no permissions exist")
+        @DisplayName("Should return empty page when no permissions exist")
         void getAllPermissions_returnsEmptyList() throws Exception {
-            when(permissionService.getAllPermissions()).thenReturn(List.of());
+            when(permissionService.getAllPermissions(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(0));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0))
+                    .andExpect(jsonPath("$.totalElements").value(0));
 
-            verify(permissionService).getAllPermissions();
+            verify(permissionService).getAllPermissions(any(Pageable.class));
         }
 
         @Test
         @DisplayName("Should include resource and action fields in each permission")
         void getAllPermissions_includesResourceAndAction() throws Exception {
-            when(permissionService.getAllPermissions()).thenReturn(List.of(employeeReadPerm));
+            when(permissionService.getAllPermissions(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(employeeReadPerm)));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].resource").value("EMPLOYEE"))
-                    .andExpect(jsonPath("$[0].action").value("READ"))
-                    .andExpect(jsonPath("$[0].name").value("Read Employee"));
+                    .andExpect(jsonPath("$.content[0].resource").value("EMPLOYEE"))
+                    .andExpect(jsonPath("$.content[0].action").value("READ"))
+                    .andExpect(jsonPath("$.content[0].name").value("Read Employee"));
         }
 
         @Test
         @DisplayName("Should return 500 when service throws unexpected error")
         void getAllPermissions_returns500_onServiceError() throws Exception {
-            when(permissionService.getAllPermissions())
+            when(permissionService.getAllPermissions(any(Pageable.class)))
                     .thenThrow(new RuntimeException("Database connection lost"));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))

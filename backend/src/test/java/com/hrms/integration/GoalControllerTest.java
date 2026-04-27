@@ -91,14 +91,9 @@ class GoalControllerTest {
         String goalId = objectMapper.readTree(createResult.getResponse().getContentAsString())
                 .get("id").asText();
 
-        // Update progress — this is the check-in
-        Map<String, Object> progressUpdate = new LinkedHashMap<>();
-        progressUpdate.put("progressPercentage", 60);
-        progressUpdate.put("currentValue", new BigDecimal("60.0"));
-
+        // Update progress — this is the check-in (uses request param, not body)
         mockMvc.perform(put(BASE + "/{id}/progress", UUID.fromString(goalId))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(progressUpdate)))
+                        .param("progressPercentage", "60"))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     assertThat(status).isIn(200, 201);
@@ -127,12 +122,9 @@ class GoalControllerTest {
     @DisplayName("UC-GROW-014 negative: check-in on non-existent goal returns 404")
     void ucGrow014_checkinNonExistentGoal_returns404() throws Exception {
         UUID nonExistentGoalId = UUID.randomUUID();
-        Map<String, Object> progressUpdate = new LinkedHashMap<>();
-        progressUpdate.put("progressPercentage", 50);
 
         mockMvc.perform(put(BASE + "/{id}/progress", nonExistentGoalId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(progressUpdate)))
+                        .param("progressPercentage", "50"))
                 .andExpect(status().isNotFound());
     }
 

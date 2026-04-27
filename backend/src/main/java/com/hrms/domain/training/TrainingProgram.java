@@ -113,6 +113,13 @@ public class TrainingProgram {
     @Version
     private Long version;
 
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public enum TrainingCategory {
         TECHNICAL, SOFT_SKILLS, LEADERSHIP, COMPLIANCE, SAFETY, PRODUCT, SALES, CUSTOMER_SERVICE, OTHER
     }

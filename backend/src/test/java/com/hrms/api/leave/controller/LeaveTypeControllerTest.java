@@ -62,6 +62,7 @@ class LeaveTypeControllerTest {
         leaveTypeId = UUID.randomUUID();
         leaveType = new LeaveType();
         leaveType.setId(leaveTypeId);
+        leaveType.setLeaveCode("AL");
         leaveType.setLeaveName("Annual Leave");
         leaveType.setAnnualQuota(new java.math.BigDecimal("21"));
         leaveType.setIsActive(true);
@@ -76,6 +77,7 @@ class LeaveTypeControllerTest {
         @DisplayName("Should create leave type successfully")
         void shouldCreateLeaveTypeSuccessfully() throws Exception {
             LeaveTypeRequest request = new LeaveTypeRequest();
+            request.setLeaveCode("AL");
             request.setLeaveName("Annual Leave");
             request.setAnnualQuota(new java.math.BigDecimal("21"));
             request.setAccrualType("MONTHLY");
@@ -87,7 +89,7 @@ class LeaveTypeControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(leaveTypeId.toString()))
-                    .andExpect(jsonPath("$.name").value("Annual Leave"));
+                    .andExpect(jsonPath("$.leaveName").value("Annual Leave"));
 
             verify(leaveTypeService).createLeaveType(any(LeaveType.class));
         }
@@ -117,7 +119,7 @@ class LeaveTypeControllerTest {
             mockMvc.perform(get("/api/v1/leave-types/{id}", leaveTypeId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(leaveTypeId.toString()))
-                    .andExpect(jsonPath("$.name").value("Annual Leave"));
+                    .andExpect(jsonPath("$.leaveName").value("Annual Leave"));
 
             verify(leaveTypeService).getLeaveTypeById(leaveTypeId);
         }
@@ -134,7 +136,7 @@ class LeaveTypeControllerTest {
                             .param("size", "20"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(1))
-                    .andExpect(jsonPath("$.content[0].name").value("Annual Leave"));
+                    .andExpect(jsonPath("$.content[0].leaveName").value("Annual Leave"));
 
             verify(leaveTypeService).getAllLeaveTypes(any(Pageable.class));
         }
@@ -147,7 +149,7 @@ class LeaveTypeControllerTest {
             mockMvc.perform(get("/api/v1/leave-types/active"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].name").value("Annual Leave"));
+                    .andExpect(jsonPath("$[0].leaveName").value("Annual Leave"));
 
             verify(leaveTypeService).getActiveLeaveTypes();
         }
@@ -161,11 +163,13 @@ class LeaveTypeControllerTest {
         @DisplayName("Should update leave type successfully")
         void shouldUpdateLeaveTypeSuccessfully() throws Exception {
             LeaveTypeRequest request = new LeaveTypeRequest();
+            request.setLeaveCode("AL");
             request.setLeaveName("Updated Annual Leave");
             request.setAnnualQuota(new java.math.BigDecimal("25"));
 
             LeaveType updated = new LeaveType();
             updated.setId(leaveTypeId);
+            updated.setLeaveCode("AL");
             updated.setLeaveName("Updated Annual Leave");
             updated.setAnnualQuota(new java.math.BigDecimal("25"));
 
@@ -175,7 +179,7 @@ class LeaveTypeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("Updated Annual Leave"));
+                    .andExpect(jsonPath("$.leaveName").value("Updated Annual Leave"));
 
             verify(leaveTypeService).updateLeaveType(eq(leaveTypeId), any(LeaveType.class));
         }

@@ -5,8 +5,13 @@ import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
+import com.hrms.domain.user.AuthProvider;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,16 +46,46 @@ class ExpenseClaimControllerTest {
 
     private static final String BASE_URL = "/api/v1/expenses";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
-    private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private UUID USER_ID;
+    private UUID EMPLOYEE_ID;
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        // Seed user + employee via JPA save() — avoids manual ID + null @Version trap
+        User user = User.builder()
+                .email("expense-test-" + UUID.randomUUID() + "@example.com")
+                .firstName("Exp")
+                .lastName("Tester")
+                .passwordHash("$2a$10$dummyhashfortestingonlydummyhashfortestingdummyha")
+                .status(User.UserStatus.ACTIVE)
+                .authProvider(AuthProvider.LOCAL)
+                .mfaEnabled(false)
+                .build();
+        user.setTenantId(TENANT_ID);
+        user = userRepository.save(user);
+        USER_ID = user.getId();
+
+        Employee emp = Employee.builder()
+                .employeeCode("EXP-" + UUID.randomUUID().toString().substring(0, 6))
+                .user(user)
+                .firstName("Exp")
+                .lastName("Tester")
+                .joiningDate(LocalDate.now().minusYears(1))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .build();
+        emp.setTenantId(TENANT_ID);
+        EMPLOYEE_ID = employeeRepository.save(emp).getId();
+
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);

@@ -1,6 +1,7 @@
 package com.hrms.api.knowledge.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.application.knowledge.service.SpacePermissionService;
 import com.hrms.application.knowledge.service.WikiSpaceService;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.TenantFilter;
@@ -8,6 +9,8 @@ import com.hrms.domain.knowledge.WikiSpace;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {WikiSpaceController.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ActiveProfiles("test")
 @DisplayName("WikiSpaceController Unit Tests")
 class WikiSpaceControllerTest {
@@ -50,6 +54,9 @@ class WikiSpaceControllerTest {
 
     @MockitoBean
     private WikiSpaceService wikiSpaceService;
+
+    @MockitoBean
+    private SpacePermissionService spacePermissionService;
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;

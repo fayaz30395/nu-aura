@@ -52,6 +52,8 @@ class ExpenseClaimServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private DataScopeService dataScopeService;
+    @Mock
+    private com.hrms.application.event.DomainEventPublisher domainEventPublisher;
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
     private UUID tenantId;

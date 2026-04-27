@@ -7,18 +7,25 @@ import com.hrms.api.user.dto.UpdateNotificationPreferencesRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.user.AuthProvider;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -34,24 +41,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
+@Transactional
 @DisplayName("Settings Use Case Integration Tests")
 class SettingsUseCaseIntegrationTest {
 
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
-    private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private UUID userId;
+    private UUID employeeId = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        // Seed test user with generated ID (avoids @Id-assigned + null @Version "detached" trap)
+        User user = User.builder()
+                .email("settings-test-" + UUID.randomUUID() + "@example.com")
+                .firstName("Settings")
+                .lastName("Tester")
+                .passwordHash("$2a$10$dummyhashfortestingonlydummyhashfortestingdummyha")
+                .status(User.UserStatus.ACTIVE)
+                .authProvider(AuthProvider.LOCAL)
+                .mfaEnabled(false)
+                .build();
+        user.setTenantId(TENANT_ID);
+        userId = userRepository.save(user).getId();
+
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentUser(userId, employeeId, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
+
+        // Provide a Spring Security Authentication so @PreAuthorize("isAuthenticated()") passes
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                userId.toString(), "n/a",
+                List.of(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     // ========================= UC-SETTINGS-001: Change password (correct current password) =========================

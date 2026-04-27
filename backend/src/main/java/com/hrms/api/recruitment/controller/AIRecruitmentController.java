@@ -58,6 +58,7 @@ public class AIRecruitmentController {
                     .success(false)
                     .message("Please provide either resumeText, resumeUrl, or fileBase64")
                     .build();
+            return ResponseEntity.badRequest().body(response);
         }
 
         return ResponseEntity.ok(response);

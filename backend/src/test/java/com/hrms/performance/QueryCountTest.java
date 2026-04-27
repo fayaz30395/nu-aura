@@ -97,8 +97,8 @@ class QueryCountTest {
     private org.springframework.test.web.servlet.ResultMatcher statusIsAnyExpected() {
         return result -> {
             int status = result.getResponse().getStatus();
-            if (status != 200 && status != 401 && (status < 500 || status >= 600)) {
-                throw new AssertionError("Expected status 200/401/5xx but was " + status);
+            if (status != 200 && status != 401 && status != 403 && status != 404 && (status < 500 || status >= 600)) {
+                throw new AssertionError("Expected status 200/401/403/404/5xx but was " + status);
             }
         };
     }

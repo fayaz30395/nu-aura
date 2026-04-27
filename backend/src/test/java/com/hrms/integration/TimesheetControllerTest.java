@@ -5,8 +5,15 @@ import com.hrms.api.project.dto.TimeEntryRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.project.Project;
 import com.hrms.domain.project.TimeEntry;
+import com.hrms.domain.user.AuthProvider;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.domain.user.User;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.project.repository.HrmsProjectRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,19 +48,62 @@ class TimesheetControllerTest {
 
     private static final String BASE_URL = "/api/v1/project-timesheets";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
-    private static final UUID EMPLOYEE_ID = UUID.fromString("111e8400-e29b-41d4-a716-446655440099");
+    private UUID userId;
+    private UUID employeeId;
+    private UUID projectId;
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
+    @Autowired
+    HrmsProjectRepository projectRepository;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        // Seed user, employee, project with generated IDs (avoids @Id-assigned + null @Version trap)
+        User user = User.builder()
+                .email("ts-test-" + UUID.randomUUID() + "@example.com")
+                .firstName("TS")
+                .lastName("Tester")
+                .passwordHash("$2a$10$dummyhashfortestingonlydummyhashfortestingdummyha")
+                .status(User.UserStatus.ACTIVE)
+                .authProvider(AuthProvider.LOCAL)
+                .mfaEnabled(false)
+                .build();
+        user.setTenantId(TENANT_ID);
+        user = userRepository.save(user);
+        userId = user.getId();
+
+        Employee emp = Employee.builder()
+                .employeeCode("TS-" + UUID.randomUUID().toString().substring(0, 6))
+                .user(user)
+                .firstName("TS")
+                .lastName("Tester")
+                .joiningDate(LocalDate.now().minusYears(1))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .build();
+        emp.setTenantId(TENANT_ID);
+        employeeId = employeeRepository.save(emp).getId();
+
+        Project project = Project.builder()
+                .projectCode("PRJ-" + UUID.randomUUID().toString().substring(0, 6))
+                .name("Test Project")
+                .startDate(LocalDate.now().minusDays(30))
+                .status(Project.ProjectStatus.IN_PROGRESS)
+                .priority(Project.Priority.MEDIUM)
+                .build();
+        project.setTenantId(TENANT_ID);
+        projectId = projectRepository.save(project).getId();
+
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
-        SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentUser(userId, employeeId, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
@@ -69,7 +119,7 @@ class TimesheetControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.hoursWorked").value(8.0))
-                .andExpect(jsonPath("$.employeeId").value(EMPLOYEE_ID.toString()));
+                .andExpect(jsonPath("$.employeeId").value(employeeId.toString()));
     }
 
     @Test
@@ -105,7 +155,7 @@ class TimesheetControllerTest {
                 .andExpect(status().isCreated());
 
         // Query employee's entries
-        mockMvc.perform(get(BASE_URL + "/entries/employee/{employeeId}", EMPLOYEE_ID))
+        mockMvc.perform(get(BASE_URL + "/entries/employee/{employeeId}", employeeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -130,7 +180,7 @@ class TimesheetControllerTest {
     @Test
     @DisplayName("ucTimeA6_restrictedEmployee_cannotSeeOtherEmployeeEntries_onlyOwn")
     void ucTimeA6_restrictedEmployee_cannotSeeOtherEmployeeEntries_onlyOwn() throws Exception {
-        // Create entry for EMPLOYEE_ID as super admin
+        // Create entry for employeeId as super admin
         TimeEntryRequest request = buildValidTimeEntryRequest(5.0);
         mockMvc.perform(post(BASE_URL + "/entries")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -157,7 +207,8 @@ class TimesheetControllerTest {
 
     private TimeEntryRequest buildValidTimeEntryRequest(double hours) {
         return TimeEntryRequest.builder()
-                .employeeId(EMPLOYEE_ID)
+                .projectId(projectId)
+                .employeeId(employeeId)
                 .workDate(LocalDate.now())
                 .hoursWorked(new BigDecimal(hours))
                 .description("Development work on authentication module")

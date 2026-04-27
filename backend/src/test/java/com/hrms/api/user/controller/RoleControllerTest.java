@@ -26,6 +26,10 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -109,7 +113,7 @@ class RoleControllerTest {
         @Test
         @DisplayName("getAllRoles should require ROLE_MANAGE permission")
         void getAllRoles_shouldRequireRoleManagePermission() throws NoSuchMethodException {
-            Method method = RoleController.class.getMethod("getAllRoles");
+            Method method = RoleController.class.getMethod("getAllRoles", Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
@@ -188,29 +192,33 @@ class RoleControllerTest {
     class GetAllRolesTests {
 
         @Test
-        @DisplayName("Should return list of roles with HTTP 200")
+        @DisplayName("Should return paginated roles with HTTP 200")
         void getAllRoles_returnsRoleList() throws Exception {
-            when(roleManagementService.getAllRoles()).thenReturn(List.of(sampleRoleResponse));
+            when(roleManagementService.getAllRoles(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(sampleRoleResponse)));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].code").value("HR_MANAGER"))
-                    .andExpect(jsonPath("$[0].name").value("HR Manager"));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(1))
+                    .andExpect(jsonPath("$.content[0].code").value("HR_MANAGER"))
+                    .andExpect(jsonPath("$.content[0].name").value("HR Manager"))
+                    .andExpect(jsonPath("$.totalElements").value(1));
 
-            verify(roleManagementService).getAllRoles();
+            verify(roleManagementService).getAllRoles(any(Pageable.class));
         }
 
         @Test
-        @DisplayName("Should return empty list when no roles exist")
+        @DisplayName("Should return empty page when no roles exist")
         void getAllRoles_returnsEmptyList() throws Exception {
-            when(roleManagementService.getAllRoles()).thenReturn(List.of());
+            when(roleManagementService.getAllRoles(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of()));
 
             mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(0));
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content.length()").value(0))
+                    .andExpect(jsonPath("$.totalElements").value(0));
         }
     }
 

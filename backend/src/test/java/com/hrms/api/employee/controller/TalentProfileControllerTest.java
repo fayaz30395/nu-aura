@@ -60,7 +60,10 @@ class TalentProfileControllerTest {
         talentProfile = TalentProfileResponse.builder()
                 .employeeId(employeeId)
                 .designation("Senior Developer")
-                .skills(List.of())
+                .skills(List.of(
+                        TalentProfileResponse.SkillDto.builder().name("Java").level(5).build(),
+                        TalentProfileResponse.SkillDto.builder().name("Spring").level(4).build(),
+                        TalentProfileResponse.SkillDto.builder().name("React").level(3).build()))
                 .build();
     }
 
@@ -79,7 +82,7 @@ class TalentProfileControllerTest {
                 mockMvc.perform(get("/api/v1/employees/{id}/talent-profile", employeeId))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.employeeId").value(employeeId.toString()))
-                        .andExpect(jsonPath("$.currentRole").value("Senior Developer"))
+                        .andExpect(jsonPath("$.designation").value("Senior Developer"))
                         .andExpect(jsonPath("$.skills.length()").value(3));
             }
 

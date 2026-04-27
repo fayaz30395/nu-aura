@@ -49,8 +49,10 @@ public class NotificationPreferencesService {
     }
 
     private UserNotificationPreferences createDefaultPreferences(UUID userId, UUID tenantId) {
+        // Do not set ID manually — @GeneratedValue(strategy = UUID) handles it.
+        // Setting the ID before save() makes Hibernate treat the entity as detached
+        // (since @Version is null), which causes "uninitialized version value" errors.
         UserNotificationPreferences preferences = new UserNotificationPreferences();
-        preferences.setId(UUID.randomUUID());
         preferences.setUserId(userId);
         preferences.setTenantId(tenantId);
         preferences.setEmailNotifications(true);

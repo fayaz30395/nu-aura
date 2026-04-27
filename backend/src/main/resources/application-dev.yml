@@ -94,10 +94,28 @@ app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
 
-  # Rate limiting enabled in dev with generous limits for local testing
+  # Rate limiting enabled in dev with generous limits for local testing.
+  # Auth bucket is bumped to support parallel Playwright workers (4 workers x rapid
+  # /auth/refresh on every page mount). Production limits are unchanged.
   rate-limit:
     enabled: true
-    requests-per-minute: 300
+    requests-per-minute: 1000
+    auth:
+      capacity: 500
+      refill-tokens: 500
+      refill-minutes: 1
+    api:
+      capacity: 2000
+      refill-tokens: 2000
+      refill-minutes: 1
+    export:
+      capacity: 100
+      refill-tokens: 100
+      refill-minutes: 5
+    wall:
+      capacity: 300
+      refill-tokens: 300
+      refill-minutes: 1
 
   # Reduced thread pools for local dev — prevents OOM under macOS memory pressure
   async:

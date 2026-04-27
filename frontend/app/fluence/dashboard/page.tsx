@@ -1,9 +1,9 @@
 'use client';
 
-import {useEffect} from 'react';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
@@ -16,28 +16,15 @@ import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/desi
  * NU-Fluence Dashboard — central hub for knowledge management.
  * Displays recent content, trending items, and quick access actions.
  */
-export default function FluenceDashboardPage() {
+function FluenceDashboardPageContent() {
   const router = useRouter();
-  const {hasAnyPermission, isReady} = usePermissions();
-
-  const hasAccess = hasAnyPermission(
-    Permissions.KNOWLEDGE_VIEW,
-    Permissions.WIKI_VIEW,
-    Permissions.BLOG_VIEW,
-  );
-
-  useEffect(() => {
-    if (isReady && !hasAccess) {
-      router.replace('/me/dashboard');
-    }
-  }, [isReady, hasAccess, router]);
+  // Permission gate is handled by the <PermissionGate> wrapper in the default
+  // export. This component only renders when access is granted.
 
   // Fetch recent content
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 6);
   const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 6);
   const {data: templatesData, isLoading: templatesLoading} = useFluenceTemplates(0, 3);
-
-  if (!isReady || !hasAccess) return null;
 
   const recentWiki = (wikiData?.content || []).slice(0, 3);
   const recentBlogs = (blogData?.content || []).slice(0, 3);
@@ -337,6 +324,17 @@ export default function FluenceDashboardPage() {
         </motion.div>
       </motion.div>
     </AppLayout>
+  );
+}
+
+export default function FluenceDashboardPage() {
+  return (
+    <PermissionGate
+      anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WIKI_VIEW, Permissions.BLOG_VIEW]}
+      fallback={<PageDeniedFallback/>}
+    >
+      <FluenceDashboardPageContent/>
+    </PermissionGate>
   );
 }
 

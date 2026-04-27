@@ -189,11 +189,51 @@ export const useAuth = create<AuthState>()(
         try {
           set({ isLoading: true });
 
-          // P0-SESSION-FIX v2: Always issue our own refresh call that returns the
-          // full AuthResponse (with user data). Previously we shared the 401
-          // interceptor's refresh promise, but that only returns a boolean, requiring
-          // a separate /auth/me call that was fragile and caused race conditions.
-          //
+          // P0-SESSION-FIX v3: Try /auth/me FIRST (uses access_token cookie, does
+          // NOT rotate refresh_token). This avoids the cascade where N parallel
+          // page mounts each call /auth/refresh and invalidate each other's tokens
+          // (observed under Playwright with 4 workers, also a real prod risk on
+          // multi-tab navigation). Only fall back to /auth/refresh on 401, meaning
+          // the access_token has actually expired.
+          try {
+            const meResponse = await authApi.me();
+            apiClient.setTenantId(meResponse.tenantId);
+            apiClient.resetRedirectFlag();
+            if (!meResponse.roles?.length) {
+              throw new Error('Session restore failed: missing roles in /auth/me response.');
+            }
+            const roleStrings = meResponse.roles;
+            const permissionStrings = meResponse.permissions || [];
+            const roles = convertRolesToObjects(roleStrings, permissionStrings);
+            const user: User = {
+              id: meResponse.userId,
+              employeeId: meResponse.employeeId,
+              tenantId: meResponse.tenantId,
+              email: meResponse.email,
+              firstName: meResponse.fullName.split(' ')[0] || '',
+              lastName: meResponse.fullName.split(' ').slice(1).join(' ') || '',
+              fullName: meResponse.fullName,
+              status: 'ACTIVE',
+              roles: roles,
+              profilePictureUrl: meResponse.profilePictureUrl,
+            };
+            set({ user, isAuthenticated: true, isLoading: false });
+            persistUserToStorage(user);
+            return true;
+          } catch (err) {
+            // Only fall through on 401 (real "session expired" signal). On 5xx,
+            // network errors, CORS, etc. the session may still be valid — the
+            // API just hiccupped. Triggering a refresh-token rotation in that
+            // case is the exact cascade v3 was designed to prevent.
+            const status = (err as {response?: {status?: number}})?.response?.status;
+            if (status !== 401) {
+              set({ isLoading: false });
+              return false;
+            }
+            // 401 — fall through to refresh path below.
+          }
+
+          // P0-SESSION-FIX v2: refresh path (used when access_token has expired).
           // To prevent concurrent refresh calls (which revoke each other's tokens),
           // we wait for any in-flight 401 interceptor refresh to finish FIRST, then
           // issue our own. The interceptor's refresh sets new cookies, so ours will
@@ -201,9 +241,6 @@ export const useAuth = create<AuthState>()(
           const existingRefresh = getSharedRefreshPromise();
           if (existingRefresh) {
             await existingRefresh;
-            // Interceptor finished — cookies are now fresh. Fall through to
-            // issue our own refresh below, which will use the new cookie and
-            // return the full user identity.
           }
 
           // Issue our own refresh, registering it in the shared mutex so the

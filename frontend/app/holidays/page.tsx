@@ -84,7 +84,13 @@ export default function HolidaysPage() {
   // Auth guard — redirect unauthenticated users
   if (hasHydrated && isReady && !isAuthenticated) {
     router.push('/auth/login');
-    return null;
+    return (
+      <div className="p-6">
+        <p className="text-sm text-[var(--text-muted)]" role="status">
+          Redirecting to sign in…
+        </p>
+      </div>
+    );
   }
 
   // Filter holidays
