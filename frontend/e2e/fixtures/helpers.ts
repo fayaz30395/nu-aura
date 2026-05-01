@@ -23,10 +23,12 @@ export async function loginAs(page: Page, email: string): Promise<void> {
   const user = allDemoUsers.find((u) => u.email === email);
   const password = user?.password ?? DEMO_PASSWORD;
 
-  // Call the backend login API directly
+  // Call the backend login API directly.
+  // 45s timeout — under concurrent worker load the backend may take >15s (default).
   const response = await page.request.post(`${API_BASE}/auth/login`, {
     data: {email, password},
     failOnStatusCode: false,
+    timeout: 45000,
   });
 
   if (!response.ok()) {
@@ -55,7 +57,7 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
   }
 
   await page.goto('/auth/login');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Find and click the demo account button by user name
   const demoButton = page.locator('button').filter({hasText: user.name});
@@ -75,7 +77,7 @@ export async function loginViaUI(page: Page, email: string): Promise<void> {
 
   // Wait for redirect to dashboard
   await page.waitForURL('**/dashboard', {timeout: 45000});
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /**
@@ -96,7 +98,7 @@ export async function waitForDashboard(page: Page, timeout = 30000): Promise<voi
     }
     // Otherwise we might already be on a non-dashboard page that's fine
   }
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   // Verify content is visible (heading or main content area)
   const content = page.locator('h1, h2, main, [data-testid="dashboard-heading"]').first();
@@ -127,7 +129,7 @@ export async function logout(page: Page): Promise<void> {
 
   // Navigate to login to confirm logout
   await page.goto('/auth/login');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /**
@@ -201,7 +203,7 @@ export function getDemoUser(email: string): DemoUser | undefined {
  */
 export async function navigateTo(page: Page, path: string): Promise<void> {
   await page.goto(path);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /**

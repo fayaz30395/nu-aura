@@ -191,7 +191,7 @@ public class SecurityConfig {
                         // Public exit interview (token-based, no auth required)
                         .requestMatchers("/api/v1/exit/interview/public/**").permitAll()
                         // Public career page (job listings, no auth required)
-                        .requestMatchers("/api/public/careers/**").permitAll()
+                        .requestMatchers("/api/v1/public/careers/**").permitAll()
                         // WebSocket/SockJS endpoints (auth handled at STOMP level)
                         .requestMatchers("/ws/**").permitAll()
                         // DocuSign webhook (public, HMAC-verified via CRIT-002)

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,31 @@ import java.util.UUID;
  */
 @Validated  // Required: enables constraint validation on @RequestParam parameters (SEC-B09)
 @RestController
-@RequestMapping("/api/public/careers")
+@RequestMapping("/api/v1/public/careers")
 @Tag(name = "Public Career Portal", description = "Public job board and application APIs — no authentication required")
 @RequiredArgsConstructor
 @Slf4j
 public class PublicCareerController {
 
     private final PublicCareerService publicCareerService;
+
+    /**
+     * Default tenant for the public career landing page when no {@code X-Tenant-ID}
+     * header is provided. The /careers route is a tenant-agnostic public landing
+     * page — when no tenant is specified (e.g. direct access to the SaaS demo), we
+     * fall back to the configured default tenant so the page can render an empty
+     * or demo job list instead of erroring.
+     */
+    @Value("${app.auth.default-tenant-id:550e8400-e29b-41d4-a716-446655440000}")
+    private String defaultTenantId;
+
+    private UUID resolveTenantOrDefault() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            return tenantId;
+        }
+        return UUID.fromString(defaultTenantId);
+    }
 
     /**
      * List publicly visible (OPEN) job postings for the tenant.
@@ -52,7 +71,7 @@ public class PublicCareerController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size) {
 
-        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID tenantId = resolveTenantOrDefault();
         log.debug("Public career listing: tenantId={}, q={}, dept={}, loc={}, type={}",
                 tenantId, q, department, location, employmentType);
 
@@ -70,7 +89,7 @@ public class PublicCareerController {
     @GetMapping("/jobs/{jobId}")
     @Operation(summary = "Get full detail of a single job opening")
     public ResponseEntity<Map<String, Object>> getJobDetail(@PathVariable UUID jobId) {
-        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID tenantId = resolveTenantOrDefault();
         log.debug("Public job detail request: tenantId={}, jobId={}", tenantId, jobId);
 
         return publicCareerService.findPublicJobById(jobId, tenantId)
@@ -99,7 +118,7 @@ public class PublicCareerController {
             @RequestParam(required = false) String expectedSalary,
             @RequestParam(required = false) MultipartFile resume) {
 
-        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID tenantId = resolveTenantOrDefault();
         log.info("Public application received: tenantId={}, jobId={}, email={}", tenantId, jobId, email);
 
         try {
@@ -123,7 +142,7 @@ public class PublicCareerController {
     @GetMapping("/filters")
     @Operation(summary = "Get filter options for job search (locations, types, departments)")
     public ResponseEntity<Map<String, Object>> getFilterOptions() {
-        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID tenantId = resolveTenantOrDefault();
         log.debug("Public filter options request: tenantId={}", tenantId);
 
         Map<String, Object> filters = publicCareerService.getPublicJobFilters(tenantId);

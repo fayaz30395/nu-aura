@@ -71,7 +71,7 @@ app:
     # For local development, set JWT_SECRET in your environment or .env file
     # Example: export JWT_SECRET="your-dev-secret-at-least-256-bits-long-for-hmac-sha256"
     secret: ${JWT_SECRET}
-    expiration: 3600000
+    expiration: 5400000
     refresh-expiration: 86400000
 
   # Dev profile: disable secure cookies (localhost doesn't have HTTPS)

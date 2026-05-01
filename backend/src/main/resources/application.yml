@@ -224,7 +224,7 @@ server:
 app:
   jwt:
     secret: ${JWT_SECRET}
-    expiration: ${JWT_EXPIRATION:3600000}
+    expiration: ${JWT_EXPIRATION:5400000}
     refresh-expiration: ${JWT_REFRESH_EXPIRATION:86400000}
 
   # Cookie configuration for JWT storage

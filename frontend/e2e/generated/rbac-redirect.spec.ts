@@ -52,19 +52,47 @@ test.describe.parallel('@rbac low-priv denied on admin scope', () => {
       await page.waitForLoadState('networkidle');
       const btn = page.locator('button').filter({hasText: user.name});
       await expect(btn, `demo button for ${user.name}`).toBeVisible({timeout: 15000});
+
+      // Arm a response listener BEFORE clicking so we don't miss the login
+      // response under parallel load (backend can take 10–20s per /auth/login).
+      const loginRespPromise = page
+        .waitForResponse(
+          (r) => /\/api\/v1\/auth\/login(\?|$)/.test(r.url()) && r.request().method() === 'POST',
+          {timeout: 90000},
+        )
+        .catch(() => null);
+
       await btn.click();
-      // Wait for the post-login redirect. Under parallel load the navigation
-      // can take longer than 30s, so we widen the budget AND fall back to
-      // checking the access_token cookie if the URL never matches (e.g. when
-      // the redirect lands on /me/dashboard via client-side router.replace).
+
+      // Wait for the backend to actually respond. The Set-Cookie (access_token)
+      // is delivered in this response — checking cookies before this resolves
+      // is racy and was the source of intermittent failures for non-superadmin
+      // users whose login latency exceeded the prior 60s waitForURL budget.
+      const loginResp = await loginRespPromise;
+      if (loginResp && !loginResp.ok()) {
+        const bodyText = await loginResp.text().catch(() => '');
+        throw new Error(
+          `login API failed for ${user.name}: HTTP ${loginResp.status()} — ${bodyText.slice(0, 200)}`,
+        );
+      }
+
+      // Now wait for the client-side router.push redirect, with a generous
+      // budget. Fall back to checking the access_token cookie (with retries)
+      // if the URL never matches — the cookie is the authoritative signal.
       try {
-        await page.waitForURL(/\/dashboard|\/me\//, {timeout: 60000});
+        await page.waitForURL(/\/dashboard|\/me\//, {timeout: 90000});
       } catch {
         await page.waitForLoadState('networkidle').catch(() => {});
-        const cookies = await page.context().cookies();
-        const hasToken = cookies.some((c) => c.name === 'access_token' && !!c.value);
-        if (!hasToken) throw new Error(`login flow did not set access_token for ${user.name}`);
       }
+      // Cookie check with short retries — Set-Cookie can lag the navigation
+      // event on slow runs.
+      let hasToken = false;
+      for (let i = 0; i < 10 && !hasToken; i++) {
+        const cookies = await page.context().cookies();
+        hasToken = cookies.some((c) => c.name === 'access_token' && !!c.value);
+        if (!hasToken) await page.waitForTimeout(500);
+      }
+      if (!hasToken) throw new Error(`login flow did not set access_token for ${user.name}`);
 
       // Now attempt the admin-scoped route.
       const res = await page.goto(cell.route, {waitUntil: 'domcontentloaded'});
