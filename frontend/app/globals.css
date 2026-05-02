@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 /* ================================================================
-   NU-AURA DESIGN SYSTEM — Blue Monochrome
+   NU-AURA DESIGN SYSTEM — Studio Slate
 
-   Philosophy: Single-hue blue monochrome. Every surface, border,
-   shadow, and text tone derives from one blue (hue ~228).
-   Color is a functional signal, not decoration.
+   Philosophy: Precision, Warmth, Clarity. Flat modern surfaces
+   with a vivid blue accent. Color is a functional signal, not
+   decoration. No skeuomorphic depth — clean, purposeful, fast.
 
-   Anchor: #2952A3 (NU-AURA Blue — unique, not standard Tailwind)
-   Principle: Clean, elegant, professional. Swiss minimalism.
+   Anchor: #2563EB (Tailwind blue-600 — vivid, accessible)
+   Principle: Flat, modern, vibrant. Studio-grade precision.
    ================================================================ */
 
 @layer base {
@@ -33,61 +33,61 @@
 
     /* ── NULogic Gradients (preserved for brand contexts) ──────── */
     --nu-gradient-logo: linear-gradient(to bottom, #F32820, #8539A6);
-    --nu-gradient-primary: linear-gradient(135deg, #2952A3, #1d3d7a);
+    --nu-gradient-primary: linear-gradient(135deg, #2563EB, #1d4ed8);
     --nu-gradient-dark: linear-gradient(135deg, #0e1528, #1a2340);
     --nu-gradient-brand: linear-gradient(to right, #ED3027, #7B469B);
 
-    /* ── Surface Hierarchy (Blue-tinted whites) ──────────────────── */
-    --bg-main: #f7f8fb;
+    /* ── Surface Hierarchy (Clean whites) ──────────────────────── */
+    --bg-main: #F5F7FA;
     --bg-surface: #ffffff;
     --bg-elevated: #ffffff;
     --bg-card: #ffffff;
     --bg-card-hover: #f0f2f7;
-    --bg-page: #f7f8fb;
+    --bg-page: #F5F7FA;
     --bg-input: #ffffff;
-    --bg-sidebar: #0e1528;
-    --bg-overlay: rgba(14, 21, 40, 0.40);
+    --bg-sidebar: #0E111A;
+    --bg-overlay: rgba(14, 17, 26, 0.40);
     --surface-2: #f0f2f7;
     --skeleton-base: #eceef5;
 
-    /* ── Background Atmosphere (Single blue wash) ────────────────── */
+    /* ── Background Atmosphere ────────────────────────────────── */
     --bg-pattern:
-      radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.03), transparent 60%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 251, 1) 50%);
+      radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.03), transparent 60%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 250, 1) 50%);
     --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy (Blue-tinted darks) ───────────────────────── */
+    /* ── Text Hierarchy ───────────────────────────────────────── */
     --text-primary: #1c2033;
     --text-heading: #0e1225;
     --text-secondary: #4e5270;
     --text-muted: #8186a0;
     --text-inverse: #ffffff;
 
-    /* ── Border & Divider (Blue-tinted grays) ──────────────────── */
+    /* ── Border & Divider ──────────────────────────────────────── */
     --border-main: #dfe2ed;
     --border-subtle: #eceef5;
     --border-strong: #b8bccf;
-    --border-focus: #2952A3;
+    --border-focus: #2563EB;
 
-    /* ── Accent Scale (NU-AURA Blue — hue ~228) ──────────────────── */
-    --accent-50: #f0f3fc;
-    --accent-100: #dce3f8;
-    --accent-200: #bcc9f2;
-    --accent-300: #92a8e8;
-    --accent-400: #6884dc;
-    --accent-500: #4463cf;
-    --accent-600: #3350b8;
-    --accent-700: #2952A3;
-    --accent-800: #244288;
-    --accent-900: #1d356d;
-    --accent-950: #121f44;
-    --accent-primary: #2952A3;
-    --accent-primary-hover: #244288;
-    --accent-primary-subtle: #f0f3fc;
+    /* ── Accent Scale (blue-600 anchor — more vivid/saturated) ── */
+    --accent-50: #eff6ff;
+    --accent-100: #dbeafe;
+    --accent-200: #bfdbfe;
+    --accent-300: #93c5fd;
+    --accent-400: #60a5fa;
+    --accent-500: #3b82f6;
+    --accent-600: #2563eb;
+    --accent-700: #1d4ed8;
+    --accent-800: #1e40af;
+    --accent-900: #1e3a8a;
+    --accent-950: #172554;
+    --accent-primary: #2563EB;
+    --accent-primary-hover: #1d4ed8;
+    --accent-primary-subtle: #eff6ff;
 
-    /* ── Sidebar (Deep navy — monochrome) ────────────────────────── */
-    --sidebar-active-bg: rgba(41, 82, 163, 0.18);
-    --sidebar-active-border: #4463cf;
+    /* ── Sidebar (Warm dark) ──────────────────────────────────── */
+    --sidebar-active-bg: rgba(37, 99, 235, 0.16);
+    --sidebar-active-border: #3b82f6;
     --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
     --sidebar-text: rgba(255, 255, 255, 0.72);
     --sidebar-text-active: #ffffff;
@@ -96,18 +96,18 @@
     --sidebar-section-text: rgba(255, 255, 255, 0.42);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.20) 100%);
 
-    /* ── Shadows (Blue-tinted, minimal) ──────────────────────────── */
-    --shadow-card: 0 1px 2px rgba(14, 18, 37, 0.04), 0 1px 3px rgba(14, 18, 37, 0.03);
-    --shadow-card-hover: 0 1px 2px rgba(14, 18, 37, 0.06), 0 4px 12px rgba(14, 18, 37, 0.05);
-    --shadow-elevated: 0 1px 2px rgba(14, 18, 37, 0.06), 0 8px 20px rgba(14, 18, 37, 0.07);
-    --shadow-dropdown: 0 4px 16px rgba(14, 18, 37, 0.10), 0 1px 2px rgba(14, 18, 37, 0.06);
+    /* ── Shadows (Clean 3-tier system) ───────────────────────── */
+    --shadow-card: 0 1px 3px rgba(15, 20, 40, 0.07), 0 1px 2px rgba(15, 20, 40, 0.04);
+    --shadow-card-hover: 0 2px 8px rgba(15, 20, 40, 0.10), 0 1px 3px rgba(15, 20, 40, 0.06);
+    --shadow-elevated: 0 4px 16px rgba(15, 20, 40, 0.10), 0 1px 4px rgba(15, 20, 40, 0.06);
+    --shadow-dropdown: 0 8px 24px rgba(15, 20, 40, 0.14), 0 2px 6px rgba(15, 20, 40, 0.08);
 
-    /* ── Ring / Focus ────────────────────────────────────────────── */
-    --ring-primary: rgba(41, 82, 163, 0.30);
+    /* ── Ring / Focus ────────────────────────────────────────── */
+    --ring-primary: rgba(37, 99, 235, 0.30);
     --ring-danger: rgba(220, 38, 38, 0.25);
     --ring-success: rgba(21, 128, 61, 0.25);
 
-    /* ── Semantic Colors (Clean, muted) ──────────────────────────── */
+    /* ── Semantic Colors ─────────────────────────────────────── */
     --status-success-bg: #f0fdf4;
     --status-success-text: #15803d;
     --status-success-border: #dcfce7;
@@ -117,22 +117,22 @@
     --status-warning-bg: #fffbeb;
     --status-warning-text: #b45309;
     --status-warning-border: #fef3c7;
-    --status-info-bg: #f0f3fc;
-    --status-info-text: #2952A3;
-    --status-info-border: #dce3f8;
+    --status-info-bg: #eff6ff;
+    --status-info-text: #2563EB;
+    --status-info-border: #dbeafe;
     --status-neutral-bg: #f0f2f7;
     --status-neutral-text: #4e5270;
     --status-neutral-border: #dfe2ed;
 
-    /* ── Header (Clean white, blue-tinted border) ────────────────── */
+    /* ── Header ─────────────────────────────────────────────── */
     --header-bg: rgba(255, 255, 255, 0.95);
     --header-border: #eceef5;
     --header-text: #1c2033;
     --header-text-muted: #4e5270;
-    --header-hover-bg: rgba(41, 82, 163, 0.05);
+    --header-hover-bg: rgba(37, 99, 235, 0.05);
     --header-divider: #eceef5;
 
-    /* ── Dropdown ─────────────────────────────────────────────────── */
+    /* ── Dropdown ────────────────────────────────────────────── */
     --dropdown-bg: #ffffff;
     --dropdown-border: #eceef5;
     --dropdown-hover: #f0f2f7;
@@ -140,54 +140,31 @@
     --dropdown-text-secondary: #4e5270;
     --dropdown-divider: #eceef5;
 
-    /* ── Skeuomorphism (Blue-tinted tactile depth) ─────────────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(255, 255, 255, 0.65),
-      0 1px 2px rgba(14, 18, 37, 0.06),
-      0 4px 12px rgba(14, 18, 37, 0.04);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 2px 4px rgba(14, 18, 37, 0.08),
-      0 8px 20px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(14, 18, 37, 0.10),
-      inset 0 1px 2px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(255, 255, 255, 0.50),
-      0 1px 2px rgba(14, 18, 37, 0.10),
-      0 2px 4px rgba(14, 18, 37, 0.06);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      0 1px 3px rgba(14, 18, 37, 0.12),
-      0 3px 8px rgba(14, 18, 37, 0.08);
-    --shadow-skeuo-input:
-      inset 0 1px 3px rgba(14, 18, 37, 0.06),
-      0 1px 0 rgba(255, 255, 255, 0.80);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(255, 255, 255, 0.65),
-      0 -1px 0 rgba(14, 18, 37, 0.04);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(14, 18, 37, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.70) 0%, rgba(240, 243, 252, 0.30) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 18, 37, 0.03) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 242, 247, 0.50) 100%);
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(188, 201, 242, 0.35);
+    /* ── Skeuomorphic tokens (FLATTENED — backward compatible) ── */
+    --shadow-skeuo-card: var(--shadow-card);
+    --shadow-skeuo-card-hover: var(--shadow-elevated);
+    --shadow-skeuo-pressed: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+    --shadow-skeuo-button: none;
+    --shadow-skeuo-button-hover: var(--shadow-card);
+    --shadow-skeuo-input: none;
+    --shadow-skeuo-emboss: none;
+    --shadow-skeuo-table-header: inset 0 -1px 0 var(--border-subtle);
+    --gradient-skeuo-surface: none;
+    --gradient-skeuo-button: none;
+    --gradient-skeuo-card: none;
+    --glass-bg: rgba(255, 255, 255, 0.92);
+    --glass-border: rgba(37, 99, 235, 0.12);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors (Blue monochrome + semantic) ────────────────── */
-    --chart-primary: #2952A3;
-    --chart-secondary: #6884dc;
+    /* ── Chart Colors ────────────────────────────────────────── */
+    --chart-primary: #2563EB;
+    --chart-secondary: #60a5fa;
     --chart-success: #16a34a;
     --chart-warning: #d97706;
     --chart-danger: #dc2626;
-    --chart-info: #4463cf;
-    --chart-accent: #92a8e8;
+    --chart-info: #3b82f6;
+    --chart-accent: #93c5fd;
     --chart-muted: #b8bccf;
     --chart-grid: #eceef5;
     --chart-tooltip-bg: #ffffff;
@@ -196,57 +173,57 @@
   }
 
   .dark {
-    /* ── Surface Hierarchy (Deep navy — monochrome) ────────────────── */
-    --bg-main: #080c18;
-    --bg-surface: #0e1322;
-    --bg-elevated: #161c30;
-    --bg-card: #0e1322;
-    --bg-card-hover: #161c30;
-    --bg-page: #080c18;
-    --bg-input: #0e1322;
-    --bg-sidebar: #060a14;
-    --bg-overlay: rgba(8, 12, 24, 0.80);
-    --surface-2: #161c30;
+    /* ── Surface Hierarchy (Warm dark — Studio Slate) ──────────── */
+    --bg-main: #0B0D13;
+    --bg-surface: #12151E;
+    --bg-elevated: #181C27;
+    --bg-card: #12151E;
+    --bg-card-hover: #181C27;
+    --bg-page: #0B0D13;
+    --bg-input: #12151E;
+    --bg-sidebar: #0E111A;
+    --bg-overlay: rgba(11, 13, 19, 0.80);
+    --surface-2: #181C27;
     --skeleton-base: #1e2440;
 
-    /* ── Background Atmosphere (Deep blue wash) ──────────────────── */
+    /* ── Background Atmosphere (Deep wash) ──────────────────── */
     --bg-pattern:
-      radial-gradient(800px 400px at 0% 0%, rgba(41, 82, 163, 0.08), transparent 60%),
-      linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(8, 12, 24, 1) 50%);
+      radial-gradient(800px 400px at 0% 0%, rgba(37, 99, 235, 0.07), transparent 60%),
+      linear-gradient(180deg, rgba(11, 13, 19, 0.95), rgba(11, 13, 19, 1) 50%);
     --bg-pattern-size: auto, auto;
 
-    /* ── Text Hierarchy (Blue-tinted whites) ─────────────────────── */
+    /* ── Text Hierarchy ──────────────────────────────────────── */
     --text-primary: #e8eaf0;
     --text-heading: #f0f2f7;
     --text-secondary: #8b90aa;
     --text-muted: #5a5f78;
     --text-inverse: #0e1225;
 
-    /* ── Border & Divider (Dark blue) ─────────────────────────── */
+    /* ── Border & Divider ─────────────────────────────────── */
     --border-main: #1e2440;
     --border-subtle: #161c30;
     --border-strong: #2a3255;
-    --border-focus: #6884dc;
+    --border-focus: #5B8CF5;
 
-    /* ── Accent Scale (Dark — lighter blues for visibility) ──────── */
-    --accent-50: rgba(41, 82, 163, 0.10);
-    --accent-100: rgba(41, 82, 163, 0.18);
-    --accent-200: #2a3255;
-    --accent-300: #4463cf;
-    --accent-400: #6884dc;
-    --accent-500: #7e9ae4;
-    --accent-600: #92a8e8;
-    --accent-700: #a8baee;
-    --accent-800: #bcc9f2;
-    --accent-900: #dce3f8;
-    --accent-950: #f0f3fc;
-    --accent-primary: #6884dc;
-    --accent-primary-hover: #92a8e8;
-    --accent-primary-subtle: rgba(41, 82, 163, 0.18);
+    /* ── Accent Scale (Dark — vivid blues for visibility) ──── */
+    --accent-50: rgba(37, 99, 235, 0.10);
+    --accent-100: rgba(37, 99, 235, 0.18);
+    --accent-200: #1e3a8a;
+    --accent-300: #1e40af;
+    --accent-400: #2563eb;
+    --accent-500: #3b82f6;
+    --accent-600: #60a5fa;
+    --accent-700: #93c5fd;
+    --accent-800: #bfdbfe;
+    --accent-900: #dbeafe;
+    --accent-950: #eff6ff;
+    --accent-primary: #5B8CF5;
+    --accent-primary-hover: #7EAAF8;
+    --accent-primary-subtle: rgba(37, 99, 235, 0.18);
 
-    /* ── Sidebar (Deepest navy) ──────────────────────────────────── */
-    --sidebar-active-bg: rgba(68, 99, 207, 0.15);
-    --sidebar-active-border: #4463cf;
+    /* ── Sidebar (Deepest warm dark) ─────────────────────── */
+    --sidebar-active-bg: rgba(91, 140, 245, 0.15);
+    --sidebar-active-border: #5B8CF5;
     --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
     --sidebar-text: rgba(255, 255, 255, 0.68);
     --sidebar-text-active: #ffffff;
@@ -255,18 +232,18 @@
     --sidebar-section-text: rgba(255, 255, 255, 0.38);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
 
-    /* ── Shadows (Minimal, dark) ─────────────────────────────────── */
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 1px 3px rgba(0, 0, 0, 0.20);
-    --shadow-card-hover: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25);
-    --shadow-elevated: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.30);
-    --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.40), 0 1px 2px rgba(0, 0, 0, 0.30);
+    /* ── Shadows (Dark — clean 3-tier system) ────────────── */
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.18);
+    --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.22);
+    --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.25);
+    --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.32);
 
-    /* ── Ring / Focus ────────────────────────────────────────────── */
-    --ring-primary: rgba(104, 132, 220, 0.40);
+    /* ── Ring / Focus ────────────────────────────────────── */
+    --ring-primary: rgba(91, 140, 245, 0.40);
     --ring-danger: rgba(248, 113, 113, 0.35);
     --ring-success: rgba(74, 222, 128, 0.35);
 
-    /* ── Semantic Colors (Dark Mode) ──────────────────────────────── */
+    /* ── Semantic Colors (Dark Mode) ──────────────────────── */
     --status-success-bg: rgba(22, 163, 74, 0.15);
     --status-success-text: #86efac;
     --status-success-border: rgba(22, 163, 74, 0.30);
@@ -276,80 +253,57 @@
     --status-warning-bg: rgba(217, 119, 6, 0.15);
     --status-warning-text: #fcd34d;
     --status-warning-border: rgba(217, 119, 6, 0.30);
-    --status-info-bg: rgba(68, 99, 207, 0.15);
-    --status-info-text: #92a8e8;
-    --status-info-border: rgba(68, 99, 207, 0.30);
+    --status-info-bg: rgba(37, 99, 235, 0.15);
+    --status-info-text: #93c5fd;
+    --status-info-border: rgba(37, 99, 235, 0.30);
     --status-neutral-bg: rgba(139, 144, 170, 0.10);
     --status-neutral-text: #8b90aa;
     --status-neutral-border: rgba(139, 144, 170, 0.20);
 
-    /* ── Header (Dark navy surface) ──────────────────────────────── */
-    --header-bg: rgba(8, 12, 24, 0.95);
+    /* ── Header ─────────────────────────────────────────── */
+    --header-bg: rgba(11, 13, 19, 0.95);
     --header-border: #1e2440;
     --header-text: #e8eaf0;
     --header-text-muted: #8b90aa;
-    --header-hover-bg: rgba(68, 99, 207, 0.10);
+    --header-hover-bg: rgba(91, 140, 245, 0.10);
     --header-divider: #1e2440;
 
-    /* ── Dropdown (Dark navy) ────────────────────────────────────── */
-    --dropdown-bg: #0e1322;
+    /* ── Dropdown ────────────────────────────────────────── */
+    --dropdown-bg: #12151E;
     --dropdown-border: #1e2440;
-    --dropdown-hover: #161c30;
+    --dropdown-hover: #181C27;
     --dropdown-text: #e8eaf0;
     --dropdown-text-secondary: #8b90aa;
     --dropdown-divider: #1e2440;
 
-    /* ── Skeuomorphism (Dark — subtle blue edge glow) ───────────── */
-    --shadow-skeuo-card:
-      inset 0 1px 0 rgba(104, 132, 220, 0.06),
-      0 1px 2px rgba(0, 0, 0, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-skeuo-card-hover:
-      inset 0 1px 0 rgba(104, 132, 220, 0.10),
-      0 2px 4px rgba(0, 0, 0, 0.30),
-      0 8px 20px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-pressed:
-      inset 0 2px 4px rgba(0, 0, 0, 0.28),
-      inset 0 1px 2px rgba(0, 0, 0, 0.18);
-    --shadow-skeuo-button:
-      inset 0 1px 0 rgba(104, 132, 220, 0.08),
-      0 1px 2px rgba(0, 0, 0, 0.20),
-      0 2px 4px rgba(0, 0, 0, 0.15);
-    --shadow-skeuo-button-hover:
-      inset 0 1px 0 rgba(104, 132, 220, 0.12),
-      0 1px 3px rgba(0, 0, 0, 0.25),
-      0 3px 8px rgba(0, 0, 0, 0.20);
-    --shadow-skeuo-input:
-      inset 0 1px 3px rgba(0, 0, 0, 0.18),
-      0 1px 0 rgba(104, 132, 220, 0.04);
-    --shadow-skeuo-emboss:
-      0 1px 0 rgba(104, 132, 220, 0.06),
-      0 -1px 0 rgba(0, 0, 0, 0.12);
-    --shadow-skeuo-table-header:
-      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 rgba(104, 132, 220, 0.05);
-    --gradient-skeuo-surface:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.06) 100%);
-    --gradient-skeuo-button:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.06) 0%, rgba(0, 0, 0, 0.08) 100%);
-    --gradient-skeuo-card:
-      linear-gradient(180deg, rgba(104, 132, 220, 0.04) 0%, rgba(0, 0, 0, 0.04) 100%);
-    --glass-bg: rgba(14, 19, 34, 0.82);
-    --glass-border: rgba(104, 132, 220, 0.10);
+    /* ── Skeuomorphic tokens (FLATTENED — dark, backward compat) */
+    --shadow-skeuo-card: var(--shadow-card);
+    --shadow-skeuo-card-hover: var(--shadow-elevated);
+    --shadow-skeuo-pressed: inset 0 1px 3px rgba(0, 0, 0, 0.28);
+    --shadow-skeuo-button: none;
+    --shadow-skeuo-button-hover: var(--shadow-card);
+    --shadow-skeuo-input: none;
+    --shadow-skeuo-emboss: none;
+    --shadow-skeuo-table-header: inset 0 -1px 0 var(--border-subtle);
+    --gradient-skeuo-surface: none;
+    --gradient-skeuo-button: none;
+    --gradient-skeuo-card: none;
+    --glass-bg: rgba(18, 21, 30, 0.90);
+    --glass-border: rgba(91, 140, 245, 0.10);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 
-    /* ── Chart Colors (Dark — lighter blue palette) ──────────────── */
-    --chart-primary: #6884dc;
-    --chart-secondary: #92a8e8;
+    /* ── Chart Colors (Dark) ──────────────────────────────── */
+    --chart-primary: #5B8CF5;
+    --chart-secondary: #93c5fd;
     --chart-success: #4ade80;
     --chart-warning: #fbbf24;
     --chart-danger: #f87171;
-    --chart-info: #a8baee;
-    --chart-accent: #bcc9f2;
+    --chart-info: #7EAAF8;
+    --chart-accent: #bfdbfe;
     --chart-muted: #1e2440;
     --chart-grid: #1e2440;
-    --chart-tooltip-bg: #0e1322;
+    --chart-tooltip-bg: #12151E;
     --chart-tooltip-border: #1e2440;
     --chart-tooltip-text: #e8eaf0;
   }
@@ -377,7 +331,7 @@
     transition-duration: 0ms !important;
   }
 
-  /* ── Body (Cool Canvas + Quiet Grid) ─────────────────────────── */
+  /* ── Body ─────────────────────────────────────────────────── */
   body {
     @apply antialiased;
     background-color: var(--bg-main);
@@ -391,7 +345,7 @@
     min-height: 100%;
   }
 
-  /* ── Typography (Montserrat Headings + Open Sans Body) ─────── */
+  /* ── Typography ────────────────────────────────────────────── */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
     color: var(--text-heading);
@@ -400,14 +354,14 @@
     line-height: 1.2;
   }
 
-  h1 { @apply text-3xl; }
+  h1 { @apply text-2xl; }
   h2 { @apply text-2xl; }
   h3 { @apply text-xl; }
   h4 { @apply text-lg; }
   h5 { @apply text-base; }
-  h6 { @apply text-sm uppercase tracking-wider font-medium; }
+  h6 { @apply text-xs font-semibold; }
 
-  /* ── Interactive Elements (Consistent Cursors) ───────────────── */
+  /* ── Interactive Elements ─────────────────────────────────── */
   button,
   [role="button"],
   a[role="button"],
@@ -418,7 +372,7 @@
     cursor: pointer;
   }
 
-  /* ── Page Enter Animation (Measured) ─────────────────────────── */
+  /* ── Page Enter Animation ─────────────────────────────────── */
   @media (prefers-reduced-motion: no-preference) {
     main {
       animation: pageEnter 260ms ease-out;
@@ -427,28 +381,26 @@
 }
 
 /* ================================================================
-   COMPONENTS (Refined, Minimal)
+   COMPONENTS (Flat, Modern, Clean)
    ================================================================ */
 
 @layer components {
-  /* ── Card System (Skeuomorphic Material Depth) ──────────────── */
+  /* ── Card System (Flat, clean borders) ─────────────────────── */
   .card-aura {
     @apply rounded-xl border;
     background-color: var(--bg-card);
-    background-image: var(--gradient-skeuo-card);
     border-color: var(--border-subtle);
-    box-shadow: var(--shadow-skeuo-card);
+    box-shadow: var(--shadow-card);
   }
 
   .card-aura:hover {
     border-color: var(--border-main);
-    box-shadow: var(--shadow-skeuo-card-hover);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .card-elevated {
     @apply rounded-xl border;
     background-color: var(--bg-elevated);
-    background-image: var(--gradient-skeuo-surface);
     border-color: var(--border-subtle);
     box-shadow: var(--shadow-elevated);
   }
@@ -456,9 +408,8 @@
   .card-interactive {
     @apply rounded-xl border cursor-pointer;
     background-color: var(--bg-card);
-    background-image: var(--gradient-skeuo-card);
     border-color: var(--border-subtle);
-    box-shadow: var(--shadow-skeuo-card);
+    box-shadow: var(--shadow-card);
     transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 180ms ease-out,
                 border-color 180ms ease-out;
@@ -466,18 +417,22 @@
 
   .card-interactive:hover {
     transform: translateY(-1px);
-    box-shadow: var(--shadow-skeuo-card-hover);
+    box-shadow: var(--shadow-card-hover);
     border-color: var(--border-main);
   }
 
-  /* ── Glass Surfaces (Frosted Skeuomorphic) ──────────────────── */
+  /* ── Glass Surfaces (Simplified) ───────────────────────────── */
   .glass-aura {
     @apply border rounded-xl;
-    background: var(--glass-bg);
+    background: rgba(255, 255, 255, 0.90);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border-color: var(--glass-border);
-    box-shadow: var(--shadow-skeuo-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .dark .glass-aura {
+    background: var(--glass-bg);
   }
 
   .glass-midnight {
@@ -492,15 +447,14 @@
     transition: all 180ms ease-out;
   }
 
-  /* ── Skeuomorphic Button (Tactile, pressable) ──────────────── */
+  /* ── Skeuomorphic Button (Flattened — backward compat) ─────── */
   .btn-skeuo {
-    background-image: var(--gradient-skeuo-button);
-    box-shadow: var(--shadow-skeuo-button);
+    box-shadow: none;
     transition: box-shadow 150ms ease, transform 100ms ease;
   }
 
   .btn-skeuo:hover {
-    box-shadow: var(--shadow-skeuo-button-hover);
+    box-shadow: var(--shadow-card);
   }
 
   .btn-skeuo:active {
@@ -508,55 +462,54 @@
     transform: translateY(1px);
   }
 
-  /* ── Skeuomorphic Input (Inset depth) ──────────────────────── */
+  /* ── Skeuomorphic Input (Flattened — backward compat) ──────── */
   .input-skeuo {
-    box-shadow: var(--shadow-skeuo-input);
+    box-shadow: none;
     transition: box-shadow 150ms ease, border-color 150ms ease;
   }
 
   .input-skeuo:focus {
-    box-shadow: var(--shadow-skeuo-input), 0 0 0 2px var(--ring-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
 
-  /* ── Skeuomorphic Badge (Embossed, stamped feel) ───────────── */
+  /* ── Skeuomorphic Badge (Flattened) ────────────────────────── */
   .badge-skeuo {
-    box-shadow: var(--shadow-skeuo-emboss);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: none;
   }
 
   .dark .badge-skeuo {
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: none;
   }
 
-  /* ── Skeuomorphic Divider (Embossed line) ──────────────────── */
+  /* ── Skeuomorphic Divider (Clean) ──────────────────────────── */
   .divider-skeuo {
     height: 1px;
     background: var(--border-subtle);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+    box-shadow: none;
   }
 
   .dark .divider-skeuo {
-    box-shadow: 0 1px 0 rgba(104, 132, 220, 0.04);
+    box-shadow: none;
   }
 
-  /* ── Skeuomorphic Header (Embossed bottom) ─────────────────── */
+  /* ── Skeuomorphic Header (Flat bottom border) ──────────────── */
   .header-skeuo {
-    box-shadow: var(--shadow-skeuo-emboss), inset 0 -1px 0 var(--border-subtle);
+    box-shadow: inset 0 -1px 0 var(--border-subtle);
   }
 
-  /* ── Skeuomorphic Section (Inset panel) ────────────────────── */
+  /* ── Panel Inset (Flat inset panel) ────────────────────────── */
   .panel-inset {
     background-color: var(--bg-main);
-    box-shadow: inset 0 1px 3px rgba(14, 18, 37, 0.05);
+    box-shadow: none;
     border: 1px solid var(--border-subtle);
     @apply rounded-lg;
   }
 
   .dark .panel-inset {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.20);
+    box-shadow: none;
   }
 
-  /* ── Noise Texture Overlay ─────────────────────────────────── */
+  /* ── Noise Texture Overlay ──────────────────────────────────── */
   .noise-overlay::after {
     content: '';
     position: absolute;
@@ -567,7 +520,7 @@
     pointer-events: none;
   }
 
-  /* ── Table Styling (Clean, High Contrast) ────────────────────── */
+  /* ── Table Styling ───────────────────────────────────────────── */
   .table-aura {
     @apply w-full text-sm;
   }
@@ -577,14 +530,12 @@
     top: 0;
     z-index: 10;
     background-color: var(--bg-elevated);
-    background-image: var(--gradient-skeuo-surface);
   }
 
   .table-aura thead th {
     @apply px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-skeuo-table-header);
     white-space: nowrap;
     height: 44px;
     user-select: none;
@@ -639,7 +590,7 @@
     color: var(--text-muted);
   }
 
-  /* ── Focus Ring (High Contrast) ──────────────────────────────── */
+  /* ── Focus Ring ──────────────────────────────────────────────── */
   .focus-ring-aura {
     @apply outline-none;
   }
@@ -695,9 +646,9 @@
     border: 1px solid var(--status-neutral-border);
   }
 
-  /* ── Typography Scale (Enforced Hierarchy) ───────────────────── */
+  /* ── Typography Scale ────────────────────────────────────────── */
   .text-page-title {
-    @apply text-4xl font-semibold tracking-tight;
+    @apply text-3xl font-semibold tracking-tight;
     color: var(--text-primary);
     font-family: var(--font-head), var(--font-body), system-ui, sans-serif;
     letter-spacing: -0.01em;
@@ -738,13 +689,12 @@
     font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
-  /* ── Form Input (Recessed, Skeuomorphic) ─────────────────────── */
+  /* ── Form Input (Flat, clean) ────────────────────────────────── */
   .input-aura {
     @apply w-full h-11 px-4 text-sm rounded-xl;
     background-color: var(--bg-input);
     border: 1px solid var(--border-main);
     color: var(--text-primary);
-    box-shadow: var(--shadow-skeuo-input);
     transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
   }
   .input-aura:hover {
@@ -752,57 +702,41 @@
   }
   .input-aura:focus {
     border-color: var(--accent-primary);
-    box-shadow:
-      var(--shadow-skeuo-input),
-      0 0 0 2px var(--bg-main),
-      0 0 0 4px var(--ring-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     outline: none;
   }
   .input-aura::placeholder {
     color: var(--text-muted);
   }
 
-  /* ── Button System (Skeuomorphic, Tactile States) ────────────── */
+  /* ── Button System (Flat, solid, clean states) ───────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center px-4 h-11 text-sm font-semibold rounded-xl;
-    background-image: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover));
+    background-color: var(--accent-primary);
     color: #ffffff;
     border: none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.20),
-      0 2px 4px rgba(5, 7, 102, 0.25),
-      0 8px 20px rgba(5, 7, 102, 0.20);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(37, 99, 235, 0.18);
     transition: transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
   .btn-primary:hover {
-    filter: brightness(1.04);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 4px 8px rgba(5, 7, 102, 0.28),
-      0 10px 24px rgba(5, 7, 102, 0.22);
+    filter: brightness(1.06);
     transform: translateY(-0.5px);
   }
   .btn-primary:active {
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.20),
-      0 1px 2px rgba(5, 7, 102, 0.18);
-    transform: translateY(0.5px);
-    filter: brightness(0.98);
+    transform: translateY(1px);
+    filter: brightness(0.96);
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center px-4 h-11 text-sm font-semibold rounded-xl;
     background-color: var(--bg-card);
-    background-image: var(--gradient-skeuo-button);
     color: var(--text-primary);
     border: 1px solid var(--border-main);
-    box-shadow: var(--shadow-skeuo-button);
-    transition: background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 120ms ease-out, transform 100ms ease-out;
+    transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 100ms ease-out;
   }
   .btn-secondary:hover {
     background-color: var(--bg-card-hover);
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-skeuo-button-hover);
     transform: translateY(-0.5px);
   }
   .btn-secondary:active {
@@ -850,7 +784,7 @@
     color: var(--text-secondary);
   }
 
-  /* ── Sidebar Menu Item (Minimal Hover) ───────────────────────── */
+  /* ── Sidebar Menu Item ───────────────────────────────────────── */
   .sidebar-menu-item {
     position: relative;
     transition: background-color 150ms ease-out;
@@ -860,43 +794,34 @@
     background-color: var(--sidebar-hover-bg);
   }
 
-  /* ── Skeuomorphic Card (Tangible Surface) ────────────────────── */
+  /* ── Skeuomorphic Card (Flat surface — backward compat) ──────── */
   .skeuo-card {
     @apply rounded-lg border;
     background-color: var(--bg-card);
-    background-image: var(--gradient-skeuo-card);
     border-color: var(--border-main);
-    box-shadow: var(--shadow-skeuo-card);
+    box-shadow: var(--shadow-card);
     position: relative;
   }
 
   .skeuo-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background-image: var(--skeuo-noise);
-    background-repeat: repeat;
-    pointer-events: none;
-    opacity: 0.4;
+    content: none;
   }
 
   .skeuo-card:hover {
-    box-shadow: var(--shadow-skeuo-card-hover);
+    box-shadow: var(--shadow-card-hover);
     border-color: var(--border-strong);
   }
 
-  /* ── Skeuomorphic Button (Pressable Feel) ────────────────────── */
+  /* ── Skeuomorphic Button (Flat — backward compat) ────────────── */
   .skeuo-button {
     @apply inline-flex items-center justify-center font-semibold rounded-xl;
-    background-image: var(--gradient-skeuo-button);
-    box-shadow: var(--shadow-skeuo-button);
+    box-shadow: none;
     transition: box-shadow 120ms ease-out, transform 100ms ease-out;
     position: relative;
   }
 
   .skeuo-button:hover {
-    box-shadow: var(--shadow-skeuo-button-hover);
+    box-shadow: var(--shadow-card);
     transform: translateY(-0.5px);
   }
 
@@ -905,10 +830,10 @@
     transform: translateY(0.5px);
   }
 
-  /* ── Skeuomorphic Input (Recessed Field) ─────────────────────── */
+  /* ── Skeuomorphic Input (Flat — backward compat) ─────────────── */
   .skeuo-input {
     @apply rounded-xl;
-    box-shadow: var(--shadow-skeuo-input);
+    box-shadow: none;
     background-color: var(--bg-input);
     border: 1px solid var(--border-main);
     transition: box-shadow 180ms ease-out, border-color 180ms ease-out;
@@ -916,91 +841,67 @@
 
   .skeuo-input:focus {
     border-color: var(--accent-primary);
-    box-shadow:
-      var(--shadow-skeuo-input),
-      0 0 0 2px var(--bg-main),
-      0 0 0 4px var(--ring-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     outline: none;
   }
 
-  /* ── Skeuomorphic Glass Panel (Frosted Overlay) ──────────────── */
+  /* ── Skeuomorphic Glass Panel (Clean — backward compat) ──────── */
   .skeuo-glass {
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-skeuo-card);
+    box-shadow: var(--shadow-card);
   }
 
-  /* ── Skeuomorphic Embossed Text (Raised Typography) ──────────── */
+  /* ── Skeuomorphic Embossed Text (Flat — backward compat) ─────── */
   .skeuo-emboss {
-    text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.5),
-      0 -1px 0 rgba(0, 0, 0, 0.04);
+    text-shadow: none;
   }
 
   .dark .skeuo-emboss {
-    text-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.05),
-      0 -1px 0 rgba(0, 0, 0, 0.25);
+    text-shadow: none;
   }
 
-  /* ── Skeuomorphic Debossed Text (Engraved Typography) ────────── */
+  /* ── Skeuomorphic Debossed Text (Flat — backward compat) ─────── */
   .skeuo-deboss {
-    text-shadow:
-      0 -1px 0 rgba(0, 0, 0, 0.15),
-      0 1px 0 rgba(255, 255, 255, 0.3);
+    text-shadow: none;
   }
 
   .dark .skeuo-deboss {
-    text-shadow:
-      0 -1px 0 rgba(0, 0, 0, 0.40),
-      0 1px 0 rgba(255, 255, 255, 0.04);
+    text-shadow: none;
   }
 
-  /* ── Skeuomorphic Surface (Elevated + Textured) ──────────────── */
+  /* ── Skeuomorphic Surface (Flat — backward compat) ───────────── */
   .skeuo-surface {
     background-color: var(--bg-surface);
-    background-image: var(--gradient-skeuo-surface);
-    box-shadow: var(--shadow-skeuo-emboss);
+    box-shadow: none;
     position: relative;
   }
 
   .skeuo-surface::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background-image: var(--skeuo-noise);
-    background-repeat: repeat;
-    pointer-events: none;
-    opacity: 0.3;
+    content: none;
   }
 
-  /* ── Skeuomorphic Toggle Switch (Physical Toggle) ────────────── */
+  /* ── Skeuomorphic Toggle Switch ──────────────────────────────── */
   .skeuo-toggle {
     @apply relative inline-flex h-7 w-12 items-center rounded-full cursor-pointer;
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.12),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+    border: 1px solid var(--border-main);
     background-color: var(--border-main);
     transition: background-color 200ms ease-out;
   }
 
   .skeuo-toggle[data-checked="true"] {
     background-color: var(--accent-primary);
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.15),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    border-color: var(--accent-primary);
+    box-shadow: none;
   }
 
   .skeuo-toggle-knob {
     @apply absolute h-5 w-5 rounded-full;
-    background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.20),
-      0 1px 1px rgba(0, 0, 0, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), 0 1px 1px rgba(0, 0, 0, 0.10);
     left: 2px;
     transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -1009,10 +910,10 @@
     transform: translateX(20px);
   }
 
-  /* ── Skeuomorphic Table Header ──────────────────────────────── */
+  /* ── Skeuomorphic Table Header (Flat — backward compat) ─────── */
   .skeuo-table-header {
-    background-image: var(--gradient-skeuo-surface);
-    box-shadow: var(--shadow-skeuo-table-header);
+    background-color: var(--bg-elevated);
+    box-shadow: inset 0 -1px 0 var(--border-subtle);
   }
 
   /* ── Reduced Motion ──────────────────────────────────────────── */
@@ -1064,56 +965,49 @@
     }
   }
 
-  /* ── Meta Row — inline metadata strip (email · dept · code etc.) ── */
+  /* ── Meta Row ─────────────────────────────────────────────── */
   .meta-row {
     @apply flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)];
   }
 
   /* ── Layout Primitives ─────────────────────────────────────── */
-  /* Flex row with space-between — used in card headers, page headers, section titles */
   .row-between {
     @apply flex items-center justify-between;
   }
 
-  /* ── Text Utilities (Body Size) ─────────────────────────────── */
-  /* Small muted text — for helper text, timestamps, secondary metadata */
+  /* ── Text Utilities ─────────────────────────────────────────── */
   .text-body-muted {
     @apply text-sm;
     color: var(--text-muted);
   }
 
   /* ── Dividers ───────────────────────────────────────────────── */
-  /* Bottom border separator using design-system token */
   .divider-b {
     @apply border-b border-[var(--border-subtle)];
   }
 
   /* ── Modal / Overlay Backdrop ───────────────────────────────── */
-  /* Full-screen overlay for modals and drawers */
   .modal-backdrop {
     @apply fixed inset-0 flex items-center justify-center p-4 z-50;
     background-color: rgba(0, 0, 0, 0.50);
   }
 
   /* ── Card Sub-elements ──────────────────────────────────────── */
-  /* Standard card header row: label + action, separated by bottom border */
   .card-header-row {
     @apply flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)];
   }
 
-  /* Standard card content area */
   .card-body {
     @apply p-4 space-y-4;
   }
 
   /* ── Stat Card Elements ─────────────────────────────────────── */
-  /* Label below a KPI number */
   .stat-label {
     @apply text-xs mt-1;
     color: var(--text-muted);
   }
 
-  /* ── Badge Color Variants (extend .badge-status) ────────────── */
+  /* ── Badge Color Variants ────────────────────────────────────── */
   .badge-success {
     @apply bg-success-50 text-success-700 border border-success-200;
   }
@@ -1143,7 +1037,6 @@
   }
 
   /* ── Form Group ─────────────────────────────────────────────── */
-  /* Label + input vertical stack */
   .form-group {
     @apply flex flex-col gap-2;
   }
@@ -1284,7 +1177,7 @@ html, body {
 
 .card-lift:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-skeuo-card-hover);
+  box-shadow: var(--shadow-card-hover);
   border-color: var(--border-strong);
 }
 
@@ -1390,7 +1283,7 @@ html, body {
 .fluence-editor-content .ProseMirror a {
   color: var(--accent-primary);
   text-decoration: underline;
-  text-decoration-color: rgba(0, 87, 255, 0.3);
+  text-decoration-color: rgba(37, 99, 235, 0.3);
   text-underline-offset: 2px;
   cursor: pointer;
   transition: color 150ms ease-out, text-decoration-color 150ms ease-out;

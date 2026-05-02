@@ -298,7 +298,7 @@ const SidebarMenuItem: React.FC<{
     'sidebar-menu-item group relative flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium',
     'transition-all duration-150 ease-out',
     isActive || isFlyoverOpen
-      ? 'font-semibold shadow-[var(--shadow-card)] border-l-[3px]'
+      ? 'font-semibold border-l-[2px]'
       : 'hover:bg-[var(--sidebar-hover-bg)]',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
@@ -308,7 +308,6 @@ const SidebarMenuItem: React.FC<{
     backgroundColor: 'var(--sidebar-active-bg)',
     borderLeftColor: 'var(--sidebar-active-border)',
     color: 'var(--sidebar-text-active)',
-    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 12px rgba(58, 95, 217, 0.08)',
   } : {
     color: 'var(--sidebar-text)',
   };
@@ -429,7 +428,7 @@ const SectionDivider: React.FC<{
     <button
       onClick={() => onToggleSection(sectionId)}
       aria-expanded={isSectionExpanded}
-      className="w-full row-between px-4 py-2.5 group rounded-md transition-all duration-200 hover:translate-x-0.5"
+      className="w-full row-between px-3 py-2 group rounded-md transition-all duration-200"
     >
       <span
         className="skeuo-deboss text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
@@ -592,11 +591,9 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           suppressHydrationWarning
           style={{
             backgroundColor: 'var(--bg-sidebar)',
-            backgroundImage: 'var(--sidebar-gradient)',
             borderColor: 'var(--sidebar-border)',
             width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
             minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-            boxShadow: 'inset -1px 0 0 rgba(255, 255, 255, 0.04)',
           }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
@@ -645,10 +642,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             >
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
-                className={cn(
-                  'flex items-center gap-2 p-2 rounded-lg transition-all duration-200 ease-out',
-                  isCollapsed ? 'w-full justify-center' : 'w-full',
-                )}
+                className={cn('flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 ease-out w-full', isCollapsed ? 'justify-center' : '')}
                 style={{
                   color: 'var(--sidebar-text)',
                 }}
@@ -747,32 +741,23 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             style={{borderTop: '1px solid var(--sidebar-border)'}}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl transition-all duration-200" style={{
-                background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.12) 0%, rgba(96, 165, 250, 0.08) 100%)',
-                border: '1px solid rgba(58, 95, 217, 0.20)',
-                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.15)'
+              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all duration-200" style={{
+                background: 'rgba(37, 99, 235, 0.10)',
+                border: '1px solid rgba(37, 99, 235, 0.18)',
               }}>
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200"
-                     style={{background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))'}}>
-                  <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200"/>
+                <div className="flex items-center justify-center w-7 h-7 rounded-md" style={{background: 'rgba(37, 99, 235, 0.18)'}}>
+                  <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate" style={{color: 'var(--sidebar-text-active)'}}>
-                    Pro Features
-                  </p>
-                  <p className="text-2xs" style={{color: 'var(--sidebar-text-muted)'}}>
-                    All modules active
-                  </p>
+                  <p className="text-xs font-semibold truncate" style={{color: 'var(--sidebar-text-active)'}}>All Modules Active</p>
+                  <p className="text-2xs" style={{color: 'var(--sidebar-text-muted)'}}>Pro Plan</p>
                 </div>
               </div>
             ) : (
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center group relative transition-all duration-200 hover:scale-105"
-                style={{background: 'linear-gradient(135deg, rgba(58, 95, 217, 0.25), rgba(96, 165, 250, 0.15))'}}>
-                <Sparkles className="h-4 w-4 text-accent-300 transition-transform duration-200"/>
-                <div
-                  className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
-                  Pro Features Active
+              <div className="w-7 h-7 rounded-md flex items-center justify-center group relative transition-all duration-200 hover:scale-105" style={{background: 'rgba(37, 99, 235, 0.18)'}}>
+                <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-[var(--shadow-dropdown)]">
+                  All Modules Active
                 </div>
               </div>
             )}

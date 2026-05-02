@@ -18,32 +18,32 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
 
 // ─── NU-AURA Blue Monochrome Design System ──────────────────────────────
 
-// Primary/Accent — NU-AURA Blue (hue ~228)
+// Primary/Accent — NU-AURA Blue (Tailwind blue-600 aligned with CSS --accent-primary: #2563EB)
 const accent: MantineColorsTuple = [
-  '#f0f3fc',   // 0 — accent-50
-  '#dce3f8',   // 1 — accent-100
-  '#bcc9f2',   // 2 — accent-200
-  '#92a8e8',   // 3 — accent-300
-  '#6884dc',   // 4 — accent-400
-  '#4463cf',   // 5 — accent-500
-  '#3350b8',   // 6 — accent-600
-  '#2952A3',   // 7 — accent-700 (NU-AURA Blue)
-  '#244288',   // 8 — accent-800
-  '#1d356d',   // 9 — accent-900
+  '#eff6ff',   // 0 — accent-50  (blue-50)
+  '#dbeafe',   // 1 — accent-100 (blue-100)
+  '#bfdbfe',   // 2 — accent-200 (blue-200)
+  '#93c5fd',   // 3 — accent-300 (blue-300)
+  '#60a5fa',   // 4 — accent-400 (blue-400)
+  '#3b82f6',   // 5 — accent-500 (blue-500)
+  '#2563eb',   // 6 — accent-600 (blue-600, primary)
+  '#1d4ed8',   // 7 — accent-700 (blue-700)
+  '#1e40af',   // 8 — accent-800 (blue-800)
+  '#1e3a8a',   // 9 — accent-900 (blue-900)
 ];
 
-// Neutrals — Blue-tinted grays (monochrome)
+// Neutrals — Clean slate grays (warmer, less blue-tinted)
 const secondary: MantineColorsTuple = [
-  '#f7f8fb',   // 0 — neutral-50
-  '#f0f2f7',   // 1 — neutral-100
-  '#dfe2ed',   // 2 — neutral-200
-  '#b8bccf',   // 3 — neutral-300
-  '#8186a0',   // 4 — neutral-400
-  '#5a5f78',   // 5 — neutral-500
-  '#4e5270',   // 6 — neutral-600
-  '#363a52',   // 7 — neutral-700
-  '#1e2240',   // 8 — neutral-800
-  '#0e1225',   // 9 — neutral-900
+  '#f8f9fb',   // 0 — neutral-50
+  '#f1f3f7',   // 1 — neutral-100
+  '#e2e5ef',   // 2 — neutral-200
+  '#bcc1d4',   // 3 — neutral-300
+  '#8990a8',   // 4 — neutral-400
+  '#616882',   // 5 — neutral-500
+  '#525872',   // 6 — neutral-600
+  '#3a3f58',   // 7 — neutral-700
+  '#222642',   // 8 — neutral-800
+  '#12151e',   // 9 — neutral-900
 ];
 
 // Semantic colors (professional, muted)
@@ -87,12 +87,12 @@ export const theme = createTheme({
     fontFamily: 'var(--font-display), "Montserrat", var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     fontWeight: '600',
     sizes: {
-      h1: {fontSize: '2.25rem', lineHeight: '1.15'},
-      h2: {fontSize: '1.875rem', lineHeight: '1.2'},
-      h3: {fontSize: '1.5rem', lineHeight: '1.2'},
-      h4: {fontSize: '1.25rem', lineHeight: '1.3'},
-      h5: {fontSize: '1.125rem', lineHeight: '1.4'},
-      h6: {fontSize: '1rem', lineHeight: '1.5'},
+      h1: {fontSize: '1.875rem', lineHeight: '1.2'},
+      h2: {fontSize: '1.5rem', lineHeight: '1.25'},
+      h3: {fontSize: '1.25rem', lineHeight: '1.3'},
+      h4: {fontSize: '1.125rem', lineHeight: '1.35'},
+      h5: {fontSize: '1rem', lineHeight: '1.45'},
+      h6: {fontSize: '0.875rem', lineHeight: '1.5'},
     },
   },
 

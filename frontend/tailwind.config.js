@@ -27,17 +27,17 @@ const gray = {
 };
 
 const brand = {
-  50: '#f0f3fc',
-  100: '#dce3f8',
-  200: '#bcc9f2',
-  300: '#92a8e8',
-  400: '#6884dc',
-  500: '#4463cf',
-  600: '#3350b8',
-  700: '#2952A3',
-  800: '#244288',
-  900: '#1d356d',
-  950: '#121f44',
+  50: '#eff6ff',
+  100: '#dbeafe',
+  200: '#bfdbfe',
+  300: '#93c5fd',
+  400: '#60a5fa',
+  500: '#3b82f6',
+  600: '#2563eb',
+  700: '#1d4ed8',
+  800: '#1e40af',
+  900: '#1e3a8a',
+  950: '#172554',
 };
 
 const semanticColors = {
@@ -135,17 +135,17 @@ module.exports = {
           divider: 'var(--dropdown-divider)',
         },
 
-        // ── Accent (NULogic Lapis Blue) ───────────────────────────
+        // ── Accent (NULogic Blue — aligned with CSS --accent-primary: #2563EB) ──
         accent: {
-          DEFAULT: brand[700],
-          hover: brand[800],
+          DEFAULT: brand[600],
+          hover: brand[700],
           subtle: brand[50],
           ...brand,
         },
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
-          DEFAULT: brand[700],
+          DEFAULT: brand[600],
           ...brand,
         },
 

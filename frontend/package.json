@@ -18,7 +18,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:firefox": "playwright test --project=firefox",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:autonomous": "bash ../scripts/qa-orchestrator/run.sh"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
