@@ -105,33 +105,30 @@ describe('AdminService', () => {
   });
 
   describe('getSystemHealth', () => {
-    it('should return health data from publicApiClient', async () => {
+    it('should return health data from /admin/health endpoint', async () => {
       const mockHealth = {
         status: 'UP',
         components: {db: {status: 'UP'}, redis: {status: 'UP'}},
       };
-      mockedPublicApiClient.get.mockResolvedValueOnce({data: mockHealth});
+      mockedApiClient.get.mockResolvedValueOnce({data: mockHealth});
       const result = await adminService.getSystemHealth();
       expect(result).toEqual(mockHealth);
-      expect(mockedPublicApiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('/actuator/health')
-      );
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/admin/health');
     });
 
     it('should return DEGRADED fallback when health endpoint fails', async () => {
-      mockedPublicApiClient.get.mockRejectedValueOnce(new Error('Connection refused'));
+      mockedApiClient.get.mockRejectedValueOnce(new Error('Connection refused'));
       const result = await adminService.getSystemHealth();
       expect(result.status).toBe('DEGRADED');
       expect(result.components.db.status).toBe('UNAVAILABLE');
       expect(result.components.redis.status).toBe('UNAVAILABLE');
     });
 
-    it('should construct health URL by removing /api/v1', async () => {
-      mockedPublicApiClient.get.mockResolvedValueOnce({data: {status: 'UP', components: {}}});
+    it('should call /admin/health endpoint', async () => {
+      mockedApiClient.get.mockResolvedValueOnce({data: {status: 'UP', components: {}}});
       await adminService.getSystemHealth();
-      const calledUrl = mockedPublicApiClient.get.mock.calls[0][0] as string;
-      expect(calledUrl).not.toContain('/api/v1');
-      expect(calledUrl).toContain('/actuator/health');
+      const calledUrl = mockedApiClient.get.mock.calls[0][0] as string;
+      expect(calledUrl).toBe('/admin/health');
     });
   });
 });

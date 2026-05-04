@@ -403,8 +403,11 @@ describe('WellnessService', () => {
 
       await wellnessService.joinChallenge('chal-1', 'team-1', 'Team Alpha');
 
-      const expectedUrl = '/wellness/challenges/chal-1/join?teamId=team-1&teamName=Team+Alpha';
-      expect(mockedApiClient.post).toHaveBeenCalledWith(expectedUrl);
+      expect(mockedApiClient.post).toHaveBeenCalledWith(
+        '/wellness/challenges/chal-1/join',
+        undefined,
+        {params: {teamId: 'team-1', teamName: 'Team Alpha'}}
+      );
     });
 
     it('should join challenge without team info', async () => {
@@ -412,7 +415,11 @@ describe('WellnessService', () => {
 
       await wellnessService.joinChallenge('chal-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/wellness/challenges/chal-1/join?');
+      expect(mockedApiClient.post).toHaveBeenCalledWith(
+        '/wellness/challenges/chal-1/join',
+        undefined,
+        {params: {}}
+      );
     });
 
     it('should join challenge with only teamId', async () => {
@@ -420,7 +427,11 @@ describe('WellnessService', () => {
 
       await wellnessService.joinChallenge('chal-1', 'team-1');
 
-      expect(mockedApiClient.post).toHaveBeenCalledWith('/wellness/challenges/chal-1/join?teamId=team-1');
+      expect(mockedApiClient.post).toHaveBeenCalledWith(
+        '/wellness/challenges/chal-1/join',
+        undefined,
+        {params: {teamId: 'team-1'}}
+      );
     });
 
     it('should handle error when joining challenge', async () => {
@@ -576,7 +587,9 @@ describe('WellnessService', () => {
 
       const result = await wellnessService.getLeaderboard();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/wellness/leaderboard?limit=10');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/wellness/leaderboard', {
+        params: {limit: 10},
+      });
       expect(result).toHaveLength(2);
       expect(result[0].rank).toBe(1);
     });
@@ -590,7 +603,9 @@ describe('WellnessService', () => {
 
       const result = await wellnessService.getLeaderboard(20);
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith('/wellness/leaderboard?limit=20');
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/wellness/leaderboard', {
+        params: {limit: 20},
+      });
       expect(result).toHaveLength(1);
     });
 
@@ -614,7 +629,8 @@ describe('WellnessService', () => {
       const result = await wellnessService.getChallengeLeaderboard('chal-1');
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/wellness/challenges/chal-1/leaderboard?limit=10'
+        '/wellness/challenges/chal-1/leaderboard',
+        {params: {limit: 10}}
       );
       expect(result).toHaveLength(2);
     });
@@ -627,7 +643,8 @@ describe('WellnessService', () => {
       const result = await wellnessService.getChallengeLeaderboard('chal-1', 50);
 
       expect(mockedApiClient.get).toHaveBeenCalledWith(
-        '/wellness/challenges/chal-1/leaderboard?limit=50'
+        '/wellness/challenges/chal-1/leaderboard',
+        {params: {limit: 50}}
       );
       expect(result).toEqual([]);
     });

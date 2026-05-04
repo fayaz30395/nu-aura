@@ -509,7 +509,7 @@ describe('PermissionGate', () => {
       expect(screen.getByText('Content During Loading')).toBeInTheDocument();
     });
 
-    it('should show fallback while loading if provided and showWhileLoading is false', () => {
+    it('should show loading status (not fallback) while loading even if fallback is provided', () => {
       mockUsePermissions.mockReturnValue({
         hasPermission: vi.fn(),
         hasAnyPermission: vi.fn(),
@@ -523,14 +523,17 @@ describe('PermissionGate', () => {
       render(
         <PermissionGate
           permission={Permissions.EMPLOYEE_CREATE}
-          fallback={<div>Loading...</div>}
+          fallback={<div>Custom Fallback</div>}
         >
           <div>Protected Content</div>
         </PermissionGate>
       );
 
+      // While loading, the gate renders an internal loading status with role="status"
+      // — neither protected content nor the user-supplied fallback are shown.
       expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
-      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Custom Fallback')).not.toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
     });
   });
 });

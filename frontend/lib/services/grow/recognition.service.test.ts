@@ -87,13 +87,13 @@ describe('RecognitionService', () => {
       mock.get.mockResolvedValueOnce({data: page});
       const result = await recognitionService.getPublicFeed();
       expect(result).toEqual(page);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/feed?page=0&size=20`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/feed`, {params: {page: 0, size: 20}});
     });
 
     it('should support custom pagination', async () => {
       mock.get.mockResolvedValueOnce({data: makePage([])});
       await recognitionService.getPublicFeed(2, 5);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/feed?page=2&size=5`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/feed`, {params: {page: 2, size: 5}});
     });
   });
 
@@ -103,7 +103,7 @@ describe('RecognitionService', () => {
       mock.get.mockResolvedValueOnce({data: page});
       const result = await recognitionService.getMyReceivedRecognitions();
       expect(result).toEqual(page);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/received?page=0&size=20`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/received`, {params: {page: 0, size: 20}});
     });
 
     it('should throw on error', async () => {
@@ -116,7 +116,7 @@ describe('RecognitionService', () => {
     it('should return given recognitions', async () => {
       mock.get.mockResolvedValueOnce({data: makePage([])});
       await recognitionService.getMyGivenRecognitions();
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/given?page=0&size=20`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/given`, {params: {page: 0, size: 20}});
     });
 
     it('should throw on error', async () => {
@@ -129,7 +129,9 @@ describe('RecognitionService', () => {
     it('should add reaction', async () => {
       mock.post.mockResolvedValueOnce({data: undefined});
       await recognitionService.addReaction('r-1', 'LIKE' as ReactionType);
-      expect(mock.post).toHaveBeenCalledWith(`${BASE}/r-1/react?reactionType=LIKE`);
+      expect(mock.post).toHaveBeenCalledWith(`${BASE}/r-1/react`, undefined, {
+        params: {reactionType: 'LIKE'},
+      });
     });
 
     it('should throw on error', async () => {
@@ -142,7 +144,9 @@ describe('RecognitionService', () => {
     it('should remove reaction', async () => {
       mock.delete.mockResolvedValueOnce({data: undefined});
       await recognitionService.removeReaction('r-1', 'LIKE' as ReactionType);
-      expect(mock.delete).toHaveBeenCalledWith(`${BASE}/r-1/react?reactionType=LIKE`);
+      expect(mock.delete).toHaveBeenCalledWith(`${BASE}/r-1/react`, {
+        params: {reactionType: 'LIKE'},
+      });
     });
 
     it('should throw on error', async () => {
@@ -185,13 +189,13 @@ describe('RecognitionService', () => {
     it('should return leaderboard with default limit', async () => {
       mock.get.mockResolvedValueOnce({data: [makePoints()]});
       await recognitionService.getLeaderboard();
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/leaderboard?limit=10`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/leaderboard`, {params: {limit: 10}});
     });
 
     it('should support custom limit', async () => {
       mock.get.mockResolvedValueOnce({data: []});
       await recognitionService.getLeaderboard(5);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/leaderboard?limit=5`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/leaderboard`, {params: {limit: 5}});
     });
   });
 
@@ -214,13 +218,13 @@ describe('RecognitionService', () => {
     it('should return milestones with default days', async () => {
       mock.get.mockResolvedValueOnce({data: []});
       await recognitionService.getUpcomingMilestones();
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/milestones/upcoming?days=7`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/milestones/upcoming`, {params: {days: 7}});
     });
 
     it('should support custom days', async () => {
       mock.get.mockResolvedValueOnce({data: []});
       await recognitionService.getUpcomingMilestones(30);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/milestones/upcoming?days=30`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/milestones/upcoming`, {params: {days: 30}});
     });
   });
 });

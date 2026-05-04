@@ -87,13 +87,13 @@ describe('TrainingService', () => {
       const page = {content: [makeProg()], totalElements: 1, totalPages: 1, size: 20, number: 0};
       mock.get.mockResolvedValueOnce({data: page});
       await trainingService.getAllPrograms();
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/programs?page=0&size=20`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/programs`, {params: {page: 0, size: 20}});
     });
 
     it('should support custom pagination', async () => {
       mock.get.mockResolvedValueOnce({data: {content: [], totalElements: 0, totalPages: 0, size: 5, number: 1}});
       await trainingService.getAllPrograms(1, 5);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}/programs?page=1&size=5`);
+      expect(mock.get).toHaveBeenCalledWith(`${BASE}/programs`, {params: {page: 1, size: 5}});
     });
   });
 
@@ -150,7 +150,7 @@ describe('TrainingService', () => {
       mock.patch.mockResolvedValueOnce({data: {...makeEnroll(), status: 'COMPLETED'}});
       const result = await trainingService.updateEnrollmentStatus('te-1', 'COMPLETED' as Parameters<typeof trainingService.updateEnrollmentStatus>[1]);
       expect(result.status).toBe('COMPLETED');
-      expect(mock.patch).toHaveBeenCalledWith(`${BASE}/enrollments/te-1/status?status=COMPLETED`);
+      expect(mock.patch).toHaveBeenCalledWith(`${BASE}/enrollments/te-1/status`, {params: {status: 'COMPLETED'}});
     });
 
     it('should throw on error', async () => {

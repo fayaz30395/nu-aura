@@ -6,10 +6,11 @@ import {analyticsService} from './analytics.service';
 import {apiClient} from '@/lib/api/client';
 
 vi.mock('@/lib/api/client', () => ({
-  apiClient: {get: vi.fn()},
+  apiClient: {get: vi.fn(), getPermissive: vi.fn()},
 }));
 
 const mockedGet = (apiClient as { get: ReturnType<typeof vi.fn> }).get;
+const mockedGetPermissive = (apiClient as unknown as { getPermissive: ReturnType<typeof vi.fn> }).getPermissive;
 
 describe('AnalyticsService', () => {
   beforeEach(() => {
@@ -34,15 +35,15 @@ describe('AnalyticsService', () => {
   describe('getDashboardAnalytics', () => {
     it('should return dashboard analytics', async () => {
       const mock = {totalEmployees: 200, departmentBreakdown: []};
-      mockedGet.mockResolvedValueOnce({data: mock});
+      mockedGetPermissive.mockResolvedValueOnce({data: mock, status: 200});
       const result = await analyticsService.getDashboardAnalytics();
       expect(result).toEqual(mock);
-      expect(mockedGet).toHaveBeenCalledWith('/analytics/dashboard', {params: undefined});
+      expect(mockedGetPermissive).toHaveBeenCalledWith('/analytics/dashboard', {params: undefined});
     });
 
-    it('should throw on error', async () => {
-      mockedGet.mockRejectedValueOnce(new Error('Unauthorized'));
-      await expect(analyticsService.getDashboardAnalytics()).rejects.toThrow('Unauthorized');
+    it('should return null on error', async () => {
+      mockedGetPermissive.mockRejectedValueOnce(new Error('Unauthorized'));
+      await expect(analyticsService.getDashboardAnalytics()).resolves.toBeNull();
     });
   });
 

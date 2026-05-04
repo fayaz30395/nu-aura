@@ -442,10 +442,11 @@ describe('EmployeeService', () => {
       const result = await employeeService.executeImport(mockFile);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
-        '/employees/import/execute?skipInvalid=true',
+        '/employees/import/execute',
         expect.any(FormData),
         expect.objectContaining({
           headers: {'Content-Type': 'multipart/form-data'},
+          params: {skipInvalid: true},
         })
       );
       expect(result).toEqual(mockResult);
@@ -464,10 +465,11 @@ describe('EmployeeService', () => {
       const result = await employeeService.executeImport(mockFile, false);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
-        '/employees/import/execute?skipInvalid=false',
+        '/employees/import/execute',
         expect.any(FormData),
         expect.objectContaining({
           headers: {'Content-Type': 'multipart/form-data'},
+          params: {skipInvalid: false},
         })
       );
       expect(result).toEqual(mockResult);

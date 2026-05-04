@@ -40,9 +40,9 @@ describe('DashboardService', () => {
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/executive');
     });
 
-    it('should throw on error', async () => {
+    it('should return null on error', async () => {
       mockedApiClient.get.mockRejectedValueOnce(new Error('Unauthorized'));
-      await expect(dashboardService.getExecutiveDashboard()).rejects.toThrow('Unauthorized');
+      await expect(dashboardService.getExecutiveDashboard()).resolves.toBeNull();
     });
   });
 
@@ -73,9 +73,9 @@ describe('DashboardService', () => {
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/employee');
     });
 
-    it('should throw on error', async () => {
+    it('should return null on error', async () => {
       mockedApiClient.get.mockRejectedValueOnce(new Error('Server error'));
-      await expect(dashboardService.getEmployeeDashboard()).rejects.toThrow('Server error');
+      await expect(dashboardService.getEmployeeDashboard()).resolves.toBeNull();
     });
   });
 
@@ -103,9 +103,9 @@ describe('DashboardService', () => {
       expect(mockedApiClient.get).toHaveBeenCalledWith('/dashboards/manager');
     });
 
-    it('should throw on error', async () => {
+    it('should return null on error', async () => {
       mockedApiClient.get.mockRejectedValueOnce(new Error('Forbidden'));
-      await expect(dashboardService.getManagerDashboard()).rejects.toThrow('Forbidden');
+      await expect(dashboardService.getManagerDashboard()).resolves.toBeNull();
     });
   });
 

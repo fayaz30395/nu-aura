@@ -17,6 +17,7 @@ vi.mock('../useAuth', () => ({
   useAuth: vi.fn(() => ({
     user: {id: 'user-1', tenantId: 'tenant-1'},
     isAuthenticated: true,
+    hasHydrated: true,
   })),
 }));
 
@@ -154,6 +155,7 @@ describe('useActiveApp', () => {
     vi.mocked(useAuthModule.useAuth).mockReturnValue({
       user: null,
       isAuthenticated: false,
+      hasHydrated: true,
     });
 
     const {result} = renderHook(() => useActiveApp());

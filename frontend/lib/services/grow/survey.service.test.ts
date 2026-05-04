@@ -73,7 +73,7 @@ describe('SurveyService', () => {
       mock.patch.mockResolvedValueOnce({data: survey});
       const result = await surveyService.updateStatus('s-1', 'ACTIVE' as SurveyStatus);
       expect(result).toEqual(survey);
-      expect(mock.patch).toHaveBeenCalledWith(`${BASE}/s-1/status?status=ACTIVE`);
+      expect(mock.patch).toHaveBeenCalledWith(`${BASE}/s-1/status`, {params: {status: 'ACTIVE'}});
     });
 
     it('should throw on error', async () => {
@@ -133,13 +133,13 @@ describe('SurveyService', () => {
       mock.get.mockResolvedValueOnce({data: page});
       const result = await surveyService.getAllSurveys();
       expect(result).toEqual(page);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}?page=0&size=20`);
+      expect(mock.get).toHaveBeenCalledWith(BASE, {params: {page: 0, size: 20}});
     });
 
     it('should support custom pagination', async () => {
       mock.get.mockResolvedValueOnce({data: {content: [], totalElements: 0, totalPages: 0, size: 5, number: 2}});
       await surveyService.getAllSurveys(2, 5);
-      expect(mock.get).toHaveBeenCalledWith(`${BASE}?page=2&size=5`);
+      expect(mock.get).toHaveBeenCalledWith(BASE, {params: {page: 2, size: 5}});
     });
   });
 

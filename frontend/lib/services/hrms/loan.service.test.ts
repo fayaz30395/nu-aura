@@ -252,12 +252,12 @@ describe('LoanService', () => {
   describe('getStatusColor (pure function)', () => {
     it('should return color for ACTIVE status', () => {
       const color = loanService.getStatusColor('ACTIVE');
-      expect(color).toContain('green');
+      expect(color).toContain('success');
     });
 
     it('should return color for REJECTED status', () => {
       const color = loanService.getStatusColor('REJECTED');
-      expect(color).toContain('red');
+      expect(color).toContain('danger');
     });
 
     it('should return color for DRAFT status', () => {
