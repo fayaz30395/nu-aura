@@ -129,6 +129,27 @@ def authenticate_all():
     return tokens
 
 
+# ---- Token refresh (mid-sweep, prevents 90-min JWT expiry) ----
+_token_refresh_lock = threading.Lock()
+_last_refresh_ts = [0.0]
+TOKEN_REFRESH_INTERVAL_SEC = 60 * 60   # re-auth every 60 min (JWT expires at 90 min)
+_tokens_ref = [None]                    # shared mutable container for current tokens dict
+
+def _maybe_refresh_tokens():
+    """Re-authenticate all roles if more than TOKEN_REFRESH_INTERVAL_SEC since last login.
+    Thread-safe: only one refresh happens even if many workers race here."""
+    now = time.time()
+    if now - _last_refresh_ts[0] < TOKEN_REFRESH_INTERVAL_SEC:
+        return
+    with _token_refresh_lock:
+        if now - _last_refresh_ts[0] < TOKEN_REFRESH_INTERVAL_SEC:
+            return  # another thread refreshed while we waited
+        print(f"[REFRESH] {time.strftime('%H:%M:%S')} — re-authenticating all roles")
+        new_tokens = authenticate_all()
+        _tokens_ref[0] = new_tokens
+        _last_refresh_ts[0] = now
+
+
 # ---- Probe ----
 
 def probe(token: Optional[str], xsrf: Optional[str], method: str, path: str, tenant: str):
@@ -249,11 +270,16 @@ def write_finding(seq: int, role: str, path: str, method: str, status: int, ms: 
 # ---- Task runner ----
 
 def run_task(args_tuple):
-    role, email, token, xsrf, ep, seq = args_tuple
+    role, email, _initial_token, _initial_xsrf, ep, seq = args_tuple
     path    = ep["path"]
     method  = ep.get("method", "GET")
     allowed = ep.get("allowed_roles", [])
     denied  = ep.get("denied_roles", [])
+
+    # Mid-sweep token refresh — prevents 90-min JWT expiry from poisoning long sweeps
+    _maybe_refresh_tokens()
+    current = (_tokens_ref[0] or {}).get(role) or (_initial_token, _initial_xsrf)
+    token, xsrf = current
 
     status, ms = probe(token, xsrf, method, path, _tenant_id)
     verdict, bug_id = get_verdict(status, token, role, path, allowed, denied)
@@ -328,6 +354,8 @@ def main():
 
     # 3. Authenticate
     tokens = authenticate_all()
+    _tokens_ref[0]      = tokens
+    _last_refresh_ts[0] = time.time()
 
     # 4. Build task list — one task per (role, endpoint) combination
     role_names = [r for (r, _) in ROLES]
