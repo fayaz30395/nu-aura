@@ -22,9 +22,9 @@ DONE_FLAG    = f'{BASE_DIR}/docs/qa/USECASE-DONE'
 BASE_URL     = 'http://localhost:8080'
 PASSWORD     = 'Welcome@123'
 
-# ---- Tuning (fixes #1 and #3) ----
-MAX_WORKERS  = 8    # was 25 — keeps Spring Boot pool healthy
-PROBE_TIMEOUT = 15  # was 10 — handles slow endpoints
+# ---- Tuning ----
+MAX_WORKERS   = 6   # was 25 → 8 → 6 — gentle on backend during cold-start
+PROBE_TIMEOUT = 30  # was 10 → 15 → 30 — Hibernate cold queries take 15-18s on first hit
 
 # ---- Role definitions (fix #2: SUPER_ADMIN_2 as fallback) ----
 ROLES = [
