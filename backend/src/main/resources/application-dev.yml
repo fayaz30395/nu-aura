@@ -18,9 +18,9 @@ spring:
     username: ${DEV_DATABASE_USERNAME:hrms}
     password: ${DEV_DATABASE_PASSWORD}
     hikari:
-      # Reduced for local dev — prevents OOM under macOS memory pressure
-      maximum-pool-size: 3
-      minimum-idle: 1
+      # Bumped for local dev to handle QA sweep load (was 3 — caused pool exhaustion)
+      maximum-pool-size: 20
+      minimum-idle: 5
       connection-timeout: 30000
       idle-timeout: 120000
       max-lifetime: 240000

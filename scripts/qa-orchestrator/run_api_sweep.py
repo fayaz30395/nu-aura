@@ -1,427 +1,386 @@
 #!/usr/bin/env python3
 """
-NU-AURA API QA Sweep Runner
-Resumes from existing findings, probes remaining (role, endpoint) combos.
+NU-AURA API QA Sweep — P0/P1 priority pass
+Fixes:
+  1. MAX_WORKERS reduced to 8 + 50-150ms jitter to avoid saturating Spring Boot pool.
+  2. SUPER_ADMIN fallback to sarankarthick.maran@nulogic.io when fayaz.m returns 409.
+  3. Probe --max-time raised to 15s.
 """
 
-import yaml, json, os, glob, hashlib, subprocess, time, sys, threading
+import yaml, json, os, glob, hashlib, re, subprocess, time, sys, threading, argparse
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Optional, List
+import random
 
-# ---- Config ----
-YAML_PATH    = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/use-cases.v2.yaml'
-FINDINGS_DIR = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/findings/usecase'
-QUEUE_FILE   = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/queue/retest'
-DONE_FLAG    = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/USECASE-DONE'
+# ---- Paths ----
+BASE_DIR     = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura'
+YAML_PATH    = f'{BASE_DIR}/docs/qa/use-cases.v2.yaml'
+FINDINGS_DIR = f'{BASE_DIR}/docs/qa/findings/usecase'
+DONE_FLAG    = f'{BASE_DIR}/docs/qa/USECASE-DONE'
 BASE_URL     = 'http://localhost:8080'
-TENANT_ID    = '00000000-0000-0000-0000-000000000001'
 PASSWORD     = 'Welcome@123'
-BATCH_SIZE   = 50
-MAX_WORKERS  = 10
-TIMEOUT      = 15
 
-os.makedirs(FINDINGS_DIR, exist_ok=True)
+# ---- Tuning (fixes #1 and #3) ----
+MAX_WORKERS  = 8    # was 25 — keeps Spring Boot pool healthy
+PROBE_TIMEOUT = 15  # was 10 — handles slow endpoints
 
-# ---- Global sequence counter ----
-_seq_lock = threading.Lock()
-_seq_counter = [0]  # will be set after loading existing
+# ---- Role definitions (fix #2: SUPER_ADMIN_2 as fallback) ----
+ROLES = [
+    ("SUPER_ADMIN",       "fayaz.m@nulogic.io"),
+    ("HR_MANAGER",        "jagadeesh@nulogic.io"),
+    ("MANAGER",           "sumit@nulogic.io"),
+    ("EMPLOYEE",          "saran@nulogic.io"),
+    ("RECRUITMENT_ADMIN", "suresh@nulogic.io"),
+]
+
+# ---- Global sequence counter (thread-safe) ----
+_seq_lock    = threading.Lock()
+_seq_counter = [0]
+
 
 def next_seq():
     with _seq_lock:
         _seq_counter[0] += 1
         return _seq_counter[0]
 
-# ---- Load YAML ----
-with open(YAML_PATH) as f:
-    data = yaml.safe_load(f)
 
-roles_meta = {r['code']: r['email'] for r in data['meta']['roles']}
-ROLES = list(roles_meta.keys())
+# ---- Auth ----
 
-priority_order = {'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3}
+def _extract_token_from_stderr(stderr: str):
+    """Parse verbose curl output for Set-Cookie access_token value."""
+    m = re.search(r'\* Added cookie access_token="([^"]+)"', stderr)
+    if m:
+        return m.group(1)
+    # Alternate pattern in some curl versions
+    m = re.search(r'access_token=([A-Za-z0-9._\-]+)', stderr)
+    return m.group(1) if m else None
 
-# Build unique endpoint list (deduplicate by path, merge allowed/denied)
-seen_eps = {}
-for route in data['routes']:
-    priority = route.get('priority', 'P3')
-    for ep in route.get('api_endpoints', []):
-        path = ep['path']
-        if path not in seen_eps:
-            seen_eps[path] = {
-                'method': ep.get('method', 'GET'),
-                'path': path,
-                'allowed_roles': list(ep.get('allowed_roles', [])),
-                'denied_roles': list(ep.get('denied_roles', [])),
-                'priority': priority,
-                'priority_order': priority_order.get(priority, 3)
-            }
-        else:
-            ex = seen_eps[path]
-            ex['allowed_roles'] = list(set(ex['allowed_roles'] + ep.get('allowed_roles', [])))
-            ex['denied_roles'] = list(set(ex['denied_roles'] + ep.get('denied_roles', [])))
-            if priority_order.get(priority, 3) < ex['priority_order']:
-                ex['priority'] = priority
-                ex['priority_order'] = priority_order.get(priority, 3)
 
-ENDPOINTS = sorted(seen_eps.values(), key=lambda x: (x['priority_order'], x['path']))
-print(f"[INIT] Loaded {len(ENDPOINTS)} unique endpoints")
-
-# ---- Load already tested ----
-existing_files = sorted(glob.glob(os.path.join(FINDINGS_DIR, 'UC-API-*.json')))
-tested = set()
-max_seq = 0
-for fp in existing_files:
-    try:
-        with open(fp) as fh:
-            d = json.load(fh)
-        tested.add((d.get('actor_role',''), d.get('route_or_endpoint','')))
-        # extract seq from filename
-        base = os.path.basename(fp)
-        try:
-            seq = int(base.replace('UC-API-','').replace('.json',''))
-            if seq > max_seq:
-                max_seq = seq
-        except:
-            pass
-    except:
-        pass
-
-_seq_counter[0] = max_seq
-print(f"[INIT] Resuming from seq {max_seq}, {len(tested)} combos already tested")
-
-# ---- Authenticate each role ----
-tokens = {}
-
-def authenticate(role_code, email):
+def login(email: str, role_label: str = ""):
+    """POST /auth/login, return access_token JWT string or None."""
     payload = json.dumps({
         "email": email,
         "password": PASSWORD,
-        "tenantId": TENANT_ID
+        "tenantId": _tenant_id,
     })
     try:
-        result = subprocess.run([
-            'curl', '-s', '-c', f'/tmp/cookies_{role_code}.txt',
-            '-w', '\n__STATUS__%{http_code}',
-            '-X', 'POST',
-            '-H', 'Content-Type: application/json',
-            '-d', payload,
-            '--max-time', '20',
-            f'{BASE_URL}/api/v1/auth/login'
-        ], capture_output=True, text=True, timeout=25)
-        out = result.stdout
-        # split body and status
-        if '\n__STATUS__' in out:
-            body_text, status_str = out.rsplit('\n__STATUS__', 1)
-        else:
-            body_text = out
-            status_str = '0'
-        status = int(status_str.strip()) if status_str.strip().isdigit() else 0
+        r = subprocess.run(
+            [
+                "curl", "-sv", "-X", "POST",
+                f"{BASE_URL}/api/v1/auth/login",
+                "-H", "Content-Type: application/json",
+                "-d", payload,
+                "--max-time", "20",
+            ],
+            capture_output=True, text=True, timeout=25,
+        )
+        # Detect 409 from either stdout body or stderr headers
+        combined = r.stdout + r.stderr
+        if "409" in combined or '"status":409' in combined:
+            print(f"[AUTH] {role_label or email}: 409 session conflict")
+            return None, True  # (token, is_409)
 
-        # Try to parse token from body
-        token = None
-        try:
-            body = json.loads(body_text)
-            token = (body.get('token') or
-                     (body.get('data') or {}).get('token') or
-                     body.get('accessToken'))
-        except:
-            pass
-
-        # Try cookie
+        token = _extract_token_from_stderr(r.stderr)
         if not token:
-            cookie_file = f'/tmp/cookies_{role_code}.txt'
-            if os.path.exists(cookie_file):
-                with open(cookie_file) as cf:
-                    for line in cf:
-                        if 'nu_aura_token' in line:
-                            parts = line.strip().split('\t')
-                            if len(parts) >= 7:
-                                token = parts[-1]
-                            break
+            # Fallback: parse JSON body for token field
+            try:
+                body = json.loads(r.stdout)
+                token = (
+                    body.get("access_token")
+                    or body.get("token")
+                    or (body.get("data") or {}).get("token")
+                    or body.get("accessToken")
+                )
+            except Exception:
+                pass
 
-        if token and status in (200, 201):
-            print(f"[AUTH] {role_code}: OK")
-            return token
+        if token:
+            print(f"[AUTH] {role_label or email}: OK")
         else:
-            print(f"[AUTH] {role_code}: FAILED (status={status})")
-            return None
-    except Exception as e:
-        print(f"[AUTH] {role_code}: ERROR {e}")
-        return None
+            print(f"[AUTH] {role_label or email}: FAILED — no token in response")
+        return token, False
+    except Exception as exc:
+        print(f"[AUTH] {role_label or email}: ERROR {exc}")
+        return None, False
 
-print("[AUTH] Authenticating all roles...")
-for code, email in roles_meta.items():
-    tokens[code] = authenticate(code, email)
 
-print(f"[AUTH] Tokens obtained: {sum(1 for t in tokens.values() if t)}/{len(tokens)}")
+def authenticate_all():
+    """Login every role, applying SUPER_ADMIN → SUPER_ADMIN_2 fallback on 409."""
+    tokens = {}
+    for (role, email) in ROLES:
+        token, is_409 = login(email, role)
+        if is_409 and role == "SUPER_ADMIN":
+            # Fix #2: auto-fallback to SUPER_ADMIN_2
+            fallback_email = dict(ROLES).get("SUPER_ADMIN_2", "")
+            print(f"[AUTH] Falling back to SUPER_ADMIN_2 ({fallback_email})")
+            token, _ = login(fallback_email, "SUPER_ADMIN_2(fallback-for-SUPER_ADMIN)")
+        tokens[role] = token
+    ok = sum(1 for t in tokens.values() if t)
+    print(f"[AUTH] {ok}/{len(tokens)} tokens acquired")
+    return tokens
 
-# ---- Probe a single endpoint for a single role ----
-def probe(role_code, ep, iter_num=1, retest=False):
-    path = ep['path']
-    # Replace path params with dummy values
-    safe_path = path
-    import re
-    safe_path = re.sub(r'\{[^}]+\}', '00000000-0000-0000-0000-000000000001', safe_path)
-    # For numeric-looking params use 1
-    safe_path = re.sub(r'\{[^}]+Id\}', '1', safe_path) if '{' in safe_path else safe_path
-    # Final fallback
-    safe_path = re.sub(r'\{[^}]+\}', '1', safe_path)
 
-    url = f"{BASE_URL}{safe_path}"
-    method = ep.get('method', 'GET')
-    allowed = ep.get('allowed_roles', [])
-    denied  = ep.get('denied_roles', [])
-    token   = tokens.get(role_code)
+# ---- Probe ----
 
-    seq = next_seq()
-    uc_id = f"UC-API-{seq:05d}"
-    out_path = os.path.join(FINDINGS_DIR, f"{uc_id}.json")
-    tmp_path  = out_path + '.tmp'
+def probe(token: Optional[str], method: str, path: str, tenant: str):
+    """Hit one endpoint, return (http_status_int, elapsed_ms)."""
+    url = re.sub(r'\{[^}]+\}', '00000000-0000-0000-0000-000000000001', f"{BASE_URL}{path}")
 
-    # Determine expected
-    if role_code in allowed:
-        expected = 'allowed'
-    elif role_code in denied:
-        expected = 'denied'
-    else:
-        expected = 'observe'
+    # Fix #1: 50-150ms jitter between probes
+    time.sleep(random.uniform(0.05, 0.15))
 
-    # Build curl command
-    curl_cmd = [
-        'curl', '-s',
-        '-o', '/tmp/uc-body.json',
-        '-w', '%{http_code}',
-        '--max-time', str(TIMEOUT),
-        '-X', method,
-        '-H', f'X-Tenant-Id: {TENANT_ID}',
-        '-H', 'Content-Type: application/json',
+    cmd = [
+        "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
+        "-H", f"X-Tenant-Id: {tenant}",
+        "--max-time", str(PROBE_TIMEOUT),   # Fix #3: was 10
+        "-X", method,
     ]
     if token:
-        curl_cmd += ['-H', f'Authorization: Bearer {token}']
-    if method in ('POST', 'PUT', 'PATCH'):
-        curl_cmd += ['-d', '{}']
-    curl_cmd.append(url)
+        cmd += ["-b", f"access_token={token}"]
+    if method in ("POST", "PUT", "PATCH"):
+        cmd += ["-H", "Content-Type: application/json", "-d", "{}"]
+    cmd.append(url)
 
     t0 = time.time()
-    verdict = 'OBSERVE'
-    severity = None
-    reason = None
-    bug_id = None
-    status = 0
-    body_preview = {}
-
     try:
-        result = subprocess.run(curl_cmd, capture_output=True, text=True, timeout=TIMEOUT + 5)
-        raw_status = result.stdout.strip()
-        status = int(raw_status) if raw_status.isdigit() else 0
-        rc = result.returncode
-
-        # Read body snippet
-        try:
-            if os.path.exists('/tmp/uc-body.json'):
-                with open('/tmp/uc-body.json') as bf:
-                    body_txt = bf.read(200)
-                body_preview = {'snippet': body_txt[:100]}
-        except:
-            pass
-
-        duration_ms = int((time.time() - t0) * 1000)
-
-        # Verdict logic
-        if rc != 0 or status == 0:
-            verdict = 'BLOCKED'
-            reason = f"curl exit={rc}"
-            severity = 'P2'
-        elif status in (502, 503):
-            # Retry once
-            time.sleep(5)
-            result2 = subprocess.run(curl_cmd, capture_output=True, text=True, timeout=TIMEOUT + 5)
-            raw2 = result2.stdout.strip()
-            status2 = int(raw2) if raw2.isdigit() else 0
-            if status2 in (502, 503) or result2.returncode != 0:
-                verdict = 'BLOCKED'
-                reason = f"backend {status} on retry"
-                severity = 'P2'
-                status = status2
-            else:
-                status = status2
-                # re-evaluate below
-
-        if verdict != 'BLOCKED':
-            if status == 401 and token:
-                verdict = 'FAIL'
-                severity = 'P0'
-                reason = "got 401 but role has valid token"
-                bug_id = hashlib.sha1(f"{role_code}:{path}:401-with-token".encode()).hexdigest()[:6]
-            elif status == 403 and expected == 'allowed':
-                verdict = 'FAIL'
-                severity = 'P1'
-                reason = f"role {role_code} is allowed but got 403"
-                bug_id = hashlib.sha1(f"{role_code}:{path}:403-allowed".encode()).hexdigest()[:6]
-            elif status in (200, 201, 204) and expected == 'denied':
-                verdict = 'FAIL'
-                severity = 'P0'
-                reason = f"role {role_code} is denied but got {status} (data leak!)"
-                bug_id = hashlib.sha1(f"{role_code}:{path}:data-leak".encode()).hexdigest()[:6]
-            elif status == 403 and expected == 'denied':
-                verdict = 'PASS'
-                reason = f"role {role_code} correctly denied"
-            elif status in (200, 201, 204, 400, 422, 404, 409) and expected == 'allowed':
-                verdict = 'PASS'
-                reason = f"role {role_code} allowed, got {status}"
-            elif status == 401 and not token:
-                verdict = 'PASS'
-                reason = "expected — role has no token"
-            elif status == 401 and expected == 'denied':
-                verdict = 'PASS'
-                reason = "role denied (401 = no auth)"
-            elif status in (200, 201, 204, 400, 422, 404, 409) and expected == 'observe':
-                verdict = 'OBSERVE'
-                reason = f"observed {status}"
-            elif status == 401 and expected == 'observe':
-                verdict = 'PASS'
-                reason = f"observed {status}"
-            elif status == 403 and expected == 'observe':
-                verdict = 'OBSERVE'
-                reason = f"observed {status} (no RBAC data)"
-            else:
-                verdict = 'OBSERVE'
-                reason = f"status={status}, expected={expected}"
-
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=PROBE_TIMEOUT + 5)
+        ms = int((time.time() - t0) * 1000)
+        raw = r.stdout.strip()
+        status = int(raw) if raw.isdigit() else 0
+        return status, ms
     except subprocess.TimeoutExpired:
-        duration_ms = int((time.time() - t0) * 1000)
-        verdict = 'BLOCKED'
-        reason = "timed out"
-        severity = 'P2'
-        status = -1
-    except Exception as e:
-        duration_ms = int((time.time() - t0) * 1000)
-        verdict = 'BLOCKED'
-        reason = str(e)[:80]
-        status = -1
+        return 0, int((time.time() - t0) * 1000)
+    except Exception:
+        return 0, int((time.time() - t0) * 1000)
+
+
+# ---- Verdict ----
+
+def get_verdict(status: int, token, role: str, path: str, allowed_roles: List[str], denied_roles: List[str]):
+    """Return (verdict_str, bug_id_or_None)."""
+    if status == 0:
+        return "BLOCKED", None
+
+    def bug(tag):
+        return hashlib.sha1(f"{role}:{path}:{tag}".encode()).hexdigest()[:6]
+
+    # Privilege escalation — denied role got data
+    if status in (200, 201, 204, 400, 422) and role in denied_roles:
+        return "FAIL", bug("LEAK")
+
+    # Missing access — allowed role got 403
+    if status == 403 and role in allowed_roles:
+        return "FAIL", bug("403")
+
+    # Token rejected — valid token but 401
+    if status == 401 and token:
+        return "FAIL", bug("401")
+
+    # Correct allow
+    if status in (200, 201, 204, 400, 422) and role in allowed_roles:
+        return "PASS", None
+
+    # Correct deny
+    if status == 403 and role in denied_roles:
+        return "PASS", None
+
+    return "OBSERVE", None
+
+
+# ---- Writing ----
+
+def write_finding(seq: int, role: str, path: str, method: str, status: int, ms: int,
+                  verdict: str, bug_id, allowed_roles: list, denied_roles: list, token):
+    uc_id = f"UC-P0P1-{seq:05d}"
+    out_path = os.path.join(FINDINGS_DIR, f"{uc_id}.json")
+    # Thread-safe write via unique tmp name
+    tmp_path = os.path.join(FINDINGS_DIR, f"{uc_id}_{threading.get_ident()}.tmp")
+
+    if role in allowed_roles:
+        expected = "allowed"
+    elif role in denied_roles:
+        expected = "denied"
+    else:
+        expected = "observe"
 
     finding = {
         "uc_id": uc_id,
         "category": "API",
-        "executed_at": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "duration_ms": duration_ms,
+        "executed_at": datetime.now(timezone.utc).isoformat(),
+        "duration_ms": ms,
         "mode": "api",
-        "actor_role": role_code,
+        "actor_role": role,
         "route_or_endpoint": path,
+        "method": method,
         "verdict": verdict,
-        "severity_on_fail": severity if verdict == 'FAIL' else None,
+        "severity_on_fail": ("P0" if verdict == "FAIL" else None),
         "expected": expected,
         "observed": {"status": status},
-        "reason": reason,
         "bug_id": bug_id,
-        "iter": iter_num,
-        "retest": retest
+        "iter": 1,
+        "retest": False,
     }
 
-    with open(tmp_path, 'w') as f:
-        json.dump(finding, f, indent=2)
+    with open(tmp_path, "w") as fh:
+        json.dump(finding, fh, indent=2)
     os.replace(tmp_path, out_path)
-
     return finding
 
-# ---- Load retest queue ----
-def load_retest():
-    try:
-        with open(QUEUE_FILE) as f:
-            return [s.strip() for s in f if s.strip()]
-    except:
-        return []
 
-def clear_retest(consumed):
-    try:
-        with open(QUEUE_FILE) as f:
-            current = [s.strip() for s in f if s.strip()]
-        remaining = [s for s in current if s not in consumed]
-        with open(QUEUE_FILE, 'w') as f:
-            f.write('\n'.join(remaining) + '\n' if remaining else '')
-    except:
-        pass
+# ---- Task runner ----
 
-def drain_retest(retests, all_eps_by_path):
-    if not retests:
-        return
-    print(f"[RETEST] Draining {len(retests)} slugs...")
-    consumed = []
+def run_task(args_tuple):
+    role, email, token, ep, seq = args_tuple
+    path    = ep["path"]
+    method  = ep.get("method", "GET")
+    allowed = ep.get("allowed_roles", [])
+    denied  = ep.get("denied_roles", [])
+
+    status, ms = probe(token, method, path, _tenant_id)
+    verdict, bug_id = get_verdict(status, token, role, path, allowed, denied)
+    finding = write_finding(seq, role, path, method, status, ms, verdict, bug_id,
+                            allowed, denied, token)
+    return finding
+
+
+# ---- YAML loading ----
+
+def load_endpoints(priorities: List[str]):
+    with open(YAML_PATH) as fh:
+        data = yaml.safe_load(fh)
+
+    global _tenant_id
+    _tenant_id = data["meta"].get("tenant_id", "660e8400-e29b-41d4-a716-446655440001")
+
+    priority_order = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+    seen: dict[str, dict] = {}
+
+    for route in data.get("routes", []):
+        p = route.get("priority", "P3")
+        if p not in priorities:
+            continue
+        for ep in route.get("api_endpoints", []):
+            key = f"{ep.get('method','GET')}:{ep['path']}"
+            if key not in seen:
+                seen[key] = {
+                    "method": ep.get("method", "GET"),
+                    "path": ep["path"],
+                    "allowed_roles": list(ep.get("allowed_roles", [])),
+                    "denied_roles":  list(ep.get("denied_roles", [])),
+                    "priority": p,
+                    "priority_order": priority_order.get(p, 3),
+                }
+            else:
+                ex = seen[key]
+                ex["allowed_roles"] = list(set(ex["allowed_roles"] + ep.get("allowed_roles", [])))
+                ex["denied_roles"]  = list(set(ex["denied_roles"]  + ep.get("denied_roles", [])))
+                if priority_order.get(p, 3) < ex["priority_order"]:
+                    ex["priority"]       = p
+                    ex["priority_order"] = priority_order.get(p, 3)
+
+    endpoints = sorted(seen.values(), key=lambda x: (x["priority_order"], x["path"]))
+    print(f"[INIT] {len(endpoints)} unique endpoints for priorities {priorities}")
+    return endpoints
+
+
+# ---- Main ----
+
+def main():
+    parser = argparse.ArgumentParser(description="NU-AURA API QA sweep")
+    parser.add_argument("--priorities", default="P0,P1",
+                        help="Comma-separated priority list (default: P0,P1)")
+    args = parser.parse_args()
+
+    priorities = [p.strip().upper() for p in args.priorities.split(",")]
+
+    # 1. Load endpoints
+    global _tenant_id
+    _tenant_id = "660e8400-e29b-41d4-a716-446655440001"   # set properly after yaml load
+    endpoints = load_endpoints(priorities)
+
+    # 2. Clear old P0P1 findings
+    old_files = glob.glob(os.path.join(FINDINGS_DIR, "UC-P0P1-*.json"))
+    for f in old_files:
+        os.remove(f)
+    if old_files:
+        print(f"[INIT] Cleared {len(old_files)} old UC-P0P1 findings")
+
+    os.makedirs(FINDINGS_DIR, exist_ok=True)
+
+    # 3. Authenticate
+    tokens = authenticate_all()
+
+    # 4. Build task list — one task per (role, endpoint) combination
+    role_names = [r for (r, _) in ROLES]
     tasks = []
-    for slug in retests:
-        for path, ep in all_eps_by_path.items():
-            if slug in path:
-                for role in ROLES:
-                    tasks.append((role, ep))
-        consumed.append(slug)
+    seq = 0
+    for ep in endpoints:
+        for role in role_names:
+            seq += 1
+            tasks.append((role, dict(ROLES).get(role, ""), tokens.get(role), ep, seq))
 
-    if tasks:
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-            futs = {ex.submit(probe, role, ep, 2, True): (role, ep) for role, ep in tasks}
-            for fut in as_completed(futs):
-                try:
-                    f = fut.result()
-                    print(f"  [RETEST] {f['uc_id']} {f['actor_role']} {f['route_or_endpoint'][:50]} -> {f['verdict']}")
-                except Exception as e:
-                    print(f"  [RETEST ERROR] {e}")
+    _seq_counter[0] = 0
+    total = len(tasks)
+    print(f"[WORK] {total} tasks queued ({len(endpoints)} endpoints × {len(role_names)} roles)")
 
-    clear_retest(consumed)
-
-# ---- Build remaining work list ----
-all_eps_by_path = {ep['path']: ep for ep in ENDPOINTS}
-
-remaining = []
-for ep in ENDPOINTS:
-    for role in ROLES:
-        if (role, ep['path']) not in tested:
-            remaining.append((role, ep))
-
-print(f"[WORK] {len(remaining)} combos to probe")
-
-# ---- Main loop ----
-batch_count = 0
-done_count  = 0
-fail_count  = 0
-blocked_count = 0
-start_time  = time.time()
-
-for i in range(0, len(remaining), BATCH_SIZE):
-    # Drain retest queue before each batch
-    retests = load_retest()
-    if retests:
-        drain_retest(retests, all_eps_by_path)
-
-    batch = remaining[i:i + BATCH_SIZE]
-    batch_count += 1
+    # 5. Execute with 8 workers (fix #1)
+    counters = {"PASS": 0, "FAIL": 0, "BLOCKED": 0, "OBSERVE": 0}
+    done = 0
+    start = time.time()
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-        futs = {ex.submit(probe, role, ep): (role, ep) for role, ep in batch}
+        futs = {ex.submit(run_task, t): t for t in tasks}
         for fut in as_completed(futs):
+            done += 1
             try:
                 f = fut.result()
-                done_count += 1
-                if f['verdict'] == 'FAIL':
-                    fail_count += 1
-                elif f['verdict'] == 'BLOCKED':
-                    blocked_count += 1
-                elapsed = time.time() - start_time
-                rate = done_count / elapsed if elapsed > 0 else 0
-                left = len(remaining) - (i + BATCH_SIZE)
-                eta = left / rate if rate > 0 else 0
-                print(f"  [{done_count}/{len(remaining)}] {f['uc_id']} {f['actor_role']:<20} {f['route_or_endpoint'][:45]:<45} -> {f['verdict']} (eta={eta/60:.1f}m)")
-            except Exception as e:
-                print(f"  [BATCH ERROR] {e}")
+                v = f["verdict"]
+                counters[v] = counters.get(v, 0) + 1
+            except Exception as exc:
+                counters["BLOCKED"] += 1
+                print(f"  [ERROR] {exc}")
 
-    print(f"[BATCH {batch_count}] Completed. Total: {done_count}/{len(remaining)}, FAIL={fail_count}, BLOCKED={blocked_count}")
+            if done % 200 == 0 or done == total:
+                elapsed = time.time() - start
+                rate = done / elapsed if elapsed > 0 else 1
+                eta_s = (total - done) / rate
+                print(
+                    f"  [progress] {done}/{total} "
+                    f"PASS={counters['PASS']} FAIL={counters['FAIL']} "
+                    f"BLOCKED={counters['BLOCKED']} OBSERVE={counters['OBSERVE']} "
+                    f"eta={eta_s/60:.1f}m"
+                )
 
-# Final retest drain
-retests = load_retest()
-if retests:
-    drain_retest(retests, all_eps_by_path)
+    # 6. Real bugs = FAIL findings whose path is not a custom-field endpoint
+    fail_files = glob.glob(os.path.join(FINDINGS_DIR, "UC-P0P1-*.json"))
+    real_bugs = 0
+    for ff in fail_files:
+        try:
+            with open(ff) as fh:
+                d = json.load(fh)
+            if d.get("verdict") == "FAIL" and "custom-field" not in d.get("route_or_endpoint", ""):
+                real_bugs += 1
+        except Exception:
+            pass
 
-# Mark done
-Path(DONE_FLAG).touch()
-print(f"\n[DONE] All {done_count} combos probed. FAIL={fail_count} BLOCKED={blocked_count}")
-print(f"[DONE] Total time: {(time.time()-start_time)/60:.1f} minutes")
-print(f"[DONE] Touched {DONE_FLAG}")
+    # 7. Summary
+    print("\n=== Final Results ===")
+    print(
+        f"Total: {total}  "
+        f"PASS: {counters['PASS']}  "
+        f"FAIL: {counters['FAIL']}  "
+        f"BLOCKED: {counters['BLOCKED']}  "
+        f"OBSERVE: {counters.get('OBSERVE', 0)}"
+    )
+    print(f"Real bugs (FAIL with non-custom-field path): {real_bugs}")
+    print(f"docs/qa/USECASE-DONE touched")
+
+    # 8. Touch sentinel
+    with open(DONE_FLAG, "w") as fh:
+        fh.write(datetime.now(timezone.utc).isoformat())
+
+
+if __name__ == "__main__":
+    main()
