@@ -58,8 +58,14 @@ def _extract_token_from_stderr(stderr: str):
     return m.group(1) if m else None
 
 
+def _extract_xsrf_from_stderr(stderr: str):
+    """Parse Set-Cookie: XSRF-TOKEN=...; Path=/ from verbose curl output."""
+    m = re.search(r'Set-Cookie:\s*XSRF-TOKEN=([^;\s]+)', stderr)
+    return m.group(1) if m else None
+
+
 def login(email: str, role_label: str = ""):
-    """POST /auth/login, return access_token JWT string or None."""
+    """POST /auth/login, return (access_token, xsrf_token, is_409)."""
     payload = json.dumps({
         "email": email,
         "password": PASSWORD,
@@ -80,9 +86,10 @@ def login(email: str, role_label: str = ""):
         combined = r.stdout + r.stderr
         if "409" in combined or '"status":409' in combined:
             print(f"[AUTH] {role_label or email}: 409 session conflict")
-            return None, True  # (token, is_409)
+            return None, None, True  # (token, xsrf, is_409)
 
         token = _extract_token_from_stderr(r.stderr)
+        xsrf  = _extract_xsrf_from_stderr(r.stderr)
         if not token:
             # Fallback: parse JSON body for token field
             try:
@@ -97,35 +104,36 @@ def login(email: str, role_label: str = ""):
                 pass
 
         if token:
-            print(f"[AUTH] {role_label or email}: OK")
+            print(f"[AUTH] {role_label or email}: OK (xsrf={'YES' if xsrf else 'NO'})")
         else:
             print(f"[AUTH] {role_label or email}: FAILED — no token in response")
-        return token, False
+        return token, xsrf, False
     except Exception as exc:
         print(f"[AUTH] {role_label or email}: ERROR {exc}")
-        return None, False
+        return None, None, False
 
 
 def authenticate_all():
-    """Login every role, applying SUPER_ADMIN → SUPER_ADMIN_2 fallback on 409."""
+    """Login every role, applying SUPER_ADMIN → SUPER_ADMIN_2 fallback on 409.
+    Returns dict of role → (token, xsrf)."""
     tokens = {}
     for (role, email) in ROLES:
-        token, is_409 = login(email, role)
+        token, xsrf, is_409 = login(email, role)
         if is_409 and role == "SUPER_ADMIN":
-            # Fix #2: auto-fallback to SUPER_ADMIN_2
             fallback_email = dict(ROLES).get("SUPER_ADMIN_2", "")
             print(f"[AUTH] Falling back to SUPER_ADMIN_2 ({fallback_email})")
-            token, _ = login(fallback_email, "SUPER_ADMIN_2(fallback-for-SUPER_ADMIN)")
-        tokens[role] = token
-    ok = sum(1 for t in tokens.values() if t)
+            token, xsrf, _ = login(fallback_email, "SUPER_ADMIN_2(fallback-for-SUPER_ADMIN)")
+        tokens[role] = (token, xsrf)
+    ok = sum(1 for (t, _x) in tokens.values() if t)
     print(f"[AUTH] {ok}/{len(tokens)} tokens acquired")
     return tokens
 
 
 # ---- Probe ----
 
-def probe(token: Optional[str], method: str, path: str, tenant: str):
-    """Hit one endpoint, return (http_status_int, elapsed_ms)."""
+def probe(token: Optional[str], xsrf: Optional[str], method: str, path: str, tenant: str):
+    """Hit one endpoint, return (http_status_int, elapsed_ms).
+    Sends X-XSRF-TOKEN header on POST/PUT/DELETE/PATCH (CSRF double-submit cookie)."""
     url = re.sub(r'\{[^}]+\}', '00000000-0000-0000-0000-000000000001', f"{BASE_URL}{path}")
 
     # Fix #1: 50-150ms jitter between probes
@@ -137,8 +145,17 @@ def probe(token: Optional[str], method: str, path: str, tenant: str):
         "--max-time", str(PROBE_TIMEOUT),   # Fix #3: was 10
         "-X", method,
     ]
+    # Cookie jar carries both auth and CSRF tokens
+    cookie_parts = []
     if token:
-        cmd += ["-b", f"access_token={token}"]
+        cookie_parts.append(f"access_token={token}")
+    if xsrf:
+        cookie_parts.append(f"XSRF-TOKEN={xsrf}")
+    if cookie_parts:
+        cmd += ["-b", "; ".join(cookie_parts)]
+    # Mutating verbs require X-XSRF-TOKEN header (double-submit cookie pattern)
+    if method in ("POST", "PUT", "PATCH", "DELETE") and xsrf:
+        cmd += ["-H", f"X-XSRF-TOKEN: {xsrf}"]
     if method in ("POST", "PUT", "PATCH"):
         cmd += ["-H", "Content-Type: application/json", "-d", "{}"]
     cmd.append(url)
@@ -232,13 +249,13 @@ def write_finding(seq: int, role: str, path: str, method: str, status: int, ms: 
 # ---- Task runner ----
 
 def run_task(args_tuple):
-    role, email, token, ep, seq = args_tuple
+    role, email, token, xsrf, ep, seq = args_tuple
     path    = ep["path"]
     method  = ep.get("method", "GET")
     allowed = ep.get("allowed_roles", [])
     denied  = ep.get("denied_roles", [])
 
-    status, ms = probe(token, method, path, _tenant_id)
+    status, ms = probe(token, xsrf, method, path, _tenant_id)
     verdict, bug_id = get_verdict(status, token, role, path, allowed, denied)
     finding = write_finding(seq, role, path, method, status, ms, verdict, bug_id,
                             allowed, denied, token)
@@ -319,7 +336,9 @@ def main():
     for ep in endpoints:
         for role in role_names:
             seq += 1
-            tasks.append((role, dict(ROLES).get(role, ""), tokens.get(role), ep, seq))
+            tok_xsrf = tokens.get(role) or (None, None)
+            token_val, xsrf_val = tok_xsrf
+            tasks.append((role, dict(ROLES).get(role, ""), token_val, xsrf_val, ep, seq))
 
     _seq_counter[0] = 0
     total = len(tasks)

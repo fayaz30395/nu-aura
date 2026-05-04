@@ -11,30 +11,23 @@ const authFile = 'playwright/.auth/user.json';
  * Authenticates as SUPER_ADMIN (fayaz.m@nulogic.io) for broadest permission coverage.
  */
 setup('authenticate', async ({page}) => {
-  setup.setTimeout(120000);
+  setup.setTimeout(240000); // Bumped 120s → 240s for dev-mode first-compile (~30-50s/page)
 
   const defaultUser = demoUsers.superAdmin;
 
-  // Navigate to login page
   await page.goto('/auth/login');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('networkidle', {timeout: 60000});
 
-  // The login page shows demo account buttons when DEMO_MODE=true.
-  // Each button contains the user's name and triggers a one-click login.
-  // Look for the demo account button matching our default user.
   const demoButton = page.locator('button').filter({hasText: defaultUser.name});
-  await expect(demoButton).toBeVisible({timeout: 15000});
+  await expect(demoButton).toBeVisible({timeout: 30000});
   await demoButton.click();
 
-  // Wait for redirect to dashboard after login.
-  // The login page redirects to /me/dashboard by default.
   try {
-    await page.waitForURL('**/dashboard', {timeout: 60000});
+    await page.waitForURL('**/dashboard', {timeout: 90000});
   } catch {
     const currentUrl = page.url();
     if (!currentUrl.includes('dashboard')) {
       await page.screenshot({path: 'test-results/auth-debug.png'});
-      // Capture any visible error message for better diagnostics
       const errorText = await page
         .locator('text=Authentication Failed')
         .locator('..')
@@ -46,12 +39,11 @@ setup('authenticate', async ({page}) => {
     }
   }
 
-  // Wait for page to fully load
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('networkidle', {timeout: 60000});
 
-  // Verify we reached the dashboard
+  // Heading bumped 15s → 60s for first-compile latency under Studio Slate v2
   const heading = page.locator('h1, h2, [data-testid="dashboard-heading"]').first();
-  await expect(heading).toBeVisible({timeout: 15000});
+  await expect(heading).toBeVisible({timeout: 60000});
 
   // Store authenticated state
   await page.context().storageState({path: authFile});
