@@ -25,8 +25,8 @@ describe('Button', () => {
     it('renders primary variant by default', () => {
       render(<Button>Primary</Button>);
       const button = screen.getByRole('button');
-      // Primary uses gradient via CSS variables
-      expect(button.className).toContain('bg-gradient-to-br');
+      // Primary uses skeuomorphic top→bottom gradient via CSS variables
+      expect(button.className).toContain('bg-gradient-to-b');
     });
 
     it('renders secondary variant', () => {
@@ -39,7 +39,9 @@ describe('Button', () => {
     it('renders danger variant', () => {
       render(<Button variant="danger">Delete</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-danger-500');
+      // Danger uses gradient from-danger-500 to-danger-600
+      expect(button.className).toContain('from-danger-500');
+      expect(button.className).toContain('to-danger-600');
     });
 
     it('renders outline variant', () => {

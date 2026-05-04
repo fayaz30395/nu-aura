@@ -10,12 +10,12 @@ describe('theme-colors', () => {
   describe('chartColors individual color getters', () => {
     it('primary returns fallback when window is undefined', () => {
       const color = chartColors.primary();
-      expect(color).toBe('#3a5fd9');
+      expect(color).toBe('#050766');
     });
 
     it('secondary returns fallback when window is undefined', () => {
       const color = chartColors.secondary();
-      expect(color).toBe('#7092ff');
+      expect(color).toBe('#8939A1');
     });
 
     it('success returns fallback', () => {
@@ -30,29 +30,29 @@ describe('theme-colors', () => {
 
     it('danger returns fallback', () => {
       const color = chartColors.danger();
-      expect(color).toBe('#dc2626');
+      expect(color).toBe('#E62A32');
     });
 
     it('info returns fallback', () => {
       const color = chartColors.info();
-      expect(color).toBe('#1d4ed8');
+      expect(color).toBe('#61629D');
     });
 
     it('accent returns fallback', () => {
       const color = chartColors.accent();
-      expect(color).toBe('#f97316');
+      expect(color).toBe('#EE777C');
     });
 
     it('muted returns fallback', () => {
       const color = chartColors.muted();
-      expect(color).toBe('#DCDCDC');
+      expect(color).toBe('#c0c3c8');
     });
   });
 
   describe('chartColors infrastructure colors', () => {
     it('grid returns fallback', () => {
       const color = chartColors.grid();
-      expect(color).toBe('#E8E8E8');
+      expect(color).toBe('#d8dadd');
     });
 
     it('tooltipBg returns fallback', () => {
@@ -62,12 +62,12 @@ describe('theme-colors', () => {
 
     it('tooltipBorder returns fallback', () => {
       const color = chartColors.tooltipBorder();
-      expect(color).toBe('#DCDCDC');
+      expect(color).toBe('#c0c3c8');
     });
 
     it('tooltipText returns fallback', () => {
       const color = chartColors.tooltipText();
-      expect(color).toBe('#191919');
+      expect(color).toBe('#050766');
     });
   });
 
@@ -80,13 +80,13 @@ describe('theme-colors', () => {
 
     it('palette contains all primary colors', () => {
       const palette = chartColors.palette();
-      expect(palette[0]).toBe('#3a5fd9'); // primary
-      expect(palette[1]).toBe('#7092ff'); // secondary
+      expect(palette[0]).toBe('#050766'); // primary
+      expect(palette[1]).toBe('#8939A1'); // secondary
       expect(palette[2]).toBe('#16a34a'); // success
       expect(palette[3]).toBe('#f59e0b'); // warning
-      expect(palette[4]).toBe('#dc2626'); // danger
-      expect(palette[5]).toBe('#1d4ed8'); // info
-      expect(palette[6]).toBe('#f97316'); // accent
+      expect(palette[4]).toBe('#E62A32'); // danger
+      expect(palette[5]).toBe('#61629D'); // info
+      expect(palette[6]).toBe('#EE777C'); // accent
     });
 
     it('palette returns consistent values across calls', () => {
@@ -148,7 +148,7 @@ describe('theme-colors', () => {
       };
       expect(statusColors.success).toBe('#16a34a');
       expect(statusColors.warning).toBe('#f59e0b');
-      expect(statusColors.danger).toBe('#dc2626');
+      expect(statusColors.danger).toBe('#E62A32');
     });
 
     it('can access tooltip styling colors together', () => {
@@ -158,8 +158,8 @@ describe('theme-colors', () => {
         text: chartColors.tooltipText(),
       };
       expect(tooltipStyles.bg).toBe('#ffffff');
-      expect(tooltipStyles.border).toBe('#DCDCDC');
-      expect(tooltipStyles.text).toBe('#191919');
+      expect(tooltipStyles.border).toBe('#c0c3c8');
+      expect(tooltipStyles.text).toBe('#050766');
     });
   });
 

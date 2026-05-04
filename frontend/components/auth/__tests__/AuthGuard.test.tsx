@@ -33,6 +33,21 @@ const Roles = {
   DEPARTMENT_MANAGER: 'DEPARTMENT_MANAGER',
 } as const;
 
+// Minimal test user — AuthGuard's `(isAuthenticated && !user)` check skips the
+// restoreSession() path when user is present. Without this, mocked `restoreSession`
+// returns undefined and AuthGuard crashes with "Cannot read properties of undefined".
+const testUser = {
+  id: 'user-1',
+  employeeId: 'emp-1',
+  tenantId: 'tenant-1',
+  email: 'test@example.com',
+  firstName: 'Test',
+  lastName: 'User',
+  fullName: 'Test User',
+  status: 'ACTIVE' as const,
+  roles: [],
+};
+
 // Mock useAuth hook
 vi.mock('@/lib/hooks/useAuth', () => ({
   useAuth: vi.fn(),
@@ -68,9 +83,10 @@ describe('AuthGuard', () => {
   describe('authentication state', () => {
     it('should render children when user is authenticated and ready', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -281,9 +297,10 @@ describe('AuthGuard', () => {
   describe('super admin privileges', () => {
     it('should bypass route-level permission checks for super admin', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -317,9 +334,10 @@ describe('AuthGuard', () => {
   describe('role-based route protection', () => {
     it('should deny access if route requires admin but user is not admin', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -372,9 +390,10 @@ describe('AuthGuard', () => {
 
     it('should allow access if route requires admin and user is admin', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -407,9 +426,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if route requires HR but user is not HR', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -445,9 +465,10 @@ describe('AuthGuard', () => {
 
     it('should allow access if route requires HR and user is HR', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -480,9 +501,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if route requires manager but user is not manager', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -518,9 +540,10 @@ describe('AuthGuard', () => {
 
     it('should allow access if route requires manager and user is manager', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -555,9 +578,10 @@ describe('AuthGuard', () => {
   describe('permission-based route protection', () => {
     it('should deny access if route requires permission user lacks', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -589,9 +613,10 @@ describe('AuthGuard', () => {
 
     it('should allow access if route requires permission user has', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -625,9 +650,10 @@ describe('AuthGuard', () => {
   describe('anyPermission checks (OR logic)', () => {
     it('should allow access if user has any of the required permissions', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -659,9 +685,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if user lacks all required permissions', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -695,9 +722,10 @@ describe('AuthGuard', () => {
   describe('allPermissions checks (AND logic)', () => {
     it('should allow access if user has all required permissions', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -729,9 +757,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if user lacks any of the required permissions', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -765,9 +794,10 @@ describe('AuthGuard', () => {
   describe('anyRole checks (OR logic)', () => {
     it('should allow access if user has any of the required roles', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -799,9 +829,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if user lacks all required roles', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -836,9 +867,10 @@ describe('AuthGuard', () => {
   describe('allRoles checks (AND logic)', () => {
     it('should allow access if user has all required roles', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -870,9 +902,10 @@ describe('AuthGuard', () => {
 
     it('should deny access if user lacks any of the required roles', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
@@ -907,9 +940,10 @@ describe('AuthGuard', () => {
   describe('no route config', () => {
     it('should allow access if authenticated and no specific route config', async () => {
       mockUseAuth.mockReturnValue({
+        user: testUser,
         isAuthenticated: true,
         hasHydrated: true,
-        restoreSession: vi.fn(),
+        restoreSession: vi.fn(() => Promise.resolve(true)),
       });
 
       mockUsePermissions.mockReturnValue({
