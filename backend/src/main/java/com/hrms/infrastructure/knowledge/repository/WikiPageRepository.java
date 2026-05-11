@@ -1,5 +1,6 @@
 package com.hrms.infrastructure.knowledge.repository;
 
+import com.hrms.application.knowledge.dto.WikiPageTreeProjection;
 import com.hrms.domain.knowledge.WikiPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,4 +75,16 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
     long countByTenantIdAndSpaceId(UUID tenantId, UUID spaceId);
 
     boolean existsByTenantIdAndSlug(UUID tenantId, String slug);
+
+    /**
+     * Lightweight tree-projection query for {@code getPageTree} — does NOT load the
+     * heavy {@code content} JSONB column. (Audit Q-P06.) Tenant-scoped.
+     */
+    @Query("SELECT new com.hrms.application.knowledge.dto.WikiPageTreeProjection(" +
+            "p.id, p.title, p.slug, p.status, p.isPinned, p.viewCount, " +
+            "CASE WHEN p.parentPage IS NULL THEN NULL ELSE p.parentPage.id END) " +
+            "FROM WikiPage p WHERE p.tenantId = :tenantId AND p.space.id = :spaceId " +
+            "ORDER BY p.title")
+    List<WikiPageTreeProjection> findTreeNodesByTenantAndSpace(@Param("tenantId") UUID tenantId,
+                                                               @Param("spaceId") UUID spaceId);
 }

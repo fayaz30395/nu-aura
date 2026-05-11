@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +41,19 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
      */
     private static final Pattern TENANT_TOPIC_PATTERN =
             Pattern.compile("^/topic/tenant/([0-9a-fA-F\\-]{36})/.*$");
+
+    /**
+     * Explicit allowlist of public (non-tenant) destination prefixes.
+     * Audit M-H3: the previous default-allow behavior accepted subscriptions to
+     * arbitrary {@code /topic/*} destinations; this allowlist makes the policy
+     * default-deny with only the strictly-public endpoints whitelisted.
+     */
+    private static final Set<String> PUBLIC_TOPIC_PREFIXES = Set.of(
+            "/user/queue/",         // Spring's per-principal queue prefix (intrinsically authenticated)
+            "/topic/health",        // ops/observability
+            "/topic/announcements"  // tenant-public announcements
+    );
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -130,8 +144,16 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
         Matcher matcher = TENANT_TOPIC_PATTERN.matcher(destination);
         if (!matcher.matches()) {
-            // Not a tenant-scoped topic — allow (e.g. /user/queue/notifications)
-            return;
+            // Audit M-H3: default-deny on non-tenant topics. Only explicitly-public
+            // destination prefixes are accepted; everything else is rejected.
+            if (PUBLIC_TOPIC_PREFIXES.stream().anyMatch(destination::startsWith)) {
+                log.debug("WebSocket SUBSCRIBE allowed (public): destination={}", destination);
+                return;
+            }
+            log.warn("WebSocket SUBSCRIBE rejected: destination is not tenant-prefixed and not in public allowlist: {}",
+                    destination);
+            throw new org.springframework.messaging.MessageDeliveryException(
+                    "Subscription denied: topic must be tenant-prefixed or in the public allowlist");
         }
 
         String topicTenantIdStr = matcher.group(1);

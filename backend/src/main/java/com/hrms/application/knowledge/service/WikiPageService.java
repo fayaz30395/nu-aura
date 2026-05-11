@@ -2,6 +2,7 @@ package com.hrms.application.knowledge.service;
 
 import com.hrms.api.knowledge.dto.WikiPageBreadcrumb;
 import com.hrms.api.knowledge.dto.WikiPageTreeNode;
+import com.hrms.application.knowledge.dto.WikiPageTreeProjection;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.WikiPage;
@@ -257,28 +258,33 @@ public class WikiPageService {
 
     /**
      * Get the full page tree for a space (root pages + children recursively, max 3 levels deep).
+     *
+     * <p>Performance (Q-P06): uses a JPQL constructor projection so the heavy
+     * {@code content} JSONB column is NOT fetched for tree-build. We only retrieve
+     * the columns actually needed for navigation rendering.</p>
      */
     @Transactional(readOnly = true)
     public List<WikiPageTreeNode> getPageTree(UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        // Fetch all pages in this space in one query to avoid N+1
-        List<WikiPage> allPages = wikiPageRepository.findByTenantIdAndSpaceId(tenantId, spaceId);
+        // Lightweight projection — skips JSONB content column.
+        List<WikiPageTreeProjection> allPages = wikiPageRepository.findTreeNodesByTenantAndSpace(tenantId, spaceId);
 
-        // Group pages by parentPageId (null key = root pages)
-        Map<UUID, List<WikiPage>> childrenByParent = allPages.stream()
+        // Group pages by parentId (null key = root pages)
+        UUID rootKey = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        Map<UUID, List<WikiPageTreeProjection>> childrenByParent = allPages.stream()
                 .collect(Collectors.groupingBy(
-                        page -> page.getParentPage() != null ? page.getParentPage().getId() : UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                        p -> p.getParentPageId() != null ? p.getParentPageId() : rootKey,
                         Collectors.toList()
                 ));
 
         // Build tree starting from root pages (those with no parent)
-        List<WikiPage> rootPages = allPages.stream()
-                .filter(p -> p.getParentPage() == null)
+        List<WikiPageTreeProjection> rootPages = allPages.stream()
+                .filter(p -> p.getParentPageId() == null)
                 .collect(Collectors.toList());
 
         return rootPages.stream()
-                .map(page -> buildTreeNode(page, childrenByParent, 1, 3))
+                .map(page -> buildTreeNodeFromProjection(page, childrenByParent, 1, 3))
                 .collect(Collectors.toList());
     }
 
@@ -371,14 +377,15 @@ public class WikiPageService {
         return wikiPageRepository.countByTenantIdAndParentPageId(tenantId, pageId);
     }
 
-    private WikiPageTreeNode buildTreeNode(WikiPage page, Map<UUID, List<WikiPage>> childrenByParent,
-                                           int currentLevel, int maxLevel) {
+    private WikiPageTreeNode buildTreeNodeFromProjection(WikiPageTreeProjection page,
+                                                         Map<UUID, List<WikiPageTreeProjection>> childrenByParent,
+                                                         int currentLevel, int maxLevel) {
         List<WikiPageTreeNode> children = List.of();
 
         if (currentLevel < maxLevel) {
-            List<WikiPage> childPages = childrenByParent.getOrDefault(page.getId(), List.of());
+            List<WikiPageTreeProjection> childPages = childrenByParent.getOrDefault(page.getId(), List.of());
             children = childPages.stream()
-                    .map(child -> buildTreeNode(child, childrenByParent, currentLevel + 1, maxLevel))
+                    .map(child -> buildTreeNodeFromProjection(child, childrenByParent, currentLevel + 1, maxLevel))
                     .collect(Collectors.toList());
         }
 
@@ -389,7 +396,7 @@ public class WikiPageService {
                 page.getStatus() != null ? page.getStatus().name() : null,
                 page.getIsPinned(),
                 page.getViewCount(),
-                page.getParentPage() != null ? page.getParentPage().getId() : null,
+                page.getParentPageId(),
                 children
         );
     }

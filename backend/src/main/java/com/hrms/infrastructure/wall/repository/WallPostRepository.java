@@ -57,25 +57,25 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
 
     // ==================== ACTIVE POSTS QUERY METHODS ====================
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.deleted = false")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.isDeleted = false")
     Page<WallPost> findByTenantIdAndDeletedFalse(@Param("tenantId") UUID tenantId, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.deleted = false ORDER BY p.pinned DESC, p.createdAt DESC")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.isDeleted = false ORDER BY p.pinned DESC, p.createdAt DESC")
     Page<WallPost> findAllActiveOrderByPinnedAndCreatedAt(@Param("tenantId") UUID tenantId, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.type = :type AND p.deleted = false ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.type = :type AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<WallPost> findByTypeAndActiveTrue(@Param("tenantId") UUID tenantId, @Param("type") WallPost.PostType type, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.author.id = :authorId AND p.deleted = false ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.author.id = :authorId AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<WallPost> findByAuthorIdAndActiveTrue(@Param("tenantId") UUID tenantId, @Param("authorId") UUID authorId, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.praiseRecipient.id = :recipientId AND p.deleted = false ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.praiseRecipient.id = :recipientId AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<WallPost> findPraiseByRecipientId(@Param("tenantId") UUID tenantId, @Param("recipientId") UUID recipientId, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.id = :id AND p.isDeleted = false")
     Optional<WallPost> findByIdAndActiveTrue(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.pinned = true AND p.deleted = false ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.pinned = true AND p.isDeleted = false ORDER BY p.createdAt DESC")
     List<WallPost> findPinnedPosts(@Param("tenantId") UUID tenantId);
 
     // ==================== N+1 OPTIMIZED FETCH QUERIES ====================
@@ -87,7 +87,7 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
     @Query("SELECT DISTINCT p FROM WallPost p " +
             "LEFT JOIN FETCH p.author a " +
             "LEFT JOIN FETCH a.user " +
-            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
+            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.isDeleted = false")
     Optional<WallPost> findByIdWithAuthor(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
     /**
@@ -99,7 +99,7 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
             "LEFT JOIN FETCH a.user " +
             "LEFT JOIN FETCH p.praiseRecipient pr " +
             "LEFT JOIN FETCH pr.user " +
-            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.deleted = false")
+            "WHERE p.tenantId = :tenantId AND p.id = :id AND p.isDeleted = false")
     Optional<WallPost> findByIdWithAuthorAndRecipient(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
     /**
@@ -131,10 +131,10 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
 
     // ==================== COUNT METHODS ====================
 
-    @Query("SELECT COUNT(p) FROM WallPost p WHERE p.tenantId = :tenantId AND p.author.id = :authorId AND p.deleted = false")
+    @Query("SELECT COUNT(p) FROM WallPost p WHERE p.tenantId = :tenantId AND p.author.id = :authorId AND p.isDeleted = false")
     long countByAuthorId(@Param("tenantId") UUID tenantId, @Param("authorId") UUID authorId);
 
-    @Query("SELECT COUNT(p) FROM WallPost p WHERE p.tenantId = :tenantId AND p.praiseRecipient.id = :recipientId AND p.deleted = false")
+    @Query("SELECT COUNT(p) FROM WallPost p WHERE p.tenantId = :tenantId AND p.praiseRecipient.id = :recipientId AND p.isDeleted = false")
     long countPraiseReceivedByEmployee(@Param("tenantId") UUID tenantId, @Param("recipientId") UUID recipientId);
 
     // ==================== DEPRECATED - DO NOT USE ====================

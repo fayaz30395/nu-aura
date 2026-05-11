@@ -261,11 +261,9 @@ public class DataScopeService {
             tryAddPredicate(predicates, () -> root.get("locationId").in(customLocationIds));
         }
 
-        // Always include user's own data with CUSTOM scope
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        if (employeeId != null) {
-            tryAddPredicate(predicates, () -> cb.equal(root.get("employeeId"), employeeId));
-        }
+        // CUSTOM scope is a strict allowlist; if the user needs to also see their own data,
+        // grant *_VIEW_SELF separately. The previous unconditional self-fallback contradicted
+        // the documented allowlist semantics and over-broadened CUSTOM-scoped queries (audit M-H5).
 
         if (predicates.isEmpty()) {
             log.debug("No custom targets found for permission: {}", permission);

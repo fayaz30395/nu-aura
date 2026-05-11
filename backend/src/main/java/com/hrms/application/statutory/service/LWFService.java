@@ -15,6 +15,7 @@ import com.hrms.infrastructure.statutory.repository.LWFConfigurationRepository;
 import com.hrms.infrastructure.statutory.repository.LWFDeductionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,16 @@ public class LWFService {
 
     private final LWFConfigurationRepository configRepository;
     private final LWFDeductionRepository deductionRepository;
+
+    /**
+     * QA sweep S2-C K-7: bulk per-payroll-run LWF computation is incomplete — the
+     * loop over configurations exists but the per-employee iteration / deduction
+     * insert has not been implemented (see {@link #calculateForPayrollRun}). India
+     * statutory compliance requires this to be implemented before payroll runs in
+     * IN tenants. Gated behind {@code app.features.lwf}.
+     */
+    @Value("${app.features.lwf:false}")
+    private boolean lwfEnabled;
 
     // ==================== Configuration Management ====================
 
@@ -270,11 +281,21 @@ public class LWFService {
      * Triggers LWF calculation for all eligible employees for a given month/year.
      * This is called during payroll processing or can be triggered manually.
      *
+     * <p>STUB-GATED (QA sweep S2-C K-7): the per-employee deduction insert is not yet
+     * implemented and the method currently returns an empty list after enumerating the
+     * applicable configurations. Throw {@code 501} unless {@code app.features.lwf=true}
+     * to prevent IN payroll runs from completing without LWF computed. India statutory
+     * compliance REQUIRES this to be implemented before any IN payroll run.</p>
+     *
      * @param request the calculation request with month, year, and optional payroll run ID
      * @return list of created deduction records
      */
     @Transactional
     public List<LWFDeduction> calculateForPayrollRun(LWFCalculationRequest request) {
+        if (!lwfEnabled) {
+            throw new UnsupportedOperationException(
+                    "Labor Welfare Fund computation not implemented — IN payroll cannot run safely until app.features.lwf=true and the per-employee deduction insert ships.");
+        }
         UUID tenantId = TenantContext.requireCurrentTenant();
         int month = request.getMonth();
         int year = request.getYear();

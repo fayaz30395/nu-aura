@@ -441,10 +441,14 @@ public class WebhookDeliveryService {
 
     // ========== Metrics ==========
 
+    // Q-P13: webhook_id was removed from Prometheus tags — per-webhook UUIDs create
+    // unbounded cardinality (one time-series per registered webhook). The success/
+    // failure rate per tenant is still answerable via centralized metricsService
+    // (which tags by tenant_bucket + event_type), so we lose nothing observability-wise.
+
     private void recordSuccessMetric(Webhook webhook) {
         Counter.builder("webhook.delivery")
                 .tag("status", "success")
-                .tag("webhook_id", webhook.getId().toString())
                 .register(meterRegistry)
                 .increment();
     }
@@ -452,7 +456,6 @@ public class WebhookDeliveryService {
     private void recordFailureMetric(Webhook webhook, int statusCode) {
         Counter.builder("webhook.delivery")
                 .tag("status", "failure")
-                .tag("webhook_id", webhook.getId().toString())
                 .tag("http_status", String.valueOf(statusCode))
                 .register(meterRegistry)
                 .increment();
@@ -460,7 +463,6 @@ public class WebhookDeliveryService {
 
     private void recordDurationMetric(Webhook webhook, long durationMs) {
         Timer.builder("webhook.delivery.duration")
-                .tag("webhook_id", webhook.getId().toString())
                 .register(meterRegistry)
                 .record(durationMs, TimeUnit.MILLISECONDS);
     }

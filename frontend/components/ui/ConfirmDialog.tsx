@@ -14,6 +14,10 @@ interface ConfirmDialogProps {
   loading?: boolean;
 }
 
+// Focus-trap pattern adopted from Modal.tsx (S2-E audit N-4)
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function ConfirmDialog({
                                 isOpen,
                                 onClose,
@@ -27,20 +31,44 @@ export function ConfirmDialog({
                               }: ConfirmDialogProps) {
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Handle escape key
+  // Handle escape key + Tab focus trap (cycle within focusable children)
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !loading) {
         onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusableElements = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey) {
+        if (document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
       }
     },
     [loading, onClose]
   );
 
-  // Focus trap and escape handling
+  // Focus trap + escape handling + previously-focused element restoration
   useEffect(() => {
     if (isOpen) {
+      // Save current focus to restore on close
+      previousFocusRef.current = document.activeElement as HTMLElement;
       document.addEventListener('keydown', handleKeyDown);
       // Focus the cancel button when dialog opens (safer default)
       cancelButtonRef.current?.focus();
@@ -51,6 +79,8 @@ export function ConfirmDialog({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
+      // Restore focus to the element that triggered the dialog
+      previousFocusRef.current?.focus();
     };
   }, [isOpen, handleKeyDown]);
 
@@ -108,13 +138,13 @@ export function ConfirmDialog({
     <div
       className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50"
       onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-description"
     >
       <div
         ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
         className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >

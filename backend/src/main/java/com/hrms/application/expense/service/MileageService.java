@@ -20,14 +20,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -41,6 +42,27 @@ public class MileageService {
     private final ExpenseClaimRepository expenseClaimRepository;
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
+    private final JdbcTemplate jdbcTemplate;
+
+    /**
+     * HIGH-003 FIX (V145): atomic per-tenant/per-month sequence allocator for
+     * mileage claim numbers. Replaces the prior UUID-suffix scheme which both
+     * lost ordering and was not gap-free across pods. The {@code RETURNING}
+     * clause makes this safe under concurrent inserts.
+     */
+    private static final String NEXT_MILEAGE_SEQ_SQL =
+            "INSERT INTO mileage_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = mileage_claim_sequence.current_value + 1 " +
+                    "RETURNING current_value";
+
+    private String generateMileageClaimNumber(UUID tenantId) {
+        String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
+        Long seq = jdbcTemplate.queryForObject(NEXT_MILEAGE_SEQ_SQL, Long.class, tenantId, ym);
+        if (seq == null) {
+            throw new IllegalStateException("Failed to allocate mileage claim sequence value for tenant " + tenantId);
+        }
+        return String.format("MIL-%s-%04d", ym, seq);
+    }
 
     @Transactional
     public MileageLogResponse createMileageLog(UUID employeeId, MileageLogRequest request) {
@@ -284,8 +306,7 @@ public class MileageService {
     }
 
     private ExpenseClaim createExpenseClaimFromMileage(MileageLog mileageLog, UUID tenantId) {
-        String prefix = "MLG-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "-";
-        String claimNumber = prefix + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String claimNumber = generateMileageClaimNumber(tenantId);
 
         String description = String.format("Mileage reimbursement: %s to %s (%s km, %s)",
                 mileageLog.getFromLocation(), mileageLog.getToLocation(),

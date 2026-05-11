@@ -27,13 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final AuditLogService auditLogService;
     private final WebSocketNotificationService webSocketNotificationService;
     private final NotificationService notificationService;
+    private final JdbcTemplate jdbcTemplate;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
@@ -69,7 +71,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             DomainEventPublisher domainEventPublisher,
             AuditLogService auditLogService,
             WebSocketNotificationService webSocketNotificationService,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            JdbcTemplate jdbcTemplate) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.dataScopeService = dataScopeService;
@@ -79,6 +82,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         this.auditLogService = auditLogService;
         this.webSocketNotificationService = webSocketNotificationService;
         this.notificationService = notificationService;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Transactional
@@ -598,32 +602,28 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     // ======================== Claim Number Generation ========================
 
     /**
-     * HIGH-003 FIX: Generates a unique claim number using synchronized block to prevent
-     * race conditions where concurrent requests could read the same max number and
-     * produce duplicate claim numbers.
+     * HIGH-003 FIX (V145): Generates a unique claim number using an atomic
+     * INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING upsert on the
+     * {@code expense_claim_sequence} table. This is process-safe across all
+     * JVM pods, replacing the prior per-JVM {@code synchronized} block which
+     * could not prevent duplicates under horizontal scale.
      * <p>
-     * Additionally appends a UUID fragment as a safety net for edge cases where
-     * two JVM instances could generate the same number.
+     * The year-month bucket is computed in UTC so the sequence roll-over is
+     * deterministic regardless of JVM zone.
      */
-    private synchronized String generateClaimNumber(UUID tenantId) {
-        String prefix = "EXP-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "-";
-        String maxNumber = expenseClaimRepository.findMaxClaimNumber(tenantId);
+    private static final String NEXT_EXPENSE_SEQ_SQL =
+            "INSERT INTO expense_claim_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = expense_claim_sequence.current_value + 1 " +
+                    "RETURNING current_value";
 
-        int nextNumber = 1;
-        if (maxNumber != null && maxNumber.startsWith(prefix)) {
-            try {
-                // Extract only the numeric part (first 4 chars after prefix) to handle
-                // claim numbers that may have a UUID suffix appended
-                String afterPrefix = maxNumber.substring(prefix.length());
-                String numPart = afterPrefix.length() > 4 ? afterPrefix.substring(0, 4) : afterPrefix;
-                nextNumber = Integer.parseInt(numPart) + 1;
-            } catch (NumberFormatException e) {
-                log.warn("generateClaimNumber: could not parse numeric suffix from '{}' (prefix='{}') — " +
-                        "resetting sequence to 1 for tenant {}. Check for data corruption.", maxNumber, prefix, tenantId);
-            }
+    private String generateClaimNumber(UUID tenantId) {
+        String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
+        Long seq = jdbcTemplate.queryForObject(NEXT_EXPENSE_SEQ_SQL, Long.class, tenantId, ym);
+        if (seq == null) {
+            // Should be unreachable — INSERT ON CONFLICT RETURNING always yields a row.
+            throw new IllegalStateException("Failed to allocate expense claim sequence value for tenant " + tenantId);
         }
-
-        return prefix + String.format("%04d", nextNumber);
+        return String.format("EXP-%s-%04d", ym, seq);
     }
 
     /**

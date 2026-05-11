@@ -393,8 +393,8 @@ public class MultiChannelNotificationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
-        MultiChannelNotification notification = notificationRepository.findById(notificationId)
-                .filter(n -> n.getTenantId().equals(tenantId) && n.getRecipientId().equals(userId))
+        MultiChannelNotification notification = notificationRepository.findByIdAndTenantId(notificationId, tenantId)
+                .filter(n -> n.getRecipientId().equals(userId))
                 .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
 
         notification.setStatus(NotificationStatus.READ);

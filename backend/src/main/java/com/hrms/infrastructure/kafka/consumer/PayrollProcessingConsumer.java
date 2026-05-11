@@ -69,6 +69,7 @@ public class PayrollProcessingConsumer {
             TenantContext.setCurrentTenant(tenantId);
         }
 
+        boolean claimed = false;
         try {
             // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
@@ -76,6 +77,7 @@ public class PayrollProcessingConsumer {
                 acknowledgment.acknowledge();
                 return;
             }
+            claimed = true;
 
             processPayrollRun(runId, triggeredBy, event);
 
@@ -84,6 +86,13 @@ public class PayrollProcessingConsumer {
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Unrecoverable error processing payroll run {}: {}", runId, e.getMessage(), e);
+
+            // Release the idempotency claim so the Kafka retry (or operator resubmit)
+            // can re-enter processing. Without this the 24h TTL would silently swallow
+            // every redelivery, masking the real failure and blocking legitimate retries.
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
 
             // Roll the run back to DRAFT so it can be resubmitted
             rollbackToDraft(runId, triggeredBy, e);

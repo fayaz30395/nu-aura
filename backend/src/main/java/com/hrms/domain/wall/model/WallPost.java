@@ -58,7 +58,7 @@ public class WallPost {
     private boolean pinned = false;
 
     @Column(name = "is_deleted")
-    private boolean deleted = false;
+    private boolean isDeleted = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility", length = 20)
@@ -169,19 +169,19 @@ public class WallPost {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return isDeleted;
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.isDeleted = deleted;
     }
 
     public boolean isActive() {
-        return !deleted;
+        return !isDeleted;
     }
 
     public void setActive(boolean active) {
-        this.deleted = !active;
+        this.isDeleted = !active;
     }
 
     public PostVisibility getVisibility() {

@@ -3,12 +3,14 @@ package com.hrms.common.security;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +49,20 @@ public class TokenBlacklistService {
     @Value("${app.jwt.refresh-expiration:86400000}")
     private long refreshExpirationMs;
 
-    private boolean redisAvailable = true;
+    /**
+     * Whether Redis is currently reachable. Updated at construction and
+     * by {@link #redisHealthProbe()} every 30 s. Reads / writes are racy
+     * (intentional — single boolean, no consistency requirement) but ordering
+     * within a single request is not relied upon: each public method re-reads
+     * the field at most once.
+     */
+    private volatile boolean redisAvailable = true;
+
+    /**
+     * Latched so we only log the multi-pod logout-bypass warning once per outage
+     * (cleared on Redis recovery). Avoids log flooding when Redis is sustained-down.
+     */
+    private final AtomicBoolean fallbackWarningEmitted = new AtomicBoolean(false);
 
     public TokenBlacklistService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -63,6 +78,47 @@ public class TokenBlacklistService {
             redisAvailable = false;
             log.warn("Redis unavailable for token blacklist, using in-memory fallback. " +
                     "This is acceptable for single-instance deployments but not recommended for production clusters.");
+        }
+    }
+
+    /**
+     * Re-probe Redis every 30 seconds and flip {@link #redisAvailable} on state
+     * transitions. Without this, an outage at startup would leave the service
+     * permanently stuck on the per-pod in-memory fallback even after Redis
+     * recovers — which silently breaks multi-pod logout correctness.
+     *
+     * <p>Only logs on transitions to avoid log flooding.</p>
+     */
+    @Scheduled(fixedDelay = 30_000)
+    public void redisHealthProbe() {
+        boolean previous = redisAvailable;
+        try {
+            // Use a lightweight read (matches what we'd do in the hot path) instead
+            // of PING so connection-pool / serializer / auth issues also surface.
+            redisTemplate.opsForValue().get("__health_probe__");
+            if (!previous) {
+                log.info("Token blacklist: Redis recovered — switching back to Redis-backed blacklist");
+                fallbackWarningEmitted.set(false);
+            }
+            redisAvailable = true;
+        } catch (RuntimeException e) {
+            if (previous) {
+                log.warn("Token blacklist: Redis became unreachable — falling back to in-memory blacklist. " +
+                        "Cross-pod logout will be best-effort until Redis returns. Cause: {}", e.getMessage());
+            }
+            redisAvailable = false;
+        }
+    }
+
+    /**
+     * Log a single warning the first time the per-pod fallback is hit during the
+     * current outage. Auto-resets when {@link #redisHealthProbe()} observes Redis
+     * recovery, so each fresh outage produces exactly one log line.
+     */
+    private void warnFallbackUsedOnce() {
+        if (fallbackWarningEmitted.compareAndSet(false, true)) {
+            log.warn("Token blacklisted in per-pod fallback only — " +
+                    "multi-pod logout-bypass window during Redis outage");
         }
     }
 
@@ -95,9 +151,11 @@ public class TokenBlacklistService {
                 log.debug("Token {} blacklisted in Redis with TTL {} seconds", jti, ttl.getSeconds());
             } catch (RuntimeException e) {
                 log.error("Failed to blacklist token in Redis, falling back to in-memory", e);
+                warnFallbackUsedOnce();
                 blacklistInMemory(jti, expiration.getTime());
             }
         } else {
+            warnFallbackUsedOnce();
             blacklistInMemory(jti, expiration.getTime());
         }
     }
@@ -156,6 +214,7 @@ public class TokenBlacklistService {
             }
         }
         // Redis-down fallback: keep the marker locally so this pod still enforces revocation.
+        warnFallbackUsedOnce();
         revokedBeforeFallback.merge(userId, epochMs, Math::max);
     }
 

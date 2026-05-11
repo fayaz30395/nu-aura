@@ -9,12 +9,10 @@ import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
-import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +34,7 @@ public class AttendanceRecordService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final AttendanceTimeEntryRepository timeEntryRepository;
     private final AttendanceConfigProperties config;
-    private final EventPublisher eventPublisher;
+    private final AttendanceAuditPublisher attendanceAuditPublisher;
     private final ShiftAttendanceService shiftAttendanceService;
     private final TenantAttendanceConfigService tenantAttendanceConfigService;
 
@@ -129,8 +127,8 @@ public class AttendanceRecordService {
 
         log.info("Check-in completed for employee {} at {} via {}", employeeId, actualCheckInTime, source);
 
-        // Publish audit event for check-in (best-effort)
-        publishAttendanceAuditEvent(employeeId, "CHECK_IN", "AttendanceRecord", savedRecord.getId(),
+        // Publish audit event for check-in (best-effort, truly async via dedicated component)
+        attendanceAuditPublisher.publish(employeeId, "CHECK_IN", "AttendanceRecord", savedRecord.getId(),
                 tenantId, "Employee checked in via " + source);
 
         return savedRecord;
@@ -205,8 +203,8 @@ public class AttendanceRecordService {
                 employeeId, actualCheckOutTime, source, record.getAttendanceDate());
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
 
-        // Publish audit event for check-out (best-effort)
-        publishAttendanceAuditEvent(employeeId, "CHECK_OUT", "AttendanceRecord", savedRecord.getId(),
+        // Publish audit event for check-out (best-effort, truly async via dedicated component)
+        attendanceAuditPublisher.publish(employeeId, "CHECK_OUT", "AttendanceRecord", savedRecord.getId(),
                 tenantId, "Employee checked out via " + source);
 
         return savedRecord;
@@ -263,6 +261,9 @@ public class AttendanceRecordService {
         }
 
         if (relevantCheckInTime != null) {
+            // TODO(DST): Duration.between on LocalDateTime ignores DST shifts (spring-forward/fall-back
+            // produces ±1h error). Migrate checkInTime/checkOutTime columns to TIMESTAMPTZ and switch
+            // these fields to OffsetDateTime/Instant in the next sprint. Tracked: NUAURA-ATTENDANCE-DST.
             long hoursWorked = java.time.Duration.between(relevantCheckInTime, checkOutTime).toHours();
             if (hoursWorked > config.getMaxOvernightShiftHours()) {
                 log.warn("Unusually long shift detected for record {}: {} hours", record.getId(), hoursWorked);
@@ -477,8 +478,8 @@ public class AttendanceRecordService {
         record.approveRegularization(approverId);
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
 
-        // Publish audit event for regularization approval (best-effort)
-        publishAttendanceAuditEvent(approverId, "APPROVE", "AttendanceRecord", savedRecord.getId(),
+        // Publish audit event for regularization approval (best-effort, truly async via dedicated component)
+        attendanceAuditPublisher.publish(approverId, "APPROVE", "AttendanceRecord", savedRecord.getId(),
                 tenantId, "Attendance regularization approved");
 
         return savedRecord;
@@ -700,29 +701,6 @@ public class AttendanceRecordService {
         record.rejectRegularization(rejectorId, reason);
         log.info("Regularization rejected for record {} by {}", id, rejectorId);
         return attendanceRecordRepository.save(record);
-    }
-
-    // ===================== Kafka Event Publishing =====================
-
-    /**
-     * Publishes an audit event for attendance operations asynchronously. Best-effort: logs errors
-     * but never fails the business operation.
-     * <p>
-     * BUG-014 FIX: Made async to prevent blocking check-in/out operations.
-     * Kafka event publishing is now non-blocking.
-     */
-    @Async
-    private void publishAttendanceAuditEvent(UUID userId, String action, String entityType,
-                                             UUID entityId, UUID tenantId, String description) {
-        try {
-            eventPublisher.publishAuditEvent(
-                    userId, action, entityType, entityId, tenantId,
-                    null, null, null, null, null, null, null, null,
-                    description);
-        } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
-            log.warn("Failed to publish attendance audit event (action={}, entityId={}): {}",
-                    action, entityId, e.getMessage());
-        }
     }
 
     // ===================== Result Classes =====================

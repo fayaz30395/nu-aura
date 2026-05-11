@@ -39,6 +39,10 @@ public class SecurityContext {
     private static final ThreadLocal<Map<String, Set<UUID>>> customEmployeeIds = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Set<UUID>>> customDepartmentIds = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Set<UUID>>> customLocationIds = new ThreadLocal<>();
+    // Audit M-C3 / M-M5: when a SuperAdmin acts on behalf of a tenant user (impersonation),
+    // the underlying admin is tracked here so the audit chain can record both actor and impersonator.
+    // {@code null} on this ThreadLocal means "no impersonation in progress on this request".
+    private static final ThreadLocal<UUID> impersonatorId = new ThreadLocal<>();
 
     /**
      * Set current user context (called during authentication)
@@ -528,6 +532,45 @@ public class SecurityContext {
         return appPerms;
     }
 
+    // ==================== Impersonation Forensics ====================
+
+    /**
+     * Returns the UUID of the SuperAdmin currently impersonating a tenant user,
+     * or {@code null} when no impersonation is active on this request thread.
+     *
+     * <p>Audit M-C3 / M-M5: persisted on {@code audit_logs.impersonator_id} so the
+     * forensic chain shows both who acted (impersonated principal) and who was
+     * actually behind the action (the SuperAdmin).</p>
+     */
+    public static UUID getCurrentImpersonatorId() {
+        return impersonatorId.get();
+    }
+
+    /**
+     * Marks this request as an impersonation session. Should be set by the
+     * SuperAdmin impersonation filter immediately after swapping the principal,
+     * and cleared by the same filter at end-of-request.
+     */
+    public static void setCurrentImpersonatorId(UUID id) {
+        impersonatorId.set(id);
+    }
+
+    /**
+     * @return true when a SuperAdmin is currently impersonating another user
+     *         on this request thread.
+     */
+    public static boolean isImpersonating() {
+        return impersonatorId.get() != null;
+    }
+
+    /**
+     * Clears only the impersonator marker — preserves the rest of the security
+     * context. Use this when ending an impersonation session mid-request.
+     */
+    public static void clearImpersonator() {
+        impersonatorId.remove();
+    }
+
     // ==================== Clear Context ====================
 
     public static void clear() {
@@ -546,5 +589,8 @@ public class SecurityContext {
         customEmployeeIds.remove();
         customDepartmentIds.remove();
         customLocationIds.remove();
+        // Audit M-C3 / M-M5: impersonator marker must be wiped along with the rest
+        // of the per-request context to prevent leak into a recycled thread.
+        impersonatorId.remove();
     }
 }

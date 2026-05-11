@@ -2,7 +2,9 @@ package com.hrms.common.security;
 
 import com.hrms.common.config.CookieConfig;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -42,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final EmployeeRepository employeeRepository;
     private final ScopeContextService scopeContextService;
     private final SecurityService securityService;
+    private final TenantRepository tenantRepository;
 
     /**
      * SEC: Bearer header fallback is OFF by default. When false (prod default),
@@ -55,12 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    UserDetailsService userDetailsService,
                                    EmployeeRepository employeeRepository,
                                    ScopeContextService scopeContextService,
-                                   SecurityService securityService) {
+                                   SecurityService securityService,
+                                   TenantRepository tenantRepository) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.employeeRepository = employeeRepository;
         this.scopeContextService = scopeContextService;
         this.securityService = securityService;
+        this.tenantRepository = tenantRepository;
     }
 
     @Override
@@ -73,6 +78,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromToken(jwt);
                 UUID tenantId = tokenProvider.getTenantIdFromToken(jwt);
+
+                // SEC (M-C1): Reject requests whose tenant is not ACTIVE. A valid JWT
+                // for a SUSPENDED / INACTIVE / PENDING_ACTIVATION tenant must not be
+                // honored — even though the signature is valid, the tenant has been
+                // disabled by the admin (billing freeze, abuse, off-boarding, etc.).
+                // Done BEFORE TenantContext.setCurrentTenant() so downstream code never
+                // executes under a disabled tenant.
+                if (tenantId != null) {
+                    Optional<Tenant> tenantOpt = tenantRepository.findById(tenantId);
+                    if (tenantOpt.isEmpty()
+                            || tenantOpt.get().getStatus() != Tenant.TenantStatus.ACTIVE) {
+                        Tenant.TenantStatus status = tenantOpt
+                                .map(Tenant::getStatus)
+                                .orElse(null);
+                        log.warn("Rejecting request for non-active tenant {} (status={}) from IP {} path {}",
+                                tenantId, status, request.getRemoteAddr(), request.getRequestURI());
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"error\":\"Tenant suspended\"}");
+                        return;
+                    }
+                }
 
                 // SEC: TenantContext is intentionally NOT set here. It is set ONLY after
                 // userDetails loads successfully (below), so a forged token cannot leak

@@ -3,10 +3,13 @@ package com.hrms.application.payment.service;
 import com.hrms.domain.payment.PaymentConfig;
 import com.hrms.domain.payment.PaymentTransaction;
 import com.hrms.domain.payment.PaymentRefund;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +24,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StripeAdapter implements PaymentGatewayAdapter {
 
+    /**
+     * QA sweep S2-C K-6: Stripe (and Razorpay) adapters are stubs. The enabled flag
+     * lets payment-service code know not to route real money through them yet; if it
+     * is flipped on while the adapter is still a stub, log a startup WARN.
+     */
+    @Value("${app.payments.adapters.enabled:false}")
+    private boolean enabled;
+
+    /** Latches so {@link #verifyWebhookSignature(String, String)} logs at most one WARN per startup. */
+    private static final AtomicBoolean SIGNATURE_WARN_LOGGED = new AtomicBoolean(false);
+
     private PaymentConfig config;
+
+    @PostConstruct
+    void warnIfEnabledButStubbed() {
+        if (enabled) {
+            log.warn("StripeAdapter is enabled (app.payments.adapters.enabled=true) but the implementation is still a STUB — no real Stripe API calls are made.");
+        }
+    }
 
     @Override
     public void initialize(PaymentConfig config) {
@@ -99,22 +120,20 @@ public class StripeAdapter implements PaymentGatewayAdapter {
         // Requires: stripe-java dependency + STRIPE_WEBHOOK_SECRET env var.
         // Until the SDK is integrated, REJECT all signatures to prevent unverified
         // webhook payloads from mutating payment state (fail-secure posture).
-        log.warn("Stripe webhook signature verification is not implemented — rejecting webhook");
+        // QA sweep S2-C K-6: log once per startup so this fail-secure stub is visible
+        // in deployment logs without spamming each webhook.
+        if (SIGNATURE_WARN_LOGGED.compareAndSet(false, true)) {
+            log.warn("Stripe webhook signature verification is STUBBED — every webhook will be rejected until NUAURA-PAYMENT-005 ships.");
+        }
         return false;
     }
 
     @Override
     public PaymentWebhookData parseWebhookPayload(String payload) {
-        try {
-            // Integration point: Parse Stripe webhook payload
-            // Example: Parse Event object and extract payment data
-            PaymentWebhookData data = new PaymentWebhookData();
-            data.setEventType("payment_intent.succeeded"); // Parse from payload
-            return data;
-        } catch (RuntimeException e) {
-            log.error("Stripe webhook parsing failed", e);
-            return null;
-        }
+        // QA sweep S2-C K-6: previously this returned a fabricated "payment_intent.succeeded"
+        // event regardless of the real payload — extremely dangerous for any caller that
+        // believed the parse "worked". Throw explicitly until the real parser ships.
+        throw new UnsupportedOperationException("Stripe webhook payload parsing not implemented");
     }
 
     @Override

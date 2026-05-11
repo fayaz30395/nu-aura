@@ -94,6 +94,19 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
             "GROUP BY r.locationCode")
     List<Object[]> getSummaryByLocation(@Param("tenantId") UUID tenantId, @Param("runId") UUID payrollRunId);
 
+    /**
+     * Bulk-update status for all records in a payroll run that currently have a specific status.
+     * Tenant-scoped. Replaces a per-record save loop on payroll approval.
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE EmployeePayrollRecord r SET r.status = :newStatus " +
+            "WHERE r.tenantId = :tenantId AND r.payrollRun.id = :runId AND r.status = :fromStatus")
+    int bulkUpdateStatus(@Param("tenantId") UUID tenantId,
+                         @Param("runId") UUID runId,
+                         @Param("newStatus") EmployeePayrollRecord.RecordStatus newStatus,
+                         @Param("fromStatus") EmployeePayrollRecord.RecordStatus fromStatus);
+
     // ==================== DEPRECATED - DO NOT USE ====================
 
     /**

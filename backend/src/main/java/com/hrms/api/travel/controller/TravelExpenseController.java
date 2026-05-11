@@ -1,7 +1,9 @@
 package com.hrms.api.travel.controller;
 
 import com.hrms.api.travel.dto.CreateTravelExpenseRequest;
+import com.hrms.api.travel.dto.TravelExpenseApprovalRequest;
 import com.hrms.api.travel.dto.TravelExpenseDto;
+import com.hrms.api.travel.dto.TravelExpenseRejectionRequest;
 import com.hrms.application.travel.service.TravelExpenseService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -14,9 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.hrms.common.exception.ValidationException;
-
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -79,13 +78,15 @@ public class TravelExpenseController {
     @Operation(summary = "Approve travel expense", description = "Approve a travel expense")
     public ResponseEntity<TravelExpenseDto> approveExpense(
             @PathVariable UUID id,
-            @RequestBody(required = false) Map<String, Object> body
+            @Valid @RequestBody(required = false) TravelExpenseApprovalRequest request
     ) {
-        UUID approverId = parseUuid(body, "approverId");
-        BigDecimal approvedAmount = parseBigDecimal(body, "approvedAmount");
-        String comments = readString(body, "comments");
-
-        return ResponseEntity.ok(travelExpenseService.approveExpense(id, approverId, approvedAmount, comments));
+        // L-10.1 fix: typed body, bounded fields — no raw Map<String, Object> mass-assignment.
+        UUID approverId = request != null ? request.getApproverId() : null;
+        return ResponseEntity.ok(travelExpenseService.approveExpense(
+                id,
+                approverId,
+                request != null ? request.getApprovedAmount() : null,
+                request != null ? request.getComments() : null));
     }
 
     @PostMapping("/{id}/reject")
@@ -93,10 +94,11 @@ public class TravelExpenseController {
     @Operation(summary = "Reject travel expense", description = "Reject a travel expense")
     public ResponseEntity<TravelExpenseDto> rejectExpense(
             @PathVariable UUID id,
-            @RequestBody(required = false) Map<String, String> body
+            @Valid @RequestBody(required = false) TravelExpenseRejectionRequest request
     ) {
-        UUID approverId = parseUuid(body, "approverId");
-        String reason = body != null ? body.get("reason") : null;
+        // L-10.1 fix: typed body, bounded fields — no raw Map<String, String> mass-assignment.
+        UUID approverId = request != null ? request.getApproverId() : null;
+        String reason = request != null ? request.getReason() : null;
         return ResponseEntity.ok(travelExpenseService.rejectExpense(id, approverId, reason));
     }
 
@@ -115,31 +117,5 @@ public class TravelExpenseController {
             @PathVariable UUID travelRequestId
     ) {
         return ResponseEntity.ok(travelExpenseService.getExpenseSummary(travelRequestId));
-    }
-
-    private UUID parseUuid(Map<String, ?> body, String key) {
-        if (body == null || body.get(key) == null) {
-            return null;
-        }
-        try {
-            return UUID.fromString(body.get(key).toString());
-        } catch (IllegalArgumentException e) {
-            throw new ValidationException("Invalid " + key + " format: " + body.get(key));
-        }
-    }
-
-    private BigDecimal parseBigDecimal(Map<String, ?> body, String key) {
-        if (body == null || body.get(key) == null) {
-            return null;
-        }
-        try {
-            return new BigDecimal(body.get(key).toString());
-        } catch (NumberFormatException e) {
-            throw new ValidationException("Invalid " + key + " format: " + body.get(key));
-        }
-    }
-
-    private String readString(Map<String, ?> body, String key) {
-        return body != null && body.get(key) != null ? body.get(key).toString() : null;
     }
 }

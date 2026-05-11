@@ -345,8 +345,12 @@ class AuthServiceTest {
         @Test
         @DisplayName("Should reset password with valid token")
         void shouldResetPasswordWithValidToken() {
+            // Sprint-1 hardening (P-1.4): reset tokens are now stored as a BCrypt
+            // hash. AuthService.resetPassword scans active (unexpired) candidates
+            // and matches the submitted token via PasswordEncoder#matches.
             String resetToken = "valid-reset-token";
-            user.setPasswordResetToken(resetToken);
+            String storedHash = "$2a$10$mockedHashThatPasswordEncoderMatchesAgainst";
+            user.setPasswordResetTokenHash(storedHash);
             user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
 
             ResetPasswordRequest request = new ResetPasswordRequest();
@@ -354,53 +358,65 @@ class AuthServiceTest {
             request.setNewPassword("newSecurePassword");
             request.setConfirmPassword("newSecurePassword");
 
-            when(userRepository.findByPasswordResetToken(resetToken))
-                    .thenReturn(Optional.of(user));
+            when(userRepository.findActivePasswordResetCandidates(any()))
+                    .thenReturn(List.of(user));
+            when(passwordEncoder.matches(eq(resetToken), eq(storedHash))).thenReturn(true);
             when(passwordEncoder.encode("newSecurePassword")).thenReturn("newHashedPassword");
             when(userRepository.save(any(User.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             authService.resetPassword(request);
 
-            verify(userRepository).save(argThat(savedUser -> savedUser.getPasswordResetToken() == null &&
-                    savedUser.getPasswordResetTokenExpiry() == null));
+            // Verify both plaintext and hashed reset-token columns are cleared.
+            verify(userRepository).save(argThat(savedUser ->
+                    savedUser.getPasswordResetToken() == null &&
+                            savedUser.getPasswordResetTokenHash() == null &&
+                            savedUser.getPasswordResetTokenExpiry() == null));
             verify(emailNotificationService).sendPasswordChangedEmail(eq("test@example.com"), anyString());
         }
 
         @Test
         @DisplayName("Should throw exception for expired reset token")
         void shouldThrowExceptionForExpiredResetToken() {
-            String resetToken = "expired-reset-token";
-            user.setPasswordResetToken(resetToken);
-            user.setPasswordResetTokenExpiry(LocalDateTime.now().minusHours(1)); // Expired
-
+            // The repository query findActivePasswordResetCandidates already filters by
+            // expiry > now — so an expired token surfaces as an empty candidate list,
+            // which the service translates to an Invalid/Expired AuthenticationException.
             ResetPasswordRequest request = new ResetPasswordRequest();
-            request.setToken(resetToken);
+            request.setToken("expired-reset-token");
             request.setNewPassword("newSecurePassword");
             request.setConfirmPassword("newSecurePassword");
 
-            when(userRepository.findByPasswordResetToken(resetToken))
-                    .thenReturn(Optional.of(user));
+            when(userRepository.findActivePasswordResetCandidates(any()))
+                    .thenReturn(Collections.emptyList());
 
             assertThatThrownBy(() -> authService.resetPassword(request))
                     .isInstanceOf(AuthenticationException.class)
-                    .hasMessageContaining("expired");
+                    .hasMessageContaining("Invalid or expired");
+            verify(userRepository, never()).save(any(User.class));
         }
 
         @Test
         @DisplayName("Should throw exception for invalid reset token")
         void shouldThrowExceptionForInvalidResetToken() {
+            // Candidate exists in DB but BCrypt match fails — must surface as a
+            // generic Invalid/Expired error (no enumeration leak) and not persist.
+            String storedHash = "$2a$10$mockedHashThatPasswordEncoderMatchesAgainst";
+            user.setPasswordResetTokenHash(storedHash);
+            user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
+
             ResetPasswordRequest request = new ResetPasswordRequest();
             request.setToken("invalid-token");
             request.setNewPassword("newSecurePassword");
             request.setConfirmPassword("newSecurePassword");
 
-            when(userRepository.findByPasswordResetToken("invalid-token"))
-                    .thenReturn(Optional.empty());
+            when(userRepository.findActivePasswordResetCandidates(any()))
+                    .thenReturn(List.of(user));
+            when(passwordEncoder.matches(eq("invalid-token"), eq(storedHash))).thenReturn(false);
 
             assertThatThrownBy(() -> authService.resetPassword(request))
                     .isInstanceOf(AuthenticationException.class)
                     .hasMessageContaining("Invalid");
+            verify(userRepository, never()).save(any(User.class));
         }
     }
 

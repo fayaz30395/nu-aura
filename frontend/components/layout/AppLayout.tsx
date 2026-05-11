@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -91,6 +91,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   // localStorage is read in useEffect (client-only) to sync the persisted state.
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed ?? false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Refs for mobile drawer focus management (audit N-6)
+  const mobileDrawerRef = useRef<HTMLElement | null>(null);
+  const previousMobileFocusRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     // Sync sidebar collapsed state from localStorage on client hydration
     const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
@@ -98,6 +101,23 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       setIsCollapsed(saved === 'true');
     }
   }, []);
+
+  // Mobile drawer focus management — focus first link on open, restore on close (audit N-6)
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      // Save the currently-focused element (typically the hamburger button) for restoration
+      previousMobileFocusRef.current = document.activeElement as HTMLElement;
+      // Focus the first link in the drawer on next paint
+      requestAnimationFrame(() => {
+        const firstLink = mobileDrawerRef.current?.querySelector<HTMLElement>('a, button');
+        firstLink?.focus();
+      });
+    } else if (previousMobileFocusRef.current) {
+      // Return focus to the element that triggered the drawer (usually the hamburger)
+      previousMobileFocusRef.current.focus();
+      previousMobileFocusRef.current = null;
+    }
+  }, [isMobileMenuOpen]);
 
   // Keyboard shortcut for toggling sidebar (Cmd/Ctrl + B)
   useEffect(() => {
@@ -292,6 +312,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             className="fixed inset-0 z-30 bg-[var(--bg-overlay)] md:hidden transition-opacity duration-300"
           />
           <aside
+            ref={mobileDrawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Sidebar navigation"
             className="fixed inset-y-0 left-0 z-40 w-72 md:hidden transform transition-transform duration-300 ease-out animate-slide-in-left"
           >
             <Sidebar
@@ -339,7 +363,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         )}
 
         {/* Content Area — scrollable, fills remaining vertical space */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
+        >
           <AuthGuard>
             <ErrorBoundary resetKeys={[pathname]}>
               <div

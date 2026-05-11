@@ -292,6 +292,10 @@ export default function CoursePlayerPage() {
         );
 
       case 'QUIZ':
+        // QA sweep S2-C K-6: the quiz player is not implemented yet. Previously this
+        // surface exposed a "Mark as Complete" bypass that let learners finish a course
+        // without ever answering a question. The button is now disabled so quiz lessons
+        // genuinely block course completion until the real player ships.
         return (
           <div
             className="flex flex-col items-center justify-center h-64 bg-accent-250 rounded-lg border border-accent-400 gap-4">
@@ -299,20 +303,15 @@ export default function CoursePlayerPage() {
             <div className="text-center">
               <p className="font-semibold text-accent-900">Quiz: {activeContent.title}</p>
               <p className="text-sm text-accent-800 mt-1">
-                Quiz engine coming soon. Mark as complete to proceed.
+                Quiz player in development. Quizzes will be required before completion.
               </p>
             </div>
             <button
-              onClick={() => markComplete(activeContent.id)}
-              disabled={contentStatus[activeContent.id] === 'completed'}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                contentStatus[activeContent.id] === 'completed'
-                  ? 'bg-success-100 text-success-700 cursor-default'
-                  : 'bg-accent-800 text-white hover:bg-accent-900'
-              }`}
+              disabled
+              aria-disabled="true"
+              className="px-4 py-2 rounded-md text-sm font-medium bg-[var(--bg-surface)] text-[var(--text-muted)] cursor-not-allowed opacity-60"
             >
-              {contentStatus[activeContent.id] === 'completed' ? <><Check
-                className="h-4 w-4"/> Completed</> : 'Take Quiz'}
+              Quiz unavailable
             </button>
           </div>
         );

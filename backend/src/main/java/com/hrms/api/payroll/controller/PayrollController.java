@@ -6,6 +6,7 @@ import com.hrms.application.payroll.service.PayrollRunService;
 import com.hrms.application.payroll.service.PayslipPdfService;
 import com.hrms.application.payroll.service.PayslipService;
 import com.hrms.application.payroll.service.SalaryStructureService;
+import com.hrms.api.payroll.dto.PayrollInputRequest;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
@@ -439,8 +440,9 @@ public class PayrollController {
     @PostMapping("/components/evaluate")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<Map<String, BigDecimal>> evaluateComponents(
-            @RequestBody Map<String, BigDecimal> inputValues) {
-        Map<String, BigDecimal> results = payrollComponentService.evaluateComponents(inputValues);
+            @Valid @RequestBody PayrollInputRequest request) {
+        // L-10.1 fix: bounded, validated input — no raw @RequestBody Map mass-assignment.
+        Map<String, BigDecimal> results = payrollComponentService.evaluateComponents(request.getInputs());
         return ResponseEntity.ok(results);
     }
 

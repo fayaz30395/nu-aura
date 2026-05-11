@@ -75,6 +75,8 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
+      role="banner"
+      aria-label="Top navigation"
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 border-b transition-all duration-150',
         'h-16 border-header-border',

@@ -260,16 +260,22 @@ public class CalendarService {
 
     @Transactional
     public Map<String, Object> importFromGoogle(String externalEventId) {
+        // QA sweep S2-C K-4: previously this logged "integration not configured" then
+        // fell through to mock data anyway. With mockMode off, fail loudly so callers
+        // can't mistake fabricated import payloads for a real Google Calendar pull.
         if (!mockMode) {
-            log.warn("Google Calendar import integration is not configured; using mock import response");
+            throw new UnsupportedOperationException(
+                    "Real Google Calendar import not implemented — set calendar.sync.mock-mode=true for development");
         }
         return createMockImportResponse(SyncProvider.GOOGLE, externalEventId);
     }
 
     @Transactional
     public Map<String, Object> importFromOutlook(String externalEventId) {
+        // QA sweep S2-C K-4: same fail-loud posture as importFromGoogle above.
         if (!mockMode) {
-            log.warn("Outlook Calendar import integration is not configured; using mock import response");
+            throw new UnsupportedOperationException(
+                    "Real Outlook Calendar import not implemented — set calendar.sync.mock-mode=true for development");
         }
         return createMockImportResponse(SyncProvider.OUTLOOK, externalEventId);
     }
@@ -327,8 +333,12 @@ public class CalendarService {
     }
 
     private Map<String, Object> performSync(CalendarEvent event, SyncProvider provider) {
+        // QA sweep S2-C K-4: when mock-mode is off, surface a clear error rather than
+        // silently writing a fake external event ID to the database.
         if (!mockMode) {
-            log.warn("Calendar sync provider {} integration is not configured; using mock sync response", provider);
+            throw new UnsupportedOperationException(
+                    "Real calendar sync not implemented for provider " + provider
+                            + " — set calendar.sync.mock-mode=true for development");
         }
         return performMockSync(event, provider);
     }

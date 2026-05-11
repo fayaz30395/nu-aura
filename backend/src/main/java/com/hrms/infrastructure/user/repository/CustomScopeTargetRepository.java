@@ -26,6 +26,13 @@ public interface CustomScopeTargetRepository extends JpaRepository<CustomScopeTa
     List<CustomScopeTarget> findByRolePermissionId(UUID rolePermissionId);
 
     /**
+     * Find all custom targets for a specific role permission, scoped to a tenant.
+     * Defense-in-depth: enforces tenant boundary even though CustomScopeTarget
+     * inherits a {@code @Where("is_deleted = false")} filter (audit M-H8).
+     */
+    List<CustomScopeTarget> findByRolePermissionIdAndTenantId(UUID rolePermissionId, UUID tenantId);
+
+    /**
      * Find all custom targets of a specific type for a role permission.
      */
     List<CustomScopeTarget> findByRolePermissionIdAndTargetType(UUID rolePermissionId, TargetType targetType);

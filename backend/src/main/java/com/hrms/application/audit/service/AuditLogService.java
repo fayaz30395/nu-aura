@@ -18,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -43,7 +45,17 @@ public class AuditLogService {
 
     // ==================== Logging Methods ====================
 
-    @Transactional
+    /**
+     * Asynchronous, isolated audit write — runs in its own REQUIRES_NEW transaction
+     * so an audit failure cannot poison the caller's business transaction, and audit
+     * persistence happens off the request thread (Q-P19).
+     *
+     * <p>Return type is {@code void} because no caller consumes the return value and
+     * {@code @Async} requires void or {@code Future<>}. Resolution: any failure is
+     * logged but not propagated.</p>
+     */
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditLog logAction(
             String entityType,
             UUID entityId,
@@ -83,12 +95,14 @@ public class AuditLogService {
         }
     }
 
-    @Transactional
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditLog logAction(String entityType, UUID entityId, AuditAction action) {
         return logAction(entityType, entityId, action, null, null, null);
     }
 
-    @Transactional
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditLog logSecurityEvent(AuditAction action, UUID userId, String description) {
         return logAction("USER", userId, action, null, null, description);
     }

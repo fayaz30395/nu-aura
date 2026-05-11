@@ -5,12 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Where;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Entity
+@Where(clause = "is_deleted = false")
 @Table(name = "fluence_activities", indexes = {
         @Index(name = "idx_fluence_activities_tenant_created", columnList = "tenantId,createdAt"),
         @Index(name = "idx_fluence_activities_tenant_actor", columnList = "tenantId,actorId"),

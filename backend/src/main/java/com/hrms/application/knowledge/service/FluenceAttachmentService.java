@@ -30,8 +30,13 @@ public class FluenceAttachmentService {
 
     /**
      * Upload an attachment for a Fluence content item.
+     *
+     * <p>Performance (Q-P17): this method is intentionally NOT {@code @Transactional}.
+     * The remote storage upload (multi-second HTTP round-trip) must not hold a DB
+     * connection open. The repository {@code save()} call below already runs in its
+     * own implicit transaction (Spring Data JPA's {@code SimpleJpaRepository.save}
+     * is {@code @Transactional}), so persistence is scoped only to the row insert.</p>
      */
-    @Transactional
     public KnowledgeAttachment uploadAttachment(UUID tenantId, UUID contentId,
                                                 KnowledgeAttachment.ContentType contentType,
                                                 MultipartFile file) {
@@ -42,6 +47,7 @@ public class FluenceAttachmentService {
             throw new BusinessException("File size exceeds the 50MB limit");
         }
 
+        // Non-transactional: object-storage upload happens before any DB transaction starts.
         FileStorageService.FileUploadResult result = fileStorageService.uploadFile(
                 file, CATEGORY_FLUENCE, contentId);
 
@@ -58,6 +64,8 @@ public class FluenceAttachmentService {
                 .contentTypeEnum(contentType.name())
                 .build();
 
+        // save() runs in its own SimpleJpaRepository @Transactional scope — tx is tight
+        // around the row insert only, not around the upload above.
         KnowledgeAttachment saved = attachmentRepository.save(attachment);
         log.info("Uploaded fluence attachment: {} for content {} (type={})",
                 saved.getId(), contentId, contentType);

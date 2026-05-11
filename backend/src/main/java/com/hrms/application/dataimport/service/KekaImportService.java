@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,6 +64,15 @@ public class KekaImportService {
     private final EmailNotificationService emailNotificationService;
 
     /**
+     * QA sweep S2-C K-5: API-driven KEKA import is not implemented — the executor below
+     * currently writes a fake history row with all-zero counters regardless of the input
+     * file. Gated behind {@code app.features.keka-import-api}. CLI-based imports go
+     * through {@code KekaMigrationService}.
+     */
+    @Value("${app.features.keka-import-api:false}")
+    private boolean apiImportEnabled;
+
+    /**
      * Upload a KEKA CSV file and extract headers
      */
     public KekaFileUploadResponse uploadKekaFile(MultipartFile file) throws IOException {
@@ -104,10 +114,18 @@ public class KekaImportService {
     }
 
     /**
-     * Execute KEKA import - create employees and users
+     * Execute KEKA import - create employees and users.
+     *
+     * <p>STUB-GATED (QA sweep S2-C K-5): the body below does not actually parse the
+     * uploaded CSV or create any employees; it persists a fake history row. Throw
+     * {@code 501} unless {@code app.features.keka-import-api} is explicitly enabled.</p>
      */
     @Transactional
     public KekaImportResult executeKekaImport(KekaImportExecuteRequest request) {
+        if (!apiImportEnabled) {
+            throw new UnsupportedOperationException(
+                    "API-driven Keka import not implemented; use KekaMigrationService via CLI");
+        }
         log.info("Executing KEKA import with file ID: {}", request.getFileId());
 
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -208,10 +226,18 @@ public class KekaImportService {
     }
 
     /**
-     * Get details of a specific import
+     * Get details of a specific import.
+     *
+     * <p>STUB-GATED (QA sweep S2-C K-5): there is no real lookup-by-id wired up;
+     * returns an empty entry that pretends the import exists. Same gate as
+     * {@link #executeKekaImport(KekaImportExecuteRequest)}.</p>
      */
     @Transactional(readOnly = true)
     public KekaImportHistoryEntry getImportDetails(String importId) {
+        if (!apiImportEnabled) {
+            throw new UnsupportedOperationException(
+                    "API-driven Keka import not implemented; use KekaMigrationService via CLI");
+        }
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // In a real implementation, you'd look up the import by ID

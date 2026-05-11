@@ -262,8 +262,8 @@ public class GlobalPayrollService {
         run.setStatus(GlobalPayrollRun.PayrollRunStatus.PROCESSING);
         run = payrollRunRepository.save(run);
 
-        // Process employee records
-        List<EmployeePayrollRecord> records = recordRepository.findByPayrollRun(runId);
+        // Process employee records (tenant-scoped)
+        List<EmployeePayrollRecord> records = recordRepository.findByTenantIdAndPayrollRun(tenantId, runId);
         String baseCurrency = run.getBaseCurrency();
         LocalDate rateDate = run.getPayPeriodEnd();
 
@@ -280,10 +280,7 @@ public class GlobalPayrollService {
                 record.setExchangeRate(rate);
                 record.setRateDate(rateDate);
 
-                // Totals are calculated in @PrePersist/@PreUpdate
-                recordRepository.save(record);
-
-                // Aggregate
+                // Aggregate (totals are calculated in @PrePersist/@PreUpdate during saveAll below)
                 if (record.getGrossPayBase() != null)
                     totalGross = totalGross.add(record.getGrossPayBase());
                 if (record.getTotalDeductionsBase() != null)
@@ -294,7 +291,6 @@ public class GlobalPayrollService {
                     totalEmployerCost = totalEmployerCost.add(record.getTotalEmployerCostBase());
 
                 record.setStatus(EmployeePayrollRecord.RecordStatus.CALCULATED);
-                recordRepository.save(record);
 
             } catch (
                     Exception e) { // Intentional broad catch — per-employee error boundary: isolates payroll calculation failure; sets record to ERROR and continues batch
@@ -302,10 +298,12 @@ public class GlobalPayrollService {
                         e.getMessage());
                 record.setStatus(EmployeePayrollRecord.RecordStatus.ERROR);
                 record.setErrorMessage(e.getMessage());
-                recordRepository.save(record);
                 errorCount++;
             }
         }
+
+        // Single bulk save for all per-employee mutations (avoids 2 saves per record per loop).
+        recordRepository.saveAll(records);
 
         // Update run totals
         run.setTotalGrossBase(totalGross);
@@ -313,7 +311,7 @@ public class GlobalPayrollService {
         run.setTotalNetBase(totalNet);
         run.setTotalEmployerCostBase(totalEmployerCost);
         run.setEmployeeCount(records.size());
-        run.setLocationCount(recordRepository.countDistinctLocationsByPayrollRun(runId));
+        run.setLocationCount(recordRepository.countDistinctLocationsByTenantIdAndPayrollRun(tenantId, runId));
         run.setErrorCount(errorCount);
         run.setProcessedAt(LocalDateTime.now());
         run.setProcessedBy(currentUserId);
@@ -345,15 +343,13 @@ public class GlobalPayrollService {
         run.setApprovedBy(currentUserId);
         run = payrollRunRepository.save(run);
 
-        // Update all records to approved
-        List<EmployeePayrollRecord> records = recordRepository.findByPayrollRunAndStatus(
-                runId, EmployeePayrollRecord.RecordStatus.CALCULATED);
-        for (EmployeePayrollRecord record : records) {
-            record.setStatus(EmployeePayrollRecord.RecordStatus.APPROVED);
-            recordRepository.save(record);
-        }
+        // Single bulk UPDATE for all CALCULATED → APPROVED records (avoids N+1 save loop).
+        int approvedCount = recordRepository.bulkUpdateStatus(
+                tenantId, runId,
+                EmployeePayrollRecord.RecordStatus.APPROVED,
+                EmployeePayrollRecord.RecordStatus.CALCULATED);
 
-        log.info("Approved payroll run: {}", run.getRunCode());
+        log.info("Approved payroll run: {} ({} records updated)", run.getRunCode(), approvedCount);
         return GlobalPayrollRunDto.fromEntity(run);
     }
 
@@ -439,7 +435,8 @@ public class GlobalPayrollService {
 
     @Transactional(readOnly = true)
     public List<EmployeePayrollRecordDto> getEmployeeRecords(UUID runId) {
-        return recordRepository.findByPayrollRun(runId).stream()
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        return recordRepository.findByTenantIdAndPayrollRun(tenantId, runId).stream()
                 .map(EmployeePayrollRecordDto::fromEntity)
                 .collect(Collectors.toList());
     }

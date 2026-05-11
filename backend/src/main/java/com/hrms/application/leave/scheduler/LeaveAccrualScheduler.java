@@ -89,7 +89,10 @@ public class LeaveAccrualScheduler {
      * @return total number of individual balance accruals applied
      */
     private int processAccrualsForTenant(UUID tenantId) {
-        int currentMonth = LocalDate.now().getMonthValue();
+        // Cron fires at 2:00 AM UTC — month math must use UTC too, otherwise a JVM in a
+        // non-UTC zone could read the previous day's month at boundary conditions and
+        // misclassify a quarter-start month.
+        int currentMonth = LocalDate.now(java.time.ZoneOffset.UTC).getMonthValue();
         boolean isQuarterStart = QUARTER_START_MONTHS.contains(currentMonth);
 
         // Fetch active leave types for this tenant

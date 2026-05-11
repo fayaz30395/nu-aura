@@ -73,14 +73,17 @@ management:
       # Validate group membership to control access
       validate-group-membership: true
       group:
-        # Kubernetes liveness probe
+        # Kubernetes liveness probe — ping only. diskSpace MUST NOT be here:
+        # a full disk would trigger pod restart (CrashLoop) instead of just
+        # marking the pod as un-ready. Disk-full is handled by readiness below.
         liveness:
-          include: ping,diskSpace
-        # Readiness probe — kafka excluded because Render doesn't run Kafka;
-        # redis excluded from hard-dependency since fallbacks exist in code.
-        # K8s deployments on GKE can override this via env if needed.
+          include: ping
+        # Readiness probe — kafka excluded because Render doesn't run Kafka.
+        # Redis is included: if Redis is down, app should not receive traffic
+        # (rate-limiter / token-blacklist fallbacks are per-pod only and not safe
+        # for sustained multi-pod traffic). K8s deployments can override via env.
         readiness:
-          include: ping,db
+          include: ping,db,redis
     prometheus:
       enabled: true
   health:
@@ -91,9 +94,10 @@ management:
       # Set SPRING_REDIS_HOST env var to a real Redis instance for full caching.
       enabled: true
     # Kafka health disabled on Render (no Kafka broker).
-    # Re-enable when deploying to GKE with Confluent Kafka.
+    # Re-enable per-environment by setting MANAGEMENT_HEALTH_KAFKA_ENABLED=true
+    # (e.g. on GKE with Confluent Kafka).
     kafka:
-      enabled: false
+      enabled: ${MANAGEMENT_HEALTH_KAFKA_ENABLED:false}
     diskSpace:
       enabled: true
       threshold: 1GB

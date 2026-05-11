@@ -7,6 +7,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,17 @@ public class MobileLeaveService {
 
     private final LeaveRequestService leaveRequestService;
     private final LeaveRequestRepository leaveRequestRepository;
+
+    /**
+     * QA sweep S2-C K-2: the mobile leave-balance projection requires mapping the
+     * generic {@code List<LeaveBalance>} returned by {@code LeaveBalanceService} into
+     * the fixed-slot DTO (casual/sick/earned/maternity/paternity/unpaid). That mapping
+     * relies on tenant-specific {@code LeaveType} metadata that is not yet exposed.
+     * Until the mapping ships, this surface is gated behind {@code app.features.mobile-leave-balance}
+     * so we don't keep returning hardcoded "12 casual / 8 sick / 20 earned" placeholders.
+     */
+    @Value("${app.features.mobile-leave-balance:false}")
+    private boolean leaveBalanceEnabled;
 
     /**
      * Quick apply for leave with minimal fields
@@ -52,42 +64,26 @@ public class MobileLeaveService {
     }
 
     /**
-     * Get leave balance for current employee
+     * Get leave balance for current employee.
+     *
+     * <p>STUB-GATED (QA sweep S2-C K-2): returns fabricated balances unless the feature
+     * flag is enabled. The previous behaviour was to silently return hardcoded values
+     * (12 casual, 8 sick, 20 earned) regardless of the employee's real entitlement, which
+     * is more dangerous than failing fast — employees would plan time off against fake
+     * numbers. Throwing {@link UnsupportedOperationException} surfaces a 501 so the
+     * mobile client can show "balance unavailable" instead of bogus data.</p>
      */
     @Transactional(readOnly = true)
     public MobileLeaveDto.LeaveBalanceResponse getLeaveBalance() {
+        if (!leaveBalanceEnabled) {
+            throw new UnsupportedOperationException(
+                    "Mobile leave-balance projection is not implemented. Set app.features.mobile-leave-balance=true once the LeaveBalanceService → DTO mapping ships.");
+        }
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
-
-        // Build leave balance response
-        // This is a placeholder - integrate with actual LeaveBalanceService
-        return MobileLeaveDto.LeaveBalanceResponse.builder()
-                .employeeId(employeeId)
-                .employeeName("") // Fetch from employee service
-                .casualLeave(MobileLeaveDto.LeaveBalanceResponse.LeaveTypeBalance.builder()
-                        .leaveTypeName("Casual Leave")
-                        .totalBalance(12.0)
-                        .usedBalance(2.0)
-                        .pendingBalance(1.0)
-                        .availableBalance(9.0)
-                        .maxConsecutiveDays(3)
-                        .build())
-                .sickLeave(MobileLeaveDto.LeaveBalanceResponse.LeaveTypeBalance.builder()
-                        .leaveTypeName("Sick Leave")
-                        .totalBalance(8.0)
-                        .usedBalance(1.0)
-                        .pendingBalance(0.0)
-                        .availableBalance(7.0)
-                        .maxConsecutiveDays(5)
-                        .build())
-                .earnedLeave(MobileLeaveDto.LeaveBalanceResponse.LeaveTypeBalance.builder()
-                        .leaveTypeName("Earned Leave")
-                        .totalBalance(20.0)
-                        .usedBalance(5.0)
-                        .pendingBalance(2.0)
-                        .availableBalance(13.0)
-                        .maxConsecutiveDays(10)
-                        .build())
-                .build();
+        // Intentionally still a stub when the flag is on — keeps an explicit hook for
+        // the LeaveBalanceService wiring without leaking fabricated numbers by default.
+        throw new UnsupportedOperationException(
+                "Mobile leave-balance mapping not implemented for employee " + employeeId);
     }
 
     /**

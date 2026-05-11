@@ -236,6 +236,10 @@ app:
 
   # Security settings
   security:
+    encryption:
+      # Required: 32-byte AES-256-GCM key, base64-encoded. Set via APP_SECURITY_ENCRYPTION_KEY env var.
+      # No default — application will fail to start if unset.
+      key: ${APP_SECURITY_ENCRYPTION_KEY:}
     csrf:
       # Enable CSRF protection (recommended for cookie-based auth)
       enabled: ${CSRF_ENABLED:true}
@@ -271,6 +275,10 @@ app:
       half-day-minutes: ${COMPOFF_HALF_DAY_MINUTES:240}
       leave-code: ${COMPOFF_LEAVE_CODE:COMP_OFF}
       expiry-days: ${COMPOFF_EXPIRY_DAYS:90}
+
+  migration:
+    # Required: temp password fragment used during bulk migration. No default — must be set.
+    default-password: ${APP_MIGRATION_DEFAULT_PASSWORD:}
 
   google:
     client-id: ${GOOGLE_CLIENT_ID:}

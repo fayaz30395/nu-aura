@@ -14,10 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface MultiChannelNotificationRepository extends JpaRepository<MultiChannelNotification, UUID> {
+
+    /**
+     * Tenant-scoped fetch — required for multi-tenant safety.
+     */
+    Optional<MultiChannelNotification> findByIdAndTenantId(UUID id, UUID tenantId);
 
     Page<MultiChannelNotification> findByRecipientIdAndTenantIdOrderByCreatedAtDesc(UUID recipientId, UUID tenantId, Pageable pageable);
 

@@ -38,12 +38,37 @@ public class PaymentService {
     private final EncryptionService encryptionService;
 
     /**
-     * Initiate a single payment transaction
+     * Initiate a single payment transaction.
+     *
+     * <p>L-7 FIX (idempotency): if the caller supplies a {@code transactionRef}
+     * and a transaction with that {@code (tenantId, transactionRef)} pair
+     * already exists, return the existing record WITHOUT invoking the gateway
+     * adapter. This guards against duplicate charges on client retries
+     * (network blip, double-tap, browser refresh) and is enforced at the DB
+     * level by the unique index {@code idx_payment_transaction_ref}.</p>
+     *
+     * <p>NOTE: this uses the existing {@code transactionRef} column rather
+     * than introducing a separate {@code idempotency_key} column. The schema
+     * change is deferred — a dedicated key column would let the client
+     * provide an arbitrary idempotency token decoupled from any internal
+     * business reference. Tracked: NUAURA-PAYMENT-IDEMPOTENCY.</p>
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public PaymentTransaction initiatePayment(PaymentTransaction transaction) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
+
+        // Idempotency short-circuit: if a transactionRef is already on file for this
+        // tenant, return the existing record. Prevents duplicate gateway calls on retry.
+        if (transaction.getTransactionRef() != null && !transaction.getTransactionRef().isBlank()) {
+            Optional<PaymentTransaction> existing = paymentTransactionRepository
+                    .findByTenantIdAndTransactionRef(tenantId, transaction.getTransactionRef());
+            if (existing.isPresent()) {
+                log.info("Idempotent payment replay: returning existing transaction {} for ref {}",
+                        existing.get().getId(), transaction.getTransactionRef());
+                return existing.get();
+            }
+        }
 
         transaction.setTenantId(tenantId);
         transaction.setCreatedBy(userId);

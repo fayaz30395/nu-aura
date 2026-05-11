@@ -83,9 +83,10 @@ public class ScopeContextService {
                     .forEach(rp -> {
                         String permissionCode = rp.getPermission().getCode();
 
-                        // Load custom targets for this role permission
+                        // Load custom targets for this role permission, scoped to tenant
+                        // (audit M-H8: defense-in-depth against cross-tenant target leakage).
                         List<CustomScopeTarget> targets = customScopeTargetRepository
-                                .findByRolePermissionId(rp.getId());
+                                .findByRolePermissionIdAndTenantId(rp.getId(), tenantId);
 
                         targets.forEach(target -> {
                             switch (target.getTargetType()) {

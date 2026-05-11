@@ -3,6 +3,7 @@ package com.hrms.api.integration.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.integration.dto.*;
+import com.hrms.application.document.service.FileStorageService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;
@@ -59,6 +60,7 @@ public class DocuSignController {
     private final IntegrationConnectorConfigService configService;
     private final DocuSignApiClient apiClient;
     private final ObjectMapper objectMapper;
+    private final FileStorageService fileStorageService;
 
     // ===================== Webhook Endpoint =====================
 
@@ -406,16 +408,42 @@ public class DocuSignController {
         // Update the envelope status
         envelope.setStatus(event.getStatus());
 
-        // If completed, update time
+        // If completed, update time and pull the signed PDF down from DocuSign so we
+        // own a durable copy. DocuSign's signedDocumentUrl is a short-lived link
+        // (≈30 days), so without persistence we'd lose the document.
         if ("COMPLETED".equals(event.getStatus()) || "completed".equalsIgnoreCase(event.getStatus())) {
+            envelope.setCompletedAt(java.time.Instant.now());
             try {
-                // FUTURE: NUAURA-DOCUSIGN-001 — Download signed PDF from DocuSign on completion and persist via FileStorageService.
-                // Current behavior: signedDocUrl points to DocuSign's temporary URL (expires after ~30 days).
-                // Steps: GET /v2.1/accounts/{accountId}/envelopes/{envelopeId}/documents/{documentId}
-                // → FileStorageService.uploadFile(bytes, "signed-documents") → set envelope.signedDocUrl().
-                envelope.setCompletedAt(java.time.Instant.now());
-            } catch (Exception e) { // Intentional broad catch — DocuSign API integration
-                log.error("Failed to process completed envelope: {}", envelope.getId(), e);
+                // QA sweep S2-C K-15: NUAURA-DOCUSIGN-001 — download signed PDF and persist.
+                ConnectorConfig downloadConfig = configService.getConfig(envelope.getTenantId(), "docusign");
+                byte[] signedBytes = apiClient.downloadDocument(
+                        downloadConfig, envelope.getEnvelopeId(), "combined");
+                if (signedBytes != null && signedBytes.length > 0) {
+                    String filename = "docusign-" + envelope.getEnvelopeId() + ".pdf";
+                    FileStorageService.FileUploadResult uploaded = fileStorageService.uploadFile(
+                            new java.io.ByteArrayInputStream(signedBytes),
+                            filename,
+                            "application/pdf",
+                            signedBytes.length,
+                            // NOTE: FileStorageService does not expose a CATEGORY_CONTRACT constant
+                            // today (only profile-photos, documents, payslips, letters, attachments,
+                            // reports). We bucket signed envelopes under DOCUMENTS — adjust if a
+                            // dedicated category is later added (file:line FileStorageService.java:30-38).
+                            FileStorageService.CATEGORY_DOCUMENTS,
+                            envelope.getEntityId());
+                    envelope.setSignedDocumentUrl(
+                            fileStorageService.getDownloadUrl(uploaded.getObjectName()));
+                    log.info("Persisted signed DocuSign document for envelope {} as {}",
+                            envelope.getEnvelopeId(), uploaded.getObjectName());
+                } else {
+                    log.warn("DocuSign returned an empty signed-document payload for envelope {}",
+                            envelope.getEnvelopeId());
+                }
+            } catch (Exception e) { // Intentional broad catch — DocuSign API + storage path
+                log.error("Failed to download / persist signed DocuSign document for envelope {}",
+                        envelope.getId(), e);
+                // Do not rethrow — we still want to record the COMPLETED status so the
+                // webhook is acknowledged. A retry job can re-fetch the PDF later.
             }
         }
 

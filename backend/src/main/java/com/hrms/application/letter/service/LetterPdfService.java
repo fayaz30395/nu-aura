@@ -16,7 +16,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -50,27 +49,34 @@ public class LetterPdfService {
      * Generate PDF for an existing letter and upload to storage.
      * Updates the letter's pdfUrl with the storage location.
      *
+     * <p>Performance (Q-P17): intentionally NOT {@code @Transactional}. The PDF render
+     * (OpenPDF is CPU-bound) plus the remote storage upload (HTTP round-trip) must not
+     * hold a DB connection open. We perform two short, implicit transactions instead:
+     * one to read the letter and template, one to save the resulting pdfUrl. The
+     * window between reads and the final save is acceptable because the only mutation
+     * is appending {@code pdfUrl}.</p>
+     *
      * @param letterId the ID of the letter to generate PDF for
      * @return the URL of the generated PDF
      */
-    @Transactional
     public String generatePdf(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // Short read transaction (implicit via repository method).
         GeneratedLetter letter = letterRepository.findByIdAndTenantId(letterId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Letter not found: " + letterId));
 
-        // Get template for additional formatting options
+        // Get template for additional formatting options (short implicit read tx).
         LetterTemplate template = templateRepository.findByIdAndTenantId(letter.getTemplateId(), tenantId)
                 .orElse(null);
 
-        // Generate PDF content
+        // CPU-bound PDF render — outside any transaction.
         byte[] pdfBytes = generatePdfBytes(letter, template);
 
         // Generate filename
         String filename = generateFilename(letter);
 
-        // Upload to storage
+        // Remote object-storage upload — also outside any transaction.
         FileStorageService.FileUploadResult uploadResult = fileStorageService.uploadFile(
                 new ByteArrayInputStream(pdfBytes),
                 filename,
@@ -80,7 +86,7 @@ public class LetterPdfService {
                 letter.getId()
         );
 
-        // Get download URL and update letter
+        // Get download URL and update letter (save runs in its own short implicit tx).
         String pdfUrl = fileStorageService.getDownloadUrl(uploadResult.getObjectName());
         letter.setPdfUrl(pdfUrl);
         letterRepository.save(letter);

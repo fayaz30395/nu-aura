@@ -227,7 +227,7 @@
     --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
     --sidebar-text: rgba(255, 255, 255, 0.68);
     --sidebar-text-active: #ffffff;
-    --sidebar-text-muted: rgba(255, 255, 255, 0.35);
+    --sidebar-text-muted: rgba(255, 255, 255, 0.55);
     --sidebar-border: rgba(255, 255, 255, 0.06);
     --sidebar-section-text: rgba(255, 255, 255, 0.38);
     --sidebar-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.30) 100%);
@@ -691,7 +691,7 @@
 
   /* ── Form Input (Flat, clean) ────────────────────────────────── */
   .input-aura {
-    @apply w-full h-11 px-4 text-sm rounded-xl;
+    @apply w-full h-9 px-3.5 text-sm rounded-xl;
     background-color: var(--bg-input);
     border: 1px solid var(--border-main);
     color: var(--text-primary);
@@ -711,7 +711,7 @@
 
   /* ── Button System (Flat, solid, clean states) ───────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 h-11 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
     background-color: var(--accent-primary);
     color: #ffffff;
     border: none;
@@ -728,7 +728,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-4 h-11 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
     background-color: var(--bg-card);
     color: var(--text-primary);
     border: 1px solid var(--border-main);
@@ -745,7 +745,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center px-4 h-11 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
     background-color: transparent;
     color: var(--text-secondary);
     border: none;

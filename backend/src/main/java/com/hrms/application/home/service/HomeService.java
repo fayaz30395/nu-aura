@@ -52,9 +52,21 @@ public class HomeService {
     private final LeaveTypeRepository leaveTypeRepository;
 
     /**
-     * Get upcoming birthdays for the next N days (default 7 days)
+     * Get upcoming birthdays for the next N days (default 7 days).
+     *
+     * <p>SECURITY: The {@code key} explicitly embeds the current tenant ID so two
+     * tenants requesting the same {@code days} value never collide on a single
+     * cache entry. The global {@link CacheConfig#keyGenerator()} bean is already
+     * tenant-aware, but the explicit key is defense-in-depth and unambiguous at
+     * the call site.</p>
+     *
+     * <p>TODO(s2-a): EmployeeService.save / update / delete should call
+     * {@code @CacheEvict(value = {UPCOMING_BIRTHDAYS, UPCOMING_ANNIVERSARIES},
+     * allEntries = true)} (scoped per tenant). EmployeeService is out of scope
+     * for S2-A — file an issue for S2-B to add the evictions.</p>
      */
-    @Cacheable(value = CacheConfig.UPCOMING_BIRTHDAYS)
+    @Cacheable(value = CacheConfig.UPCOMING_BIRTHDAYS,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':' + #days")
     @Transactional(readOnly = true)
     public List<BirthdayResponse> getUpcomingBirthdays(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -106,9 +118,14 @@ public class HomeService {
     }
 
     /**
-     * Get upcoming work anniversaries for the next N days (default 7 days)
+     * Get upcoming work anniversaries for the next N days (default 7 days).
+     *
+     * <p>SECURITY: The {@code key} explicitly embeds the current tenant ID so two
+     * tenants requesting the same {@code days} value never collide on a single
+     * cache entry. See {@link #getUpcomingBirthdays(int)} for context.</p>
      */
-    @Cacheable(value = CacheConfig.UPCOMING_ANNIVERSARIES)
+    @Cacheable(value = CacheConfig.UPCOMING_ANNIVERSARIES,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':' + #days")
     @Transactional(readOnly = true)
     public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();

@@ -1,6 +1,7 @@
 package com.hrms.api.knowledge.controller;
 
 import com.hrms.api.knowledge.dto.CreateWikiPageRequest;
+import com.hrms.api.knowledge.dto.MoveWikiPageRequest;
 import com.hrms.api.knowledge.dto.UpdateWikiPageRequest;
 import com.hrms.api.knowledge.dto.WikiPageBreadcrumb;
 import com.hrms.api.knowledge.dto.WikiPageDto;
@@ -263,8 +264,9 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
     public ResponseEntity<WikiPageDto> movePage(
             @PathVariable UUID pageId,
-            @RequestBody Map<String, UUID> body) {
-        UUID newParentPageId = body.get("parentPageId");
+            @Valid @RequestBody MoveWikiPageRequest request) {
+        // L-10.1 fix: typed body — no raw @RequestBody Map<String, UUID> mass-assignment.
+        UUID newParentPageId = request != null ? request.getParentPageId() : null;
         WikiPage moved = wikiPageService.movePage(pageId, newParentPageId);
         return ResponseEntity.ok(toDto(moved));
     }

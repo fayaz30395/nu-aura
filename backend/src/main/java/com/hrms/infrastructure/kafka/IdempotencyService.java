@@ -66,4 +66,25 @@ public class IdempotencyService {
         }
     }
 
+    /**
+     * Release a previously-claimed event so retries can proceed.
+     *
+     * <p>Call this on the exception path of a consumer that has already
+     * succeeded {@link #tryProcess(String)} but then failed to complete the
+     * business operation. Without this release, the 24-hour TTL would
+     * silently swallow every Kafka redelivery until expiry — masking real
+     * failures and blocking legitimate retries.</p>
+     *
+     * <p>Best-effort: Redis failures are logged but never propagated, matching
+     * {@link #tryProcess(String)}'s graceful-degradation contract.</p>
+     */
+    public void release(String eventId) {
+        try {
+            redisTemplate.delete(PREFIX + eventId);
+            log.debug("Released idempotency claim on event {} for retry", eventId);
+        } catch (RuntimeException e) { // Intentional broad catch — release must never mask the original failure
+            log.warn("Failed to release idempotency key {}: {}", eventId, e.getMessage());
+        }
+    }
+
 }

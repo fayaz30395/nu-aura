@@ -37,6 +37,16 @@ public class AuditLog extends TenantAware {
     @Column(length = 200)
     private String actorEmail;
 
+    /**
+     * Audit M-C3 / M-M5: when a SuperAdmin acts on behalf of a tenant user,
+     * {@link #actorId} captures the impersonated principal (so RBAC scope still
+     * makes sense) and this field captures the underlying admin. Null when no
+     * impersonation is in play. Populated by {@code AuditLogService} from
+     * {@link com.hrms.common.security.SecurityContext#getCurrentImpersonatorId()}.
+     */
+    @Column(name = "impersonator_id")
+    private UUID impersonatorId;
+
     @Column(columnDefinition = "TEXT")
     private String oldValue;
 

@@ -4,11 +4,13 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Where(clause = "is_deleted = false")
 @Table(name = "wiki_space_members", indexes = {
         @Index(name = "idx_space_members_tenant", columnList = "tenantId"),
         @Index(name = "idx_space_members_space", columnList = "space_id"),

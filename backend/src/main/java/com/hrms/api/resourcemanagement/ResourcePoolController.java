@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -34,8 +37,22 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/resource-pools")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Resource Pools", description = "Resource pool management — UC-RESOURCE-006")
 public class ResourcePoolController {
+
+    /**
+     * QA sweep S2-C K-3 (production-blocker): until a real {@code resource_pools} table
+     * and a backing service exist, every endpoint returns a stubbed empty payload, which
+     * lets users believe their pool was created when it actually was not persisted. We
+     * now gate the entire controller on {@code app.features.resource-pools} and return
+     * {@code 501 Not Implemented} for every method when the flag is off. We do this with
+     * a runtime {@code @Value} check rather than {@code @ConditionalOnProperty} so the
+     * endpoints respond with a clear 501 instead of 404 (consistent with the rest of
+     * this sweep).
+     */
+    @Value("${app.features.resource-pools:false}")
+    private boolean enabled;
 
     // -----------------------------------------------------------------------
     // DTOs (static inner classes — no separate DTO file needed at stub stage)
@@ -102,6 +119,9 @@ public class ResourcePoolController {
             @RequestParam(required = false) String poolType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         // Stub: resource pool entity not yet persisted in DB.
         // Returns empty list with 200 so QA flow proceeds without 404.
         return ResponseEntity.ok(Collections.emptyList());
@@ -116,6 +136,9 @@ public class ResourcePoolController {
     @Operation(summary = "Create a resource pool")
     public ResponseEntity<CreatePoolResponse> createPool(
             @Valid @RequestBody CreatePoolRequest request) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         // Stub: acknowledges the request and returns a synthetic pool record.
         // Full persistence requires a future Flyway migration adding resource_pools table.
         CreatePoolResponse response = new CreatePoolResponse();
@@ -139,6 +162,9 @@ public class ResourcePoolController {
     @RequiresPermission(Permission.PROJECT_VIEW)
     @Operation(summary = "Get a resource pool by ID")
     public ResponseEntity<ResourcePoolSummary> getPool(@PathVariable UUID id) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         // Stub: resource pool entity not yet persisted in DB; return 404 rather than empty 200.
         return ResponseEntity.notFound().build();
     }
@@ -155,6 +181,9 @@ public class ResourcePoolController {
             @PathVariable UUID id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         return ResponseEntity.ok(Collections.emptyList());
     }
 
@@ -167,7 +196,10 @@ public class ResourcePoolController {
     @Operation(summary = "Add members to a resource pool")
     public ResponseEntity<Map<String, Object>> addMembers(
             @PathVariable UUID id,
-            @RequestBody List<UUID> employeeIds) {
+            @RequestBody @Size(min = 1, max = 500, message = "Provide 1-500 employee IDs") List<UUID> employeeIds) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         return ResponseEntity.ok(Map.of(
                 "poolId", id,
                 "addedCount", employeeIds != null ? employeeIds.size() : 0,
@@ -185,6 +217,9 @@ public class ResourcePoolController {
     public ResponseEntity<Void> removeMember(
             @PathVariable UUID id,
             @PathVariable UUID employeeId) {
+        if (!enabled) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        }
         return ResponseEntity.noContent().build();
     }
 }

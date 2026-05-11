@@ -10,6 +10,7 @@ import com.hrms.domain.attendance.OfficeLocation;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,14 +42,16 @@ public class MobileAttendanceService {
     private final OfficeLocationService officeLocationService;
     private final ShiftAttendanceService shiftAttendanceService;
     private final TenantAttendanceConfigService tenantAttendanceConfigService;
+    private final EmployeeRepository employeeRepository;
 
     // ==================== MOBILE CHECK-IN/OUT ====================
 
     public MobileCheckInResponse mobileCheckIn(MobileCheckInRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDate today = LocalDate.now();
+        ZoneId employeeZone = getEmployeeZone(employeeId);
+        LocalDateTime now = LocalDateTime.now(employeeZone);
+        LocalDate today = LocalDate.now(employeeZone);
 
         // Validate mock location
         if (Boolean.TRUE.equals(request.getIsMockLocation())) {
@@ -135,8 +139,9 @@ public class MobileAttendanceService {
     public MobileCheckInResponse mobileCheckOut(MobileCheckInRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDate today = LocalDate.now();
+        ZoneId employeeZone = getEmployeeZone(employeeId);
+        LocalDateTime now = LocalDateTime.now(employeeZone);
+        LocalDate today = LocalDate.now(employeeZone);
 
         // Validate mock location
         if (Boolean.TRUE.equals(request.getIsMockLocation())) {
@@ -227,7 +232,7 @@ public class MobileAttendanceService {
     public MobileAttendanceDashboard getDashboard(BigDecimal latitude, BigDecimal longitude) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(getEmployeeZone(employeeId));
 
         // Get today's record
         Optional<AttendanceRecord> todayRecord = attendanceRecordRepository
@@ -248,7 +253,7 @@ public class MobileAttendanceService {
         }
 
         // Today's summary
-        MobileAttendanceDashboard.TodaySummary todaySummary = buildTodaySummary(todayRecord.orElse(null));
+        MobileAttendanceDashboard.TodaySummary todaySummary = buildTodaySummary(todayRecord.orElse(null), today);
 
         // Weekly summary
         MobileAttendanceDashboard.WeeklySummary weeklySummary = buildWeeklySummary(employeeId, tenantId);
@@ -308,8 +313,7 @@ public class MobileAttendanceService {
 
     // ==================== HELPER METHODS ====================
 
-    private MobileAttendanceDashboard.TodaySummary buildTodaySummary(AttendanceRecord record) {
-        LocalDate today = LocalDate.now();
+    private MobileAttendanceDashboard.TodaySummary buildTodaySummary(AttendanceRecord record, LocalDate today) {
         String dayName = today.getDayOfWeek().toString();
 
         if (record == null) {
@@ -334,7 +338,7 @@ public class MobileAttendanceService {
     }
 
     private MobileAttendanceDashboard.WeeklySummary buildWeeklySummary(UUID employeeId, UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(getEmployeeZone(employeeId));
         LocalDate weekStart = today.with(DayOfWeek.MONDAY);
         LocalDate weekEnd = today.with(DayOfWeek.SUNDAY);
 
@@ -417,7 +421,7 @@ public class MobileAttendanceService {
     }
 
     private List<MobileAttendanceDashboard.RecentActivity> getRecentActivity(UUID employeeId, UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(getEmployeeZone(employeeId));
         List<AttendanceRecord> recentRecords = attendanceRecordRepository
                 .findAllByEmployeeIdAndAttendanceDateBetween(employeeId, today.minusDays(7), today);
 
@@ -449,7 +453,7 @@ public class MobileAttendanceService {
     }
 
     private MobileAttendanceDashboard.QuickStats buildQuickStats(UUID employeeId, UUID tenantId) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(getEmployeeZone(employeeId));
         LocalDate monthStart = today.withDayOfMonth(1);
 
         List<AttendanceRecord> monthRecords = attendanceRecordRepository
@@ -525,5 +529,31 @@ public class MobileAttendanceService {
         int hours = minutes / 60;
         int mins = minutes % 60;
         return hours + "h " + mins + "m";
+    }
+
+    /**
+     * Resolve an employee's timezone via their assigned OfficeLocation.
+     * <p>Falls back to {@link ZoneId#systemDefault()} when the employee has no
+     * office location, the office has no timezone configured, or the configured
+     * value is invalid. This keeps "today" boundaries aligned with the employee's
+     * working calendar regardless of the JVM clock's actual location.</p>
+     */
+    private ZoneId getEmployeeZone(UUID employeeId) {
+        if (employeeId == null) {
+            return ZoneId.systemDefault();
+        }
+        try {
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .map(emp -> emp.getOfficeLocationId())
+                    .flatMap(locId -> officeLocationRepository.findByIdAndTenantId(locId, tenantId))
+                    .map(OfficeLocation::getTimezone)
+                    .filter(tz -> tz != null && !tz.isBlank())
+                    .map(ZoneId::of)
+                    .orElseGet(ZoneId::systemDefault);
+        } catch (Exception e) { // Intentional broad catch — zone resolution must never fail attendance flow
+            log.debug("Falling back to system default zone for employee {} ({})", employeeId, e.getMessage());
+            return ZoneId.systemDefault();
+        }
     }
 }
