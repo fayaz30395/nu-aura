@@ -1,5 +1,6 @@
 package com.hrms.application.leave.service;
 
+import com.hrms.api.leave.dto.LeaveBalanceResponse;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveBalance;
@@ -8,6 +9,7 @@ import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Year;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +99,62 @@ public class LeaveBalanceService {
     public List<LeaveBalance> getEmployeeBalancesForYear(UUID employeeId, Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveBalanceRepository.findByEmployeeIdAndYear(employeeId, year, tenantId);
+    }
+
+    /**
+     * PERF (wave-3 H4): batched variant of {@link #getEmployeeBalances(UUID)}
+     * that pre-resolves the leave-type name for every row in a single
+     * {@code findAllById} round-trip.
+     *
+     * <p>The previous controller-side {@code toResponse} did
+     * {@code leaveTypeRepository.findById(...)} once per balance row, producing
+     * up to 15 PG round-trips per request on accounts with the full leave
+     * catalogue. This method collapses that to two queries total: one for
+     * balances, one batched for distinct leave-type IDs.</p>
+     *
+     * <p>Field-copy semantics match the controller's previous implementation —
+     * audit/tenant fields are deliberately excluded from {@link BeanUtils#copyProperties}
+     * to avoid leaking server-managed metadata into the response DTO.</p>
+     */
+    @Transactional(readOnly = true)
+    public List<LeaveBalanceResponse> getEmployeeBalancesEnriched(UUID employeeId) {
+        List<LeaveBalance> balances = getEmployeeBalances(employeeId);
+        if (balances.isEmpty()) {
+            return List.of();
+        }
+
+        // Collect distinct leave-type IDs — typically 5-15 per employee, so
+        // {@code findAllById} is a single IN(...) lookup instead of N point reads.
+        Set<UUID> typeIds = balances.stream()
+                .map(LeaveBalance::getLeaveTypeId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<UUID, String> typeNamesById = new HashMap<>();
+        if (!typeIds.isEmpty()) {
+            for (LeaveType type : leaveTypeRepository.findAllById(typeIds)) {
+                typeNamesById.put(type.getId(), type.getLeaveName());
+            }
+        }
+
+        return balances.stream()
+                .map(balance -> toResponse(balance, typeNamesById))
+                .collect(Collectors.toList());
+    }
+
+    private LeaveBalanceResponse toResponse(LeaveBalance balance, Map<UUID, String> typeNamesById) {
+        LeaveBalanceResponse response = new LeaveBalanceResponse();
+        // SEC-FIX (F7): mirror the controller — exclude audit/tenant fields from
+        // the response DTO so server-side metadata is never leaked client-side.
+        BeanUtils.copyProperties(balance, response,
+                "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
+        if (balance.getLeaveTypeId() != null) {
+            String name = typeNamesById.get(balance.getLeaveTypeId());
+            if (name != null) {
+                response.setLeaveTypeName(name);
+            }
+        }
+        return response;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)

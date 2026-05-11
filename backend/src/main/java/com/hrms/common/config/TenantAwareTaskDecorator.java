@@ -5,6 +5,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.user.RoleScope;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,14 @@ public class TenantAwareTaskDecorator implements TaskDecorator {
         UUID teamId = SecurityContext.getCurrentTeamId();
         // Capture Spring Security context for DelegatingSecurityContextExecutor compatibility
         var springSecurityCtx = SecurityContextHolder.getContext();
+        // PERF / FIX (wave-3 2.3): snapshot the calling request's attributes so
+        // @Async methods like AuditLogService.logAction can still read the
+        // originating HttpServletRequest (IP, User-Agent). Without this the
+        // async worker thread sees a null RequestContextHolder and audit rows
+        // are persisted with ipAddress=null / userAgent=null. RequestAttributes
+        // itself is request-scoped, so taking a reference is cheap; we never
+        // mutate it from the worker thread.
+        RequestAttributes requestAttrs = RequestContextHolder.getRequestAttributes();
 
         return () -> {
             try {
@@ -63,6 +73,13 @@ public class TenantAwareTaskDecorator implements TaskDecorator {
                 }
                 SecurityContext.setOrgContext(locationId, departmentId, teamId);
                 SecurityContextHolder.setContext(springSecurityCtx);
+                if (requestAttrs != null) {
+                    // {@code inheritable=false} — the worker thread is not a child
+                    // of the request thread, and the request will likely complete
+                    // (and clear its own RequestContextHolder) before the worker
+                    // runs. We attach the snapshot only on this worker thread.
+                    RequestContextHolder.setRequestAttributes(requestAttrs, false);
+                }
 
                 runnable.run();
             } finally {
@@ -70,6 +87,9 @@ public class TenantAwareTaskDecorator implements TaskDecorator {
                 TenantContext.clear();
                 SecurityContext.clear();
                 SecurityContextHolder.clearContext();
+                if (requestAttrs != null) {
+                    RequestContextHolder.resetRequestAttributes();
+                }
             }
         };
     }

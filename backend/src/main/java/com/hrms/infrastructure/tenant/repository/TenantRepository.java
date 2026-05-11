@@ -34,4 +34,11 @@ public interface TenantRepository extends JpaRepository<Tenant, UUID> {
      */
     @Query("SELECT COUNT(t) FROM Tenant t WHERE t.createdAt <= :cutoff")
     long countByCreatedAtBefore(@Param("cutoff") LocalDateTime cutoff);
+
+    // NOTE: Cached tenant lookups used by JwtAuthenticationFilter live in
+    // {@link com.hrms.infrastructure.tenant.repository.TenantStatusCache} rather
+    // than on this interface, because {@code @Cacheable} is not reliably applied
+    // to {@code default} methods inside Spring Data JPA repository interfaces
+    // (proxying skips them). Keeping the cache concern in a separate @Service
+    // also lets us evict it cleanly from suspend/activate flows.
 }

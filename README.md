@@ -36,15 +36,15 @@ NU-AURA is a **bundle app platform** — 4 sub-applications behind a single logi
 nu-aura/
 ├── backend/                    # Spring Boot monolith (Java 21, Maven)
 │   ├── src/main/java/com/hrms/
-│   │   ├── api/                # 143 controllers (REST endpoints)
-│   │   ├── application/        # 209 services (business logic)
-│   │   ├── domain/             # 265 entities + enums
+│   │   ├── api/                # 173 controllers (REST endpoints)
+│   │   ├── application/        # 228 services (business logic)
+│   │   ├── domain/             # ~285 entities + enums
 │   │   ├── infrastructure/     # 260 repositories + Kafka + WebSocket
 │   │   └── common/             # Config, security, validation, exceptions
 │   └── src/main/resources/
-│       └── db/migration/       # 88 Flyway migrations (V0–V91)
+│       └── db/migration/       # 138 Flyway migrations (V0–V146)
 ├── frontend/                   # Next.js 14 App Router
-│   ├── app/                    # 200+ pages
+│   ├── app/                    # 261 frontend pages
 │   ├── components/             # 123 TSX components
 │   ├── lib/                    # 190 hooks, 92 services, types, validations
 │   └── middleware.ts           # Route protection + OWASP headers
@@ -103,7 +103,11 @@ See [SETUP.md](SETUP.md) for detailed setup instructions and environment variabl
 - **Payroll:** SpEL formula engine with DAG-ordered component evaluation, always transactional.
 - **Workflow:** Generic approval engine — `workflow_def` > `workflow_step` > `approval_instance` >
   `approval_task`.
-- **Migrations:** Flyway only (V0–V91, 88 files). Next migration: V92. Legacy Liquibase deprecated.
+- **Migrations:** Flyway only (V0–V146, 138 files). Next migration: V147. Legacy Liquibase deprecated.
+- **Security hardening (Sprints 1–3, May 2026):** 79 wave-1 findings, ~50 wave-2 findings, and
+  wave-3 regression follow-ups closed across auth, IDOR, injection, SSRF, Drive tenant isolation,
+  dependencies, mass-assignment, and field-level AES-GCM encryption for PII. See `CHANGELOG.md` and
+  `SECURITY.md`.
 
 ## Services (Development)
 

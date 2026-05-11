@@ -36,7 +36,7 @@ PROJECT CONTEXT:
 - NU-AURA is a bundle app platform (SSO/RBAC) with 4 sub-apps: NU-HRMS, NU-Hire, NU-Grow, NU-Fluence
 - Frontend: Next.js 14 (App Router) + Mantine UI + Tailwind CSS + TypeScript (strict)
 - Backend: Spring Boot 3.4.1 (Java 17), monolith, package root: com.hrms
-- Database: PostgreSQL (Neon cloud dev, PG 16 prod), Flyway migrations (V0–V93, next = V94)
+- Database: PostgreSQL (Neon cloud dev, PG 16 prod), Flyway migrations (V0–V146, next = V147; latest sprint added V147–V149)
 - Caching: Redis 7 (permission cache, rate limiting via Bucket4j, sessions)
 - Messaging: Kafka (Confluent 7.6.0) — 5 topics + 5 DLT topics
 - Search: Elasticsearch 8.11.0 (NU-Fluence full-text search)
@@ -91,7 +91,7 @@ PROJECT CONTEXT:
   - PDF: OpenPDF 2.0.3 (backend only, no jsPDF in frontend)
   - Excel: Apache POI 5.3.0
   - API docs: SpringDoc OpenAPI 2.7.0
-- Database: PostgreSQL, Flyway migrations (V0–V93, next = V94)
+- Database: PostgreSQL, Flyway migrations (V0–V146, next = V147; latest sprint added V147–V149)
 - Multi-tenancy: tenant_id UUID on all tables, PostgreSQL RLS
 
 YOUR ROLE:

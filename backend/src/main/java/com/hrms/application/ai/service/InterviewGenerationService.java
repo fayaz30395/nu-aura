@@ -2,9 +2,11 @@ package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.*;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.ai.AiUsageLog;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.Interview;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,13 @@ import java.util.UUID;
  * AI-powered interview question generation and multi-round feedback synthesis.
  * Generates tailored question banks by category and synthesizes feedback
  * from completed interview rounds into cohesive hiring narratives.
+ *
+ * <p><strong>SAFETY (wave-5 AI #1, #5):</strong> When {@code OPENAI_API_KEY} is
+ * not configured, this service throws
+ * {@link com.hrms.common.exception.BusinessException} rather than returning
+ * a fabricated question bank. The model name persisted on responses is the
+ * runtime configuration value, not the hardcoded {@code "gpt-4o-mini-v1"}
+ * string that previously misrepresented self-hosted gateways.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -30,18 +40,39 @@ import java.util.UUID;
 @Transactional
 public class InterviewGenerationService {
 
-    private static final String AI_MODEL_VERSION = "gpt-4o-mini-v1";
+    /**
+     * AiUsageLog feature keys for the two entrypoints in this service.
+     */
+    private static final String FEATURE_INTERVIEW_GEN = "interview_gen";
+    private static final String FEATURE_FEEDBACK_SYNTH = "feedback_synthesis";
+
+    /**
+     * Temperature for interview question generation and feedback synthesis.
+     * These are creative-ish tasks, but we want consistent question banks for
+     * the same job, so we keep it modest.
+     */
+    private static final double INTERVIEW_TEMPERATURE = 0.5;
 
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final InterviewRepository interviewRepository;
     private final AIRecruitmentHelper aiHelper;
     private final ObjectMapper objectMapper;
+    private final AiUsageLogRepository aiUsageLogRepository;
+
+    /**
+     * Runtime upstream model name. Replaces the previous hardcoded
+     * {@code AI_MODEL_VERSION = "gpt-4o-mini-v1"} constant.
+     */
+    @Value("${ai.openai.model:gpt-4o-mini}")
+    private String aiModelName;
 
     // ==================== PUBLIC API ====================
 
     /**
      * Generate interview questions based on job and candidate profile.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
      */
     @Transactional(readOnly = true)
     public InterviewQuestionsResponse generateInterviewQuestions(UUID jobOpeningId, UUID candidateId) {
@@ -57,9 +88,10 @@ public class InterviewGenerationService {
         }
 
         String prompt = buildInterviewQuestionsPrompt(job, candidate);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai = aiHelper.callOpenAI(prompt, INTERVIEW_TEMPERATURE);
+        recordUsage(FEATURE_INTERVIEW_GEN, ai);
 
-        return parseInterviewQuestionsResponse(aiResponse);
+        return parseInterviewQuestionsResponse(ai.getContent());
     }
 
     /**
@@ -75,6 +107,10 @@ public class InterviewGenerationService {
      * Fetches all COMPLETED interviews, clusters feedback by round and theme,
      * and produces a cohesive narrative with agreements, disagreements, and next steps.
      * This is guidance for hiring teams only and must not be used for automated decisions.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
+     *     (only when there is actually feedback to synthesize — the empty case still returns a
+     *     deterministic "no data" response so the UI degrades gracefully)
      */
     public FeedbackSynthesisResponse synthesizeInterviewFeedback(UUID candidateId, UUID jobOpeningId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -108,14 +144,15 @@ public class InterviewGenerationService {
                     .missingData(List.of("No completed interviews with feedback found"))
                     .openQuestions(List.of())
                     .recommendedNextStep("Schedule initial interviews")
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
         }
 
         String prompt = buildFeedbackSynthesisPrompt(candidate, job, completedInterviews);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai = aiHelper.callOpenAI(prompt, INTERVIEW_TEMPERATURE);
+        recordUsage(FEATURE_FEEDBACK_SYNTH, ai);
 
-        return parseFeedbackSynthesisResponse(aiResponse, candidate, job);
+        return parseFeedbackSynthesisResponse(ai.getContent(), candidate, job);
     }
 
     // ==================== PRIVATE HELPERS ====================
@@ -193,13 +230,12 @@ public class InterviewGenerationService {
                     interview.getNotes() != null ? interview.getNotes() : "No notes"));
         }
 
+        // Use the shared protected-attribute guardrail so every recruitment
+        // prompt enforces the same EEOC / Equality-Act language (wave-5 AI #6).
         return """
                 You are an expert HR interviewer synthesizing feedback from multiple interview rounds.
                 This synthesis is for the hiring team only and MUST NOT be used for automated hiring decisions.
-
-                Focus on evidence from the data provided. Do NOT infer or comment on any protected
-                attributes (age, gender, ethnicity, religion, health, marital status, etc.).
-
+                %s
                 JOB: %s
                 CANDIDATE: %s
 
@@ -219,6 +255,7 @@ public class InterviewGenerationService {
 
                 Return ONLY valid JSON.
                 """.formatted(
+                AIRecruitmentHelper.PROTECTED_ATTRIBUTE_GUARDRAIL,
                 job.getJobTitle(),
                 candidate.getFullName(),
                 interviews.size(),
@@ -321,7 +358,7 @@ public class InterviewGenerationService {
                     .missingData(dto.getMissingData())
                     .openQuestions(dto.getOpenQuestions())
                     .recommendedNextStep(dto.getRecommendedNextStep())
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
         } catch (JsonProcessingException e) {
             log.error("Error parsing feedback synthesis response: {}", e.getMessage());
@@ -337,8 +374,31 @@ public class InterviewGenerationService {
                     .missingData(List.of())
                     .openQuestions(List.of())
                     .recommendedNextStep("Review feedback manually")
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
+        }
+    }
+
+    /**
+     * Best-effort persistence of a row to {@code ai_usage_log}. Failures must not
+     * propagate — usage logging is observability, not part of the user-facing
+     * interview-generation contract.
+     */
+    private void recordUsage(String featureName, AIRecruitmentHelper.ChatCompletionResult ai) {
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            if (tenantId == null) {
+                return;
+            }
+            AiUsageLog usage = AiUsageLog.builder()
+                    .feature(featureName)
+                    .modelName(aiModelName)
+                    .tokensUsed((int) ai.getTotalTokens())
+                    .build();
+            usage.setTenantId(tenantId);
+            aiUsageLogRepository.save(usage);
+        } catch (RuntimeException e) {
+            log.warn("Failed to persist AI usage log for {}: {}", featureName, e.getMessage());
         }
     }
 }

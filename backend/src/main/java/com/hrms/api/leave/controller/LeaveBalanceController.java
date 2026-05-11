@@ -31,8 +31,9 @@ public class LeaveBalanceController {
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_TEAM, Permission.LEAVE_VIEW_SELF})
     public ResponseEntity<List<LeaveBalanceResponse>> getEmployeeBalances(@PathVariable UUID employeeId) {
-        List<LeaveBalance> balances = leaveBalanceService.getEmployeeBalances(employeeId);
-        return ResponseEntity.ok(balances.stream().map(this::toResponse).collect(Collectors.toList()));
+        // PERF (wave-3 H4): delegate to the batched service method which
+        // collapses the per-row LeaveType lookup into a single IN(...) query.
+        return ResponseEntity.ok(leaveBalanceService.getEmployeeBalancesEnriched(employeeId));
     }
 
     @GetMapping("/employee/{employeeId}/year/{year}")

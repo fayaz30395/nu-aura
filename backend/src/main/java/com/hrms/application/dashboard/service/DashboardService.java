@@ -2,6 +2,7 @@ package com.hrms.application.dashboard.service;
 
 import com.hrms.api.dashboard.dto.DashboardMetricsResponse;
 import com.hrms.api.dashboard.dto.DashboardMetricsResponse.*;
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.audit.AuditLog;
 import com.hrms.domain.employee.Employee;
@@ -9,6 +10,7 @@ import com.hrms.infrastructure.audit.repository.AuditLogRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,8 @@ public class DashboardService {
     private final AuditLogRepository auditLogRepository;
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.DASHBOARD_METRICS,
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant()")
     public DashboardMetricsResponse getDashboardMetrics() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         log.info("Fetching dashboard metrics for tenant: {}", tenantId);
@@ -46,30 +50,34 @@ public class DashboardService {
     }
 
     private EmployeeMetrics getEmployeeMetrics(UUID tenantId) {
-        List<Employee> allEmployees = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0, 10000))
-                .getContent();
-
-        long totalEmployees = allEmployees.size();
-        long activeEmployees = allEmployees.stream()
-                .filter(e -> Employee.EmployeeStatus.ACTIVE.equals(e.getStatus()))
-                .count();
+        // PERF (wave-3 H1): previously loaded up to 10,000 employees into memory
+        // just to compute counts. Replaced with three COUNT(*) queries which run
+        // in O(index-scan) time and keep heap pressure constant regardless of
+        // tenant size. Per-status grouping is built from the two known buckets
+        // (ACTIVE, others) — the dashboard only consumes ACTIVE / INACTIVE
+        // headline numbers, so this avoids a second GROUP BY round-trip.
+        long totalEmployees = employeeRepository.countByTenantId(tenantId);
+        long activeEmployees = employeeRepository.countByTenantIdAndStatus(
+                tenantId, Employee.EmployeeStatus.ACTIVE);
         long inactiveEmployees = totalEmployees - activeEmployees;
 
-        // Employees hired this month
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        long newEmployeesThisMonth = allEmployees.stream()
-                .filter(e -> e.getJoiningDate() != null &&
-                        !e.getJoiningDate().isBefore(startOfMonth))
-                .count();
+        long newEmployeesThisMonth = employeeRepository.countNewHiresAfterDate(tenantId, startOfMonth);
 
-        // Group by department - simplified since we only have departmentId
+        // Group by department: not currently populated by this endpoint (kept
+        // as an empty map to preserve the response contract). If the frontend
+        // ever requires it, EmployeeRepository#getEmployeeCountByDepartment
+        // already exposes it as a single GROUP BY query.
         Map<String, Long> employeesByDepartment = new HashMap<>();
 
-        // Group by status
-        Map<String, Long> employeesByStatus = allEmployees.stream()
-                .collect(Collectors.groupingBy(
-                        e -> e.getStatus() != null ? e.getStatus().name() : "UNKNOWN",
-                        Collectors.counting()));
+        // Group by status: only ACTIVE vs other is exposed to the dashboard.
+        // Avoid a second query just to populate this map — derive it from the
+        // counts we already have above.
+        Map<String, Long> employeesByStatus = new HashMap<>();
+        employeesByStatus.put(Employee.EmployeeStatus.ACTIVE.name(), activeEmployees);
+        if (inactiveEmployees > 0) {
+            employeesByStatus.put("INACTIVE", inactiveEmployees);
+        }
 
         return EmployeeMetrics.builder()
                 .totalEmployees(totalEmployees)
@@ -129,9 +137,13 @@ public class DashboardService {
     }
 
     private List<RecentActivity> getRecentActivities(UUID tenantId) {
-        // Fetch recent audit logs
-        List<AuditLog> recentLogs = auditLogRepository.findAll(
-                PageRequest.of(0, 10)).getContent();
+        // SEC + PERF (wave-3 H1): previous implementation called
+        // {@code auditLogRepository.findAll(PageRequest.of(0, 10))} which had
+        // NO tenant filter — a user on tenant A could see audit rows from
+        // tenant B. Now scoped via the existing tenant-aware finder.
+        List<AuditLog> recentLogs = auditLogRepository
+                .findAllByTenantIdOrderByCreatedAtDesc(tenantId, PageRequest.of(0, 10))
+                .getContent();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

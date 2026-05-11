@@ -6,7 +6,15 @@ import com.hrms.application.payroll.service.PayrollRunService;
 import com.hrms.application.payroll.service.PayslipPdfService;
 import com.hrms.application.payroll.service.PayslipService;
 import com.hrms.application.payroll.service.SalaryStructureService;
+import com.hrms.api.payroll.dto.CreatePayrollComponentRequest;
+import com.hrms.api.payroll.dto.CreatePayrollRunRequest;
+import com.hrms.api.payroll.dto.CreatePayslipRequest;
+import com.hrms.api.payroll.dto.CreateSalaryStructureRequest;
 import com.hrms.api.payroll.dto.PayrollInputRequest;
+import com.hrms.api.payroll.dto.UpdatePayrollComponentRequest;
+import com.hrms.api.payroll.dto.UpdatePayrollRunRequest;
+import com.hrms.api.payroll.dto.UpdatePayslipRequest;
+import com.hrms.api.payroll.dto.UpdateSalaryStructureRequest;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
 import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
@@ -56,14 +64,37 @@ public class PayrollController {
 
     @PostMapping("/runs")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<PayrollRun> createPayrollRun(@Valid @RequestBody PayrollRun payrollRun) {
+    public ResponseEntity<PayrollRun> createPayrollRun(@Valid @RequestBody CreatePayrollRunRequest request) {
+        // R-1.10: bind only whitelisted fields — entity status/audit fields are server-controlled
+        PayrollRun payrollRun = new PayrollRun();
+        payrollRun.setPayPeriodMonth(request.getPayPeriodMonth());
+        payrollRun.setPayPeriodYear(request.getPayPeriodYear());
+        payrollRun.setPayrollDate(request.getPayrollDate());
+        payrollRun.setRemarks(request.getRemarks());
+        // Defense-in-depth: ensure no audit-controlled state leaks through
+        payrollRun.setId(null);
+        payrollRun.setTenantId(null);
+        payrollRun.setStatus(PayrollStatus.DRAFT);
+        payrollRun.setProcessedBy(null);
+        payrollRun.setProcessedAt(null);
+        payrollRun.setApprovedBy(null);
+        payrollRun.setApprovedAt(null);
+        payrollRun.setTotalEmployees(null);
+
         PayrollRun created = payrollRunService.createPayrollRun(payrollRun);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/runs/{id}")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<PayrollRun> updatePayrollRun(@PathVariable UUID id, @Valid @RequestBody PayrollRun payrollRun) {
+    public ResponseEntity<PayrollRun> updatePayrollRun(@PathVariable UUID id, @Valid @RequestBody UpdatePayrollRunRequest request) {
+        // R-1.10: map only mutable fields the service copies — status/audit fields are NOT bound
+        PayrollRun payrollRun = new PayrollRun();
+        payrollRun.setPayPeriodMonth(request.getPayPeriodMonth());
+        payrollRun.setPayPeriodYear(request.getPayPeriodYear());
+        payrollRun.setPayrollDate(request.getPayrollDate());
+        payrollRun.setRemarks(request.getRemarks());
+
         PayrollRun updated = payrollRunService.updatePayrollRun(id, payrollRun);
         return ResponseEntity.ok(updated);
     }
@@ -186,14 +217,60 @@ public class PayrollController {
 
     @PostMapping("/payslips")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<Payslip> createPayslip(@Valid @RequestBody Payslip payslip) {
+    public ResponseEntity<Payslip> createPayslip(@Valid @RequestBody CreatePayslipRequest request) {
+        // R-1.10: bind only whitelisted fields — totals/pdfFileId/tenantId stay server-controlled
+        Payslip payslip = new Payslip();
+        payslip.setPayrollRunId(request.getPayrollRunId());
+        payslip.setEmployeeId(request.getEmployeeId());
+        payslip.setPayPeriodMonth(request.getPayPeriodMonth());
+        payslip.setPayPeriodYear(request.getPayPeriodYear());
+        payslip.setPayDate(request.getPayDate());
+        payslip.setBasicSalary(request.getBasicSalary());
+        payslip.setHra(request.getHra());
+        payslip.setConveyanceAllowance(request.getConveyanceAllowance());
+        payslip.setMedicalAllowance(request.getMedicalAllowance());
+        payslip.setSpecialAllowance(request.getSpecialAllowance());
+        payslip.setOtherAllowances(request.getOtherAllowances());
+        payslip.setProvidentFund(request.getProvidentFund());
+        payslip.setProfessionalTax(request.getProfessionalTax());
+        payslip.setIncomeTax(request.getIncomeTax());
+        payslip.setOtherDeductions(request.getOtherDeductions());
+        payslip.setWorkingDays(request.getWorkingDays());
+        payslip.setPresentDays(request.getPresentDays());
+        payslip.setLeaveDays(request.getLeaveDays());
+        // Defense-in-depth: do not let client supply server-controlled state
+        payslip.setId(null);
+        payslip.setTenantId(null);
+        payslip.setPdfFileId(null);
+
         Payslip created = payslipService.createPayslip(payslip);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/payslips/{id}")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<Payslip> updatePayslip(@PathVariable UUID id, @Valid @RequestBody Payslip payslip) {
+    public ResponseEntity<Payslip> updatePayslip(@PathVariable UUID id, @Valid @RequestBody UpdatePayslipRequest request) {
+        // R-1.10: map only mutable fields the service copies — totals are recomputed in calculateTotals()
+        Payslip payslip = new Payslip();
+        payslip.setPayrollRunId(request.getPayrollRunId());
+        payslip.setEmployeeId(request.getEmployeeId());
+        payslip.setPayPeriodMonth(request.getPayPeriodMonth());
+        payslip.setPayPeriodYear(request.getPayPeriodYear());
+        payslip.setPayDate(request.getPayDate());
+        payslip.setBasicSalary(request.getBasicSalary());
+        payslip.setHra(request.getHra());
+        payslip.setConveyanceAllowance(request.getConveyanceAllowance());
+        payslip.setMedicalAllowance(request.getMedicalAllowance());
+        payslip.setSpecialAllowance(request.getSpecialAllowance());
+        payslip.setOtherAllowances(request.getOtherAllowances());
+        payslip.setProvidentFund(request.getProvidentFund());
+        payslip.setProfessionalTax(request.getProfessionalTax());
+        payslip.setIncomeTax(request.getIncomeTax());
+        payslip.setOtherDeductions(request.getOtherDeductions());
+        payslip.setWorkingDays(request.getWorkingDays());
+        payslip.setPresentDays(request.getPresentDays());
+        payslip.setLeaveDays(request.getLeaveDays());
+
         Payslip updated = payslipService.updatePayslip(id, payslip);
         return ResponseEntity.ok(updated);
     }
@@ -304,7 +381,27 @@ public class PayrollController {
 
     @PostMapping("/salary-structures")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<SalaryStructure> createSalaryStructure(@Valid @RequestBody SalaryStructure salaryStructure) {
+    public ResponseEntity<SalaryStructure> createSalaryStructure(@Valid @RequestBody CreateSalaryStructureRequest request) {
+        // R-1.10: bind only whitelisted fields — tenantId / id stay server-controlled
+        SalaryStructure salaryStructure = new SalaryStructure();
+        salaryStructure.setEmployeeId(request.getEmployeeId());
+        salaryStructure.setEffectiveDate(request.getEffectiveDate());
+        salaryStructure.setEndDate(request.getEndDate());
+        salaryStructure.setBasicSalary(request.getBasicSalary());
+        salaryStructure.setHra(request.getHra());
+        salaryStructure.setConveyanceAllowance(request.getConveyanceAllowance());
+        salaryStructure.setMedicalAllowance(request.getMedicalAllowance());
+        salaryStructure.setSpecialAllowance(request.getSpecialAllowance());
+        salaryStructure.setOtherAllowances(request.getOtherAllowances());
+        salaryStructure.setProvidentFund(request.getProvidentFund());
+        salaryStructure.setProfessionalTax(request.getProfessionalTax());
+        salaryStructure.setIncomeTax(request.getIncomeTax());
+        salaryStructure.setOtherDeductions(request.getOtherDeductions());
+        salaryStructure.setIsActive(request.getIsActive() != null ? request.getIsActive() : Boolean.TRUE);
+        // Defense-in-depth: prevent client-supplied id/tenant
+        salaryStructure.setId(null);
+        salaryStructure.setTenantId(null);
+
         SalaryStructure created = salaryStructureService.createSalaryStructure(salaryStructure);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -313,7 +410,24 @@ public class PayrollController {
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<SalaryStructure> updateSalaryStructure(
             @PathVariable UUID id,
-            @Valid @RequestBody SalaryStructure salaryStructure) {
+            @Valid @RequestBody UpdateSalaryStructureRequest request) {
+        // R-1.10: map only mutable fields the service copies — tenantId / id remain server-controlled
+        SalaryStructure salaryStructure = new SalaryStructure();
+        salaryStructure.setEmployeeId(request.getEmployeeId());
+        salaryStructure.setEffectiveDate(request.getEffectiveDate());
+        salaryStructure.setEndDate(request.getEndDate());
+        salaryStructure.setBasicSalary(request.getBasicSalary());
+        salaryStructure.setHra(request.getHra());
+        salaryStructure.setConveyanceAllowance(request.getConveyanceAllowance());
+        salaryStructure.setMedicalAllowance(request.getMedicalAllowance());
+        salaryStructure.setSpecialAllowance(request.getSpecialAllowance());
+        salaryStructure.setOtherAllowances(request.getOtherAllowances());
+        salaryStructure.setProvidentFund(request.getProvidentFund());
+        salaryStructure.setProfessionalTax(request.getProfessionalTax());
+        salaryStructure.setIncomeTax(request.getIncomeTax());
+        salaryStructure.setOtherDeductions(request.getOtherDeductions());
+        salaryStructure.setIsActive(request.getIsActive());
+
         SalaryStructure updated = salaryStructureService.updateSalaryStructure(id, salaryStructure);
         return ResponseEntity.ok(updated);
     }
@@ -380,7 +494,22 @@ public class PayrollController {
     @PostMapping("/components")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<PayrollComponent> createComponent(
-            @Valid @RequestBody PayrollComponent component) {
+            @Valid @RequestBody CreatePayrollComponentRequest request) {
+        // R-1.10: bind only whitelisted fields — evaluationOrder/tenantId/id stay server-controlled
+        PayrollComponent component = new PayrollComponent();
+        component.setCode(request.getCode());
+        component.setName(request.getName());
+        component.setComponentType(request.getComponentType());
+        component.setFormula(request.getFormula());
+        component.setDefaultValue(request.getDefaultValue());
+        component.setIsActive(request.getIsActive() != null ? request.getIsActive() : Boolean.TRUE);
+        component.setIsTaxable(request.getIsTaxable() != null ? request.getIsTaxable() : Boolean.TRUE);
+        component.setDescription(request.getDescription());
+        // Defense-in-depth: server computes evaluationOrder, owns tenantId/id
+        component.setId(null);
+        component.setTenantId(null);
+        component.setEvaluationOrder(0);
+
         PayrollComponent created = payrollComponentService.createComponent(component);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -389,7 +518,17 @@ public class PayrollController {
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<PayrollComponent> updateComponent(
             @PathVariable UUID id,
-            @Valid @RequestBody PayrollComponent component) {
+            @Valid @RequestBody UpdatePayrollComponentRequest request) {
+        // R-1.10: map only mutable fields the service copies — code is immutable, evaluationOrder is recomputed
+        PayrollComponent component = new PayrollComponent();
+        component.setName(request.getName());
+        component.setComponentType(request.getComponentType());
+        component.setFormula(request.getFormula());
+        component.setDefaultValue(request.getDefaultValue());
+        component.setIsActive(request.getIsActive());
+        component.setIsTaxable(request.getIsTaxable());
+        component.setDescription(request.getDescription());
+
         PayrollComponent updated = payrollComponentService.updateComponent(id, component);
         return ResponseEntity.ok(updated);
     }

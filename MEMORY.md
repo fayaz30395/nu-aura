@@ -331,11 +331,29 @@ Updated frequently as the project evolves.
 
 ## 2.2 Flyway Migration Status
 
-| Field             | Value                                                    |
-|-------------------|----------------------------------------------------------|
-| Active migrations | V0–V91 (88 files, gaps at V1, V27–V29, V63–V66, V68–V79) |
-| Next migration    | **V92**                                                  |
-| Legacy Liquibase  | `db/changelog/` — **DO NOT USE**                         |
+| Field             | Value                                                                 |
+|-------------------|-----------------------------------------------------------------------|
+| Active migrations | V0–V146 (138 files; sprint-3 added V147–V149)                         |
+| Next migration    | **V150** (after sprint-3 lands)                                       |
+| Legacy Liquibase  | `db/changelog/` — **DO NOT USE**                                      |
+
+**Security sprints (May 2026):**
+
+- **Sprint 1 (2026-05-12, `a93d4093`):** 79 wave-1 audited findings closed across auth, IDOR,
+  injection, SSRF, Drive tenant isolation, dependencies.
+- **Sprint 2 (2026-05-12, `2ac7218d`):** ~50 of ~200 wave-2 findings closed across config, RBAC,
+  mobile/integration stubs, edge cases, frontend a11y, RBAC scope, mass-assignment, impersonation.
+- **Sprint 3 (this commit, 2026-05-12):** Wave-3 regressions + wave-4 documentation audit.
+  - DataScope CUSTOM scope strict allowlist
+  - `UnsupportedOperationException` → HTTP 501
+  - JWT tenant-status caching
+  - AsyncContext IP/UA propagation
+  - PayrollController mass-assignment (8 endpoints → typed DTOs)
+  - Field-level AES-GCM for `BenefitDependent` PII, `TaxDeclaration` previous-employer PAN,
+    `User.mfaSecret` (V147)
+  - Wall `PostReaction` unique constraint + Wiki `version_number` race fix (V148)
+  - Postgres FTS GIN indexes restored (V149)
+  - Governance files added: `LICENSE`, `SECURITY.md`, `CHANGELOG.md`, `.github/CODEOWNERS`
 
 **Recent migrations (Wave 12-18, 2026-03-27):**
 

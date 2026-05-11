@@ -9,6 +9,9 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.domain.wall.model.*;
 import com.hrms.infrastructure.wall.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +35,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class WallService {
+
+    private static final Logger log = LoggerFactory.getLogger(WallService.class);
 
     private final WallPostRepository wallPostRepository;
     private final PostReactionRepository postReactionRepository;
@@ -109,14 +114,65 @@ public class WallService {
     public Page<WallPostResponse> getPosts(Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<WallPost> postsPage = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(tenantId, pageable);
-        return mapPageToResponses(postsPage, tenantId, currentUserId);
+        return mapPageToResponses(filterByVisibility(postsPage, tenantId, currentUserId), tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPostsByType(WallPost.PostType type, Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Page<WallPost> postsPage = wallPostRepository.findByTypeAndActiveTrue(tenantId, type, pageable);
-        return mapPageToResponses(postsPage, tenantId, currentUserId);
+        return mapPageToResponses(filterByVisibility(postsPage, tenantId, currentUserId), tenantId, currentUserId);
+    }
+
+    /**
+     * Wave-3 NU-Fluence 3.5: enforce post-visibility boundary.
+     * <ul>
+     *   <li>PUBLIC / ORGANIZATION → visible to all in tenant.</li>
+     *   <li>DEPARTMENT → only visible if viewer's department matches author's.</li>
+     *   <li>TEAM → only visible if viewer's team matches author's.</li>
+     *   <li>PRIVATE → only visible to the author.</li>
+     * </ul>
+     * TODO: push this predicate into the JPQL repository query so we don't waste
+     * a page slot when a post is filtered out. The in-memory filter below is a
+     * correctness fix; pagination counts may under-report on the filtered page.
+     */
+    private Page<WallPost> filterByVisibility(Page<WallPost> page, UUID tenantId, UUID currentUserId) {
+        if (page.isEmpty() || currentUserId == null) {
+            return page;
+        }
+        Employee viewer = employeeRepository.findByIdAndTenantId(currentUserId, tenantId).orElse(null);
+        UUID viewerDeptId = viewer != null ? viewer.getDepartmentId() : null;
+        UUID viewerTeamId = viewer != null ? viewer.getTeamId() : null;
+
+        List<WallPost> filtered = page.getContent().stream()
+                .filter(p -> isVisibleToViewer(p, currentUserId, viewerDeptId, viewerTeamId))
+                .collect(Collectors.toList());
+        return new org.springframework.data.domain.PageImpl<>(filtered, page.getPageable(), page.getTotalElements());
+    }
+
+    private boolean isVisibleToViewer(WallPost post, UUID viewerId, UUID viewerDeptId, UUID viewerTeamId) {
+        WallPost.PostVisibility v = post.getVisibility();
+        if (v == null || v == WallPost.PostVisibility.PUBLIC || v == WallPost.PostVisibility.ORGANIZATION) {
+            return true;
+        }
+        Employee author = post.getAuthor();
+        UUID authorId = author != null ? author.getId() : null;
+        if (authorId != null && authorId.equals(viewerId)) {
+            // Authors always see their own posts regardless of visibility setting.
+            return true;
+        }
+        if (v == WallPost.PostVisibility.PRIVATE) {
+            return false;
+        }
+        if (v == WallPost.PostVisibility.DEPARTMENT) {
+            UUID authorDeptId = author != null ? author.getDepartmentId() : null;
+            return viewerDeptId != null && viewerDeptId.equals(authorDeptId);
+        }
+        if (v == WallPost.PostVisibility.TEAM) {
+            UUID authorTeamId = author != null ? author.getTeamId() : null;
+            return viewerTeamId != null && viewerTeamId.equals(authorTeamId);
+        }
+        return true;
     }
 
     @Transactional(readOnly = true)
@@ -204,13 +260,21 @@ public class WallService {
             reaction.setReactionType(reactionType);
             postReactionRepository.save(reaction);
         } else {
-            // Create new reaction
+            // Create new reaction. Wave-3 fix: a unique index on
+            // (tenant_id, post_id, employee_id) now guards concurrent inserts,
+            // so we must handle the DB-level conflict gracefully.
             PostReaction reaction = new PostReaction(post, employee, reactionType);
-            postReactionRepository.save(reaction);
+            try {
+                postReactionRepository.save(reaction);
 
-            // Update like count on the post
-            post.setLikesCount(post.getLikesCount() + 1);
-            wallPostRepository.save(post);
+                // Update like count on the post
+                post.setLikesCount(post.getLikesCount() + 1);
+                wallPostRepository.save(post);
+            } catch (DataIntegrityViolationException e) {
+                log.debug("Concurrent reaction collision for post={} user={}", postId, employeeId);
+                // Idempotent: caller assumes reaction recorded. The other concurrent
+                // request already inserted the row and bumped likesCount.
+            }
         }
     }
 

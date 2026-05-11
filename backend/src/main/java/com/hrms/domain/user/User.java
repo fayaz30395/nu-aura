@@ -1,5 +1,6 @@
 package com.hrms.domain.user;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
@@ -78,8 +79,11 @@ public class User extends TenantAware {
     @Builder.Default
     private Boolean mfaEnabled = false;
 
+    // TOTP MFA seed — must be confidentiality-protected at rest (wall multi-tenant audit M-MFA).
+    // AES-GCM encrypted at rest — V147 widened to 256.
     @com.fasterxml.jackson.annotation.JsonIgnore
-    @Column(name = "mfa_secret", length = 100)
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "mfa_secret", length = 256)
     private String mfaSecret;
 
     @Column(name = "mfa_backup_codes", columnDefinition = "TEXT")

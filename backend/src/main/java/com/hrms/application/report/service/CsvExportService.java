@@ -19,6 +19,21 @@ public class CsvExportService {
     private static final String SEPARATOR = ",";
     private static final String NEW_LINE = "\n";
 
+    /**
+     * CSV formula-injection guard (S3-F sprint 3).
+     * Any cell whose leading character is {@code =}, {@code +}, {@code -}, {@code @},
+     * tab or carriage return can be interpreted as a formula by Excel/LibreOffice/Numbers
+     * when the CSV is opened. We neutralize by prepending a single quote so the
+     * spreadsheet renders it as a literal string.
+     */
+    private static final java.util.regex.Pattern FORMULA_LEAD =
+            java.util.regex.Pattern.compile("^[=+\\-@\\t\\r].*", java.util.regex.Pattern.DOTALL);
+
+    private String neutralizeFormula(String value) {
+        if (value == null) return "";
+        return FORMULA_LEAD.matcher(value).matches() ? "'" + value : value;
+    }
+
     @Transactional(readOnly = true)
     public byte[] exportEmployeeDirectoryToCsv(List<EmployeeDirectoryReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -232,6 +247,9 @@ public class CsvExportService {
         if (value == null) {
             return "";
         }
+
+        // Defuse spreadsheet formulas before any quote handling (S3-F sprint 3).
+        value = neutralizeFormula(value);
 
         // If the value contains comma, newline, or quotes, wrap it in quotes
         if (value.contains(",") || value.contains("\n") || value.contains("\"")) {

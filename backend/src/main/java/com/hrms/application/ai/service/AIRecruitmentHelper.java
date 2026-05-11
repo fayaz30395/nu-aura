@@ -1,5 +1,6 @@
 package com.hrms.application.ai.service;
 
+import com.hrms.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,18 +8,21 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Shared infrastructure helper for AI recruitment services.
- * Encapsulates OpenAI API calls, JSON extraction, mock response generation,
- * and other utilities shared across ResumeParserService, CandidateMatchingService,
- * and InterviewGenerationService.
+ * Encapsulates OpenAI API calls, JSON extraction, and other utilities
+ * shared across ResumeParserService, CandidateMatchingService, and
+ * InterviewGenerationService.
+ *
+ * <p><strong>SECURITY / SAFETY:</strong> When the OpenAI API key is not
+ * configured, this helper now throws {@link BusinessException} rather than
+ * silently returning hardcoded mock data. Returning fabricated
+ * "John Doe"-style content from a real AI endpoint is a wave-5 AI audit
+ * blocker — recruiters could persist mock candidates as real matches.</p>
  */
 @Component
 @RequiredArgsConstructor
@@ -36,12 +40,79 @@ class AIRecruitmentHelper {
     @Value("${ai.openai.model:gpt-4o-mini}")
     private String openAiModel;
 
+    /**
+     * Standard EEOC / UK Equality Act guardrail clause appended to every
+     * recruitment prompt. Prevents the model from inferring or commenting on
+     * protected attributes (wave-5 AI #6 — gap between match-score and
+     * screening-summary prompts).
+     */
+    static final String PROTECTED_ATTRIBUTE_GUARDRAIL = """
+
+            IMPORTANT: Do NOT infer or comment on any protected attributes
+            (age, gender, ethnicity, religion, health, marital status, national origin,
+            disability, sexual orientation, etc.). Base your assessment ONLY on documented
+            skills, experience, and qualifications.
+            """;
+
     // ==================== OPENAI ====================
 
+    /**
+     * Result of a chat-completion call: assistant message content plus token usage.
+     * Token counts are best-effort — OpenAI does not always populate the usage block,
+     * and self-hosted gateways may omit it entirely.
+     */
+    static class ChatCompletionResult {
+        final String content;
+        final long promptTokens;
+        final long completionTokens;
+        final long totalTokens;
+
+        ChatCompletionResult(String content, long promptTokens, long completionTokens, long totalTokens) {
+            this.content = content;
+            this.promptTokens = promptTokens;
+            this.completionTokens = completionTokens;
+            this.totalTokens = totalTokens;
+        }
+
+        String getContent() {
+            return content;
+        }
+
+        long getTotalTokens() {
+            return totalTokens;
+        }
+    }
+
+    /**
+     * Convenience wrapper that returns only the message content at the default
+     * temperature. Maintained for callers that have not been migrated to the
+     * full {@link #callOpenAI(String, double)} entry point.
+     *
+     * @param prompt user-role prompt content
+     * @return assistant message content
+     * @throws BusinessException if the API key is not configured (no silent mock fallback)
+     */
     String callOpenAI(String prompt) {
-        if (openAiApiKey == null || openAiApiKey.isEmpty()) {
-            log.warn("OpenAI API key not configured, returning mock response");
-            return getMockResponse(prompt);
+        return callOpenAI(prompt, 0.7).getContent();
+    }
+
+    /**
+     * Invoke OpenAI chat completions and return both the response content and the
+     * token usage block (for {@code AiUsageLog} persistence).
+     *
+     * @param prompt      user-role prompt content
+     * @param temperature sampling temperature — use 0.1 for structured JSON extraction,
+     *                    0.2 for evaluative scoring, higher for open-ended generation
+     * @return {@link ChatCompletionResult} carrying content + token counts
+     * @throws BusinessException if the API key is not configured
+     */
+    ChatCompletionResult callOpenAI(String prompt, double temperature) {
+        if (openAiApiKey == null || openAiApiKey.isBlank()) {
+            // Wave-5 AI #1: do NOT fall back to fabricated mock data here.
+            // The previous behavior returned hardcoded "John Doe" JSON that callers
+            // would persist as if it were a real model response.
+            throw new BusinessException(
+                    "AI feature not available — OPENAI_API_KEY not configured");
         }
 
         try {
@@ -53,7 +124,7 @@ class AIRecruitmentHelper {
             requestBody.put("model", openAiModel);
             requestBody.put("messages", List.of(
                     Map.of("role", "user", "content", prompt)));
-            requestBody.put("temperature", 0.7);
+            requestBody.put("temperature", temperature);
             requestBody.put("max_tokens", 2000);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
@@ -65,21 +136,65 @@ class AIRecruitmentHelper {
                     new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
                     });
 
+            String content = "";
+            long promptTokens = 0L;
+            long completionTokens = 0L;
+            long totalTokens = 0L;
+
             if (response.getBody() != null) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
                 if (choices != null && !choices.isEmpty()) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                    return (String) message.get("content");
+                    if (message != null && message.get("content") != null) {
+                        content = (String) message.get("content");
+                    }
+                }
+                @SuppressWarnings("unchecked")
+                Map<String, Object> usage = (Map<String, Object>) response.getBody().get("usage");
+                if (usage != null) {
+                    promptTokens = toLong(usage.get("prompt_tokens"));
+                    completionTokens = toLong(usage.get("completion_tokens"));
+                    totalTokens = toLong(usage.get("total_tokens"));
                 }
             }
 
-            return "";
+            return new ChatCompletionResult(content, promptTokens, completionTokens, totalTokens);
+        } catch (BusinessException e) {
+            // Already a domain-shaped failure — let it propagate.
+            throw e;
         } catch (RuntimeException e) {
+            // Wave-5 AI #1: do NOT fall back to fabricated mock data on transport
+            // failures either. Callers must see real errors and surface them to
+            // recruiters rather than persisting hallucinated match scores.
             log.error("Error calling OpenAI API: {}", e.getMessage());
-            return getMockResponse(prompt);
+            throw new BusinessException(
+                    "AI provider call failed: " + e.getMessage());
         }
+    }
+
+    /**
+     * Currently-configured upstream model identifier (e.g. {@code gpt-4o-mini}).
+     * Exposed so callers can persist the real model name onto AiUsageLog and
+     * CandidateMatchScore rather than a hardcoded version string.
+     */
+    String getModelName() {
+        return openAiModel;
+    }
+
+    private static long toLong(Object raw) {
+        if (raw instanceof Number num) {
+            return num.longValue();
+        }
+        if (raw instanceof String str) {
+            try {
+                return Long.parseLong(str);
+            } catch (NumberFormatException ignored) {
+                return 0L;
+            }
+        }
+        return 0L;
     }
 
     // ==================== JSON EXTRACTION ====================
@@ -130,339 +245,10 @@ class AIRecruitmentHelper {
         return value.doubleValue();
     }
 
-    // ==================== MOCK RESPONSE GENERATION ====================
-
-    private String getMockResponse(String prompt) {
-        if (prompt.contains("resume")) {
-            return """
-                    {
-                      "fullName": "John Doe",
-                      "email": "john.doe@email.com",
-                      "phone": "+91 9876543210",
-                      "currentLocation": "Bangalore, India",
-                      "currentCompany": "Tech Corp",
-                      "currentDesignation": "Senior Software Engineer",
-                      "totalExperienceYears": 5,
-                      "skills": ["Java", "Spring Boot", "Microservices", "AWS", "Docker"],
-                      "education": [{"degree": "B.Tech", "institution": "IIT Delhi", "year": 2018}],
-                      "certifications": ["AWS Solutions Architect"],
-                      "languages": ["English", "Hindi"],
-                      "summary": "Experienced software engineer with 5 years in backend development"
-                    }
-                    """;
-        } else if (prompt.contains("match")) {
-            String candidateName = extractBetween(prompt, "- Name: ", "\n");
-            String jobTitle = extractBetween(prompt, "- Title: ", "\n");
-
-            long seed = generateHashSeed(candidateName, jobTitle);
-            int overallScore = generateOverallScore(seed);
-            int skillsScore = generateComponentScore(seed, overallScore, 1);
-            int experienceScore = generateComponentScore(seed, overallScore, 2);
-            int educationScore = generateComponentScore(seed, overallScore, 3);
-            int culturalFitScore = generateComponentScore(seed, overallScore, 4);
-
-            List<String> strengths = generateStrengths(seed, overallScore);
-            List<String> gaps = generateGaps(seed, overallScore);
-            String recommendation = getRecommendationForScore(overallScore);
-
-            String summary = String.format(
-                    "Candidate demonstrates %s match for the role. %s. %s",
-                    overallScore >= 75 ? "strong" : (overallScore >= 50 ? "moderate" : "limited"),
-                    !strengths.isEmpty() ? "Strengths include: " + String.join(", ", strengths) : "Some training may be required",
-                    !gaps.isEmpty() ? "Consider developing: " + String.join(", ", gaps) : "Well-rounded profile"
-            );
-
-            List<String> interviewFocus = generateFollowUpQuestions(seed);
-
-            return String.format("""
-                            {
-                              "overallScore": %d,
-                              "skillsScore": %d,
-                              "experienceScore": %d,
-                              "educationScore": %d,
-                              "culturalFitScore": %d,
-                              "strengths": %s,
-                              "gaps": %s,
-                              "recommendation": "%s",
-                              "summary": "%s",
-                              "interviewFocus": %s,
-                              "aiModelVersion": "mock-v1"
-                            }
-                            """,
-                    overallScore,
-                    skillsScore,
-                    experienceScore,
-                    educationScore,
-                    culturalFitScore,
-                    toJsonArray(strengths),
-                    toJsonArray(gaps),
-                    recommendation,
-                    summary.replace("\"", "\\\""),
-                    toJsonArray(interviewFocus)
-            );
-        } else if (prompt.contains("screening summary") || prompt.contains("Screening")) {
-            String candidateName = extractBetween(prompt, "- Name: ", "\n");
-            String jobTitle = extractBetween(prompt, "- Title: ", "\n");
-
-            long seed = generateHashSeed(candidateName, jobTitle);
-            String fitLevel = generateFitLevel(seed);
-            List<String> strengths = generateStrengths(seed, fitLevel.equals("HIGH") ? 80 : (fitLevel.equals("MEDIUM") ? 60 : 40));
-            List<String> gaps = generateGaps(seed, fitLevel.equals("HIGH") ? 80 : (fitLevel.equals("MEDIUM") ? 60 : 40));
-            List<String> followUpQuestions = generateFollowUpQuestions(seed);
-            List<String> riskFlags = generateRiskFlags(seed, fitLevel);
-            String recommendation = getScreeningRecommendationForFitLevel(fitLevel);
-
-            String summary = String.format(
-                    "Candidate shows %s fit for this role. %s",
-                    fitLevel.toLowerCase(),
-                    fitLevel.equals("HIGH") ? "Ready to advance to next stage." : (fitLevel.equals("MEDIUM") ? "Further evaluation recommended." : "Consider alternative candidates.")
-            );
-
-            return String.format("""
-                            {
-                              "fitLevel": "%s",
-                              "strengths": %s,
-                              "gaps": %s,
-                              "followUpQuestions": %s,
-                              "riskFlags": %s,
-                              "recommendation": "%s",
-                              "summary": "%s",
-                              "aiModelVersion": "mock-v1"
-                            }
-                            """,
-                    fitLevel,
-                    toJsonArray(strengths),
-                    toJsonArray(gaps),
-                    toJsonArray(followUpQuestions),
-                    toJsonArray(riskFlags),
-                    recommendation,
-                    summary.replace("\"", "\\\"")
-            );
-        } else if (prompt.contains("synthesizing feedback") || prompt.contains("Synthesize")) {
-            return """
-                    {
-                      "candidateNarrative": "The candidate demonstrated strong technical abilities across multiple rounds, particularly in system design and problem solving. Communication skills were consistently noted as a strength. There is some disagreement on leadership readiness, with the technical panel seeing potential while the managerial round flagged limited people management experience.",
-                      "themes": ["Strong technical foundation", "Good communication", "Leadership readiness uncertain", "Culture alignment positive"],
-                      "agreements": ["Technically proficient for the role", "Strong communication and presentation skills", "Positive attitude and willingness to learn"],
-                      "disagreements": ["Leadership readiness: Technical panel rated high, managerial round rated moderate", "Depth of system design knowledge varies by interviewer assessment"],
-                      "missingData": ["No assessment of cross-functional collaboration", "Team dynamics and conflict resolution not tested"],
-                      "openQuestions": ["How does the candidate handle ambiguity in project requirements?", "What is their experience leading teams of more than 3 people?"],
-                      "recommendedNextStep": "Schedule a final panel round focusing on leadership scenarios and cross-functional collaboration before making an offer decision."
-                    }
-                    """;
-        } else if (prompt.contains("job description")) {
-            return """
-                    {
-                      "title": "Senior Software Engineer",
-                      "summary": "We are looking for an experienced Software Engineer to join our team.",
-                      "responsibilities": ["Design and develop scalable applications", "Mentor junior developers", "Participate in code reviews"],
-                      "requirements": ["5+ years of experience", "Proficiency in Java/Python", "Experience with cloud platforms"],
-                      "preferredQualifications": ["AWS certification", "Open source contributions"],
-                      "benefits": ["Competitive salary", "Health insurance", "Flexible work hours"],
-                      "fullDescription": "Join our innovative team as a Senior Software Engineer..."
-                    }
-                    """;
-        } else {
-            return """
-                    {
-                      "technicalQuestions": [
-                        {"question": "Explain microservices architecture", "purpose": "Technical knowledge", "difficulty": "medium"},
-                        {"question": "How do you handle database optimization?", "purpose": "Problem solving", "difficulty": "medium"}
-                      ],
-                      "behavioralQuestions": [
-                        {"question": "Tell me about a challenging project", "competency": "Problem solving"}
-                      ],
-                      "situationalQuestions": [
-                        {"question": "How would you handle a production outage?", "scenario": "Crisis management"}
-                      ],
-                      "culturalFitQuestions": [
-                        {"question": "How do you prefer to receive feedback?", "value": "Growth mindset"}
-                      ],
-                      "roleSpecificQuestions": [
-                        {"question": "What's your experience with agile methodologies?", "focus": "Process"}
-                      ]
-                    }
-                    """;
-        }
-    }
-
-    // ==================== MOCK GENERATION UTILITIES ====================
-
-    private String extractBetween(String text, String startDelim, String endDelim) {
-        if (text == null) return "";
-        int start = text.indexOf(startDelim);
-        if (start == -1) return "";
-        start += startDelim.length();
-        int end = text.indexOf(endDelim, start);
-        if (end == -1) {
-            return text.substring(start).trim();
-        }
-        return text.substring(start, end).trim();
-    }
-
-    private String toJsonArray(List<String> items) {
-        if (items == null || items.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < items.size(); i++) {
-            sb.append("\"").append(items.get(i).replace("\"", "\\\"")).append("\"");
-            if (i < items.size() - 1) {
-                sb.append(", ");
-            }
-        }
-        sb.append("]");
-        return sb.toString();
-    }
-
-    private long generateHashSeed(String candidateName, String jobTitle) {
-        try {
-            String combined = (candidateName != null ? candidateName : "") + "|" + (jobTitle != null ? jobTitle : "");
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(combined.getBytes());
-            long seed = 0;
-            for (int i = 0; i < 8; i++) {
-                seed = (seed << 8) | (hash[i] & 0xFF);
-            }
-            return seed;
-        } catch (NoSuchAlgorithmException e) {
-            String combined = (candidateName != null ? candidateName : "") + "|" + (jobTitle != null ? jobTitle : "");
-            return combined.hashCode();
-        }
-    }
-
-    private int generateOverallScore(long seed) {
-        java.util.Random rand = new java.util.Random(seed);
-        return 45 + rand.nextInt(51); // 45-95
-    }
-
-    private int generateComponentScore(long seed, int baseScore, int offset) {
-        java.util.Random rand = new java.util.Random(seed + offset);
-        int variation = rand.nextInt(21) - 10; // -10 to +10
-        int score = baseScore + variation;
-        return Math.max(0, Math.min(100, score));
-    }
-
-    private String getRecommendationForScore(int overallScore) {
-        if (overallScore >= 80) {
-            return "HIGHLY_RECOMMENDED";
-        } else if (overallScore >= 65) {
-            return "RECOMMENDED";
-        } else if (overallScore >= 50) {
-            return "CONSIDER";
-        } else {
-            return "NOT_RECOMMENDED";
-        }
-    }
-
-    private String getScreeningRecommendationForFitLevel(String fitLevel) {
-        if ("HIGH".equals(fitLevel)) {
-            return "ADVANCE";
-        } else if ("MEDIUM".equals(fitLevel)) {
-            return "HOLD";
-        } else {
-            return "REJECT";
-        }
-    }
-
-    private String generateFitLevel(long seed) {
-        java.util.Random rand = new java.util.Random(seed);
-        int fitRand = rand.nextInt(100);
-        if (fitRand < 33) {
-            return "HIGH";
-        } else if (fitRand < 66) {
-            return "MEDIUM";
-        } else {
-            return "LOW";
-        }
-    }
-
-    private List<String> generateStrengths(long seed, int overallScore) {
-        java.util.Random rand = new java.util.Random(seed);
-        List<String> allStrengths = List.of(
-                "Strong technical skills",
-                "Relevant industry experience",
-                "Excellent communication abilities",
-                "Leadership potential",
-                "Problem-solving aptitude",
-                "Cultural fit",
-                "Proven track record",
-                "Quick learner",
-                "Team collaboration skills",
-                "Adaptability"
-        );
-
-        List<String> selected = new ArrayList<>();
-        int count = overallScore > 75 ? 3 : (overallScore > 50 ? 2 : 1);
-        for (int i = 0; i < count; i++) {
-            selected.add(allStrengths.get(rand.nextInt(allStrengths.size())));
-        }
-        return selected;
-    }
-
-    private List<String> generateGaps(long seed, int overallScore) {
-        java.util.Random rand = new java.util.Random(seed + 1000);
-        List<String> allGaps = List.of(
-                "Limited leadership experience",
-                "No cloud platform certification",
-                "Gap in specific technical domain",
-                "Limited experience with modern frameworks",
-                "Lacking advanced degree",
-                "No international experience",
-                "Limited project management background",
-                "Unfamiliar with industry best practices",
-                "Communication gaps",
-                "Geographic mismatch"
-        );
-
-        List<String> selected = new ArrayList<>();
-        int count = overallScore < 60 ? 3 : (overallScore < 80 ? 2 : 1);
-        for (int i = 0; i < count; i++) {
-            selected.add(allGaps.get(rand.nextInt(allGaps.size())));
-        }
-        return selected;
-    }
-
-    private List<String> generateFollowUpQuestions(long seed) {
-        java.util.Random rand = new java.util.Random(seed + 2000);
-        List<String> allQuestions = List.of(
-                "Can you elaborate on your most recent project experience?",
-                "How do you approach learning new technologies?",
-                "Tell us about your team collaboration experience",
-                "What are your career goals for the next 3-5 years?",
-                "How do you handle pressure and tight deadlines?",
-                "Describe your approach to problem-solving",
-                "What attracted you to this role?",
-                "How do you stay current with industry trends?",
-                "Tell us about a time you faced conflict at work",
-                "What is your approach to code quality and testing?"
-        );
-
-        List<String> selected = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            selected.add(allQuestions.get(rand.nextInt(allQuestions.size())));
-        }
-        return selected;
-    }
-
-    private List<String> generateRiskFlags(long seed, String fitLevel) {
-        java.util.Random rand = new java.util.Random(seed + 3000);
-        List<String> allRisks = List.of(
-                "High salary expectations may not align with offer",
-                "Short tenure at last position",
-                "Geographic relocation required",
-                "Skill gaps in critical areas",
-                "Limited availability (long notice period)",
-                "Technology stack mismatch",
-                "Career progression expectations unclear"
-        );
-
-        List<String> selected = new ArrayList<>();
-        if ("LOW".equals(fitLevel)) {
-            for (int i = 0; i < 2; i++) {
-                selected.add(allRisks.get(rand.nextInt(allRisks.size())));
-            }
-        }
-        return selected;
-    }
+    // Mock fabrication path (getMockResponse + seeded score generators) was removed
+    // in S3-G (wave-5 AI #1). It returned hardcoded "John Doe" resumes and SHA-256-
+    // seeded match scores that callers persisted to CandidateMatchScore / Candidate
+    // as if they were real model output. The new contract: when the API key is
+    // unconfigured or the upstream call fails, throw BusinessException and let the
+    // controller layer surface an "AI unavailable" error to the user.
 }

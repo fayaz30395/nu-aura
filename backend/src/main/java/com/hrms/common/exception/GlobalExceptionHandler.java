@@ -383,6 +383,38 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Wave-3 2.2 FIX: Map UnsupportedOperationException to 501 Not Implemented.
+     *
+     * <p>Service methods that intentionally signal "feature not wired up yet" (e.g. stub
+     * payroll exports, draft AI flows) throw {@link UnsupportedOperationException}.
+     * Previously these fell through to the generic handler and returned 500, which
+     * triggered Sentry/PagerDuty alerts. 501 is the semantically correct status and
+     * we log at WARN (not ERROR) to keep the alert pipeline quiet for known gaps.</p>
+     */
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedOperation(
+            UnsupportedOperationException ex, WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.NOT_IMPLEMENTED;
+        String requestId = MDC.get("requestId");
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // WARN (not ERROR) — these are known-unimplemented features, not bugs.
+        log.warn("FEATURE_NOT_AVAILABLE [{}] path={} tenant={} message={}",
+                requestId, path, tenantId, ex.getMessage());
+        recordErrorMetric("feature", "not_implemented", status);
+
+        String message = ex.getMessage() != null && !ex.getMessage().isBlank()
+                ? ex.getMessage()
+                : "This feature is not yet available.";
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Implemented", message, path);
+        errorResponse.setErrorCode("FEATURE_NOT_AVAILABLE");
+
+        return jsonResponse(status, errorResponse);
+    }
+
+    /**
      * BUG-004 FIX: Handle invalid UUID path variables (e.g., empty string, malformed UUID).
      * Returns 400 Bad Request instead of 500 Internal Server Error.
      */

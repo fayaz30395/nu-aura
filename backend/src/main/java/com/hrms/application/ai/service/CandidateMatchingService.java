@@ -2,9 +2,11 @@ package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.*;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.ai.AiUsageLog;
 import com.hrms.domain.ai.CandidateMatchScore;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,19 @@ import java.util.UUID;
  * AI-powered candidate matching, screening, and job description generation.
  * Calculates fit scores between candidates and job openings, ranks candidate
  * pools, generates screening summaries, and produces AI-drafted job descriptions.
+ *
+ * <p><strong>SAFETY (wave-5 AI #1, #2, #5, #6, #8):</strong></p>
+ * <ul>
+ *   <li>When {@code OPENAI_API_KEY} is not configured, throws
+ *       {@link com.hrms.common.exception.BusinessException} rather than returning
+ *       deterministic seeded "AI" scores (those were indistinguishable from real
+ *       model output once persisted onto {@code CandidateMatchScore}).</li>
+ *   <li>The stored model identifier is now the runtime model name, not the
+ *       hardcoded {@code "gpt-4o-mini-v1"} placeholder.</li>
+ *   <li>Every prompt — including {@code buildMatchingPrompt} — carries the
+ *       protected-attribute guardrail (EEOC / UK Equality Act).</li>
+ *   <li>Match scoring uses temperature 0.2 to keep ratings reproducible.</li>
+ * </ul>
  */
 @Service
 @RequiredArgsConstructor
@@ -31,18 +47,45 @@ import java.util.UUID;
 @Transactional
 public class CandidateMatchingService {
 
-    private static final String AI_MODEL_VERSION = "gpt-4o-mini-v1";
+    /**
+     * AiUsageLog feature keys for the three entrypoints in this service.
+     */
+    private static final String FEATURE_MATCH_SCORE = "match_score";
+    private static final String FEATURE_SCREENING_SUMMARY = "screening_summary";
+    private static final String FEATURE_JOB_DESCRIPTION = "job_description";
+
+    /**
+     * Temperature for match-score and screening-summary prompts. These are
+     * evaluative tasks — same inputs should yield substantially the same scores.
+     */
+    private static final double MATCH_TEMPERATURE = 0.2;
+
+    /**
+     * Job description generation is a creative writing task; default temperature is fine.
+     */
+    private static final double JD_TEMPERATURE = 0.7;
 
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final CandidateMatchScoreRepository matchScoreRepository;
     private final AIRecruitmentHelper aiHelper;
     private final ObjectMapper objectMapper;
+    private final AiUsageLogRepository aiUsageLogRepository;
+
+    /**
+     * Runtime upstream model name. Replaces the previous hardcoded
+     * {@code AI_MODEL_VERSION = "gpt-4o-mini-v1"} constant so the stored value
+     * reflects the model that actually scored the candidate.
+     */
+    @Value("${ai.openai.model:gpt-4o-mini}")
+    private String aiModelName;
 
     // ==================== PUBLIC API ====================
 
     /**
      * Calculate match score between a candidate and a job opening using AI.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
      */
     @Transactional(readOnly = true)
     public CandidateMatchResponse calculateMatchScore(UUID candidateId, UUID jobOpeningId) {
@@ -56,9 +99,10 @@ public class CandidateMatchingService {
                 .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
 
         String prompt = buildMatchingPrompt(candidate, job);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai = aiHelper.callOpenAI(prompt, MATCH_TEMPERATURE);
+        recordUsage(FEATURE_MATCH_SCORE, ai);
 
-        CandidateMatchResponse response = parseMatchResponse(aiResponse, candidate, job);
+        CandidateMatchResponse response = parseMatchResponse(ai.getContent(), candidate, job);
 
         saveMatchScore(candidate, job, response);
 
@@ -68,6 +112,8 @@ public class CandidateMatchingService {
     /**
      * Generate a structured screening summary for a candidate against a job opening.
      * This is intended as human guidance only and must not be used for automated decisions.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
      */
     @Transactional(readOnly = true)
     public CandidateScreeningSummaryResponse generateScreeningSummary(
@@ -82,9 +128,10 @@ public class CandidateMatchingService {
                 .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
 
         String prompt = buildScreeningSummaryPrompt(candidate, job, context);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai = aiHelper.callOpenAI(prompt, MATCH_TEMPERATURE);
+        recordUsage(FEATURE_SCREENING_SUMMARY, ai);
 
-        return parseScreeningSummaryResponse(aiResponse, candidate, job);
+        return parseScreeningSummaryResponse(ai.getContent(), candidate, job);
     }
 
     /**
@@ -118,23 +165,31 @@ public class CandidateMatchingService {
 
     /**
      * Generate a job description using AI.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
      */
     @Transactional(readOnly = true)
     public JobDescriptionResponse generateJobDescription(JobDescriptionRequest request) {
         log.info("Generating job description for: {}", request.getJobTitle());
 
         String prompt = buildJobDescriptionPrompt(request);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai = aiHelper.callOpenAI(prompt, JD_TEMPERATURE);
+        recordUsage(FEATURE_JOB_DESCRIPTION, ai);
 
-        return parseJobDescriptionResponse(aiResponse, request);
+        return parseJobDescriptionResponse(ai.getContent(), request);
     }
 
     // ==================== PRIVATE HELPERS ====================
 
     private String buildMatchingPrompt(Candidate candidate, JobOpening job) {
+        // Wave-5 AI #6: the match-score prompt previously lacked the EEOC /
+        // Equality-Act guardrail that buildScreeningSummaryPrompt already had.
+        // The model was free to weight protected attributes into the numerical
+        // score, which then drove ranked candidate lists. Adding the shared
+        // guardrail clause closes that gap.
         return """
                 You are an expert HR recruiter. Analyze the match between this candidate and job opening.
-
+                %s
                 JOB OPENING:
                 - Title: %s
                 - Description: %s
@@ -168,6 +223,7 @@ public class CandidateMatchingService {
 
                 Return ONLY valid JSON.
                 """.formatted(
+                AIRecruitmentHelper.PROTECTED_ATTRIBUTE_GUARDRAIL,
                 job.getJobTitle(),
                 job.getJobDescription() != null ? job.getJobDescription() : "Not specified",
                 job.getRequirements() != null ? job.getRequirements() : "Not specified",
@@ -193,14 +249,13 @@ public class CandidateMatchingService {
                 """.formatted(context)
                 : "";
 
+        // Use the shared protected-attribute guardrail so every recruitment
+        // prompt enforces the same EEOC / Equality-Act language (wave-5 AI #6).
         return """
                 You are an expert recruiter. Create a structured screening summary for this candidate
                 against the given job opening. This summary is for human recruiters only and MUST NOT be used
                 for automated hiring decisions.
-
-                Focus on evidence from the data provided. Do NOT infer or comment on any protected
-                attributes (age, gender, ethnicity, religion, health, marital status, etc.).
-
+                %s
                 JOB OPENING:
                 - Title: %s
                 - Description: %s
@@ -233,6 +288,7 @@ public class CandidateMatchingService {
 
                 Return ONLY valid JSON.
                 """.formatted(
+                AIRecruitmentHelper.PROTECTED_ATTRIBUTE_GUARDRAIL,
                 job.getJobTitle(),
                 job.getJobDescription() != null ? job.getJobDescription() : "Not specified",
                 job.getRequirements() != null ? job.getRequirements() : "Not specified",
@@ -309,7 +365,7 @@ public class CandidateMatchingService {
                     .recommendation(dto.getRecommendation())
                     .summary(dto.getSummary())
                     .interviewFocus(dto.getInterviewFocus())
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
         } catch (JsonProcessingException e) {
             log.error("Error parsing match response: {}", e.getMessage());
@@ -344,7 +400,7 @@ public class CandidateMatchingService {
                     .riskFlags(dto.getRiskFlags())
                     .recommendation(dto.getRecommendation())
                     .summary(dto.getSummary())
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
         } catch (JsonProcessingException e) {
             log.error("Error parsing screening summary response: {}", e.getMessage());
@@ -355,7 +411,7 @@ public class CandidateMatchingService {
                     .jobTitle(job.getJobTitle())
                     .fitLevel("LOW")
                     .summary("Unable to generate screening summary - " + e.getMessage())
-                    .aiModelVersion(AI_MODEL_VERSION)
+                    .aiModelVersion(aiModelName)
                     .build();
         }
     }
@@ -410,7 +466,7 @@ public class CandidateMatchingService {
         score.setCulturalFitScore(response.getCulturalFitScore());
         score.setStrengths(String.join(",", response.getStrengths() != null ? response.getStrengths() : List.of()));
         score.setGaps(String.join(",", response.getGaps() != null ? response.getGaps() : List.of()));
-        score.setAiModelVersion(AI_MODEL_VERSION);
+        score.setAiModelVersion(aiModelName);
 
         try {
             score.setRecommendation(CandidateMatchScore.Recommendation.valueOf(response.getRecommendation()));
@@ -419,5 +475,28 @@ public class CandidateMatchingService {
         }
 
         matchScoreRepository.save(score);
+    }
+
+    /**
+     * Best-effort persistence of a row to {@code ai_usage_log}. Failures must not
+     * propagate — usage logging is observability, not part of the match-score
+     * user-facing contract.
+     */
+    private void recordUsage(String featureName, AIRecruitmentHelper.ChatCompletionResult ai) {
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            if (tenantId == null) {
+                return;
+            }
+            AiUsageLog usage = AiUsageLog.builder()
+                    .feature(featureName)
+                    .modelName(aiModelName)
+                    .tokensUsed((int) ai.getTotalTokens())
+                    .build();
+            usage.setTenantId(tenantId);
+            aiUsageLogRepository.save(usage);
+        } catch (RuntimeException e) {
+            log.warn("Failed to persist AI usage log for {}: {}", featureName, e.getMessage());
+        }
     }
 }

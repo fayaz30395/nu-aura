@@ -67,6 +67,12 @@ public class AuditLogService {
         try {
             UUID actorId = SecurityContext.getCurrentUserId();
 
+            // FIX (wave-3 2.3): {@link TenantAwareTaskDecorator} now snapshots
+            // RequestAttributes from the calling thread and re-attaches them on
+            // this @Async worker thread, so {@link #getHttpServletRequest()}
+            // returns the originating request rather than null. If you remove
+            // that decorator, IP/User-Agent capture here will silently break —
+            // see {@code AsyncConfig#getAsyncExecutor()}.
             HttpServletRequest request = getHttpServletRequest();
             String ipAddress = request != null ? getClientIp(request) : null;
             String userAgent = request != null ? request.getHeader("User-Agent") : null;
@@ -87,6 +93,14 @@ public class AuditLogService {
                     .build();
 
             auditLog.setTenantId(tenantId);
+
+            // Audit M-C3 / M-M5 wave-3: when SuperAdmin acts on behalf of a tenant user,
+            // capture the underlying admin so the audit chain records both principals.
+            // Field + SecurityContext accessor were added in sprint 2 (agent H).
+            UUID impersonatorId = SecurityContext.getCurrentImpersonatorId();
+            if (impersonatorId != null) {
+                auditLog.setImpersonatorId(impersonatorId);
+            }
 
             return auditLogRepository.save(auditLog);
         } catch (JsonProcessingException e) {

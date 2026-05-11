@@ -14,6 +14,7 @@ import com.hrms.infrastructure.knowledge.repository.WikiPageVersionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -445,21 +446,43 @@ public class WikiPageService {
         return plain.length() > 200 ? plain.substring(0, 200) : plain;
     }
 
+    /**
+     * Wave-3 NU-Fluence 1.2 fix: concurrent edits to the same wiki page used to
+     * compute {@code versionNumber = countByPage() + 1} which is racy — two
+     * concurrent edits both see count=N and insert N+1, leaving a duplicate row.
+     * <p>
+     * V148 adds {@code UNIQUE (tenant_id, page_id, version_number)}; here we
+     * retry on the resulting {@link DataIntegrityViolationException} with a
+     * freshly-computed count (max 3 attempts). The retry is safe because the
+     * version row carries an immutable snapshot — recomputing the number does
+     * not invalidate any other state.
+     */
     private void createPageVersion(WikiPage page, String changeSummary, UUID tenantId, UUID userId) {
-        long versionCount = wikiPageVersionRepository.countByTenantIdAndPageId(tenantId, page.getId());
-        int nextVersion = (int) (versionCount + 1);
+        DataIntegrityViolationException lastError = null;
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            long versionCount = wikiPageVersionRepository.countByTenantIdAndPageId(tenantId, page.getId());
+            int nextVersion = (int) (versionCount + 1);
 
-        WikiPageVersion version = WikiPageVersion.builder()
-                .tenantId(tenantId)
-                .page(page)
-                .versionNumber(nextVersion)
-                .title(page.getTitle())
-                .excerpt(page.getExcerpt())
-                .content(page.getContent())
-                .changeSummary(changeSummary)
-                .createdBy(userId)
-                .build();
-
-        wikiPageVersionRepository.save(version);
+            WikiPageVersion version = WikiPageVersion.builder()
+                    .tenantId(tenantId)
+                    .page(page)
+                    .versionNumber(nextVersion)
+                    .title(page.getTitle())
+                    .excerpt(page.getExcerpt())
+                    .content(page.getContent())
+                    .changeSummary(changeSummary)
+                    .createdBy(userId)
+                    .build();
+            try {
+                wikiPageVersionRepository.saveAndFlush(version);
+                return;
+            } catch (DataIntegrityViolationException e) {
+                lastError = e;
+                log.warn("Concurrent wiki version conflict (page={} attempt={}/3); retrying with fresh count",
+                        page.getId(), attempt);
+            }
+        }
+        throw new IllegalStateException(
+                "Failed to allocate wiki page version after 3 attempts for page " + page.getId(), lastError);
     }
 }

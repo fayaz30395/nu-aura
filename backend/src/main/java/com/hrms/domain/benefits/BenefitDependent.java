@@ -1,5 +1,6 @@
 package com.hrms.domain.benefits;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Where;
@@ -38,20 +39,36 @@ public class BenefitDependent extends TenantAware {
     @Enumerated(EnumType.STRING)
     private Relationship relationship;
 
+    // TODO(privacy): dateOfBirth is high-sensitivity PII (Article 4 GDPR). Cannot use
+    // EncryptedStringConverter directly because the column is LocalDate, not String.
+    // Defer to follow-up: introduce a date-mask / shadow-encrypted-string column
+    // approach, or migrate column to encrypted TEXT with read/write helpers.
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
     private String gender;
 
-    // Identification
+    // Identification (AES-GCM encrypted at rest — V147 widened columns to 512)
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(length = 512)
     private String nationalId;
+
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(length = 512)
     private String passportNumber;
 
-    // Contact
+    // Contact (AES-GCM encrypted at rest)
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(length = 512)
     private String phone;
+
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(length = 512)
     private String email;
 
-    // Address (if different from employee)
+    // Address (if different from employee) — street line encrypted; city/state/postal/country left as-is
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(length = 2048)
     private String address;
     private String city;
     private String state;
@@ -64,9 +81,13 @@ public class BenefitDependent extends TenantAware {
     private LocalDate coverageEndDate;
     private String membershipId;
 
-    // Health details
+    // Health details — Article 9 GDPR special category. AES-GCM encrypted at rest.
     private boolean hasPreExistingConditions;
+
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(columnDefinition = "TEXT")
     private String preExistingConditions;
+
     private boolean isDisabled;
 
     // Documents

@@ -28,10 +28,14 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,6 +65,7 @@ public class EmployeeService {
     private final DomainEventPublisher eventPublisher;
     private final AuditLogService auditLogService;
     private final DataScopeService dataScopeService;
+    private final JdbcTemplate jdbcTemplate;
 
     public EmployeeService(EmployeeRepository employeeRepository,
                            DepartmentRepository departmentRepository,
@@ -68,7 +73,8 @@ public class EmployeeService {
                            PasswordEncoder passwordEncoder,
                            DomainEventPublisher eventPublisher,
                            AuditLogService auditLogService,
-                           DataScopeService dataScopeService) {
+                           DataScopeService dataScopeService,
+                           JdbcTemplate jdbcTemplate) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
@@ -76,6 +82,33 @@ public class EmployeeService {
         this.eventPublisher = eventPublisher;
         this.auditLogService = auditLogService;
         this.dataScopeService = dataScopeService;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    /**
+     * Wave-3 business-logic F10.1 fix: previously {@code createEmployee} ran a
+     * {@code count++ / existsByEmployeeCode} loop which is a TOCTOU race
+     * — two concurrent creates can observe the same count and produce a duplicate
+     * code (the existsBy check then masks the dup until DB constraint fires).
+     * <p>
+     * Mirrors the V145 expense-claim pattern: V148 adds an
+     * {@code employee_code_sequence(tenant_id, year_month, current_value)} table
+     * and we allocate via atomic INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING.
+     * Format: {@code EMP-yyyyMM-NNNN}.
+     */
+    private static final String NEXT_EMPLOYEE_CODE_SEQ_SQL =
+            "INSERT INTO employee_code_sequence(tenant_id, year_month, current_value) VALUES(?, ?, 1) " +
+                    "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = employee_code_sequence.current_value + 1 " +
+                    "RETURNING current_value";
+
+    private String generateEmployeeCode(UUID tenantId) {
+        String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
+        Long seq = jdbcTemplate.queryForObject(NEXT_EMPLOYEE_CODE_SEQ_SQL, Long.class, tenantId, ym);
+        if (seq == null) {
+            // Unreachable — INSERT ON CONFLICT RETURNING always returns a row.
+            throw new IllegalStateException("Failed to allocate employee code sequence for tenant " + tenantId);
+        }
+        return String.format("EMP-%s-%04d", ym, seq);
     }
 
     @Transactional
@@ -87,14 +120,12 @@ public class EmployeeService {
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        // F-02: Auto-generate employee code when not provided
+        // F-02 / Wave-3 F10.1: Auto-generate employee code when not provided.
+        // Replaced the racy count++/existsBy loop with an atomic Postgres
+        // sequence backed by V148.employee_code_sequence (see generateEmployeeCode).
         String employeeCode = request.getEmployeeCode();
         if (employeeCode == null || employeeCode.isBlank()) {
-            long count = employeeRepository.countByTenantId(tenantId);
-            do {
-                count++;
-                employeeCode = String.format("EMP-%04d", count);
-            } while (employeeRepository.existsByEmployeeCodeAndTenantId(employeeCode, tenantId));
+            employeeCode = generateEmployeeCode(tenantId);
         } else if (employeeRepository.existsByEmployeeCodeAndTenantId(employeeCode, tenantId)) {
             throw new DuplicateResourceException("Employee code already exists");
         }

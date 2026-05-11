@@ -267,8 +267,9 @@ public class DataScopeService {
 
         if (predicates.isEmpty()) {
             log.debug("No custom targets found for permission: {}", permission);
-            // Fallback to SELF if no custom targets
-            return getSelfPredicate(root, cb);
+            // Strict allowlist semantics (wave-3 R-1.7): CUSTOM scope with no targets matches
+            // nothing. Users needing self-access must be granted *_VIEW_SELF separately.
+            return cb.disjunction();
         }
 
         return cb.or(predicates.toArray(new Predicate[0]));

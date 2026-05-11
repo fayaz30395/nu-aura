@@ -11,12 +11,15 @@ import com.hrms.infrastructure.notification.repository.NotificationChannelConfig
 import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -38,17 +41,40 @@ public class SlackCommandService {
 
     private static final String HMAC_SHA256 = "HmacSHA256";
     private static final long MAX_TIMESTAMP_DIFF_SECONDS = 300; // 5 minutes
+    private static final String PROD_PROFILE = "prod";
     private final EmployeeRepository employeeRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveTypeRepository leaveTypeRepository;
     private final NotificationChannelConfigRepository channelConfigRepository;
     private final ObjectMapper objectMapper;
+    // Wave-3 W5-D #14: ensure dev-bypass WARN log fires only once per process.
+    private final AtomicBoolean devBypassWarned = new AtomicBoolean(false);
     @Value("${app.slack.signing-secret:}")
     private String signingSecret;
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     // ==================== Signature Verification ====================
     @Value("${app.frontend.url:http://localhost:3000}")
     private String appUrl;
+
+    /**
+     * Wave-3 W5-D #14: fail fast at startup when running in prod without a Slack
+     * signing secret. The previous dev-bypass would silently accept any signature,
+     * which is a critical risk in production.
+     */
+    @PostConstruct
+    void validateProdConfig() {
+        boolean isProd = activeProfile != null
+                && java.util.Arrays.stream(activeProfile.split(","))
+                        .map(String::trim)
+                        .anyMatch(PROD_PROFILE::equalsIgnoreCase);
+        if (isProd && (signingSecret == null || signingSecret.isBlank())) {
+            throw new IllegalStateException(
+                    "app.slack.signing-secret must be configured in production. " +
+                    "Refusing to start with Slack signature verification disabled.");
+        }
+    }
 
     // ==================== Command Handlers ====================
 
@@ -67,7 +93,12 @@ public class SlackCommandService {
      */
     public boolean verifySlackSignature(HttpServletRequest request) {
         if (signingSecret == null || signingSecret.isEmpty()) {
-            log.warn("Slack signing secret not configured — skipping verification in dev mode");
+            // Prod path is blocked at @PostConstruct, so reaching here implies non-prod.
+            // Emit the dev-bypass warning exactly once per process to avoid log noise.
+            if (devBypassWarned.compareAndSet(false, true)) {
+                log.warn("Slack signing secret not configured — skipping verification in dev mode (profile={})",
+                        activeProfile);
+            }
             return true; // Allow in dev when secret not configured
         }
 

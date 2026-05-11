@@ -83,4 +83,4 @@ These files affect security and must be reviewed carefully before changes:
 - [ ] No new Axios instances
 - [ ] No hardcoded colors or spacing violations
 - [ ] No secrets or credentials in code
-- [ ] Flyway migration version doesn't conflict (current: V0–V91, next: V92)
+- [ ] Flyway migration version doesn't conflict (current: V0–V146, next: V147)

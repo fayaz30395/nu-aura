@@ -19,6 +19,21 @@ public class ExcelExportService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * CSV/Excel formula-injection guard (S3-F sprint 3).
+     * Any cell whose leading character is {@code =}, {@code +}, {@code -}, {@code @},
+     * tab or carriage return can be interpreted as a formula by Excel/LibreOffice/Numbers
+     * and silently executed when the user opens an exported spreadsheet. We neutralize by
+     * prepending a single quote ({@code '}) so the spreadsheet renders it as a literal.
+     */
+    private static final java.util.regex.Pattern FORMULA_LEAD =
+            java.util.regex.Pattern.compile("^[=+\\-@\\t\\r].*", java.util.regex.Pattern.DOTALL);
+
+    private String neutralizeFormula(String value) {
+        if (value == null) return "";
+        return FORMULA_LEAD.matcher(value).matches() ? "'" + value : value;
+    }
+
     @Transactional(readOnly = true)
     public byte[] exportEmployeeDirectoryToExcel(List<EmployeeDirectoryReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -45,15 +60,15 @@ public class ExcelExportService {
             for (EmployeeDirectoryReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getEmployeeCode());
-                dataRow.createCell(1).setCellValue(row.getFullName());
-                dataRow.createCell(2).setCellValue(row.getEmail());
-                dataRow.createCell(3).setCellValue(row.getPhoneNumber());
-                dataRow.createCell(4).setCellValue(row.getDepartment());
-                dataRow.createCell(5).setCellValue(row.getDesignation());
-                dataRow.createCell(6).setCellValue(row.getJobRole());
-                dataRow.createCell(7).setCellValue(row.getLevel());
-                dataRow.createCell(8).setCellValue(row.getEmploymentType());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getEmployeeCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getFullName()));
+                dataRow.createCell(2).setCellValue(neutralizeFormula(row.getEmail()));
+                dataRow.createCell(3).setCellValue(neutralizeFormula(row.getPhoneNumber()));
+                dataRow.createCell(4).setCellValue(neutralizeFormula(row.getDepartment()));
+                dataRow.createCell(5).setCellValue(neutralizeFormula(row.getDesignation()));
+                dataRow.createCell(6).setCellValue(neutralizeFormula(row.getJobRole()));
+                dataRow.createCell(7).setCellValue(neutralizeFormula(row.getLevel()));
+                dataRow.createCell(8).setCellValue(neutralizeFormula(row.getEmploymentType()));
 
                 Cell dateCell = dataRow.createCell(9);
                 if (row.getJoiningDate() != null) {
@@ -61,9 +76,9 @@ public class ExcelExportService {
                     dateCell.setCellStyle(dateStyle);
                 }
 
-                dataRow.createCell(10).setCellValue(row.getStatus());
-                dataRow.createCell(11).setCellValue(row.getWorkLocation());
-                dataRow.createCell(12).setCellValue(row.getReportingManager());
+                dataRow.createCell(10).setCellValue(neutralizeFormula(row.getStatus()));
+                dataRow.createCell(11).setCellValue(neutralizeFormula(row.getWorkLocation()));
+                dataRow.createCell(12).setCellValue(neutralizeFormula(row.getReportingManager()));
             }
 
             // Auto-size columns
@@ -98,9 +113,9 @@ public class ExcelExportService {
             for (AttendanceReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getEmployeeCode());
-                dataRow.createCell(1).setCellValue(row.getEmployeeName());
-                dataRow.createCell(2).setCellValue(row.getDepartment());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getEmployeeCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getEmployeeName()));
+                dataRow.createCell(2).setCellValue(neutralizeFormula(row.getDepartment()));
 
                 Cell dateCell = dataRow.createCell(3);
                 if (row.getDate() != null) {
@@ -108,15 +123,15 @@ public class ExcelExportService {
                     dateCell.setCellStyle(dateStyle);
                 }
 
-                dataRow.createCell(4).setCellValue(row.getStatus());
+                dataRow.createCell(4).setCellValue(neutralizeFormula(row.getStatus()));
                 dataRow.createCell(5).setCellValue(row.getCheckInTime() != null ?
                         row.getCheckInTime().format(TIME_FORMATTER) : "");
                 dataRow.createCell(6).setCellValue(row.getCheckOutTime() != null ?
                         row.getCheckOutTime().format(TIME_FORMATTER) : "");
                 dataRow.createCell(7).setCellValue(row.getHoursWorked() != null ?
                         row.getHoursWorked() : 0.0);
-                dataRow.createCell(8).setCellValue(row.getShift());
-                dataRow.createCell(9).setCellValue(row.getRemarks());
+                dataRow.createCell(8).setCellValue(neutralizeFormula(row.getShift()));
+                dataRow.createCell(9).setCellValue(neutralizeFormula(row.getRemarks()));
             }
 
             for (int i = 0; i < headers.length; i++) {
@@ -151,10 +166,10 @@ public class ExcelExportService {
             for (LeaveReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getEmployeeCode());
-                dataRow.createCell(1).setCellValue(row.getEmployeeName());
-                dataRow.createCell(2).setCellValue(row.getDepartment());
-                dataRow.createCell(3).setCellValue(row.getLeaveType());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getEmployeeCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getEmployeeName()));
+                dataRow.createCell(2).setCellValue(neutralizeFormula(row.getDepartment()));
+                dataRow.createCell(3).setCellValue(neutralizeFormula(row.getLeaveType()));
 
                 Cell startDateCell = dataRow.createCell(4);
                 if (row.getStartDate() != null) {
@@ -169,9 +184,9 @@ public class ExcelExportService {
                 }
 
                 dataRow.createCell(6).setCellValue(row.getDays() != null ? row.getDays() : 0.0);
-                dataRow.createCell(7).setCellValue(row.getStatus());
-                dataRow.createCell(8).setCellValue(row.getReason());
-                dataRow.createCell(9).setCellValue(row.getApprovedBy());
+                dataRow.createCell(7).setCellValue(neutralizeFormula(row.getStatus()));
+                dataRow.createCell(8).setCellValue(neutralizeFormula(row.getReason()));
+                dataRow.createCell(9).setCellValue(neutralizeFormula(row.getApprovedBy()));
 
                 Cell approvedDateCell = dataRow.createCell(10);
                 if (row.getApprovedOn() != null) {
@@ -213,10 +228,10 @@ public class ExcelExportService {
             for (PayrollReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getEmployeeCode());
-                dataRow.createCell(1).setCellValue(row.getEmployeeName());
-                dataRow.createCell(2).setCellValue(row.getDepartment());
-                dataRow.createCell(3).setCellValue(row.getDesignation());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getEmployeeCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getEmployeeName()));
+                dataRow.createCell(2).setCellValue(neutralizeFormula(row.getDepartment()));
+                dataRow.createCell(3).setCellValue(neutralizeFormula(row.getDesignation()));
 
                 Cell monthCell = dataRow.createCell(4);
                 if (row.getPayrollMonth() != null) {
@@ -240,7 +255,7 @@ public class ExcelExportService {
                 netCell.setCellValue(row.getNetSalary() != null ? row.getNetSalary().doubleValue() : 0.0);
                 netCell.setCellStyle(currencyStyle);
 
-                dataRow.createCell(9).setCellValue(row.getPaymentStatus());
+                dataRow.createCell(9).setCellValue(neutralizeFormula(row.getPaymentStatus()));
 
                 Cell paymentDateCell = dataRow.createCell(10);
                 if (row.getPaymentDate() != null) {
@@ -280,15 +295,15 @@ public class ExcelExportService {
             for (DepartmentHeadcountReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getDepartmentCode());
-                dataRow.createCell(1).setCellValue(row.getDepartmentName());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getDepartmentCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getDepartmentName()));
                 dataRow.createCell(2).setCellValue(row.getTotalEmployees() != null ? row.getTotalEmployees() : 0);
                 dataRow.createCell(3).setCellValue(row.getActiveEmployees() != null ? row.getActiveEmployees() : 0);
                 dataRow.createCell(4).setCellValue(row.getInactiveEmployees() != null ? row.getInactiveEmployees() : 0);
                 dataRow.createCell(5).setCellValue(row.getOnLeave() != null ? row.getOnLeave() : 0);
                 dataRow.createCell(6).setCellValue(row.getNewHires() != null ? row.getNewHires() : 0);
                 dataRow.createCell(7).setCellValue(row.getTerminations() != null ? row.getTerminations() : 0);
-                dataRow.createCell(8).setCellValue(row.getDepartmentHead());
+                dataRow.createCell(8).setCellValue(neutralizeFormula(row.getDepartmentHead()));
             }
 
             for (int i = 0; i < headers.length; i++) {
@@ -323,11 +338,11 @@ public class ExcelExportService {
             for (PerformanceReportRow row : data) {
                 Row dataRow = sheet.createRow(rowNum++);
 
-                dataRow.createCell(0).setCellValue(row.getEmployeeCode());
-                dataRow.createCell(1).setCellValue(row.getEmployeeName());
-                dataRow.createCell(2).setCellValue(row.getDepartment());
-                dataRow.createCell(3).setCellValue(row.getDesignation());
-                dataRow.createCell(4).setCellValue(row.getReviewCycle());
+                dataRow.createCell(0).setCellValue(neutralizeFormula(row.getEmployeeCode()));
+                dataRow.createCell(1).setCellValue(neutralizeFormula(row.getEmployeeName()));
+                dataRow.createCell(2).setCellValue(neutralizeFormula(row.getDepartment()));
+                dataRow.createCell(3).setCellValue(neutralizeFormula(row.getDesignation()));
+                dataRow.createCell(4).setCellValue(neutralizeFormula(row.getReviewCycle()));
 
                 Cell dateCell = dataRow.createCell(5);
                 if (row.getReviewDate() != null) {
@@ -335,12 +350,12 @@ public class ExcelExportService {
                     dateCell.setCellStyle(dateStyle);
                 }
 
-                dataRow.createCell(6).setCellValue(row.getReviewer());
+                dataRow.createCell(6).setCellValue(neutralizeFormula(row.getReviewer()));
                 dataRow.createCell(7).setCellValue(row.getOverallRating() != null ? row.getOverallRating() : 0.0);
-                dataRow.createCell(8).setCellValue(row.getPerformanceLevel());
+                dataRow.createCell(8).setCellValue(neutralizeFormula(row.getPerformanceLevel()));
                 dataRow.createCell(9).setCellValue(row.getGoalsCompleted() != null ? row.getGoalsCompleted() : 0);
                 dataRow.createCell(10).setCellValue(row.getTotalGoals() != null ? row.getTotalGoals() : 0);
-                dataRow.createCell(11).setCellValue(row.getComments());
+                dataRow.createCell(11).setCellValue(neutralizeFormula(row.getComments()));
             }
 
             for (int i = 0; i < headers.length; i++) {

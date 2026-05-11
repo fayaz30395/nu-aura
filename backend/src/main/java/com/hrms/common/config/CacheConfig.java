@@ -59,6 +59,8 @@ public class CacheConfig implements CachingConfigurer {
     public static final String TENANT_ATTENDANCE_CONFIG = "tenantAttendanceConfig";
     public static final String UPCOMING_BIRTHDAYS = "upcomingBirthdays";
     public static final String UPCOMING_ANNIVERSARIES = "upcomingAnniversaries";
+    // PERF (wave-3 2.1): JWT-filter tenant ACTIVE check — read on every request.
+    public static final String TENANT_STATUS = "tenantStatus";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -109,6 +111,14 @@ public class CacheConfig implements CachingConfigurer {
         // Analytics caches - short-lived to reflect near-real-time data
         cacheConfigurations.put(ANALYTICS_SUMMARY, defaultConfig.entryTtl(Duration.ofMinutes(5)));
         cacheConfigurations.put(DASHBOARD_METRICS, defaultConfig.entryTtl(Duration.ofMinutes(5)));
+
+        // PERF (wave-3 2.1): JWT filter checks Tenant.status on every authenticated
+        // request to reject SUSPENDED tenants. 30s TTL is short enough that admin
+        // suspend actions propagate quickly even without explicit eviction, but
+        // long enough to absorb the per-request load. SystemAdminService should
+        // still evict via TenantStatusCache#evict on suspend/activate for
+        // immediate consistency.
+        cacheConfigurations.put(TENANT_STATUS, defaultConfig.entryTtl(Duration.ofSeconds(30)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

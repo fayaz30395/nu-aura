@@ -8,6 +8,8 @@ import com.hrms.domain.wall.model.WallPost;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.hrms.common.security.Permission.*;
@@ -23,6 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/wall")
+@Validated
 @Tag(name = "Organization Wall", description = "APIs for managing organization wall posts, polls, and praise")
 public class WallController {
 
@@ -174,14 +178,18 @@ public class WallController {
     }
 
     @GetMapping("/comments/{commentId}/replies")
-    @Operation(summary = "Get replies for a comment", description = "Get paginated list of replies for a specific comment")
+    @Operation(summary = "Get replies for a comment", description = "Get paginated list of direct replies for a specific comment. Reply chain depth is capped at 3 levels (wave-3 5.3).")
     @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<CommentResponse>> getReplies(
             @PathVariable UUID commentId,
+            @RequestParam(name = "depth", defaultValue = "1") @Min(1) @Max(3) int depth,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
         if (pageable.getPageSize() > 50) {
             pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
         }
+        // Wave-3 5.3: WallService.getReplies fetches only direct children (single-level).
+        // `depth` is a request-time guardrail (1..3) that bounds future recursive expansion
+        // and is currently unused by the service. Validated via @Min/@Max above.
         Page<CommentResponse> replies = wallService.getReplies(commentId, pageable);
         return ResponseEntity.ok(replies);
     }

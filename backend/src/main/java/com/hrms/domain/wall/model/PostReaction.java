@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "post_reactions")
+@Table(name = "post_reactions", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_post_reaction_user", columnNames = {"tenant_id", "post_id", "employee_id"})
+})
 @EntityListeners(AuditingEntityListener.class)
 public class PostReaction {
 

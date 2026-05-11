@@ -1,6 +1,9 @@
 package com.hrms.application.ai.service;
 
 import com.hrms.api.recruitment.dto.ai.*;
+import com.hrms.common.security.TenantContext;
+import com.hrms.domain.ai.AiUsageLog;
+import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,14 @@ import java.util.List;
 /**
  * Handles resume parsing and text extraction from multiple sources:
  * plain text, URL, binary file bytes (PDF/DOCX via Apache Tika), and base64-encoded files.
+ *
+ * <p><strong>SAFETY (wave-5 AI #1):</strong> If {@code OPENAI_API_KEY} is not
+ * configured, this service throws {@link com.hrms.common.exception.BusinessException}
+ * rather than returning hardcoded mock candidate data. Persisting fabricated
+ * "John Doe" rows into the candidate table would corrupt the recruiting pipeline.</p>
+ *
+ * <p>Structured JSON extraction uses temperature 0.1 to keep model output
+ * deterministic and reduce hallucinated fields (wave-5 AI #8).</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -24,22 +35,38 @@ import java.util.List;
 @Transactional
 public class ResumeParserService {
 
+    /**
+     * AiUsageLog feature key — matches the analytics dashboard's bucket name.
+     */
+    private static final String FEATURE_NAME = "resume_parse";
+
+    /**
+     * Temperature for resume parsing. Resume extraction is a structured-output
+     * task — we want the model to copy fields verbatim, not be creative.
+     */
+    private static final double RESUME_PARSE_TEMPERATURE = 0.1;
+
     private final ResumeTextExtractor resumeTextExtractor;
     private final AIRecruitmentHelper aiHelper;
     private final ObjectMapper objectMapper;
+    private final AiUsageLogRepository aiUsageLogRepository;
 
     // ==================== PUBLIC API ====================
 
     /**
      * Parse resume text and extract structured candidate information.
+     *
+     * @throws com.hrms.common.exception.BusinessException if the OpenAI API key is not configured
      */
     public ResumeParseResponse parseResume(String resumeText) {
         log.info("Parsing resume text of length: {}", resumeText.length());
 
         String prompt = buildResumeParsePrompt(resumeText);
-        String aiResponse = aiHelper.callOpenAI(prompt);
+        AIRecruitmentHelper.ChatCompletionResult ai =
+                aiHelper.callOpenAI(prompt, RESUME_PARSE_TEMPERATURE);
+        recordUsage(ai);
 
-        return parseResumeResponse(aiResponse);
+        return parseResumeResponse(ai.getContent());
     }
 
     /**
@@ -384,6 +411,32 @@ public class ResumeParserService {
                     .success(false)
                     .message("Error parsing resume: " + e.getMessage())
                     .build();
+        }
+    }
+
+    /**
+     * Best-effort persistence of a row to {@code ai_usage_log}. Failures must not
+     * propagate — usage logging is observability, not part of the user-facing
+     * parse contract.
+     */
+    private void recordUsage(AIRecruitmentHelper.ChatCompletionResult ai) {
+        try {
+            java.util.UUID tenantId = TenantContext.getCurrentTenant();
+            if (tenantId == null) {
+                // No tenant context (e.g. invoked from a system job) — skip rather
+                // than fabricate a tenant ID.
+                return;
+            }
+            AiUsageLog usage = AiUsageLog.builder()
+                    .feature(FEATURE_NAME)
+                    .modelName(aiHelper.getModelName())
+                    .tokensUsed((int) ai.getTotalTokens())
+                    .build();
+            usage.setTenantId(tenantId);
+            aiUsageLogRepository.save(usage);
+        } catch (RuntimeException e) {
+            // Cost analytics is best-effort — never fail the main resume parse path.
+            log.warn("Failed to persist AI usage log for {}: {}", FEATURE_NAME, e.getMessage());
         }
     }
 }

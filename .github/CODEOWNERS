@@ -1,0 +1,31 @@
+# CODEOWNERS for NU-AURA
+#
+# NOTE: team slugs below are placeholders — replace with real GitHub team
+# slugs (e.g. @nulogic-org/<team>) once the org structure is finalised.
+# Until then, GitHub will silently ignore unresolved teams and fall back
+# to repo admins for review requirements.
+
+# Default owners for all files
+*                                              @nulogic/platform-eng
+
+# Backend
+/backend/                                      @nulogic/backend-team
+/backend/src/main/java/com/hrms/common/        @nulogic/platform-eng
+/backend/src/main/java/com/hrms/common/security/ @nulogic/security-team
+/backend/src/main/resources/db/migration/      @nulogic/backend-team @nulogic/dba
+
+# Frontend
+/frontend/                                     @nulogic/frontend-team
+/frontend/middleware.ts                        @nulogic/security-team
+
+# Infrastructure & deployment
+/deployment/                                   @nulogic/devops
+/docker-compose*.yml                           @nulogic/devops
+/.github/workflows/                            @nulogic/devops
+
+# Monitoring
+/monitoring/                                   @nulogic/sre
+
+# Documentation
+*.md                                           @nulogic/platform-eng
+/SECURITY.md                                   @nulogic/security-team

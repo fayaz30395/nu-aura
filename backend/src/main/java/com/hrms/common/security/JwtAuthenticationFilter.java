@@ -4,7 +4,7 @@ import com.hrms.common.config.CookieConfig;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
-import com.hrms.infrastructure.tenant.repository.TenantRepository;
+import com.hrms.infrastructure.tenant.repository.TenantStatusCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -44,7 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final EmployeeRepository employeeRepository;
     private final ScopeContextService scopeContextService;
     private final SecurityService securityService;
-    private final TenantRepository tenantRepository;
+    // PERF (wave-3 2.1): cached lookup so the per-request tenant-status check is
+    // served from Redis instead of hitting PostgreSQL on every authenticated call.
+    private final TenantStatusCache tenantStatusCache;
 
     /**
      * SEC: Bearer header fallback is OFF by default. When false (prod default),
@@ -59,13 +61,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    EmployeeRepository employeeRepository,
                                    ScopeContextService scopeContextService,
                                    SecurityService securityService,
-                                   TenantRepository tenantRepository) {
+                                   TenantStatusCache tenantStatusCache) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.employeeRepository = employeeRepository;
         this.scopeContextService = scopeContextService;
         this.securityService = securityService;
-        this.tenantRepository = tenantRepository;
+        this.tenantStatusCache = tenantStatusCache;
     }
 
     @Override
@@ -86,7 +88,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Done BEFORE TenantContext.setCurrentTenant() so downstream code never
                 // executes under a disabled tenant.
                 if (tenantId != null) {
-                    Optional<Tenant> tenantOpt = tenantRepository.findById(tenantId);
+                    // PERF (wave-3 2.1): served from 30s Redis cache to avoid a
+                    // per-request PG round-trip for this hot-path check.
+                    Optional<Tenant> tenantOpt = tenantStatusCache.findById(tenantId);
                     if (tenantOpt.isEmpty()
                             || tenantOpt.get().getStatus() != Tenant.TenantStatus.ACTIVE) {
                         Tenant.TenantStatus status = tenantOpt

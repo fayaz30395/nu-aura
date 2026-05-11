@@ -1,5 +1,6 @@
 package com.hrms.domain.tax;
 
+import com.hrms.common.converter.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -134,7 +135,9 @@ public class TaxDeclaration {
     @Column(name = "previous_employer_name", length = 255)
     private String previousEmployerName;
 
-    @Column(name = "previous_employer_pan", length = 10)
+    // PAN is high-sensitivity PII (India ITA + GDPR). AES-GCM encrypted at rest — V147 widened to 256.
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "previous_employer_pan", length = 256)
     private String previousEmployerPan;
 
     @Column(name = "previous_employer_income", precision = 15, scale = 2)

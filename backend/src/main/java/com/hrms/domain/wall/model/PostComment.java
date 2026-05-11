@@ -57,8 +57,10 @@ public class PostComment {
     @Column(name = "likes_count")
     private int likesCount = 0;
 
+    // Wave-3 G-9: Java field renamed `deleted` -> `isDeleted` to align with column name
+    // and sibling entities (WallPost, PostReaction). JPQL queries must use `c.isDeleted`.
     @Column(name = "is_deleted")
-    private boolean deleted = false;
+    private boolean isDeleted = false;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -152,19 +154,19 @@ public class PostComment {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return isDeleted;
     }
 
     public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+        this.isDeleted = deleted;
     }
 
     public boolean isActive() {
-        return !deleted;
+        return !isDeleted;
     }
 
     public void setActive(boolean active) {
-        this.deleted = !active;
+        this.isDeleted = !active;
     }
 
     public LocalDateTime getCreatedAt() {

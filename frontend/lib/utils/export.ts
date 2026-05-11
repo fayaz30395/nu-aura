@@ -12,10 +12,23 @@ interface ExportColumn {
 }
 
 /**
+ * Formula-injection guard (S3-F sprint 3).
+ * Any cell whose leading character is `=`, `+`, `-`, `@`, tab, or carriage return
+ * can be interpreted as a formula by Excel/LibreOffice/Numbers when a CSV is opened.
+ * We neutralize by prepending a single quote so the spreadsheet renders it as a literal.
+ */
+function neutralizeFormula(value: string): string {
+  if (value && /^[=+\-@\t\r]/.test(value)) return "'" + value;
+  return value;
+}
+
+/**
  * Escape a CSV cell value — wraps in quotes if it contains commas, quotes, or newlines.
+ * Also defuses spreadsheet formulas before quoting.
  */
 function escapeCsvCell(value: unknown): string {
-  const str = value == null ? '' : String(value);
+  let str = value == null ? '' : String(value);
+  str = neutralizeFormula(str);
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replace(/"/g, '""')}"`;
   }
@@ -88,11 +101,11 @@ export async function exportToExcel<T extends Record<string, unknown>>(
       cell.alignment = {horizontal: 'left', vertical: 'middle'};
     });
 
-    // Add data rows
+    // Add data rows (defuse spreadsheet formulas — S3-F sprint 3)
     data.forEach((row) => {
       const rowValues = visibleColumns.map((col) => {
         const val = resolveKey(row, col.key);
-        return val == null ? '' : String(val);
+        return val == null ? '' : neutralizeFormula(String(val));
       });
       worksheet.addRow(rowValues);
     });
