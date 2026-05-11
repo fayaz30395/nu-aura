@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +44,7 @@ public class GoogleDriveConfig {
     private String applicationName;
 
     @Bean
-    public StorageProvider storageProvider() throws GeneralSecurityException, IOException {
+    public StorageProvider storageProvider(JdbcTemplate jdbcTemplate) throws GeneralSecurityException, IOException {
         File credFile = new File(credentialsPath);
         if (!credFile.exists()) {
             log.warn("Google Drive credentials not found at '{}' — starting with mock StorageProvider. " +
@@ -52,16 +53,22 @@ public class GoogleDriveConfig {
         }
 
         log.info("Initializing Google Drive storage provider with credentials: {}", credentialsPath);
+        // SEC-FIX (2.3): Use DRIVE_FILE instead of DRIVE so the service account is
+        // restricted to files it created/opened via the app. With this scope, any
+        // org Drive content that was manually shared with the service account (i.e.,
+        // outside the app's own uploads) becomes inaccessible — coordinate with ops
+        // before deploy if such content exists. The narrower scope reduces blast
+        // radius if the service-account key leaks.
         GoogleCredentials credentials = GoogleCredentials
                 .fromStream(new FileInputStream(credFile))
-                .createScoped(Collections.singletonList(DriveScopes.DRIVE));
+                .createScoped(Collections.singletonList(DriveScopes.DRIVE_FILE));
         Drive drive = new Drive.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
                 new HttpCredentialsAdapter(credentials))
                 .setApplicationName(applicationName)
                 .build();
-        return new GoogleDriveStorageProvider(drive, rootFolderId);
+        return new GoogleDriveStorageProvider(drive, rootFolderId, jdbcTemplate);
     }
 
     private StorageProvider mockProvider() {

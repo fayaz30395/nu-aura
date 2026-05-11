@@ -20,6 +20,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/projects")
 public class ProjectController {
 
+    /** Allow-list of sortable fields for {@code Project} entity — prevents reflection-based sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "createdAt", "updatedAt", "name", "projectCode", "status", "priority", "startDate", "endDate", "expectedEndDate"
+    );
+
     private final ProjectService projectService;
 
     public ProjectController(ProjectService projectService) {
@@ -42,8 +47,9 @@ public class ProjectController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection) {
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<ProjectResponse> projects = projectService.getAllProjects(status, priority, pageable);
         return ResponseEntity.ok(projects);
     }

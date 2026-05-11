@@ -43,14 +43,14 @@ public class RoleController {
     }
 
     @PostMapping
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody CreateRoleRequest request) {
         RoleResponse role = roleManagementService.createRole(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(role);
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> updateRole(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateRoleRequest request) {
@@ -59,14 +59,14 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<Void> deleteRole(@PathVariable UUID id) {
         roleManagementService.deleteRole(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/permissions")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> assignPermissions(
             @PathVariable UUID id,
             @Valid @RequestBody AssignPermissionsRequest request) {
@@ -75,7 +75,7 @@ public class RoleController {
     }
 
     @PostMapping("/{id}/permissions")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> addPermissions(
             @PathVariable UUID id,
             @Valid @RequestBody AssignPermissionsRequest request) {
@@ -84,7 +84,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}/permissions")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> removePermissions(
             @PathVariable UUID id,
             @Valid @RequestBody AssignPermissionsRequest request) {
@@ -97,7 +97,7 @@ public class RoleController {
      * Supports ALL, LOCATION, DEPARTMENT, TEAM, SELF, and CUSTOM scopes.
      */
     @PutMapping("/{id}/permissions-with-scope")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> assignPermissionsWithScope(
             @PathVariable UUID id,
             @Valid @RequestBody AssignPermissionsWithScopeRequest request) {
@@ -109,7 +109,7 @@ public class RoleController {
      * Update scope for a single permission on a role.
      */
     @PatchMapping("/{roleId}/permissions/{permissionCode}/scope")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(value = ROLE_MANAGE, revalidate = true)
     public ResponseEntity<RoleResponse> updatePermissionScope(
             @PathVariable UUID roleId,
             @PathVariable String permissionCode,

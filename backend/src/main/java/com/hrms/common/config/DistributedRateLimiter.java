@@ -47,6 +47,11 @@ public class DistributedRateLimiter {
     /**
      * Check if a request should be allowed based on rate limits.
      *
+     * <p><b>SEC fail policy:</b> On Redis errors we fail OPEN for non-auth buckets to
+     * preserve availability of the broader API, but fail CLOSED for {@link RateLimitType#AUTH}
+     * so brute-force/credential-stuffing protections cannot be bypassed by causing
+     * Redis to error.</p>
+     *
      * @param clientKey Unique identifier for the client (e.g., userId:tenantId or ip:address)
      * @param type      The type of rate limit to apply
      * @return RateLimitResult containing whether allowed and remaining tokens
@@ -63,7 +68,11 @@ public class DistributedRateLimiter {
             );
 
             if (remaining == null) {
-                // Redis error - fail open (allow request but log warning)
+                // Redis error - fail closed for AUTH, open elsewhere
+                if (type == RateLimitType.AUTH) {
+                    log.warn("Redis rate limit check failed for AUTH key: {}, failing CLOSED", key);
+                    return new RateLimitResult(false, 0, type.getWindowSeconds());
+                }
                 log.warn("Redis rate limit check failed for key: {}, failing open", key);
                 return new RateLimitResult(true, type.getLimit(), type.getWindowSeconds());
             }
@@ -78,7 +87,12 @@ public class DistributedRateLimiter {
             return new RateLimitResult(allowed, remainingTokens, type.getWindowSeconds());
 
         } catch (RuntimeException e) {
-            // Redis unavailable - fail open to prevent complete service outage
+            // Redis unavailable - fail CLOSED for AUTH (brute-force protection),
+            // fail open for other buckets to preserve broader API availability.
+            if (type == RateLimitType.AUTH) {
+                log.error("Redis rate limit error for AUTH key: {}, failing CLOSED", key, e);
+                return new RateLimitResult(false, 0, type.getWindowSeconds());
+            }
             log.error("Redis rate limit error for key: {}, failing open", key, e);
             return new RateLimitResult(true, type.getLimit(), type.getWindowSeconds());
         }
@@ -133,7 +147,7 @@ public class DistributedRateLimiter {
      * Rate limit configurations for different endpoint types.
      */
     public enum RateLimitType {
-        AUTH("ratelimit:auth:", 10, 60),           // 10 requests per minute
+        AUTH("ratelimit:auth:", 5, 60),            // 5 requests per minute (docs: 5/min auth)
         API("ratelimit:api:", 100, 60),            // 100 requests per minute
         EXPORT("ratelimit:export:", 5, 300),       // 5 requests per 5 minutes
         WALL("ratelimit:wall:", 30, 60),           // 30 requests per minute

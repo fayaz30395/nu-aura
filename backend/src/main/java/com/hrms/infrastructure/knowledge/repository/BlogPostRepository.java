@@ -36,14 +36,14 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
     @Query(value = "SELECT bp.* FROM blog_posts bp " +
             "WHERE bp.tenant_id = :tenantId AND " +
             "to_tsvector('english', bp.title || ' ' || COALESCE(bp.excerpt, '')) @@ " +
-            "to_tsquery('english', :query) " +
+            "websearch_to_tsquery('english', :query) " +
             "ORDER BY ts_rank(to_tsvector('english', bp.title || ' ' || COALESCE(bp.excerpt, '')), " +
-            "to_tsquery('english', :query)) DESC",
+            "websearch_to_tsquery('english', :query)) DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM blog_posts bp " +
                     "WHERE bp.tenant_id = :tenantId AND " +
                     "to_tsvector('english', bp.title || ' ' || COALESCE(bp.excerpt, '')) @@ " +
-                    "to_tsquery('english', :query)")
+                    "websearch_to_tsquery('english', :query)")
     Page<BlogPost> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**

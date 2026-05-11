@@ -34,6 +34,7 @@ public class User extends TenantAware {
     @Column(length = 100)
     private String lastName;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(nullable = false)
     private String passwordHash;
 
@@ -53,8 +54,13 @@ public class User extends TenantAware {
     @Column
     private LocalDateTime lockedUntil;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column
     private String passwordResetToken;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @Column(name = "password_reset_token_hash", length = 255)
+    private String passwordResetTokenHash;
 
     @Column
     private LocalDateTime passwordResetTokenExpiry;
@@ -72,6 +78,7 @@ public class User extends TenantAware {
     @Builder.Default
     private Boolean mfaEnabled = false;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(name = "mfa_secret", length = 100)
     private String mfaSecret;
 

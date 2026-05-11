@@ -79,7 +79,9 @@ public class LeaveBalanceController {
 
     private LeaveBalanceResponse toResponse(LeaveBalance balance) {
         LeaveBalanceResponse response = new LeaveBalanceResponse();
-        BeanUtils.copyProperties(balance, response);
+        // SEC-FIX (F7): Explicitly ignore audit/tenant fields when copying entity to response DTO.
+        BeanUtils.copyProperties(balance, response,
+                "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
         // Enrich with leave type name so the frontend can display it without a separate request
         if (balance.getLeaveTypeId() != null) {
             leaveTypeRepository.findById(balance.getLeaveTypeId())

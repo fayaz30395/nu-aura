@@ -107,13 +107,45 @@ public class SamlAuthenticationSuccessHandler implements AuthenticationSuccessHa
             response.sendRedirect(frontendUrl + "/dashboard?saml=success");
 
         } catch (Exception e) { // Intentional broad catch — security filter error boundary
-            log.error("SAML authentication processing failed for registration {}: {}",
-                    registrationId, e.getMessage(), e);
-            response.sendRedirect(frontendUrl + "/auth/login?error=saml_auth_failed&message=" +
-                    java.net.URLEncoder.encode(e.getMessage(), "UTF-8"));
+            // Don't reflect raw exception text into the redirect URL (open-redirect/reflected-XSS
+            // surface, leaks internal stack details to the user agent). Log server-side and emit
+            // an opaque, allow-listed error code instead.
+            log.warn("SAML authentication failed for registration {}", registrationId, e);
+            response.sendRedirect(frontendUrl + "/auth/login?error=saml_auth_failed&code=" + classifyError(e));
         } finally {
             TenantContext.clear();
         }
+    }
+
+    /**
+     * Maps a SAML processing exception to a stable, opaque error code that is safe to
+     * surface in a redirect URL. The mapping is intentionally coarse: it lets the
+     * frontend display a localised, generic message without leaking exception strings
+     * back into the URL.
+     */
+    private String classifyError(Exception e) {
+        if (e == null) {
+            return "unknown";
+        }
+        // Most-specific causes first
+        Throwable cause = e;
+        for (int i = 0; i < 5 && cause != null; i++) {
+            String className = cause.getClass().getName();
+            if (className.contains("Saml2AuthenticationException")
+                    || className.contains("Saml2Exception")) {
+                return "invalid_token";
+            }
+            cause = cause.getCause();
+        }
+        if (e instanceof IllegalArgumentException) {
+            // UUID.fromString(...) throws on a malformed registrationId.
+            return "tenant_mismatch";
+        }
+        if (e instanceof IllegalStateException) {
+            // Thrown when no active SAML config exists for the tenant.
+            return "config_error";
+        }
+        return "unknown";
     }
 
     /**

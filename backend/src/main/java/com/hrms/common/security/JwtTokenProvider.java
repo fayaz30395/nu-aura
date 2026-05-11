@@ -198,11 +198,13 @@ public class JwtTokenProvider {
         try {
             Claims claims;
             try {
-                // Primary path: validate with issuer + audience claims
+                // Primary path: validate with issuer + audience claims.
+                // clockSkewSeconds(30) tolerates 30s of drift between issuer and verifier.
                 claims = Jwts.parser()
                         .verifyWith(getSigningKey())
                         .requireIssuer("nu-aura")
                         .requireAudience("nu-aura-api")
+                        .clockSkewSeconds(30)
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();
@@ -250,6 +252,7 @@ public class JwtTokenProvider {
                     .verifyWith(getSigningKey())
                     .requireIssuer("nu-aura")
                     .requireAudience("nu-aura-api")
+                    .clockSkewSeconds(30)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -362,6 +365,7 @@ public class JwtTokenProvider {
                 .verifyWith(getSigningKey())
                 .requireIssuer("nu-aura")
                 .requireAudience("nu-aura-api")
+                .clockSkewSeconds(30)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

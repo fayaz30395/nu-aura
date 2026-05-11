@@ -34,6 +34,12 @@ import com.hrms.domain.overtime.CompTimeTransaction;
 @Slf4j
 public class OvertimeManagementController {
 
+    /** Allow-list of sortable fields for {@code OvertimeRecord} entity — prevents sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "overtimeDate", "createdAt", "updatedAt", "status", "overtimeType",
+            "overtimeHours", "effectiveHours", "approvedAt"
+    );
+
     private final OvertimeManagementService overtimeManagementService;
 
     @PostMapping
@@ -98,10 +104,11 @@ public class OvertimeManagementController {
             @RequestParam(defaultValue = "overtimeDate") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection) {
         log.info("Fetching all overtime records");
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "overtimeDate";
         Sort.Direction direction = "ASC".equalsIgnoreCase(sortDirection)
                 ? Sort.Direction.ASC
                 : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<OvertimeRecordResponse> response = overtimeManagementService.getAllOvertimeRecords(pageable);
         return ResponseEntity.ok(response);
     }

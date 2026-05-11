@@ -30,7 +30,9 @@ public class LeaveTypeController {
     @RequiresPermission(Permission.LEAVE_APPROVE)
     public ResponseEntity<LeaveTypeResponse> createLeaveType(@Valid @RequestBody LeaveTypeRequest request) {
         LeaveType leaveType = new LeaveType();
-        BeanUtils.copyProperties(request, leaveType);
+        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
+        BeanUtils.copyProperties(request, leaveType,
+                "id", "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
         if (request.getAccrualType() != null) {
             leaveType.setAccrualType(LeaveType.AccrualType.valueOf(request.getAccrualType()));
         }
@@ -45,7 +47,9 @@ public class LeaveTypeController {
     @RequiresPermission(Permission.LEAVE_APPROVE)
     public ResponseEntity<LeaveTypeResponse> updateLeaveType(@PathVariable UUID id, @Valid @RequestBody LeaveTypeRequest request) {
         LeaveType leaveTypeData = new LeaveType();
-        BeanUtils.copyProperties(request, leaveTypeData);
+        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
+        BeanUtils.copyProperties(request, leaveTypeData,
+                "id", "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
         if (request.getAccrualType() != null) {
             leaveTypeData.setAccrualType(LeaveType.AccrualType.valueOf(request.getAccrualType()));
         }

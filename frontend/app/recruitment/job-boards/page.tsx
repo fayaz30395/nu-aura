@@ -14,6 +14,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 const postJobBoardSchema = z.object({
   jobId: z.string().min(1, 'Select a job opening'),
@@ -224,7 +225,7 @@ export default function JobBoardsPage() {
                             <StatusIcon className={`w-4 h-4 ${sc.color}`}/>
                             <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
-                              <a href={posting.externalUrl} target="_blank" rel="noopener noreferrer"
+                              <a href={safeUrl(posting.externalUrl)} target="_blank" rel="noopener noreferrer"
                                  className="text-accent-500 hover:underline">
                                 <ExternalLink className="w-3.5 h-3.5"/>
                               </a>

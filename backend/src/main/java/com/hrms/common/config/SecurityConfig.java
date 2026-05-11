@@ -1,5 +1,6 @@
 package com.hrms.common.config;
 
+import com.hrms.common.security.ApiKeyAuthenticationFilter;
 import com.hrms.common.security.CsrfDoubleSubmitFilter;
 import com.hrms.common.security.JwtAuthenticationFilter;
 import com.hrms.common.security.RateLimitingFilter;
@@ -50,6 +51,7 @@ public class SecurityConfig {
     private final TenantFilter tenantFilter;
     private final RateLimitingFilter rateLimitingFilter;
     private final CsrfDoubleSubmitFilter csrfDoubleSubmitFilter;
+    private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     private final UserDetailsService userDetailsService;
     private final RelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
     private final SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler;
@@ -61,6 +63,7 @@ public class SecurityConfig {
                           @Lazy TenantFilter tenantFilter,
                           RateLimitingFilter rateLimitingFilter,
                           CsrfDoubleSubmitFilter csrfDoubleSubmitFilter,
+                          @Lazy ApiKeyAuthenticationFilter apiKeyAuthenticationFilter,
                           @Lazy UserDetailsService userDetailsService,
                           @Lazy RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
                           @Lazy SamlAuthenticationSuccessHandler samlAuthenticationSuccessHandler) {
@@ -69,6 +72,7 @@ public class SecurityConfig {
         this.tenantFilter = tenantFilter;
         this.rateLimitingFilter = rateLimitingFilter;
         this.csrfDoubleSubmitFilter = csrfDoubleSubmitFilter;
+        this.apiKeyAuthenticationFilter = apiKeyAuthenticationFilter;
         this.userDetailsService = userDetailsService;
         this.relyingPartyRegistrationRepository = relyingPartyRegistrationRepository;
         this.samlAuthenticationSuccessHandler = samlAuthenticationSuccessHandler;
@@ -109,6 +113,13 @@ public class SecurityConfig {
     @Bean
     public FilterRegistrationBean<CsrfDoubleSubmitFilter> disableCsrfDoubleSubmitFilterAutoRegistration(CsrfDoubleSubmitFilter filter) {
         FilterRegistrationBean<CsrfDoubleSubmitFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<ApiKeyAuthenticationFilter> disableApiKeyFilterAutoRegistration(ApiKeyAuthenticationFilter filter) {
+        FilterRegistrationBean<ApiKeyAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }
@@ -171,11 +182,26 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Error endpoint must be public
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        // MFA endpoints - login is public (pre-auth step), others require
-                        // authentication
-                        .requestMatchers("/api/v1/auth/mfa-login").permitAll()
-                        .requestMatchers("/api/v1/auth/mfa/**").authenticated()
+                        // SEC: explicit auth endpoint allow-list — replaces the previous
+                        // /api/v1/auth/** wildcard, which let any new (potentially sensitive)
+                        // auth endpoint default to permitAll.
+                        .requestMatchers(
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/google",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/reset-password",
+                                "/api/v1/auth/mfa-login"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/me",
+                                "/api/v1/auth/logout",
+                                "/api/v1/auth/change-password",
+                                "/api/v1/auth/mfa/**"
+                        ).authenticated()
+                        // External APIs authenticate via ApiKeyAuthenticationFilter (X-API-Key),
+                        // not Spring Security's auth context.
+                        .requestMatchers("/api/v1/external/**").permitAll()
                         .requestMatchers("/api/v1/tenants/register").permitAll()
                         // Actuator: only health endpoint is public, others require SUPER_ADMIN
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
@@ -219,10 +245,12 @@ public class SecurityConfig {
                 .saml2Login(saml2 -> saml2
                         .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository)
                         .successHandler(samlAuthenticationSuccessHandler))
-                // Filter order: RateLimiting -> Tenant -> JWT -> CSRF -> (UsernamePasswordAuth)
-                // All positioned relative to standard UsernamePasswordAuthenticationFilter.
+                // Filter order: RateLimiting -> Tenant -> ApiKey -> JWT -> CSRF -> (UsernamePasswordAuth)
+                // ApiKeyAuthenticationFilter runs before JwtAuthenticationFilter so external API
+                // requests are authenticated via X-API-Key without consuming the JWT path.
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(apiKeyAuthenticationFilter, JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(csrfDoubleSubmitFilter, UsernamePasswordAuthenticationFilter.class);
 

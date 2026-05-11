@@ -49,6 +49,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class IntegrationConnectorController {
 
+    /** Allow-list of sortable fields for {@code IntegrationEventLog} — prevents reflection-based
+     *  sort injection via {@code sortBy} query param. Only @Column scalar fields. */
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "createdAt", "connectorId", "eventType", "entityType", "status", "durationMs"
+    );
+
     private final ConnectorRegistry connectorRegistry;
     private final IntegrationConnectorConfigService configService;
     private final IntegrationEventLogService eventLogService;
@@ -329,8 +335,9 @@ public class IntegrationConnectorController {
             size = 100;
         }
 
-        Sort.Direction direction = Sort.Direction.valueOf(sortDir.toUpperCase());
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
+        Sort.Direction direction = "ASC".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
 
         Page<IntegrationEventLog> eventPage;
         if (status != null && !status.isEmpty()) {

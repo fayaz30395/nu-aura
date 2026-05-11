@@ -23,13 +23,19 @@ public class JwtSecretValidator {
             "secret",
             "your-secret-key",
             "change-me",
+            "change-this",
             "changeme",
             "your-256-bit-secret",
             "your-jwt-secret",
             "jwt-secret",
             "mysecret",
             "test",
-            "password"
+            "password",
+            "your-",
+            "placeholder",
+            "super-secret",
+            "welcome@",
+            "nulogic@"
     };
 
     @Value("${app.jwt.secret:}")
@@ -57,10 +63,10 @@ public class JwtSecretValidator {
             );
         }
 
-        // Check for known weak/default secrets (case-insensitive)
+        // Check for known weak/default secrets (case-insensitive substring match)
         String secretLower = jwtSecret.toLowerCase();
         for (String forbidden : FORBIDDEN_SECRETS) {
-            if (secretLower.equals(forbidden)) {
+            if (secretLower.contains(forbidden)) {
                 log.error("SECURITY VIOLATION: JWT_SECRET appears to be a weak or default value!");
                 throw new SecurityException(
                         "JWT_SECRET appears to be a weak or default value. " +

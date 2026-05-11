@@ -1,5 +1,6 @@
 package com.hrms.application.employee.service;
 
+import com.hrms.api.employee.dto.AdminEmployeeUpdateRequest;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
@@ -19,6 +20,8 @@ import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -44,6 +47,8 @@ import java.util.Collections;
 
 @Service
 public class EmployeeService {
+
+    private static final Logger log = LoggerFactory.getLogger(EmployeeService.class);
 
     /**
      * Maximum depth for recursive org-chart traversal (prevents OOM on circular/deep hierarchies).
@@ -180,28 +185,14 @@ public class EmployeeService {
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-        // Capture previous values for event tracking
-        Employee.EmployeeStatus previousStatus = employee.getStatus();
-        String previousDesignation = employee.getDesignation();
-        Employee.EmployeeLevel previousLevel = employee.getLevel();
-        UUID previousDepartmentId = employee.getDepartmentId();
-        UUID previousManagerId = employee.getManagerId();
         Set<String> changedFields = new HashSet<>();
 
-        // Update employee code if provided and different from current
-        if (request.getEmployeeCode() != null && !request.getEmployeeCode().equals(employee.getEmployeeCode())) {
-            // Check if new employee code already exists for another employee
-            employeeRepository.findByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)
-                    .ifPresent(existing -> {
-                        if (!existing.getId().equals(employeeId)) {
-                            throw new DuplicateResourceException("Employee code already exists");
-                        }
-                    });
-            employee.setEmployeeCode(request.getEmployeeCode());
-            changedFields.add("employeeCode");
-        }
+        // SECURITY: self-service path. Only personal/contact fields are accepted here.
+        // Admin-only fields (employeeCode, departmentId, designation, level, jobRole,
+        // managerId, dottedLineManager{1,2}Id, employmentType, status, confirmationDate,
+        // bankAccountNumber, bankName, bankIfscCode, taxId) live on
+        // AdminEmployeeUpdateRequest and go through updateEmployeeAdminFields().
 
-        // Update fields if provided and track changes
         if (request.getFirstName() != null && !request.getFirstName().equals(employee.getFirstName())) {
             employee.setFirstName(request.getFirstName());
             if (employee.getUser() != null) {
@@ -260,15 +251,71 @@ public class EmployeeService {
             employee.setCountry(request.getCountry());
             changedFields.add("country");
         }
-        if (request.getConfirmationDate() != null && !Objects.equals(request.getConfirmationDate(), employee.getConfirmationDate())) {
-            employee.setConfirmationDate(request.getConfirmationDate());
-            changedFields.add("confirmationDate");
+
+        employee = employeeRepository.save(employee);
+
+        // BUG-QA2-009 FIX: Only persist the User record when fields that mirror onto
+        // the User entity actually changed (firstName / lastName). Calling
+        // userRepository.save() unconditionally triggers a Hibernate merge() on the User,
+        // which may try to initialize the lazily-loaded roles collection to check for
+        // dirty state. For a status-only update (e.g. deactivation) the User is
+        // untouched — accessing the uninitialized roles proxy in that code path causes
+        // a LazyInitializationException / NPE that surfaces as HTTP 500. Guard with an
+        // explicit check on changedFields before touching the User entity.
+        if (employee.getUser() != null
+                && (changedFields.contains("firstName") || changedFields.contains("lastName"))) {
+            userRepository.save(employee.getUser());
+        }
+
+        // Publish a single update event covering self-service fields
+        if (!changedFields.isEmpty()) {
+            eventPublisher.publish(EmployeeUpdatedEvent.of(this, employee, changedFields));
+        }
+
+        return EmployeeResponse.fromEmployee(employee);
+    }
+
+    /**
+     * SECURITY: admin-only update path for fields an employee must NOT be able
+     * to change on their own profile (employeeCode, department, designation,
+     * level, jobRole, managers, employmentType, status, bank, tax). The caller
+     * is responsible for gating with a manage-level permission before invoking
+     * this method.
+     */
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
+            @CacheEvict(value = CacheConfig.ANALYTICS_SUMMARY, allEntries = true),
+            @CacheEvict(value = CacheConfig.DASHBOARD_METRICS, allEntries = true)
+    })
+    public EmployeeResponse updateEmployeeAdminFields(UUID employeeId, AdminEmployeeUpdateRequest request) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        // Capture previous values for event tracking
+        Employee.EmployeeStatus previousStatus = employee.getStatus();
+        String previousDesignation = employee.getDesignation();
+        Employee.EmployeeLevel previousLevel = employee.getLevel();
+        UUID previousDepartmentId = employee.getDepartmentId();
+        UUID previousManagerId = employee.getManagerId();
+        Set<String> changedFields = new HashSet<>();
+
+        if (request.getEmployeeCode() != null && !request.getEmployeeCode().equals(employee.getEmployeeCode())) {
+            employeeRepository.findByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)
+                    .ifPresent(existing -> {
+                        if (!existing.getId().equals(employeeId)) {
+                            throw new DuplicateResourceException("Employee code already exists");
+                        }
+                    });
+            employee.setEmployeeCode(request.getEmployeeCode());
+            changedFields.add("employeeCode");
         }
         if (request.getDepartmentId() != null && !Objects.equals(request.getDepartmentId(), employee.getDepartmentId())) {
             UUID oldDeptId = employee.getDepartmentId();
             employee.setDepartmentId(request.getDepartmentId());
             changedFields.add("departmentId");
-            // Audit log: department change
             auditLogService.logAction(
                     "EMPLOYEE",
                     employeeId,
@@ -282,7 +329,6 @@ public class EmployeeService {
             String oldDesignation = employee.getDesignation();
             employee.setDesignation(request.getDesignation());
             changedFields.add("designation");
-            // Audit log: designation change
             auditLogService.logAction(
                     "EMPLOYEE",
                     employeeId,
@@ -296,7 +342,6 @@ public class EmployeeService {
             Employee.EmployeeLevel oldLevel = employee.getLevel();
             employee.setLevel(request.getLevel());
             changedFields.add("level");
-            // Audit log: level change
             auditLogService.logAction(
                     "EMPLOYEE",
                     employeeId,
@@ -330,7 +375,6 @@ public class EmployeeService {
             Employee.EmployeeStatus oldStatus = employee.getStatus();
             employee.setStatus(request.getStatus());
             changedFields.add("status");
-            // Audit log: status change
             auditLogService.logAction(
                     "EMPLOYEE",
                     employeeId,
@@ -359,30 +403,14 @@ public class EmployeeService {
 
         employee = employeeRepository.save(employee);
 
-        // BUG-QA2-009 FIX: Only persist the User record when fields that mirror onto
-        // the User entity actually changed (firstName / lastName). Calling
-        // userRepository.save() unconditionally triggers a Hibernate merge() on the User,
-        // which may try to initialize the lazily-loaded roles collection to check for
-        // dirty state. For a status-only update (e.g. deactivation) the User is
-        // untouched — accessing the uninitialized roles proxy in that code path causes
-        // a LazyInitializationException / NPE that surfaces as HTTP 500. Guard with an
-        // explicit check on changedFields before touching the User entity.
-        if (employee.getUser() != null
-                && (changedFields.contains("firstName") || changedFields.contains("lastName"))) {
-            userRepository.save(employee.getUser());
-        }
-
-        // Publish domain events based on what changed
         if (!changedFields.isEmpty()) {
             eventPublisher.publish(EmployeeUpdatedEvent.of(this, employee, changedFields));
         }
 
-        // Check for status change
         if (changedFields.contains("status") && previousStatus != employee.getStatus()) {
             eventPublisher.publish(EmployeeStatusChangedEvent.of(this, employee, previousStatus, employee.getStatus()));
         }
 
-        // Check for promotion (level or designation change)
         if ((changedFields.contains("level") || changedFields.contains("designation")) &&
                 (previousLevel != employee.getLevel() || !Objects.equals(previousDesignation, employee.getDesignation()))) {
             eventPublisher.publish(EmployeePromotedEvent.of(this, employee,
@@ -390,12 +418,13 @@ public class EmployeeService {
                     previousLevel, employee.getLevel()));
         }
 
-        // Check for department change
         if (changedFields.contains("departmentId") && !Objects.equals(previousDepartmentId, employee.getDepartmentId())) {
             eventPublisher.publish(EmployeeDepartmentChangedEvent.of(this, employee,
                     previousDepartmentId, employee.getDepartmentId(),
                     previousManagerId, employee.getManagerId()));
         }
+
+        log.debug("Admin update applied to employee {} — changed fields: {}", employeeId, changedFields);
 
         return EmployeeResponse.fromEmployee(employee);
     }

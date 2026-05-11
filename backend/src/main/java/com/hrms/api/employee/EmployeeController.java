@@ -1,5 +1,6 @@
 package com.hrms.api.employee;
 
+import com.hrms.api.employee.dto.AdminEmployeeUpdateRequest;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
@@ -228,6 +229,33 @@ public class EmployeeController {
                 "You are not authorized to view this employee record");
     }
 
+    /**
+     * Enforces data-scope rules for mutating a single employee record.
+     * Allow if the caller is the same employee (self-service) OR holds a
+     * tenant-wide manage permission (EMPLOYEE_VIEW_ALL is used as the
+     * "manage anyone" gate — there is no EMPLOYEE_MANAGE permission today).
+     * SuperAdmin / TenantAdmin / HR Manager bypass automatically.
+     */
+    private void enforceEmployeeUpdateScope(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // Tenant-wide view-all is treated as the privileged "edit anyone" gate for now —
+        // EMPLOYEE_MANAGE does not exist in the Permission registry (Blocker noted in report).
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to update this employee record");
+    }
+
     @GetMapping("/{id}/hierarchy")
     @RequiresPermission({
             Permission.EMPLOYEE_VIEW_ALL,
@@ -241,6 +269,8 @@ public class EmployeeController {
     })
     public ResponseEntity<EmployeeResponse> getEmployeeHierarchy(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
+        // IDOR FIX: org-chart traversal must respect the same view-scope rules as GET /{id}.
+        enforceEmployeeViewScope(id);
         EmployeeResponse response = employeeService.getEmployeeHierarchy(id);
         return ResponseEntity.ok(response);
     }
@@ -255,6 +285,8 @@ public class EmployeeController {
     @ApiResponse(responseCode = "200", description = "Subordinates retrieved successfully")
     public ResponseEntity<List<EmployeeResponse>> getSubordinates(
             @Parameter(description = "Manager UUID") @PathVariable UUID id) {
+        // IDOR FIX: cannot enumerate reportees of an employee you cannot view.
+        enforceEmployeeViewScope(id);
         List<EmployeeResponse> subordinates = employeeService.getSubordinates(id);
         return ResponseEntity.ok(subordinates);
     }
@@ -289,23 +321,54 @@ public class EmployeeController {
     @ApiResponse(responseCode = "200", description = "Dotted-line reports retrieved successfully")
     public ResponseEntity<List<EmployeeResponse>> getDottedLineReports(
             @Parameter(description = "Manager UUID") @PathVariable UUID id) {
+        // IDOR FIX: cannot enumerate dotted-line reports of an employee you cannot view.
+        enforceEmployeeViewScope(id);
         List<EmployeeResponse> reports = employeeService.getDottedLineReports(id);
         return ResponseEntity.ok(reports);
     }
 
     @PutMapping("/{id}")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
-    @Operation(summary = "Update employee", description = "Update an existing employee's information")
+    @Operation(summary = "Update employee (self-service fields)",
+            description = "Updates personal/contact fields. Admin-only fields (department, manager, level, status, bank, tax) must go through PUT /{id}/admin.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to update this employee"),
             @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> updateEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id,
             @Valid @RequestBody UpdateEmployeeRequest request
     ) {
+        // IDOR FIX: caller must be self, HR-level, or admin — not just any holder of EMPLOYEE:UPDATE.
+        enforceEmployeeUpdateScope(id);
         EmployeeResponse response = employeeService.updateEmployee(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Admin-only endpoint for mutating fields an employee must NOT be able to
+     * change on their own profile (department, manager, level, status, bank,
+     * tax, employmentType, employeeCode). Gated by EMPLOYEE_VIEW_ALL with
+     * permission revalidation, since EMPLOYEE_MANAGE does not exist in the
+     * Permission registry.
+     */
+    @PutMapping("/{id}/admin")
+    @RequiresPermission(value = Permission.EMPLOYEE_VIEW_ALL, revalidate = true)
+    @Operation(summary = "Update employee (admin fields)",
+            description = "Mutates admin-only fields: department, manager, level, status, bank, tax, employeeCode. Requires EMPLOYEE:VIEW_ALL.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "403", description = "Not authorized for admin updates"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
+    public ResponseEntity<EmployeeResponse> updateEmployeeAdminFields(
+            @Parameter(description = "Employee UUID") @PathVariable UUID id,
+            @Valid @RequestBody AdminEmployeeUpdateRequest request
+    ) {
+        EmployeeResponse response = employeeService.updateEmployeeAdminFields(id, request);
         return ResponseEntity.ok(response);
     }
 
@@ -323,16 +386,17 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}/deactivate")
-    @RequiresPermission(Permission.EMPLOYEE_UPDATE)
-    @Operation(summary = "Deactivate employee", description = "Set employee status to INACTIVE")
+    @RequiresPermission(value = Permission.EMPLOYEE_VIEW_ALL, revalidate = true)
+    @Operation(summary = "Deactivate employee", description = "Set employee status to INACTIVE (admin-only).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Employee deactivated successfully"),
             @ApiResponse(responseCode = "404", description = "Employee not found")
     })
     public ResponseEntity<EmployeeResponse> deactivateEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
-        UpdateEmployeeRequest req = new UpdateEmployeeRequest();
+        // Status is now admin-only — route through the admin update path.
+        AdminEmployeeUpdateRequest req = new AdminEmployeeUpdateRequest();
         req.setStatus(com.hrms.domain.employee.Employee.EmployeeStatus.INACTIVE);
-        return ResponseEntity.ok(employeeService.updateEmployee(id, req));
+        return ResponseEntity.ok(employeeService.updateEmployeeAdminFields(id, req));
     }
 }

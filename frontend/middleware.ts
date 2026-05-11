@@ -248,14 +248,20 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      // 'unsafe-inline' required for Next.js streaming/hydration. Use CSP nonces
-      // when ready to harden — see https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
+      // SEC: 'strict-dynamic' is present in production — browsers IGNORE 'unsafe-inline'/host
+      // allowlists when 'strict-dynamic' is in script-src, so DOM-injected scripts are blocked.
+      // 'unsafe-inline' is kept as a fallback for browsers that don't understand strict-dynamic.
+      // TODO: Migrate to full nonce-based CSP via Next.js middleware nonces — requires SSR
+      // plumbing to inject the nonce into every <script> tag emitted by hydration. See
+      // https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
+      // 'https://cdn.jsdelivr.net' removed — was unused in production.
       process.env.NODE_ENV === 'development'
-        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
-        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
+        : "script-src 'self' 'strict-dynamic' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
       `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://accounts.googleapis.com https://www.googleapis.com`,
-      "img-src 'self' data: blob: https:",
+      // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
+      "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
       "font-src 'self' https://fonts.gstatic.com",
       "frame-src 'self' https://docs.google.com https://accounts.google.com",
       "object-src 'none'",
@@ -272,8 +278,10 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
     'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   );
 
-  // Prevent XSS attacks (legacy header, still useful for some browsers)
-  response.headers.set('X-XSS-Protection', '1; mode=block');
+  // X-XSS-Protection: '0' disables legacy XSS auditor (Chrome removed it; '1; mode=block'
+  // can actually introduce vulns in older browsers). Modern protection comes from CSP above.
+  // Aligned with backend SecurityHeadersFilter.
+  response.headers.set('X-XSS-Protection', '0');
 
   // Disable DNS prefetching to improve privacy
   response.headers.set('X-DNS-Prefetch-Control', 'off');

@@ -17,10 +17,13 @@ import com.hrms.infrastructure.asset.repository.AssetMaintenanceRequestRepositor
 import com.hrms.infrastructure.asset.repository.AssetRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.kafka.producer.EventPublisher;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -182,7 +185,33 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
+
+        // BOLA FIX: any holder of ASSET:VIEW could previously fetch any asset by ID.
+        // Privileged callers (SuperAdmin / TenantAdmin / HR Manager / ASSET:MANAGE)
+        // see everything. Other callers may only view assets currently assigned to
+        // them; unassigned (free-pool) assets require the privileged path.
+        if (!canViewAllAssets()) {
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            boolean isAssignee = asset.getAssignedTo() != null
+                    && asset.getAssignedTo().equals(currentEmployeeId);
+            if (!isAssignee) {
+                throw new AccessDeniedException("Not authorized to view this asset");
+            }
+        }
+
         return mapToAssetResponse(asset);
+    }
+
+    /**
+     * Privileged "view any asset" gate. There is no ASSET:VIEW_ALL permission in
+     * the registry today — ASSET:MANAGE is the closest elevated grant, matched by
+     * the existing controller-level @RequiresPermission(ASSET_MANAGE) usage.
+     */
+    private boolean canViewAllAssets() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isTenantAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermission(Permission.ASSET_MANAGE);
     }
 
     @Transactional(readOnly = true)
@@ -206,6 +235,16 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<AssetResponse> getAssetsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // BOLA FIX: previously any ASSET:VIEW holder could enumerate ANY employee's assets.
+        // Restrict to self OR a privileged caller (admin / HR / ASSET:MANAGE).
+        if (!canViewAllAssets()) {
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            if (currentEmployeeId == null || !currentEmployeeId.equals(employeeId)) {
+                throw new AccessDeniedException("Not authorized to view assets for this employee");
+            }
+        }
+
         List<Asset> assets = assetRepository.findByTenantIdAndAssignedTo(tenantId, employeeId);
         // Batch-load employee names in a single query to avoid N+1
         Map<UUID, String> nameCache = buildEmployeeNameCache(assets);

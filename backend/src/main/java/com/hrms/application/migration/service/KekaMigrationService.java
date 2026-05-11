@@ -64,7 +64,7 @@ public class KekaMigrationService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final PasswordEncoder passwordEncoder;
-    @Value("${app.migration.default-password:Welcome@123}")
+    @Value("${app.migration.default-password}")
     private String defaultMigrationPassword;
 
     // ==================== Import Employees ====================
@@ -130,11 +130,14 @@ public class KekaMigrationService {
         }
 
         // Create User (roles will be assigned later by admin)
+        // Generate per-user random temporary password (satisfies 12-char policy: uppercase+lowercase+digit+special)
+        String tempPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 12) + "!Aa1";
+        // TODO: add passwordChangeRequired field to User entity to force reset on first login
         User user = User.builder()
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
-                .passwordHash(passwordEncoder.encode(defaultMigrationPassword))
+                .passwordHash(passwordEncoder.encode(tempPassword))
                 .status(User.UserStatus.ACTIVE)
                 .build();
         user.setId(UUID.randomUUID());

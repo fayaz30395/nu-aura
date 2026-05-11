@@ -1,5 +1,7 @@
 package com.hrms.common.security;
 
+import com.hrms.common.exception.BusinessException;
+import com.hrms.common.validation.SsrfProtectionUtils;
 import com.hrms.domain.auth.SamlIdentityProvider;
 import com.hrms.infrastructure.auth.repository.SamlIdentityProviderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -99,8 +101,23 @@ public class DynamicSamlRelyingPartyRegistrationRepository implements RelyingPar
     }
 
     private RelyingPartyRegistration buildRegistration(String registrationId, SamlIdentityProvider idp) {
-        // If metadata URL is available, try to build from metadata first
+        // If metadata URL is available, try to build from metadata first.
+        // SECURITY: validate the URL before invoking RelyingPartyRegistrations.fromMetadataLocation,
+        // which performs an outbound HTTP fetch. Without this guard, an admin could point the
+        // metadata URL at an internal address (169.254.169.254, k8s API server, etc.) and
+        // exfiltrate the response into the SAML config flow.
+        //
+        // TODO(SSRF-DEEP): Spring's metadata resolver follows redirects internally — a fully
+        // tamper-proof solution requires a custom Saml2MetadataLocation resolver that re-validates
+        // every redirect hop. Track as separate ticket; current mitigation covers the initial URL.
         if (idp.getMetadataUrl() != null && !idp.getMetadataUrl().isBlank()) {
+            try {
+                SsrfProtectionUtils.validateUrlSafety(idp.getMetadataUrl());
+            } catch (BusinessException ssrf) {
+                log.warn("SAML metadata URL rejected by SSRF policy for tenant {}: {} ({})",
+                        registrationId, idp.getMetadataUrl(), ssrf.getMessage());
+                throw ssrf;
+            }
             try {
                 return RelyingPartyRegistrations
                         .fromMetadataLocation(idp.getMetadataUrl())

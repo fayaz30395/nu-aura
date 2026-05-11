@@ -13,7 +13,7 @@ services:
       - "127.0.0.1:6380:6379"  # mapped to 6380 to avoid conflict with local Redis on 6379
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-devRedis123!}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD must be set}
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
@@ -122,7 +122,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${NEON_DB_PASSWORD:?Set NEON_DB_PASSWORD in .env}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
-      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-devRedis123!}
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
       APP_SECURITY_ENCRYPTION_KEY: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set in .env}

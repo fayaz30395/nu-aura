@@ -2,9 +2,11 @@ package com.hrms.application.webhook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.validation.SsrfProtectionUtils;
 import com.hrms.domain.webhook.*;
 import com.hrms.domain.webhook.WebhookDelivery.DeliveryStatus;
 import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
@@ -12,10 +14,12 @@ import com.hrms.infrastructure.webhook.repository.WebhookRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,6 +36,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -57,15 +63,54 @@ public class WebhookDeliveryService {
     private static final String EVENT_ID_HEADER = "X-Webhook-Event-Id";
     private static final String EVENT_TYPE_HEADER = "X-Webhook-Event-Type";
     private static final String TIMESTAMP_HEADER = "X-Webhook-Timestamp";
+
+    // Headers redacted from response storage to prevent secret leakage when admins
+    // view delivery history. Mirrors the request-side forbidden list in WebhookController.
+    private static final Set<String> SENSITIVE_RESPONSE_HEADERS = Set.of(
+            "authorization", "cookie", "set-cookie", "proxy-authorization"
+    );
+
     private final WebhookRepository webhookRepository;
     private final WebhookDeliveryRepository deliveryRepository;
     private final WebhookService webhookService;
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
     private final MetricsService metricsService;
+    // NOTE: injected RestTemplate is the shared singleton from AIConfig. We do NOT use it
+    // for outbound webhook delivery — instead deliveryRestTemplate (built in @PostConstruct)
+    // has redirect-following disabled to close an SSRF-via-redirect bypass.
     private final RestTemplate restTemplate;
+    // Webhook-scoped RestTemplate with redirect-following disabled.
+    private RestTemplate deliveryRestTemplate;
     // Circuit breakers per webhook URL to prevent cascading failures
     private final Map<UUID, CircuitBreaker> circuitBreakers = new HashMap<>();
+
+    /**
+     * Build a webhook-scoped RestTemplate with redirect-following disabled.
+     *
+     * <p>Standard RestTemplate follows 3xx by default — an attacker who controls a
+     * webhook endpoint can return a redirect to an internal address (169.254.169.254,
+     * etc.) and bypass the SSRF check performed against the original URL.</p>
+     *
+     * <p>Using {@link SimpleClientHttpRequestFactory} subclassed to set
+     * {@code setInstanceFollowRedirects(false)} on the underlying
+     * {@link HttpURLConnection} avoids depending on apache HttpComponents.</p>
+     */
+    @PostConstruct
+    void initDeliveryRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory() {
+            @Override
+            protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws java.io.IOException {
+                super.prepareConnection(connection, httpMethod);
+                // SECURITY: do NOT follow redirects — an attacker-controlled webhook
+                // endpoint could redirect to an internal address.
+                connection.setInstanceFollowRedirects(false);
+            }
+        };
+        factory.setConnectTimeout(10_000); // 10s
+        factory.setReadTimeout(30_000);    // 30s
+        this.deliveryRestTemplate = new RestTemplate(factory);
+    }
 
     /**
      * Dispatch an event to all subscribed webhooks for the current tenant.
@@ -152,10 +197,17 @@ public class WebhookDeliveryService {
         String errorMessage = null;
 
         try {
+            // SECURITY: re-validate the webhook URL at delivery time. The URL was validated
+            // at create/update via WebhookUrlValidator, but DNS may have changed (rebinding)
+            // and a redirect could point elsewhere — deliveryRestTemplate blocks redirects.
+            if (!SsrfProtectionUtils.isUrlSafe(webhook.getUrl())) {
+                throw new BusinessException("Webhook URL blocked by SSRF policy: " + webhook.getUrl());
+            }
+
             HttpHeaders headers = buildHeaders(webhook, delivery);
             HttpEntity<String> request = new HttpEntity<>(delivery.getPayload(), headers);
 
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<String> response = deliveryRestTemplate.exchange(
                     webhook.getUrl(),
                     HttpMethod.POST,
                     request,
@@ -163,9 +215,19 @@ public class WebhookDeliveryService {
             );
 
             statusCode = response.getStatusCode().value();
-            responseBody = response.getBody();
+            responseBody = sanitizeResponseBody(response.getBody(), response.getHeaders());
 
-            if (response.getStatusCode().is2xxSuccessful()) {
+            // SECURITY: a 3xx from the receiver is treated as a delivery failure rather than
+            // being followed. This closes the redirect-SSRF bypass: even if an attacker registers
+            // a public webhook URL and tries to redirect us to a private host, we never follow it.
+            if (response.getStatusCode().is3xxRedirection()) {
+                RuntimeException redirectError = new RuntimeException("HTTP " + statusCode + " redirect not followed");
+                circuitBreaker.recordFailure(redirectError);
+                webhook.recordFailure("HTTP " + statusCode + " (redirect rejected)");
+                webhookRepository.save(webhook);
+                recordFailureMetric(webhook, statusCode);
+                errorMessage = "Redirects are not followed for webhook delivery";
+            } else if (response.getStatusCode().is2xxSuccessful()) {
                 circuitBreaker.recordSuccess();
                 webhook.recordSuccess();
                 webhookRepository.save(webhook);
@@ -178,6 +240,15 @@ public class WebhookDeliveryService {
                 recordFailureMetric(webhook, statusCode);
             }
 
+        } catch (BusinessException e) {
+            // SSRF policy rejection: record as failure but do not invoke the network.
+            errorMessage = e.getMessage();
+            circuitBreaker.recordFailure(e);
+            webhook.recordFailure(errorMessage);
+            webhookRepository.save(webhook);
+            recordFailureMetric(webhook, 0);
+            log.warn("Webhook delivery refused by SSRF policy for {} to {}: {}",
+                    delivery.getEventId(), webhook.getUrl(), errorMessage);
         } catch (RuntimeException e) {
             // Intentional broad catch — external HTTP delivery; any transport error must be recorded
             errorMessage = e.getMessage();
@@ -222,13 +293,21 @@ public class WebhookDeliveryService {
             headers.set(SIGNATURE_HEADER, "sha256=" + signature);
         }
 
-        // Add custom headers if configured
+        // Add custom headers if configured (with forbidden-header filtering as a second
+        // line of defense; the controller already strips these at create/update time).
         if (webhook.getCustomHeaders() != null) {
             try {
                 @SuppressWarnings("unchecked")
                 Map<String, String> customHeaders = objectMapper.readValue(
                         webhook.getCustomHeaders(), Map.class);
-                customHeaders.forEach(headers::set);
+                customHeaders.forEach((k, v) -> {
+                    if (k == null) return;
+                    if (FORBIDDEN_CUSTOM_HEADERS.contains(k.toLowerCase())) {
+                        log.warn("Dropping forbidden custom header '{}' on webhook {}", k, webhook.getId());
+                        return;
+                    }
+                    headers.set(k, v);
+                });
             } catch (JsonProcessingException e) {
                 log.warn("Failed to parse custom headers for webhook {}: {}", webhook.getId(), e.getMessage());
             }
@@ -236,6 +315,13 @@ public class WebhookDeliveryService {
 
         return headers;
     }
+
+    // Headers a webhook owner must NEVER be able to control on outbound delivery —
+    // mirrors the controller-side allowlist filter. Defense in depth.
+    private static final Set<String> FORBIDDEN_CUSTOM_HEADERS = Set.of(
+            "authorization", "cookie", "set-cookie", "host", "content-length",
+            "x-forwarded-for", "x-real-ip", "x-forwarded-host", "proxy-authorization"
+    );
 
     /**
      * Compute HMAC-SHA256 signature for payload verification.
@@ -260,6 +346,40 @@ public class WebhookDeliveryService {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+
+    /**
+     * Sanitize the response body before storing it on the delivery record.
+     *
+     * <p>Redaction targets:</p>
+     * <ul>
+     *   <li>Sensitive response headers serialized into the body (Authorization, Cookie, Set-Cookie,
+     *       Proxy-Authorization) — admins viewing delivery history must never see leaked secrets.</li>
+     *   <li>Body length capped by WebhookDelivery#truncate (2000 chars) downstream.</li>
+     * </ul>
+     *
+     * <p>If sensitive headers are present in the response, they are logged for audit but
+     * not persisted on the delivery record.</p>
+     */
+    private String sanitizeResponseBody(String body, HttpHeaders responseHeaders) {
+        if (responseHeaders != null) {
+            for (String name : SENSITIVE_RESPONSE_HEADERS) {
+                if (responseHeaders.containsKey(name)
+                        || responseHeaders.containsKey(name.substring(0, 1).toUpperCase() + name.substring(1))) {
+                    // We do not echo header values into the body — but log presence for audit.
+                    log.debug("Sensitive response header '{}' present from webhook target; suppressing from storage", name);
+                }
+            }
+        }
+        if (body == null) return null;
+        // Best-effort body-level redaction in case the target echoes its own auth headers.
+        String redacted = body;
+        for (String name : SENSITIVE_RESPONSE_HEADERS) {
+            // Strip "Authorization: ..." style lines from response body text.
+            redacted = redacted.replaceAll("(?i)(" + java.util.regex.Pattern.quote(name) + ")\\s*[:=]\\s*[^\\r\\n]*",
+                    "$1: [REDACTED]");
+        }
+        return redacted;
     }
 
     /**

@@ -7,11 +7,12 @@ spring:
 
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
 
   jpa:
     hibernate:
+      # in-memory H2 only; production uses Flyway
       ddl-auto: create-drop
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect

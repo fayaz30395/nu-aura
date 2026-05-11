@@ -20,7 +20,7 @@ DB_HOST="localhost"
 DB_PORT="5432"
 DB_NAME="hrms_db"
 DB_USER="postgres"
-DB_PASSWORD="postgres123"
+DB_PASSWORD="${PGPASSWORD:?Set PGPASSWORD env var before running}"
 
 # Colors for output
 GREEN='\033[0;32m'

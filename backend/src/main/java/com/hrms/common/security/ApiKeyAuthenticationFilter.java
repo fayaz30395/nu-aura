@@ -45,72 +45,80 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
+        // SEC: Wrap the entire filter body so TenantContext (ThreadLocal) is cleared on
+        // every path — success, error, or invalid key. Without this, a pooled thread can
+        // leak the previous request's tenant into the next one.
+        try {
+            String requestUri = request.getRequestURI();
 
-        // Check if this is an API-key-eligible path
-        boolean isExternalApi = requestUri.startsWith(EXTERNAL_API_PATH_PREFIX);
-        boolean isWebhookApi = requestUri.startsWith(WEBHOOK_API_PATH_PREFIX);
+            // Check if this is an API-key-eligible path
+            boolean isExternalApi = requestUri.startsWith(EXTERNAL_API_PATH_PREFIX);
+            boolean isWebhookApi = requestUri.startsWith(WEBHOOK_API_PATH_PREFIX);
 
-        // Skip if not an API-key-eligible path
-        if (!isExternalApi && !isWebhookApi) {
+            // Skip if not an API-key-eligible path
+            if (!isExternalApi && !isWebhookApi) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String apiKey = request.getHeader(API_KEY_HEADER);
+
+            // For webhook APIs, API key is optional (can use JWT instead)
+            if (isWebhookApi && (apiKey == null || apiKey.isEmpty())) {
+                // Let the request proceed - JWT filter will handle authentication
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // For external APIs, API key is required
+            if (isExternalApi && (apiKey == null || apiKey.isEmpty())) {
+                log.warn("Missing API key for external API request: {}", requestUri);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Missing API key\",\"message\":\"X-API-Key header is required\"}");
+                return;
+            }
+
+            // Validate the API key
+            String clientIp = getClientIp(request);
+            Optional<ApiKey> validKey = apiKeyService.validateApiKey(apiKey, clientIp);
+
+            if (validKey.isEmpty()) {
+                log.warn("Invalid API key attempt from IP: {}", clientIp);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Invalid API key\",\"message\":\"The provided API key is invalid or expired\"}");
+                return;
+            }
+
+            ApiKey key = validKey.get();
+
+            // Create authentication with API key scopes as authorities
+            List<SimpleGrantedAuthority> authorities = key.getScopes().stream()
+                    .map(scope -> new SimpleGrantedAuthority("SCOPE_" + scope))
+                    .collect(Collectors.toList());
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            "api-key:" + key.getName(),
+                            null,
+                            authorities
+                    );
+
+            // Store tenant ID in authentication details
+            authentication.setDetails(new ApiKeyAuthenticationDetails(key.getTenantId(), key.getId(), key.getScopes()));
+
+            // Set tenant context for downstream filters and services
+            TenantContext.setCurrentTenant(key.getTenantId());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("API key authentication successful for key: {} (tenant: {})", key.getName(), key.getTenantId());
+
             filterChain.doFilter(request, response);
-            return;
+        } finally {
+            // ThreadLocal cleanup on every path — pooled threads must not leak tenant scope.
+            TenantContext.clear();
         }
-
-        String apiKey = request.getHeader(API_KEY_HEADER);
-
-        // For webhook APIs, API key is optional (can use JWT instead)
-        if (isWebhookApi && (apiKey == null || apiKey.isEmpty())) {
-            // Let the request proceed - JWT filter will handle authentication
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // For external APIs, API key is required
-        if (isExternalApi && (apiKey == null || apiKey.isEmpty())) {
-            log.warn("Missing API key for external API request: {}", requestUri);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Missing API key\",\"message\":\"X-API-Key header is required\"}");
-            return;
-        }
-
-        // Validate the API key
-        String clientIp = getClientIp(request);
-        Optional<ApiKey> validKey = apiKeyService.validateApiKey(apiKey, clientIp);
-
-        if (validKey.isEmpty()) {
-            log.warn("Invalid API key attempt from IP: {}", clientIp);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Invalid API key\",\"message\":\"The provided API key is invalid or expired\"}");
-            return;
-        }
-
-        ApiKey key = validKey.get();
-
-        // Create authentication with API key scopes as authorities
-        List<SimpleGrantedAuthority> authorities = key.getScopes().stream()
-                .map(scope -> new SimpleGrantedAuthority("SCOPE_" + scope))
-                .collect(Collectors.toList());
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        "api-key:" + key.getName(),
-                        null,
-                        authorities
-                );
-
-        // Store tenant ID in authentication details
-        authentication.setDetails(new ApiKeyAuthenticationDetails(key.getTenantId(), key.getId(), key.getScopes()));
-
-        // Set tenant context for downstream filters and services
-        TenantContext.setCurrentTenant(key.getTenantId());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.debug("API key authentication successful for key: {} (tenant: {})", key.getName(), key.getTenantId());
-
-        filterChain.doFilter(request, response);
     }
 
     private String getClientIp(HttpServletRequest request) {

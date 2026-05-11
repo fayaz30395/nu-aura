@@ -164,6 +164,8 @@ public class LoanService implements ApprovalCallbackHandler {
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
 
+        enforceLoanAccess(loan, com.hrms.common.security.Permission.LOAN_MANAGE);
+
         if (loan.getStatus() != LoanStatus.ACTIVE && loan.getStatus() != LoanStatus.DISBURSED) {
             throw new IllegalStateException("Cannot record repayment for loan in status: " + loan.getStatus());
         }
@@ -191,6 +193,8 @@ public class LoanService implements ApprovalCallbackHandler {
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
 
+        enforceLoanAccess(loan, com.hrms.common.security.Permission.LOAN_MANAGE);
+
         if (loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.CLOSED) {
             throw new IllegalStateException("Cannot cancel loan in status: " + loan.getStatus());
         }
@@ -207,7 +211,22 @@ public class LoanService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Loan not found"));
+        enforceLoanAccess(loan, com.hrms.common.security.Permission.LOAN_VIEW_ALL);
         return EmployeeLoanDto.fromEntity(loan);
+    }
+
+    private void enforceLoanAccess(EmployeeLoan loan, String elevatedPermission) {
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+        if (SecurityContext.hasPermission(elevatedPermission)) {
+            return;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null || !currentEmployeeId.equals(loan.getEmployeeId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Not authorized to access this loan");
+        }
     }
 
     @Transactional(readOnly = true)

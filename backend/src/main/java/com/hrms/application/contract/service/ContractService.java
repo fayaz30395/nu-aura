@@ -135,13 +135,34 @@ public class ContractService {
     }
 
     /**
-     * Get contract by ID
+     * Get contract by ID.
+     *
+     * <p>BOLA FIX: the controller-level @RequiresPermission(CONTRACT:VIEW) is
+     * tenant-scoped only; without an entity-level check, any employee with
+     * CONTRACT:VIEW could fetch every contract in the tenant by enumerating
+     * UUIDs. HR Managers / Tenant Admins / SuperAdmins keep tenant-wide
+     * access; everyone else must be the contract's employee (e.g., signed by
+     * them).
      */
     @Transactional(readOnly = true)
     public ContractDto getContractById(UUID contractId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
+
+        // HR-level and above see all contracts for the tenant. The Contract entity only
+        // exposes `employeeId` as an association — there is no counterparty field today —
+        // so non-HR callers may only view their own contract.
+        if (!SecurityContext.isHRManager()) {
+            UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+            boolean isOwner = contract.getEmployeeId() != null
+                    && contract.getEmployeeId().equals(currentEmployeeId);
+            if (!isOwner) {
+                throw new org.springframework.security.access.AccessDeniedException(
+                        "Not authorized to view this contract");
+            }
+        }
+
         return toDtoWithSignatures(contract);
     }
 

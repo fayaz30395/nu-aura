@@ -1,9 +1,12 @@
 package com.hrms.api.webhook.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.webhook.dto.WebhookDeliveryResponse;
 import com.hrms.api.webhook.dto.WebhookRequest;
 import com.hrms.api.webhook.dto.WebhookResponse;
 import com.hrms.application.webhook.service.WebhookService;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -26,7 +29,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,8 +59,17 @@ import java.util.stream.Collectors;
 @SecurityRequirement(name = "apiKeyAuth")
 public class WebhookController {
 
+    // Forbidden custom-header names (case-insensitive). A webhook owner must NEVER be able
+    // to set these on outbound requests — they would let them inject auth, leak secrets to
+    // other services, or break HTTP framing on the delivery side.
+    private static final Set<String> FORBIDDEN_HEADER_NAMES = Set.of(
+            "authorization", "cookie", "set-cookie", "host", "content-length",
+            "x-forwarded-for", "x-real-ip", "x-forwarded-host", "proxy-authorization"
+    );
+
     private final WebhookService webhookService;
     private final WebhookDeliveryRepository deliveryRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * List all webhooks for the current tenant.
@@ -96,6 +111,9 @@ public class WebhookController {
     public ResponseEntity<WebhookResponse> createWebhook(@Valid @RequestBody WebhookRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // SECURITY: filter forbidden headers before persisting. See FORBIDDEN_HEADER_NAMES.
+        String sanitizedHeaders = sanitizeCustomHeaders(request.getCustomHeaders());
+
         Webhook webhook = Webhook.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -103,7 +121,7 @@ public class WebhookController {
                 .secret(request.getSecret())
                 .events(request.getEvents())
                 .status(WebhookStatus.ACTIVE)
-                .customHeaders(request.getCustomHeaders())
+                .customHeaders(sanitizedHeaders)
                 .build();
         webhook.setTenantId(tenantId);
 
@@ -135,7 +153,8 @@ public class WebhookController {
             existing.setSecret(request.getSecret());
         }
         existing.setEvents(request.getEvents());
-        existing.setCustomHeaders(request.getCustomHeaders());
+        // SECURITY: filter forbidden headers before persisting. See FORBIDDEN_HEADER_NAMES.
+        existing.setCustomHeaders(sanitizeCustomHeaders(request.getCustomHeaders()));
 
         Webhook updated = webhookService.update(existing);
         log.info("Updated webhook {}", id);
@@ -230,5 +249,39 @@ public class WebhookController {
         WebhookDelivery saved = webhookService.retryDelivery(deliveryId);
         log.info("Scheduled retry for delivery {}", deliveryId);
         return ResponseEntity.ok(WebhookDeliveryResponse.fromEntity(saved));
+    }
+
+    /**
+     * Strip forbidden header names from the user-supplied customHeaders JSON string.
+     *
+     * <p>customHeaders is stored as a JSON object string (Map&lt;String,String&gt;).
+     * We parse, filter forbidden keys (case-insensitive), and re-serialize so the
+     * downstream {@code WebhookDeliveryService} can never inject them on outbound calls.</p>
+     *
+     * @param customHeadersJson raw JSON string from the request DTO (may be null/blank)
+     * @return sanitized JSON string (same shape) or the original value if blank/unparseable
+     */
+    private String sanitizeCustomHeaders(String customHeadersJson) {
+        if (customHeadersJson == null || customHeadersJson.isBlank()) {
+            return customHeadersJson;
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, String> parsed = objectMapper.readValue(customHeadersJson, Map.class);
+            // Preserve insertion order; strip forbidden keys case-insensitively.
+            Map<String, String> filtered = new LinkedHashMap<>();
+            parsed.forEach((k, v) -> {
+                if (k == null) return;
+                if (FORBIDDEN_HEADER_NAMES.contains(k.toLowerCase())) {
+                    log.warn("Stripping forbidden custom header '{}' from webhook payload", k);
+                    return;
+                }
+                filtered.put(k, v);
+            });
+            return objectMapper.writeValueAsString(filtered);
+        } catch (JsonProcessingException e) {
+            // Malformed JSON — surface as a 4xx rather than silently storing untrusted bytes.
+            throw new BusinessException("customHeaders must be a JSON object of string keys/values");
+        }
     }
 }

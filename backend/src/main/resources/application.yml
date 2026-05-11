@@ -397,7 +397,6 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: alpha
-  show-actuator: true
 
 logging:
   level:

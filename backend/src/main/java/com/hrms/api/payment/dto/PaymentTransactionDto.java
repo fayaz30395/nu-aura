@@ -62,13 +62,10 @@ public class PaymentTransactionDto {
 
     public PaymentTransaction toEntity() {
         return PaymentTransaction.builder()
-                .id(id)
-                .transactionRef(transactionRef)
                 .externalRef(externalRef)
                 .type(type)
                 .amount(amount)
                 .currency(currency)
-                .status(status)
                 .employeeId(employeeId)
                 .payrollRunId(payrollRunId)
                 .expenseClaimId(expenseClaimId)
@@ -76,12 +73,6 @@ public class PaymentTransactionDto {
                 .recipientAccountNumber(recipientAccountNumber)
                 .recipientIfsc(recipientIfsc)
                 .provider(provider)
-                .failedReason(failedReason)
-                .initiatedAt(initiatedAt)
-                .completedAt(completedAt)
-                .refundedAt(refundedAt)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .build();
     }
 }

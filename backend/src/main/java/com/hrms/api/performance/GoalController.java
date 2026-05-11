@@ -25,6 +25,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GoalController {
 
+    /** Allow-list of sortable fields for {@code Goal} entity — prevents sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "createdAt", "updatedAt", "title", "goalType", "category", "status",
+            "startDate", "dueDate", "progressPercentage"
+    );
+
     private final GoalService goalService;
 
     @PostMapping
@@ -42,8 +48,9 @@ public class GoalController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection
     ) {
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<GoalResponse> goals = goalService.getAllGoals(pageable);
         return ResponseEntity.ok(goals);
     }

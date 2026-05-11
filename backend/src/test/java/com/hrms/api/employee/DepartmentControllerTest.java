@@ -59,8 +59,6 @@ class DepartmentControllerTest {
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-    @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
     @MockitoBean
     private TenantFilter tenantFilter;

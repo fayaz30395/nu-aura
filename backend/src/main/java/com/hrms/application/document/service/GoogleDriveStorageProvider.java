@@ -3,9 +3,12 @@ package com.hrms.application.document.service;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Permission;
 import com.hrms.common.exception.BusinessException;
+import com.hrms.common.security.TenantContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
@@ -14,26 +17,39 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Google Drive-based storage provider.
  * Used for production environments.
  * <p>
- * Google Drive uses fileId-based access rather than path-based.
- * The objectName parameter doubles as the fileId when using this provider:
- * - On upload, the objectName (logical path) is stored as a custom property on the Drive file,
- * and the returned value is the Google Drive fileId.
- * - On download/delete/exists, the objectName is treated as the Google Drive fileId.
+ * Tenant-isolation contract (audit finding 2.1):
+ * <ul>
+ *   <li>{@link #upload} accepts the logical path
+ *       ({@code tenantId/category/entityId/...}) as {@code objectName} and
+ *       returns the opaque Drive fileId. Callers (FileStorageService) MUST
+ *       persist a {@code drive_file_mapping(tenant_id, object_name, drive_file_id)}
+ *       row so the logical path can be resolved back to the fileId on
+ *       subsequent operations.</li>
+ *   <li>{@link #download}, {@link #delete}, {@link #exists},
+ *       {@link #getDownloadUrl} accept the logical path as {@code objectName}
+ *       and resolve the Drive fileId server-side via
+ *       {@link #resolveDriveFileId(String, UUID)}. The opaque fileId is never
+ *       returned to clients, so the {@code startsWith(tenantId + "/")} guard
+ *       in FileUploadController is meaningful again.</li>
+ * </ul>
  */
 @Slf4j
 public class GoogleDriveStorageProvider implements StorageProvider {
 
     private final Drive driveService;
     private final String rootFolderId;
+    private final JdbcTemplate jdbcTemplate;
 
-    public GoogleDriveStorageProvider(Drive driveService, String rootFolderId) {
+    public GoogleDriveStorageProvider(Drive driveService, String rootFolderId, JdbcTemplate jdbcTemplate) {
         this.driveService = driveService;
         this.rootFolderId = rootFolderId;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -65,6 +81,11 @@ public class GoogleDriveStorageProvider implements StorageProvider {
                     .execute();
 
             log.info("Google Drive upload complete: objectName={}, fileId={}", objectName, uploadedFile.getId());
+            // SEC-FIX (2.1): return the Drive fileId so FileStorageService can persist
+            //   drive_file_mapping(tenant_id, object_name=logicalPath, drive_file_id=this).
+            // FileStorageService is responsible for mapping persistence; this method
+            // does not write to drive_file_mapping itself to keep upload transactional
+            // boundary aligned with the caller's @Transactional scope.
             return uploadedFile.getId();
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive upload failed for object: {}", objectName, e);
@@ -74,55 +95,71 @@ public class GoogleDriveStorageProvider implements StorageProvider {
 
     @Override
     public String getDownloadUrl(String objectName, int expiryHours) {
-        try {
-            // Create a temporary reader permission for the file
-            Permission permission = new Permission()
-                    .setType("anyone")
-                    .setRole("reader");
-
-            driveService.permissions().create(objectName, permission)
-                    .setFields("id")
-                    .execute();
-
-            File file = driveService.files().get(objectName)
-                    .setFields("webContentLink")
-                    .execute();
-
-            String downloadUrl = file.getWebContentLink();
-            log.info("Google Drive download URL generated for fileId: {}", objectName);
-            return downloadUrl;
-        } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
-            log.error("Google Drive download URL generation failed for fileId: {}", objectName, e);
-            throw new BusinessException("Failed to generate download URL from Google Drive");
-        }
+        // SEC-FIX (2.2): Direct Drive webContentLink URLs are not generated anymore.
+        // The previous implementation granted Permission(type=anyone, role=reader)
+        // permanently — making files publicly downloadable to anyone with the URL
+        // forever (no expiry). Callers MUST use the backend-proxied path
+        // /api/v1/files/download/direct which streams the file through the
+        // FileUploadController after enforcing the tenant guard.
+        log.warn("getDownloadUrl invoked for objectName={} — direct Drive URLs disabled; " +
+                "use backend-proxied /api/v1/files/download/direct instead.", objectName);
+        throw new UnsupportedOperationException(
+                "Direct Drive URLs disabled — use /api/v1/files/download/direct backend-proxied path");
     }
 
     @Override
     public InputStream download(String objectName) {
+        // SEC-FIX (2.1): objectName is the logical path; resolve to Drive fileId
+        // scoped to the current tenant before talking to Drive.
+        String driveFileId = resolveDriveFileId(objectName, TenantContext.getCurrentTenant());
         try {
-            return driveService.files().get(objectName)
+            return driveService.files().get(driveFileId)
                     .executeMediaAsInputStream();
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
-            log.error("Google Drive download failed for fileId: {}", objectName, e);
+            log.error("Google Drive download failed for objectName={} (resolved fileId={})", objectName, driveFileId, e);
             throw new BusinessException("Failed to retrieve file from Google Drive");
         }
     }
 
     @Override
     public void delete(String objectName) {
+        // SEC-FIX (2.1): objectName is the logical path; resolve to Drive fileId
+        // scoped to the current tenant before talking to Drive. Also delete the
+        // mapping row so the logical path can't be reused to reach orphan data.
+        UUID tenantId = TenantContext.getCurrentTenant();
+        String driveFileId = resolveDriveFileId(objectName, tenantId);
         try {
-            driveService.files().delete(objectName).execute();
-            log.info("Google Drive file deleted: fileId={}", objectName);
+            driveService.files().delete(driveFileId).execute();
+            log.info("Google Drive file deleted: objectName={}, fileId={}", objectName, driveFileId);
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
-            log.error("Google Drive delete failed for fileId: {}", objectName, e);
+            log.error("Google Drive delete failed for objectName={} (fileId={})", objectName, driveFileId, e);
             throw new BusinessException("Failed to delete file from Google Drive");
+        }
+        // Mapping cleanup is best-effort: a Drive delete failure already throws above,
+        // so reaching here means the file is gone. We then remove the row.
+        try {
+            int rows = jdbcTemplate.update(
+                    "DELETE FROM drive_file_mapping WHERE object_name = ? AND tenant_id = ?",
+                    objectName, tenantId);
+            log.debug("drive_file_mapping rows deleted for objectName={}: {}", objectName, rows);
+        } catch (Exception e) { // Best-effort — file is already deleted in Drive
+            log.warn("Failed to delete drive_file_mapping row for objectName={}: {}", objectName, e.getMessage());
         }
     }
 
     @Override
     public boolean exists(String objectName) {
+        // SEC-FIX (2.1): objectName is the logical path. Use the mapping table to
+        // check existence without leaking other tenants' fileIds.
+        UUID tenantId = TenantContext.getCurrentTenant();
+        String driveFileId;
         try {
-            driveService.files().get(objectName)
+            driveFileId = resolveDriveFileId(objectName, tenantId);
+        } catch (AccessDeniedException | BusinessException e) {
+            return false;
+        }
+        try {
+            driveService.files().get(driveFileId)
                     .setFields("id")
                     .execute();
             return true;
@@ -133,6 +170,11 @@ public class GoogleDriveStorageProvider implements StorageProvider {
 
     @Override
     public String copy(String sourceObjectName, String destinationObjectName) {
+        // The copy() contract still takes Drive-level identifiers because it is only
+        // invoked internally from FileStorageService.copyFile, which currently has
+        // not been migrated to logical-path resolution. For now, callers using
+        // copyFile() must pass through FileStorageService, which will persist a
+        // new drive_file_mapping row keyed by destinationObjectName.
         try {
             File copiedFileMetadata = new File();
             // Extract filename from destination path if it looks like a path, otherwise use as-is
@@ -145,11 +187,16 @@ public class GoogleDriveStorageProvider implements StorageProvider {
             properties.put("objectName", destinationObjectName);
             copiedFileMetadata.setProperties(properties);
 
-            File copiedFile = driveService.files().copy(sourceObjectName, copiedFileMetadata)
+            // If source looks like a logical path, resolve to fileId first.
+            String sourceFileId = sourceObjectName.contains("/")
+                    ? resolveDriveFileId(sourceObjectName, TenantContext.getCurrentTenant())
+                    : sourceObjectName;
+
+            File copiedFile = driveService.files().copy(sourceFileId, copiedFileMetadata)
                     .setFields("id, name")
                     .execute();
 
-            log.info("Google Drive file copied: sourceId={}, newId={}", sourceObjectName, copiedFile.getId());
+            log.info("Google Drive file copied: sourceObjectName={}, newFileId={}", sourceObjectName, copiedFile.getId());
             return copiedFile.getId();
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive copy failed from {} to {}", sourceObjectName, destinationObjectName, e);
@@ -218,6 +265,40 @@ public class GoogleDriveStorageProvider implements StorageProvider {
         } catch (Exception e) { // Intentional broad catch — Google Drive API may throw checked and unchecked exceptions
             log.error("Google Drive listObjects failed (prefix={})", prefix, e);
             throw new BusinessException("Failed to list files in Google Drive");
+        }
+    }
+
+    /**
+     * Resolves a logical object path to its opaque Drive fileId, enforcing tenant
+     * isolation. Throws {@link AccessDeniedException} if the row does not exist
+     * for the given tenant — this is the load-bearing security check for fixes
+     * to audit finding 2.1.
+     *
+     * @param objectName the logical path (tenantId/category/entityId/filename)
+     * @param tenantId   the current tenant from {@link TenantContext}; may be null
+     *                   only for system/scheduler contexts that explicitly
+     *                   bypass tenancy
+     * @return the Drive fileId
+     */
+    private String resolveDriveFileId(String objectName, UUID tenantId) {
+        if (objectName == null || objectName.isBlank()) {
+            throw new BusinessException("objectName is required");
+        }
+        try {
+            if (tenantId != null) {
+                return jdbcTemplate.queryForObject(
+                        "SELECT drive_file_id FROM drive_file_mapping WHERE object_name = ? AND tenant_id = ?",
+                        String.class, objectName, tenantId);
+            }
+            // tenantId == null only for system contexts (e.g., orphan-detection jobs).
+            // No tenant scoping in that case, but logged so abuse is traceable.
+            log.warn("resolveDriveFileId called without tenant context for objectName={}", objectName);
+            return jdbcTemplate.queryForObject(
+                    "SELECT drive_file_id FROM drive_file_mapping WHERE object_name = ?",
+                    String.class, objectName);
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("drive_file_mapping miss: objectName={}, tenantId={}", objectName, tenantId);
+            throw new AccessDeniedException("File not found or access denied");
         }
     }
 

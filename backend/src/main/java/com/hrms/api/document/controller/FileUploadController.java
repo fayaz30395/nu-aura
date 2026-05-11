@@ -13,12 +13,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.io.InputStream;
 import java.util.UUID;
 
 /**
  * Controller for file upload and download operations.
+ *
+ * <p>Audit finding 2.1 (CRITICAL): the tenant-isolation guard
+ * {@code objectName.startsWith(tenantId + "/")} was previously dead code because
+ * {@code objectName} was set to the opaque Google Drive fileId at upload time.
+ * After the V143 mapping refactor, {@code objectName} is the LOGICAL path
+ * ({@code tenantId/category/entityId/timestamp_uuid.ext}), so the guard now
+ * actually enforces tenant ownership. The Drive fileId is resolved server-side
+ * via the {@code drive_file_mapping} table inside the storage provider.</p>
  */
 @RestController
 @RequestMapping("/api/v1/files")
@@ -45,7 +55,12 @@ public class FileUploadController {
                 .size(result.getSize())
                 .category(result.getCategory())
                 .entityId(result.getEntityId())
-                .downloadUrl(fileStorageService.getDownloadUrl(result.getObjectName()))
+                // SEC-FIX (2.2): direct Drive URLs are disabled. Clients should call
+                // /api/v1/files/download/direct with the objectName to stream the file
+                // through the backend (which enforces the tenant guard). We surface a
+                // backend-proxied URL hint here rather than calling getDownloadUrl
+                // (which now throws because the unbounded Permission grant was removed).
+                .downloadUrl("/api/v1/files/download/direct?objectName=" + result.getObjectName())
                 .build());
     }
 
@@ -68,7 +83,8 @@ public class FileUploadController {
                 .size(result.getSize())
                 .category(result.getCategory())
                 .entityId(result.getEntityId())
-                .downloadUrl(fileStorageService.getDownloadUrl(result.getObjectName()))
+                // SEC-FIX (2.2): see note in uploadFile above.
+                .downloadUrl("/api/v1/files/download/direct?objectName=" + result.getObjectName())
                 .build());
     }
 
@@ -92,23 +108,25 @@ public class FileUploadController {
                 .size(result.getSize())
                 .category(result.getCategory())
                 .entityId(result.getEntityId())
-                .downloadUrl(fileStorageService.getDownloadUrl(result.getObjectName()))
+                // SEC-FIX (2.2): see note in uploadFile above.
+                .downloadUrl("/api/v1/files/download/direct?objectName=" + result.getObjectName())
                 .build());
     }
 
     @GetMapping("/download")
     @RequiresPermission(Permission.DOCUMENT_VIEW)
-    @Operation(summary = "Get download URL", description = "Get a pre-signed URL for downloading a file")
+    @Operation(summary = "Get download URL", description = "Direct Drive URLs are disabled; use /download/direct.")
     public ResponseEntity<DownloadUrlResponse> getDownloadUrl(@RequestParam("objectName") String objectName) {
-        // SEC-008 FIX: Verify the objectName belongs to the current tenant
-        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
-        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "Access denied: file does not belong to your tenant");
-        }
+        // SEC-FIX (2.1): reject missing objectName (was previously NPE-prone).
+        assertTenantOwns(objectName);
 
-        String url = fileStorageService.getDownloadUrl(objectName);
-        return ResponseEntity.ok(new DownloadUrlResponse(url));
+        // SEC-FIX (2.2): direct Drive URLs would require granting public reader
+        // permission on the Drive file, which had no expiry and could not be
+        // revoked. We now refuse to mint such URLs and direct callers to the
+        // backend-proxied /download/direct path which enforces tenant ownership
+        // on every request.
+        return ResponseEntity.ok(new DownloadUrlResponse(
+                "/api/v1/files/download/direct?objectName=" + objectName));
     }
 
     @GetMapping("/download/direct")
@@ -118,12 +136,10 @@ public class FileUploadController {
             @RequestParam("objectName") String objectName,
             @RequestParam(value = "filename", required = false) String filename) {
 
-        // SEC-008 FIX: Verify the objectName belongs to the current tenant
-        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
-        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "Access denied: file does not belong to your tenant");
-        }
+        // SEC-FIX (2.1): verify the objectName belongs to the current tenant
+        // before opening the Drive stream. After V143, objectName is the logical
+        // path, so the startsWith check is meaningful.
+        assertTenantOwns(objectName);
 
         InputStream inputStream = fileStorageService.getFile(objectName);
 
@@ -150,12 +166,8 @@ public class FileUploadController {
     @RequiresPermission(Permission.DOCUMENT_DELETE)
     @Operation(summary = "Delete a file", description = "Delete a file from storage")
     public ResponseEntity<Void> deleteFile(@RequestParam("objectName") String objectName) {
-        // SEC-008 FIX: Verify the objectName belongs to the current tenant
-        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
-        if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "Access denied: file does not belong to your tenant");
-        }
+        // SEC-FIX (2.1): see note in downloadFile.
+        assertTenantOwns(objectName);
 
         fileStorageService.deleteFile(objectName);
         return ResponseEntity.noContent().build();
@@ -165,15 +177,32 @@ public class FileUploadController {
     @RequiresPermission(Permission.DOCUMENT_VIEW)
     @Operation(summary = "Check if file exists", description = "Check if a file exists in storage")
     public ResponseEntity<FileExistsResponse> fileExists(@RequestParam("objectName") String objectName) {
-        // SEC-008 FIX: Verify the objectName belongs to the current tenant
+        // SEC-FIX (2.1): see note in downloadFile.
+        assertTenantOwns(objectName);
+
+        boolean exists = fileStorageService.fileExists(objectName);
+        return ResponseEntity.ok(new FileExistsResponse(exists));
+    }
+
+    /**
+     * Tenant ownership guard for all read/delete endpoints.
+     *
+     * <p>After V143, {@code objectName} is the logical path
+     * {@code tenantId/category/entityId/...}, so {@code startsWith} cheaply
+     * verifies the caller's tenant owns the file. The provider's resolver in
+     * {@code drive_file_mapping} provides a defense-in-depth second check; if
+     * the row is missing or owned by another tenant, the provider also throws
+     * AccessDeniedException.</p>
+     */
+    private void assertTenantOwns(String objectName) {
+        if (objectName == null || objectName.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "objectName is required");
+        }
         UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
         if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
             throw new org.springframework.security.access.AccessDeniedException(
                     "Access denied: file does not belong to your tenant");
         }
-
-        boolean exists = fileStorageService.fileExists(objectName);
-        return ResponseEntity.ok(new FileExistsResponse(exists));
     }
 
     // Response DTOs

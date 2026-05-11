@@ -257,12 +257,20 @@ public class SamlConfigurationService {
             }
         }
 
-        // Validate metadata URL format if provided
+        // Validate metadata URL format if provided. We also run the SSRF check at
+        // save time so an internal-pointing URL is rejected before persistence —
+        // the runtime guard in DynamicSamlRelyingPartyRegistrationRepository is a
+        // safety net, but rejecting early gives the admin a clear validation error.
         if (request.getMetadataUrl() != null && !request.getMetadataUrl().isBlank()) {
             try {
                 URI.create(request.getMetadataUrl());
             } catch (IllegalArgumentException e) {
                 throw new BusinessException("Invalid metadata URL format: " + request.getMetadataUrl());
+            }
+            try {
+                com.hrms.common.validation.SsrfProtectionUtils.validateUrlSafety(request.getMetadataUrl());
+            } catch (BusinessException ssrf) {
+                throw new BusinessException("Metadata URL rejected: " + ssrf.getMessage());
             }
         }
 

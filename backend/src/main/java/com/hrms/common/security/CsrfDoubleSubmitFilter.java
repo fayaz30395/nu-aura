@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Set;
@@ -40,14 +42,18 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
         String csrfCookie = getCsrfCookieValue(request);
         if (csrfCookie == null) {
             csrfCookie = generateToken();
-            setCsrfCookie(request, response, csrfCookie);
+            setCsrfCookie(response, csrfCookie);
         }
 
         // Only validate on state-changing methods, and skip validation for excluded paths
         // (auth endpoints, public endpoints) that still need the cookie set
         if (!SAFE_METHODS.contains(request.getMethod().toUpperCase()) && !isValidationExcluded(request)) {
             String headerValue = request.getHeader(CSRF_HEADER_NAME);
-            if (csrfCookie == null || headerValue == null || !csrfCookie.equals(headerValue)) {
+            // Constant-time comparison to mitigate timing side-channels on the token equality check.
+            if (csrfCookie == null || headerValue == null
+                    || !MessageDigest.isEqual(
+                            csrfCookie.getBytes(StandardCharsets.UTF_8),
+                            headerValue.getBytes(StandardCharsets.UTF_8))) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.setContentType("application/json");
                 response.getWriter().write(
@@ -68,14 +74,22 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
      * Auth endpoints (login, Google OAuth, refresh) are excluded from validation
      * (they need to work without a prior CSRF token) but the filter still runs
      * so that the response includes the XSRF-TOKEN cookie for subsequent requests.
+     *
+     * <p><b>SEC hardening:</b> The previous version skipped CSRF whenever an
+     * {@code X-API-Key} header was present. That let a CSRF attacker bypass the
+     * filter by simply adding the header — CORS does not block custom headers on
+     * cross-origin requests with credentials when preflight is satisfied.
+     * Exemption is now URI-scoped to dedicated external/webhook paths only.</p>
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         // Only skip the filter entirely for non-browser paths that will never
-        // need CSRF cookies: webhooks, actuator, WebSocket, SAML, API-key calls.
+        // need CSRF cookies: webhooks, actuator, WebSocket, SAML, dedicated external APIs.
         return path.startsWith("/actuator/") ||
                path.startsWith("/api/v1/webhooks/") ||
+               path.startsWith("/api/webhooks/") ||
+               path.startsWith("/api/v1/external/") ||
                path.startsWith("/api/v1/integrations/docusign/") ||
                path.startsWith("/api/v1/integrations/slack/") ||
                path.startsWith("/api/v1/payments/webhooks/") ||
@@ -84,8 +98,7 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
                path.startsWith("/ws/") ||
                path.startsWith("/saml2/") ||
                path.startsWith("/login/saml2/") ||
-               path.startsWith("/logout/saml2/") ||
-               request.getHeader("X-API-Key") != null;
+               path.startsWith("/logout/saml2/");
     }
 
     /**
@@ -107,11 +120,14 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
                path.startsWith("/api/v1/tenants/register");
     }
 
-    private void setCsrfCookie(HttpServletRequest request, HttpServletResponse response, String token) {
+    private void setCsrfCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token);
         cookie.setPath("/");
         cookie.setHttpOnly(false); // Must be readable by JavaScript
-        cookie.setSecure(request.isSecure());
+        // Always Secure: SameSite=Strict requires it on modern browsers, and downgrade
+        // attacks otherwise leak the CSRF token over the cleartext leg. Local dev runs
+        // over HTTPS via mkcert/devcert; tests can mock this filter or use HTTPS.
+        cookie.setSecure(true);
         cookie.setMaxAge(-1); // Session cookie
         response.addCookie(cookie);
     }

@@ -8,20 +8,22 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
- * DTO for updating employee data.
+ * DTO for self-service updates to an employee's own profile.
  *
- * <p>All fields are optional (PATCH semantics) — only supplied fields are updated.
- * Validation annotations enforce format and length constraints on PII fields (SEC-B09).
+ * <p>SECURITY: This DTO must only contain fields that an employee is allowed
+ * to modify on their own record. Admin-only fields (department, manager,
+ * status, level, compensation, bank, tax ID, employee code) are intentionally
+ * NOT exposed here — they live on {@link AdminEmployeeUpdateRequest} and are
+ * mutated through a separate, permission-gated endpoint.
+ *
+ * <p>All fields remain optional (PATCH semantics) — only supplied fields are
+ * applied. Validation annotations enforce format and length constraints on
+ * PII fields (SEC-B09).
  */
 @Data
 public class UpdateEmployeeRequest {
-
-    @Size(max = 20, message = "Employee code must not exceed 20 characters")
-    @Pattern(regexp = "^[A-Za-z0-9\\-_]*$", message = "Employee code must be alphanumeric (hyphens and underscores allowed)")
-    private String employeeCode;
 
     @Size(min = 1, max = 50, message = "First name must be between 1 and 50 characters")
     private String firstName;
@@ -63,41 +65,4 @@ public class UpdateEmployeeRequest {
 
     @Size(max = 100, message = "Country must not exceed 100 characters")
     private String country;
-
-    @PastOrPresent(message = "Confirmation date cannot be in the future")
-    private LocalDate confirmationDate;
-
-    private UUID departmentId;
-
-    @Size(max = 100, message = "Designation must not exceed 100 characters")
-    private String designation;
-
-    private Employee.EmployeeLevel level;
-
-    private Employee.JobRole jobRole;
-
-    private UUID managerId;
-
-    private UUID dottedLineManager1Id;
-
-    private UUID dottedLineManager2Id;
-
-    private Employee.EmploymentType employmentType;
-
-    private Employee.EmployeeStatus status;
-
-    @Size(max = 30, message = "Bank account number must not exceed 30 characters")
-    @Pattern(regexp = "^[A-Za-z0-9]*$", message = "Bank account number must be alphanumeric")
-    private String bankAccountNumber;
-
-    @Size(max = 100, message = "Bank name must not exceed 100 characters")
-    private String bankName;
-
-    @Size(max = 11, message = "IFSC code must not exceed 11 characters")
-    @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "IFSC code format is invalid (expected: XXXX0XXXXXX)")
-    private String bankIfscCode;
-
-    @Size(max = 20, message = "Tax ID must not exceed 20 characters")
-    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$", message = "Tax ID (PAN) must be in the format AAAAA9999A")
-    private String taxId;
 }

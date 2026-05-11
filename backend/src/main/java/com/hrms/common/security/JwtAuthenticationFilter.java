@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,6 +43,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ScopeContextService scopeContextService;
     private final SecurityService securityService;
 
+    /**
+     * SEC: Bearer header fallback is OFF by default. When false (prod default),
+     * the filter only accepts the httpOnly cookie. Enable explicitly in non-prod
+     * for legacy M2M clients via {@code app.security.allow-bearer-header=true}.
+     */
+    @Value("${app.security.allow-bearer-header:false}")
+    private boolean allowBearerHeader;
+
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider,
                                    UserDetailsService userDetailsService,
                                    EmployeeRepository employeeRepository,
@@ -65,7 +74,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = tokenProvider.getUsernameFromToken(jwt);
                 UUID tenantId = tokenProvider.getTenantIdFromToken(jwt);
 
-                TenantContext.setCurrentTenant(tenantId);
+                // SEC: TenantContext is intentionally NOT set here. It is set ONLY after
+                // userDetails loads successfully (below), so a forged token cannot leak
+                // tenant scope into downstream services if validation later fails.
+                // The finally block clears the context regardless.
 
                 // Try to get NU Platform app-aware claims from token
                 String appCode = tokenProvider.getAppCodeFromToken(jwt);
@@ -255,12 +267,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return tokenFromCookie;
         }
 
-        // Fallback to Authorization header for backward compatibility and API clients
-        // DEPRECATED: This path will be removed once all M2M clients migrate to httpOnly cookies
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            log.warn("JWT authentication via Authorization header detected from IP: {} for path: {}. This method is deprecated — use httpOnly cookies.", request.getRemoteAddr(), request.getRequestURI());
-            return bearerToken.substring(7);
+        // Fallback to Authorization header for backward compatibility and API clients.
+        // DEPRECATED: gated behind app.security.allow-bearer-header (default false in prod).
+        if (allowBearerHeader) {
+            String bearerToken = request.getHeader("Authorization");
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+                log.debug("JWT via Authorization header from IP: {} path: {} (deprecated path enabled)",
+                        request.getRemoteAddr(), request.getRequestURI());
+                return bearerToken.substring(7);
+            }
         }
 
         return null;

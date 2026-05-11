@@ -33,6 +33,7 @@ import {
 } from '@/lib/hooks/queries/useLearning';
 import type {CourseModule, ModuleContent} from '@/lib/services/grow/lms.service';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -157,7 +158,7 @@ function ScormLauncher({
           <div className="row-between px-4 py-2 bg-[var(--bg-muted)] border-b border-[var(--border-main)]">
             <span className="text-xs font-medium text-[var(--text-secondary)]">{title}</span>
             <a
-              href={url}
+              href={safeUrl(url)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-accent-600 hover:underline flex items-center gap-1"
@@ -171,7 +172,7 @@ function ScormLauncher({
             title={title}
             className="w-full h-[540px] border-0"
             allow="fullscreen"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            sandbox="allow-scripts allow-forms allow-popups"
           />
         </div>
       )}

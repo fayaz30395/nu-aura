@@ -7,11 +7,13 @@ import com.hrms.domain.customfield.CustomFieldDefinition;
 import com.hrms.infrastructure.customfield.repository.CustomFieldDefinitionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.dao.DataAccessException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -208,11 +210,15 @@ public class EmployeeImportParserService {
 
     /**
      * Parse Excel file.
+     *
+     * <p>SECURITY: SAX/XML parser errors from POI surface as a generic
+     * {@link BusinessException} rather than leaking parser internals. POI 5.3 already
+     * disables external entities; this catch is defense-in-depth.</p>
      */
     private List<EmployeeImportRow> parseExcel(MultipartFile file, Set<String> customFieldCodes) throws IOException {
         List<EmployeeImportRow> rows = new ArrayList<>();
 
-        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+        try (Workbook workbook = openXssfWorkbookSafely(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet == null) {
                 throw new BusinessException("Excel file has no sheets");
@@ -641,6 +647,31 @@ public class EmployeeImportParserService {
             java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
             workbook.write(outputStream);
             return outputStream.toByteArray();
+        }
+    }
+
+    /**
+     * Construct an XSSFWorkbook from the given stream, catching SAX/XML
+     * parser errors arising from malformed or hostile XLSX files.
+     *
+     * <p>POI 5.3 already disables external entity resolution and DTDs internally —
+     * this catch surfaces a clean error message instead of leaking parser internals
+     * to the controller's error handler. Any {@link SAXParseException} or
+     * {@link InvalidFormatException} reaching us means the upload is invalid.</p>
+     */
+    private Workbook openXssfWorkbookSafely(java.io.InputStream inputStream) throws IOException {
+        try {
+            return new XSSFWorkbook(inputStream);
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof SAXParseException || cause instanceof InvalidFormatException) {
+                    log.warn("Rejected malformed XLSX upload (wrapped parser error: {})", cause.getMessage());
+                    throw new BusinessException("Unsupported or corrupt XLSX file");
+                }
+                cause = cause.getCause();
+            }
+            throw e;
         }
     }
 }

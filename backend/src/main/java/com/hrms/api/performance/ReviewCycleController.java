@@ -27,6 +27,11 @@ import java.util.UUID;
 @Slf4j
 public class ReviewCycleController {
 
+    /** Allow-list of sortable fields for {@code ReviewCycle} entity — prevents sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "createdAt", "updatedAt", "cycleName", "cycleType", "status", "startDate", "endDate"
+    );
+
     private final ReviewCycleService reviewCycleService;
 
     public ReviewCycleController(ReviewCycleService reviewCycleService) {
@@ -48,8 +53,9 @@ public class ReviewCycleController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection
     ) {
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<ReviewCycleResponse> cycles = reviewCycleService.getAllCycles(pageable);
         return ResponseEntity.ok(cycles);
     }

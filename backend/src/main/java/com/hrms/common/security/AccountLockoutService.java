@@ -3,6 +3,7 @@ package com.hrms.common.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -29,6 +30,17 @@ public class AccountLockoutService {
     private static final Duration LOCK_DURATION = Duration.ofMinutes(15);
     private static final String ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
     private static final String LOCKED_KEY_PREFIX = "lockout:locked:";
+
+    /**
+     * Pre-computed BCrypt hash of a static dummy password. Used by
+     * {@link #equalizeTiming()} so a "locked" response takes roughly the same
+     * wall-clock time as a "wrong password" response, mitigating timing oracles
+     * for account-existence and lockout-state enumeration.
+     */
+    private static final String DUMMY_HASH =
+            "$2a$10$abcdefghijklmnopqrstuO5vK7xQwYJ7bRtL0EqXt0E5rWnZl1y3uK";
+
+    private final BCryptPasswordEncoder timingEncoder = new BCryptPasswordEncoder();
 
     private final StringRedisTemplate redis;
 
@@ -70,5 +82,22 @@ public class AccountLockoutService {
     public boolean isAccountLocked(String username) {
         Boolean locked = redis.hasKey(LOCKED_KEY_PREFIX + username);
         return Boolean.TRUE.equals(locked);
+    }
+
+    /**
+     * Burn time equivalent to a real BCrypt comparison so a "locked" or
+     * "user-not-found" response cannot be timed apart from a "wrong password"
+     * response. Callers should invoke this immediately before throwing the
+     * locked / not-found exception.
+     *
+     * <p>The result is intentionally discarded — only the wall-clock cost matters.
+     */
+    public void equalizeTiming() {
+        // result intentionally ignored; only the BCrypt CPU cost matters here
+        boolean ignored = timingEncoder.matches("dummy-password-for-timing", DUMMY_HASH);
+        if (ignored) {
+            // Unreachable: dummy hash never matches the dummy password.
+            log.trace("equalizeTiming() matched (unexpected — DUMMY_HASH may have been corrupted)");
+        }
     }
 }

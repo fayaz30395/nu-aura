@@ -144,6 +144,52 @@ public class OcrReceiptService {
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new BusinessException("File size exceeds maximum of 10MB");
         }
+
+        // SECURITY: validate magic bytes against the declared content type. Content-Type
+        // header alone is attacker-controlled — a PHP/EXE payload renamed to receipt.jpg
+        // and labeled image/jpeg would otherwise reach Tess4j or be stored as-is.
+        validateMagicBytes(file, contentType);
+    }
+
+    /**
+     * Minimal magic-byte check for the OCR-allowed content types.
+     *
+     * <p>FileStorageService has a more comprehensive validator, but its method is
+     * private. We replicate the minimal subset (JPEG, PNG, PDF) inline because the
+     * receipt upload path bypasses {@link FileStorageService#uploadFile} for the
+     * initial OCR pass.</p>
+     */
+    private void validateMagicBytes(MultipartFile file, String declaredContentType) {
+        byte[] header = new byte[8];
+        try (InputStream is = file.getInputStream()) {
+            int read = is.read(header);
+            if (read < 4) {
+                throw new BusinessException("Receipt file is too small to be a valid " + declaredContentType);
+            }
+        } catch (IOException e) {
+            log.error("Failed to read header bytes from receipt file: {}", e.getMessage());
+            throw new BusinessException("Unable to read receipt file for content validation");
+        }
+
+        boolean matches = switch (declaredContentType) {
+            case "image/jpeg" -> header[0] == (byte) 0xFF
+                    && header[1] == (byte) 0xD8
+                    && header[2] == (byte) 0xFF;
+            case "image/png" -> header[0] == (byte) 0x89
+                    && header[1] == (byte) 0x50
+                    && header[2] == (byte) 0x4E
+                    && header[3] == (byte) 0x47;
+            case "application/pdf" -> header[0] == (byte) 0x25
+                    && header[1] == (byte) 0x50
+                    && header[2] == (byte) 0x44
+                    && header[3] == (byte) 0x46;
+            default -> false;
+        };
+        if (!matches) {
+            log.warn("Receipt magic bytes do not match declared content-type {} (filename={})",
+                    declaredContentType, file.getOriginalFilename());
+            throw new BusinessException("Receipt content does not match declared type: " + declaredContentType);
+        }
     }
 
     private String performOcr(MultipartFile file) {

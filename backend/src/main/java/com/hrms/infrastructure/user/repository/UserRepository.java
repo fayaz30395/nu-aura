@@ -54,7 +54,24 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    /**
+     * @deprecated SEC: plaintext reset tokens are no longer stored. Use
+     * {@link #findActivePasswordResetCandidates(LocalDateTime)} and BCrypt-compare
+     * each candidate's {@code password_reset_token_hash} against the submitted token.
+     * Kept for backward compatibility with any caller still inflight on rollout.
+     */
+    @Deprecated
     Optional<User> findByPasswordResetToken(String token);
+
+    /**
+     * Return all users with an unexpired hashed password-reset token.
+     * The caller iterates and uses {@link org.springframework.security.crypto.password.PasswordEncoder#matches}
+     * to identify the right candidate in constant time per comparison.
+     */
+    @Query("SELECT u FROM User u WHERE u.passwordResetTokenHash IS NOT NULL " +
+            "AND u.passwordResetTokenExpiry IS NOT NULL " +
+            "AND u.passwordResetTokenExpiry > :now")
+    List<User> findActivePasswordResetCandidates(@Param("now") LocalDateTime now);
 
     /**
      * Find user by email across all tenants.

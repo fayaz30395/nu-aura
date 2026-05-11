@@ -2,6 +2,7 @@ package com.hrms.application.attendance.service;
 
 import com.hrms.api.attendance.dto.BulkAttendanceImportResponse;
 import com.hrms.api.attendance.dto.BulkAttendanceImportResponse.ImportErrorCode;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.logging.Audited;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
@@ -11,11 +12,13 @@ import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXParseException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -149,8 +152,11 @@ public class AttendanceImportService {
 
         log.info("Starting attendance import batch {} for tenant {}", importBatchId, tenantId);
 
+        // SECURITY: catch SAX/InvalidFormat exceptions from POI's XLSX parser. POI 5.3
+        // hardens XML parsing internally (no external entities, no DTDs) — these
+        // catches surface a clean error instead of leaking parser internals to clients.
         try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = WorkbookFactory.create(inputStream)) {
+             Workbook workbook = createWorkbookSafely(inputStream)) {
 
             Sheet sheet = workbook.getSheetAt(0);
             int totalRows = 0;
@@ -456,5 +462,31 @@ public class AttendanceImportService {
                 .errorMessage(message)
                 .suggestion(suggestion)
                 .build());
+    }
+
+    /**
+     * Wrap {@link WorkbookFactory#create(InputStream)} so SAX/XML errors arising from
+     * a malformed or hostile XLSX surface as a clean {@link BusinessException} instead
+     * of leaking parser internals through the controller's error handler.
+     *
+     * <p>POI 5.3 already disables external entity resolution and DTDs in its XML
+     * factories; this catch is purely defensive — any {@link SAXParseException} or
+     * {@link InvalidFormatException} surfaced through {@code WorkbookFactory} means
+     * we should refuse the upload, not try to parse on.</p>
+     */
+    private Workbook createWorkbookSafely(InputStream inputStream) throws IOException {
+        try {
+            return WorkbookFactory.create(inputStream);
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof SAXParseException || cause instanceof InvalidFormatException) {
+                    log.warn("Rejected malformed XLSX upload (wrapped parser error: {})", cause.getMessage());
+                    throw new BusinessException("Unsupported or corrupt XLSX file");
+                }
+                cause = cause.getCause();
+            }
+            throw e;
+        }
     }
 }

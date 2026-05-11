@@ -97,6 +97,8 @@ export default function RichTextEditor({
         openOnClick: false,
         autolink: true,
         defaultProtocol: 'https',
+        protocols: ['http', 'https', 'mailto', 'tel'],
+        isAllowedUri: (url: string) => /^(https?:|mailto:|tel:|\/)/i.test(url),
       }),
       CodeBlockLowlight.configure({
         lowlight,

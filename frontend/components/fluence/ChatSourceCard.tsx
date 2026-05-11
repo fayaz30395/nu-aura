@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import {BookOpen, ExternalLink, FileStack, Newspaper} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import type {ChatSource} from '@/lib/types/platform/fluence-chat';
 
 const typeConfig: Record<string, { icon: React.ElementType; label: string; color: string }> = {
@@ -22,7 +23,7 @@ export const ChatSourceCard: React.FC<ChatSourceCardProps> = ({source}) => {
 
   return (
     <Link
-      href={source.url}
+      href={safeUrl(source.url)}
       className={cn(
         'group flex items-start gap-2 rounded-lg border border-[var(--border-subtle)] p-2',
         'bg-[var(--bg-surface)] hover:bg-[var(--bg-card-hover)] transition-colors',

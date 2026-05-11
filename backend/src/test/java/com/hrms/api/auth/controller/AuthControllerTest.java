@@ -8,7 +8,6 @@ import com.hrms.common.security.ApiKeyAuthenticationFilter;
 import com.hrms.common.security.ApiKeyService;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.JwtAuthenticationFilter;
-import com.hrms.common.security.RateLimitFilter;
 import com.hrms.common.security.RateLimitingFilter;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.ScopeContextService;
@@ -72,8 +71,6 @@ class AuthControllerTest {
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
     @MockitoBean
     private RateLimitingFilter rateLimitingFilter;
     @MockitoBean

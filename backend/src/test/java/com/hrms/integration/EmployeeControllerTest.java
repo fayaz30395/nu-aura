@@ -137,13 +137,14 @@ class EmployeeControllerTest {
         UUID createdId = UUID.fromString(
                 objectMapper.readTree(createBody).get("id").asText());
 
-        // HR updates designation (admin field)
-        UpdateEmployeeRequest updateReq = new UpdateEmployeeRequest();
-        updateReq.setDesignation("Senior Engineer");
+        // HR updates designation (admin field) — split into AdminEmployeeUpdateRequest at /admin.
+        com.hrms.api.employee.dto.AdminEmployeeUpdateRequest adminReq =
+                new com.hrms.api.employee.dto.AdminEmployeeUpdateRequest();
+        adminReq.setDesignation("Senior Engineer");
 
-        mockMvc.perform(put("/api/v1/employees/" + createdId)
+        mockMvc.perform(put("/api/v1/employees/" + createdId + "/admin")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateReq)))
+                        .content(objectMapper.writeValueAsString(adminReq)))
                 .andExpect(status().isOk());
     }
 

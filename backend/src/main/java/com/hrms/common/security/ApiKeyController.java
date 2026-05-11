@@ -27,7 +27,7 @@ public class ApiKeyController {
     private final ApiKeyService apiKeyService;
 
     @PostMapping
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(value = Permission.SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Create API key", description = "Create a new API key. The raw key is only shown once.")
     public ResponseEntity<ApiKeyCreationResponse> createApiKey(@Valid @RequestBody CreateApiKeyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -71,7 +71,7 @@ public class ApiKeyController {
     }
 
     @DeleteMapping("/{keyId}")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(value = Permission.SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Revoke API key", description = "Revoke an API key (soft delete)")
     public ResponseEntity<Void> revokeApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -80,7 +80,7 @@ public class ApiKeyController {
     }
 
     @PostMapping("/{keyId}/regenerate")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(value = Permission.SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Regenerate API key", description = "Revoke old key and create a new one with same settings")
     public ResponseEntity<ApiKeyCreationResponse> regenerateApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -99,7 +99,7 @@ public class ApiKeyController {
     }
 
     @PutMapping("/{keyId}/scopes")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(value = Permission.SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Update API key scopes", description = "Update the scopes for an existing API key")
     public ResponseEntity<ApiKeyResponse> updateScopes(
             @PathVariable UUID keyId,
@@ -110,7 +110,7 @@ public class ApiKeyController {
     }
 
     @DeleteMapping("/{keyId}/permanent")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission(value = Permission.SYSTEM_ADMIN, revalidate = true)
     @Operation(summary = "Permanently delete API key", description = "Permanently delete an API key")
     public ResponseEntity<Void> deleteApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();

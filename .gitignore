@@ -79,6 +79,10 @@ coverage/
 **/credentials*.json
 **/*_credentials.json
 
+# Database backups (never commit)
+scripts/db-backups/
+**/*.sql.gz
+
 # Generated files
 COMPONENTS_CREATED.txt
 LAYOUT_FILES_CREATED.txt

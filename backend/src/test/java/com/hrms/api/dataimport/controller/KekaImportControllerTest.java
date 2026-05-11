@@ -62,9 +62,6 @@ class KekaImportControllerTest {
     private RateLimitingFilter rateLimitingFilter;
 
     @MockitoBean
-    private RateLimitFilter rateLimitFilter;
-
-    @MockitoBean
     private UserDetailsService userDetailsService;
 
     @MockitoBean

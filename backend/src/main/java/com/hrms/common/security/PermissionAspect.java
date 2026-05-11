@@ -45,15 +45,6 @@ public class PermissionAspect {
     @Around("@annotation(com.hrms.common.security.RequiresPermission) || @within(com.hrms.common.security.RequiresPermission)")
     public Object checkPermission(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        // Admin bypass: skip all permission evaluation for TENANT_ADMIN and SUPER_ADMIN users.
-        // SecurityContext.isTenantAdmin() returns true for both TENANT_ADMIN and SUPER_ADMIN
-        // roles, matching the frontend usePermissions.ts behavior that treats both as full admin.
-        if (SecurityContext.isTenantAdmin()) {
-            log.debug("Admin bypass — skipping @RequiresPermission check for method: {}",
-                    ((MethodSignature) joinPoint.getSignature()).getMethod().getName());
-            return joinPoint.proceed();
-        }
-
         // Get the method being called
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -76,6 +67,22 @@ public class PermissionAspect {
         String[] anyOfPermissions = requiresPermission.value();
         String[] allOfPermissions = requiresPermission.allOf();
         boolean revalidate = requiresPermission.revalidate();
+
+        // Admin bypass: skip all permission evaluation for TENANT_ADMIN and SUPER_ADMIN users.
+        // SecurityContext.isTenantAdmin() returns true for both TENANT_ADMIN and SUPER_ADMIN
+        // roles, matching the frontend usePermissions.ts behavior that treats both as full admin.
+        //
+        // SEC-FIX (F7): Emit an audit-level log line on every bypass so privileged access can be
+        // reconstructed from logs. Logged at INFO so it lands in production aggregators by default.
+        if (SecurityContext.isTenantAdmin()) {
+            log.info("AUDIT: TENANT_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
+                    SecurityContext.getCurrentUserId(),
+                    SecurityContext.getCurrentTenantId(),
+                    method.getName(),
+                    Arrays.toString(anyOfPermissions),
+                    Arrays.toString(allOfPermissions));
+            return joinPoint.proceed();
+        }
 
         // CRIT-1: Guard against misconfigured annotations that specify no permissions at all.
         // An empty annotation would silently allow any authenticated user through — treat it as

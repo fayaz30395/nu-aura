@@ -28,6 +28,16 @@ import java.util.UUID;
 @Slf4j
 public class ShiftManagementController {
 
+    /** Allow-list of sortable fields for {@code Shift} entity — prevents reflection-based sort injection. */
+    private static final java.util.Set<String> ALLOWED_SHIFT_SORT_FIELDS = java.util.Set.of(
+            "shiftName", "shiftCode", "shiftType", "isActive", "createdAt", "updatedAt"
+    );
+
+    /** Allow-list of sortable fields for {@code ShiftPattern} entity. */
+    private static final java.util.Set<String> ALLOWED_PATTERN_SORT_FIELDS = java.util.Set.of(
+            "name", "rotationType", "cycleDays", "isActive", "createdAt", "updatedAt"
+    );
+
     private final ShiftManagementService shiftManagementService;
     private final ShiftPatternService shiftPatternService;
     private final ShiftScheduleService shiftScheduleService;
@@ -68,10 +78,11 @@ public class ShiftManagementController {
             @RequestParam(defaultValue = "shiftName") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection) {
         log.info("Fetching all shifts");
+        String safeSortBy = ALLOWED_SHIFT_SORT_FIELDS.contains(sortBy) ? sortBy : "shiftName";
         Sort.Direction direction = "DESC".equalsIgnoreCase(sortDirection)
                 ? Sort.Direction.DESC
                 : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<ShiftResponse> response = shiftManagementService.getAllShifts(pageable);
         return ResponseEntity.ok(response);
     }
@@ -184,8 +195,9 @@ public class ShiftManagementController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection) {
+        String safeSortBy = ALLOWED_PATTERN_SORT_FIELDS.contains(sortBy) ? sortBy : "name";
         Sort.Direction direction = "DESC".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<ShiftPatternResponse> response = shiftPatternService.getAllPatterns(pageable);
         return ResponseEntity.ok(response);
     }

@@ -96,7 +96,7 @@ public class SystemAdminController {
      */
     @PostMapping("/tenants/{tenantId}/suspend")
     @Operation(summary = "Suspend tenant", description = "Suspend a tenant, immediately revoking access by invalidating all caches")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
     public ResponseEntity<TenantStatusDTO> suspendTenant(
             @Parameter(description = "Tenant ID to suspend")
             @PathVariable UUID tenantId) {
@@ -114,7 +114,7 @@ public class SystemAdminController {
      */
     @PostMapping("/tenants/{tenantId}/activate")
     @Operation(summary = "Activate tenant", description = "Re-activate a suspended or pending tenant")
-    @RequiresPermission(SYSTEM_ADMIN)
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
     public ResponseEntity<TenantStatusDTO> activateTenant(
             @Parameter(description = "Tenant ID to activate")
             @PathVariable UUID tenantId) {

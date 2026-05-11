@@ -111,10 +111,9 @@ class EmployeeControllerTest {
         createEmployeeRequest.setJoiningDate(LocalDate.of(2020, 1, 15));
         createEmployeeRequest.setManagerId(managerId);
 
-        // Set up update request
+        // Set up update request (self-service DTO — designation moved to AdminEmployeeUpdateRequest after IDOR split).
         updateEmployeeRequest = new UpdateEmployeeRequest();
         updateEmployeeRequest.setFirstName("Jane");
-        updateEmployeeRequest.setDesignation("Lead Engineer");
     }
 
     @Nested

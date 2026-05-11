@@ -1,8 +1,10 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.CookieConfig;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -102,15 +104,49 @@ public class TenantFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                TenantContext.setCurrentTenant(tenant);
-                // Mirror into the shared-module TenantContext used by PSA / PM modules
-                com.nulogic.common.security.TenantContext.setCurrentTenant(tenant);
+                // SEC: Only consume X-Tenant-ID for unauthenticated public endpoints.
+                // For everything else, JwtAuthenticationFilter derives tenant from the
+                // signed JWT claim — the header is untrusted and must not override it.
+                boolean hasAccessTokenCookie = hasAccessTokenCookie(request);
+                boolean isPublicEndpoint = request.getRequestURI() != null
+                        && request.getRequestURI().startsWith("/api/v1/public/");
+
+                if (hasAccessTokenCookie) {
+                    // Log a warning so operators can spot misconfigured clients sending both.
+                    // Actual mismatch enforcement lives in JwtAuthenticationFilter (JWT wins).
+                    log.warn("Both access_token cookie and {} header present for path: {} — header ignored, JWT claim authoritative",
+                            tenantHeader, request.getRequestURI());
+                } else if (isPublicEndpoint) {
+                    TenantContext.setCurrentTenant(tenant);
+                    // Mirror into the shared-module TenantContext used by PSA / PM modules
+                    com.nulogic.common.security.TenantContext.setCurrentTenant(tenant);
+                }
+                // Else: header present but neither authenticated (no cookie) nor public path —
+                // drop it silently; JwtAuthenticationFilter will reject the request as unauthenticated.
             }
             filterChain.doFilter(request, response);
         } finally {
             TenantContext.clear();
             com.nulogic.common.security.TenantContext.clear();
         }
+    }
+
+    /**
+     * Returns true if the request carries the access_token httpOnly cookie.
+     * Used to decide whether the X-Tenant-ID header should be honoured.
+     */
+    private boolean hasAccessTokenCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return false;
+        }
+        for (Cookie c : cookies) {
+            if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(c.getName())
+                    && c.getValue() != null && !c.getValue().isBlank()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ─────────────────────────────────────────────────────────────────────────

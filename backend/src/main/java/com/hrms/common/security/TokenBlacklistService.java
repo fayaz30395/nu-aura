@@ -1,6 +1,7 @@
 package com.hrms.common.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,20 @@ public class TokenBlacklistService {
 
     // Fallback in-memory blacklist (used when Redis unavailable)
     private final ConcurrentHashMap<String, Long> inMemoryBlacklist = new ConcurrentHashMap<>();
+
+    /**
+     * Per-user revoked-before timestamp (epoch-ms) used when Redis is unavailable.
+     * Mirrors the Redis key {@code user:token:revoked_before:<userId>} so logout/
+     * password-change revocation survives Redis outages on a single-pod fallback.
+     */
+    private static final ConcurrentHashMap<String, Long> revokedBeforeFallback = new ConcurrentHashMap<>();
+
+    /**
+     * Refresh token expiration in milliseconds — used as the TTL for the
+     * "revoked before" timestamp record.
+     */
+    @Value("${app.jwt.refresh-expiration:86400000}")
+    private long refreshExpirationMs;
 
     private boolean redisAvailable = true;
 
@@ -126,17 +141,22 @@ public class TokenBlacklistService {
         }
 
         String key = "user:token:revoked_before:" + userId;
-        // Store with TTL of max refresh token lifetime (24 hours default)
-        Duration ttl = Duration.ofHours(24);
+        // TTL matches the longest-lived token (refresh) so the marker outlives any
+        // already-issued token. Configurable via app.jwt.refresh-expiration.
+        Duration ttl = Duration.ofMillis(refreshExpirationMs);
+        long epochMs = timestamp.toEpochMilli();
 
         if (redisAvailable) {
             try {
-                redisTemplate.opsForValue().set(key, String.valueOf(timestamp.toEpochMilli()), ttl);
+                redisTemplate.opsForValue().set(key, String.valueOf(epochMs), ttl);
                 log.info("All tokens for user {} issued before {} are now revoked", userId, timestamp);
+                return;
             } catch (RuntimeException e) {
-                log.error("Failed to set user token revocation time in Redis", e);
+                log.error("Failed to set user token revocation time in Redis — falling back to in-memory", e);
             }
         }
+        // Redis-down fallback: keep the marker locally so this pod still enforces revocation.
+        revokedBeforeFallback.merge(userId, epochMs, Math::max);
     }
 
     /**
@@ -147,21 +167,25 @@ public class TokenBlacklistService {
      * @return true if the token was issued before the revocation time
      */
     public boolean isTokenRevokedByTimestamp(String userId, Date issuedAt) {
-        if (userId == null || issuedAt == null || !redisAvailable) {
+        if (userId == null || issuedAt == null) {
             return false;
         }
 
-        try {
-            String key = "user:token:revoked_before:" + userId;
-            String revokedBeforeStr = redisTemplate.opsForValue().get(key);
-            if (revokedBeforeStr != null) {
-                long revokedBefore = Long.parseLong(revokedBeforeStr);
-                return issuedAt.getTime() < revokedBefore;
+        if (redisAvailable) {
+            try {
+                String key = "user:token:revoked_before:" + userId;
+                String revokedBeforeStr = redisTemplate.opsForValue().get(key);
+                if (revokedBeforeStr != null) {
+                    long revokedBefore = Long.parseLong(revokedBeforeStr);
+                    return issuedAt.getTime() < revokedBefore;
+                }
+            } catch (RuntimeException e) {
+                log.error("Failed to check user token revocation in Redis — falling back to in-memory", e);
             }
-        } catch (RuntimeException e) {
-            log.error("Failed to check user token revocation in Redis", e);
         }
-        return false;
+        // Redis-down fallback path
+        Long fallbackRevokedBefore = revokedBeforeFallback.get(userId);
+        return fallbackRevokedBefore != null && issuedAt.getTime() < fallbackRevokedBefore;
     }
 
     // In-memory fallback methods

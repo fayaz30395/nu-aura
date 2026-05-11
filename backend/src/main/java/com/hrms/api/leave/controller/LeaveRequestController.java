@@ -58,7 +58,11 @@ public class LeaveRequestController {
     })
     public ResponseEntity<LeaveRequestResponse> createLeaveRequest(@Valid @RequestBody LeaveRequestRequest request) {
         LeaveRequest leaveRequest = new LeaveRequest();
-        BeanUtils.copyProperties(request, leaveRequest);
+        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
+        // Note: employeeId is permitted on create — request DTO carries it and service validates ownership.
+        BeanUtils.copyProperties(request, leaveRequest,
+                "id", "tenantId", "status", "approvedBy", "approvedAt", "rejectedBy", "rejectedAt",
+                "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
 
         // BUG-QA2-001 FIX: totalDays is now optional in the request DTO.
         // If the frontend omits it, compute it from startDate / endDate.
@@ -263,7 +267,11 @@ public class LeaveRequestController {
             @Parameter(description = "Leave request UUID") @PathVariable UUID id,
             @Valid @RequestBody LeaveRequestRequest request) {
         LeaveRequest leaveRequestData = new LeaveRequest();
-        BeanUtils.copyProperties(request, leaveRequestData);
+        // SEC-FIX (F7): Explicitly ignore sensitive entity fields on update — also ignore employeeId
+        // so the owner cannot be re-assigned via mass assignment.
+        BeanUtils.copyProperties(request, leaveRequestData,
+                "id", "tenantId", "status", "approvedBy", "approvedAt", "rejectedBy", "rejectedAt",
+                "createdAt", "updatedAt", "createdBy", "updatedBy", "version", "employeeId");
         if (request.getHalfDayPeriod() != null) {
             // BUG-QA2-007 FIX: Normalize frontend aliases MORNING/AFTERNOON to
             // Java enum values FIRST_HALF/SECOND_HALF before calling valueOf().

@@ -44,9 +44,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -166,8 +170,12 @@ public class AuthService {
         // Set tenant context for authentication
         com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
 
-        // Check account lockout before attempting authentication
+        // Check account lockout before attempting authentication.
+        // SEC: Burn the same wall-clock time a real BCrypt compare would take so the
+        // "locked" response is not distinguishable from a "wrong password" response
+        // (and so a "user-not-found" response is not distinguishable either).
         if (accountLockoutService.isAccountLocked(request.getEmail())) {
+            accountLockoutService.equalizeTiming();
             metricsService.recordLoginFailure("password", "account_locked");
             throw new org.springframework.security.authentication.LockedException(
                     "Account temporarily locked due to too many failed login attempts");
@@ -697,15 +705,21 @@ public class AuthService {
                 return "GOOGLE";
             }
 
-            // Generate reset token (valid for 1 hour)
-            String resetToken = UUID.randomUUID().toString();
-            user.setPasswordResetToken(resetToken);
+            // SEC: generate a 256-bit URL-safe random token and persist only its BCrypt
+            // hash. The cleartext is emailed to the user and never stored. This prevents
+            // an attacker with read access to the users table from minting reset links.
+            String resetToken = generateUrlSafeToken(32);
+            String resetTokenHash = passwordEncoder.encode(resetToken);
+
+            user.setPasswordResetTokenHash(resetTokenHash);
+            // Keep legacy plaintext column null so old lookups never succeed.
+            user.setPasswordResetToken(null);
             user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
             userRepository.save(user);
 
             log.info("Password reset requested for user ID: {}", user.getId());
 
-            // Send password reset email
+            // Send password reset email with the cleartext token (link payload)
             String userName = user.getFullName() != null ? user.getFullName() : email;
             emailNotificationService.sendPasswordResetEmail(email, userName, resetToken);
             return "LOCAL";
@@ -727,10 +741,22 @@ public class AuthService {
             throw new ValidationException("New password and confirm password do not match");
         }
 
-        User user = userRepository.findByPasswordResetToken(request.getToken())
+        // SEC: token stored as BCrypt hash — scan unexpired candidates and constant-time match.
+        // TODO(scaling): if the candidate set grows large, add a short-lived in-memory
+        // salt-prefix index keyed by token prefix to narrow the BCrypt comparisons.
+        String submittedToken = request.getToken();
+        if (submittedToken == null || submittedToken.isBlank()) {
+            throw new AuthenticationException("Invalid or expired reset token");
+        }
+
+        List<User> candidates = userRepository.findActivePasswordResetCandidates(LocalDateTime.now());
+        User user = candidates.stream()
+                .filter(u -> u.getPasswordResetTokenHash() != null
+                        && passwordEncoder.matches(submittedToken, u.getPasswordResetTokenHash()))
+                .findFirst()
                 .orElseThrow(() -> new AuthenticationException("Invalid or expired reset token"));
 
-        // Check if token is expired
+        // Check if token is expired (defence-in-depth — query already filters)
         if (user.getPasswordResetTokenExpiry() == null ||
                 user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
             throw new AuthenticationException("Password reset token has expired");
@@ -757,10 +783,11 @@ public class AuthService {
         // Capture old hash before overwriting
         String oldPasswordHash = user.getPasswordHash();
 
-        // Update password and clear reset token
+        // Update password and clear reset token (both legacy plaintext and hashed columns)
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setPasswordChangedAt(LocalDateTime.now());
         user.setPasswordResetToken(null);
+        user.setPasswordResetTokenHash(null);
         user.setPasswordResetTokenExpiry(null);
         userRepository.save(user);
 
@@ -772,6 +799,35 @@ public class AuthService {
         // Send confirmation email
         String userName = user.getFullName() != null ? user.getFullName() : user.getEmail();
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
+    }
+
+    // ==================== Password Reset Helpers ====================
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    /**
+     * Generate a URL-safe Base64-encoded random token containing {@code byteLength}
+     * bytes (~256 bits when byteLength=32). Padding is stripped so the value can
+     * appear unmodified in a URL.
+     */
+    private String generateUrlSafeToken(int byteLength) {
+        byte[] bytes = new byte[byteLength];
+        SECURE_RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Constant-time string equality. Helper kept for any future direct-string
+     * comparisons (e.g., HMAC-SHA256 reset tokens) — current flow uses BCrypt
+     * via {@link PasswordEncoder#matches(CharSequence, String)} which is already
+     * constant-time over the produced hash.
+     */
+    @SuppressWarnings("unused")
+    private boolean constantTimeEquals(String a, String b) {
+        if (a == null || b == null) return false;
+        byte[] ab = a.getBytes(StandardCharsets.UTF_8);
+        byte[] bb = b.getBytes(StandardCharsets.UTF_8);
+        return MessageDigest.isEqual(ab, bb);
     }
 
     /**

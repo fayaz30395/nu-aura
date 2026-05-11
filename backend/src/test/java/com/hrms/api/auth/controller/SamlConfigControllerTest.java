@@ -70,8 +70,6 @@ class SamlConfigControllerTest {
     private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
     @MockitoBean
     private ApiKeyService apiKeyService;
-    @MockitoBean
-    private RateLimitFilter rateLimitFilter;
     private MockedStatic<TenantContext> tenantContextMock;
     private MockedStatic<SecurityContext> securityContextMock;
 

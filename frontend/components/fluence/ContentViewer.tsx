@@ -42,6 +42,8 @@ export default function ContentViewer({
         openOnClick: true,
         autolink: true,
         defaultProtocol: 'https',
+        protocols: ['http', 'https', 'mailto', 'tel'],
+        isAllowedUri: (url: string) => /^(https?:|mailto:|tel:|\/)/i.test(url),
       }),
       CodeBlockLowlight.configure({
         lowlight,

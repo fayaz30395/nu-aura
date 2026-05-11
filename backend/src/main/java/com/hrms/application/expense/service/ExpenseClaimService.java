@@ -124,6 +124,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new IllegalStateException("Can only update expense claims in DRAFT status");
         }
@@ -150,6 +152,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
 
         claim.submit();
         ExpenseClaim saved = expenseClaimRepository.save(claim);
@@ -243,6 +247,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+
         claim.cancel();
         expenseClaimRepository.save(claim);
         log.info("Cancelled expense claim: {}", claim.getClaimNumber());
@@ -254,6 +260,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new ValidationException("Only DRAFT expense claims can be deleted");

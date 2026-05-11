@@ -1,8 +1,10 @@
 package com.hrms.application.webhook.service;
 
 import com.hrms.common.config.CacheConfig;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.validation.SsrfProtectionUtils;
 import com.hrms.domain.webhook.Webhook;
 import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookStatus;
@@ -102,6 +104,14 @@ public class WebhookService {
         if (webhookRepository.existsByTenantIdAndUrl(webhook.getTenantId(), webhook.getUrl())) {
             throw new IllegalArgumentException("A webhook with this URL already exists");
         }
+        // SECURITY: belt-and-braces SSRF check at service layer. Even though WebhookUrlValidator
+        // runs on the DTO, callers that bypass validation (admin imports, background jobs)
+        // must still be blocked from registering internal-pointing URLs.
+        try {
+            SsrfProtectionUtils.validateUrlSafety(webhook.getUrl());
+        } catch (BusinessException e) {
+            throw new BusinessException("Webhook URL rejected: " + e.getMessage());
+        }
         log.info("Creating webhook '{}' for tenant {}", webhook.getName(), webhook.getTenantId());
         return webhookRepository.save(webhook);
     }
@@ -119,6 +129,13 @@ public class WebhookService {
     })
     @Transactional
     public Webhook update(Webhook webhook) {
+        // SECURITY: re-validate URL on every update — controllers may not re-trigger
+        // bean validation when updating only a subset of fields.
+        try {
+            SsrfProtectionUtils.validateUrlSafety(webhook.getUrl());
+        } catch (BusinessException e) {
+            throw new BusinessException("Webhook URL rejected: " + e.getMessage());
+        }
         log.info("Updating webhook {} for tenant {}", webhook.getId(), webhook.getTenantId());
         return webhookRepository.save(webhook);
     }

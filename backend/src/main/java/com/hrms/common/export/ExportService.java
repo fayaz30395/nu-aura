@@ -36,6 +36,14 @@ public class ExportService {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
+     * Detects values that would be interpreted as a formula by spreadsheet
+     * applications (Excel, LibreOffice, Google Sheets). Leading {@code = + - @ TAB CR}
+     * triggers formula parsing — see CWE-1236.
+     */
+    private static final java.util.regex.Pattern FORMULA_LEAD =
+            java.util.regex.Pattern.compile("^[=+\\-@\\t\\r].*", java.util.regex.Pattern.DOTALL);
+
+    /**
      * Export data to CSV format
      */
     @Transactional(readOnly = true)
@@ -195,10 +203,13 @@ public class ExportService {
 
     private String escapeCsvField(String field) {
         if (field == null) return "";
-        if (field.contains(",") || field.contains("\"") || field.contains("\n")) {
-            return "\"" + field.replace("\"", "\"\"") + "\"";
+        // CSV injection (CWE-1236): if the cell starts with a formula-trigger
+        // character, prepend a single quote so the spreadsheet treats it as text.
+        String safe = FORMULA_LEAD.matcher(field).matches() ? "'" + field : field;
+        if (safe.contains(",") || safe.contains("\"") || safe.contains("\n")) {
+            return "\"" + safe.replace("\"", "\"\"") + "\"";
         }
-        return field;
+        return safe;
     }
 
     private String formatValue(Object value) {
@@ -228,7 +239,10 @@ public class ExportService {
         } else if (value instanceof LocalDateTime dateTime) {
             cell.setCellValue(dateTime.format(DATETIME_FORMATTER));
         } else {
-            cell.setCellValue(value.toString());
+            String s = value.toString();
+            // CSV injection (CWE-1236) — neutralize formula-leading characters in Excel too.
+            s = FORMULA_LEAD.matcher(s).matches() ? "'" + s : s;
+            cell.setCellValue(s);
         }
     }
 }

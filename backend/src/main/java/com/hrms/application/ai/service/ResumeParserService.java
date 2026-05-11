@@ -46,6 +46,14 @@ public class ResumeParserService {
      * Parse resume from URL — fetches content and extracts plain text for analysis.
      * Supports plain text, HTML, PDF, DOCX, DOC, RTF, and other document formats.
      * Binary formats are automatically handled using Apache Tika.
+     *
+     * <p>SSRF hardening:</p>
+     * <ul>
+     *   <li>HTTPS-only (http:// is rejected to prevent cleartext + downgrade tricks)</li>
+     *   <li>Redirects are NOT followed by the JVM — each 3xx Location is re-validated
+     *       through SsrfProtectionUtils and we manually follow up to 3 hops</li>
+     *   <li>Every hop runs through full SSRF validation (incl. DNS rebind defenses)</li>
+     * </ul>
      */
     public ResumeParseResponse parseResumeFromUrl(String resumeUrl) {
         log.info("Parsing resume from URL: {}", resumeUrl);
@@ -55,19 +63,25 @@ public class ResumeParserService {
 
             java.net.URI uri = java.net.URI.create(resumeUrl);
             String scheme = uri.getScheme();
-            if (!"https".equalsIgnoreCase(scheme) && !"http".equalsIgnoreCase(scheme)) {
+            // SECURITY: HTTPS-only. http:// was previously accepted; this allowed both
+            // plaintext exfiltration of any Authorization the server might add, and
+            // simpler downgrade attacks via DNS-level redirection.
+            if (!"https".equalsIgnoreCase(scheme)) {
                 return ResumeParseResponse.builder()
                         .success(false)
-                        .message("Only HTTP/HTTPS URLs are supported.")
+                        .message("Only HTTPS URLs are supported for remote resume fetch.")
                         .build();
             }
 
-            java.net.HttpURLConnection conn =
-                    (java.net.HttpURLConnection) uri.toURL().openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10_000);
-            conn.setReadTimeout(30_000);
-            conn.setRequestProperty("User-Agent", "NuLogic-HRMS/1.0");
+            java.net.HttpURLConnection conn = openConnectionWithManualRedirects(uri.toURL(), 3);
+            if (conn == null) {
+                return ResumeParseResponse.builder()
+                        .success(false)
+                        .message("Resume URL rejected (too many redirects or unsafe redirect target).")
+                        .build();
+            }
+            // Request method, timeouts and headers were already set in the helper
+            // before we issued the request (necessary because getResponseCode connects).
 
             String contentType = conn.getContentType() != null ? conn.getContentType().toLowerCase() : "";
 
@@ -209,6 +223,63 @@ public class ResumeParserService {
     }
 
     // ==================== PRIVATE HELPERS ====================
+
+    /**
+     * Open an {@link java.net.HttpURLConnection} to {@code initialUrl}, manually re-validating
+     * any 3xx redirect's Location through {@link com.hrms.common.validation.SsrfProtectionUtils}.
+     *
+     * <p>The JVM's built-in redirect-follow is disabled because it does NOT re-run our SSRF
+     * policy on the redirected URL — an attacker could host a public resume URL that 302s
+     * to {@code https://169.254.169.254/latest/meta-data/}.</p>
+     *
+     * @param initialUrl the URL after the initial SSRF check passed
+     * @param maxHops    maximum number of redirect hops to follow (3 is the standard limit)
+     * @return a connected {@link java.net.HttpURLConnection} positioned on a 2xx response,
+     *         or {@code null} if we ran out of hops or any hop failed SSRF validation
+     */
+    private java.net.HttpURLConnection openConnectionWithManualRedirects(java.net.URL initialUrl, int maxHops)
+            throws java.io.IOException {
+        java.net.URL current = initialUrl;
+        for (int hop = 0; hop < maxHops; hop++) {
+            java.net.HttpURLConnection conn =
+                    (java.net.HttpURLConnection) current.openConnection();
+            conn.setInstanceFollowRedirects(false);  // SECURITY: never auto-follow
+            conn.setConnectTimeout(10_000);
+            conn.setReadTimeout(30_000);
+            conn.setRequestProperty("User-Agent", "NuLogic-HRMS/1.0");
+            // We must call getResponseCode() to actually issue the request and inspect headers.
+            int status = conn.getResponseCode();
+            if (status >= 300 && status < 400) {
+                String location = conn.getHeaderField("Location");
+                conn.disconnect();
+                if (location == null || location.isBlank()) {
+                    log.warn("Resume URL returned redirect without Location header");
+                    return null;
+                }
+                // Resolve relative redirects against current URL
+                java.net.URL next;
+                try {
+                    next = new java.net.URL(current, location);
+                } catch (java.net.MalformedURLException e) {
+                    log.warn("Resume URL redirect to malformed location: {}", location);
+                    return null;
+                }
+                // SECURITY: re-validate every hop through full SSRF policy.
+                try {
+                    com.hrms.common.validation.SsrfProtectionUtils.validateUrlSafety(next.toString());
+                } catch (com.hrms.common.exception.BusinessException ssrf) {
+                    log.warn("Resume URL redirect rejected by SSRF policy: {} ({})",
+                            next, ssrf.getMessage());
+                    return null;
+                }
+                current = next;
+                continue;
+            }
+            return conn; // 2xx (or 4xx/5xx — caller handles non-2xx)
+        }
+        log.warn("Resume URL exceeded {} redirect hops", maxHops);
+        return null;
+    }
 
     private String buildResumeParsePrompt(String resumeText) {
         return """

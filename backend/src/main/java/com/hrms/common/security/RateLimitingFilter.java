@@ -18,8 +18,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +96,15 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private int requestsPerMinute;
     @Value("${app.rate-limit.enabled:true}")
     private boolean rateLimitEnabled;
+    /**
+     * Server-side secret used to derive a per-token bucket key via HMAC-SHA256.
+     * Reuses the JWT signing secret so that the bucket key cannot be predicted by
+     * an attacker who only sees the (unvalidated) JWT payload. The HMAC also means
+     * a forged token with a chosen {@code sub} can no longer collide with a real
+     * user's bucket — only signed-and-validated tokens reach the same bucket key.
+     */
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Filter logic
@@ -282,34 +296,43 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     /**
      * Resolves a stable client identifier for rate-limit bucketing.
      *
-     * <p>For authenticated users we extract the {@code sub} (subject / userId) claim
-     * from the JWT payload instead of hashing the entire token.  This ensures that
-     * the rate-limit bucket survives token refresh — the same user keeps the same
-     * bucket across access-token rotations (SEC-B01 fix).
+     * <p><b>SEC-B01 hardening:</b> The previous implementation read the {@code sub}
+     * claim from an unvalidated JWT payload, which let an attacker forge tokens with
+     * arbitrary {@code sub} values to either evade their own bucket or pollute another
+     * user's bucket (memory-exhaustion vector). We now derive the bucket key by
+     * HMAC-SHA256-hashing the entire token with the server-side JWT secret. Because
+     * only signed-and-valid tokens are produced by the auth service with a known
+     * signature segment, the resulting key is stable across re-presentations of the
+     * same token but cannot be forged from outside.</p>
+     *
+     * <p>Note: this means token rotation (refresh) produces a new bucket. That's an
+     * acceptable trade-off — refresh is infrequent relative to the 60s window — and
+     * the alternative (trusting unvalidated claims) is the actual vulnerability.</p>
      */
     private String resolveClientId(HttpServletRequest request) {
-        // 1. Prefer authenticated user — extract userId from JWT in Authorization header
+        // 1. Prefer authenticated user — derive bucket key from full JWT in Authorization header
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String userId = extractSubjectFromJwt(authHeader.substring(7));
-            if (userId != null) {
-                return "user:" + userId;
+            String token = authHeader.substring(7);
+            String tokenKey = deriveTokenBucketKey(token);
+            if (tokenKey != null) {
+                return "user:" + tokenKey;
             }
-            // Fallback if JWT is malformed — use IP so we don't create unbounded keys
+            // Fallback if HMAC derivation fails — use IP so we don't create unbounded keys
             return "ip:" + getClientIp(request);
         }
 
-        // 2. Fallback: extract userId from httpOnly access_token cookie (primary auth mechanism)
+        // 2. Fallback: derive bucket key from httpOnly access_token cookie (primary auth mechanism)
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
                     try {
-                        String userId = extractSubjectFromJwt(cookie.getValue());
-                        if (userId != null) {
-                            return "user:" + userId;
+                        String tokenKey = deriveTokenBucketKey(cookie.getValue());
+                        if (tokenKey != null) {
+                            return "user:" + tokenKey;
                         }
                     } catch (Exception e) {
-                        log.debug("Failed to extract userId from access_token cookie for rate limiting", e);
+                        log.debug("Failed to derive bucket key from access_token cookie", e);
                         // Fall through to API key / IP-based identification
                     }
                     break;
@@ -332,30 +355,27 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Extracts the {@code sub} claim from a JWT without full signature verification.
-     * This is intentional — rate limiting doesn't need cryptographic proof, just a
-     * stable identifier. Full auth is handled by the downstream security filter chain.
+     * Derives a stable, unforgeable bucket key from a JWT by HMAC-SHA256-hashing the
+     * full token with the server-side JWT secret. The first 16 hex chars (64 bits) are
+     * enough to make collisions vanishingly unlikely while keeping log lines short.
      *
-     * @return the subject (userId) string, or {@code null} if extraction fails
+     * <p>Because the input includes the JWT's signature segment, only tokens signed
+     * with the server secret can land in a given bucket — forged tokens with chosen
+     * {@code sub} claims cannot collide with a real user's bucket.</p>
+     *
+     * @return the 16-char hex HMAC prefix, or {@code null} if HMAC computation fails
      */
-    private String extractSubjectFromJwt(String token) {
+    private String deriveTokenBucketKey(String token) {
+        if (token == null || token.isEmpty() || jwtSecret == null || jwtSecret.isEmpty()) {
+            return null;
+        }
         try {
-            String[] parts = token.split("\\.");
-            if (parts.length < 2) return null;
-            String payload = new String(java.util.Base64.getUrlDecoder().decode(parts[1]), java.nio.charset.StandardCharsets.UTF_8);
-            // Minimal JSON parsing — extract "sub" field without pulling in a JSON library
-            int subIdx = payload.indexOf("\"sub\"");
-            if (subIdx < 0) return null;
-            int colonIdx = payload.indexOf(':', subIdx);
-            if (colonIdx < 0) return null;
-            int startQuote = payload.indexOf('"', colonIdx);
-            if (startQuote < 0) return null;
-            int endQuote = payload.indexOf('"', startQuote + 1);
-            if (endQuote < 0) return null;
-            String sub = payload.substring(startQuote + 1, endQuote);
-            return sub.isEmpty() ? null : sub;
-        } catch (IllegalArgumentException e) {
-            log.debug("Failed to extract subject from JWT for rate limiting", e);
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] digest = mac.doFinal(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest).substring(0, 16);
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            log.debug("Failed to derive HMAC bucket key for rate limiting", e);
             return null;
         }
     }
@@ -376,22 +396,16 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     /**
      * Returns the client IP address.
      *
-     * <p><b>Security note (SEC-B01):</b> The X-Forwarded-For header can be spoofed by
-     * the client for all positions <em>except</em> the rightmost entry, which is set by
-     * the last trusted reverse proxy. We take {@code request.getRemoteAddr()} when no
-     * proxy header is present, and the rightmost X-Forwarded-For entry otherwise.
-     *
-     * <p>If the application is behind a trusted load balancer (e.g. AWS ALB, GCP LB, nginx),
-     * the rightmost IP is the one the LB actually connected from — the real client IP.
+     * <p><b>Security note (SEC-B01):</b> Do not parse X-Forwarded-For directly — the
+     * header is fully attacker-controllable when the request bypasses our trusted
+     * reverse proxy (and even when it doesn't, both leftmost and rightmost strategies
+     * have foot-guns). Instead we rely on Spring's {@code ForwardedHeaderFilter} which
+     * is enabled in production via {@code server.forward-headers-strategy: framework}
+     * and rewrites {@code request.getRemoteAddr()} only when the immediate peer is a
+     * configured trusted proxy.</p>
      */
     private String getClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            // Take the rightmost IP — the one added by our trusted reverse proxy.
-            // All entries to the left can be spoofed by the client.
-            String[] ips = xForwardedFor.split(",");
-            return ips[ips.length - 1].trim();
-        }
+        // Trust resolved client IP from ForwardedHeaderFilter (configured via server.forward-headers-strategy=framework).
         return request.getRemoteAddr();
     }
 

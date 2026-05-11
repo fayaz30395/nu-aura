@@ -23,6 +23,12 @@ import java.util.UUID;
 @RequestMapping("/api/v1/reviews")
 public class PerformanceReviewController {
 
+    /** Allow-list of sortable fields for {@code PerformanceReview} entity — prevents sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "createdAt", "updatedAt", "status", "reviewType", "reviewPeriodStart", "reviewPeriodEnd",
+            "overallRating", "finalRating"
+    );
+
     private final PerformanceReviewService reviewService;
 
     public PerformanceReviewController(PerformanceReviewService reviewService) {
@@ -44,8 +50,9 @@ public class PerformanceReviewController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection
     ) {
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<ReviewResponse> reviews = reviewService.getAllReviews(pageable);
         return ResponseEntity.ok(reviews);
     }

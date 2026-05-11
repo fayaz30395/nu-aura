@@ -43,6 +43,14 @@ public class PaymentController {
 
         paymentFeatureGuard.requirePaymentsEnabled();
         PaymentTransaction transaction = request.toEntity();
+        transaction.setId(null);
+        transaction.setTenantId(null);
+        transaction.setTransactionRef(null);
+        transaction.setStatus(null);
+        transaction.setFailedReason(null);
+        transaction.setInitiatedAt(null);
+        transaction.setCompletedAt(null);
+        transaction.setRefundedAt(null);
         PaymentTransaction result = paymentService.initiatePayment(transaction);
 
         return ResponseEntity.status(HttpStatus.CREATED)

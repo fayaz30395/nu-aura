@@ -66,8 +66,8 @@ management:
       base-path: /actuator
   endpoint:
     health:
-      # Show details only when authorized (via Spring Security)
-      show-details: when-authorized
+      # Production: never expose health details (override default when-authorized)
+      show-details: never
       probes:
         enabled: true
       # Validate group membership to control access
@@ -108,12 +108,19 @@ management:
 
 # Production error handling
 server:
+  forward-headers-strategy: framework
   error:
     # CRITICAL: Never expose stack traces in production
     include-stacktrace: never
     include-message: never
     include-binding-errors: false
     include-exception: false
+
+# Disable API docs / Swagger UI in production
+springdoc:
+  show-actuator: false
+  swagger-ui:
+    enabled: false
 
 # Production security settings
 app:

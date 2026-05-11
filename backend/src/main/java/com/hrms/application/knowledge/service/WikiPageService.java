@@ -13,7 +13,9 @@ import com.hrms.infrastructure.knowledge.repository.WikiPageVersionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,7 +153,14 @@ public class WikiPageService {
     @Transactional(readOnly = true)
     public Page<WikiPage> searchPages(String query, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return wikiPageRepository.searchByTenant(tenantId, query, pageable);
+        try {
+            return wikiPageRepository.searchByTenant(tenantId, query, pageable);
+        } catch (InvalidDataAccessResourceUsageException e) {
+            // Defensive: malformed full-text search expression — return empty page so callers don't 500.
+            log.warn("Wiki search rejected by Postgres for tenant {} (query length={}): {}",
+                    tenantId, query == null ? 0 : query.length(), e.getMostSpecificCause().getMessage());
+            return new PageImpl<>(java.util.List.of(), pageable, 0);
+        }
     }
 
     public WikiPage publishPage(UUID pageId) {

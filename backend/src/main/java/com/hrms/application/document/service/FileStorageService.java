@@ -5,6 +5,7 @@ import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,14 +51,26 @@ public class FileStorageService {
     );
     // MIME categories used for magic byte cross-checking
     private static final Set<String> IMAGE_TYPES = Set.of("image/jpeg", "image/png", "image/gif");
+    // SEC-FIX (1.1): "application/zip" intentionally NOT in DOCUMENT_TYPES — any
+    // declared type that doesn't already match an OOXML/PDF/etc signature but has
+    // ZIP magic bytes will now fall into the "unknown" category and be rejected
+    // by validateMagicBytes. OOXML formats are accepted because detectMimeType
+    // maps the ZIP signature back to the declared OOXML type when consistent.
     private static final Set<String> DOCUMENT_TYPES = Set.of(
             "application/pdf", "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/vnd.ms-excel",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/zip");
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     private static final Set<String> TEXT_TYPES = Set.of("text/csv", "text/plain");
+    // OOXML content types whose magic bytes legitimately match the ZIP signature
+    // (50 4B 03 04). Any other declared MIME with a ZIP-shaped body is rejected
+    // by validateMagicBytes.
+    private static final Set<String> OOXML_TYPES = Set.of(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation");
     private final StorageProvider storageProvider;
+    private final JdbcTemplate jdbcTemplate;
     @Value("${app.storage.url-expiry-hours:24}")
     private int urlExpiryHours;
 
@@ -83,10 +96,19 @@ public class FileStorageService {
             String storageId = storageProvider.upload(objectName, file.getInputStream(), file.getSize(),
                     file.getContentType(), metadata);
 
-            log.info("File uploaded: {} (storageId: {})", objectName, storageId);
+            // SEC-FIX (2.1): persist the (tenantId, logicalPath, driveFileId) mapping
+            // so subsequent download/delete/exists calls can verify tenant ownership
+            // by the logical path prefix, then resolve to the opaque Drive fileId
+            // server-side. The objectName returned to clients is the LOGICAL path —
+            // never the Drive fileId — so the controller's startsWith(tenantId+"/")
+            // guard is meaningful.
+            persistDriveMapping(tenantId, objectName, storageId);
+
+            log.info("File uploaded: {} (driveFileId: {})", objectName, storageId);
 
             return FileUploadResult.builder()
-                    .objectName(storageId)
+                    .objectName(objectName)
+                    .driveFileId(storageId)
                     .bucket("storage")
                     .originalFilename(file.getOriginalFilename())
                     .contentType(file.getContentType())
@@ -124,10 +146,14 @@ public class FileStorageService {
 
             String storageId = storageProvider.upload(objectName, inputStream, size, contentType, metadata);
 
-            log.info("File uploaded from stream: {} (storageId: {})", objectName, storageId);
+            // SEC-FIX (2.1): see note in the MultipartFile overload above.
+            persistDriveMapping(tenantId, objectName, storageId);
+
+            log.info("File uploaded from stream: {} (driveFileId: {})", objectName, storageId);
 
             return FileUploadResult.builder()
-                    .objectName(storageId)
+                    .objectName(objectName)
+                    .driveFileId(storageId)
                     .bucket("storage")
                     .originalFilename(filename)
                     .contentType(contentType)
@@ -146,18 +172,23 @@ public class FileStorageService {
     }
 
     /**
-     * Get a pre-signed URL for downloading a file.
+     * Get a download URL for a file.
+     *
+     * <p>SEC-FIX (2.2): previously this delegated to
+     * {@code storageProvider.getDownloadUrl}, which for Drive granted a
+     * {@code Permission(type=anyone, role=reader)} on the file with no expiry —
+     * effectively a permanent public link. We now return a backend-proxied
+     * URL pointing at {@code /api/v1/files/download/direct}, which streams the
+     * file through the controller after enforcing the tenant guard on every
+     * request. The {@code urlExpiryHours} setting is no longer meaningful since
+     * the backend-streamed path is gated by Spring Security on each call.</p>
      */
     @Transactional(readOnly = true)
     public String getDownloadUrl(String objectName) {
-        try {
-            return storageProvider.getDownloadUrl(objectName, urlExpiryHours);
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
-            log.error("Failed to generate download URL for: {}", objectName, e);
-            throw new BusinessException("Failed to generate download URL");
+        if (objectName == null || objectName.isBlank()) {
+            throw new BusinessException("objectName is required");
         }
+        return "/api/v1/files/download/direct?objectName=" + objectName;
     }
 
     /**
@@ -207,14 +238,37 @@ public class FileStorageService {
                 sourceObjectName.substring(sourceObjectName.lastIndexOf('/') + 1));
 
         try {
-            String storageId = storageProvider.copy(sourceObjectName, destinationObjectName);
-            log.info("File copied from {} to {} (storageId: {})", sourceObjectName, destinationObjectName, storageId);
-            return storageId;
+            String driveFileId = storageProvider.copy(sourceObjectName, destinationObjectName);
+            // SEC-FIX (2.1): persist the destination mapping so the new logical path
+            // is resolvable for the destination tenant context.
+            persistDriveMapping(tenantId, destinationObjectName, driveFileId);
+            log.info("File copied from {} to {} (driveFileId: {})", sourceObjectName, destinationObjectName, driveFileId);
+            return destinationObjectName;
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) { // Intentional broad catch — delegates to pluggable storage provider
             log.error("Failed to copy file: {}", sourceObjectName, e);
             throw new BusinessException("Failed to copy file");
+        }
+    }
+
+    /**
+     * Persists the (tenant_id, object_name, drive_file_id) mapping introduced in
+     * V143__add_drive_file_id_mapping.sql. Uses ON CONFLICT DO UPDATE so a
+     * re-upload at the same logical path replaces the mapping rather than
+     * failing the upload (the UUID component of generateObjectName makes
+     * collisions effectively impossible in practice, but defensive nonetheless).
+     */
+    private void persistDriveMapping(UUID tenantId, String objectName, String driveFileId) {
+        try {
+            jdbcTemplate.update(
+                    "INSERT INTO drive_file_mapping (id, tenant_id, object_name, drive_file_id, created_at) " +
+                            "VALUES (gen_random_uuid(), ?, ?, ?, CURRENT_TIMESTAMP) " +
+                            "ON CONFLICT (object_name) DO UPDATE SET drive_file_id = EXCLUDED.drive_file_id",
+                    tenantId, objectName, driveFileId);
+        } catch (Exception e) { // Intentional broad catch — mapping persistence is a hard prereq for download
+            log.error("Failed to persist drive_file_mapping for objectName={}", objectName, e);
+            throw new BusinessException("Failed to record file mapping");
         }
     }
 
@@ -253,7 +307,7 @@ public class FileStorageService {
             throw new BusinessException("Unable to validate file content");
         }
 
-        String detectedType = detectMimeType(headerBytes);
+        String detectedType = detectMimeType(headerBytes, contentType);
         String declaredCategory = getMimeCategory(contentType);
         String detectedCategory = getMimeCategory(detectedType);
 
@@ -267,8 +321,16 @@ public class FileStorageService {
 
     /**
      * Detect MIME type from file magic bytes (file signature).
+     *
+     * <p>The {@code declaredContentType} argument disambiguates the ZIP magic
+     * signature (50 4B 03 04): OOXML formats (DOCX/XLSX/PPTX) legitimately use
+     * the ZIP container, so the ZIP signature is reported back as the declared
+     * OOXML type only when the declared type matches. For any other declared
+     * type, a ZIP-shaped body is reported as {@code application/zip} so
+     * validateMagicBytes will reject it as a category mismatch. This closes the
+     * archive-upload vector described in audit finding 1.1.</p>
      */
-    private String detectMimeType(byte[] headerBytes) {
+    private String detectMimeType(byte[] headerBytes, String declaredContentType) {
         // JPEG: FF D8 FF
         if (headerBytes.length >= 3
                 && headerBytes[0] == (byte) 0xFF
@@ -300,12 +362,19 @@ public class FileStorageService {
                 && headerBytes[3] == 0x38) {
             return "image/gif";
         }
-        // XLSX/DOCX (ZIP container): 50 4B 03 04
+        // OOXML (XLSX/DOCX/PPTX) uses ZIP container: 50 4B 03 04.
+        // Only accept ZIP magic as a "document" if the client declared an OOXML
+        // type. Otherwise report bare "application/zip" so validateMagicBytes
+        // rejects it (we don't accept bare archive uploads anywhere today).
         if (headerBytes.length >= 4
                 && headerBytes[0] == 0x50
                 && headerBytes[1] == 0x4B
                 && headerBytes[2] == 0x03
                 && headerBytes[3] == 0x04) {
+            if (declaredContentType != null && OOXML_TYPES.contains(declaredContentType)) {
+                return declaredContentType;
+            }
+            // Bare ZIP body but no OOXML declaration → reject downstream.
             return "application/zip";
         }
         // CSV/TXT: starts with printable ASCII
@@ -341,20 +410,48 @@ public class FileStorageService {
                 extension);
     }
 
+    /**
+     * Hardened extension extraction (audit finding 1.1).
+     * <ul>
+     *   <li>Strips any path components a client may have injected (no path
+     *       traversal into the generated objectName).</li>
+     *   <li>Drops control bytes that could be used in shell/path injection
+     *       downstream.</li>
+     *   <li>Restricts to an allowlist — any other extension is rejected so the
+     *       extension portion of the generated objectName is a known set.</li>
+     * </ul>
+     */
     private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return "";
+        if (filename == null) return "";
+        String base = java.nio.file.Paths.get(filename).getFileName().toString();
+        base = base.replaceAll("[\\x00-\\x1F\\x7F]", "");
+        int dot = base.lastIndexOf('.');
+        if (dot < 0) return "";
+        String ext = base.substring(dot + 1).toLowerCase();
+        java.util.Set<String> allowed = java.util.Set.of(
+                "jpg", "jpeg", "png", "gif", "webp", "pdf", "doc", "docx", "xls", "xlsx",
+                "csv", "txt", "ppt", "pptx", "odt", "ods", "odp"
+        );
+        if (!allowed.contains(ext)) {
+            throw new com.hrms.common.exception.BusinessException("Disallowed file extension: " + ext);
         }
-        return filename.substring(filename.lastIndexOf("."));
+        return "." + ext;
     }
 
     /**
      * Result of a file upload operation.
+     *
+     * <p>After audit finding 2.1, {@code objectName} is the LOGICAL path
+     * ({@code tenantId/category/entityId/timestamp_uuid.ext}) — never the
+     * opaque Drive fileId. {@code driveFileId} holds the Drive identifier and
+     * exists primarily for diagnostics; callers should NOT return it to
+     * clients, since exposing it re-introduces the tenant-isolation gap.</p>
      */
     @lombok.Builder
     @lombok.Data
     public static class FileUploadResult {
         private String objectName;
+        private String driveFileId;
         private String bucket;
         private String originalFilename;
         private String contentType;

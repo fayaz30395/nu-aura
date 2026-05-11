@@ -465,10 +465,15 @@ public class JobBoardIntegrationService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(indeedAccessToken);
-            String query = "{ jobStats(jobId: \"" + posting.getExternalJobId() + "\") { applications views } }";
+            // GraphQL parameterized query — passing user/external IDs as variables prevents
+            // string-concatenation injection into the operation document.
+            String query = "query Stats($jobId: ID!) { jobStats(jobId: $jobId) { applications views } }";
+            Map<String, Object> payload = Map.of(
+                    "query", query,
+                    "variables", Map.of("jobId", posting.getExternalJobId()));
             ResponseEntity<Map> response = restTemplate.exchange(
                     indeedApiUrl, HttpMethod.POST,
-                    new HttpEntity<>(Map.of("query", query), headers), Map.class);
+                    new HttpEntity<>(payload, headers), Map.class);
             if (response.getBody() != null) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");

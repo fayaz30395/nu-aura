@@ -42,14 +42,14 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
             "WHERE wp.tenant_id = :tenantId AND " +
             "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-            "to_tsquery('english', :query) " +
+            "websearch_to_tsquery('english', :query) " +
             "ORDER BY ts_rank(to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')), " +
-            "to_tsquery('english', :query)) DESC",
+            "websearch_to_tsquery('english', :query)) DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
                     "WHERE wp.tenant_id = :tenantId AND " +
                     "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-                    "to_tsquery('english', :query)")
+                    "websearch_to_tsquery('english', :query)")
     Page<WikiPage> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**

@@ -40,7 +40,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                                                         onUpload,
                                                         onError,
                                                         category = 'documents',
-                                                        accept = '*/*',
+                                                        accept = 'image/jpeg,image/png,image/gif,image/webp,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt',
                                                         maxSize = 10 * 1024 * 1024, // 10MB default
                                                         multiple = false,
                                                         className = '',

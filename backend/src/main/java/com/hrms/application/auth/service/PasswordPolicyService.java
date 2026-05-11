@@ -48,7 +48,8 @@ public class PasswordPolicyService {
             "daniel", "david", "diamond", "donald", "edward", "eminem", "ferrari",
             "flower", "freedom", "fuckoff", "fuckyou", "george", "ginger", "golden",
             "hammer", "hannah", "harley", "heather", "hello", "hockey", "hunter",
-            "jackson", "jasmine", "jennifer", "jessica", "johnny", "jordan", "joshua"
+            "jackson", "jasmine", "jennifer", "jessica", "johnny", "jordan", "joshua",
+            "Welcome@123", "Welcome123", "Nulogic@123", "NuLogic@123", "Password@123", "Admin@123"
     );
     // Regex patterns for character class validation
     private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");

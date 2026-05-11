@@ -64,14 +64,20 @@ public class PermissionHandlerInterceptor implements HandlerInterceptor {
             return true; // No permission annotation — not a protected endpoint
         }
 
-        // SUPER_ADMIN / TENANT_ADMIN bypass (mirrors PermissionAspect and frontend usePermissions.ts)
-        if (SecurityContext.isTenantAdmin()) {
-            log.debug("PermissionHandlerInterceptor: admin bypass for {}", method.getName());
-            return true;
-        }
-
         String[] anyOf = annotation.value();
         String[] allOf = annotation.allOf();
+
+        // SUPER_ADMIN / TENANT_ADMIN bypass (mirrors PermissionAspect and frontend usePermissions.ts).
+        // SEC-FIX (F7): Audit-log every bypass so privileged access is traceable in production logs.
+        if (SecurityContext.isTenantAdmin()) {
+            log.info("AUDIT: TENANT_ADMIN bypass — user={} tenant={} method={} anyOf={} allOf={}",
+                    SecurityContext.getCurrentUserId(),
+                    SecurityContext.getCurrentTenantId(),
+                    method.getName(),
+                    Arrays.toString(anyOf),
+                    Arrays.toString(allOf));
+            return true;
+        }
 
         if (anyOf.length == 0 && allOf.length == 0) {
             log.warn("PermissionHandlerInterceptor: @RequiresPermission on {} has no permissions defined — denying", method.getName());

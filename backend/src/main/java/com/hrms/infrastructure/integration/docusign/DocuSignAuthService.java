@@ -207,7 +207,7 @@ public class DocuSignAuthService {
      *
      * <pre>
      * -----BEGIN PRIVATE KEY-----
-     * base64-encoded-key
+     * (redacted - see runbook for actual key)
      * -----END PRIVATE KEY-----
      * </pre>
      *

@@ -35,6 +35,14 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CustomReportService {
 
+    /**
+     * Detects values that would be interpreted as a formula by spreadsheet
+     * applications (Excel, LibreOffice, Google Sheets). Leading {@code = + - @ TAB CR}
+     * triggers formula parsing — see CWE-1236.
+     */
+    private static final java.util.regex.Pattern FORMULA_LEAD =
+            java.util.regex.Pattern.compile("^[=+\\-@\\t\\r].*", java.util.regex.Pattern.DOTALL);
+
     private final ReportTemplateRepository templateRepository;
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
@@ -288,6 +296,11 @@ public class CustomReportService {
     private String csvEscape(Object value) {
         if (value == null) return "";
         String s = value.toString();
+        // CSV injection (CWE-1236): if the cell starts with a formula-trigger
+        // character, prepend a single quote so the spreadsheet treats it as text.
+        if (FORMULA_LEAD.matcher(s).matches()) {
+            s = "'" + s;
+        }
         if (s.contains(",") || s.contains("\"") || s.contains("\n")) {
             return "\"" + s.replace("\"", "\"\"") + "\"";
         }

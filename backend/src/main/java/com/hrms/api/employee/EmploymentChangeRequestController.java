@@ -24,6 +24,11 @@ import java.util.UUID;
 @Tag(name = "Employment Change Requests", description = "APIs for managing employment detail change requests requiring HR approval")
 public class EmploymentChangeRequestController {
 
+    /** Allow-list of sortable fields for {@code EmploymentChangeRequest} entity — prevents sort injection. */
+    private static final java.util.Set<String> ALLOWED_SORT_FIELDS = java.util.Set.of(
+            "createdAt", "updatedAt", "status", "changeType", "effectiveDate", "approvedAt"
+    );
+
     private final EmploymentChangeRequestService changeRequestService;
 
     public EmploymentChangeRequestController(EmploymentChangeRequestService changeRequestService) {
@@ -47,8 +52,9 @@ public class EmploymentChangeRequestController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection) {
+        String safeSortBy = ALLOWED_SORT_FIELDS.contains(sortBy) ? sortBy : "createdAt";
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
         Page<EmploymentChangeRequestDto> requests = changeRequestService.getAllChangeRequests(pageable);
         return ResponseEntity.ok(requests);
     }
