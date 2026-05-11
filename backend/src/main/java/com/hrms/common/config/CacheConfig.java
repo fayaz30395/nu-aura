@@ -61,6 +61,8 @@ public class CacheConfig implements CachingConfigurer {
     public static final String UPCOMING_ANNIVERSARIES = "upcomingAnniversaries";
     // PERF (wave-3 2.1): JWT-filter tenant ACTIVE check — read on every request.
     public static final String TENANT_STATUS = "tenantStatus";
+    // PERF (wave-3 H5): per-user unread notification count — polled by bell icon.
+    public static final String UNREAD_COUNT_BY_USER = "unreadCountByUser";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -119,6 +121,12 @@ public class CacheConfig implements CachingConfigurer {
         // still evict via TenantStatusCache#evict on suspend/activate for
         // immediate consistency.
         cacheConfigurations.put(TENANT_STATUS, defaultConfig.entryTtl(Duration.ofSeconds(30)));
+
+        // Unread notification counts — polled by the bell icon on a 10–30s
+        // interval. 30s TTL absorbs the poll storm while staying short enough
+        // that newly-arrived notifications surface within one polling cycle.
+        // Evicted explicitly by NotificationService on markAsRead / markAllAsRead.
+        cacheConfigurations.put(UNREAD_COUNT_BY_USER, defaultConfig.entryTtl(Duration.ofSeconds(30)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

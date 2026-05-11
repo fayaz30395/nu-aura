@@ -47,6 +47,16 @@ public class WikiPage extends TenantAware {
     @Column(columnDefinition = "JSONB", nullable = false)
     private String content;
 
+    /**
+     * Plain-text projection of {@link #content} (TipTap JSONB), populated by
+     * {@code WikiPageService.{createPage,updatePage}}. Indexed with pg_trgm GIN
+     * (V152) so the RAG retriever in {@code FluenceContentRetriever} can perform
+     * substring search without falling back to a sequential scan of the
+     * {@code CAST(content AS TEXT)} expression. See V152 migration notes.
+     */
+    @Column(name = "body_text", columnDefinition = "TEXT")
+    private String bodyText;
+
     @Builder.Default
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)

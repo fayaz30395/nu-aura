@@ -1,0 +1,160 @@
+# =============================================================================
+# NU-AURA HRMS — Default Helm Values
+# =============================================================================
+# Override per environment with `helm install -f values-prod.yaml ...` or
+# `--set backend.image.tag=<sha>`. All sections below are consumed by the
+# templates under ./templates.
+# =============================================================================
+
+# Namespace where all resources are deployed. Must exist prior to install
+# (or use `helm install --create-namespace`).
+namespace: hrms
+
+# Global image registry — override at install time. Example: gcr.io/your-project
+# or ghcr.io/your-org. Final image string = "<registry>/<repository>:<tag>".
+imageRegistry: gcr.io/PROJECT_ID
+
+# Image pull secrets list (if your registry requires auth). Each entry is the
+# name of a docker-registry Secret in the target namespace.
+imagePullSecrets: []
+#  - name: gcr-pull-secret
+
+# -----------------------------------------------------------------------------
+# Backend (Spring Boot)
+# -----------------------------------------------------------------------------
+backend:
+  image:
+    # Final image = "<imageRegistry>/<repository>:<tag>".
+    # IMAGE_TAG is replaced by CI/CD (git SHA / semver) — never deploy :latest
+    # in production (enforced by deployment/kyverno/disallow-latest-tag.yaml).
+    repository: hrms-backend
+    tag: IMAGE_TAG
+    pullPolicy: IfNotPresent
+
+  replicas: 2
+
+  strategy:
+    type: RollingUpdate
+    maxSurge: 1
+    maxUnavailable: 0
+
+  serviceAccountName: hrms-backend-sa
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+  # JVM tuning — passed via JAVA_OPTS env.
+  javaOpts: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
+
+  # Disruption budget — guarantees at least N pods stay Ready during voluntary
+  # disruptions (node drains, upgrades, autoscaler evictions). wave-3 #1 (P0).
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+  # Probe tuning — keep generous for cold JVM startup.
+  probes:
+    liveness:
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    startup:
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 30
+
+# -----------------------------------------------------------------------------
+# Frontend (Next.js)
+# -----------------------------------------------------------------------------
+frontend:
+  image:
+    repository: hrms-frontend
+    tag: IMAGE_TAG
+    pullPolicy: IfNotPresent
+
+  replicas: 2
+
+  strategy:
+    type: RollingUpdate
+    maxSurge: 1
+    maxUnavailable: 0
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+  probes:
+    liveness:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    startup:
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 30
+
+# -----------------------------------------------------------------------------
+# Ingress (GCE / GKE managed cert)
+# -----------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: "gce"
+
+  # Replace these placeholders with production domains before deploy.
+  # ManagedCertificate provisioning requires DNS pointing to the GKE LB IP.
+  # Tracking: NU-AURA P0 deploy checklist (wave-3 deployment audit #3).
+  hosts:
+    frontend: hrms.example.com
+    api: api.hrms.example.com
+
+  tls:
+    secretName: hrms-tls
+
+  staticIpName: "hrms-static-ip"
+  managedCertificateName: "hrms-certificate"
+  preSharedCert: "hrms-ssl-cert"
+
+  cloudArmorPolicy: "hrms-security-policy"
+  connectionDrainingTimeoutSec: 30
+  sessionAffinity: "CLIENT_IP"
+  sessionAffinityCookieTtlSec: 3600
+
+# -----------------------------------------------------------------------------
+# Cosign / image signature verification
+# -----------------------------------------------------------------------------
+# Used by deployment/kyverno/require-image-signature.yaml at admission time.
+# Public key is referenced (not embedded) so this chart stays portable.
+cosign:
+  enabled: true
+  # Path the Kyverno policy references — see deployment/kyverno/require-image-signature.yaml.
+  publicKeySecretRef:
+    name: cosign-public-key
+    namespace: kyverno
+    key: cosign.pub

@@ -15,6 +15,26 @@ spring:
       idle-timeout: 300000
       max-lifetime: 600000
 
+    # Optional read-replica routing (wave-3 H7 / C7).
+    # RoutingDataSourceConfig activates ONLY when SPRING_DATASOURCE_REPLICA_URL is set.
+    # When configured, @Transactional(readOnly=true) methods route to the Neon read
+    # replica endpoint; writes and default-tx paths stay on the primary above.
+    # Provision the replica endpoint in Neon and inject these via K8s secrets:
+    #
+    #   SPRING_DATASOURCE_REPLICA_URL=jdbc:postgresql://replica.<project>.neon.tech:5432/hrms?sslmode=require
+    #   SPRING_DATASOURCE_REPLICA_USERNAME=<replica-role>
+    #   SPRING_DATASOURCE_REPLICA_PASSWORD=<replica-secret>
+    #
+    # The replica Hikari pool is marked read-only at the JDBC layer (writes fail fast),
+    # and TenantAwareDataSourceConfig still injects app.current_tenant_id so RLS
+    # enforcement holds on the replica too. Connection pool sized identically to primary
+    # (20 max / 5 min) — adjust via env vars if replica traffic profile differs.
+    replica:
+      url: ${SPRING_DATASOURCE_REPLICA_URL:}
+      username: ${SPRING_DATASOURCE_REPLICA_USERNAME:}
+      password: ${SPRING_DATASOURCE_REPLICA_PASSWORD:}
+      driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       # CRITICAL: Never auto-modify schema in production
@@ -44,7 +64,12 @@ spring:
       port: ${SPRING_REDIS_PORT:6379}
       password: ${SPRING_REDIS_PASSWORD:}
       ssl:
-        enabled: ${SPRING_REDIS_SSL_ENABLED:false}
+        # Default flipped to true (compliance #11, wave-3 deployment audit).
+        # Production Redis (Upstash, GCP Memorystore TLS, AWS ElastiCache TLS) is
+        # always TLS-protected; defaulting to plain made it trivial for an operator
+        # to forget the env var and silently send credentials in cleartext.
+        # Local dev / docker-compose can still override via SPRING_REDIS_SSL_ENABLED=false.
+        enabled: ${SPRING_REDIS_SSL_ENABLED:true}
       lettuce:
         pool:
           max-active: 16

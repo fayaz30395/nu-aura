@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,6 +193,63 @@ public class AuditLogService {
                 .stream()
                 .map(this::enrichResponse)
                 .collect(Collectors.toList());
+    }
+
+    // ==================== Cross-Tenant Query Methods (SUPER_ADMIN only — wave-3 M-C2) ====================
+
+    /**
+     * Cross-tenant audit-log query for SuperAdmin / SYSTEM:ADMIN.
+     *
+     * <p><strong>Security:</strong> intentionally bypasses {@link TenantContext}'s
+     * tenant filter. The caller-side controller already gates entry via
+     * {@code @RequiresPermission(SYSTEM_ADMIN, revalidate=true)}; we re-check here
+     * for defense-in-depth so a misconfigured controller cannot accidentally expose
+     * cross-tenant audit data.</p>
+     */
+    @Transactional(readOnly = true)
+    public Page<AuditLogResponse> getAllAuditLogsCrossTenant(Pageable pageable) {
+        requireSuperAdminOrSystemAdmin();
+        return auditLogRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(this::enrichResponseCrossTenant);
+    }
+
+    /**
+     * Cross-tenant search with optional {@code tenantId} narrowing for SuperAdmin.
+     * When {@code tenantId} is null, the search spans all tenants.
+     */
+    @Transactional(readOnly = true)
+    public Page<AuditLogResponse> searchCrossTenant(UUID tenantId, String entityType, AuditAction action,
+                                                    UUID actorId, LocalDateTime startDate, LocalDateTime endDate,
+                                                    Pageable pageable) {
+        requireSuperAdminOrSystemAdmin();
+        return auditLogRepository.searchCrossTenant(tenantId, entityType, action, actorId, startDate, endDate, pageable)
+                .map(this::enrichResponseCrossTenant);
+    }
+
+    /**
+     * Defense-in-depth re-check that the current security context holds SUPER_ADMIN
+     * role or the SYSTEM:ADMIN permission. Throws {@link AccessDeniedException}
+     * (handled by the global exception handler -> 403) when neither is present.
+     */
+    private void requireSuperAdminOrSystemAdmin() {
+        if (!SecurityContext.isSuperAdmin() && !SecurityContext.hasPermission("SYSTEM:ADMIN")) {
+            throw new AccessDeniedException(
+                    "Cross-tenant audit-log query requires SUPER_ADMIN or SYSTEM:ADMIN");
+        }
+    }
+
+    /**
+     * Cross-tenant variant of {@link #enrichResponse(AuditLog)} — uses the audit
+     * log's own tenantId rather than {@link TenantContext}, so actor-name enrichment
+     * works correctly when the result spans many tenants.
+     */
+    private AuditLogResponse enrichResponseCrossTenant(AuditLog entity) {
+        AuditLogResponse response = AuditLogResponse.fromEntity(entity);
+        if (entity.getActorId() != null && entity.getTenantId() != null) {
+            employeeRepository.findByIdAndTenantId(entity.getActorId(), entity.getTenantId())
+                    .ifPresent(emp -> response.setActorName(emp.getFirstName() + " " + emp.getLastName()));
+        }
+        return response;
     }
 
     // ==================== Statistics Methods ====================

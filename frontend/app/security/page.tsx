@@ -38,26 +38,26 @@ export default function SecurityPage() {
   const certifications = [
     {
       icon: Shield,
-      name: 'SOC 2 Type II',
-      description: 'Audited security controls and processes',
+      name: 'Security Controls',
+      description: 'Audited internal security controls aligned with SOC 2 framework; formal certification in progress',
       color: 'from-accent-500 to-accent-600',
     },
     {
       icon: Globe,
-      name: 'GDPR Compliant',
-      description: 'EU data protection regulation compliance',
+      name: 'Privacy Practices',
+      description: 'GDPR-aligned data handling practices; DPIA in progress',
       color: 'from-success-500 to-success-600',
     },
     {
       icon: FileCheck,
-      name: 'ISO 27001',
-      description: 'Information security management',
+      name: 'ISMS Practices',
+      description: 'Information-security-management practices aligned with ISO 27001; certification roadmap',
       color: 'from-accent-700 to-accent-800',
     },
     {
       icon: Lock,
-      name: 'Privacy Shield',
-      description: 'Cross-border data transfer framework',
+      name: 'Cross-Border Transfers',
+      description: 'EU-US DPF-aligned data transfers (Privacy Shield was invalidated 2020)',
       color: 'from-warning-500 to-warning-600',
     },
   ];
@@ -140,15 +140,15 @@ export default function SecurityPage() {
   const complianceFeatures = [
     {
       title: 'Data Subject Rights',
-      description: 'Full support for GDPR data subject access requests',
+      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Data Portability',
-      description: 'Export all data in standard formats',
+      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Right to Erasure',
-      description: 'Permanent data deletion with audit trail',
+      description: 'Coming Soon — Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
     },
     {
       title: 'Data Processing Agreements',
@@ -190,7 +190,7 @@ export default function SecurityPage() {
             Enterprise-grade security you can trust
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            Bank-level encryption, SOC 2 certified, and GDPR compliant. Your data security is our top priority.
+            AES-256-GCM field-level encryption, security practices aligned with SOC 2 and GDPR; certifications in progress.
           </p>
           <Button size="lg" variant="outline" className="gap-2">
             <Download className="h-5 w-5"/>

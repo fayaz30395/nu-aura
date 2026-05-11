@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import {cn} from '@/lib/utils';
+import {safeStorage} from '@/lib/utils/safeStorage';
 import {Skeleton} from './Skeleton';
 import {EmptyState} from './EmptyState';
 
@@ -301,10 +302,10 @@ function DataTable<T>({
   const storageKey = tableId ? `datatable-columns-${tableId}` : null;
 
   const [visibilityMap, setVisibilityMap] = useState<Record<string, boolean>>(() => {
-    // Try to load from localStorage
-    if (storageKey && typeof window !== 'undefined') {
+    // Try to load from safeStorage (graceful fallback on SSR / private mode)
+    if (storageKey) {
       try {
-        const stored = localStorage.getItem(storageKey);
+        const stored = safeStorage.get(storageKey);
         if (stored) return JSON.parse(stored) as Record<string, boolean>;
       } catch {
         // ignore parse errors
@@ -322,12 +323,9 @@ function DataTable<T>({
     (key: string) => {
       setVisibilityMap((prev) => {
         const next = {...prev, [key]: prev[key] === false};
-        if (storageKey && typeof window !== 'undefined') {
-          try {
-            localStorage.setItem(storageKey, JSON.stringify(next));
-          } catch {
-            // quota exceeded — ignore
-          }
+        if (storageKey) {
+          // safeStorage handles quota / disabled-storage internally
+          safeStorage.set(storageKey, JSON.stringify(next));
         }
         return next;
       });

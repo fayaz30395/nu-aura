@@ -4,6 +4,7 @@ import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {cn} from '@/lib/utils';
+import {safeStorage} from '@/lib/utils/safeStorage';
 import {ChevronDown, ChevronRight, PanelLeft, PanelLeftClose, Sparkles, X} from 'lucide-react';
 
 const STORAGE_KEY_COLLAPSED_SECTIONS = 'sidebar-collapsed-sections';
@@ -477,19 +478,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       ? `${storageKeyPrefix}-${STORAGE_KEY_COLLAPSED_SECTIONS}`
       : STORAGE_KEY_COLLAPSED_SECTIONS;
 
-    // Load collapsed section state from localStorage
+    // Load collapsed section state from safeStorage
     // NOTE: Sidebar collapsed state (expand/collapse) is managed by AppLayout to avoid
     // dual-source race conditions. Only section collapse (which sections are open) is local.
     useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const savedCollapsedSections = localStorage.getItem(sectionStorageKey);
-        if (savedCollapsedSections) {
-          try {
-            const parsed = JSON.parse(savedCollapsedSections);
-            setCollapsedSections(new Set(parsed));
-          } catch {
-            // Ignore parse errors
-          }
+      const savedCollapsedSections = safeStorage.get(sectionStorageKey);
+      if (savedCollapsedSections) {
+        try {
+          const parsed = JSON.parse(savedCollapsedSections);
+          setCollapsedSections(new Set(parsed));
+        } catch {
+          // Ignore parse errors
         }
       }
     }, [sectionStorageKey]);
@@ -502,9 +501,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const handleCollapsedChange = useCallback((newCollapsed: boolean) => {
       setIsCollapsed(newCollapsed);
       onCollapsedChange?.(newCollapsed);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY_COLLAPSED, String(newCollapsed));
-      }
+      safeStorage.set(STORAGE_KEY_COLLAPSED, String(newCollapsed));
       // Close flyover when collapsing/expanding
       setOpenFlyoverId(null);
       setFlyoverTriggerRect(null);
@@ -533,10 +530,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         } else {
           newSet.add(sectionId);
         }
-        // Persist to localStorage using the namespaced key
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(sectionStorageKey, JSON.stringify([...newSet]));
-        }
+        // Persist via safeStorage using the namespaced key
+        safeStorage.set(sectionStorageKey, JSON.stringify([...newSet]));
         return newSet;
       });
     }, [sectionStorageKey]);

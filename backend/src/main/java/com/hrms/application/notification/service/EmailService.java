@@ -14,6 +14,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +85,21 @@ public class EmailService {
     public EmailSendResult sendEmailInternal(EmailNotification notification) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
+            // Email deliverability: List-Unsubscribe header (RFC 8058 one-click)
+            String unsubscribeUrl = frontendUrl + "/unsubscribe?email="
+                    + URLEncoder.encode(notification.getRecipientEmail(), StandardCharsets.UTF_8);
+            message.addHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
+            message.addHeader("List-Unsubscribe-Post", "List-Unsubscribe=One-Click");
+
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(fromEmail);
             helper.setTo(notification.getRecipientEmail());
             helper.setSubject(notification.getSubject());
-            helper.setText(notification.getBody(), true);
+            // Email deliverability: multipart/alternative (text + html) to reduce spam scoring
+            String htmlContent = notification.getBody();
+            String plainText = htmlContent.replaceAll("<[^>]+>", "").replaceAll("&nbsp;", " ").replaceAll("\\s+", " ").trim();
+            helper.setText(plainText, htmlContent);
 
             mailSender.send(message);
 

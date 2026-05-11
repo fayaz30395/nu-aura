@@ -27,6 +27,7 @@ public class FluenceAttachmentService {
 
     private final FileStorageService fileStorageService;
     private final KnowledgeAttachmentRepository attachmentRepository;
+    private final AttachmentTextExtractionService textExtractionService;
 
     /**
      * Upload an attachment for a Fluence content item.
@@ -51,6 +52,16 @@ public class FluenceAttachmentService {
         FileStorageService.FileUploadResult result = fileStorageService.uploadFile(
                 file, CATEGORY_FLUENCE, contentId);
 
+        // W5-B (knowledge-search audit gap): extract searchable text from PDF/DOCX/etc.
+        // via Tika so the body is available for the follow-up ES indexing pass.
+        // Best-effort: a failure here MUST NOT block the upload.
+        String extractedText = null;
+        try {
+            extractedText = textExtractionService.extractText(file.getBytes(), file.getOriginalFilename());
+        } catch (Exception e) {
+            log.warn("Text extraction skipped for {}: {}", file.getOriginalFilename(), e.getMessage());
+        }
+
         KnowledgeAttachment attachment = KnowledgeAttachment.builder()
                 .tenantId(tenantId)
                 .contentId(contentId)
@@ -63,6 +74,14 @@ public class FluenceAttachmentService {
                 .objectName(result.getObjectName())
                 .contentTypeEnum(contentType.name())
                 .build();
+
+        // TODO(W5-B follow-up): persist `extractedText` once KnowledgeAttachment grows
+        // an `extractedText TEXT` column (Flyway migration to be added in next sprint).
+        // For now we surface the extracted length so the call site is exercised end-to-end.
+        if (extractedText != null) {
+            log.debug("Extracted {} chars of text from attachment {} ({})",
+                    extractedText.length(), file.getOriginalFilename(), contentType);
+        }
 
         // save() runs in its own SimpleJpaRepository @Transactional scope — tx is tight
         // around the row insert only, not around the upload above.

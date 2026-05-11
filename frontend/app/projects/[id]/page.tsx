@@ -2,7 +2,8 @@
 
 import React, {useEffect, useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {ArrowLeft, Edit2, Loader2, XCircle} from 'lucide-react';
@@ -115,6 +116,7 @@ export default function ProjectDetailPage() {
   // Edit form
   const {
     register: editRegister,
+    control: editControl,
     handleSubmit: editHandleSubmit,
     reset: editReset,
     watch: editWatch,
@@ -360,17 +362,59 @@ export default function ProjectDetailPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Input label="Start date" type="date" {...editRegister('startDate')} />
+                <Controller
+                  name="startDate"
+                  control={editControl}
+                  render={({field}) => (
+                    <DateInput
+                      label="Start date"
+                      value={field.value ? new Date(field.value) : null}
+                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      valueFormat="YYYY-MM-DD"
+                      placeholder="YYYY-MM-DD"
+                      clearable
+                      size="sm"
+                    />
+                  )}
+                />
                 {editErrors.startDate && <p className="text-sm text-danger-500 mt-1">{editErrors.startDate.message}</p>}
               </div>
               <div>
-                <Input label="Expected end date" type="date" {...editRegister('expectedEndDate')} />
+                <Controller
+                  name="expectedEndDate"
+                  control={editControl}
+                  render={({field}) => (
+                    <DateInput
+                      label="Expected end date"
+                      value={field.value ? new Date(field.value) : null}
+                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      valueFormat="YYYY-MM-DD"
+                      placeholder="YYYY-MM-DD"
+                      clearable
+                      size="sm"
+                    />
+                  )}
+                />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <Input label="Actual end date" type="date" {...editRegister('endDate')} />
+                <Controller
+                  name="endDate"
+                  control={editControl}
+                  render={({field}) => (
+                    <DateInput
+                      label="Actual end date"
+                      value={field.value ? new Date(field.value) : null}
+                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      valueFormat="YYYY-MM-DD"
+                      placeholder="YYYY-MM-DD"
+                      clearable
+                      size="sm"
+                    />
+                  )}
+                />
               </div>
               <div>
                 <Select label="Status" {...editRegister('status')}>

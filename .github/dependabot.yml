@@ -1,0 +1,67 @@
+# Dependabot configuration for NU-AURA
+# Added per wave-3 deployment audit — automated weekly dependency updates
+# across backend (Maven), frontend (npm), GitHub Actions, and Docker images.
+# Grouped PRs reduce noise; reviewers can merge related upgrades together.
+version: 2
+updates:
+  # ── Backend Maven dependencies ───────────────────────────────────────────
+  - package-ecosystem: "maven"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "backend"
+    groups:
+      spring:
+        patterns:
+          - "org.springframework.*"
+          - "io.spring.*"
+      test:
+        patterns:
+          - "*junit*"
+          - "*mockito*"
+          - "org.testcontainers:*"
+
+  # ── Frontend npm dependencies ────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "frontend"
+    groups:
+      next:
+        patterns:
+          - "next"
+          - "@next/*"
+          - "react"
+          - "react-dom"
+      mantine:
+        patterns:
+          - "@mantine/*"
+      tiptap:
+        patterns:
+          - "@tiptap/*"
+
+  # ── GitHub Actions ───────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # ── Docker base images ───────────────────────────────────────────────────
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"

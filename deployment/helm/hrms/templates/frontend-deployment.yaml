@@ -1,0 +1,160 @@
+# Frontend Deployment — Helm-templated version of
+# deployment/kubernetes/frontend-deployment.yaml. Keep that flat manifest in
+# sync (S5-B owns it for backward compat); this template is for new tenants
+# installing via `helm install`.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrms-frontend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+    component: frontend
+    version: v1
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  strategy:
+    type: {{ .Values.frontend.strategy.type }}
+    rollingUpdate:
+      maxSurge: {{ .Values.frontend.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.frontend.strategy.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: hrms
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: hrms
+        component: frontend
+        version: v1
+    spec:
+      serviceAccountName: default
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      # Init container to wait for backend
+      initContainers:
+        - name: wait-for-backend
+          image: busybox:1.36
+          command: [ 'sh', '-c', 'until nc -z hrms-backend 8080; do echo waiting for backend; sleep 2; done;' ]
+
+      containers:
+        - name: frontend
+          # IMAGE_TAG is replaced by CI/CD (git SHA or semver).
+          # :latest is forbidden by deployment/kyverno/disallow-latest-tag.yaml.
+          image: "{{ .Values.imageRegistry }}/{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+
+          env:
+            # ── Node Environment ───────────────────────────────────────────────────────
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: NODE_ENV
+
+            # ── API Configuration (REQUIRED) ───────────────────────────────────────────
+            # env.ts validates NEXT_PUBLIC_API_URL at startup; app crashes if missing.
+            - name: NEXT_PUBLIC_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: NEXT_PUBLIC_API_URL
+
+            # ── Google OAuth (optional) ────────────────────────────────────────────────
+            - name: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: hrms-secrets
+                  key: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+            # ── Demo mode (disabled in production) ────────────────────────────────────
+            - name: NEXT_PUBLIC_DEMO_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: NEXT_PUBLIC_DEMO_MODE
+
+            # ── Analytics ─────────────────────────────────────────────────────────────
+            - name: NEXT_PUBLIC_ENABLE_ANALYTICS
+              valueFrom:
+                configMapKeyRef:
+                  name: hrms-config
+                  key: NEXT_PUBLIC_ENABLE_ANALYTICS
+
+          resources:
+            requests:
+              memory: {{ .Values.frontend.resources.requests.memory | quote }}
+              cpu: {{ .Values.frontend.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.frontend.resources.limits.memory | quote }}
+              cpu: {{ .Values.frontend.resources.limits.cpu | quote }}
+
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: {{ .Values.frontend.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.liveness.failureThreshold }}
+
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: {{ .Values.frontend.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.readiness.failureThreshold }}
+
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: {{ .Values.frontend.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.frontend.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.frontend.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.frontend.probes.startup.failureThreshold }}
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /.next/cache
+
+      volumes:
+        - name: tmp
+          emptyDir: { }
+        - name: cache
+          emptyDir: { }
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: component
+                      operator: In
+                      values:
+                        - frontend
+                topologyKey: kubernetes.io/hostname
+
+      terminationGracePeriodSeconds: 30

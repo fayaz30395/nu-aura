@@ -1,0 +1,51 @@
+# Kyverno ClusterPolicy — refuse any container that uses the `:latest` tag
+# (or any image reference without an explicit tag, which Docker treats as
+# `:latest`). Aligns with the comment in our existing manifests:
+#   "IMAGE_TAG is replaced by CI/CD ... Do NOT deploy with :latest in production."
+# wave-3 deployment audit (image hygiene). Mode = Enforce.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    policies.kyverno.io/title: Disallow :latest Image Tags
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Image tags must be immutable. `:latest` (or missing tag) makes
+      rollbacks unsafe and breaks supply-chain attestations because the
+      digest the cluster pulled may not match the digest CI signed.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: require-explicit-tag
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - kyverno
+      validate:
+        message: >-
+          Image tag is missing or set to :latest. Use an explicit immutable
+          tag (git SHA or semver, e.g. hrms-backend:1.0.0 or hrms-backend:abc1234).
+        pattern:
+          spec:
+            =(initContainers):
+              - name: "*"
+                image: "!*:latest & *:*"
+            containers:
+              - name: "*"
+                image: "!*:latest & *:*"
+            =(ephemeralContainers):
+              - name: "*"
+                image: "!*:latest & *:*"

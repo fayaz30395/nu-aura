@@ -29,7 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -84,13 +88,31 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         leaveRequest.setRequestNumber(requestNumber);
         leaveRequest.setTenantId(tenantId);
 
+        // F2.1 (partial): Compute totalDays server-side — never trust the client-supplied
+        // value. Weekends are excluded. TODO: full sandwich-rule needs the tenant's
+        // holiday calendar (out of scope here; flagged for follow-up).
+        BigDecimal computedDays = computeLeaveDays(
+                leaveRequest.getStartDate(),
+                leaveRequest.getEndDate(),
+                Boolean.TRUE.equals(leaveRequest.getIsHalfDay()),
+                tenantId);
+        leaveRequest.setTotalDays(computedDays);
+
+        // F2.4: The pending reservation MUST match the eventual deduction. Approval
+        // deducts 0.5 for half-day requests, so reserving the full totalDays leaked
+        // 0.5 day(s) of pending balance on every half-day approval. Mirror approval's
+        // deduction logic here.
+        BigDecimal daysToReserve = Boolean.TRUE.equals(leaveRequest.getIsHalfDay())
+                ? new BigDecimal("0.5")
+                : computedDays;
+
         // F-06: Validate balance and reserve days as pending BEFORE persisting the request.
-        // addPendingLeave throws IllegalArgumentException if available < totalDays, which
+        // addPendingLeave throws IllegalArgumentException if available < daysToReserve, which
         // causes the transaction to roll back so no invalid request is ever saved.
         leaveBalanceService.addPendingLeave(
                 leaveRequest.getEmployeeId(),
                 leaveRequest.getLeaveTypeId(),
-                leaveRequest.getTotalDays());
+                daysToReserve);
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
 
@@ -195,12 +217,17 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             log.warn("Audit log failed for leave request reject: {}", e.getMessage());
         }
 
-        // F-07: Release pending days reserved at request creation
+        // F-07 + F2.4: Release pending days reserved at request creation. The release
+        // amount MUST match what was reserved — 0.5 for half-day, totalDays otherwise —
+        // otherwise the balance leaks (over- or under-release).
+        BigDecimal daysToRelease = Boolean.TRUE.equals(saved.getIsHalfDay())
+                ? new BigDecimal("0.5")
+                : saved.getTotalDays();
         try {
             leaveBalanceService.releasePendingLeave(
                     saved.getEmployeeId(),
                     saved.getLeaveTypeId(),
-                    saved.getTotalDays());
+                    daysToRelease);
         } catch (Exception e) {
             log.warn("Failed to release pending leave on rejection for request {}: {}", saved.getId(), e.getMessage());
         }
@@ -263,20 +290,24 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             log.warn("Audit log failed for leave request cancel: {}", e.getMessage());
         }
 
-        // F-07: Release balance based on prior status
+        // F-07 + F2.4: Release balance based on prior status. The release amount MUST
+        // mirror the deduction/reservation logic: half-day → 0.5, otherwise → totalDays.
+        BigDecimal daysToRestore = Boolean.TRUE.equals(saved.getIsHalfDay())
+                ? new BigDecimal("0.5")
+                : saved.getTotalDays();
         if (wasApproved) {
             // Was fully approved — credit back from used
             leaveBalanceService.creditLeave(
                     saved.getEmployeeId(),
                     saved.getLeaveTypeId(),
-                    saved.getTotalDays());
+                    daysToRestore);
         } else if (wasPending) {
             // Was still pending — release the reserved pending days
             try {
                 leaveBalanceService.releasePendingLeave(
                         saved.getEmployeeId(),
                         saved.getLeaveTypeId(),
-                        saved.getTotalDays());
+                        daysToRestore);
             } catch (Exception e) {
                 log.warn("Failed to release pending leave on cancellation for request {}: {}", saved.getId(), e.getMessage());
             }
@@ -553,6 +584,33 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         } catch (RuntimeException e) {
             log.warn("Failed to send leave rejection notification: {}", e.getMessage());
         }
+    }
+
+    /**
+     * F2.1 (partial): Server-side computation of leave-day count between two dates.
+     * Weekends (Sat/Sun) are excluded.
+     *
+     * <p>Half-day requests are valid only when {@code start == end}; otherwise the
+     * half-day flag is ignored and the full weekday count is returned. Callers should
+     * separately enforce the half-day single-day invariant at the API boundary.</p>
+     *
+     * <p>TODO (F2.1 full sandwich rule): also subtract tenant-configured holidays
+     * between {@code start} and {@code end}. That requires a holiday-calendar lookup
+     * which is out of scope for this commit — wire in {@code HolidayService.getHolidays}
+     * here once it is available in this module.</p>
+     */
+    public BigDecimal computeLeaveDays(LocalDate start, LocalDate end, boolean isHalfDay, UUID tenantId) {
+        if (isHalfDay && start.equals(end)) {
+            return new BigDecimal("0.5");
+        }
+        long total = ChronoUnit.DAYS.between(start, end) + 1;
+        long weekends = 0;
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            if (d.getDayOfWeek() == DayOfWeek.SATURDAY || d.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                weekends++;
+            }
+        }
+        return BigDecimal.valueOf(total - weekends);
     }
 
     private String formatDateRange(LeaveRequest leaveRequest) {

@@ -1,13 +1,15 @@
 import {apiConfig} from '@/lib/config';
+import {safeStorage} from '@/lib/utils/safeStorage';
 import type {ChatRole, ChatSSEEvent, FluenceChatRequest,} from '@/lib/types/platform/fluence-chat';
 
 /**
- * Get the tenant ID from localStorage (API-006: consistent with rest of app).
- * Falls back to cookie for backward compatibility.
+ * Get the tenant ID from storage (API-006: consistent with rest of app).
+ * Falls back to cookie for backward compatibility. Uses safeStorage so
+ * private mode / disabled storage doesn't throw.
  */
 function getTenantId(): string | null {
   if (typeof window === 'undefined') return null;
-  const fromStorage = localStorage.getItem('tenantId');
+  const fromStorage = safeStorage.get('tenantId');
   if (fromStorage) return fromStorage;
   // Fallback to cookie
   if (typeof document !== 'undefined') {

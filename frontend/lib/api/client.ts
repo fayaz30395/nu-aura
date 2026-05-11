@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { apiConfig } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
+import { safeStorage } from '@/lib/utils/safeStorage';
 
 const API_URL = apiConfig.baseUrl;
 
@@ -201,12 +202,11 @@ class ApiClient {
   /**
    * Get tenant ID from localStorage.
    * Note: Tenant ID is not sensitive, so localStorage is acceptable.
+   * Uses safeStorage so Safari private mode / disabled storage degrade to an
+   * in-memory fallback instead of throwing (Wave-4 W4-A #2 migration).
    */
   private getTenantId(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tenantId');
-    }
-    return null;
+    return safeStorage.get('tenantId');
   }
 
   /**
@@ -214,9 +214,7 @@ class ApiClient {
    * Called after successful login.
    */
   setTenantId(tenantId: string): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('tenantId', tenantId);
-    }
+    safeStorage.set('tenantId', tenantId);
   }
 
   /**
@@ -224,9 +222,11 @@ class ApiClient {
    * Note: httpOnly cookies are cleared by backend on logout.
    */
   clearTokens(): void {
+    safeStorage.remove('tenantId');
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('tenantId');
-      sessionStorage.removeItem('auth-storage');
+      try {
+        sessionStorage.removeItem('auth-storage');
+      } catch { /* ignore — best-effort */ }
     }
   }
 

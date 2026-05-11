@@ -34,6 +34,25 @@ spring:
       # statement_timeout prevents queries from hanging on broken connections (2 min max).
       connection-init-sql: SET app.current_tenant_id = ''; SET statement_timeout = '120s'
 
+    # Optional read-replica routing (wave-3 H7 / C7).
+    # RoutingDataSourceConfig activates ONLY when spring.datasource.replica.url is set.
+    # When configured, @Transactional(readOnly=true) methods route to the replica;
+    # all other paths (writes, no-tx, default-tx) stay on the primary above.
+    # Without these env vars, the existing primary DataSource path is unchanged — zero risk.
+    #
+    #   SPRING_DATASOURCE_REPLICA_URL=jdbc:postgresql://replica.neon.tech:5432/hrms?sslmode=require
+    #   SPRING_DATASOURCE_REPLICA_USERNAME=...
+    #   SPRING_DATASOURCE_REPLICA_PASSWORD=...
+    #
+    # The replica Hikari pool is marked read-only at the JDBC layer (writes fail fast),
+    # and TenantAwareDataSourceConfig still injects app.current_tenant_id so RLS
+    # enforcement holds on the replica too.
+    replica:
+      url: ${SPRING_DATASOURCE_REPLICA_URL:}
+      username: ${SPRING_DATASOURCE_REPLICA_USERNAME:}
+      password: ${SPRING_DATASOURCE_REPLICA_PASSWORD:}
+      driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: validate

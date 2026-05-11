@@ -3,6 +3,7 @@ package com.hrms.application.knowledge.service;
 import com.hrms.api.knowledge.dto.WikiPageBreadcrumb;
 import com.hrms.api.knowledge.dto.WikiPageTreeNode;
 import com.hrms.application.knowledge.dto.WikiPageTreeProjection;
+import com.hrms.application.knowledge.util.TipTapTextExtractor;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.WikiPage;
@@ -41,6 +42,7 @@ public class WikiPageService {
     private final WikiPageVersionRepository wikiPageVersionRepository;
     private final FluenceNotificationService fluenceNotificationService;
     private final FluenceActivityService fluenceActivityService;
+    private final TipTapTextExtractor tipTapTextExtractor;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -54,6 +56,10 @@ public class WikiPageService {
         page.setLikeCount(0);
         page.setCommentCount(0);
         page.setIsPinned(false);
+        // V152: derive flat text projection of TipTap JSONB so the RAG retriever
+        // (FluenceContentRetriever) can hit idx_wiki_pages_body_text_trgm instead
+        // of seq-scanning CAST(content AS TEXT) on every keyword pass.
+        page.setBodyText(tipTapTextExtractor.extract(page.getContent()));
 
         WikiPage saved = wikiPageRepository.save(page);
 
@@ -82,6 +88,8 @@ public class WikiPageService {
         page.setSlug(pageData.getSlug());
         page.setExcerpt(pageData.getExcerpt());
         page.setContent(pageData.getContent());
+        // V152: keep body_text in sync with content for trigram-indexed RAG search.
+        page.setBodyText(tipTapTextExtractor.extract(pageData.getContent()));
         page.setVisibility(pageData.getVisibility());
         page.setStatus(pageData.getStatus());
 

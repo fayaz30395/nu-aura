@@ -11,7 +11,6 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,10 +139,10 @@ public class DashboardService {
         // SEC + PERF (wave-3 H1): previous implementation called
         // {@code auditLogRepository.findAll(PageRequest.of(0, 10))} which had
         // NO tenant filter — a user on tenant A could see audit rows from
-        // tenant B. Now scoped via the existing tenant-aware finder.
+        // tenant B. Now scoped via the dedicated derived finder, which avoids
+        // the unnecessary count(*) query that PageRequest forces on Page<>.
         List<AuditLog> recentLogs = auditLogRepository
-                .findAllByTenantIdOrderByCreatedAtDesc(tenantId, PageRequest.of(0, 10))
-                .getContent();
+                .findTop10ByTenantIdOrderByCreatedAtDesc(tenantId);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

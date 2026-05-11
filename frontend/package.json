@@ -107,5 +107,14 @@
     "msw": "^2.1.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 111",
+    "Edge >= 111",
+    "Firefox >= 113",
+    "Safari >= 16.2",
+    "iOS >= 16.2",
+    "not dead",
+    "not op_mini all"
+  ]
 }

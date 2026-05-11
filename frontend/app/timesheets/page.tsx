@@ -16,6 +16,7 @@ import {
   Timer,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {DateInput} from '@mantine/dates';
 import {
   Badge,
   Button,
@@ -786,12 +787,14 @@ export default function TimesheetsPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Date *
                   </label>
-                  <input
-                    type="date"
+                  <DateInput
                     required
-                    value={entryForm.entryDate}
-                    onChange={(e) => setEntryForm({...entryForm, entryDate: e.target.value})}
-                    className="input-aura"
+                    value={entryForm.entryDate ? new Date(entryForm.entryDate) : null}
+                    onChange={(d) => setEntryForm({...entryForm, entryDate: d ? d.toISOString().split('T')[0] : ''})}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
                   />
                 </div>
                 <div>

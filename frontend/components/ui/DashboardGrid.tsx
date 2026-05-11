@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react';
 import { Button } from './Button';
 import { Card, CardContent, CardHeader, CardTitle } from './Card';
+import { safeStorage } from '@/lib/utils/safeStorage';
 
 /**
  * Represents a single dashboard widget
@@ -69,8 +70,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
   // Initialize from localStorage on mount
   useEffect(() => {
-    const savedOrder = localStorage.getItem(storageKeyOrder);
-    const savedVisibility = localStorage.getItem(storageKeyVisibility);
+    const savedOrder = safeStorage.get(storageKeyOrder);
+    const savedVisibility = safeStorage.get(storageKeyVisibility);
 
     // Set widget order
     if (savedOrder) {
@@ -106,13 +107,13 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   // Save widget order to localStorage
   const saveOrder = (newOrder: string[]) => {
     setWidgetOrder(newOrder);
-    localStorage.setItem(storageKeyOrder, JSON.stringify(newOrder));
+    safeStorage.set(storageKeyOrder, JSON.stringify(newOrder));
   };
 
   // Save widget visibility to localStorage
   const saveVisibility = (newVisibility: WidgetVisibility) => {
     setWidgetVisibility(newVisibility);
-    localStorage.setItem(storageKeyVisibility, JSON.stringify(newVisibility));
+    safeStorage.set(storageKeyVisibility, JSON.stringify(newVisibility));
   };
 
   // Handle drag end

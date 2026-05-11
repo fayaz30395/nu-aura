@@ -2,7 +2,8 @@
 
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {CalendarDays, ChevronLeft, ChevronRight, Pencil, Plus, Trash2} from 'lucide-react';
@@ -538,10 +539,19 @@ export default function HolidaysPage() {
                       <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Date *
                       </label>
-                      <input
-                        type="date"
-                        {...form.register('holidayDate')}
-                        className="input-aura w-full"
+                      <Controller
+                        name="holidayDate"
+                        control={form.control}
+                        render={({field}) => (
+                          <DateInput
+                            value={field.value ? new Date(field.value) : null}
+                            onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                            valueFormat="YYYY-MM-DD"
+                            placeholder="YYYY-MM-DD"
+                            clearable
+                            size="sm"
+                          />
+                        )}
                       />
                       {form.formState.errors.holidayDate && (
                         <p className="mt-1 text-xs text-danger-500">{form.formState.errors.holidayDate.message}</p>

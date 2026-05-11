@@ -10,6 +10,7 @@ import {usePayments, usePaymentStats} from '@/lib/hooks/queries/usePayments';
 import {paymentService} from '@/lib/services/core/payment.service';
 import {PaymentProvider, PaymentStatus, PaymentType,} from '@/lib/types/core/payment';
 import {EmptyState} from '@/components/ui';
+import {DateInput} from '@mantine/dates';
 import {endOfMonth, format, startOfMonth} from 'date-fns';
 
 // Phase 2 stabilization: payments module gated behind feature flag
@@ -304,11 +305,13 @@ function PaymentsPageContent() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date From
                 </label>
-                <input
-                  type="date"
-                  value={filters.dateFrom}
-                  onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                <DateInput
+                  value={filters.dateFrom ? new Date(filters.dateFrom) : null}
+                  onChange={(d) => setFilters({...filters, dateFrom: d ? d.toISOString().split('T')[0] : ''})}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  size="sm"
                 />
               </div>
 
@@ -316,11 +319,13 @@ function PaymentsPageContent() {
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date To
                 </label>
-                <input
-                  type="date"
-                  value={filters.dateTo}
-                  onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
+                <DateInput
+                  value={filters.dateTo ? new Date(filters.dateTo) : null}
+                  onChange={(d) => setFilters({...filters, dateTo: d ? d.toISOString().split('T')[0] : ''})}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  size="sm"
                 />
               </div>
 

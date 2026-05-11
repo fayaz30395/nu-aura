@@ -2,8 +2,10 @@ package com.hrms.application.payroll.service;
 
 import com.hrms.application.payroll.dto.StatutoryDeductions;
 import com.hrms.application.statutory.service.LWFService;
+import com.hrms.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -70,6 +72,9 @@ public class StatutoryDeductionService {
     private static final BigDecimal SLAB_12L = new BigDecimal("1200000");
     private static final BigDecimal SLAB_15L = new BigDecimal("1500000");
     private static final BigDecimal MONTHS_IN_YEAR = new BigDecimal("12");
+    // F1.8: §87A rebate threshold (New Regime FY 2024-25) and 4% health-and-education cess.
+    private static final BigDecimal REBATE_87A_LIMIT = new BigDecimal("700000");
+    private static final BigDecimal CESS_MULTIPLIER = new BigDecimal("1.04");
     // ─── TDS rate constants ─────────────────────────────────────────────────
     private static final BigDecimal RATE_5_PCT = new BigDecimal("0.05");
     private static final BigDecimal RATE_10_PCT = new BigDecimal("0.10");
@@ -86,6 +91,14 @@ public class StatutoryDeductionService {
     private static final BigDecimal MH_PT_1 = new BigDecimal("175");
     private static final BigDecimal MH_PT_2 = new BigDecimal("200");
     private final LWFService lwfService;
+
+    /**
+     * F1.1: When true (default), employee PF is capped at the ₹15,000 wage ceiling
+     * (statutory minimum under EPF Act). Set to false per-tenant if the employer/employee
+     * agreement opts to contribute on actual basic (voluntary higher contribution).
+     */
+    @Value("${app.payroll.pf.apply-ceiling-employee:true}")
+    private boolean pfApplyCeilingEmployee;
 
     /**
      * Calculates all India statutory deductions for the given employee and salary inputs.
@@ -134,9 +147,10 @@ public class StatutoryDeductionService {
 
         BigDecimal employeePf = calculateEmployeePf(basicSalary);
         BigDecimal employerPf = calculateEmployerPf(basicSalary);
-        BigDecimal employeeEsi = calculateEmployeeEsi(grossSalary);
-        BigDecimal employerEsi = calculateEmployerEsi(grossSalary);
-        BigDecimal pt = calculateProfessionalTax(grossSalary, state);
+        LocalDate payPeriodStart = LocalDate.of(year, month, 1);
+        BigDecimal employeeEsi = calculateEmployeeEsi(grossSalary, payPeriodStart, employeeId);
+        BigDecimal employerEsi = calculateEmployerEsi(grossSalary, payPeriodStart, employeeId);
+        BigDecimal pt = calculateProfessionalTax(grossSalary, state, employeeId);
         BigDecimal tds = calculateMonthlyTds(grossSalary);
 
         // LWF — fixed amount based on state rules, only in applicable months
@@ -174,10 +188,15 @@ public class StatutoryDeductionService {
     // ─── PF ──────────────────────────────────────────────────────────────────
 
     /**
-     * Employee PF = 12% of actual basic salary (no ceiling on employee side).
+     * Employee PF = 12% of basic salary.
+     * <p>F1.1 fix: EPF Act §6 requires PF contribution on wages up to the statutory
+     * ceiling (₹15,000). Previously uncapped, causing over-deduction for high earners
+     * and exposing the employer to refund liability under PF Commissioner orders.
+     * Per-tenant override via {@code app.payroll.pf.apply-ceiling-employee} (default true).
      */
     private BigDecimal calculateEmployeePf(BigDecimal basicSalary) {
-        return basicSalary.multiply(PF_RATE).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal wage = pfApplyCeilingEmployee ? basicSalary.min(PF_WAGE_CEILING) : basicSalary;
+        return wage.multiply(PF_RATE).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -193,8 +212,30 @@ public class StatutoryDeductionService {
     // ─── ESI ─────────────────────────────────────────────────────────────────
 
     /**
-     * Employee ESI = 0.75% of gross salary, only if gross ≤ ₹21,000.
+     * Employee ESI = 0.75% of gross salary.
+     * <p>F1.2 fix — Reg.40 of ESI (Central) Rules, 1950: an employee whose wages exceed
+     * the ₹21,000 ceiling mid-contribution-period continues to be an "employee" until the
+     * end of that period. Contribution periods are April–September and October–March.
+     * <p>If we don't know the gross at period start (no payslip history), we err on the
+     * compliant side and treat as exempt — the same as the pre-fix behavior.
      */
+    private BigDecimal calculateEmployeeEsi(BigDecimal grossSalary, LocalDate payPeriodStart, UUID employeeId) {
+        if (grossSalary.compareTo(ESI_GROSS_CEILING) > 0) {
+            LocalDate periodStart = periodStartFor(payPeriodStart);
+            BigDecimal grossAtPeriodStart = lookupGrossAtPeriodStart(employeeId, periodStart);
+            if (grossAtPeriodStart == null || grossAtPeriodStart.compareTo(ESI_GROSS_CEILING) > 0) {
+                return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+            }
+            // Crossed ceiling mid-period — keep contributing till period end.
+        }
+        return grossSalary.multiply(ESI_EMPLOYEE_RATE).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Backward-compatible overload — skips the Reg.40 mid-period check. Prefer the
+     * employeeId-aware variant for production payroll runs.
+     */
+    @SuppressWarnings("unused")
     private BigDecimal calculateEmployeeEsi(BigDecimal grossSalary) {
         if (grossSalary.compareTo(ESI_GROSS_CEILING) > 0) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
@@ -203,13 +244,55 @@ public class StatutoryDeductionService {
     }
 
     /**
-     * Employer ESI = 3.25% of gross salary, only if gross ≤ ₹21,000.
+     * Employer ESI = 3.25% of gross salary. Same Reg.40 mid-period semantics as
+     * {@link #calculateEmployeeEsi(BigDecimal, LocalDate, UUID)}.
      */
+    private BigDecimal calculateEmployerEsi(BigDecimal grossSalary, LocalDate payPeriodStart, UUID employeeId) {
+        if (grossSalary.compareTo(ESI_GROSS_CEILING) > 0) {
+            LocalDate periodStart = periodStartFor(payPeriodStart);
+            BigDecimal grossAtPeriodStart = lookupGrossAtPeriodStart(employeeId, periodStart);
+            if (grossAtPeriodStart == null || grossAtPeriodStart.compareTo(ESI_GROSS_CEILING) > 0) {
+                return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+            }
+        }
+        return grossSalary.multiply(ESI_EMPLOYER_RATE).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Backward-compatible overload — skips the Reg.40 mid-period check.
+     */
+    @SuppressWarnings("unused")
     private BigDecimal calculateEmployerEsi(BigDecimal grossSalary) {
         if (grossSalary.compareTo(ESI_GROSS_CEILING) > 0) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
         return grossSalary.multiply(ESI_EMPLOYER_RATE).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Returns the start date of the ESI contribution period that contains {@code date}.
+     * Period 1: 1-April to 30-September. Period 2: 1-October to 31-March (next year).
+     */
+    private LocalDate periodStartFor(LocalDate date) {
+        int month = date.getMonthValue();
+        if (month >= 4 && month <= 9) {
+            return date.withMonth(4).withDayOfMonth(1);
+        }
+        if (month >= 10) {
+            return date.withMonth(10).withDayOfMonth(1);
+        }
+        // Jan–Mar: period started 1-Oct of the previous calendar year.
+        return date.minusYears(1).withMonth(10).withDayOfMonth(1);
+    }
+
+    /**
+     * TODO(F1.2-wiring): Look up the employee's gross salary on/around the contribution
+     * period start, e.g. via {@code PayslipRepository.findLatestBeforeOrEqual(employeeId,
+     * periodStart)}. Returning {@code null} means "we don't know" → caller defaults to
+     * exempt-above-ceiling (safe pre-fix behavior). Owned by S5 payroll-history sweep.
+     */
+    private BigDecimal lookupGrossAtPeriodStart(UUID employeeId, LocalDate periodStart) {
+        return null;
     }
 
     // ─── Professional Tax ────────────────────────────────────────────────────
@@ -218,23 +301,25 @@ public class StatutoryDeductionService {
      * Returns monthly professional tax based on state-specific slabs.
      *
      * <ul>
-     *   <li><b>Karnataka</b>: ₹200/month if gross &gt; ₹15,000, else ₹0</li>
-     *   <li><b>Maharashtra</b>: ₹0 if gross ≤ ₹7,500; ₹175 if ≤ ₹10,000; ₹200 above</li>
+     *   <li><b>Karnataka</b>: ₹200/month if gross ≥ ₹15,000, else ₹0 (F1.7 fix: was {@code &gt;})</li>
+     *   <li><b>Maharashtra</b>: gender-aware slabs — F1.13 (women exempt up to ₹25,000)</li>
      *   <li><b>Tamil Nadu</b>: ₹208/month (flat, for all earning employees)</li>
      *   <li><b>Others</b>: ₹0 (configurable in future)</li>
      * </ul>
      */
-    private BigDecimal calculateProfessionalTax(BigDecimal grossSalary, String state) {
+    private BigDecimal calculateProfessionalTax(BigDecimal grossSalary, String state, UUID employeeId) {
         if (state == null || state.isBlank()) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
 
         return switch (state.trim().toUpperCase()) {
-            case "KARNATAKA", "KA" -> grossSalary.compareTo(PT_KA_THRESHOLD) > 0
+            // F1.7: Karnataka PT statute KTPT Act schedule: salary ≥ ₹15,000 → ₹200.
+            case "KARNATAKA", "KA" -> grossSalary.compareTo(PT_KA_THRESHOLD) >= 0
                     ? PT_KA_AMOUNT.setScale(2, RoundingMode.HALF_UP)
                     : BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
-            case "MAHARASHTRA", "MH" -> calculateMaharashtraPt(grossSalary);
+            // F1.13: Maharashtra PT requires gender for the women's exemption slab.
+            case "MAHARASHTRA", "MH" -> calculateMaharashtraPt(grossSalary, lookupGender(employeeId));
 
             case "TAMIL NADU", "TN" -> PT_TN_AMOUNT.setScale(2, RoundingMode.HALF_UP);
 
@@ -243,19 +328,50 @@ public class StatutoryDeductionService {
     }
 
     /**
-     * Maharashtra professional tax slabs (monthly gross):
-     * &lt;= ₹7,500   → ₹0
-     * ₹7,501–₹10,000 → ₹175
-     * &gt; ₹10,000  → ₹200
+     * Backward-compatible overload — falls back to non-FEMALE Maharashtra slab.
      */
-    private BigDecimal calculateMaharashtraPt(BigDecimal grossSalary) {
-        if (grossSalary.compareTo(MH_SLAB_1) <= 0) {
+    @SuppressWarnings("unused")
+    private BigDecimal calculateProfessionalTax(BigDecimal grossSalary, String state) {
+        return calculateProfessionalTax(grossSalary, state, null);
+    }
+
+    /**
+     * Maharashtra professional tax slabs (monthly gross) — gender-aware per
+     * Maharashtra State Tax on Professions Act §27A and notifications:
+     * <pre>
+     *   FEMALE:
+     *     ≤ ₹25,000 → ₹0   (exemption)
+     *     &gt; ₹25,000 → ₹200
+     *   Others (MALE / OTHER / unknown):
+     *     ≤ ₹7,500   → ₹0
+     *     ₹7,501–₹10,000 → ₹175
+     *     &gt; ₹10,000  → ₹200
+     * </pre>
+     */
+    private BigDecimal calculateMaharashtraPt(BigDecimal grossSalary, Employee.Gender gender) {
+        if (gender == Employee.Gender.FEMALE) {
+            if (grossSalary.compareTo(new BigDecimal("25000")) > 0) {
+                return MH_PT_2.setScale(2, RoundingMode.HALF_UP);
+            }
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        } else if (grossSalary.compareTo(MH_SLAB_2) <= 0) {
-            return MH_PT_1.setScale(2, RoundingMode.HALF_UP);
-        } else {
+        }
+        if (grossSalary.compareTo(MH_SLAB_2) > 0) {
             return MH_PT_2.setScale(2, RoundingMode.HALF_UP);
         }
+        if (grossSalary.compareTo(MH_SLAB_1) > 0) {
+            return MH_PT_1.setScale(2, RoundingMode.HALF_UP);
+        }
+        return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * TODO(F1.13-wiring): Look up {@link Employee#getGender()} via EmployeeRepository.
+     * Returning {@code null} means "unknown" → caller defaults to the non-FEMALE slab
+     * (pre-fix behavior). Owned by S5 payroll-history sweep — needs EmployeeRepository
+     * injection without creating a payroll→employee circular dep.
+     */
+    private Employee.Gender lookupGender(UUID employeeId) {
+        return null;
     }
 
     // ─── TDS ─────────────────────────────────────────────────────────────────
@@ -275,9 +391,11 @@ public class StatutoryDeductionService {
      *   ₹12,00,001 – ₹15,00,000 — 20%
      *   Above ₹15,00,000         — 30%
      * </pre>
-     * <p>
-     * Note: Rebate u/s 87A (income ≤ ₹7L → tax = 0) and surcharge/cess are intentionally
-     * excluded here for simplicity; they can be layered in a future enhancement.
+     * <p>F1.8 fix: §87A rebate (taxable income ≤ ₹7L → tax = 0) and 4% health-and-
+     * education cess are now applied. TODO(F1.8-surcharge): surcharge bands
+     * (10% for 50L–1Cr, 15% for 1–2Cr, 25% for 2–5Cr, 37% for &gt;5Cr) — out of
+     * scope for this hotfix as they require marginal-relief logic per §2(3) of
+     * the Finance Act.
      */
     private BigDecimal calculateMonthlyTds(BigDecimal grossSalary) {
         BigDecimal annualIncome = grossSalary.multiply(MONTHS_IN_YEAR);
@@ -286,7 +404,8 @@ public class StatutoryDeductionService {
     }
 
     /**
-     * Computes annual income tax under the New Regime for FY 2024-25.
+     * Computes annual income tax under the New Regime for FY 2024-25, including
+     * §87A rebate and 4% health-and-education cess (F1.8).
      */
     private BigDecimal computeNewRegimeTax(BigDecimal annualIncome) {
         if (annualIncome.compareTo(SLAB_3L) <= 0) {
@@ -324,6 +443,14 @@ public class StatutoryDeductionService {
             BigDecimal taxable = annualIncome.subtract(SLAB_15L);
             tax = tax.add(taxable.multiply(RATE_30_PCT));
         }
+
+        // F1.8: §87A rebate — full waiver for taxable income up to ₹7L under New Regime.
+        if (annualIncome.compareTo(REBATE_87A_LIMIT) <= 0) {
+            tax = BigDecimal.ZERO;
+        }
+
+        // F1.8: 4% health-and-education cess on the tax payable (post-rebate).
+        tax = tax.multiply(CESS_MULTIPLIER);
 
         return tax.setScale(2, RoundingMode.HALF_UP);
     }

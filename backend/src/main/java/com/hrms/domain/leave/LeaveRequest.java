@@ -2,6 +2,7 @@ package com.hrms.domain.leave;
 
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import org.hibernate.annotations.Where;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -127,6 +128,23 @@ public class LeaveRequest extends TenantAware {
 
     public boolean isActive() {
         return this.status == LeaveRequestStatus.APPROVED || this.status == LeaveRequestStatus.PENDING;
+    }
+
+    /**
+     * F2.5: Bean-validation invariant — a half-day request MUST specify which half
+     * (MORNING/AFTERNOON). Without this, payroll/attendance integrations have no way
+     * to know which half of the day the employee is off. Conversely, a full-day
+     * request must not carry a half-day period (defensive, prevents stale data).
+     *
+     * <p>Annotated with {@link AssertTrue} so Spring's {@code @Valid} on request DTOs
+     * and Hibernate's pre-persist validation both enforce it.</p>
+     */
+    @AssertTrue(message = "halfDayPeriod required when isHalfDay=true and must be null otherwise")
+    public boolean isHalfDayPeriodValid() {
+        if (Boolean.TRUE.equals(isHalfDay)) {
+            return halfDayPeriod != null;
+        }
+        return halfDayPeriod == null;
     }
 
     public enum LeaveRequestStatus {

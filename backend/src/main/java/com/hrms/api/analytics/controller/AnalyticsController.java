@@ -10,6 +10,11 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/analytics")
 @RequiredArgsConstructor
+@Tag(name = "Analytics", description = "Dashboard and analytics APIs for HRMS metrics")
 public class AnalyticsController {
 
     private final DashboardAnalyticsService dashboardAnalyticsService;
@@ -32,6 +38,12 @@ public class AnalyticsController {
      */
     @GetMapping("/summary")
     @RequiresPermission(Permission.ANALYTICS_VIEW)
+    @Operation(summary = "Get analytics summary", description = "Returns the dashboard KPI summary: total employees, present today, on leave, pending approvals, payroll status, open positions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Summary retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<com.hrms.application.analytics.dto.AnalyticsSummary> getAnalyticsSummary() {
         com.hrms.application.analytics.dto.AnalyticsSummary summary = analyticsService.getAnalyticsSummary();
         return ResponseEntity.ok(summary);
@@ -45,6 +57,12 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/dashboard")
+    @Operation(summary = "Get role-based dashboard analytics", description = "Returns analytics scoped to the caller's role: Admin/HR see org-wide, Manager sees team, Employee sees personal")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dashboard analytics retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<DashboardAnalyticsResponse> getDashboardAnalytics() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -67,6 +85,12 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/metrics")
+    @Operation(summary = "Get dashboard metrics", description = "Returns comprehensive cached dashboard metrics across the tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Metrics retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<DashboardMetrics> getDashboardMetrics() {
         DashboardMetrics metrics = analyticsService.getDashboardMetrics();
         return ResponseEntity.ok(metrics);
@@ -77,6 +101,12 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/employees")
+    @Operation(summary = "Get employee metrics", description = "Returns employee-related metrics for the current tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee metrics retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<EmployeeMetrics> getEmployeeMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeMetrics metrics = analyticsService.getEmployeeMetrics(tenantId);
@@ -88,8 +118,14 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/headcount-trend")
+    @Operation(summary = "Get headcount trend", description = "Returns the headcount trend over the specified number of months")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trend retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<List<HeadcountTrend>> getHeadcountTrend(
-            @RequestParam(defaultValue = "12") int months) {
+            @Parameter(description = "Number of months to include (defaults to 12)") @RequestParam(defaultValue = "12") int months) {
         List<HeadcountTrend> trend = analyticsService.getHeadcountTrend(months);
         return ResponseEntity.ok(trend);
     }
@@ -99,6 +135,12 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/leave")
+    @Operation(summary = "Get leave metrics", description = "Returns leave metrics for the current calendar month")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Leave metrics retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<LeaveMetrics> getLeaveMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
         java.time.LocalDate today = java.time.LocalDate.now();
@@ -112,6 +154,12 @@ public class AnalyticsController {
      */
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @GetMapping("/payroll")
+    @Operation(summary = "Get payroll metrics", description = "Returns payroll metrics for the current calendar month")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payroll metrics retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ANALYTICS:VIEW permission")
+    })
     public ResponseEntity<PayrollMetrics> getPayrollMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
         java.time.LocalDate today = java.time.LocalDate.now();

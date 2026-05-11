@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -143,11 +144,43 @@ public class FnFCalculationService {
                 ? exitProcess.getLastWorkingDate() : LocalDate.now();
 
         if (joiningDate != null) {
-            long days = ChronoUnit.DAYS.between(joiningDate, lastWorkingDate);
-            BigDecimal years = BigDecimal.valueOf(days).divide(BigDecimal.valueOf(365), 2, RoundingMode.HALF_UP);
-            settlement.setYearsOfService(years);
-            settlement.setLastDrawnSalary(baseSalary);
-            settlement.calculateGratuity();
+            // F1.3: Use Period for leap-year-correct YMD breakdown instead of days/365,
+            // which drifts ~1 day per 4 years and can wrongly disqualify employees on the
+            // 5-year boundary.
+            Period period = Period.between(joiningDate, lastWorkingDate);
+            int years = period.getYears();
+            int months = period.getMonths();
+            long daysInLastYear = ChronoUnit.DAYS.between(joiningDate.plusYears(years), lastWorkingDate);
+
+            // 240-day rule per Madras HC + SC (Mettur Beardsell / Indian Hume Pipe Co.):
+            // a 4-year + 240-day tenure qualifies as 5 years of continuous service for
+            // gratuity under §2A of the Payment of Gratuity Act, 1972.
+            boolean eligibleViaTenure = years >= 5;
+            boolean eligibleVia240Rule = years == 4 && daysInLastYear >= 240;
+
+            if (!eligibleViaTenure && !eligibleVia240Rule) {
+                settlement.setIsGratuityEligible(false);
+                settlement.setLastDrawnSalary(baseSalary);
+                settlement.setYearsOfService(
+                        BigDecimal.valueOf(years).add(
+                                BigDecimal.valueOf(months).divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP)));
+                settlement.setGratuityAmount(BigDecimal.ZERO);
+            } else {
+                // For statutory calculation, round up tenure ≥ 6 months in the final year
+                // to a full year (§4(2) Payment of Gratuity Act). Years-only completed
+                // service counts otherwise.
+                int gratuityYears = years + (months >= 6 ? 1 : 0);
+                BigDecimal yearsOfService = BigDecimal.valueOf(gratuityYears).setScale(2, RoundingMode.HALF_UP);
+
+                // 240-day rule: when invoked, treat as 5 completed years for the formula.
+                if (!eligibleViaTenure && eligibleVia240Rule) {
+                    yearsOfService = new BigDecimal("5").setScale(2, RoundingMode.HALF_UP);
+                }
+
+                settlement.setYearsOfService(yearsOfService);
+                settlement.setLastDrawnSalary(baseSalary);
+                settlement.calculateGratuity();
+            }
         }
 
         // Pending salary: pro-rated for current month

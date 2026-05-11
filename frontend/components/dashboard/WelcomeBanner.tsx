@@ -1,7 +1,16 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Bell, CheckCircle2, AlertCircle, Clock, ChevronRight } from 'lucide-react';
+
+// wave-3 N: Safari <=16.1 lacks color-mix() support. We default to the
+// modern value on first paint (matches SSR), then swap to the rgba()
+// fallback after mount on browsers that don't support it.
+function supportsColorMix(): boolean {
+  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
+  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
+}
 
 interface WelcomeBannerProps {
   employeeName: string;
@@ -32,12 +41,24 @@ export function WelcomeBanner({
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
   const greeting = getGreeting();
 
+  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
+  // --nu-lapis-blue resolves to #050766 ≈ rgb(5, 7, 102). 25% mix with
+  // transparent approximates rgba(5, 7, 102, 0.25) — close enough for a
+  // decorative drop shadow on the welcome banner.
+  const [useFallback, setUseFallback] = useState(false);
+  useEffect(() => {
+    if (!supportsColorMix()) setUseFallback(true);
+  }, []);
+  const shadowMix = useFallback
+    ? 'rgba(5, 7, 102, 0.25)' // fallback for Safari <=16.1
+    : 'color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)';
+
   return (
     <div
       className="relative w-full overflow-hidden rounded-lg px-4 py-4 sm:px-7 sm:py-6 flex flex-col justify-center"
       style={{
         background: 'var(--nu-gradient-dark)',
-        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent), 0 2px 8px rgba(0, 0, 0, 0.15)',
+        boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px ${shadowMix}, 0 2px 8px rgba(0, 0, 0, 0.15)`,
       }}
     >
       {/* Mesh gradient orbs for visual depth — hidden on mobile to prevent overflow */}

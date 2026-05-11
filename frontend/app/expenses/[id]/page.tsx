@@ -18,7 +18,8 @@ import {
   User,
   XCircle,
 } from 'lucide-react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {formatCurrency} from '@/lib/utils';
@@ -95,6 +96,7 @@ export default function ExpenseDetailPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset: resetForm,
     formState: {errors},
@@ -426,8 +428,20 @@ export default function ExpenseDetailPage() {
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date
                       *</label>
-                    <input type="date" {...register('expenseDate')}
-                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"/>
+                    <Controller
+                      name="expenseDate"
+                      control={control}
+                      render={({field}) => (
+                        <DateInput
+                          value={field.value ? new Date(field.value) : null}
+                          onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                          valueFormat="YYYY-MM-DD"
+                          placeholder="YYYY-MM-DD"
+                          clearable
+                          size="sm"
+                        />
+                      )}
+                    />
                     {errors.expenseDate && <p className="text-danger-500 text-sm mt-1">{errors.expenseDate.message}</p>}
                   </div>
                 </div>

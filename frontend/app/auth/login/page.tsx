@@ -11,6 +11,15 @@ import { z } from 'zod';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
 import { MfaVerification } from '@/components/auth/MfaVerification';
+import { safeStorage, safeSessionStorage } from '@/lib/utils/safeStorage';
+
+// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the modern
+// value on first paint (matches SSR), swap to rgba() fallback on mount if
+// the browser doesn't support it.
+function supportsColorMix(): boolean {
+  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
+  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
+}
 import {
   AlertCircle,
   Shield,
@@ -95,22 +104,35 @@ const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io
 
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
+  // wave-3 N: Safari <=16.1 lacks color-mix(). Swap to rgba() fallback
+  // post-mount on unsupported browsers. CSS variable references for
+  // brand colors resolve as follows:
+  //   --nu-lapis-blue  #050766 → rgb(5, 7, 102)
+  //   --nu-purple      #8939A1 → rgb(137, 57, 161)
+  //   --nu-red-orange  #E62A32 → rgb(230, 42, 50)
+  const [useFallback, setUseFallback] = useState(false);
+  useEffect(() => {
+    if (!supportsColorMix()) setUseFallback(true);
+  }, []);
+
+  const bg = (rgba: string, colorMix: string): string => (useFallback ? rgba : colorMix);
+
   return (
     <div className="fixed inset-0" style={{ zIndex: 0 }} suppressHydrationWarning>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
       {/* Light-mode: NULogic Lapis Blue + Purple gradient mesh */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'color-mix(in srgb, var(--nu-lapis-blue) 8%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'color-mix(in srgb, var(--nu-purple) 6%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: 'color-mix(in srgb, var(--nu-red-orange) 4%, transparent)' }} suppressHydrationWarning />
+        <div className="absolute top-[-15%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: bg('rgba(5, 7, 102, 0.08)', 'color-mix(in srgb, var(--nu-lapis-blue) 8%, transparent)') }} suppressHydrationWarning />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: bg('rgba(137, 57, 161, 0.06)', 'color-mix(in srgb, var(--nu-purple) 6%, transparent)') }} suppressHydrationWarning />
+        <div className="absolute top-[35%] right-[15%] w-[350px] h-[350px] rounded-full blur-[90px]" style={{ background: bg('rgba(230, 42, 50, 0.04)', 'color-mix(in srgb, var(--nu-red-orange) 4%, transparent)') }} suppressHydrationWarning />
       </div>
       {/* Dark-mode: deep NULogic navy mesh with subtle grid lines */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
         <div className="absolute inset-0" style={{ background: 'var(--bg-main)' }} suppressHydrationWarning />
-        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: 'color-mix(in srgb, var(--nu-purple) 8%, transparent)' }} suppressHydrationWarning />
-        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: 'color-mix(in srgb, var(--nu-red-orange) 5%, transparent)' }} suppressHydrationWarning />
+        <div className="absolute top-[-12%] left-[-8%] w-[700px] h-[700px] rounded-full blur-[140px]" style={{ background: bg('rgba(5, 7, 102, 0.14)', 'color-mix(in srgb, var(--nu-lapis-blue) 14%, transparent)') }} suppressHydrationWarning />
+        <div className="absolute bottom-[-12%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[120px]" style={{ background: bg('rgba(137, 57, 161, 0.08)', 'color-mix(in srgb, var(--nu-purple) 8%, transparent)') }} suppressHydrationWarning />
+        <div className="absolute top-[50%] left-[40%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: bg('rgba(230, 42, 50, 0.05)', 'color-mix(in srgb, var(--nu-red-orange) 5%, transparent)') }} suppressHydrationWarning />
         {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -284,16 +306,16 @@ function LoginPage() {
   // Restore rate-limit state from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedAttempts = localStorage.getItem('loginAttempts');
-      const storedLockout = localStorage.getItem('lockoutUntil');
+      const storedAttempts = safeStorage.get('loginAttempts');
+      const storedLockout = safeStorage.get('lockoutUntil');
       if (storedAttempts) setLoginAttempts(parseInt(storedAttempts, 10));
       if (storedLockout) {
         const lockoutTime = parseInt(storedLockout, 10);
         if (lockoutTime > Date.now()) {
           setLockoutUntil(lockoutTime);
         } else {
-          localStorage.removeItem('loginAttempts');
-          localStorage.removeItem('lockoutUntil');
+          safeStorage.remove('loginAttempts');
+          safeStorage.remove('lockoutUntil');
         }
       }
     }
@@ -306,9 +328,9 @@ function LoginPage() {
     if (!hasHydrated) return;
     if (isAuthenticated && user && !didFreshLogin) {
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('auth-storage');
-        sessionStorage.removeItem('user');
-        localStorage.removeItem('tenantId');
+        safeSessionStorage.remove('auth-storage');
+        safeSessionStorage.remove('user');
+        safeStorage.remove('tenantId');
       }
       setUser(null);
     }
@@ -331,8 +353,8 @@ function LoginPage() {
         if (remaining === 0) {
           setLockoutUntil(null);
           setLoginAttempts(0);
-          localStorage.removeItem('loginAttempts');
-          localStorage.removeItem('lockoutUntil');
+          safeStorage.remove('loginAttempts');
+          safeStorage.remove('lockoutUntil');
         }
       }, 1000);
       return () => clearInterval(interval);
@@ -342,8 +364,8 @@ function LoginPage() {
   const resetLoginAttempts = () => {
     setLoginAttempts(0);
     setLockoutUntil(null);
-    localStorage.removeItem('loginAttempts');
-    localStorage.removeItem('lockoutUntil');
+    safeStorage.remove('loginAttempts');
+    safeStorage.remove('lockoutUntil');
   };
 
   const handleMfaSuccess = (_token: string) => {
@@ -770,7 +792,7 @@ function LoginPage() {
               <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
                 <div className="flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
-                  <span>SOC 2</span>
+                  <span>Enterprise Security</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
@@ -782,7 +804,7 @@ function LoginPage() {
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 text-accent-700 dark:text-accent-400" />
-                  <span>GDPR</span>
+                  <span>Enterprise Security</span>
                 </div>
               </div>
             </div>

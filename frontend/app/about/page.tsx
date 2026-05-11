@@ -50,8 +50,8 @@ export default function AboutPage() {
     },
     {
       year: '2024',
-      title: 'SOC 2 Certified',
-      description: 'Achieved SOC 2 Type II certification for enterprise security',
+      title: 'Security-first engineering',
+      description: 'SOC 2 Type II audit in progress',
     },
   ];
 

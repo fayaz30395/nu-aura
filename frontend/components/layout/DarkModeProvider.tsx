@@ -1,6 +1,7 @@
 'use client';
 
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {safeStorage} from '@/lib/utils/safeStorage';
 
 // ── Types ────────────────────────────────────────────────────────────
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -49,7 +50,7 @@ function applyToDOM(resolved: ResolvedTheme): void {
 
 function getSavedTheme(): ThemeMode {
   if (typeof window === 'undefined') return 'light';
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = safeStorage.get(STORAGE_KEY);
   if (saved === 'dark' || saved === 'light' || saved === 'system') return saved;
   return 'system'; // default to system if nothing saved
 }
@@ -98,9 +99,7 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({child
     setResolvedTheme(resolved);
     applyToDOM(resolved);
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, mode);
-    }
+    safeStorage.set(STORAGE_KEY, mode);
   }, []);
 
   // Legacy: binary toggle (light ↔ dark). If currently 'system', resolve then toggle.

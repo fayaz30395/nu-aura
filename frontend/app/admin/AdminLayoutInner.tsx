@@ -21,6 +21,7 @@ import {
   Users,
 } from 'lucide-react';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
+import {safeStorage} from '@/lib/utils/safeStorage';
 
 // This component is dynamically imported with { ssr: false } from layout.tsx.
 // It is NEVER server-rendered, so there is no hydration to worry about.
@@ -288,9 +289,9 @@ export default function AdminLayoutInner({
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Sync collapsed state from localStorage after hydration to avoid SSR mismatch
+  // Sync collapsed state from storage after hydration to avoid SSR mismatch
   useEffect(() => {
-    const saved = localStorage.getItem('admin-sidebar-collapsed');
+    const saved = safeStorage.get('admin-sidebar-collapsed');
     if (saved === 'true') {
       setIsCollapsed(true);
     }
@@ -298,9 +299,7 @@ export default function AdminLayoutInner({
 
   const handleCollapsedChange = (collapsed: boolean) => {
     setIsCollapsed(collapsed);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('admin-sidebar-collapsed', String(collapsed));
-    }
+    safeStorage.set('admin-sidebar-collapsed', String(collapsed));
   };
 
   return (

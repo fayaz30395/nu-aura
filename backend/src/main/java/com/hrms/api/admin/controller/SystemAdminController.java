@@ -3,9 +3,11 @@ package com.hrms.api.admin.controller;
 import com.hrms.api.admin.dto.*;
 import com.hrms.application.admin.service.SystemAdminService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -141,5 +143,26 @@ public class SystemAdminController {
         log.info("SuperAdmin generating impersonation token for tenant: {}", tenantId);
         ImpersonationTokenDTO token = systemAdminService.generateImpersonationToken(tenantId);
         return ResponseEntity.ok(token);
+    }
+
+    /**
+     * SuperAdmin-initiated password reset for a target user.
+     *
+     * <p>Generates a cryptographically-random 12-char temp password (URL-safe Base64),
+     * persists the encoded hash, revokes all outstanding JWTs for the user, writes an
+     * audit-log entry, and dispatches the temp password to the user via email. The temp
+     * password is intentionally <em>not</em> included in the response — it is delivered
+     * out-of-band to the user only.</p>
+     *
+     * <p>Closes wave-3 multi-tenant audit finding: "no admin password reset path".</p>
+     */
+    @PostMapping("/users/reset-password")
+    @RequiresPermission(value = SYSTEM_ADMIN, revalidate = true)
+    @Operation(summary = "Admin-initiated user password reset",
+               description = "Generates a random temp password, sets force-change flag on next login, emails user")
+    public AdminPasswordResetResponse adminResetPassword(@Valid @RequestBody AdminPasswordResetRequest request) {
+        log.info("SuperAdmin initiating password reset for user {} (reason length={})",
+                request.getUserId(), request.getReason() == null ? 0 : request.getReason().length());
+        return systemAdminService.adminResetPassword(request, SecurityContext.getCurrentUserId());
     }
 }

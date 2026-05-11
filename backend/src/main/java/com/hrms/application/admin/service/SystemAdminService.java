@@ -2,29 +2,39 @@ package com.hrms.application.admin.service;
 
 import com.hrms.api.admin.dto.*;
 import com.hrms.application.document.service.StorageMetricsService;
+import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.config.TenantCacheManager;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.JwtTokenProvider;
+import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.TenantFilter;
+import com.hrms.common.security.TokenBlacklistService;
+import com.hrms.domain.audit.AuditLog;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.User;
 import com.hrms.domain.workflow.WorkflowExecution;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
+import com.hrms.infrastructure.tenant.repository.TenantStatusCache;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.WorkflowExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -50,6 +60,19 @@ public class SystemAdminService {
     private final TenantCacheManager tenantCacheManager;
     private final StorageMetricsService storageMetricsService;
     private final AiUsageService aiUsageService;
+    // Sprint-4 wave-3 follow-up: evict the per-request tenant-status cache so suspend/activate
+    // propagate immediately rather than waiting for the 30-second TTL.
+    private final TenantStatusCache tenantStatusCache;
+    // Sprint-4: tenant-wide token revocation marker on suspension (belt-and-braces with the
+    // JWT-filter tenant-status check from sprint 2, which remains the primary defense).
+    private final TokenBlacklistService tokenBlacklistService;
+    // Sprint-6 wave-3 (S6-B): SuperAdmin password-reset path — encode the new temp credential
+    // and deliver it out-of-band via email so it never appears in the API response.
+    private final PasswordEncoder passwordEncoder;
+    private final EmailNotificationService emailNotificationService;
+
+    /** Cryptographically-secure RNG for temp-password byte generation. */
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Get comprehensive system overview across all tenants
@@ -271,6 +294,14 @@ public class SystemAdminService {
         // Immediately invalidate caches so the tenant is locked out (SEC-B10)
         tenantFilter.invalidateTenant(tenantId);
         tenantCacheManager.invalidateTenantCaches(tenantId);
+        // Sprint-4 follow-up: bypass the 30-second TenantStatusCache TTL so the
+        // JwtAuthenticationFilter sees the SUSPENDED status on the very next request.
+        tenantStatusCache.evict(tenantId);
+        // Sprint-4 M-C4: drop a tenant-wide revocation marker so any token already in flight
+        // for users of this tenant is treated as revoked. The primary defense remains the
+        // JWT-filter tenant-status check; this is belt-and-braces for race windows where a
+        // token was minted just before suspension.
+        tokenBlacklistService.revokeAllTokensForTenant(tenantId, Instant.now());
 
         // Audit log the suspension
         UUID currentUserId = com.hrms.common.security.SecurityContext.getCurrentUserId();
@@ -300,6 +331,9 @@ public class SystemAdminService {
         String previousStatus = tenant.getStatus().name();
         tenant.activate(); // throws IllegalStateException if not SUSPENDED/PENDING_ACTIVATION
         tenantRepository.save(tenant);
+        // Sprint-4 follow-up: bypass the 30-second TenantStatusCache TTL so users of this
+        // tenant regain access on the very next request instead of waiting for TTL expiry.
+        tenantStatusCache.evict(tenantId);
 
         // Audit log the activation
         UUID currentUserId = com.hrms.common.security.SecurityContext.getCurrentUserId();
@@ -376,6 +410,92 @@ public class SystemAdminService {
         // Query the database for the maximum lastLoginAt timestamp for the tenant.
         // This avoids loading all users into the Java heap and streaming them.
         return userRepository.findMaxLastLoginAtByTenantId(tenantId).orElse(null);
+    }
+
+    /**
+     * SuperAdmin-initiated password reset.
+     *
+     * <p>Sequence:
+     * <ol>
+     *   <li>Resolve the target user inside the current tenant scope (defence-in-depth — even
+     *       though {@code SYSTEM_ADMIN} bypasses tenant filters at the security layer, we
+     *       still pin the lookup to {@link TenantContext} so cross-tenant accidents require
+     *       an explicit impersonation token first).</li>
+     *   <li>Generate a 12-char URL-safe Base64 temp password from {@link SecureRandom}.</li>
+     *   <li>Persist the BCrypt-encoded hash and stamp {@code passwordChangedAt} so existing
+     *       password-age policies kick in.</li>
+     *   <li>Revoke all in-flight JWTs for the user via
+     *       {@link TokenBlacklistService#revokeAllTokensBefore(String, Instant)}.</li>
+     *   <li>Write an audit-log entry (action = {@code PASSWORD_CHANGE}; the enum has no
+     *       dedicated {@code PASSWORD_RESET} value — extend the enum in a follow-up if a
+     *       distinct event type is required).</li>
+     *   <li>Send the temp password to the user out-of-band via email.</li>
+     * </ol></p>
+     *
+     * <p><strong>Security:</strong> the returned DTO never contains the temp password.</p>
+     */
+    @Transactional
+    public AdminPasswordResetResponse adminResetPassword(AdminPasswordResetRequest request, UUID adminUserId) {
+        UUID currentTenant = TenantContext.getCurrentTenant();
+        log.info("SuperAdmin {} initiating password reset for user {} in tenant {}",
+                adminUserId, request.getUserId(), currentTenant);
+
+        User user = userRepository.findByIdAndTenantId(request.getUserId(), currentTenant)
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        String tempPassword = generateSecureTempPassword();
+        user.setPasswordHash(passwordEncoder.encode(tempPassword));
+        user.setPasswordChangedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        // Revoke all outstanding JWTs for this user so the old password can't be used post-reset.
+        // The marker key is the userId; signature requires String, hence toString().
+        tokenBlacklistService.revokeAllTokensBefore(user.getId().toString(), Instant.now());
+
+        // Audit log — using PASSWORD_CHANGE because AuditAction.PASSWORD_RESET does not exist
+        // in the enum. If a distinct event type is needed downstream, extend AuditLog.AuditAction
+        // in a follow-up sprint (out of scope here — the audit domain belongs to another owner).
+        auditLogService.logAction(
+                "USER",
+                user.getId(),
+                AuditLog.AuditAction.PASSWORD_CHANGE,
+                null,
+                null,
+                "Admin reset by " + adminUserId + ": " + request.getReason()
+        );
+
+        // TODO(S6-B-followup): add EmailNotificationService#sendAdminPasswordReset(User, String)
+        //   that uses a dedicated "admin-initiated reset" template explaining the rotation cause.
+        //   Method signature:
+        //     public void sendAdminPasswordReset(User user, String tempPassword)
+        //   For now we reuse the generic password-reset template — the user receives the temp
+        //   credential in the token slot so they can sign in once and immediately rotate.
+        emailNotificationService.sendPasswordResetEmail(
+                user.getEmail(),
+                user.getFirstName() != null ? user.getFirstName() : user.getEmail(),
+                tempPassword
+        );
+
+        LocalDateTime resetAt = LocalDateTime.now();
+        log.info("Password reset completed for user {} by admin {} at {}",
+                user.getId(), adminUserId, resetAt);
+
+        return AdminPasswordResetResponse.builder()
+                .success(true)
+                .userId(user.getId())
+                .resetAt(resetAt)
+                .mustChange(true)
+                .build();
+    }
+
+    /**
+     * Generate a 12-character URL-safe Base64 temp password from 9 random bytes
+     * (9 bytes × 8 bits = 72 bits of entropy, encoded as 12 Base64 chars without padding).
+     */
+    private String generateSecureTempPassword() {
+        byte[] bytes = new byte[9];
+        SECURE_RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     /**

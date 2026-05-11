@@ -1,0 +1,60 @@
+# Kyverno ClusterPolicy — every container must declare CPU + memory limits.
+# Prevents the noisy-neighbor failure mode where a runaway pod starves
+# every other workload on the node. wave-3 deployment audit (resource
+# governance). Mode = Enforce: a pod without limits is rejected at admission.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resource-limits
+  annotations:
+    policies.kyverno.io/title: Require CPU and Memory Limits
+    policies.kyverno.io/category: Resource Governance
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Every container, init container, and ephemeral container must declare
+      both cpu and memory under resources.limits. Pods without limits can
+      consume unbounded node resources and trigger OOMKilled cascades.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: validate-resource-limits
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - kyverno
+      validate:
+        message: >-
+          Every container must declare both resources.limits.cpu and
+          resources.limits.memory. Update your Helm values or manifest
+          to set these limits before redeploying.
+        pattern:
+          spec:
+            =(initContainers):
+              - name: "*"
+                resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"
+            containers:
+              - name: "*"
+                resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"
+            =(ephemeralContainers):
+              - name: "*"
+                resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"

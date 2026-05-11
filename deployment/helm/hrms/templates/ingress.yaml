@@ -1,0 +1,139 @@
+{{- if .Values.ingress.enabled }}
+# Ingress — Helm-templated version of deployment/kubernetes/ingress.yaml.
+# Includes GCE Ingress + BackendConfig + ManagedCertificate so a single
+# `helm install` provisions the full edge tier.
+#
+# WARNING: hosts default to *.example.com placeholders. Override via
+# `--set ingress.hosts.frontend=hrms.acme.com --set ingress.hosts.api=api.hrms.acme.com`
+# (and update DNS) before the ManagedCertificate will provision.
+# Tracking: NU-AURA P0 deploy checklist (wave-3 deployment audit #3).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hrms-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className | quote }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.staticIpName | quote }}
+    networking.gke.io/managed-certificates: {{ .Values.ingress.managedCertificateName | quote }}
+    ingress.gcp.kubernetes.io/pre-shared-cert: {{ .Values.ingress.preSharedCert | quote }}
+    cloud.google.com/backend-config: '{"default": "hrms-backend-config"}'
+    cloud.google.com/armor-config: '{"hrms-frontend": "{{ .Values.ingress.cloudArmorPolicy }}", "hrms-backend": "{{ .Values.ingress.cloudArmorPolicy }}"}'
+    cloud.google.com/connection-draining-timeout: "{{ .Values.ingress.connectionDrainingTimeoutSec }}"
+    cloud.google.com/session-affinity: {{ .Values.ingress.sessionAffinity | quote }}
+    ingress.kubernetes.io/health-check-path: "/api/health"
+spec:
+  tls:
+    - secretName: {{ .Values.ingress.tls.secretName }}
+      hosts:
+        - {{ .Values.ingress.hosts.frontend }}
+        - {{ .Values.ingress.hosts.api }}
+
+  rules:
+    # Frontend routing
+    - host: {{ .Values.ingress.hosts.frontend }}
+      http:
+        paths:
+          - path: /api/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+
+          - path: /actuator/health
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+          - path: /actuator/health/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+          # Block all other actuator endpoints from external access
+          - path: /actuator/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-actuator-deny
+                port:
+                  number: 9999
+
+          - path: /ws/*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-frontend
+                port:
+                  number: 3000
+
+    # API subdomain (optional - direct API access)
+    - host: {{ .Values.ingress.hosts.api }}
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: hrms-backend
+                port:
+                  number: 8080
+
+---
+# Backend configuration for GCP Load Balancer
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: hrms-backend-config
+  namespace: {{ .Values.namespace }}
+spec:
+  timeoutSec: 30
+  connectionDraining:
+    drainingTimeoutSec: {{ .Values.ingress.connectionDrainingTimeoutSec }}
+  sessionAffinity:
+    affinityType: {{ .Values.ingress.sessionAffinity | quote }}
+    affinityCookieTtlSec: {{ .Values.ingress.sessionAffinityCookieTtlSec }}
+  healthCheck:
+    checkIntervalSec: 10
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+    type: HTTP
+    requestPath: /actuator/health
+    port: 8080
+  cdn:
+    enabled: false
+  iap:
+    enabled: false
+  logging:
+    enable: true
+    sampleRate: 1.0
+
+---
+# Managed Certificate for automatic SSL provisioning
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Values.ingress.managedCertificateName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  domains:
+    - {{ .Values.ingress.hosts.frontend }}
+    - {{ .Values.ingress.hosts.api }}
+{{- end }}

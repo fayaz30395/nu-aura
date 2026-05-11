@@ -1,0 +1,43 @@
+apiVersion: v2
+name: hrms
+description: |
+  NU-AURA HRMS bundle (NU-HRMS + NU-Hire + NU-Grow + NU-Fluence) — Helm chart.
+  Skeleton chart that wraps the existing flat manifests under deployment/kubernetes/.
+  Tenants can `helm install hrms ./deployment/helm/hrms` and override values per
+  environment (image tags, replicas, resources, ingress hostnames).
+type: application
+
+# Chart version — bump on every chart change (Chart.yaml, templates/, values.yaml).
+# Independent from appVersion. Follows semver.
+version: 1.0.0
+
+# Application version — should match the backend/frontend image tag baseline.
+# Track this alongside the application release (not the chart).
+appVersion: "2.5.0"
+
+kubeVersion: ">=1.27.0-0"
+
+home: https://github.com/nulogic/nu-aura
+sources:
+  - https://github.com/nulogic/nu-aura
+
+keywords:
+  - hrms
+  - hr
+  - nulogic
+  - nu-aura
+  - nu-hire
+  - nu-grow
+  - nu-fluence
+
+maintainers:
+  - name: NU-AURA Platform Team
+    email: platform@nulogic.example.com
+
+annotations:
+  # Renderable change notes for `helm show chart`.
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial Helm chart skeleton (wave-3 deployment #14).
+    - kind: added
+      description: PDB templates, ingress, backend+frontend deployments.

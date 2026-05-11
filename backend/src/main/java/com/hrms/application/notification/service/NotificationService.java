@@ -6,6 +6,8 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.notification.Notification;
 import com.hrms.infrastructure.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +75,18 @@ public class NotificationService {
         return notificationRepository.findByTenantIdAndUserIdAndIsReadFalseOrderByCreatedAtDesc(tenantId, userId);
     }
 
+    /**
+     * Returns the unread notification count for a user, cached for 30s per
+     * (tenant, user) to absorb the bell-icon poll storm. Cache is bypassed
+     * when the result is 0 so a freshly-cleared inbox does not hide newly
+     * arrived notifications for up to 30s (wave-3 H5).
+     */
     @Transactional(readOnly = true)
+    @Cacheable(
+            value = "unreadCountByUser",
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':' + #userId",
+            unless = "#result == 0L"
+    )
     public Long getUnreadCount(UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return notificationRepository.countByTenantIdAndUserIdAndIsReadFalse(tenantId, userId);
@@ -86,13 +99,23 @@ public class NotificationService {
         return notificationRepository.findRecentNotifications(tenantId, userId, since);
     }
 
+    /**
+     * Marks a single notification as read. Evicts the entire unreadCountByUser
+     * cache for the current tenant because the API does not give us the userId
+     * the notification belongs to — coarse but correct (wave-3 H5).
+     */
     @Transactional
+    @CacheEvict(value = "unreadCountByUser", allEntries = true)
     public void markAsRead(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         notificationRepository.markAsRead(tenantId, notificationId, LocalDateTime.now());
     }
 
     @Transactional
+    @CacheEvict(
+            value = "unreadCountByUser",
+            key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':' + #userId"
+    )
     public void markAllAsRead(UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         notificationRepository.markAllAsReadForUser(tenantId, userId, LocalDateTime.now());

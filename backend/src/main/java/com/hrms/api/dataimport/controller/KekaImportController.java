@@ -3,6 +3,11 @@ package com.hrms.api.dataimport.controller;
 import com.hrms.api.dataimport.dto.*;
 import com.hrms.application.dataimport.service.KekaImportService;
 import com.hrms.common.security.RequiresPermission;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +30,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/keka-import")
 @RequiredArgsConstructor
+@Tag(name = "KEKA Import", description = "KEKA HRMS data import APIs — all endpoints require SYSTEM:ADMIN")
 public class KekaImportController {
 
     private final KekaImportService kekaImportService;
@@ -34,7 +40,16 @@ public class KekaImportController {
      */
     @PostMapping("/upload")
     @RequiresPermission("SYSTEM:ADMIN")
-    public ResponseEntity<KekaFileUploadResponse> uploadKekaFile(@RequestParam("file") MultipartFile file) {
+    @Operation(summary = "Upload KEKA CSV", description = "Upload a KEKA HRMS export file and auto-detect column mappings")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "File uploaded and columns detected successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid file format"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "500", description = "I/O error reading the file")
+    })
+    public ResponseEntity<KekaFileUploadResponse> uploadKekaFile(
+            @Parameter(description = "KEKA CSV file") @RequestParam("file") MultipartFile file) {
         try {
             log.info("Processing KEKA file upload: {}", file.getOriginalFilename());
 
@@ -52,6 +67,14 @@ public class KekaImportController {
      */
     @PostMapping("/preview")
     @RequiresPermission("SYSTEM:ADMIN")
+    @Operation(summary = "Preview KEKA import", description = "Validate and preview the KEKA import without persisting any records")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Preview generated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "404", description = "Uploaded file not found")
+    })
     public ResponseEntity<KekaImportPreview> previewKekaImport(@Valid @RequestBody KekaImportPreviewRequest request) {
         log.info("Previewing KEKA import for file: {}", request.getFileId());
 
@@ -65,6 +88,14 @@ public class KekaImportController {
      */
     @PostMapping("/execute")
     @RequiresPermission("SYSTEM:ADMIN")
+    @Operation(summary = "Execute KEKA import", description = "Persist the previewed import into the current tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Import executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "404", description = "Uploaded file not found")
+    })
     public ResponseEntity<KekaImportResult> executeKekaImport(@Valid @RequestBody KekaImportExecuteRequest request) {
         log.info("Executing KEKA import for file: {}", request.getFileId());
 
@@ -78,6 +109,12 @@ public class KekaImportController {
      */
     @GetMapping("/history")
     @RequiresPermission("SYSTEM:ADMIN")
+    @Operation(summary = "Get import history", description = "Returns a paginated history of KEKA imports for the current tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "History retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission")
+    })
     public ResponseEntity<Page<KekaImportHistoryEntry>> getImportHistory(Pageable pageable) {
         log.info("Fetching KEKA import history");
 
@@ -91,7 +128,15 @@ public class KekaImportController {
      */
     @GetMapping("/{importId}")
     @RequiresPermission("SYSTEM:ADMIN")
-    public ResponseEntity<KekaImportHistoryEntry> getImportDetails(@PathVariable String importId) {
+    @Operation(summary = "Get import details", description = "Returns the full record of a single KEKA import")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Import details retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "404", description = "Import not found")
+    })
+    public ResponseEntity<KekaImportHistoryEntry> getImportDetails(
+            @Parameter(description = "Import ID") @PathVariable String importId) {
         log.info("Fetching KEKA import details: {}", importId);
 
         KekaImportHistoryEntry details = kekaImportService.getImportDetails(importId);
@@ -104,7 +149,15 @@ public class KekaImportController {
      */
     @GetMapping("/{importId}/errors/csv")
     @RequiresPermission("SYSTEM:ADMIN")
-    public ResponseEntity<String> downloadErrorReport(@PathVariable String importId) {
+    @Operation(summary = "Download error CSV", description = "Download a CSV report of validation errors for the specified import")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Error report generated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "404", description = "Import not found")
+    })
+    public ResponseEntity<String> downloadErrorReport(
+            @Parameter(description = "Import ID") @PathVariable String importId) {
         log.info("Downloading error report for import: {}", importId);
 
         // Placeholder implementation
@@ -118,7 +171,15 @@ public class KekaImportController {
      */
     @PostMapping("/{importId}/cancel")
     @RequiresPermission("SYSTEM:ADMIN")
-    public ResponseEntity<Void> cancelKekaImport(@PathVariable String importId) {
+    @Operation(summary = "Cancel import", description = "Cancel an in-progress KEKA import")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Import cancelled successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires SYSTEM:ADMIN permission"),
+            @ApiResponse(responseCode = "404", description = "Import not found")
+    })
+    public ResponseEntity<Void> cancelKekaImport(
+            @Parameter(description = "Import ID") @PathVariable String importId) {
         log.info("Cancelling KEKA import: {}", importId);
 
         // Placeholder implementation

@@ -153,16 +153,18 @@ public class FullAndFinalSettlement extends TenantAware {
     }
 
     public void calculateGratuity() {
-        // India: Gratuity eligible after 5 years (240 days rule)
+        // India: Gratuity eligible after 5 years (240-day rule handled in FnFCalculationService).
         if (yearsOfService != null && yearsOfService.compareTo(new BigDecimal("5")) >= 0) {
             this.isGratuityEligible = true;
-            // Gratuity = (Last Drawn Salary × 15/26) × Years of Service
+            // F1.3 fix: Gratuity = (Last Drawn Salary × 15 × Years of Service) / 26.
+            // Old code divided by 26 BEFORE multiplying by years, scaling to 2dp at every step,
+            // which lost paise on long tenures and produced amounts below the statutory floor.
+            // Single final divide preserves precision per §4 Payment of Gratuity Act, 1972.
             if (lastDrawnSalary != null) {
                 this.gratuityAmount = lastDrawnSalary
                         .multiply(new BigDecimal("15"))
-                        .divide(new BigDecimal("26"), 2, java.math.RoundingMode.HALF_UP)
                         .multiply(yearsOfService)
-                        .setScale(2, java.math.RoundingMode.HALF_UP);
+                        .divide(new BigDecimal("26"), 2, java.math.RoundingMode.HALF_UP);
             }
         }
     }

@@ -2,9 +2,10 @@
 
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {DateInput} from '@mantine/dates';
 import {AppLayout} from '@/components/layout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -35,7 +36,7 @@ export default function ApplyLeavePage() {
   const {data: balances = []} = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
   const createLeaveRequest = useCreateLeaveRequest();
 
-  const {register, handleSubmit, watch, formState: {errors, isSubmitting}, reset} = useForm<LeaveFormData>({
+  const {register, control, handleSubmit, watch, formState: {errors, isSubmitting}, reset} = useForm<LeaveFormData>({
     resolver: zodResolver(leaveFormSchema),
     defaultValues: {
       leaveTypeId: '',
@@ -151,10 +152,19 @@ export default function ApplyLeavePage() {
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start Date *
               </label>
-              <input
-                type="date"
-                {...register('startDate')}
-                className="input-aura"
+              <Controller
+                name="startDate"
+                control={control}
+                render={({field}) => (
+                  <DateInput
+                    value={field.value ? new Date(field.value) : null}
+                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
+                  />
+                )}
               />
               {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
@@ -164,11 +174,20 @@ export default function ApplyLeavePage() {
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End Date *
               </label>
-              <input
-                type="date"
-                {...register('endDate')}
-                min={startDate}
-                className="input-aura"
+              <Controller
+                name="endDate"
+                control={control}
+                render={({field}) => (
+                  <DateInput
+                    value={field.value ? new Date(field.value) : null}
+                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    minDate={startDate ? new Date(startDate) : undefined}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
+                  />
+                )}
               />
               {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>

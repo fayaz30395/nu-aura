@@ -11,6 +11,11 @@ import com.hrms.domain.performance.Objective;
 import com.hrms.domain.performance.Objective.ObjectiveLevel;
 import com.hrms.domain.performance.Objective.ObjectiveStatus;
 import com.hrms.domain.performance.OkrCheckIn;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/okr")
 @RequiredArgsConstructor
+@Tag(name = "OKRs", description = "Objectives and Key Results management APIs")
 public class OkrController {
 
     private final OkrService okrService;
@@ -35,6 +41,13 @@ public class OkrController {
 
     @PostMapping("/objectives")
     @RequiresPermission(Permission.OKR_CREATE)
+    @Operation(summary = "Create objective", description = "Creates a new objective with optional nested key results")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objective created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:CREATE permission")
+    })
     public ResponseEntity<ObjectiveResponse> createObjective(@Valid @RequestBody ObjectiveRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -90,11 +103,17 @@ public class OkrController {
 
     @GetMapping("/objectives")
     @RequiresPermission(Permission.OKR_VIEW)
+    @Operation(summary = "List objectives", description = "Returns a paginated list of objectives with optional filters by level, status, owner, or department")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objectives retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
     public ResponseEntity<Page<ObjectiveResponse>> getObjectives(
-            @RequestParam(required = false) ObjectiveLevel level,
-            @RequestParam(required = false) ObjectiveStatus status,
-            @RequestParam(required = false) UUID ownerId,
-            @RequestParam(required = false) UUID departmentId,
+            @Parameter(description = "Filter by objective level (COMPANY, DEPARTMENT, TEAM, INDIVIDUAL)") @RequestParam(required = false) ObjectiveLevel level,
+            @Parameter(description = "Filter by objective status") @RequestParam(required = false) ObjectiveStatus status,
+            @Parameter(description = "Filter by owner UUID") @RequestParam(required = false) UUID ownerId,
+            @Parameter(description = "Filter by department UUID") @RequestParam(required = false) UUID departmentId,
             Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -116,6 +135,12 @@ public class OkrController {
 
     @GetMapping("/objectives/my")
     @RequiresPermission(Permission.OKR_VIEW)
+    @Operation(summary = "Get my objectives", description = "Returns all objectives owned by the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objectives retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
     public ResponseEntity<List<ObjectiveResponse>> getMyObjectives() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -128,7 +153,15 @@ public class OkrController {
 
     @GetMapping("/objectives/{id}")
     @RequiresPermission(Permission.OKR_VIEW)
-    public ResponseEntity<ObjectiveResponse> getObjective(@PathVariable UUID id) {
+    @Operation(summary = "Get objective by ID", description = "Returns a single objective by its UUID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objective found"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
+    public ResponseEntity<ObjectiveResponse> getObjective(
+            @Parameter(description = "Objective UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return okrService.getObjectiveById(tenantId, id)
                 .map(obj -> ResponseEntity.ok(ObjectiveResponse.fromEntity(obj)))
@@ -137,8 +170,16 @@ public class OkrController {
 
     @PutMapping("/objectives/{id}")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Update objective", description = "Updates an existing objective's details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objective updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
     public ResponseEntity<ObjectiveResponse> updateObjective(
-            @PathVariable UUID id,
+            @Parameter(description = "Objective UUID") @PathVariable UUID id,
             @Valid @RequestBody ObjectiveRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -168,9 +209,16 @@ public class OkrController {
 
     @PutMapping("/objectives/{id}/status")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Update objective status", description = "Transitions an objective to a new status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
     public ResponseEntity<ObjectiveResponse> updateObjectiveStatus(
-            @PathVariable UUID id,
-            @RequestParam ObjectiveStatus status) {
+            @Parameter(description = "Objective UUID") @PathVariable UUID id,
+            @Parameter(description = "New status value") @RequestParam ObjectiveStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         return okrService.getObjectiveById(tenantId, id)
@@ -185,7 +233,15 @@ public class OkrController {
 
     @PostMapping("/objectives/{id}/approve")
     @RequiresPermission(Permission.OKR_APPROVE)
-    public ResponseEntity<ObjectiveResponse> approveObjective(@PathVariable UUID id) {
+    @Operation(summary = "Approve objective", description = "Approves a draft objective, transitioning it to ACTIVE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Objective approved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:APPROVE permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
+    public ResponseEntity<ObjectiveResponse> approveObjective(
+            @Parameter(description = "Objective UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentEmployeeId();
 
@@ -202,7 +258,15 @@ public class OkrController {
 
     @DeleteMapping("/objectives/{id}")
     @RequiresPermission(Permission.OKR_DELETE)
-    public ResponseEntity<Void> deleteObjective(@PathVariable UUID id) {
+    @Operation(summary = "Delete objective", description = "Soft-deletes an objective and its associated key results")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Objective deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:DELETE permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
+    public ResponseEntity<Void> deleteObjective(
+            @Parameter(description = "Objective UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         okrService.deleteObjective(tenantId, id);
         return ResponseEntity.noContent().build();
@@ -212,8 +276,16 @@ public class OkrController {
 
     @PostMapping("/objectives/{objectiveId}/key-results")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Add key result", description = "Adds a new key result to an existing objective")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Key result created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission"),
+            @ApiResponse(responseCode = "404", description = "Objective not found")
+    })
     public ResponseEntity<KeyResultResponse> addKeyResult(
-            @PathVariable UUID objectiveId,
+            @Parameter(description = "Objective UUID") @PathVariable UUID objectiveId,
             @Valid @RequestBody KeyResultRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -241,7 +313,14 @@ public class OkrController {
 
     @GetMapping("/objectives/{objectiveId}/key-results")
     @RequiresPermission(Permission.OKR_VIEW)
-    public ResponseEntity<List<KeyResultResponse>> getKeyResults(@PathVariable UUID objectiveId) {
+    @Operation(summary = "List key results", description = "Returns all key results for the specified objective")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Key results retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
+    public ResponseEntity<List<KeyResultResponse>> getKeyResults(
+            @Parameter(description = "Objective UUID") @PathVariable UUID objectiveId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<KeyResult> keyResults = okrService.getKeyResultsByObjective(tenantId, objectiveId);
         return ResponseEntity.ok(keyResults.stream()
@@ -251,8 +330,16 @@ public class OkrController {
 
     @PutMapping("/key-results/{id}")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Update key result", description = "Updates an existing key result's title, target, weight, or due date")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Key result updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission"),
+            @ApiResponse(responseCode = "404", description = "Key result not found")
+    })
     public ResponseEntity<KeyResultResponse> updateKeyResult(
-            @PathVariable UUID id,
+            @Parameter(description = "Key result UUID") @PathVariable UUID id,
             @Valid @RequestBody KeyResultRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -279,9 +366,16 @@ public class OkrController {
 
     @PutMapping("/key-results/{id}/progress")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Update key result progress", description = "Records a progress update on a key result and creates a check-in entry")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Progress updated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission"),
+            @ApiResponse(responseCode = "404", description = "Key result not found")
+    })
     public ResponseEntity<KeyResultResponse> updateKeyResultProgress(
-            @PathVariable UUID id,
-            @RequestParam BigDecimal value) {
+            @Parameter(description = "Key result UUID") @PathVariable UUID id,
+            @Parameter(description = "New current value") @RequestParam BigDecimal value) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
 
@@ -321,7 +415,15 @@ public class OkrController {
 
     @DeleteMapping("/key-results/{id}")
     @RequiresPermission(Permission.OKR_DELETE)
-    public ResponseEntity<Void> deleteKeyResult(@PathVariable UUID id) {
+    @Operation(summary = "Delete key result", description = "Soft-deletes a key result")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Key result deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:DELETE permission"),
+            @ApiResponse(responseCode = "404", description = "Key result not found")
+    })
+    public ResponseEntity<Void> deleteKeyResult(
+            @Parameter(description = "Key result UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         okrService.deleteKeyResult(tenantId, id);
         return ResponseEntity.noContent().build();
@@ -331,6 +433,13 @@ public class OkrController {
 
     @PostMapping("/check-ins")
     @RequiresPermission(Permission.OKR_UPDATE)
+    @Operation(summary = "Create check-in", description = "Records a manual check-in with notes, blockers, and confidence level")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Check-in created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:UPDATE permission")
+    })
     public ResponseEntity<CheckInResponse> createCheckIn(@Valid @RequestBody CheckInRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -356,7 +465,14 @@ public class OkrController {
 
     @GetMapping("/objectives/{objectiveId}/check-ins")
     @RequiresPermission(Permission.OKR_VIEW)
-    public ResponseEntity<List<CheckInResponse>> getCheckIns(@PathVariable UUID objectiveId) {
+    @Operation(summary = "List objective check-ins", description = "Returns all check-ins for the specified objective")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Check-ins retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
+    public ResponseEntity<List<CheckInResponse>> getCheckIns(
+            @Parameter(description = "Objective UUID") @PathVariable UUID objectiveId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<OkrCheckIn> checkIns = okrService.getCheckInsByObjective(tenantId, objectiveId);
         return ResponseEntity.ok(checkIns.stream()
@@ -366,7 +482,14 @@ public class OkrController {
 
     @GetMapping("/key-results/{keyResultId}/check-ins")
     @RequiresPermission(Permission.OKR_VIEW)
-    public ResponseEntity<List<CheckInResponse>> getKeyResultCheckIns(@PathVariable UUID keyResultId) {
+    @Operation(summary = "List key result check-ins", description = "Returns all check-ins for the specified key result")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Check-ins retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
+    public ResponseEntity<List<CheckInResponse>> getKeyResultCheckIns(
+            @Parameter(description = "Key result UUID") @PathVariable UUID keyResultId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<OkrCheckIn> checkIns = okrService.getCheckInsByKeyResult(tenantId, keyResultId);
         return ResponseEntity.ok(checkIns.stream()
@@ -378,6 +501,12 @@ public class OkrController {
 
     @GetMapping("/dashboard/summary")
     @RequiresPermission(Permission.OKR_VIEW)
+    @Operation(summary = "Get OKR dashboard summary", description = "Returns aggregated OKR metrics for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Summary retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW permission")
+    })
     public ResponseEntity<?> getDashboardSummary() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -388,6 +517,12 @@ public class OkrController {
 
     @GetMapping("/company/objectives")
     @RequiresPermission(Permission.OKR_VIEW_ALL)
+    @Operation(summary = "Get company objectives", description = "Returns all company-level objectives across the tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Company objectives retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires OKR:VIEW_ALL permission")
+    })
     public ResponseEntity<List<ObjectiveResponse>> getCompanyObjectives() {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<Objective> objectives = okrService.getCompanyObjectives(tenantId);

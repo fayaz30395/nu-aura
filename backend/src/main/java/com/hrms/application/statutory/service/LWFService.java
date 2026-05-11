@@ -65,11 +65,20 @@ public class LWFService {
     private final LWFDeductionRepository deductionRepository;
 
     /**
-     * QA sweep S2-C K-7: bulk per-payroll-run LWF computation is incomplete — the
+     * QA sweep S2-C K-7 / S4-G wave-3: bulk per-payroll-run LWF computation is incomplete — the
      * loop over configurations exists but the per-employee iteration / deduction
      * insert has not been implemented (see {@link #calculateForPayrollRun}). India
      * statutory compliance requires this to be implemented before payroll runs in
      * IN tenants. Gated behind {@code app.features.lwf}.
+     *
+     * <p><b>OPERATIONAL CONTRACT</b> — defaults to {@code false} so non-IN deployments
+     * are not forced to ship LWF code. <b>IN tenants MUST set {@code app.features.lwf=true}</b>
+     * in their environment (application-prod.yml / Helm values / env var) once the per-employee
+     * iteration in {@link #calculateForPayrollRun} is implemented. When the flag is {@code false}
+     * and a payroll run requests LWF computation, the service throws
+     * {@link UnsupportedOperationException} rather than silently skipping — this is intentional
+     * to surface the compliance gap loudly during pre-prod testing rather than producing
+     * understated paychecks in production.</p>
      */
     @Value("${app.features.lwf:false}")
     private boolean lwfEnabled;

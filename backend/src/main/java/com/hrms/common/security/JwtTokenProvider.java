@@ -425,6 +425,13 @@ public class JwtTokenProvider {
         // CRIT-005: 15-minute expiry for impersonation tokens (not standard jwtExpiration)
         Date expiryDate = new Date(now.getTime() + 15 * 60 * 1000L);
 
+        // Sprint-4 wave-3 M-C4: mint a dedicated impersonationJti claim so the impersonation
+        // session can be revoked WITHOUT nuking the SuperAdmin's normal (home) session.
+        // Previously, revocation keyed off userId would invalidate both. The standard JTI
+        // (.id below) remains the per-token identifier for the access-token blacklist; the
+        // separate impersonationJti is the dedicated key for "revoke this impersonation only".
+        String impersonationJti = UUID.randomUUID().toString();
+
         return Jwts.builder()
                 .id(generateJti())
                 .issuer("nu-aura")
@@ -435,6 +442,7 @@ public class JwtTokenProvider {
                 .claim("tenantId", targetTenantId.toString())
                 .claim("roles", new ArrayList<>(roles))
                 .claim("isImpersonation", true)
+                .claim("impersonationJti", impersonationJti) // M-C4: separate revocation key
                 .claim("type", "access")
                 .issuedAt(now)
                 .expiration(expiryDate)
@@ -451,6 +459,25 @@ public class JwtTokenProvider {
             return isImpersonation != null && isImpersonation;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    /**
+     * Sprint-4 M-C4: extract the dedicated impersonation revocation key from an
+     * impersonation token. Returns {@code null} if the token is not an impersonation
+     * token or pre-dates the M-C4 claim addition.
+     *
+     * <p>TODO: wire this into {@link #validateToken(String)} so that when
+     * {@code isImpersonation=true}, the filter checks the impersonationJti blacklist
+     * instead of (or in addition to) the per-user revocation marker. Out of scope for
+     * this minimum-viable fix — call sites that need it can use this getter today.</p>
+     */
+    public UUID getImpersonationJtiFromToken(String token) {
+        try {
+            String value = getClaims(token).get("impersonationJti", String.class);
+            return value != null ? UUID.fromString(value) : null;
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
         }
     }
 }

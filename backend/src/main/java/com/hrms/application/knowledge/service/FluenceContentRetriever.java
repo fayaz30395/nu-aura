@@ -4,11 +4,11 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
 import com.hrms.domain.knowledge.DocumentTemplate;
 import com.hrms.domain.knowledge.WikiPage;
-import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
 import com.hrms.infrastructure.knowledge.repository.DocumentTemplateRepository;
-import com.hrms.infrastructure.knowledge.repository.WikiPageRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +62,24 @@ public class FluenceContentRetriever {
             "who", "whom", "this", "that", "these", "those", "am", "tell", "know",
             "show", "give", "find", "get", "want", "like", "think", "say", "said"
     );
-    private final WikiPageRepository wikiPageRepository;
-    private final BlogPostRepository blogPostRepository;
+    // V152 (S6-A): wiki + blog lookups switched to native body_text queries via
+    // EntityManager below. The matching repository methods (searchByTenantBroad)
+    // remain in WikiPageRepository / BlogPostRepository for callers that still
+    // need the legacy CAST(content AS TEXT) shape — S4-D owns their FTS
+    // migration. Templates still go through their repository because
+    // DocumentTemplate has no JSONB content column to seq-scan.
     private final DocumentTemplateRepository documentTemplateRepository;
     private final ObjectMapper objectMapper;
+
+    /**
+     * EntityManager used to issue body_text-targeted native queries that
+     * bypass {@code wiki_pages.content / blog_posts.content} JSONB and instead
+     * read the V152 plain-text projection column. Kept local to the retriever
+     * so the existing repository {@code searchByTenantBroad} (owned by S4-D
+     * for FTS migration) is not modified by this sprint.
+     */
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Retrieve the most relevant content chunks for a given natural language query.
@@ -88,41 +102,47 @@ public class FluenceContentRetriever {
             for (String keyword : keywords) {
                 Pageable limit = PageRequest.of(0, RESULTS_PER_KEYWORD);
 
-                // Search wiki pages (broad ILIKE on title, excerpt, content::TEXT)
-                var wikiResults = wikiPageRepository.searchByTenantBroad(tenantId, keyword, limit);
-                log.info("Wiki search for keyword '{}': {} results", keyword, wikiResults.getTotalElements());
-                for (WikiPage page : wikiResults.getContent()) {
+                // V152 (S6-A): switched off the broad ILIKE-on-CAST(content AS TEXT)
+                // path — that path always seq-scanned wiki_pages because the planner
+                // cannot use the GIN search_vector index when the WHERE clause casts
+                // a JSONB column. The native query below targets the new body_text
+                // column (populated by WikiPageService on every save) which is
+                // covered by idx_wiki_pages_body_text_trgm (pg_trgm GIN, partial on
+                // is_deleted = false).
+                List<WikiPage> wikiResults = searchWikiByBodyText(tenantId, keyword, RESULTS_PER_KEYWORD);
+                log.info("Wiki search for keyword '{}': {} results", keyword, wikiResults.size());
+                for (WikiPage page : wikiResults) {
                     String key = "wiki-" + page.getId();
                     if (!deduped.containsKey(key)) {
                         deduped.put(key, ContentChunk.builder()
                                 .id(page.getId().toString())
                                 .type("wiki")
                                 .title(page.getTitle())
-                                .content(truncate(extractTextFromTipTap(page.getContent()), MAX_CONTENT_LENGTH))
+                                .content(truncate(chooseBody(page.getBodyText(), page.getContent()), MAX_CONTENT_LENGTH))
                                 .url("/fluence/wiki/" + page.getId())
                                 .relevanceScore(scoreTitleMatch(page.getTitle(), keywords))
                                 .build());
                     }
                 }
 
-                // Search blog posts (broad ILIKE on title, excerpt, content::TEXT)
-                var blogResults = blogPostRepository.searchByTenantBroad(tenantId, keyword, limit);
-                log.info("Blog search for keyword '{}': {} results", keyword, blogResults.getTotalElements());
-                for (BlogPost post : blogResults.getContent()) {
+                // V152 (S6-A): same body_text switch for blog posts (see wiki note above).
+                List<BlogPost> blogResults = searchBlogByBodyText(tenantId, keyword, RESULTS_PER_KEYWORD);
+                log.info("Blog search for keyword '{}': {} results", keyword, blogResults.size());
+                for (BlogPost post : blogResults) {
                     String key = "blog-" + post.getId();
                     if (!deduped.containsKey(key)) {
                         deduped.put(key, ContentChunk.builder()
                                 .id(post.getId().toString())
                                 .type("blog")
                                 .title(post.getTitle())
-                                .content(truncate(extractTextFromTipTap(post.getContent()), MAX_CONTENT_LENGTH))
+                                .content(truncate(chooseBody(post.getBodyText(), post.getContent()), MAX_CONTENT_LENGTH))
                                 .url("/fluence/blogs/" + post.getId())
                                 .relevanceScore(scoreTitleMatch(post.getTitle(), keywords))
                                 .build());
                     }
                 }
 
-                // Search templates (already ILIKE-based)
+                // Search templates (already ILIKE-based; template.description is a plain TEXT column — no JSONB cast involved)
                 var templateResults = documentTemplateRepository.searchByTenant(tenantId, keyword, limit);
                 for (DocumentTemplate template : templateResults.getContent()) {
                     String key = "template-" + template.getId();
@@ -186,6 +206,75 @@ public class FluenceContentRetriever {
     }
 
     /**
+     * Look up wiki pages whose {@code body_text} column (V152) matches the
+     * given keyword via case-insensitive {@code ILIKE '%keyword%'}.
+     *
+     * <p>Uses {@code idx_wiki_pages_body_text_trgm} (pg_trgm GIN, partial on
+     * {@code is_deleted = false}) — leading-wildcard ILIKE is index-eligible
+     * under pg_trgm. Tenant scope and the soft-delete filter are explicit so
+     * the planner can prove they line up with the partial index predicate.</p>
+     */
+    private List<WikiPage> searchWikiByBodyText(UUID tenantId, String keyword, int limit) {
+        String sql = "SELECT wp.* FROM wiki_pages wp " +
+                "WHERE wp.tenant_id = :tenantId " +
+                "  AND wp.is_deleted = false " +
+                "  AND (" +
+                "       LOWER(wp.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                "    OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                "    OR LOWER(COALESCE(wp.body_text, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                "  ) " +
+                "ORDER BY CASE WHEN LOWER(wp.title) LIKE LOWER(CONCAT('%', :keyword, '%')) THEN 0 ELSE 1 END, " +
+                "         wp.updated_at DESC " +
+                "LIMIT :lim";
+        @SuppressWarnings("unchecked")
+        List<WikiPage> rows = entityManager.createNativeQuery(sql, WikiPage.class)
+                .setParameter("tenantId", tenantId)
+                .setParameter("keyword", keyword)
+                .setParameter("lim", limit)
+                .getResultList();
+        return rows;
+    }
+
+    /**
+     * Look up blog posts whose {@code body_text} column (V152) matches the
+     * given keyword. Symmetric to {@link #searchWikiByBodyText} — same index
+     * strategy via {@code idx_blog_posts_body_text_trgm}.
+     */
+    private List<BlogPost> searchBlogByBodyText(UUID tenantId, String keyword, int limit) {
+        String sql = "SELECT bp.* FROM blog_posts bp " +
+                "WHERE bp.tenant_id = :tenantId " +
+                "  AND bp.is_deleted = false " +
+                "  AND (" +
+                "       LOWER(bp.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                "    OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                "    OR LOWER(COALESCE(bp.body_text, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+                "  ) " +
+                "ORDER BY CASE WHEN LOWER(bp.title) LIKE LOWER(CONCAT('%', :keyword, '%')) THEN 0 ELSE 1 END, " +
+                "         bp.updated_at DESC " +
+                "LIMIT :lim";
+        @SuppressWarnings("unchecked")
+        List<BlogPost> rows = entityManager.createNativeQuery(sql, BlogPost.class)
+                .setParameter("tenantId", tenantId)
+                .setParameter("keyword", keyword)
+                .setParameter("lim", limit)
+                .getResultList();
+        return rows;
+    }
+
+    /**
+     * Prefer the pre-extracted body_text (V152) when it exists, falling back
+     * to extracting from the raw JSONB on the fly. Historical rows have a
+     * null body_text until they are next saved — the V152 migration notes
+     * cover the deferred backfill rationale.
+     */
+    private String chooseBody(String bodyText, String content) {
+        if (bodyText != null && !bodyText.isBlank()) {
+            return bodyText;
+        }
+        return extractTextFromTipTap(content);
+    }
+
+    /**
      * Extract plain text from TipTap JSON content.
      * <p>
      * TipTap stores content as a JSON AST like:
@@ -193,6 +282,10 @@ public class FluenceContentRetriever {
      * <p>
      * This method recursively walks the JSON tree and extracts all "text" values
      * from text nodes, producing clean readable text for the LLM prompt.
+     * <p>
+     * Retained alongside the new {@code TipTapTextExtractor} component because
+     * this is the fallback path for historical rows without a populated
+     * {@code body_text} column — see {@link #chooseBody(String, String)}.
      */
     private String extractTextFromTipTap(String content) {
         if (content == null || content.isBlank()) return "";

@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -273,5 +275,84 @@ public class TokenBlacklistService {
     private void cleanupInMemoryBlacklist() {
         long now = System.currentTimeMillis();
         inMemoryBlacklist.entrySet().removeIf(entry -> entry.getValue() < now);
+    }
+
+    // ==================== Sprint-4: Tenant-wide revocation (M-C4) ====================
+
+    /**
+     * Drop a tenant-wide "revoked before" marker so any access token issued for the
+     * tenant prior to {@code beforeInstant} is treated as revoked.
+     *
+     * <p>Belt-and-braces complement to the JWT-filter tenant-status check from sprint 2,
+     * which remains the primary defense against suspended-tenant access. This marker
+     * closes the race window where an attacker had a freshly-minted token in-hand the
+     * moment the admin clicked "suspend".</p>
+     *
+     * <p>Fail-open on Redis outage: we do not throw, because the tenant-status check
+     * already blocks the request. Logged at WARN so on-call sees the degradation.</p>
+     */
+    public void revokeAllTokensForTenant(UUID tenantId, Instant beforeInstant) {
+        if (tenantId == null || beforeInstant == null) {
+            return;
+        }
+        String key = "revoked_before_tenant:" + tenantId;
+        try {
+            redisTemplate.opsForValue().set(
+                    key,
+                    String.valueOf(beforeInstant.toEpochMilli()),
+                    refreshExpirationMs,
+                    TimeUnit.MILLISECONDS
+            );
+            log.info("Tenant-wide revocation marker set for {} (before {})", tenantId, beforeInstant);
+        } catch (RuntimeException e) {
+            // Intentional fail-open: tenant-status check in JwtAuthenticationFilter is the primary defense.
+            log.warn("Failed to set tenant-wide revocation marker for {}: {}", tenantId, e.getMessage());
+        }
+    }
+
+    /**
+     * Check whether a token issued at {@code tokenIssuedAt} for the given tenant
+     * predates the tenant-wide revocation marker. Fail-open on Redis outage
+     * (returns {@code false}) because the JWT-filter tenant-status check is the
+     * primary defense — this method is the secondary, race-window-only check.
+     */
+    public boolean isTenantTokenRevokedBefore(UUID tenantId, Instant tokenIssuedAt) {
+        if (tenantId == null || tokenIssuedAt == null) {
+            return false;
+        }
+        String key = "revoked_before_tenant:" + tenantId;
+        try {
+            String value = redisTemplate.opsForValue().get(key);
+            return value != null && Long.parseLong(value) > tokenIssuedAt.toEpochMilli();
+        } catch (RuntimeException e) {
+            // Fail-open: tenant-status check is the primary defense.
+            log.debug("Tenant-wide revocation check failed for {}: {}", tenantId, e.getMessage());
+            return false;
+        }
+    }
+
+    // ==================== Sprint-4: Separate impersonation revocation key (M-C4) ====================
+
+    /**
+     * Revoke only the impersonation session identified by {@code impersonationJti}
+     * without affecting the SuperAdmin's home (non-impersonation) session.
+     *
+     * <p>Sprint-4 M-C4: previously, revoking an impersonation token would call
+     * {@link #revokeAllTokensBefore(String, Instant)} keyed on the admin's userId,
+     * which also nuked the admin's normal session. By keying revocation off the
+     * dedicated {@code impersonationJti} claim minted in
+     * {@link com.hrms.common.security.JwtTokenProvider#generateImpersonationToken},
+     * we revoke only the impersonation session.</p>
+     *
+     * <p>Backed by the standard token blacklist (TTL = token lifetime), so this is
+     * just a thin wrapper over {@link #blacklistToken(String, Date)} for clarity at
+     * the call site.</p>
+     */
+    public void revokeImpersonationToken(UUID impersonationJti, Date tokenExpiration) {
+        if (impersonationJti == null) {
+            return;
+        }
+        blacklistToken(impersonationJti.toString(), tokenExpiration);
+        log.info("Impersonation session {} revoked", impersonationJti);
     }
 }

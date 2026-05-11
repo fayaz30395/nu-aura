@@ -170,6 +170,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Which date do you want to regularize? <span className="text-danger-500">*</span>
                           </label>
+                          {/* TODO(S5-C): migrate to Mantine DateInput once parent passes `control` prop (requires Controller refactor in regularization page) */}
                           <input
                             type="date"
                             {...register('attendanceDate')}

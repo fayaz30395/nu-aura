@@ -1,3 +1,12 @@
+# WARNING: hostnames below are placeholders. Replace with your actual
+# domain before deploying to production. The managed certificate will
+# NOT provision until DNS resolves these names to the GKE LB IP.
+# Tracking: NU-AURA P0 deploy checklist (wave-3 deployment audit #3).
+#
+# Files to update when changing hostnames:
+#   - Ingress.spec.tls.hosts        (line ~47)
+#   - Ingress.spec.rules[].host     (lines ~55, 112)
+#   - ManagedCertificate.spec.domains (lines ~162-163)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

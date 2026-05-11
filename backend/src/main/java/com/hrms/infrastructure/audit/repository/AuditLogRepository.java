@@ -58,6 +58,10 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSp
     List<AuditLog> findTop10ByTenantIdAndEntityTypeAndEntityIdOrderByCreatedAtDesc(
             UUID tenantId, String entityType, UUID entityId);
 
+    // Recent activity feed for a tenant (used by dashboard).
+    // Spring Data derived finder — avoids constructing a PageRequest for a fixed top-N.
+    List<AuditLog> findTop10ByTenantIdOrderByCreatedAtDesc(UUID tenantId);
+
     // Statistics
     @Query("SELECT COUNT(a) FROM AuditLog a WHERE a.tenantId = :tenantId AND a.createdAt BETWEEN :startDate AND :endDate")
     long countByTenantIdAndDateRange(
@@ -115,6 +119,38 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSp
     long countByTenantIdAndEntityType(UUID tenantId, String entityType);
 
     long countByTenantIdAndActorId(UUID tenantId, UUID actorId);
+
+    // ==================== Cross-tenant queries (SUPER_ADMIN — wave-3 M-C2) ====================
+
+    /**
+     * List ALL audit logs across every tenant, ordered by createdAt desc.
+     * Used only by {@code AuditLogService.getAllAuditLogsCrossTenant}, which is
+     * gated by SYSTEM:ADMIN permission + a defense-in-depth re-check in the service.
+     */
+    Page<AuditLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    /**
+     * Cross-tenant search with an optional {@code tenantId} filter. When the
+     * parameter is {@code null}, the predicate degenerates to "any tenant".
+     * Mirrors {@link #searchAuditLogs} but with tenantId as a nullable filter
+     * rather than a required scope.
+     */
+    @Query("SELECT a FROM AuditLog a WHERE " +
+            "(:tenantId IS NULL OR a.tenantId = :tenantId) " +
+            "AND (:entityType IS NULL OR a.entityType = :entityType) " +
+            "AND (:action IS NULL OR a.action = :action) " +
+            "AND (:actorId IS NULL OR a.actorId = :actorId) " +
+            "AND (:startDate IS NULL OR a.createdAt >= :startDate) " +
+            "AND (:endDate IS NULL OR a.createdAt <= :endDate) " +
+            "ORDER BY a.createdAt DESC")
+    Page<AuditLog> searchCrossTenant(
+            @Param("tenantId") UUID tenantId,
+            @Param("entityType") String entityType,
+            @Param("action") AuditAction action,
+            @Param("actorId") UUID actorId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
 
     // Legacy queries (kept for backward compatibility)
     Page<AuditLog> findByEntityTypeAndEntityIdOrderByCreatedAtDesc(String entityType, UUID entityId, Pageable pageable);

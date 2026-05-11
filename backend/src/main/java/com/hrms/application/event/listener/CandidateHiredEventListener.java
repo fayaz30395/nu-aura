@@ -92,34 +92,51 @@ public class CandidateHiredEventListener {
             }
 
             // Step C: Create initial salary structure and revision from offered CTC
+            //   S4-G wave-3 F1.11: previously dumped the whole CTC into basicSalary and hardcoded "USD".
+            //   Now split per standard Indian payroll convention (40% basic, 50% of basic as HRA,
+            //   remainder as special allowance) and derive currency from tenant context.
+            //   Tenant entity has no defaultCurrency column yet, so default to INR (project memory:
+            //   distributed workforce, India-first tenants). Override via tenant settings later.
             if (event.getOfferedCtc() != null && event.getOfferedCtc().compareTo(BigDecimal.ZERO) > 0) {
                 try {
                     LocalDate effectiveDate = event.getProposedJoiningDate() != null
                             ? event.getProposedJoiningDate() : LocalDate.now();
 
+                    BigDecimal totalCtc = event.getOfferedCtc();
+                    BigDecimal basic = totalCtc.multiply(new BigDecimal("0.40"))
+                            .setScale(2, java.math.RoundingMode.HALF_UP);
+                    BigDecimal hra = basic.multiply(new BigDecimal("0.50"))
+                            .setScale(2, java.math.RoundingMode.HALF_UP);
+                    BigDecimal special = totalCtc.subtract(basic).subtract(hra)
+                            .setScale(2, java.math.RoundingMode.HALF_UP);
+
+                    String tenantCurrency = resolveTenantCurrency(tenantId);
+
                     SalaryStructure structure = SalaryStructure.builder()
                             .tenantId(tenantId)
                             .employeeId(employeeId)
-                            .basicSalary(event.getOfferedCtc())
+                            .basicSalary(basic)
+                            .hra(hra)
+                            .specialAllowance(special)
                             .effectiveDate(effectiveDate)
                             .isActive(true)
                             .build();
                     salaryStructureRepository.save(structure);
-                    log.info("Initial salary structure created for employee {} with CTC {}",
-                            employeeId, event.getOfferedCtc());
+                    log.info("Initial salary structure created for employee {} (CTC {} {} = basic {} + hra {} + special {})",
+                            employeeId, totalCtc, tenantCurrency, basic, hra, special);
 
                     SalaryRevision revision = SalaryRevision.builder()
                             .tenantId(tenantId)
                             .employeeId(employeeId)
                             .revisionType(SalaryRevision.RevisionType.PROBATION_CONFIRMATION)
                             .previousSalary(BigDecimal.ZERO)
-                            .newSalary(event.getOfferedCtc())
-                            .incrementAmount(event.getOfferedCtc())
+                            .newSalary(totalCtc)
+                            .incrementAmount(totalCtc)
                             .effectiveDate(effectiveDate)
                             .status(SalaryRevision.RevisionStatus.APPLIED)
                             .justification("Initial salary from offer acceptance")
                             .newDesignation(event.getOfferedDesignation())
-                            .currency("USD")
+                            .currency(tenantCurrency)
                             .build();
                     revision.calculateIncrement();
                     salaryRevisionRepository.save(revision);
@@ -182,6 +199,20 @@ public class CandidateHiredEventListener {
             password.append(chars.charAt(SECURE_RANDOM.nextInt(chars.length())));
         }
         return password.toString();
+    }
+
+    /**
+     * Resolves the currency code for the given tenant.
+     *
+     * <p>Tenant entity does not yet carry a {@code defaultCurrency} column, so this
+     * defaults to {@code INR} (project memory: NULogic is India-first, distributed
+     * workforce). When the tenant settings JSON adds a currency override, parse it
+     * here. Returns "INR" on any error to avoid blocking the after-commit listener.</p>
+     */
+    private String resolveTenantCurrency(UUID tenantId) {
+        // TODO: read currency from Tenant.settings (JSON) once the schema is in place.
+        // Hardcoded INR is safer than the previous hardcoded "USD" for the IN-first tenant base.
+        return "INR";
     }
 
     /**

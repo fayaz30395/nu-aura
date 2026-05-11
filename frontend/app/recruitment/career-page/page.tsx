@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import {useJobOpenings, useUpdateJobOpening} from '@/lib/hooks/queries/useRecruitment';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {safeStorage} from '@/lib/utils/safeStorage';
 import type {CreateJobOpeningRequest, JobOpening, JobStatus} from '@/lib/types/hire/recruitment';
 
 // ==================== Career Page Content Schema ====================
@@ -51,7 +52,7 @@ const STORAGE_KEY = 'nu-aura:career-page-content';
 function loadStoredContent(): CareerContentFormData {
   if (typeof window === 'undefined') return {};
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = safeStorage.get(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as CareerContentFormData) : {};
   } catch {
     return {};
@@ -281,7 +282,7 @@ function CareerContentEditor() {
     'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm';
 
   const onSave = (data: CareerContentFormData) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    safeStorage.set(STORAGE_KEY, JSON.stringify(data));
     reset(data);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);

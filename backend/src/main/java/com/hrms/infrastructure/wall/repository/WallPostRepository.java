@@ -60,11 +60,62 @@ public interface WallPostRepository extends JpaRepository<WallPost, UUID> {
     @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.isDeleted = false")
     Page<WallPost> findByTenantIdAndDeletedFalse(@Param("tenantId") UUID tenantId, Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.isDeleted = false ORDER BY p.pinned DESC, p.createdAt DESC")
-    Page<WallPost> findAllActiveOrderByPinnedAndCreatedAt(@Param("tenantId") UUID tenantId, Pageable pageable);
+    /**
+     * Active feed for a tenant with visibility predicate pushed into the query.
+     *
+     * <p>S3-E follow-up: previously visibility was filtered in-memory after the
+     * page was returned, which made {@code Page.totalElements} over-report and
+     * left filtered rows as empty "holes" in the page. Now the visibility rule
+     * lives in JPQL so pagination counts are correct.</p>
+     *
+     * <p>Visibility rules:
+     * <ul>
+     *   <li>PUBLIC / ORGANIZATION → visible to anyone in the tenant.</li>
+     *   <li>DEPARTMENT → viewer's departmentId must match author's.</li>
+     *   <li>TEAM → viewer's teamId must match author's.</li>
+     *   <li>PRIVATE → only the author sees it.</li>
+     *   <li>Authors always see their own posts regardless of visibility.</li>
+     * </ul>
+     * </p>
+     */
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.isDeleted = false " +
+            "AND (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.PUBLIC " +
+            "  OR p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.ORGANIZATION " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.DEPARTMENT " +
+            "      AND p.author.departmentId = :viewerDepartmentId) " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.TEAM " +
+            "      AND p.author.teamId = :viewerTeamId) " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.PRIVATE " +
+            "      AND p.author.id = :viewerEmployeeId) " +
+            "  OR p.author.id = :viewerEmployeeId) " +
+            "ORDER BY p.pinned DESC, p.createdAt DESC")
+    Page<WallPost> findAllActiveOrderByPinnedAndCreatedAt(@Param("tenantId") UUID tenantId,
+                                                          @Param("viewerEmployeeId") UUID viewerEmployeeId,
+                                                          @Param("viewerDepartmentId") UUID viewerDepartmentId,
+                                                          @Param("viewerTeamId") UUID viewerTeamId,
+                                                          Pageable pageable);
 
-    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.type = :type AND p.isDeleted = false ORDER BY p.createdAt DESC")
-    Page<WallPost> findByTypeAndActiveTrue(@Param("tenantId") UUID tenantId, @Param("type") WallPost.PostType type, Pageable pageable);
+    /**
+     * Type-scoped feed (POLL, PRAISE, ANNOUNCEMENT, …) with the same
+     * visibility predicate as {@link #findAllActiveOrderByPinnedAndCreatedAt}.
+     */
+    @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.type = :type AND p.isDeleted = false " +
+            "AND (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.PUBLIC " +
+            "  OR p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.ORGANIZATION " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.DEPARTMENT " +
+            "      AND p.author.departmentId = :viewerDepartmentId) " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.TEAM " +
+            "      AND p.author.teamId = :viewerTeamId) " +
+            "  OR (p.visibility = com.hrms.domain.wall.model.WallPost.PostVisibility.PRIVATE " +
+            "      AND p.author.id = :viewerEmployeeId) " +
+            "  OR p.author.id = :viewerEmployeeId) " +
+            "ORDER BY p.createdAt DESC")
+    Page<WallPost> findByTypeAndActiveTrue(@Param("tenantId") UUID tenantId,
+                                           @Param("type") WallPost.PostType type,
+                                           @Param("viewerEmployeeId") UUID viewerEmployeeId,
+                                           @Param("viewerDepartmentId") UUID viewerDepartmentId,
+                                           @Param("viewerTeamId") UUID viewerTeamId,
+                                           Pageable pageable);
 
     @Query("SELECT p FROM WallPost p WHERE p.tenantId = :tenantId AND p.author.id = :authorId AND p.isDeleted = false ORDER BY p.createdAt DESC")
     Page<WallPost> findByAuthorIdAndActiveTrue(@Param("tenantId") UUID tenantId, @Param("authorId") UUID authorId, Pageable pageable);

@@ -109,47 +109,59 @@ public class WallService {
      * 1. Fetch paginated post IDs
      * 2. Batch-hydrate authors, reactions, votes in bulk queries
      * Reduces total queries from ~100+ to ~8 regardless of page size.
+     *
+     * <p>S4-F: visibility is now enforced inside the JPQL query so pagination
+     * totals are correct. The viewer's department + team are resolved once
+     * here and passed as bind parameters; null viewer (anonymous) collapses
+     * the predicate to PUBLIC / ORGANIZATION only.</p>
      */
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPosts(Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        Page<WallPost> postsPage = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(tenantId, pageable);
-        return mapPageToResponses(filterByVisibility(postsPage, tenantId, currentUserId), tenantId, currentUserId);
+        ViewerContext viewer = resolveViewer(tenantId, currentUserId);
+        Page<WallPost> postsPage = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(
+                tenantId, viewer.employeeId(), viewer.departmentId(), viewer.teamId(), pageable);
+        return mapPageToResponses(postsPage, tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPostsByType(WallPost.PostType type, Pageable pageable, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        Page<WallPost> postsPage = wallPostRepository.findByTypeAndActiveTrue(tenantId, type, pageable);
-        return mapPageToResponses(filterByVisibility(postsPage, tenantId, currentUserId), tenantId, currentUserId);
+        ViewerContext viewer = resolveViewer(tenantId, currentUserId);
+        Page<WallPost> postsPage = wallPostRepository.findByTypeAndActiveTrue(
+                tenantId, type, viewer.employeeId(), viewer.departmentId(), viewer.teamId(), pageable);
+        return mapPageToResponses(postsPage, tenantId, currentUserId);
     }
 
     /**
-     * Wave-3 NU-Fluence 3.5: enforce post-visibility boundary.
-     * <ul>
-     *   <li>PUBLIC / ORGANIZATION → visible to all in tenant.</li>
-     *   <li>DEPARTMENT → only visible if viewer's department matches author's.</li>
-     *   <li>TEAM → only visible if viewer's team matches author's.</li>
-     *   <li>PRIVATE → only visible to the author.</li>
-     * </ul>
-     * TODO: push this predicate into the JPQL repository query so we don't waste
-     * a page slot when a post is filtered out. The in-memory filter below is a
-     * correctness fix; pagination counts may under-report on the filtered page.
+     * Resolves the viewing employee's tenancy + scoping IDs once, so the
+     * repository can bind them into the visibility predicate. When the caller
+     * is anonymous (no currentUserId) or the employee row is missing, all
+     * scope IDs collapse to null — the JPQL falls back to PUBLIC /
+     * ORGANIZATION only because the equality checks short-circuit on null.
      */
-    private Page<WallPost> filterByVisibility(Page<WallPost> page, UUID tenantId, UUID currentUserId) {
-        if (page.isEmpty() || currentUserId == null) {
-            return page;
+    private ViewerContext resolveViewer(UUID tenantId, UUID currentUserId) {
+        if (currentUserId == null) {
+            return ViewerContext.ANONYMOUS;
         }
         Employee viewer = employeeRepository.findByIdAndTenantId(currentUserId, tenantId).orElse(null);
-        UUID viewerDeptId = viewer != null ? viewer.getDepartmentId() : null;
-        UUID viewerTeamId = viewer != null ? viewer.getTeamId() : null;
-
-        List<WallPost> filtered = page.getContent().stream()
-                .filter(p -> isVisibleToViewer(p, currentUserId, viewerDeptId, viewerTeamId))
-                .collect(Collectors.toList());
-        return new org.springframework.data.domain.PageImpl<>(filtered, page.getPageable(), page.getTotalElements());
+        if (viewer == null) {
+            return new ViewerContext(currentUserId, null, null);
+        }
+        return new ViewerContext(currentUserId, viewer.getDepartmentId(), viewer.getTeamId());
     }
 
+    /** Bundles the viewer's identity + scope fields used by the visibility predicate. */
+    private record ViewerContext(UUID employeeId, UUID departmentId, UUID teamId) {
+        static final ViewerContext ANONYMOUS = new ViewerContext(null, null, null);
+    }
+
+    /**
+     * Wave-3 NU-Fluence 3.5: defence-in-depth visibility check for single-post
+     * lookup paths (e.g. {@link #getPostById}). The feed-level filter now runs
+     * in JPQL ({@link WallPostRepository#findAllActiveOrderByPinnedAndCreatedAt}),
+     * but this in-memory check still guards direct accesses by post id.
+     */
     private boolean isVisibleToViewer(WallPost post, UUID viewerId, UUID viewerDeptId, UUID viewerTeamId) {
         WallPost.PostVisibility v = post.getVisibility();
         if (v == null || v == WallPost.PostVisibility.PUBLIC || v == WallPost.PostVisibility.ORGANIZATION) {
@@ -180,6 +192,14 @@ public class WallService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // S4-F: single-post lookup bypasses the JPQL visibility predicate, so
+        // re-check in memory. Treats a 403 as a 404 to avoid leaking existence
+        // of restricted posts to non-authorised viewers.
+        ViewerContext viewer = resolveViewer(tenantId, currentUserId);
+        if (!isVisibleToViewer(post, viewer.employeeId(), viewer.departmentId(), viewer.teamId())) {
+            throw new IllegalArgumentException("Post not found");
+        }
 
         // Track view in generic content view system
         if (currentUserId != null) {

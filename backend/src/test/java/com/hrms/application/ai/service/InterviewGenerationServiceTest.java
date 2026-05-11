@@ -6,6 +6,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.Interview;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.infrastructure.ai.repository.AiUsageLogRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
@@ -43,6 +44,9 @@ class InterviewGenerationServiceTest {
     private AIRecruitmentHelper aiHelper;
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
+    // S4-G: sprint 3 added AiUsageLogRepository to InterviewGenerationService — needed for @InjectMocks
+    @Mock
+    private AiUsageLogRepository aiUsageLogRepository;
     @InjectMocks
     private InterviewGenerationService interviewGenerationService;
     private UUID tenantId;
@@ -69,6 +73,11 @@ class InterviewGenerationServiceTest {
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+        // S4-G: prevent NPE on best-effort AI usage logging — recordUsage() catches RuntimeException,
+        // but lenient stub here is defensive and avoids strict-mock UnnecessaryStubbingException churn
+        // when individual tests don't trigger the AI call path.
+        lenient().when(aiUsageLogRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         jobOpening = new JobOpening();
         jobOpening.setId(jobOpeningId);

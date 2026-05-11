@@ -74,6 +74,10 @@ public class SalaryStructureService {
 
         salaryStructure.setEmployeeId(salaryStructureData.getEmployeeId());
         salaryStructure.setEffectiveDate(salaryStructureData.getEffectiveDate());
+        // S3-B follow-up: honour endDate updates. The DTO + controller already
+        // forward the field; without this assignment the persisted entity kept
+        // its previous endDate (null on first update, then stale forever).
+        salaryStructure.setEndDate(salaryStructureData.getEndDate());
         salaryStructure.setBasicSalary(salaryStructureData.getBasicSalary());
         salaryStructure.setHra(salaryStructureData.getHra());
         salaryStructure.setConveyanceAllowance(salaryStructureData.getConveyanceAllowance());

@@ -121,9 +121,36 @@ public class LeaveAccrualScheduler {
             log.debug("LeaveAccrualScheduler: accruing {} days for leave type '{}' ({}), tenant {}",
                     accrualAmount, leaveType.getLeaveName(), leaveType.getAccrualType(), tenantId);
 
+            // S4-G wave-3 F2.6: prorate accrual for employees who joined mid-month.
+            // - Employee with no joiningDate              → credit full monthlyAccrual (legacy behaviour)
+            // - Employee joined before this month         → credit full monthlyAccrual
+            // - Employee joined this month                → credit (daysFromJoiningToMonthEnd / daysInMonth) * monthlyAccrual
+            // - Employee joined AFTER today               → skip entirely
+            LocalDate today = LocalDate.now(java.time.ZoneOffset.UTC);
+            LocalDate firstOfMonth = today.withDayOfMonth(1);
+            int daysInMonth = today.lengthOfMonth();
+
             for (Employee employee : activeEmployees) {
                 try {
-                    leaveBalanceService.accrueLeave(employee.getId(), leaveType.getId(), accrualAmount);
+                    LocalDate joiningDate = employee.getJoiningDate();
+                    if (joiningDate != null && joiningDate.isAfter(today)) {
+                        // Future-dated joiner: do not accrue yet
+                        continue;
+                    }
+
+                    BigDecimal employeeAccrual = accrualAmount;
+                    if (joiningDate != null && !joiningDate.isBefore(firstOfMonth)) {
+                        // Joined this month: prorate based on days from joining through month end
+                        int daysFromJoining = daysInMonth - joiningDate.getDayOfMonth() + 1;
+                        employeeAccrual = accrualAmount
+                                .multiply(BigDecimal.valueOf(daysFromJoining))
+                                .divide(BigDecimal.valueOf(daysInMonth), 4, RoundingMode.HALF_UP);
+                        log.debug("LeaveAccrualScheduler: prorating employee {} (joined {}) — {}/{} of {} = {}",
+                                employee.getId(), joiningDate, daysFromJoining, daysInMonth,
+                                accrualAmount, employeeAccrual);
+                    }
+
+                    leaveBalanceService.accrueLeave(employee.getId(), leaveType.getId(), employeeAccrual);
                     accrualCount++;
                 } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                     log.error("LeaveAccrualScheduler: failed to accrue leave for employee {} / leaveType {} in tenant {}: {}",

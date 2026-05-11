@@ -272,7 +272,9 @@ public class LeaveBalanceService {
             throw new IllegalStateException("This leave type does not allow encashment");
         }
 
-        balance.encashLeave(BigDecimal.valueOf(daysToEncash));
+        // F2.3: Enforce per-year encashment cap defined on the leave-type policy.
+        // Null cap means no policy limit (legacy behaviour preserved).
+        balance.encashLeave(BigDecimal.valueOf(daysToEncash), leaveType.getMaxEncashableDaysPerYear());
         return leaveBalanceRepository.save(balance);
     }
 

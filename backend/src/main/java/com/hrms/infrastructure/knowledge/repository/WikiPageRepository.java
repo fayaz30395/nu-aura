@@ -40,22 +40,35 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
             "ORDER BY wp.pinnedAt DESC")
     List<WikiPage> findPinnedPagesByTenant(@Param("tenantId") UUID tenantId);
 
+    // Sprint-4 (S4-D): Migrated to V149 STORED `search_vector` (GIN-indexed) — eliminates
+    // per-query to_tsvector() recomputation that forced a seq-scan. Added updated_at
+    // tiebreaker for recency-stable ordering on ties.
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
-            "WHERE wp.tenant_id = :tenantId AND " +
-            "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-            "websearch_to_tsquery('english', :query) " +
-            "ORDER BY ts_rank(to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')), " +
-            "websearch_to_tsquery('english', :query)) DESC",
+            "WHERE wp.tenant_id = :tenantId " +
+            "  AND wp.is_deleted = false " +
+            "  AND wp.search_vector @@ websearch_to_tsquery('english', :query) " +
+            "ORDER BY ts_rank(wp.search_vector, websearch_to_tsquery('english', :query)) DESC, " +
+            "         wp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
-                    "WHERE wp.tenant_id = :tenantId AND " +
-                    "to_tsvector('english', wp.title || ' ' || COALESCE(wp.excerpt, '')) @@ " +
-                    "websearch_to_tsquery('english', :query)")
+                    "WHERE wp.tenant_id = :tenantId " +
+                    "  AND wp.is_deleted = false " +
+                    "  AND wp.search_vector @@ websearch_to_tsquery('english', :query)")
     Page<WikiPage> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**
      * Broad ILIKE-based search for RAG retrieval — high recall, LLM handles precision.
      * Searches title, excerpt, AND content body (JSONB cast to TEXT) for any keyword match.
+     *
+     * <p>Sprint-4 (S4-D) note: V149's GIN index on {@code search_vector} covers the
+     * title/excerpt portions of this query, but the {@code CAST(content AS TEXT)} branch
+     * still forces a sequential scan of the JSONB column. The OR-with-cast pattern means
+     * the planner cannot use the GIN index even for the title/excerpt clauses.
+     *
+     * <p>TODO (separate sprint): extract a {@code body_text TEXT} generated/maintained column
+     * from {@code content} JSONB and include it in {@code search_vector} (or build a parallel
+     * GIN index on a tsvector over {@code body_text}). Until then the RAG retriever path
+     * remains a seq-scan — acceptable while corpus is small, but will not scale.
      */
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
             "WHERE wp.tenant_id = :tenantId AND (" +

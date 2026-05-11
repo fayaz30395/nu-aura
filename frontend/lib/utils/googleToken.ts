@@ -1,5 +1,15 @@
 // Unified Google Token Storage for SSO
 // This allows login to authenticate Drive and Mail simultaneously
+//
+// Wave-1 flagged this file as a security risk because sensitive OAuth
+// tokens live in sessionStorage (accessible to any same-origin script).
+// Converting to safeSessionStorage does NOT change the storage choice —
+// that requires a backend cookie-based session swap — but it does add
+// graceful error handling for private mode, sandboxed iframes, and
+// quota-exceeded scenarios so the SSO flow degrades cleanly rather than
+// throwing uncaught DOMExceptions.
+
+import {safeSessionStorage} from './safeStorage';
 
 const GOOGLE_TOKEN_KEY = 'nu_google_token';
 const GOOGLE_TOKEN_EXPIRY_KEY = 'nu_google_token_expiry';
@@ -20,22 +30,22 @@ export const saveGoogleToken = (token: string, expiresIn: number = 3600): void =
   if (typeof window === 'undefined') return;
 
   const expiryTime = Date.now() + expiresIn * 1000;
-  sessionStorage.setItem(GOOGLE_TOKEN_KEY, token);
-  sessionStorage.setItem(GOOGLE_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  safeSessionStorage.set(GOOGLE_TOKEN_KEY, token);
+  safeSessionStorage.set(GOOGLE_TOKEN_EXPIRY_KEY, expiryTime.toString());
 
   // Also save to Drive and Mail keys for compatibility
-  sessionStorage.setItem(DRIVE_TOKEN_KEY, token);
-  sessionStorage.setItem(DRIVE_TOKEN_EXPIRY_KEY, expiryTime.toString());
-  sessionStorage.setItem(MAIL_TOKEN_KEY, token);
-  sessionStorage.setItem(MAIL_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  safeSessionStorage.set(DRIVE_TOKEN_KEY, token);
+  safeSessionStorage.set(DRIVE_TOKEN_EXPIRY_KEY, expiryTime.toString());
+  safeSessionStorage.set(MAIL_TOKEN_KEY, token);
+  safeSessionStorage.set(MAIL_TOKEN_EXPIRY_KEY, expiryTime.toString());
 };
 
 // Get stored Google token (checks validity with 5 min buffer)
 export const getGoogleToken = (): string | null => {
   if (typeof window === 'undefined') return null;
 
-  const token = sessionStorage.getItem(GOOGLE_TOKEN_KEY);
-  const expiry = sessionStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  const token = safeSessionStorage.get(GOOGLE_TOKEN_KEY);
+  const expiry = safeSessionStorage.get(GOOGLE_TOKEN_EXPIRY_KEY);
 
   if (!token || !expiry) return null;
 
@@ -53,14 +63,14 @@ export const clearGoogleToken = (): void => {
   if (typeof window === 'undefined') return;
 
   // Clear unified token
-  sessionStorage.removeItem(GOOGLE_TOKEN_KEY);
-  sessionStorage.removeItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  safeSessionStorage.remove(GOOGLE_TOKEN_KEY);
+  safeSessionStorage.remove(GOOGLE_TOKEN_EXPIRY_KEY);
 
   // Clear Drive and Mail tokens
-  sessionStorage.removeItem(DRIVE_TOKEN_KEY);
-  sessionStorage.removeItem(DRIVE_TOKEN_EXPIRY_KEY);
-  sessionStorage.removeItem(MAIL_TOKEN_KEY);
-  sessionStorage.removeItem(MAIL_TOKEN_EXPIRY_KEY);
+  safeSessionStorage.remove(DRIVE_TOKEN_KEY);
+  safeSessionStorage.remove(DRIVE_TOKEN_EXPIRY_KEY);
+  safeSessionStorage.remove(MAIL_TOKEN_KEY);
+  safeSessionStorage.remove(MAIL_TOKEN_EXPIRY_KEY);
 };
 
 // Check if Google token exists and is valid
@@ -72,7 +82,7 @@ export const hasValidGoogleToken = (): boolean => {
 export const getGoogleTokenExpiry = (): number | null => {
   if (typeof window === 'undefined') return null;
 
-  const expiry = sessionStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
+  const expiry = safeSessionStorage.get(GOOGLE_TOKEN_EXPIRY_KEY);
   if (!expiry) return null;
 
   return parseInt(expiry);

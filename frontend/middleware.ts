@@ -254,7 +254,6 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       // TODO: Migrate to full nonce-based CSP via Next.js middleware nonces — requires SSR
       // plumbing to inject the nonce into every <script> tag emitted by hydration. See
       // https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
-      // 'https://cdn.jsdelivr.net' removed — was unused in production.
       process.env.NODE_ENV === 'development'
         ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
         : "script-src 'self' 'strict-dynamic' 'unsafe-inline' https://accounts.google.com https://apis.google.com",

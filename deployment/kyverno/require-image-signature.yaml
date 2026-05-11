@@ -1,0 +1,73 @@
+# Kyverno ClusterPolicy — require Cosign signature on every image admitted
+# into the cluster. Pairs with .github/workflows/cosign-sign.yml which
+# signs images via Sigstore Rekor (keyless OIDC).
+#
+# This policy is skeleton-level: it lists the registries we publish to
+# (gcr.io/PROJECT_ID and ghcr.io/nulogic) and requires either:
+#   1. A keyless signature with subject matching our GitHub Actions identity, OR
+#   2. A key-based signature using the `cosign-public-key` Secret in kyverno ns.
+#
+# wave-3 deployment audit #16. Mode = Audit until we have all images signed
+# in CI for at least one release; flip to Enforce in v1.1 of this policy.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-image-signature
+  annotations:
+    policies.kyverno.io/title: Require Cosign Image Signatures
+    policies.kyverno.io/category: Supply Chain Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Every container image admitted to the cluster must carry a valid Cosign
+      signature. Verified against either keyless OIDC (preferred) or the
+      cosign-public-key Secret in the kyverno namespace.
+spec:
+  validationFailureAction: Audit  # TODO flip to Enforce once all images signed (target: v1.1 of this policy)
+  webhookTimeoutSeconds: 30
+  failurePolicy: Fail
+  rules:
+    - name: verify-hrms-images
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      # Skip system namespaces — only enforce on workload namespaces.
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - kyverno
+      verifyImages:
+        # Match HRMS images from our registries. Add/remove patterns here as new
+        # registries come online. Keep the list narrow — wildcards are dangerous.
+        - imageReferences:
+            - "gcr.io/PROJECT_ID/hrms-backend:*"
+            - "gcr.io/PROJECT_ID/hrms-frontend:*"
+            - "ghcr.io/nulogic/hrms-backend:*"
+            - "ghcr.io/nulogic/hrms-frontend:*"
+          attestors:
+            # Option 1 — keyless verification via Sigstore Rekor
+            # (matches what .github/workflows/cosign-sign.yml produces).
+            - count: 1
+              entries:
+                - keyless:
+                    subject: "https://github.com/nulogic/nu-aura/.github/workflows/cosign-sign.yml@refs/heads/main"
+                    issuer: "https://token.actions.githubusercontent.com"
+                    rekor:
+                      url: https://rekor.sigstore.dev
+            # Option 2 — key-based fallback for emergency manual signing.
+            - count: 1
+              entries:
+                - keys:
+                    publicKeys: |-
+                      # PLACEHOLDER — replace with PEM-encoded cosign.pub
+                      # generated via `cosign generate-key-pair`. Store the
+                      # private half in CI secrets, never check it in here.
+                      -----BEGIN PUBLIC KEY-----
+                      REPLACE_WITH_COSIGN_PUB_KEY
+                      -----END PUBLIC KEY-----

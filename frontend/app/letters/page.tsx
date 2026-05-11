@@ -1,9 +1,10 @@
 'use client';
 
 import React, {useState} from 'react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {DateInput} from '@mantine/dates';
 import {
   AlertCircle,
   Calendar,
@@ -963,10 +964,19 @@ export default function LettersPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Letter Date
                     </label>
-                    <input
-                      type="date"
-                      {...generateLetterForm.register('letterDate')}
-                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    <Controller
+                      name="letterDate"
+                      control={generateLetterForm.control}
+                      render={({field}) => (
+                        <DateInput
+                          value={field.value ? new Date(field.value) : null}
+                          onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                          valueFormat="YYYY-MM-DD"
+                          placeholder="YYYY-MM-DD"
+                          clearable
+                          size="sm"
+                        />
+                      )}
                     />
                     {generateLetterForm.formState.errors.letterDate && (
                       <p
@@ -977,10 +987,19 @@ export default function LettersPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Effective Date
                     </label>
-                    <input
-                      type="date"
-                      {...generateLetterForm.register('effectiveDate')}
-                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    <Controller
+                      name="effectiveDate"
+                      control={generateLetterForm.control}
+                      render={({field}) => (
+                        <DateInput
+                          value={field.value ? new Date(field.value) : null}
+                          onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                          valueFormat="YYYY-MM-DD"
+                          placeholder="YYYY-MM-DD"
+                          clearable
+                          size="sm"
+                        />
+                      )}
                     />
                   </div>
                 </div>
@@ -989,6 +1008,7 @@ export default function LettersPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Expiry Date
                   </label>
+                  {/* TODO(S5-C): migrate generateLetterForm.expiryDate to Mantine DateInput in follow-up sprint */}
                   <input
                     type="date"
                     {...generateLetterForm.register('expiryDate')}
@@ -1283,10 +1303,19 @@ export default function LettersPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Proposed Joining Date *
                     </label>
-                    <input
-                      type="date"
-                      {...offerLetterForm.register('proposedJoiningDate')}
-                      className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    <Controller
+                      name="proposedJoiningDate"
+                      control={offerLetterForm.control}
+                      render={({field}) => (
+                        <DateInput
+                          value={field.value ? new Date(field.value) : null}
+                          onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                          valueFormat="YYYY-MM-DD"
+                          placeholder="YYYY-MM-DD"
+                          clearable
+                          size="sm"
+                        />
+                      )}
                     />
                     {offerLetterForm.formState.errors.proposedJoiningDate && (
                       <p
@@ -1297,6 +1326,7 @@ export default function LettersPage() {
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Letter Date
                     </label>
+                    {/* TODO(S5-C): migrate offerLetterForm.letterDate to Mantine DateInput in follow-up sprint */}
                     <input
                       type="date"
                       {...offerLetterForm.register('letterDate')}
@@ -1313,6 +1343,7 @@ export default function LettersPage() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Offer Expiry Date
                   </label>
+                  {/* TODO(S5-C): migrate offerLetterForm.expiryDate to Mantine DateInput in follow-up sprint */}
                   <input
                     type="date"
                     {...offerLetterForm.register('expiryDate')}

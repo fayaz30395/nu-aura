@@ -1,7 +1,8 @@
 'use client';
 
 import {useState} from 'react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
@@ -76,6 +77,7 @@ export default function ReviewCyclesPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: {errors, isSubmitting},
@@ -504,10 +506,19 @@ export default function ReviewCyclesPage() {
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Start Date *
                         </label>
-                        <input
-                          type="date"
-                          {...register('startDate')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        <Controller
+                          name="startDate"
+                          control={control}
+                          render={({field}) => (
+                            <DateInput
+                              value={field.value ? new Date(field.value) : null}
+                              onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                              valueFormat="YYYY-MM-DD"
+                              placeholder="YYYY-MM-DD"
+                              clearable
+                              size="sm"
+                            />
+                          )}
                         />
                         {errors.startDate && (
                           <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -518,10 +529,19 @@ export default function ReviewCyclesPage() {
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           End Date *
                         </label>
-                        <input
-                          type="date"
-                          {...register('endDate')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        <Controller
+                          name="endDate"
+                          control={control}
+                          render={({field}) => (
+                            <DateInput
+                              value={field.value ? new Date(field.value) : null}
+                              onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                              valueFormat="YYYY-MM-DD"
+                              placeholder="YYYY-MM-DD"
+                              clearable
+                              size="sm"
+                            />
+                          )}
                         />
                         {errors.endDate && (
                           <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -534,10 +554,19 @@ export default function ReviewCyclesPage() {
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Deadline *
                         </label>
-                        <input
-                          type="date"
-                          {...register('reviewDeadline')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        <Controller
+                          name="reviewDeadline"
+                          control={control}
+                          render={({field}) => (
+                            <DateInput
+                              value={field.value ? new Date(field.value) : null}
+                              onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                              valueFormat="YYYY-MM-DD"
+                              placeholder="YYYY-MM-DD"
+                              clearable
+                              size="sm"
+                            />
+                          )}
                         />
                         {errors.reviewDeadline && (
                           <p className="text-danger-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
@@ -548,6 +577,7 @@ export default function ReviewCyclesPage() {
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Self Review Deadline
                         </label>
+                        {/* TODO(S5-C): migrate selfReviewDeadline to Mantine DateInput in follow-up sprint */}
                         <input
                           type="date"
                           {...register('selfReviewDeadline')}

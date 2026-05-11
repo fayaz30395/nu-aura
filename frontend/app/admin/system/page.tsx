@@ -16,6 +16,7 @@ import {
 } from '@/lib/hooks/queries/useSystemAdmin';
 import {MonthlyGrowth, TenantListItem} from '@/lib/types/core/admin-system';
 import {createLogger} from '@/lib/utils/logger';
+import {safeSessionStorage} from '@/lib/utils/safeStorage';
 
 const GrowthChart = dynamic(
   () => import('./GrowthChart'),
@@ -63,10 +64,12 @@ export default function SystemDashboard() {
 
     try {
       const result = await impersonationMutation.mutateAsync(selectedTenant.tenantId);
-      // Store the impersonation token in sessionStorage (SEC-F05: sensitive auth data)
-      sessionStorage.setItem('impersonationToken', result.token);
-      sessionStorage.setItem('impersonatedTenantId', result.tenantId);
-      sessionStorage.setItem('impersonatedTenantName', result.tenantName);
+      // Store the impersonation token in sessionStorage (SEC-F05: sensitive auth data).
+      // safeSessionStorage handles private-mode / quota errors so impersonation
+      // degrades to a visible failure rather than an uncaught DOMException.
+      safeSessionStorage.set('impersonationToken', result.token);
+      safeSessionStorage.set('impersonatedTenantId', result.tenantId);
+      safeSessionStorage.set('impersonatedTenantName', result.tenantName);
       // Redirect to tenant's main dashboard
       router.push('/admin');
     } catch (error) {

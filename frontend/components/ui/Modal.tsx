@@ -86,10 +86,17 @@ const Modal: React.FC<ModalProps> = ({
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
-      // Auto-focus first focusable element in modal
+      // Auto-focus first focusable element in modal, skipping the header
+      // close button so users land on the primary content control (e.g. "Save")
+      // instead of "X" (wave-3 N-16).
       requestAnimationFrame(() => {
-        const firstFocusable = modalRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-        firstFocusable?.focus();
+        const container = modalRef.current;
+        if (!container) return;
+        const focusableNodes = container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+        const initialFocus = Array.from(focusableNodes).find(
+          (el) => !(el instanceof HTMLElement) || !(el.getAttribute('aria-label')?.toLowerCase().includes('close'))
+        ) ?? focusableNodes[0];
+        initialFocus?.focus();
       });
     }
 

@@ -3,6 +3,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {ChevronDown, Filter, MoreVertical, Plus, Save, Trash2, X,} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import {safeStorage} from '@/lib/utils/safeStorage';
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -96,12 +97,11 @@ const generateId = (): string => `${Date.now()}-${Math.random().toString(36).sub
 const getPresetStorageKey = (tableId: string): string => `filter-presets-${tableId}`;
 
 /**
- * Load saved presets from localStorage
+ * Load saved presets from storage (safeStorage handles SSR / disabled storage).
  */
 const loadSavedPresets = (tableId: string): SavedFilterPreset[] => {
-  if (typeof window === 'undefined') return [];
   try {
-    const stored = localStorage.getItem(getPresetStorageKey(tableId));
+    const stored = safeStorage.get(getPresetStorageKey(tableId));
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
@@ -109,15 +109,10 @@ const loadSavedPresets = (tableId: string): SavedFilterPreset[] => {
 };
 
 /**
- * Save presets to localStorage
+ * Save presets via safeStorage (handles quota / disabled storage internally).
  */
 const saveSavedPresets = (tableId: string, presets: SavedFilterPreset[]): void => {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(getPresetStorageKey(tableId), JSON.stringify(presets));
-  } catch {
-    // localStorage quota exceeded or disabled
-  }
+  safeStorage.set(getPresetStorageKey(tableId), JSON.stringify(presets));
 };
 
 // ─── FilterRow Component ────────────────────────────────────────────────

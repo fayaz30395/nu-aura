@@ -67,6 +67,14 @@ public class LeaveType extends TenantAware implements Serializable {
     @Builder.Default
     private Boolean isEncashable = false;
 
+    // F2.3: Cap on per-year encashment to prevent unbounded encashment of accrued days.
+    @Column(name = "max_encashable_days_per_year", precision = 5, scale = 2)
+    private BigDecimal maxEncashableDaysPerYear;
+
+    // F2.3: Cap on lifetime/at-exit encashment (e.g., final settlement).
+    @Column(name = "max_encashable_at_exit", precision = 5, scale = 2)
+    private BigDecimal maxEncashableAtExit;
+
     @Column(name = "requires_document")
     @Builder.Default
     private Boolean requiresDocument = false;

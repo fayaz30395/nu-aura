@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
+import { safeStorage } from '@/lib/utils/safeStorage';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import { cn } from '@/lib/utils';
@@ -95,8 +96,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const mobileDrawerRef = useRef<HTMLElement | null>(null);
   const previousMobileFocusRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    // Sync sidebar collapsed state from localStorage on client hydration
-    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    // Sync sidebar collapsed state from storage on client hydration
+    const saved = safeStorage.get(SIDEBAR_COLLAPSED_KEY);
     if (saved !== null) {
       setIsCollapsed(saved === 'true');
     }
@@ -127,10 +128,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         setIsCollapsed(prev => {
           const newValue = !prev;
           onSidebarCollapsedChange?.(newValue);
-          // Persist to localStorage
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newValue));
-          }
+          // Persist via safeStorage (SSR-safe, quota-safe)
+          safeStorage.set(SIDEBAR_COLLAPSED_KEY, String(newValue));
           return newValue;
         });
       }
@@ -143,10 +142,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const handleSidebarCollapsedChange = useCallback((collapsed: boolean) => {
     setIsCollapsed(collapsed);
     onSidebarCollapsedChange?.(collapsed);
-    // Persist to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(collapsed));
-    }
+    // Persist via safeStorage (SSR-safe, quota-safe)
+    safeStorage.set(SIDEBAR_COLLAPSED_KEY, String(collapsed));
   }, [onSidebarCollapsedChange]);
 
   const handleMenuItemClick = useCallback((item: SidebarItem) => {

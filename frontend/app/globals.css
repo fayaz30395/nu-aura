@@ -1065,6 +1065,30 @@ html, body {
 }
 
 /* ================================================================
+   color-mix() FALLBACK (Wave-3 N)
+   ----------------------------------------------------------------
+   Components that use `color-mix(in srgb, ...)` inline (login page,
+   dashboard widgets) emit a sibling `rgba()` declaration before the
+   `color-mix()` line so Safari <=16.1 and other older browsers see
+   a usable color. Browsers that support color-mix override the
+   rgba() with the second declaration. See:
+     - frontend/app/auth/login/page.tsx (AnimatedBackground orbs)
+     - frontend/components/dashboard/WelcomeBanner.tsx
+     - frontend/components/dashboard/LeaveBalanceWidget.tsx
+     - frontend/components/dashboard/TimeClockWidget.tsx
+
+   When adding new color-mix() usages, follow the same pattern:
+   emit the rgba() fallback first, color-mix() second. The
+   browserslist field in package.json targets Safari >= 16.2;
+   anything older falls back gracefully.
+   ================================================================ */
+@supports not (background: color-mix(in srgb, red, blue)) {
+  /* No-op — fallbacks are emitted inline by each component so they
+     are guaranteed to apply regardless of @supports propagation
+     across CSS-in-JS boundaries. This block exists for discoverability. */
+}
+
+/* ================================================================
    SCROLLBAR (Minimal)
    ================================================================ */
 

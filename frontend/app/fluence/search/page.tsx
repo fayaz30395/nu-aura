@@ -30,6 +30,7 @@ import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, 
 import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
 import type {SavedSearch} from '@/lib/types/platform/fluence';
 import {sanitizeHtml} from '@/lib/utils/sanitize';
+import {safeStorage} from '@/lib/utils/safeStorage';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -55,7 +56,7 @@ const MAX_SAVED = 10;
 function loadSavedSearches(): SavedSearch[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(SAVED_SEARCHES_KEY);
+    const raw = safeStorage.get(SAVED_SEARCHES_KEY);
     return raw ? (JSON.parse(raw) as SavedSearch[]) : [];
   } catch {
     return [];
@@ -63,8 +64,7 @@ function loadSavedSearches(): SavedSearch[] {
 }
 
 function persistSavedSearches(searches: SavedSearch[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(SAVED_SEARCHES_KEY, JSON.stringify(searches));
+  safeStorage.set(SAVED_SEARCHES_KEY, JSON.stringify(searches));
 }
 
 // ─── Visibility option config ─────────────────────────────────────────────────

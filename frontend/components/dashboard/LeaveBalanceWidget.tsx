@@ -4,6 +4,14 @@ import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {ArrowRight, Calendar} from 'lucide-react';
 
+// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the
+// modern value on first paint (matches SSR), swap to rgba() after mount
+// on browsers that don't support it.
+function supportsColorMix(): boolean {
+  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
+  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
+}
+
 interface LeaveBalance {
   leaveTypeId: string;
   leaveName: string;
@@ -70,10 +78,18 @@ function CircularProgress({used, total}: { used: number; total: number }) {
 export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
+  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
+  const [useFallback, setUseFallback] = useState(false);
   useEffect(() => {
     setIsHydrated(true);
+    if (!supportsColorMix()) setUseFallback(true);
   }, []);
   if (!isHydrated) return null;
+
+  // --nu-lapis-blue #050766 ≈ rgb(5, 7, 102); 25% mix ≈ rgba(5, 7, 102, 0.25)
+  const buttonShadow = useFallback
+    ? '0 2px 8px rgba(5, 7, 102, 0.25)' // fallback for Safari <=16.1
+    : '0 2px 8px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)';
 
   const balances = leaveBalances && leaveBalances.length > 0 ? leaveBalances : DEMO_BALANCES;
   const current = balances[selectedIndex];
@@ -131,7 +147,7 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           className="block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 hover:shadow-[var(--shadow-dropdown)] active:scale-[0.98]"
           style={{
             background: 'var(--nu-gradient-dark)',
-            boxShadow: '0 2px 8px color-mix(in srgb, var(--nu-lapis-blue) 25%, transparent)',
+            boxShadow: buttonShadow,
           }}
         >
           Request Leave

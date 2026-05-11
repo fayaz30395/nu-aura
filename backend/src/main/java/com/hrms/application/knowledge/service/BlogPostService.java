@@ -1,5 +1,6 @@
 package com.hrms.application.knowledge.service;
 
+import com.hrms.application.knowledge.util.TipTapTextExtractor;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
@@ -27,6 +28,7 @@ public class BlogPostService {
 
     private final BlogPostRepository blogPostRepository;
     private final FluenceActivityService fluenceActivityService;
+    private final TipTapTextExtractor tipTapTextExtractor;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -40,6 +42,10 @@ public class BlogPostService {
         post.setLikeCount(0);
         post.setCommentCount(0);
         post.setIsFeatured(false);
+        // V152: derive flat text projection of TipTap JSONB so the RAG retriever
+        // (FluenceContentRetriever) can hit idx_blog_posts_body_text_trgm instead
+        // of seq-scanning CAST(content AS TEXT) on every keyword pass.
+        post.setBodyText(tipTapTextExtractor.extract(post.getContent()));
 
         BlogPost saved = blogPostRepository.save(post);
         log.info("Created blog post: {}", saved.getId());
@@ -61,6 +67,8 @@ public class BlogPostService {
         post.setExcerpt(postData.getExcerpt());
         post.setFeaturedImageUrl(postData.getFeaturedImageUrl());
         post.setContent(postData.getContent());
+        // V152: keep body_text in sync with content for trigram-indexed RAG search.
+        post.setBodyText(tipTapTextExtractor.extract(postData.getContent()));
         post.setVisibility(postData.getVisibility());
         post.setStatus(postData.getStatus());
         post.setReadTimeMinutes(postData.getReadTimeMinutes());

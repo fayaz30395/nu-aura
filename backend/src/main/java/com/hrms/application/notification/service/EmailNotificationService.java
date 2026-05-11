@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,12 +73,20 @@ public class EmailNotificationService {
             String htmlContent = templateEngine.process(templateName, context);
 
             MimeMessage message = mailSender.createMimeMessage();
+            // Email deliverability: List-Unsubscribe header (RFC 8058 one-click)
+            String unsubscribeUrl = frontendUrl + "/unsubscribe?email="
+                    + URLEncoder.encode(to, StandardCharsets.UTF_8);
+            message.addHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
+            message.addHeader("List-Unsubscribe-Post", "List-Unsubscribe=One-Click");
+
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(fromEmail);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            // Email deliverability: multipart/alternative (text + html) to reduce spam scoring
+            String plainText = htmlContent.replaceAll("<[^>]+>", "").replaceAll("&nbsp;", " ").replaceAll("\\s+", " ").trim();
+            helper.setText(plainText, htmlContent);
 
             mailSender.send(message);
             log.info("Sent HTML email to: {} using template: {}", to, templateName);

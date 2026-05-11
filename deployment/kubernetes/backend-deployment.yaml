@@ -400,3 +400,23 @@ spec:
                 topologyKey: kubernetes.io/hostname
 
       terminationGracePeriodSeconds: 30
+
+---
+# PodDisruptionBudget — guarantees ≥1 backend pod stays Ready during
+# voluntary disruptions (node drains, cluster upgrades, autoscaler evictions).
+# Selector matches the Deployment's pod labels (app=hrms, component=backend).
+# Added per wave-3 deployment audit #1 (P0).
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hrms-backend-pdb
+  namespace: hrms
+  labels:
+    app: hrms
+    component: backend
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: hrms
+      component: backend

@@ -2,7 +2,8 @@
 
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -99,6 +100,7 @@ export default function ShiftSwapPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     watch,
     reset,
@@ -394,10 +396,20 @@ export default function ShiftSwapPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
-              <input
-                type="date"
-                {...register('requesterShiftDate')}
-                className={`input-aura ${errors.requesterShiftDate ? 'border-danger-500' : ''}`}
+              <Controller
+                name="requesterShiftDate"
+                control={control}
+                render={({field}) => (
+                  <DateInput
+                    value={field.value ? new Date(field.value) : null}
+                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
+                    error={errors.requesterShiftDate ? true : undefined}
+                  />
+                )}
               />
               {errors.requesterShiftDate && (
                 <p className="mt-1 text-xs text-danger-500">{errors.requesterShiftDate.message}</p>
@@ -406,10 +418,19 @@ export default function ShiftSwapPage() {
             {watchedSwapType === 'SWAP' && (
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Shift Date</label>
-                <input
-                  type="date"
-                  {...register('targetShiftDate')}
-                  className="input-aura"
+                <Controller
+                  name="targetShiftDate"
+                  control={control}
+                  render={({field}) => (
+                    <DateInput
+                      value={field.value ? new Date(field.value) : null}
+                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      valueFormat="YYYY-MM-DD"
+                      placeholder="YYYY-MM-DD"
+                      clearable
+                      size="sm"
+                    />
+                  )}
                 />
               </div>
             )}

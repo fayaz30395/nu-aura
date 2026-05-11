@@ -8,6 +8,7 @@ import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {useCreateContract} from '@/lib/hooks/queries/useContracts';
 import {Button, Card, Input, Select, Textarea} from '@mantine/core';
+import {DateInput} from '@mantine/dates';
 import {ArrowLeft} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
@@ -124,18 +125,38 @@ export default function CreateContractPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1">Start Date *</label>
-              <Input
-                type="date"
-                {...register('startDate')}
+              <Controller
+                name="startDate"
+                control={control}
+                render={({field}) => (
+                  <DateInput
+                    value={field.value ? new Date(field.value) : null}
+                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
+                  />
+                )}
               />
               {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">End Date</label>
-              <Input
-                type="date"
-                {...register('endDate')}
+              <Controller
+                name="endDate"
+                control={control}
+                render={({field}) => (
+                  <DateInput
+                    value={field.value ? new Date(field.value) : null}
+                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
+                  />
+                )}
               />
               {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>

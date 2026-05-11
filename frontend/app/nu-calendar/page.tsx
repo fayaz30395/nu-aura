@@ -24,6 +24,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {DateInput} from '@mantine/dates';
 import {useGoogleLogin} from '@react-oauth/google';
 import {clearGoogleToken, getGoogleToken, GOOGLE_SSO_SCOPES, saveGoogleToken} from '@/lib/utils/googleToken';
 import {createLogger} from '@/lib/utils/logger';
@@ -927,10 +928,13 @@ function CalendarContent() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date *
                   </label>
-                  <Input
-                    type="date"
-                    value={newEvent.startDate}
-                    onChange={(e) => setNewEvent({...newEvent, startDate: e.target.value})}
+                  <DateInput
+                    value={newEvent.startDate ? new Date(newEvent.startDate) : null}
+                    onChange={(d) => setNewEvent({...newEvent, startDate: d ? d.toISOString().split('T')[0] : ''})}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
                   />
                 </div>
                 <div>
@@ -950,10 +954,13 @@ function CalendarContent() {
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
-                  <Input
-                    type="date"
-                    value={newEvent.endDate}
-                    onChange={(e) => setNewEvent({...newEvent, endDate: e.target.value})}
+                  <DateInput
+                    value={newEvent.endDate ? new Date(newEvent.endDate) : null}
+                    onChange={(d) => setNewEvent({...newEvent, endDate: d ? d.toISOString().split('T')[0] : ''})}
+                    valueFormat="YYYY-MM-DD"
+                    placeholder="YYYY-MM-DD"
+                    clearable
+                    size="sm"
                   />
                 </div>
                 <div>

@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 // R2-001 FIX: @Version enables JPA optimistic locking — concurrent deductions
@@ -117,11 +118,38 @@ public class LeaveBalance extends TenantAware {
         calculateAvailable();
     }
 
+    /**
+     * F2.3: Legacy single-arg overload retained for backward compatibility — delegates
+     * to the cap-enforcing form with a {@code null} cap (no policy enforcement).
+     */
     public void encashLeave(BigDecimal days) {
+        encashLeave(days, null);
+    }
+
+    /**
+     * F2.3: Encashes {@code days} from this balance and enforces an optional per-year
+     * encashment cap supplied by the leave-type policy.
+     *
+     * <ul>
+     *   <li>Throws when {@code days} would push the running encashed total over
+     *       {@code maxAllowed}, regardless of available balance.</li>
+     *   <li>Also throws on a single oversized request (defensive — covers the
+     *       "first encashment of the year is itself > cap" case).</li>
+     * </ul>
+     */
+    public void encashLeave(BigDecimal days, BigDecimal maxAllowed) {
+        Objects.requireNonNull(days, "days required");
         if (this.available.compareTo(days) < 0) {
             throw new IllegalStateException("Insufficient leave balance for encashment");
         }
-        this.encashed = this.encashed.add(days);
+        if (maxAllowed != null && days.compareTo(maxAllowed) > 0) {
+            throw new IllegalStateException("Encashment exceeds policy maximum: " + maxAllowed);
+        }
+        BigDecimal newEncashed = this.encashed.add(days);
+        if (maxAllowed != null && newEncashed.compareTo(maxAllowed) > 0) {
+            throw new IllegalStateException("Cumulative encashment would exceed annual cap");
+        }
+        this.encashed = newEncashed;
         calculateAvailable();
     }
 

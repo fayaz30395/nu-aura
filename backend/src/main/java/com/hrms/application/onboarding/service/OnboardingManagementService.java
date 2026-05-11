@@ -36,6 +36,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     private final OnboardingChecklistTemplateRepository templateRepository;
     private final OnboardingTemplateTaskRepository templateTaskRepository;
     private final OnboardingTaskRepository taskRepository;
+    private final com.hrms.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository;
     private final WorkflowService workflowService;
 
     public OnboardingManagementService(OnboardingProcessRepository onboardingRepository,
@@ -43,12 +44,14 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                                        OnboardingChecklistTemplateRepository templateRepository,
                                        OnboardingTemplateTaskRepository templateTaskRepository,
                                        OnboardingTaskRepository taskRepository,
+                                       com.hrms.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository,
                                        @org.springframework.context.annotation.Lazy WorkflowService workflowService) {
         this.onboardingRepository = onboardingRepository;
         this.employeeRepository = employeeRepository;
         this.templateRepository = templateRepository;
         this.templateTaskRepository = templateTaskRepository;
         this.taskRepository = taskRepository;
+        this.roleTemplateRepository = roleTemplateRepository;
         this.workflowService = workflowService;
     }
 
@@ -81,15 +84,80 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
         OnboardingProcess savedProcess = onboardingRepository.save(process);
 
-        // If template ID is provided, generate tasks
+        // If template ID is provided, generate tasks from the user-managed checklist.
         if (request.getTemplateId() != null) {
             generateTasksFromTemplate(savedProcess, request.getTemplateId());
+        } else {
+            // F4.6 wave-3: fall back to role-aware default task templates so a
+            // sensible per-role task set is seeded even when HR did not pick a
+            // checklist. Role filter is matched case-insensitively against
+            // Employee.designation; nulls apply to everyone.
+            generateTasksFromRoleTemplates(savedProcess, tenantId);
         }
 
         // Start approval workflow (HR -> Department Head)
         startOnboardingApprovalWorkflow(savedProcess, tenantId);
 
         return mapToResponse(savedProcess);
+    }
+
+    /**
+     * Seed default onboarding tasks from {@code onboarding_task_templates}
+     * (F4.6). Selects all active templates for the tenant, then filters to
+     * those whose {@code roleFilter} is null (universal) or matches the
+     * employee's designation case-insensitively. Department filtering is
+     * reserved for a future pass — the column exists in the schema but is
+     * not yet consulted here.
+     */
+    private void generateTasksFromRoleTemplates(OnboardingProcess process, UUID tenantId) {
+        List<com.hrms.domain.onboarding.OnboardingTaskTemplate> templates =
+                roleTemplateRepository
+                        .findByTenantIdAndIsActiveTrueAndIsDeletedFalseOrderBySequenceOrder(tenantId);
+        if (templates.isEmpty()) {
+            log.debug("No role-aware onboarding templates configured for tenant {}", tenantId);
+            return;
+        }
+
+        String employeeRole = employeeRepository.findByIdAndTenantId(process.getEmployeeId(), tenantId)
+                .map(Employee::getDesignation)
+                .orElse(null);
+
+        LocalDate joinDate = process.getStartDate() != null ? process.getStartDate() : LocalDate.now();
+        int created = 0;
+        for (com.hrms.domain.onboarding.OnboardingTaskTemplate tpl : templates) {
+            if (tpl.getRoleFilter() != null
+                    && (employeeRole == null || !tpl.getRoleFilter().equalsIgnoreCase(employeeRole))) {
+                continue;
+            }
+
+            // OnboardingTask has no assignee_role column; preserve the logical
+            // role in the task description so downstream UIs can surface it
+            // without a schema change. assigned_to (UUID) is left null —
+            // resolving role -> user is a workflow-engine concern, not ours.
+            String description = tpl.getTaskDescription();
+            if (tpl.getAssigneeRole() != null && !tpl.getAssigneeRole().isBlank()) {
+                String prefix = "[Assignee: " + tpl.getAssigneeRole() + "] ";
+                description = description == null ? prefix.trim() : prefix + description;
+            }
+
+            OnboardingTask task = OnboardingTask.builder()
+                    .processId(process.getId())
+                    .employeeId(process.getEmployeeId())
+                    .taskName(tpl.getTaskName())
+                    .description(description)
+                    .orderSequence(tpl.getSequenceOrder())
+                    .status(OnboardingTask.TaskStatus.PENDING)
+                    .priority(OnboardingTask.TaskPriority.MEDIUM)
+                    .isMandatory(true)
+                    .dueDate(joinDate.plusDays(
+                            tpl.getDueDaysAfterJoin() != null ? tpl.getDueDaysAfterJoin() : 7))
+                    .build();
+            task.setTenantId(tenantId);
+            taskRepository.save(task);
+            created++;
+        }
+        log.info("Seeded {} role-aware onboarding tasks (employeeRole='{}') for process {}",
+                created, employeeRole, process.getId());
     }
 
     private void generateTasksFromTemplate(OnboardingProcess process, UUID templateId) {

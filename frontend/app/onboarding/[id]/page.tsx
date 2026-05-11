@@ -34,6 +34,7 @@ import {
 import {useGoogleLogin} from '@react-oauth/google';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {createLogger} from '@/lib/utils/logger';
+import {safeSessionStorage} from '@/lib/utils/safeStorage';
 
 const log = createLogger('OnboardingPage');
 
@@ -55,7 +56,7 @@ export default function OnboardingDetailPage() {
   const {mutate: updateTaskStatus, isPending: isUpdating} = useUpdateOnboardingTaskStatus();
 
   useEffect(() => {
-    const token = sessionStorage.getItem('nu_drive_token');
+    const token = safeSessionStorage.get('nu_drive_token');
     if (token) setDriveToken(token);
 
     // Auto-expand first category
@@ -87,7 +88,7 @@ export default function OnboardingDetailPage() {
   const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       const token = tokenResponse.access_token;
-      sessionStorage.setItem('nu_drive_token', token);
+      safeSessionStorage.set('nu_drive_token', token);
       setDriveToken(token);
     },
     scope: 'https://www.googleapis.com/auth/drive.file',

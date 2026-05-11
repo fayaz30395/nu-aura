@@ -3,6 +3,14 @@
 import {useEffect, useState} from 'react';
 import {CheckCircle2, Clock, LogIn, LogOut} from 'lucide-react';
 
+// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the
+// modern value on first paint (matches SSR), swap to rgba() after mount
+// on browsers that don't support it.
+function supportsColorMix(): boolean {
+  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
+  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
+}
+
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
   checkInTime: Date | null;
@@ -44,6 +52,16 @@ export function TimeClockWidget({
   const [currentTime, setCurrentTime] = useState<string>(getInitialTime());
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [dateDisplay, setDateDisplay] = useState<string>(getInitialDateDisplay());
+  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
+  const [useColorMixFallback, setUseColorMixFallback] = useState(false);
+  useEffect(() => {
+    if (!supportsColorMix()) setUseColorMixFallback(true);
+  }, []);
+
+  // --nu-lapis-blue #050766 ≈ rgb(5, 7, 102); 35% mix ≈ rgba(5, 7, 102, 0.35)
+  const clockInShadow = useColorMixFallback
+    ? '0 4px 14px rgba(5, 7, 102, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)' // fallback
+    : '0 4px 14px color-mix(in srgb, var(--nu-lapis-blue) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.15)';
 
   useEffect(() => {
     const updateTime = () => {
@@ -158,7 +176,7 @@ export function TimeClockWidget({
           } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
           style={!isCheckedIn ? {
             background: 'var(--nu-gradient-dark)',
-            boxShadow: '0 4px 14px color-mix(in srgb, var(--nu-lapis-blue) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+            boxShadow: clockInShadow,
           } : undefined}
         >
           {isCheckedIn ? (
