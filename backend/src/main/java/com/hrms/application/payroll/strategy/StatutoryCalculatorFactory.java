@@ -1,6 +1,7 @@
 package com.hrms.application.payroll.strategy;
 
 import com.hrms.common.exception.BusinessException;
+import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,11 @@ import java.util.UUID;
  * The factory then resolves the tenant's country and returns the calculator whose
  * {@link StatutoryCalculator#countryCode()} matches.
  *
- * <p>Today the {@code Tenant} entity does not yet carry a country attribute, so
- * the lookup falls back to {@code "IN"} (India) — preserving the platform's
- * historical single-country behaviour. The fallback is removed once the entity
- * gains a {@code country} column (see TODO below).
+ * <p>V155 added {@code tenants.country} (ISO 3166-1 alpha-2, NOT NULL DEFAULT 'IN'),
+ * so resolution is now {@code Tenant::getCountry} with a {@link #DEFAULT_COUNTRY}
+ * fallback only when the tenantId is null (system callers) or the row is unknown.
  *
- * <p>Wave-3 i18n — audit recommendation #14.
+ * <p>Wave-3 i18n — audit recommendation #14 (closed S9-C/S9-D).
  */
 @Slf4j
 @Component
@@ -49,11 +49,6 @@ public class StatutoryCalculatorFactory {
 
     /**
      * Returns the {@link StatutoryCalculator} bound to the given tenant's country.
-     *
-     * <p>TODO(i18n-#14-tenant-country): once {@code Tenant} gains a
-     * {@code country} column (ISO 3166-1 alpha-2), replace the {@code DEFAULT_COUNTRY}
-     * fallback with {@code tenant.getCountry()}. A Flyway migration is tracked
-     * separately under the wave-3 i18n epic.
      *
      * @param tenantId the tenant the payroll run belongs to
      * @return a matching calculator
@@ -83,20 +78,22 @@ public class StatutoryCalculatorFactory {
     }
 
     /**
-     * Resolves the country for a tenant.
-     *
-     * <p>Currently always returns {@link #DEFAULT_COUNTRY} because the {@code Tenant}
-     * entity does not yet carry a country field. The {@code tenantId} is still
-     * resolved against the repository so an invalid tenant raises early, and so
-     * the lookup site is in place for the entity migration.
+     * Resolves the country for a tenant. Reads {@link Tenant#getCountry()} which is
+     * NOT NULL after V155. Falls back to {@link #DEFAULT_COUNTRY} when the tenantId
+     * is null (system callers) or the row is missing; logs WARN on the missing-row
+     * path since the constraint should make it impossible in production.
      */
     private String resolveCountry(UUID tenantId) {
         if (tenantId == null) {
             return DEFAULT_COUNTRY;
         }
         return tenantRepository.findById(tenantId)
-                // TODO(i18n-#14-tenant-country): swap to `Tenant::getCountry` after migration lands.
-                .map(t -> DEFAULT_COUNTRY)
-                .orElse(DEFAULT_COUNTRY);
+                .map(Tenant::getCountry)
+                .map(c -> c == null || c.isBlank() ? DEFAULT_COUNTRY : c.trim().toUpperCase())
+                .orElseGet(() -> {
+                    log.warn("Tenant {} not found in country lookup — falling back to {}",
+                            tenantId, DEFAULT_COUNTRY);
+                    return DEFAULT_COUNTRY;
+                });
     }
 }

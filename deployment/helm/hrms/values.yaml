@@ -158,3 +158,44 @@ cosign:
     name: cosign-public-key
     namespace: kyverno
     key: cosign.pub
+
+# -----------------------------------------------------------------------------
+# HorizontalPodAutoscaler (S9-J)
+# -----------------------------------------------------------------------------
+# autoscaling/v2 HPAs for backend + frontend. Disabled by default; prod overlay
+# turns them on. Targets are CPU-first; backend optionally also tracks memory.
+hpa:
+  enabled: false
+  backend:
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 0   # 0 disables memory target
+  frontend:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# -----------------------------------------------------------------------------
+# NetworkPolicy (S9-J)
+# -----------------------------------------------------------------------------
+# Zero-trust east-west: default deny ingress, explicit allows for ingress
+# controller -> frontend / backend, frontend -> backend, DNS egress.
+networkPolicy:
+  enabled: false
+  ingressNamespaceLabel: "ingress-nginx"
+
+# -----------------------------------------------------------------------------
+# ServiceAccount + Workload Identity (S9-J)
+# -----------------------------------------------------------------------------
+# Backend KSA carries the gke.io/workload-identity binding (annotation slot
+# below). Frontend KSA has no token, no RBAC.
+serviceAccount:
+  enabled: false
+  backend:
+    name: hrms-backend-sa
+    annotations: {}
+    # iam.gke.io/gcp-service-account: hrms-backend@PROJECT_ID.iam.gserviceaccount.com
+  frontend:
+    name: hrms-frontend-sa
+    annotations: {}

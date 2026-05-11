@@ -1,0 +1,178 @@
+# =============================================================================
+# NU-AURA HRMS — Production Overrides
+# =============================================================================
+# Layer this on top of values.yaml:
+#   helm install hrms ./deployment/helm/hrms -f values-prod.yaml
+#
+# Prod posture:
+#   - 3 backend replicas / 2 frontend replicas (HA across 3 zones)
+#   - Tight resource limits sized from S8-A capacity planning (2026-05)
+#   - HPA + NetworkPolicy + ServiceAccount toggles ON
+#   - Tuned probes — longer cold start for JVM, faster readiness for autoscaler
+#   - topologySpreadConstraints + podAntiAffinity for zone resilience
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Backend (Spring Boot)
+# -----------------------------------------------------------------------------
+backend:
+  replicas: 3
+
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+  # JVM heap sized for 2Gi limit — leave ~512Mi headroom for non-heap / native.
+  javaOpts: "-Xms1g -Xmx1500m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:+ExitOnOutOfMemoryError"
+
+  probes:
+    liveness:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 2
+    startup:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 30
+
+  pdb:
+    enabled: true
+    minAvailable: 2
+
+  # Spread pods across zones — assumes regional GKE cluster (3 zones).
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app: hrms
+          component: backend
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app: hrms
+          component: backend
+
+  # Required anti-affinity for prod — never co-locate backend pods on same node.
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: component
+              operator: In
+              values:
+                - backend
+        topologyKey: kubernetes.io/hostname
+
+# -----------------------------------------------------------------------------
+# Frontend (Next.js)
+# -----------------------------------------------------------------------------
+frontend:
+  replicas: 2
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+  probes:
+    liveness:
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 2
+    startup:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 30
+
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app: hrms
+          component: frontend
+
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: component
+              operator: In
+              values:
+                - frontend
+        topologyKey: kubernetes.io/hostname
+
+# -----------------------------------------------------------------------------
+# HPA — on in prod
+# -----------------------------------------------------------------------------
+hpa:
+  enabled: true
+  backend:
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  frontend:
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# -----------------------------------------------------------------------------
+# NetworkPolicy — on in prod (default deny, allowlist below)
+# -----------------------------------------------------------------------------
+networkPolicy:
+  enabled: true
+  ingressNamespaceLabel: "ingress-nginx"
+
+# -----------------------------------------------------------------------------
+# ServiceAccount — workload identity for prod
+# -----------------------------------------------------------------------------
+serviceAccount:
+  enabled: true
+  backend:
+    name: hrms-backend-sa
+    # gke.io/workload-identity stub — replace with real GSA before deploy.
+    annotations:
+      iam.gke.io/gcp-service-account: "hrms-backend@PROJECT_ID.iam.gserviceaccount.com"
+  frontend:
+    name: hrms-frontend-sa
+    annotations:
+      iam.gke.io/gcp-service-account: "hrms-frontend@PROJECT_ID.iam.gserviceaccount.com"
+
+# -----------------------------------------------------------------------------
+# Ingress — prod hosts (placeholders — replace before deploy)
+# -----------------------------------------------------------------------------
+ingress:
+  hosts:
+    frontend: hrms.nulogic.com
+    api: api.hrms.nulogic.com

@@ -41,6 +41,12 @@ public class Tenant extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String settings;
 
+    // ISO 3166-1 alpha-2 country code — drives multi-jurisdiction routing (statutory engine etc.).
+    // V155 backfills 'IN' for legacy rows and enforces NOT NULL + ^[A-Z]{2}$ check.
+    @Column(name = "country", nullable = false, length = 2)
+    @Builder.Default
+    private String country = "IN";
+
     public void activate() {
         if (this.status == TenantStatus.PENDING_ACTIVATION || this.status == TenantStatus.SUSPENDED) {
             this.status = TenantStatus.ACTIVE;

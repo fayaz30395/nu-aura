@@ -3,7 +3,8 @@
 import React from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Check, Info, Send} from 'lucide-react';
-import {FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
+import {Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
+import {DateInput} from '@mantine/dates';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 
@@ -42,6 +43,7 @@ interface CreateRequestModalProps {
   open: boolean;
   formStep: 1 | 2 | 3;
   register: UseFormRegister<RegularizationFormData>;
+  control: Control<RegularizationFormData>;
   errors: FieldErrors<RegularizationFormData>;
   isSubmitting: boolean;
   isPending: boolean;
@@ -59,6 +61,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                                                            open,
                                                                            formStep,
                                                                            register,
+                                                                           control,
                                                                            errors,
                                                                            isSubmitting,
                                                                            isPending,
@@ -170,12 +173,21 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                           <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Which date do you want to regularize? <span className="text-danger-500">*</span>
                           </label>
-                          {/* TODO(S5-C): migrate to Mantine DateInput once parent passes `control` prop (requires Controller refactor in regularization page) */}
-                          <input
-                            type="date"
-                            {...register('attendanceDate')}
-                            max={new Date().toISOString().split('T')[0]}
-                            className="input-aura w-full px-4 py-2.5"
+                          <Controller
+                            name="attendanceDate"
+                            control={control}
+                            render={({field}) => (
+                              <DateInput
+                                value={field.value || null}
+                                onChange={(d) => field.onChange(d ?? '')}
+                                maxDate={new Date()}
+                                valueFormat="YYYY-MM-DD"
+                                placeholder="YYYY-MM-DD"
+                                clearable
+                                size="sm"
+                                classNames={{input: 'input-aura'}}
+                              />
+                            )}
                           />
                           {errors.attendanceDate && (
                             <motion.p

@@ -6,6 +6,11 @@ import com.hrms.application.leave.service.LeaveTypeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.leave.LeaveType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -22,12 +27,21 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/leave-types")
 @RequiredArgsConstructor
+@Tag(name = "Leave Types", description = "Configuration of leave types: accrual rules, gender-specificity, activation toggles")
 public class LeaveTypeController {
 
     private final LeaveTypeService leaveTypeService;
 
     @PostMapping
     @RequiresPermission(Permission.LEAVE_APPROVE)
+    @Operation(summary = "Create leave type",
+            description = "Define a new leave type with accrual policy and applicability rules (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Leave type created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires LEAVE:APPROVE permission")
+    })
     public ResponseEntity<LeaveTypeResponse> createLeaveType(@Valid @RequestBody LeaveTypeRequest request) {
         LeaveType leaveType = new LeaveType();
         // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
@@ -45,9 +59,17 @@ public class LeaveTypeController {
 
     @PutMapping("/{id}")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<LeaveTypeResponse> updateLeaveType(@PathVariable UUID id, @Valid @RequestBody LeaveTypeRequest request) {
+    @Operation(summary = "Update leave type",
+            description = "Update an existing leave type definition; sensitive identifiers cannot be mutated")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Leave type updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Leave type not found")
+    })
+    public ResponseEntity<LeaveTypeResponse> updateLeaveType(
+            @Parameter(description = "Leave type UUID") @PathVariable UUID id,
+            @Valid @RequestBody LeaveTypeRequest request) {
         LeaveType leaveTypeData = new LeaveType();
-        // SEC-FIX (F7): Explicitly ignore sensitive entity fields to prevent mass-assignment attacks.
         BeanUtils.copyProperties(request, leaveTypeData,
                 "id", "tenantId", "createdAt", "updatedAt", "createdBy", "updatedBy", "version");
         if (request.getAccrualType() != null) {
@@ -62,13 +84,21 @@ public class LeaveTypeController {
 
     @GetMapping("/{id}")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_SELF})
-    public ResponseEntity<LeaveTypeResponse> getLeaveType(@PathVariable UUID id) {
+    @Operation(summary = "Get leave type by ID", description = "Returns a single leave type by its UUID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Leave type found"),
+            @ApiResponse(responseCode = "404", description = "Leave type not found")
+    })
+    public ResponseEntity<LeaveTypeResponse> getLeaveType(
+            @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
         return ResponseEntity.ok(toResponse(leaveType));
     }
 
     @GetMapping
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_SELF})
+    @Operation(summary = "List all leave types", description = "Returns a paginated list of all leave types (active and inactive)")
+    @ApiResponse(responseCode = "200", description = "Leave types retrieved successfully")
     public ResponseEntity<Page<LeaveTypeResponse>> getAllLeaveTypes(Pageable pageable) {
         Page<LeaveType> leaveTypes = leaveTypeService.getAllLeaveTypes(pageable);
         return ResponseEntity.ok(leaveTypes.map(this::toResponse));
@@ -76,6 +106,8 @@ public class LeaveTypeController {
 
     @GetMapping("/active")
     @RequiresPermission({Permission.LEAVE_VIEW_ALL, Permission.LEAVE_VIEW_SELF})
+    @Operation(summary = "List active leave types", description = "Returns only leave types currently available for new requests")
+    @ApiResponse(responseCode = "200", description = "Active leave types retrieved successfully")
     public ResponseEntity<List<LeaveTypeResponse>> getActiveLeaveTypes() {
         List<LeaveType> leaveTypes = leaveTypeService.getActiveLeaveTypes();
         return ResponseEntity.ok(leaveTypes.stream().map(this::toResponse).collect(Collectors.toList()));
@@ -83,7 +115,13 @@ public class LeaveTypeController {
 
     @PatchMapping("/{id}/activate")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<LeaveTypeResponse> activateLeaveType(@PathVariable UUID id) {
+    @Operation(summary = "Activate leave type", description = "Re-enable a previously deactivated leave type")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Leave type activated successfully"),
+            @ApiResponse(responseCode = "404", description = "Leave type not found")
+    })
+    public ResponseEntity<LeaveTypeResponse> activateLeaveType(
+            @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         leaveTypeService.activateLeaveType(id);
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
         return ResponseEntity.ok(toResponse(leaveType));
@@ -91,7 +129,14 @@ public class LeaveTypeController {
 
     @PatchMapping("/{id}/deactivate")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<LeaveTypeResponse> deactivateLeaveType(@PathVariable UUID id) {
+    @Operation(summary = "Deactivate leave type",
+            description = "Disable a leave type from new requests (existing balances retained)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Leave type deactivated successfully"),
+            @ApiResponse(responseCode = "404", description = "Leave type not found")
+    })
+    public ResponseEntity<LeaveTypeResponse> deactivateLeaveType(
+            @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         leaveTypeService.deactivateLeaveType(id);
         LeaveType leaveType = leaveTypeService.getLeaveTypeById(id);
         return ResponseEntity.ok(toResponse(leaveType));
@@ -99,7 +144,14 @@ public class LeaveTypeController {
 
     @DeleteMapping("/{id}")
     @RequiresPermission(Permission.LEAVE_APPROVE)
-    public ResponseEntity<Void> deleteLeaveType(@PathVariable UUID id) {
+    @Operation(summary = "Delete leave type", description = "Soft-delete a leave type (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Leave type deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Leave type not found"),
+            @ApiResponse(responseCode = "409", description = "Leave type still in use; cannot delete")
+    })
+    public ResponseEntity<Void> deleteLeaveType(
+            @Parameter(description = "Leave type UUID") @PathVariable UUID id) {
         leaveTypeService.deleteLeaveType(id);
         return ResponseEntity.noContent().build();
     }

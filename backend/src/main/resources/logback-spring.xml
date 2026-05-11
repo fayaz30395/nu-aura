@@ -87,8 +87,11 @@
         </appender>
 
         <!-- JSON Console Appender for Cloud Logging (stdout) -->
+        <!-- Uses PiiMaskingLogstashEncoder (S9-I) so PII is masked in the JSON path
+             that flows to Cloud Logging / ELK — pattern-layout %maskedMsg only covers
+             the plain-text STDOUT_MASKED appender; this closes the S7-D follow-up. -->
         <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <encoder class="com.hrms.common.logging.PiiMaskingLogstashEncoder">
                 <includeMdcKeyName>correlationId</includeMdcKeyName>
                 <includeMdcKeyName>userId</includeMdcKeyName>
                 <includeMdcKeyName>tenantId</includeMdcKeyName>
@@ -117,7 +120,7 @@
                 <maxHistory>30</maxHistory>
                 <totalSizeCap>10GB</totalSizeCap>
             </rollingPolicy>
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <encoder class="com.hrms.common.logging.PiiMaskingLogstashEncoder">
                 <includeMdcKeyName>correlationId</includeMdcKeyName>
                 <includeMdcKeyName>userId</includeMdcKeyName>
                 <includeMdcKeyName>tenantId</includeMdcKeyName>

@@ -57,6 +57,8 @@ public class DsrService {
     private final DsrRequestRepository dsrRequestRepository;
     private final AuditLogService auditLogService;
     private final JavaMailSender mailSender;
+    private final DsrExportService dsrExportService;
+    private final DsrErasureService dsrErasureService;
 
     // ==================== Create endpoints (Articles 15 / 17 / 20 / 16) ====================
 
@@ -218,6 +220,156 @@ public class DsrService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         return dsrRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("DSR request not found"));
+    }
+
+    // ==================== Article 15 / 20 fulfilment (S9-A export pipeline) ====================
+
+    /**
+     * Drive an ACCESS / PORTABILITY request through the export pipeline:
+     * transition PENDING → IN_PROGRESS, delegate to
+     * {@link DsrExportService#buildExport} to aggregate the requester's
+     * tenant-scoped data and render a JSON artefact, stamp SHA-256 + size
+     * onto the row, transition to COMPLETED, and emit an EXPORT audit row
+     * carrying digest + size in the {@code newValue} JSON.
+     *
+     * <p>Deliberately separate from the erasure / rectification fulfilment
+     * branches — those right-types have very different cascading semantics
+     * and shouldn't share state-machine code with the export pipeline.</p>
+     *
+     * <p>Caller-side controllers MUST gate entry on {@code SYSTEM_ADMIN}.
+     * We re-load the request inside this transaction (not trusting the
+     * caller) so tenant scope is enforced at the persistence boundary and
+     * any concurrent status flip is caught by the JPA optimistic-lock
+     * {@code @Version}.</p>
+     *
+     * @param requestId DSR row to fulfil; tenant-scoped, type ACCESS or PORTABILITY
+     * @return rendered artefact for inline delivery
+     * @throws IllegalArgumentException if request missing or wrong type
+     * @throws IllegalStateException    if request is already in a terminal state
+     */
+    @Transactional
+    public DsrExportArtifact processAccessOrPortability(UUID requestId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID handlerId = SecurityContext.getCurrentUserId();
+
+        DsrRequest request = dsrRequestRepository.findByIdAndTenantId(requestId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("DSR request not found"));
+
+        return processAccessOrPortability(request, handlerId);
+    }
+
+    /**
+     * Lower-level overload for callers that already loaded a tenant-safe
+     * {@link DsrRequest}. Same status-transition + export + audit cycle as
+     * {@link #processAccessOrPortability(UUID)}.
+     */
+    @Transactional
+    public DsrExportArtifact processAccessOrPortability(DsrRequest request, UUID handlerId) {
+        if (request == null) {
+            throw new IllegalArgumentException("DSR request is required");
+        }
+        DsrRequest.RequestType type = request.getRequestType();
+        if (type != DsrRequest.RequestType.ACCESS && type != DsrRequest.RequestType.PORTABILITY) {
+            throw new IllegalArgumentException(
+                    "Only ACCESS / PORTABILITY may be processed here (got " + type + ")");
+        }
+        DsrRequest.Status start = request.getStatus();
+        if (start == DsrRequest.Status.COMPLETED || start == DsrRequest.Status.REJECTED) {
+            // Fail loud — silently re-exporting PII to a different handler
+            // would be worse than rejecting. Re-opening a terminal row is an
+            // explicit ops action via updateStatus().
+            throw new IllegalStateException(
+                    "DSR request already in terminal state " + start + " — cannot re-export");
+        }
+
+        // 1) Advance to IN_PROGRESS (idempotent if already in-flight).
+        if (start != DsrRequest.Status.IN_PROGRESS) {
+            request.setStatus(DsrRequest.Status.IN_PROGRESS);
+            request.setHandlerUserId(handlerId);
+            dsrRequestRepository.save(request);
+        }
+
+        // 2) Build the artefact. A serialisation / aggregation failure
+        //    propagates and rolls back the IN_PROGRESS transition — a
+        //    half-built export must not appear to have started.
+        DsrExportArtifact artefact = dsrExportService.buildExport(request);
+
+        // 3) Stamp integrity metadata onto the row.
+        String sha256 = dsrExportService.sha256Hex(artefact.bytes());
+        long size = artefact.size();
+        request.setArtifactSha256(sha256);
+        request.setArtifactSize(size);
+
+        // 4) Transition to COMPLETED via the entity helper so handler +
+        //    completedAt stay consistent with manual admin transitions.
+        request.complete(handlerId, request.getAdminNotes());
+        DsrRequest saved = dsrRequestRepository.save(request);
+
+        // 5) Audit — EXPORT with digest + size in the newValue JSON.
+        //    Async/REQUIRES_NEW: audit failure cannot poison this txn.
+        auditLogService.logAction(
+                "DsrRequest",
+                saved.getId(),
+                AuditLog.AuditAction.EXPORT,
+                Map.of("status", start.name()),
+                Map.of(
+                        "action", "DSR_FULFILLMENT_EXPORT",
+                        "type", type.name(),
+                        "status", saved.getStatus().name(),
+                        "handlerUserId", String.valueOf(handlerId),
+                        "artifactSha256", sha256,
+                        "artifactSize", size
+                ),
+                "GDPR DSR " + type + " fulfilled — artefact " + size + " bytes, sha256=" + sha256
+        );
+
+        log.info("DSR fulfilment export complete: requestId={}, type={}, size={}, sha256={}, handler={}",
+                saved.getId(), type, size, sha256, handlerId);
+
+        return artefact;
+    }
+
+    // ==================== Article 17 fulfilment (S9-B) ====================
+
+    /**
+     * GDPR Article 17 — fulfil an erasure request.
+     *
+     * <p>This is the orchestrating entry point that the controller / scheduled
+     * fulfilment worker calls to actually erase the data subject's personal
+     * data. The heavy lifting (legal-hold determination, User-row
+     * anonymisation, audit emission) is delegated to {@link DsrErasureService};
+     * this method is the public surface that ties the DSR row to the cascade
+     * and is the canonical place where a {@link DsrRequest} of type
+     * {@link DsrRequest.RequestType#ERASURE} moves
+     * {@code PENDING -> IN_PROGRESS -> COMPLETED}.</p>
+     *
+     * <p>Returns the same {@link DsrRequest} after status transitions and
+     * cascade application. The DSR row's {@code adminNotes} field carries
+     * the human-readable per-data-class result summary for inclusion in the
+     * 30-day statutory response to the data subject.</p>
+     *
+     * <p><strong>Authorization:</strong> enforced inside
+     * {@link DsrErasureService#processErasure} rather than via
+     * {@code @RequiresPermission} because the "you may erase yourself" path is
+     * identity-based, not permission-based. The data subject themselves OR a
+     * {@code SYSTEM_ADMIN} / {@code SUPER_ADMIN} may invoke this.</p>
+     *
+     * @param requestId the DSR row to fulfil; must be of type
+     *                  {@link DsrRequest.RequestType#ERASURE} and not yet
+     *                  in a terminal state.
+     * @return the same DSR row, now {@code COMPLETED}.
+     */
+    @Transactional
+    public DsrRequest processErasure(UUID requestId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        DsrRequest request = dsrRequestRepository.findByIdAndTenantId(requestId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("DSR request not found"));
+        if (request.getRequestType() != DsrRequest.RequestType.ERASURE) {
+            throw new IllegalArgumentException(
+                    "DSR request " + requestId + " is not an erasure request (type="
+                            + request.getRequestType() + ")");
+        }
+        return dsrErasureService.processErasure(request);
     }
 
     // ==================== Ops notification ====================

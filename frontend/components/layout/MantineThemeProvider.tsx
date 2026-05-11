@@ -1,8 +1,12 @@
 'use client';
 
 import {ColorSchemeScript, MantineProvider} from '@mantine/core';
+import {DatesProvider} from '@mantine/dates';
 import {theme} from '@/lib/theme/mantine-theme';
 import {useDarkMode} from './DarkModeProvider';
+
+// Required for @mantine/dates calendar / DateInput rendering.
+import '@mantine/dates/styles.css';
 
 interface MantineThemeProviderProps {
   children: React.ReactNode;
@@ -11,6 +15,12 @@ interface MantineThemeProviderProps {
 /**
  * Mantine Theme Provider - Synced with DarkModeProvider.
  * Uses forceColorScheme to keep Mantine in sync with the resolved theme.
+ *
+ * DatesProvider (S9-G): locale-aware DateInput display platform-wide.
+ *   - locale "en-IN"             — DD/MM/YYYY display, INR-region defaults
+ *   - firstDayOfWeek 1           — Monday-first calendar (India business week)
+ *   - weekendDays [0]            — Sunday only (Saturday is a working day)
+ * Placed inside MantineProvider so dates components inherit theme/colorScheme.
  */
 export function MantineThemeProvider({children}: MantineThemeProviderProps) {
   const {resolvedTheme} = useDarkMode();
@@ -28,7 +38,9 @@ export function MantineThemeProvider({children}: MantineThemeProviderProps) {
         theme={theme}
         forceColorScheme={resolvedTheme}
       >
-        {children}
+        <DatesProvider settings={{locale: 'en-IN', firstDayOfWeek: 1, weekendDays: [0]}}>
+          {children}
+        </DatesProvider>
       </MantineProvider>
     </div>
   );

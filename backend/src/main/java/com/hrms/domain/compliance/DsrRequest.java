@@ -88,6 +88,18 @@ public class DsrRequest extends TenantAware {
     @Column(name = "handler_user_id")
     private UUID handlerUserId;
 
+    /**
+     * SHA-256 (lowercase hex) of the exported artefact bytes for an
+     * Article 15 / 20 fulfilment. Null for ERASURE / RECTIFICATION rows
+     * and for ACCESS / PORTABILITY rows that have not been fulfilled.
+     */
+    @Column(name = "artifact_sha256", length = 64)
+    private String artifactSha256;
+
+    /** Byte size of the exported artefact (see {@link #artifactSha256}). */
+    @Column(name = "artifact_size")
+    private Long artifactSize;
+
     @PrePersist
     public void prePersist() {
         if (requestedAt == null) {

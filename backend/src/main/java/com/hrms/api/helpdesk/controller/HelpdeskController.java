@@ -4,6 +4,11 @@ import com.hrms.api.helpdesk.dto.*;
 import com.hrms.application.helpdesk.service.HelpdeskService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.helpdesk.Ticket;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +26,7 @@ import static com.hrms.common.security.Permission.*;
 @RestController
 @RequestMapping("/api/v1/helpdesk")
 @RequiredArgsConstructor
+@Tag(name = "Helpdesk", description = "Helpdesk ticket lifecycle, comments, and category configuration")
 public class HelpdeskController {
 
     private final HelpdeskService helpdeskService;
@@ -29,91 +35,163 @@ public class HelpdeskController {
 
     @PostMapping("/tickets")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @Operation(summary = "Create helpdesk ticket", description = "Submit a new helpdesk ticket; defaults to OPEN status")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Ticket created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated")
+    })
     public ResponseEntity<TicketResponse> createTicket(@Valid @RequestBody TicketRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.createTicket(request));
     }
 
     @PutMapping("/tickets/{id}")
     @RequiresPermission(HELPDESK_TICKET_RESOLVE)
+    @Operation(summary = "Update ticket", description = "Mutate a ticket's content or metadata (resolver/admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
     public ResponseEntity<TicketResponse> updateTicket(
-            @PathVariable UUID id,
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id,
             @Valid @RequestBody TicketRequest request) {
         return ResponseEntity.ok(helpdeskService.updateTicket(id, request));
     }
 
     @PatchMapping("/tickets/{id}/status")
     @RequiresPermission(HELPDESK_TICKET_RESOLVE)
+    @Operation(summary = "Update ticket status",
+            description = "Transition a ticket to a new status (OPEN, IN_PROGRESS, RESOLVED, CLOSED, etc.)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found"),
+            @ApiResponse(responseCode = "409", description = "Illegal status transition")
+    })
     public ResponseEntity<TicketResponse> updateTicketStatus(
-            @PathVariable UUID id,
-            @RequestParam Ticket.TicketStatus status) {
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id,
+            @Parameter(description = "Target status", example = "IN_PROGRESS") @RequestParam Ticket.TicketStatus status) {
         return ResponseEntity.ok(helpdeskService.updateTicketStatus(id, status));
     }
 
     @PatchMapping("/tickets/{id}/resolve")
     @RequiresPermission(HELPDESK_TICKET_RESOLVE)
-    public ResponseEntity<TicketResponse> resolveTicket(@PathVariable UUID id) {
+    @Operation(summary = "Resolve ticket", description = "Mark a ticket as RESOLVED (pending requester confirmation to close)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket resolved successfully"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
+    public ResponseEntity<TicketResponse> resolveTicket(
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.resolveTicket(id));
     }
 
     @PatchMapping("/tickets/{id}/close")
     @RequiresPermission(HELPDESK_TICKET_RESOLVE)
-    public ResponseEntity<TicketResponse> closeTicket(@PathVariable UUID id) {
+    @Operation(summary = "Close ticket", description = "Permanently close a resolved ticket")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket closed successfully"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
+    public ResponseEntity<TicketResponse> closeTicket(
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.closeTicket(id));
     }
 
     @PatchMapping("/tickets/{id}/assign")
     @RequiresPermission(HELPDESK_TICKET_ASSIGN)
+    @Operation(summary = "Assign ticket", description = "Assign a ticket to a specific employee (assignee)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket assigned successfully"),
+            @ApiResponse(responseCode = "404", description = "Ticket or assignee not found")
+    })
     public ResponseEntity<TicketResponse> assignTicket(
-            @PathVariable UUID id,
-            @RequestParam UUID assigneeId) {
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id,
+            @Parameter(description = "Assignee employee UUID") @RequestParam UUID assigneeId) {
         return ResponseEntity.ok(helpdeskService.assignTicket(id, assigneeId));
     }
 
     @GetMapping("/tickets/{id}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<TicketResponse> getTicketById(@PathVariable UUID id) {
+    @Operation(summary = "Get ticket by ID", description = "Returns a single ticket by its UUID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket found"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
+    public ResponseEntity<TicketResponse> getTicketById(
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.getTicketById(id));
     }
 
     @GetMapping("/tickets/number/{ticketNumber}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<TicketResponse> getTicketByNumber(@PathVariable String ticketNumber) {
+    @Operation(summary = "Get ticket by ticket number",
+            description = "Returns a single ticket by its human-readable ticket number")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket found"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
+    public ResponseEntity<TicketResponse> getTicketByNumber(
+            @Parameter(description = "Ticket number", example = "TKT-2026-00123") @PathVariable String ticketNumber) {
         return ResponseEntity.ok(helpdeskService.getTicketByNumber(ticketNumber));
     }
 
     @GetMapping("/tickets")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
+    @Operation(summary = "List all tickets", description = "Returns a paginated list of helpdesk tickets")
+    @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<Page<TicketResponse>> getAllTickets(Pageable pageable) {
         return ResponseEntity.ok(helpdeskService.getAllTickets(pageable));
     }
 
     @GetMapping("/tickets/employee/{employeeId}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<List<TicketResponse>> getTicketsByEmployee(@PathVariable UUID employeeId) {
+    @Operation(summary = "List tickets by reporter employee",
+            description = "Returns tickets raised by the specified employee")
+    @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
+    public ResponseEntity<List<TicketResponse>> getTicketsByEmployee(
+            @Parameter(description = "Reporter employee UUID") @PathVariable UUID employeeId) {
         return ResponseEntity.ok(helpdeskService.getTicketsByEmployee(employeeId));
     }
 
     @GetMapping("/tickets/assignee/{assigneeId}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<List<TicketResponse>> getTicketsByAssignee(@PathVariable UUID assigneeId) {
+    @Operation(summary = "List tickets by assignee",
+            description = "Returns tickets currently assigned to the specified employee")
+    @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
+    public ResponseEntity<List<TicketResponse>> getTicketsByAssignee(
+            @Parameter(description = "Assignee employee UUID") @PathVariable UUID assigneeId) {
         return ResponseEntity.ok(helpdeskService.getTicketsByAssignee(assigneeId));
     }
 
     @GetMapping("/tickets/status/{status}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<List<TicketResponse>> getTicketsByStatus(@PathVariable Ticket.TicketStatus status) {
+    @Operation(summary = "List tickets by status",
+            description = "Filter tickets by status (OPEN, IN_PROGRESS, RESOLVED, CLOSED, etc.)")
+    @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
+    public ResponseEntity<List<TicketResponse>> getTicketsByStatus(
+            @Parameter(description = "Ticket status", example = "OPEN") @PathVariable Ticket.TicketStatus status) {
         return ResponseEntity.ok(helpdeskService.getTicketsByStatus(status));
     }
 
     @GetMapping("/tickets/category/{categoryId}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<List<TicketResponse>> getTicketsByCategory(@PathVariable UUID categoryId) {
+    @Operation(summary = "List tickets by category", description = "Filter tickets by category UUID")
+    @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
+    public ResponseEntity<List<TicketResponse>> getTicketsByCategory(
+            @Parameter(description = "Category UUID") @PathVariable UUID categoryId) {
         return ResponseEntity.ok(helpdeskService.getTicketsByCategory(categoryId));
     }
 
     @DeleteMapping("/tickets/{id}")
     @RequiresPermission(HELPDESK_TICKET_MANAGE)
-    public ResponseEntity<Void> deleteTicket(@PathVariable UUID id) {
+    @Operation(summary = "Delete ticket", description = "Soft-delete a ticket (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Ticket deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found")
+    })
+    public ResponseEntity<Void> deleteTicket(
+            @Parameter(description = "Ticket UUID") @PathVariable UUID id) {
         helpdeskService.deleteTicket(id);
         return ResponseEntity.noContent().build();
     }
@@ -122,27 +200,47 @@ public class HelpdeskController {
 
     @PostMapping("/comments")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
+    @Operation(summary = "Add ticket comment", description = "Append a comment to an existing ticket")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Comment added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Parent ticket not found")
+    })
     public ResponseEntity<TicketCommentResponse> addComment(@Valid @RequestBody TicketCommentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.addComment(request));
     }
 
     @PutMapping("/comments/{id}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
+    @Operation(summary = "Update ticket comment", description = "Edit an existing ticket comment (author or admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comment updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Comment not found")
+    })
     public ResponseEntity<TicketCommentResponse> updateComment(
-            @PathVariable UUID id,
+            @Parameter(description = "Comment UUID") @PathVariable UUID id,
             @Valid @RequestBody TicketCommentRequest request) {
         return ResponseEntity.ok(helpdeskService.updateComment(id, request));
     }
 
     @GetMapping("/comments/ticket/{ticketId}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<List<TicketCommentResponse>> getCommentsByTicket(@PathVariable UUID ticketId) {
+    @Operation(summary = "List comments for a ticket", description = "Returns the full comment thread for a ticket")
+    @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
+    public ResponseEntity<List<TicketCommentResponse>> getCommentsByTicket(
+            @Parameter(description = "Ticket UUID") @PathVariable UUID ticketId) {
         return ResponseEntity.ok(helpdeskService.getCommentsByTicket(ticketId));
     }
 
     @DeleteMapping("/comments/{id}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<Void> deleteComment(@PathVariable UUID id) {
+    @Operation(summary = "Delete ticket comment", description = "Remove a ticket comment (author or admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Comment deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Comment not found")
+    })
+    public ResponseEntity<Void> deleteComment(
+            @Parameter(description = "Comment UUID") @PathVariable UUID id) {
         helpdeskService.deleteComment(id);
         return ResponseEntity.noContent().build();
     }
@@ -151,39 +249,67 @@ public class HelpdeskController {
 
     @PostMapping("/categories")
     @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
+    @Operation(summary = "Create ticket category",
+            description = "Create a new helpdesk ticket category (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Category created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data")
+    })
     public ResponseEntity<TicketCategoryResponse> createCategory(@Valid @RequestBody TicketCategoryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.createCategory(request));
     }
 
     @PutMapping("/categories/{id}")
     @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
+    @Operation(summary = "Update ticket category", description = "Mutate an existing ticket category (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Category updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
     public ResponseEntity<TicketCategoryResponse> updateCategory(
-            @PathVariable UUID id,
+            @Parameter(description = "Category UUID") @PathVariable UUID id,
             @Valid @RequestBody TicketCategoryRequest request) {
         return ResponseEntity.ok(helpdeskService.updateCategory(id, request));
     }
 
     @GetMapping("/categories/{id}")
     @RequiresPermission(HELPDESK_TICKET_VIEW)
-    public ResponseEntity<TicketCategoryResponse> getCategoryById(@PathVariable UUID id) {
+    @Operation(summary = "Get ticket category by ID", description = "Returns a single ticket category by its UUID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Category found"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
+    public ResponseEntity<TicketCategoryResponse> getCategoryById(
+            @Parameter(description = "Category UUID") @PathVariable UUID id) {
         return ResponseEntity.ok(helpdeskService.getCategoryById(id));
     }
 
     @GetMapping("/categories")
     @RequiresPermission(HELPDESK_TICKET_VIEW)
+    @Operation(summary = "List all ticket categories", description = "Returns all helpdesk categories (active and inactive)")
+    @ApiResponse(responseCode = "200", description = "Categories retrieved successfully")
     public ResponseEntity<List<TicketCategoryResponse>> getAllCategories() {
         return ResponseEntity.ok(helpdeskService.getAllCategories());
     }
 
     @GetMapping("/categories/active")
     @RequiresPermission(HELPDESK_TICKET_VIEW)
+    @Operation(summary = "List active ticket categories",
+            description = "Returns only categories currently active for ticket creation")
+    @ApiResponse(responseCode = "200", description = "Active categories retrieved successfully")
     public ResponseEntity<List<TicketCategoryResponse>> getActiveCategories() {
         return ResponseEntity.ok(helpdeskService.getActiveCategories());
     }
 
     @DeleteMapping("/categories/{id}")
     @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+    @Operation(summary = "Delete ticket category", description = "Soft-delete a ticket category (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Category deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
+    public ResponseEntity<Void> deleteCategory(
+            @Parameter(description = "Category UUID") @PathVariable UUID id) {
         helpdeskService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }

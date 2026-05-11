@@ -93,6 +93,20 @@ public class User extends TenantAware {
     private LocalDateTime mfaSetupAt;
 
     /**
+     * GDPR Article 17 fulfilment marker. Non-null indicates the row's PII
+     * fields have been replaced with anonymised placeholders by the erasure
+     * pipeline (owned by S9-B); the row is retained beyond that point only
+     * for FK integrity and statutory retention windows (e.g. Indian Income
+     * Tax Act §139A 7-year payroll retention). When set, {@link #status} is
+     * forced to {@link UserStatus#INACTIVE} so login / SSO paths reject the
+     * principal. Added here (rather than in S9-B's branch) because Lombok's
+     * {@code @Getter}/{@code @Setter} on this class is the source of truth
+     * for the accessor pair that {@code UserAnonymizer} reads/writes.
+     */
+    @Column(name = "anonymized_at")
+    private LocalDateTime anonymizedAt;
+
+    /**
      * User roles - loaded LAZILY to avoid N+1 and unnecessary data loading.
      *
      * <p><strong>IMPORTANT:</strong> Do NOT access this collection directly in service code.

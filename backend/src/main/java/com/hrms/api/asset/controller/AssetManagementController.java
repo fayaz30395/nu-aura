@@ -8,6 +8,11 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.asset.Asset;
 import com.hrms.domain.asset.AssetMaintenanceRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import static com.hrms.common.security.Permission.*;
 
@@ -22,12 +27,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/assets")
 @RequiredArgsConstructor
+@Tag(name = "Asset Management", description = "Hardware/software asset lifecycle, assignment, maintenance, and audit trail")
 public class AssetManagementController {
 
     private final AssetManagementService assetService;
@@ -35,6 +40,13 @@ public class AssetManagementController {
 
     @PostMapping
     @RequiresPermission(ASSET_CREATE)
+    @Operation(summary = "Create asset", description = "Register a new asset in the inventory (admin/IT only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Asset created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires ASSET:CREATE permission")
+    })
     public ResponseEntity<AssetResponse> createAsset(@Valid @RequestBody AssetRequest request) {
         AssetResponse response = assetService.createAsset(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -42,8 +54,14 @@ public class AssetManagementController {
 
     @PutMapping("/{assetId}")
     @RequiresPermission(ASSET_MANAGE)
+    @Operation(summary = "Update asset", description = "Mutate an existing asset's metadata, specs, or status")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Asset updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Asset not found")
+    })
     public ResponseEntity<AssetResponse> updateAsset(
-            @PathVariable UUID assetId,
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId,
             @Valid @RequestBody AssetRequest request) {
         AssetResponse response = assetService.updateAsset(assetId, request);
         return ResponseEntity.ok(response);
@@ -51,29 +69,52 @@ public class AssetManagementController {
 
     @PostMapping("/{assetId}/assign")
     @RequiresPermission(ASSET_ASSIGN)
+    @Operation(summary = "Assign asset to employee",
+            description = "Assign an asset to the given employee and update its status to ASSIGNED")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Asset assigned successfully"),
+            @ApiResponse(responseCode = "404", description = "Asset or employee not found"),
+            @ApiResponse(responseCode = "409", description = "Asset is not available for assignment")
+    })
     public ResponseEntity<AssetResponse> assignAsset(
-            @PathVariable UUID assetId,
-            @RequestParam UUID employeeId) {
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId,
+            @Parameter(description = "Target employee UUID") @RequestParam UUID employeeId) {
         AssetResponse response = assetService.assignAsset(assetId, employeeId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{assetId}/return")
     @RequiresPermission(ASSET_MANAGE)
-    public ResponseEntity<AssetResponse> returnAsset(@PathVariable UUID assetId) {
+    @Operation(summary = "Return asset", description = "Mark an assigned asset as returned, transitioning to AVAILABLE")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Asset returned successfully"),
+            @ApiResponse(responseCode = "404", description = "Asset not found"),
+            @ApiResponse(responseCode = "409", description = "Asset is not currently assigned")
+    })
+    public ResponseEntity<AssetResponse> returnAsset(
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId) {
         AssetResponse response = assetService.returnAsset(assetId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{assetId}")
     @RequiresPermission(ASSET_VIEW)
-    public ResponseEntity<AssetResponse> getAssetById(@PathVariable UUID assetId) {
+    @Operation(summary = "Get asset by ID", description = "Returns a single asset by its UUID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Asset found"),
+            @ApiResponse(responseCode = "404", description = "Asset not found")
+    })
+    public ResponseEntity<AssetResponse> getAssetById(
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId) {
         AssetResponse response = assetService.getAssetById(assetId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     @RequiresPermission(ASSET_VIEW)
+    @Operation(summary = "List all assets",
+            description = "Returns a paginated, scope-filtered list of assets in the tenant")
+    @ApiResponse(responseCode = "200", description = "Assets retrieved successfully")
     public ResponseEntity<Page<AssetResponse>> getAllAssets(Pageable pageable) {
         org.springframework.data.jpa.domain.Specification<Asset> spec = dataScopeService
                 .getScopeSpecification(ASSET_VIEW);
@@ -83,21 +124,35 @@ public class AssetManagementController {
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(ASSET_VIEW)
-    public ResponseEntity<List<AssetResponse>> getAssetsByEmployee(@PathVariable UUID employeeId) {
+    @Operation(summary = "List assets assigned to employee",
+            description = "Returns assets currently assigned to the specified employee")
+    @ApiResponse(responseCode = "200", description = "Assets retrieved successfully")
+    public ResponseEntity<List<AssetResponse>> getAssetsByEmployee(
+            @Parameter(description = "Employee UUID") @PathVariable UUID employeeId) {
         List<AssetResponse> response = assetService.getAssetsByEmployee(employeeId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/status/{status}")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<List<AssetResponse>> getAssetsByStatus(@PathVariable Asset.AssetStatus status) {
+    @Operation(summary = "List assets by status",
+            description = "Filter assets by status (AVAILABLE, ASSIGNED, MAINTENANCE, RETIRED, etc.)")
+    @ApiResponse(responseCode = "200", description = "Assets retrieved successfully")
+    public ResponseEntity<List<AssetResponse>> getAssetsByStatus(
+            @Parameter(description = "Asset status", example = "AVAILABLE") @PathVariable Asset.AssetStatus status) {
         List<AssetResponse> response = assetService.getAssetsByStatus(status);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{assetId}")
     @RequiresPermission(SYSTEM_ADMIN)
-    public ResponseEntity<Void> deleteAsset(@PathVariable UUID assetId) {
+    @Operation(summary = "Delete asset", description = "Soft-delete an asset record (system admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Asset deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Asset not found")
+    })
+    public ResponseEntity<Void> deleteAsset(
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId) {
         assetService.deleteAsset(assetId);
         return ResponseEntity.noContent().build();
     }
@@ -106,12 +161,14 @@ public class AssetManagementController {
     // Self-service asset request (via approval workflow)
     // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Employee self-request for an asset. Triggers the approval workflow.
-     * The requesting employee is resolved from the security context.
-     */
     @PostMapping("/request")
     @RequiresPermission(ASSET_VIEW)
+    @Operation(summary = "Request asset (self-service)",
+            description = "Employee submits a self-request for an asset; triggers the approval workflow")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Request submitted successfully"),
+            @ApiResponse(responseCode = "404", description = "Asset not found")
+    })
     public ResponseEntity<AssetResponse> requestAsset(@RequestBody @Valid AssetSelfRequest request) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         AssetResponse response = assetService.requestAssetAssignment(request.assetId(), employeeId);
@@ -124,6 +181,13 @@ public class AssetManagementController {
 
     @PostMapping("/maintenance")
     @RequiresPermission(ASSET_VIEW)
+    @Operation(summary = "Create maintenance request",
+            description = "Open a maintenance ticket for an asset (typically by the current holder)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Maintenance request created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Asset not found")
+    })
     public ResponseEntity<AssetMaintenanceRequest> createMaintenanceRequest(
             @RequestBody @Valid MaintenanceRequestBody body) {
         UUID requestedBy = SecurityContext.getCurrentEmployeeId();
@@ -135,16 +199,25 @@ public class AssetManagementController {
 
     @GetMapping("/{assetId}/maintenance")
     @RequiresPermission(ASSET_VIEW)
+    @Operation(summary = "Get maintenance history",
+            description = "Returns the full maintenance request history for the specified asset")
+    @ApiResponse(responseCode = "200", description = "Maintenance history retrieved successfully")
     public ResponseEntity<List<AssetMaintenanceRequest>> getMaintenanceHistory(
-            @PathVariable UUID assetId) {
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId) {
         List<AssetMaintenanceRequest> history = assetService.getMaintenanceHistory(assetId);
         return ResponseEntity.ok(history);
     }
 
     @PatchMapping("/maintenance/{requestId}/status")
     @RequiresPermission(ASSET_MANAGE)
+    @Operation(summary = "Update maintenance request status",
+            description = "Transition a maintenance request to a new status (IN_PROGRESS, COMPLETED, etc.)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Maintenance request not found")
+    })
     public ResponseEntity<AssetMaintenanceRequest> updateMaintenanceStatus(
-            @PathVariable UUID requestId,
+            @Parameter(description = "Maintenance request UUID") @PathVariable UUID requestId,
             @RequestBody @Valid MaintenanceStatusUpdate body) {
         AssetMaintenanceRequest updated = assetService.updateMaintenanceStatus(
                 requestId, body.status(), body.notes());
@@ -157,7 +230,11 @@ public class AssetManagementController {
 
     @GetMapping("/{assetId}/audit")
     @RequiresPermission(ASSET_VIEW)
-    public ResponseEntity<List<AuditLogResponse>> getAssetAuditTrail(@PathVariable UUID assetId) {
+    @Operation(summary = "Get asset audit trail",
+            description = "Returns the full audit log for an asset (assignments, returns, edits)")
+    @ApiResponse(responseCode = "200", description = "Audit trail retrieved successfully")
+    public ResponseEntity<List<AuditLogResponse>> getAssetAuditTrail(
+            @Parameter(description = "Asset UUID") @PathVariable UUID assetId) {
         List<AuditLogResponse> trail = assetService.getAssetAuditTrail(assetId);
         return ResponseEntity.ok(trail);
     }

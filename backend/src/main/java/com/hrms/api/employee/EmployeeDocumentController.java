@@ -7,6 +7,9 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +30,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/employees")
 @RequiredArgsConstructor
-@Tag(name = "Employee Documents", description = "Upload documents for an employee")
+@Tag(name = "Employee Documents", description = "Upload documents for an employee (canonical spec path)")
 public class EmployeeDocumentController {
 
     private final FileStorageService fileStorageService;
@@ -36,12 +39,19 @@ public class EmployeeDocumentController {
     @RequiresPermission(Permission.DOCUMENT_UPLOAD)
     @Operation(
             summary = "Upload employee document",
-            description = "Upload a document for an employee. Spec-canonical path: POST /api/v1/employees/{id}/documents"
+            description = "Upload a document for an employee. Spec-canonical path: POST /api/v1/employees/{id}/documents. Scope: self, HR/admin, or manager-in-chain."
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Document uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid file or missing payload"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — caller is not in target employee's authorized scope"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
     public ResponseEntity<FileUploadResponse> uploadEmployeeDocument(
-            @PathVariable("id") UUID employeeId,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "documentType", required = false) String documentType) {
+            @Parameter(description = "Employee UUID") @PathVariable("id") UUID employeeId,
+            @Parameter(description = "File to upload (multipart)") @RequestParam("file") MultipartFile file,
+            @Parameter(description = "Optional document type label", example = "OFFER_LETTER") @RequestParam(value = "documentType", required = false) String documentType) {
 
         // IDOR FIX: any holder of DOCUMENT:UPLOAD could previously target ANY employee's document space.
         // Require the caller to be the same employee, an HR/admin, or a manager-in-chain.
@@ -65,11 +75,7 @@ public class EmployeeDocumentController {
 
     /**
      * Inline scope guard mirroring {@code EmployeeController.enforceEmployeeUpdateScope} —
-     * we deliberately do not extract a shared helper for one call-site. Allow when:
-     *   - Caller is SuperAdmin / TenantAdmin / HR Manager, OR
-     *   - Caller is the same employee (self-service upload), OR
-     *   - Caller is a manager whose reportee chain includes the target, OR
-     *   - Caller holds DOCUMENT:VIEW_ALL (tenant-wide document admin).
+     * we deliberately do not extract a shared helper for one call-site.
      */
     private void enforceEmployeeUploadScope(UUID targetEmployeeId) {
         if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {

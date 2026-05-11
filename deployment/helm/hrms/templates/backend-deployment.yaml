@@ -36,7 +36,11 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/actuator/prometheus"
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ .Values.serviceAccount.backend.name }}
+      {{- else }}
       serviceAccountName: {{ .Values.backend.serviceAccountName }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -44,7 +48,30 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      {{- with .Values.backend.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+        podAntiAffinity:
+          {{- with .Values.backend.podAntiAffinity }}
+          {{- toYaml . | nindent 10 }}
+          {{- else }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: component
+                      operator: In
+                      values:
+                        - backend
+                topologyKey: kubernetes.io/hostname
+          {{- end }}
 
       # Init container to wait for dependencies
       initContainers:
@@ -396,18 +423,5 @@ spec:
         - name: google-drive-credentials
           secret:
             secretName: hrms-google-drive-credentials
-
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: component
-                      operator: In
-                      values:
-                        - backend
-                topologyKey: kubernetes.io/hostname
 
       terminationGracePeriodSeconds: 30

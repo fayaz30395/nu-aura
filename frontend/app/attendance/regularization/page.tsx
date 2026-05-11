@@ -79,6 +79,7 @@ export default function RegularizationPage() {
   // ---------------------------------------------------------------------------
   const {
     register,
+    control,
     handleSubmit,
     formState: {errors, isSubmitting},
     reset,
@@ -309,6 +310,7 @@ export default function RegularizationPage() {
         open={showCreateModal}
         formStep={formStep}
         register={register}
+        control={control}
         errors={errors}
         isSubmitting={isSubmitting}
         isPending={requestMutation.isPending}

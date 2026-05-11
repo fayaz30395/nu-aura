@@ -577,11 +577,19 @@ export default function ReviewCyclesPage() {
                         <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Self Review Deadline
                         </label>
-                        {/* TODO(S5-C): migrate selfReviewDeadline to Mantine DateInput in follow-up sprint */}
-                        <input
-                          type="date"
-                          {...register('selfReviewDeadline')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        <Controller
+                          name="selfReviewDeadline"
+                          control={control}
+                          render={({field}) => (
+                            <DateInput
+                              value={field.value || null}
+                              onChange={(d) => field.onChange(d ?? '')}
+                              valueFormat="YYYY-MM-DD"
+                              placeholder="YYYY-MM-DD"
+                              clearable
+                              size="sm"
+                            />
+                          )}
                         />
                         {errors.selfReviewDeadline && (
                           <p className="text-danger-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>

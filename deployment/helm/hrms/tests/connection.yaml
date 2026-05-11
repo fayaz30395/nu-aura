@@ -1,0 +1,71 @@
+# Helm test — smoke check the backend /actuator/health endpoint after install.
+# Run with:
+#   helm test hrms -n hrms
+#
+# Notes:
+#   - "helm.sh/hook": test marks this Pod as a test hook (not deployed normally).
+#   - "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+#     cleans up the pod between runs and on success.
+#   - busybox wget --spider returns 0 only on HTTP 2xx; non-2xx -> non-zero -> FAIL.
+#   - Uses Release.Name so it works for any release name (`helm install foo`).
+#   - Single-shot, no restartPolicy: Always (test hooks must terminate).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-connection-test"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: hrms
+    component: helm-test
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "1"
+spec:
+  restartPolicy: Never
+  # Inherit security baseline from S8-C Kyverno policy (runAsNonRoot).
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534    # nobody
+    runAsGroup: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: connection-test
+      image: busybox:1.36
+      imagePullPolicy: IfNotPresent
+      command:
+        - sh
+        - -c
+        - |
+          set -eu
+          echo "=== Smoke test: backend /actuator/health ==="
+          # Retry for up to 60s — backend may still be warming up.
+          for i in $(seq 1 12); do
+            if wget --spider --quiet --timeout=5 \
+                "http://hrms-backend.{{ .Values.namespace }}.svc.cluster.local:8080/actuator/health"; then
+              echo "PASS: backend /actuator/health responded 2xx (attempt $i)"
+              exit 0
+            fi
+            echo "attempt $i failed, retrying in 5s..."
+            sleep 5
+          done
+          echo "FAIL: backend /actuator/health never returned 2xx after 60s"
+          exit 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 50m
+          memory: 32Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
