@@ -81,6 +81,7 @@ coverage/
 
 # Database backups (never commit)
 scripts/db-backups/
+scripts/db/backups/
 **/*.sql.gz
 
 # Generated files
