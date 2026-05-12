@@ -135,7 +135,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
                                                      @Param("endDate") LocalDate endDate);
 
     // Get department distribution for a set of employees
-    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id WHERE e.tenant_id = :tenantId AND e.status = 'ACTIVE' AND e.id IN :employeeIds GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
+    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id AND d.is_deleted = false WHERE e.tenant_id = :tenantId AND e.is_deleted = false AND e.status = 'ACTIVE' AND e.id IN :employeeIds GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
     List<Object[]> findDepartmentDistributionForEmployees(@Param("tenantId") UUID tenantId,
                                                           @Param("employeeIds") List<UUID> employeeIds);
 
@@ -183,10 +184,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * Replaces 12 individual countByTenantIdAndJoiningDateBetween calls in
      * trend-chart generation.
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT EXTRACT(YEAR FROM e.joining_date)::int, EXTRACT(MONTH FROM e.joining_date)::int, COUNT(e.id) "
             +
             "FROM employees e " +
             "WHERE e.tenant_id = :tenantId " +
+            "  AND e.is_deleted = false " +
             "  AND e.joining_date >= :startDate " +
             "  AND e.joining_date <= :endDate " +
             "GROUP BY EXTRACT(YEAR FROM e.joining_date), EXTRACT(MONTH FROM e.joining_date)", nativeQuery = true)
@@ -202,9 +205,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * Replaces 12 individual countByTenantIdAndStatusAndExitDateBetween calls in
      * trend-chart generation.
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT EXTRACT(YEAR FROM e.exit_date)::int, EXTRACT(MONTH FROM e.exit_date)::int, COUNT(e.id) " +
             "FROM employees e " +
             "WHERE e.tenant_id = :tenantId " +
+            "  AND e.is_deleted = false " +
             "  AND e.status = :status " +
             "  AND e.exit_date >= :startDate " +
             "  AND e.exit_date <= :endDate " +
@@ -226,7 +231,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT COUNT(e) FROM Employee e WHERE e.tenantId = :tenantId AND e.joiningDate >= :afterDate")
     Long countNewHiresAfterDate(@Param("tenantId") UUID tenantId, @Param("afterDate") LocalDate afterDate);
 
-    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id WHERE e.tenant_id = :tenantId GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
+    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id AND d.is_deleted = false WHERE e.tenant_id = :tenantId AND e.is_deleted = false GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
     List<Object[]> getEmployeeCountByDepartment(@Param("tenantId") UUID tenantId);
 
     Long countByTenantIdAndStatusAndExitDateBetween(UUID tenantId, Employee.EmployeeStatus status,
@@ -234,7 +240,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Long countByTenantIdAndStatusAndJoiningDateBefore(UUID tenantId, Employee.EmployeeStatus status, LocalDate date);
 
-    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id WHERE e.tenant_id = :tenantId AND e.status = 'ACTIVE' GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
+    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id AND d.is_deleted = false WHERE e.tenant_id = :tenantId AND e.is_deleted = false AND e.status = 'ACTIVE' GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
     List<Object[]> findDepartmentDistribution(@Param("tenantId") UUID tenantId);
 
     @Query(value = "SELECT e.* FROM employees e " +
@@ -281,11 +288,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     List<Employee> findUpcomingAnniversaries(@Param("tenantId") UUID tenantId,
                                              @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed —
+    // brings this in line with findUpcomingBirthdays (which already filters e.is_deleted = false)
     @Query(value = "SELECT e.id, e.first_name, e.middle_name, e.last_name, e.date_of_birth, " +
             "COALESCE(d.name, 'N/A') as department_name " +
             "FROM employees e " +
-            "LEFT JOIN departments d ON e.department_id = d.id AND d.tenant_id = :tenantId " +
-            "WHERE e.tenant_id = :tenantId AND e.date_of_birth IS NOT NULL " +
+            "LEFT JOIN departments d ON e.department_id = d.id AND d.tenant_id = :tenantId AND d.is_deleted = false " +
+            "WHERE e.tenant_id = :tenantId AND e.is_deleted = false AND e.date_of_birth IS NOT NULL " +
             "AND ( " +
             "  (EXTRACT(MONTH FROM CAST(:startDate AS DATE)) = EXTRACT(MONTH FROM CAST(:endDate AS DATE)) " +
             "   AND EXTRACT(MONTH FROM e.date_of_birth) = EXTRACT(MONTH FROM CAST(:startDate AS DATE)) " +
@@ -305,11 +314,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     List<Object[]> findUpcomingBirthdaysWithDepartment(@Param("tenantId") UUID tenantId,
                                                        @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed —
+    // brings this in line with findUpcomingAnniversaries (which already filters e.is_deleted = false)
     @Query(value = "SELECT e.id, e.first_name, e.middle_name, e.last_name, e.joining_date, " +
             "COALESCE(d.name, 'N/A') as department_name " +
             "FROM employees e " +
-            "LEFT JOIN departments d ON e.department_id = d.id AND d.tenant_id = :tenantId " +
-            "WHERE e.tenant_id = :tenantId AND e.joining_date IS NOT NULL " +
+            "LEFT JOIN departments d ON e.department_id = d.id AND d.tenant_id = :tenantId AND d.is_deleted = false " +
+            "WHERE e.tenant_id = :tenantId AND e.is_deleted = false AND e.joining_date IS NOT NULL " +
             "AND ( " +
             "  (EXTRACT(MONTH FROM CAST(:startDate AS DATE)) = EXTRACT(MONTH FROM CAST(:endDate AS DATE)) " +
             "   AND EXTRACT(MONTH FROM e.joining_date) = EXTRACT(MONTH FROM CAST(:startDate AS DATE)) " +
@@ -461,10 +472,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
      * @param departmentId The department ID
      * @return Optional containing the department head's user ID
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed —
+    // escalation routing must not return a soft-deleted manager/user
     @Query(value = "SELECT DISTINCT u.id FROM users u " +
             "JOIN employees e ON u.id = e.user_id " +
             "WHERE e.tenant_id = :tenantId " +
-            "AND e.id = (SELECT d.manager_id FROM departments d WHERE d.id = :departmentId AND d.tenant_id = :tenantId) "
+            "AND u.is_deleted = false " +
+            "AND e.is_deleted = false " +
+            "AND e.id = (SELECT d.manager_id FROM departments d WHERE d.id = :departmentId AND d.tenant_id = :tenantId AND d.is_deleted = false) "
             +
             "AND e.status = 'ACTIVE'", nativeQuery = true)
     Optional<UUID> findDepartmentHeadUserId(@Param("tenantId") UUID tenantId,

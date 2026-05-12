@@ -144,10 +144,12 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
      * Use instead of findAllByTenantIdAndPayrollRunId when the caller needs employee
      * identity columns alongside payslip financial data.</p>
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT p.*, e.first_name, e.last_name, e.employee_code " +
             "FROM payslips p " +
-            "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId " +
+            "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId AND e.is_deleted = false " +
             "WHERE p.tenant_id = :tenantId AND p.payroll_run_id = :runId " +
+            "AND p.is_deleted = false " +
             "ORDER BY e.last_name ASC, e.first_name ASC",
             nativeQuery = true)
     List<Object[]> findByRunWithEmployee(

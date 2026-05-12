@@ -48,8 +48,9 @@ public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, UUID
     java.math.BigDecimal sumBalanceByEmployeeId(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId, @Param("year") Integer year);
 
     // Get detailed balances for employee with leave type info (native query for JOIN)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT lt.leave_code, lt.leave_name, lb.opening_balance, lb.used, lb.available, lb.pending " +
-            "FROM leave_balances lb JOIN leave_types lt ON lb.leave_type_id = lt.id " +
-            "WHERE lb.tenant_id = :tenantId AND lb.employee_id = :employeeId AND lb.year = :year", nativeQuery = true)
+            "FROM leave_balances lb JOIN leave_types lt ON lb.leave_type_id = lt.id AND lt.is_deleted = false " +
+            "WHERE lb.tenant_id = :tenantId AND lb.is_deleted = false AND lb.employee_id = :employeeId AND lb.year = :year", nativeQuery = true)
     List<Object[]> findBalancesByEmployeeId(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId, @Param("year") Integer year);
 }

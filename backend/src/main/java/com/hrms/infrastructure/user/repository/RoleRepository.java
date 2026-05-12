@@ -40,13 +40,14 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
     @Query("SELECT r FROM Role r WHERE r.parentRoleId = :roleId AND r.tenantId = :tenantId")
     List<Role> findDirectChildren(@Param("roleId") UUID roleId, @Param("tenantId") UUID tenantId);
 
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = """
             WITH RECURSIVE children AS (
-              SELECT id FROM roles WHERE parent_role_id = :roleId AND tenant_id = :tenantId
+              SELECT id FROM roles WHERE parent_role_id = :roleId AND tenant_id = :tenantId AND is_deleted = false
               UNION ALL
               SELECT r.id FROM roles r
               INNER JOIN children c ON r.parent_role_id = c.id
-              WHERE r.tenant_id = :tenantId
+              WHERE r.tenant_id = :tenantId AND r.is_deleted = false
             )
             SELECT id FROM children LIMIT 100
             """, nativeQuery = true)

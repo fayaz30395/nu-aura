@@ -12,8 +12,9 @@
     <description>NuLogic Enterprise Platform - Parent POM</description>
 
     <modules>
-        <module>modules/common</module>
-        <module>modules/pm</module>
+        <!-- modules/common + modules/pm were removed in commit cc242bcb ("remove
+             legacy modules/"); only `backend` remains. References purged in S13
+             to make `mvn` work at the root, not just inside backend/. -->
         <module>backend</module>
     </modules>
 

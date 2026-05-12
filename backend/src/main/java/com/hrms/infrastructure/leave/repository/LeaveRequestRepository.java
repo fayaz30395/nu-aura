@@ -56,7 +56,8 @@ public interface LeaveRequestRepository
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    @Query(value = "SELECT lt.leave_name, COUNT(lr.id) FROM leave_requests lr JOIN leave_types lt ON lr.leave_type_id = lt.id WHERE lr.tenant_id = :tenantId GROUP BY lt.leave_name", nativeQuery = true)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
+    @Query(value = "SELECT lt.leave_name, COUNT(lr.id) FROM leave_requests lr JOIN leave_types lt ON lr.leave_type_id = lt.id AND lt.is_deleted = false WHERE lr.tenant_id = :tenantId AND lr.is_deleted = false GROUP BY lt.leave_name", nativeQuery = true)
     List<Object[]> findLeaveTypeDistribution(@Param("tenantId") UUID tenantId);
 
     // Team-based analytics methods
@@ -98,8 +99,11 @@ public interface LeaveRequestRepository
 
     // Count approved leave days for employee in date range (PostgreSQL date
     // subtraction)
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed —
+    // soft-deleted approved leaves must NOT double-charge leave balances
     @Query(value = "SELECT COALESCE(SUM((end_date - start_date) + 1), 0) FROM leave_requests " +
             "WHERE tenant_id = :tenantId AND employee_id = :employeeId " +
+            "AND is_deleted = false " +
             "AND status = 'APPROVED' AND start_date <= :endDate AND end_date >= :startDate", nativeQuery = true)
     Long countApprovedLeaveDaysByEmployeeIdAndDateBetween(
             @Param("tenantId") UUID tenantId,
@@ -143,11 +147,12 @@ public interface LeaveRequestRepository
      * Use this instead of findAllByTenantIdAndEmployeeId when the caller also needs
      * leave type name or employee display name rendered in the response DTO.</p>
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT lr.*, lt.leave_name, e.first_name, e.last_name " +
             "FROM leave_requests lr " +
-            "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId " +
-            "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId " +
-            "WHERE lr.tenant_id = :tenantId AND lr.employee_id = :employeeId " +
+            "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId AND lt.is_deleted = false " +
+            "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId AND e.is_deleted = false " +
+            "WHERE lr.tenant_id = :tenantId AND lr.is_deleted = false AND lr.employee_id = :employeeId " +
             "ORDER BY lr.start_date DESC",
             nativeQuery = true)
     List<Object[]> findByEmployeeWithTypeAndName(
@@ -159,11 +164,13 @@ public interface LeaveRequestRepository
      * employee data joined in one query — used by manager/HR list views that display
      * leave type name and employee name per row without N+1 secondary lookups.
      */
+    // SOFT_DELETE_GUARD (S13-B): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT lr.*, lt.leave_name, e.first_name, e.last_name " +
             "FROM leave_requests lr " +
-            "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId " +
-            "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId " +
+            "LEFT JOIN leave_types lt ON lt.id = lr.leave_type_id AND lt.tenant_id = :tenantId AND lt.is_deleted = false " +
+            "LEFT JOIN employees e ON e.id = lr.employee_id AND e.tenant_id = :tenantId AND e.is_deleted = false " +
             "WHERE lr.tenant_id = :tenantId " +
+            "AND lr.is_deleted = false " +
             "AND lr.start_date BETWEEN :startDate AND :endDate " +
             "ORDER BY lr.start_date DESC",
             nativeQuery = true)
