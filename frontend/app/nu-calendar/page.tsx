@@ -929,8 +929,8 @@ function CalendarContent() {
                     Start Date *
                   </label>
                   <DateInput
-                    value={newEvent.startDate ? new Date(newEvent.startDate) : null}
-                    onChange={(d) => setNewEvent({...newEvent, startDate: d ? d.toISOString().split('T')[0] : ''})}
+                    value={newEvent.startDate || null}
+                    onChange={(d) => setNewEvent({...newEvent, startDate: d ?? ''})}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable
@@ -955,8 +955,8 @@ function CalendarContent() {
                     End Date
                   </label>
                   <DateInput
-                    value={newEvent.endDate ? new Date(newEvent.endDate) : null}
-                    onChange={(d) => setNewEvent({...newEvent, endDate: d ? d.toISOString().split('T')[0] : ''})}
+                    value={newEvent.endDate || null}
+                    onChange={(d) => setNewEvent({...newEvent, endDate: d ?? ''})}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable

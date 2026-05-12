@@ -2,6 +2,10 @@ package com.hrms.application.payroll.service;
 
 import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.application.payroll.dto.StatutoryDeductions;
+import com.hrms.application.payroll.strategy.StatutoryCalculator;
+import com.hrms.application.payroll.strategy.StatutoryCalculator.StatutoryCalculationInput;
+import com.hrms.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.hrms.application.payroll.strategy.StatutoryResult;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.payroll.Payslip;
@@ -27,8 +31,13 @@ public class PayslipService {
 
     private final PayslipRepository payslipRepository;
     private final AuditLogService auditLogService;
-    // Injected lazily via setter to avoid circular-dependency with StatutoryDeductionService
-    private StatutoryDeductionService statutoryDeductionService;
+    /**
+     * S10-B: routes per-tenant to the correct country-specific calculator. For IN tenants
+     * this resolves to {@code IndianStatutoryCalculator} which delegates to the legacy
+     * {@code StatutoryDeductionService}, so behaviour for existing tenants is unchanged.
+     * Injected lazily via setter to avoid eager-init coupling to the strategy package.
+     */
+    private StatutoryCalculatorFactory statutoryCalculatorFactory;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Payslip createPayslip(Payslip payslip) {
@@ -161,11 +170,22 @@ public class PayslipService {
                 .filter(p -> p.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found: " + payslipId));
 
-        StatutoryDeductions deductions = statutoryDeductionService.calculate(
+        // S10-B: route via the strategy factory so non-IN tenants can plug in their own
+        // calculators. For IN the IndianStatutoryCalculator delegates to the legacy
+        // StatutoryDeductionService — behaviour is bit-identical for existing tenants.
+        // Non-IN calculators that are skeleton-only will throw UnsupportedOperationException,
+        // which the controller layer translates to HTTP 501 NOT_IMPLEMENTED.
+        StatutoryCalculator calculator = statutoryCalculatorFactory.forTenant(tenantId);
+        StatutoryCalculationInput input = new StatutoryCalculationInput(
                 payslip.getEmployeeId(),
-                payslip.getBasicSalary(),
                 payslip.getGrossSalary(),
-                state);
+                payslip.getBasicSalary(),
+                /* gender = */ null,
+                state,
+                payslip.getPayPeriodMonth(),
+                payslip.getPayPeriodYear());
+        StatutoryResult strategyResult = calculator.calculate(input);
+        StatutoryDeductions deductions = strategyResult.legacyIndiaView();
 
         // Apply all deduction fields atomically — if any setter or calculateTotals()
         // throws, the whole transaction rolls back and no partial data is saved.
@@ -186,7 +206,7 @@ public class PayslipService {
     }
 
     @org.springframework.beans.factory.annotation.Autowired
-    public void setStatutoryDeductionService(StatutoryDeductionService statutoryDeductionService) {
-        this.statutoryDeductionService = statutoryDeductionService;
+    public void setStatutoryCalculatorFactory(StatutoryCalculatorFactory statutoryCalculatorFactory) {
+        this.statutoryCalculatorFactory = statutoryCalculatorFactory;
     }
 }

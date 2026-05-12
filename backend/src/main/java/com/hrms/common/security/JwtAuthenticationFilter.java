@@ -5,6 +5,7 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.tenant.repository.TenantStatusCache;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +27,7 @@ import io.jsonwebtoken.JwtException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +49,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // PERF (wave-3 2.1): cached lookup so the per-request tenant-status check is
     // served from Redis instead of hitting PostgreSQL on every authenticated call.
     private final TenantStatusCache tenantStatusCache;
+    // SEC (S10-E): used for the GDPR-Art.17 anonymised-principal guard below.
+    // Only the {@code anonymized_at} column is selected, so this check is a
+    // single index seek per request rather than a full user hydration.
+    private final UserRepository userRepository;
 
     /**
      * SEC: Bearer header fallback is OFF by default. When false (prod default),

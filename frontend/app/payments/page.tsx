@@ -306,8 +306,8 @@ function PaymentsPageContent() {
                   Date From
                 </label>
                 <DateInput
-                  value={filters.dateFrom ? new Date(filters.dateFrom) : null}
-                  onChange={(d) => setFilters({...filters, dateFrom: d ? d.toISOString().split('T')[0] : ''})}
+                  value={filters.dateFrom || null}
+                  onChange={(d) => setFilters({...filters, dateFrom: d ?? ''})}
                   valueFormat="YYYY-MM-DD"
                   placeholder="YYYY-MM-DD"
                   clearable
@@ -320,8 +320,8 @@ function PaymentsPageContent() {
                   Date To
                 </label>
                 <DateInput
-                  value={filters.dateTo ? new Date(filters.dateTo) : null}
-                  onChange={(d) => setFilters({...filters, dateTo: d ? d.toISOString().split('T')[0] : ''})}
+                  value={filters.dateTo || null}
+                  onChange={(d) => setFilters({...filters, dateTo: d ?? ''})}
                   valueFormat="YYYY-MM-DD"
                   placeholder="YYYY-MM-DD"
                   clearable

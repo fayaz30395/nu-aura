@@ -256,8 +256,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 <div>
                   <label className="block text-caption mb-1">From</label>
                   <DateInput
-                    value={startDate ? new Date(startDate) : null}
-                    onChange={(d) => setStartDate(d ? d.toISOString().split('T')[0] : '')}
+                    value={startDate || null}
+                    onChange={(d) => setStartDate(d ?? '')}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable
@@ -267,8 +267,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 <div>
                   <label className="block text-caption mb-1">To</label>
                   <DateInput
-                    value={endDate ? new Date(endDate) : null}
-                    onChange={(d) => setEndDate(d ? d.toISOString().split('T')[0] : '')}
+                    value={endDate || null}
+                    onChange={(d) => setEndDate(d ?? '')}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable

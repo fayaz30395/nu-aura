@@ -165,4 +165,37 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      */
     @Query("SELECT MAX(u.lastLoginAt) FROM User u WHERE u.tenantId = :tenantId")
     Optional<LocalDateTime> findMaxLastLoginAtByTenantId(@Param("tenantId") UUID tenantId);
+
+    // ==================== GDPR Art. 17 / Anonymisation Probes ====================
+
+    /**
+     * Lightweight projection used by {@code JwtAuthenticationFilter} to reject
+     * requests authenticated as a principal whose User row has been anonymised
+     * under GDPR Article 17 (right to erasure). Returns the
+     * {@code anonymized_at} timestamp wrapped in a single-element list when the
+     * row exists; the wrapper avoids a {@link IncorrectResultSizeDataAccessException}
+     * if the user has been hard-deleted between the JWT being issued and the
+     * request being filtered.
+     *
+     * <p>Defence-in-depth: the only other guard against an anonymised principal
+     * authenticating is {@code status = INACTIVE} set by {@code UserAnonymizer},
+     * and that single signal would silently break if any future code path were
+     * to flip status back to ACTIVE on an anonymised row. The explicit
+     * {@code anonymized_at} check here cannot be undone by a status flip.</p>
+     *
+     * <p>The query intentionally selects only the single column so this hot-path
+     * check costs a single index seek per request rather than hydrating the
+     * full User entity (which has lazy role/permission graphs).</p>
+     */
+    @Query("SELECT u.anonymizedAt FROM User u WHERE u.id = :userId")
+    Optional<LocalDateTime> findAnonymizedAtById(@Param("userId") UUID userId);
+
+    /**
+     * Companion to {@link #findAnonymizedAtById(UUID)} keyed by email. Used by
+     * the {@code JwtAuthenticationFilter} fallback path when the JWT does not
+     * carry a {@code userId} claim (legacy tokens issued before the userId
+     * claim was added) and only the username (email) is known.
+     */
+    @Query("SELECT u.anonymizedAt FROM User u WHERE u.email = :email")
+    Optional<LocalDateTime> findAnonymizedAtByEmail(@Param("email") String email);
 }

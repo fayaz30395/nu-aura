@@ -130,8 +130,8 @@ export default function CreateContractPage() {
                 control={control}
                 render={({field}) => (
                   <DateInput
-                    value={field.value ? new Date(field.value) : null}
-                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    value={field.value || null}
+                    onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable
@@ -149,8 +149,8 @@ export default function CreateContractPage() {
                 control={control}
                 render={({field}) => (
                   <DateInput
-                    value={field.value ? new Date(field.value) : null}
-                    onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                    value={field.value || null}
+                    onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable

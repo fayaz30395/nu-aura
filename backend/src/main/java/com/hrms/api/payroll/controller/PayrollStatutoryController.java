@@ -2,25 +2,39 @@ package com.hrms.api.payroll.controller;
 
 import com.hrms.application.payroll.dto.StatutoryDeductions;
 import com.hrms.application.payroll.service.PayslipService;
-import com.hrms.application.payroll.service.StatutoryDeductionService;
+import com.hrms.application.payroll.strategy.StatutoryCalculator;
+import com.hrms.application.payroll.strategy.StatutoryCalculator.StatutoryCalculationInput;
+import com.hrms.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.hrms.application.payroll.strategy.StatutoryResult;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
- * REST API for India statutory deduction preview and application.
+ * REST API for statutory deduction preview and application.
  *
  * <p>Endpoints:
  * <ul>
  *   <li>GET  /api/v1/payroll/statutory/preview  — dry-run calculation (no persistence)</li>
  *   <li>POST /api/v1/payroll/statutory/{payslipId}/apply — persist deductions on a payslip</li>
  * </ul>
+ *
+ * <p><strong>S10-B (Wave-3 i18n, audit recommendation #14):</strong> The previous direct
+ * dependency on the India-specific {@code StatutoryDeductionService} has been replaced with
+ * a {@link StatutoryCalculatorFactory} lookup so that non-IN tenants can plug in their own
+ * calculators. For IN tenants the {@code IndianStatutoryCalculator} delegates back to the
+ * legacy service so behaviour is bit-identical. Tenants in jurisdictions without a wired
+ * calculator surface as {@code 501 NOT_IMPLEMENTED}.
  *
  * <p><strong>BUG-002 FIX:</strong> The {@code apply} endpoint previously held a direct
  * {@link com.hrms.infrastructure.payroll.repository.PayslipRepository} reference and wrote
@@ -34,7 +48,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PayrollStatutoryController {
 
-    private final StatutoryDeductionService statutoryDeductionService;
+    /**
+     * S10-B: routes per-tenant to the correct country-specific calculator. For IN tenants
+     * this resolves to {@code IndianStatutoryCalculator} which delegates to the legacy
+     * {@code StatutoryDeductionService}, so behaviour for existing tenants is unchanged.
+     */
+    private final StatutoryCalculatorFactory statutoryCalculatorFactory;
     /**
      * BUG-002 FIX: use service, not raw repository.
      */
@@ -54,8 +73,27 @@ public class PayrollStatutoryController {
         log.info("Statutory preview requested: employeeId={}, basic={}, gross={}, state={}",
                 employeeId, basicSalary, grossSalary, state);
 
-        StatutoryDeductions result = statutoryDeductionService.calculate(
-                employeeId, basicSalary, grossSalary, state);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate now = LocalDate.now();
+        StatutoryCalculationInput input = new StatutoryCalculationInput(
+                employeeId,
+                grossSalary,
+                basicSalary,
+                /* gender = */ null,
+                state,
+                now.getMonthValue(),
+                now.getYear());
+
+        StatutoryDeductions result;
+        try {
+            StatutoryCalculator calculator = statutoryCalculatorFactory.forTenant(tenantId);
+            StatutoryResult strategyResult = calculator.calculate(input);
+            result = strategyResult.legacyIndiaView();
+        } catch (UnsupportedOperationException e) {
+            // Non-IN jurisdictions whose calculator is wired but skeleton-only.
+            log.warn("Statutory preview not implemented for tenantId={}: {}", tenantId, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, e.getMessage(), e);
+        }
 
         return ResponseEntity.ok(result);
     }

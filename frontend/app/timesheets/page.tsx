@@ -789,8 +789,8 @@ export default function TimesheetsPage() {
                   </label>
                   <DateInput
                     required
-                    value={entryForm.entryDate ? new Date(entryForm.entryDate) : null}
-                    onChange={(d) => setEntryForm({...entryForm, entryDate: d ? d.toISOString().split('T')[0] : ''})}
+                    value={entryForm.entryDate || null}
+                    onChange={(d) => setEntryForm({...entryForm, entryDate: d ?? ''})}
                     valueFormat="YYYY-MM-DD"
                     placeholder="YYYY-MM-DD"
                     clearable

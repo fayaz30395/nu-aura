@@ -368,8 +368,8 @@ export default function ProjectDetailPage() {
                   render={({field}) => (
                     <DateInput
                       label="Start date"
-                      value={field.value ? new Date(field.value) : null}
-                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      value={field.value || null}
+                      onChange={(d) => field.onChange(d ?? '')}
                       valueFormat="YYYY-MM-DD"
                       placeholder="YYYY-MM-DD"
                       clearable
@@ -386,8 +386,8 @@ export default function ProjectDetailPage() {
                   render={({field}) => (
                     <DateInput
                       label="Expected end date"
-                      value={field.value ? new Date(field.value) : null}
-                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      value={field.value || null}
+                      onChange={(d) => field.onChange(d ?? '')}
                       valueFormat="YYYY-MM-DD"
                       placeholder="YYYY-MM-DD"
                       clearable
@@ -406,8 +406,8 @@ export default function ProjectDetailPage() {
                   render={({field}) => (
                     <DateInput
                       label="Actual end date"
-                      value={field.value ? new Date(field.value) : null}
-                      onChange={(d) => field.onChange(d ? d.toISOString().split('T')[0] : '')}
+                      value={field.value || null}
+                      onChange={(d) => field.onChange(d ?? '')}
                       valueFormat="YYYY-MM-DD"
                       placeholder="YYYY-MM-DD"
                       clearable

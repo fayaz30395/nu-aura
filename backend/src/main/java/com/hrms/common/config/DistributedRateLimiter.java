@@ -1,12 +1,21 @@
 package com.hrms.common.config;
 
-import lombok.RequiredArgsConstructor;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.ConsumptionProbe;
+import io.github.bucket4j.Refill;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,10 +26,17 @@ import java.util.concurrent.TimeUnit;
  *
  * <p><strong>SECURITY:</strong> Prevents distributed denial-of-service attacks
  * by enforcing rate limits consistently across all instances.</p>
+ *
+ * <p><strong>Per-tenant scoping (S10-H):</strong> in addition to per-IP and
+ * per-user scopes, {@link #tryConsumePerTenant(UUID, String, long)} provides
+ * a per-tenant + per-resource bucket so one noisy tenant cannot exhaust the
+ * global rate budget. Default capacity is 1000 req/min/resource/tenant; each
+ * resource is independently tunable via
+ * {@code app.ratelimit.tenant.<resource>.{capacity,refill}} (refill is in
+ * tokens per minute).</p>
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class DistributedRateLimiter {
 
     // Lua script for atomic rate limiting (increment and check with TTL)
@@ -41,8 +57,72 @@ public class DistributedRateLimiter {
 
             return limit - current
             """;
+
+    /**
+     * Lua script for atomic per-tenant rate limiting that supports multi-token
+     * consumption. INCRBY by {@code tokens}; if the resulting counter exceeds
+     * the limit, revert the increment and return -1 (rejected). Otherwise
+     * return remaining tokens.
+     */
+    private static final String TENANT_RATE_LIMIT_SCRIPT = """
+            local key = KEYS[1]
+            local limit = tonumber(ARGV[1])
+            local window = tonumber(ARGV[2])
+            local tokens = tonumber(ARGV[3])
+
+            local current = redis.call('INCRBY', key, tokens)
+
+            if current == tokens then
+                redis.call('EXPIRE', key, window)
+            end
+
+            if current > limit then
+                redis.call('DECRBY', key, tokens)
+                return -1
+            end
+
+            return limit - current
+            """;
+
+    /**
+     * Default per-tenant bucket: 1000 requests per minute per resource.
+     * Overridable per resource via {@code app.ratelimit.tenant.<resource>.capacity}
+     * and {@code app.ratelimit.tenant.<resource>.refill}.
+     */
+    private static final int DEFAULT_TENANT_CAPACITY = 1000;
+    private static final int DEFAULT_TENANT_REFILL_TOKENS_PER_MINUTE = 1000;
+    private static final int TENANT_WINDOW_SECONDS = 60;
+
+    /**
+     * Hard cap on the number of distinct (tenant,resource) fallback buckets
+     * we keep in memory. Beyond this, a clear is forced — same defensive
+     * pattern used by {@link RateLimitConfig#cleanupBuckets()}.
+     */
+    private static final int MAX_FALLBACK_BUCKETS = 10_000;
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisScript<Long> rateLimitScript = RedisScript.of(RATE_LIMIT_SCRIPT, Long.class);
+    private final RedisScript<Long> tenantRateLimitScript =
+            RedisScript.of(TENANT_RATE_LIMIT_SCRIPT, Long.class);
+
+    /**
+     * Spring {@link Environment} for resolving per-resource tunables at lookup
+     * time. Marked {@code required = false} so unit tests can construct the
+     * limiter without a full Spring context — when null we fall back to the
+     * built-in defaults.
+     */
+    @Autowired(required = false)
+    private Environment environment;
+
+    /**
+     * Bucket4j fallback for per-tenant rate limiting, keyed by
+     * {@code tenantId:resource}. Used when Redis is unavailable.
+     */
+    private final Map<String, Bucket> tenantFallbackBuckets = new ConcurrentHashMap<>();
+
+    public DistributedRateLimiter(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * Check if a request should be allowed based on rate limits.
@@ -99,6 +179,153 @@ public class DistributedRateLimiter {
     }
 
     /**
+     * Try to consume {@code tokens} from a per-tenant + per-resource bucket.
+     *
+     * <p>Key pattern: {@code rl:tenant:{tenantId}:{resource}} — e.g.
+     * {@code rl:tenant:abc-123:export}.</p>
+     *
+     * <p>Default bucket: 1000 req/min per tenant per resource. Each resource is
+     * tunable via {@code app.ratelimit.tenant.<resource>.capacity} and
+     * {@code app.ratelimit.tenant.<resource>.refill} (refill is in tokens per
+     * minute).</p>
+     *
+     * <p>If Redis is unavailable we fall back to an in-memory Bucket4j bucket
+     * keyed by {@code tenantId:resource}, matching the same fallback pattern
+     * used by {@link RateLimitingFilter} on the request hot path.</p>
+     *
+     * <p>On exhaustion this method emits a WARN-level audit log line including
+     * the tenant id, resource, and remaining wait window so SRE can spot a
+     * runaway tenant in log aggregation.</p>
+     *
+     * @param tenantId non-null tenant id; an IllegalArgumentException is thrown when null
+     * @param resource non-blank resource bucket name (e.g. "export", "api", "webhook")
+     * @param tokens   positive number of tokens to consume (typically 1)
+     * @return result describing whether the consumption was allowed and tokens remaining
+     */
+    public RateLimitResult tryConsumePerTenant(UUID tenantId, String resource, long tokens) {
+        if (tenantId == null) {
+            throw new IllegalArgumentException("tenantId must not be null for per-tenant rate limiting");
+        }
+        if (resource == null || resource.isBlank()) {
+            throw new IllegalArgumentException("resource must not be blank for per-tenant rate limiting");
+        }
+        if (tokens <= 0) {
+            throw new IllegalArgumentException("tokens must be positive");
+        }
+
+        int capacity = resolveTenantCapacity(resource);
+        int refillPerMinute = resolveTenantRefill(resource);
+        String key = buildTenantKey(tenantId, resource);
+
+        // ── Primary: Redis Lua, multi-token consume ──────────────────────────
+        if (redisTemplate != null) {
+            try {
+                Long remaining = redisTemplate.execute(
+                        tenantRateLimitScript,
+                        Collections.singletonList(key),
+                        capacity,
+                        TENANT_WINDOW_SECONDS,
+                        tokens
+                );
+
+                if (remaining != null) {
+                    if (remaining < 0) {
+                        log.warn(
+                                "Tenant {} exhausted rate budget for {}; remaining wait {}s.",
+                                tenantId, resource, TENANT_WINDOW_SECONDS
+                        );
+                        return new RateLimitResult(false, 0, TENANT_WINDOW_SECONDS);
+                    }
+                    return new RateLimitResult(true, remaining, TENANT_WINDOW_SECONDS);
+                }
+                // null remaining => Redis script returned no value; fall through to local fallback
+                log.warn("Redis returned null for tenant rate limit key {}, falling back to local bucket", key);
+            } catch (RuntimeException e) {
+                log.warn(
+                        "Redis tenant rate limit error for key {}; falling back to local Bucket4j: {}",
+                        key, e.getMessage()
+                );
+                // fall through to local fallback below
+            }
+        }
+
+        // ── Fallback: in-memory Bucket4j ─────────────────────────────────────
+        Bucket bucket = getOrCreateTenantFallbackBucket(key, capacity, refillPerMinute);
+        ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(tokens);
+
+        if (!probe.isConsumed()) {
+            long waitSeconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
+            log.warn(
+                    "Tenant {} exhausted rate budget for {}; remaining wait {}s. (local fallback)",
+                    tenantId, resource, Math.max(waitSeconds, 1)
+            );
+            return new RateLimitResult(false, 0, (int) Math.max(waitSeconds, 1));
+        }
+
+        return new RateLimitResult(true, probe.getRemainingTokens(), TENANT_WINDOW_SECONDS);
+    }
+
+    /**
+     * Convenience overload for the common single-token case.
+     */
+    public RateLimitResult tryConsumePerTenant(UUID tenantId, String resource) {
+        return tryConsumePerTenant(tenantId, resource, 1);
+    }
+
+    /**
+     * Build the canonical per-tenant rate-limit Redis key. Exposed for tests.
+     */
+    static String buildTenantKey(UUID tenantId, String resource) {
+        return "rl:tenant:" + tenantId + ":" + resource;
+    }
+
+    private int resolveTenantCapacity(String resource) {
+        return resolveIntProperty(
+                "app.ratelimit.tenant." + resource + ".capacity",
+                DEFAULT_TENANT_CAPACITY
+        );
+    }
+
+    private int resolveTenantRefill(String resource) {
+        return resolveIntProperty(
+                "app.ratelimit.tenant." + resource + ".refill",
+                DEFAULT_TENANT_REFILL_TOKENS_PER_MINUTE
+        );
+    }
+
+    private int resolveIntProperty(String key, int defaultValue) {
+        if (environment == null) {
+            return defaultValue;
+        }
+        try {
+            Integer value = environment.getProperty(key, Integer.class);
+            return value != null && value > 0 ? value : defaultValue;
+        } catch (RuntimeException e) {
+            log.debug("Unable to resolve property {}, using default {}", key, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    private Bucket getOrCreateTenantFallbackBucket(String key, int capacity, int refillTokensPerMinute) {
+        // Defensive bound on the local fallback map size — clear when we hit
+        // the hard cap, same approach as RateLimitConfig#cleanupBuckets.
+        if (tenantFallbackBuckets.size() > MAX_FALLBACK_BUCKETS) {
+            log.warn(
+                    "Per-tenant fallback bucket map exceeded {} entries; clearing.",
+                    MAX_FALLBACK_BUCKETS
+            );
+            tenantFallbackBuckets.clear();
+        }
+        return tenantFallbackBuckets.computeIfAbsent(key, k -> {
+            Bandwidth limit = Bandwidth.classic(
+                    capacity,
+                    Refill.greedy(refillTokensPerMinute, Duration.ofMinutes(1))
+            );
+            return Bucket.builder().addLimit(limit).build();
+        });
+    }
+
+    /**
      * Get remaining tokens for a client without consuming one.
      */
     public long getRemainingTokens(String clientKey, RateLimitType type) {
@@ -130,6 +357,25 @@ public class DistributedRateLimiter {
     }
 
     /**
+     * Reset rate limit for a specific tenant+resource pair. Removes both the
+     * Redis-backed counter (when available) and the in-memory fallback bucket.
+     */
+    public void resetTenantLimit(UUID tenantId, String resource) {
+        if (tenantId == null || resource == null || resource.isBlank()) {
+            return;
+        }
+        String key = buildTenantKey(tenantId, resource);
+        try {
+            if (redisTemplate != null) {
+                redisTemplate.delete(key);
+            }
+        } catch (RuntimeException e) {
+            log.debug("Error resetting tenant rate limit in Redis for key {}", key, e);
+        }
+        tenantFallbackBuckets.remove(key);
+    }
+
+    /**
      * Block a client completely (for abuse prevention).
      */
     public void blockClient(String clientKey, RateLimitType type, long durationMinutes) {
@@ -141,6 +387,14 @@ public class DistributedRateLimiter {
         } catch (RuntimeException e) {
             log.error("Error blocking client: {}", key, e);
         }
+    }
+
+    /**
+     * Test seam — allows tests to install a stubbed Environment without
+     * pulling in a full Spring context.
+     */
+    void setEnvironmentForTesting(Environment env) {
+        this.environment = env;
     }
 
     /**
