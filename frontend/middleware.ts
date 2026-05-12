@@ -301,6 +301,23 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/me/dashboard', request.url));
   }
 
+  // P3a route consolidation redirects (2026-05-13)
+  // Old org-chart routes -> canonical /admin/org-hierarchy (425-line implementation)
+  if (pathname === '/org-chart' || pathname.startsWith('/org-chart/')
+      || pathname === '/organization-chart' || pathname.startsWith('/organization-chart/')) {
+    return NextResponse.redirect(new URL('/admin/org-hierarchy', request.url));
+  }
+  // Old letter-templates -> nested under letters/templates
+  if (pathname === '/letter-templates' || pathname.startsWith('/letter-templates/')) {
+    const newPath = pathname.replace('/letter-templates', '/letters/templates');
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+  // Old statutory-filings -> nested under statutory/filings
+  if (pathname === '/statutory-filings' || pathname.startsWith('/statutory-filings/')) {
+    const newPath = pathname.replace('/statutory-filings', '/statutory/filings');
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+
   // Allow public routes
   if (isPublicRoute(pathname)) {
     // NOTE: We intentionally do NOT redirect authenticated users from /auth/login

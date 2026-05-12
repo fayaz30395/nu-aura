@@ -254,7 +254,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           id: 'org-chart',
           label: 'Org Chart',
           icon: icon.gitBranch,
-          href: '/org-chart',
+          href: '/admin/org-hierarchy',
           requiredPermission: Permissions.ORG_STRUCTURE_VIEW
         },
         {
@@ -427,7 +427,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           id: 'letter-templates',
           label: 'Letter Templates',
           icon: icon.fileText,
-          href: '/letter-templates',
+          href: '/letters/templates',
           requiredPermission: Permissions.LETTER_TEMPLATE_MANAGE
         },
         {
