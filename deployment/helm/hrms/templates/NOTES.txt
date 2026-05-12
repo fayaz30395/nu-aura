@@ -1,0 +1,25 @@
+{{- if eq .Values.ingress.hosts.frontend "hrms.example.com" }}
+
+WARNING: ingress.hosts.frontend is still the placeholder "hrms.example.com".
+
+ManagedCertificate provisioning will FAIL until you override with the real
+domain via `helm upgrade --set ingress.hosts.frontend=hrms.acme.com ...`
+
+DNS must point to: {{ .Values.ingress.staticIpName }}.
+{{- end }}
+
+{{- if eq .Values.ingress.hosts.api "api.hrms.example.com" }}
+
+WARNING: ingress.hosts.api still placeholder. Same as above.
+{{- end }}
+
+Release:   {{ .Release.Name }}
+Namespace: {{ .Values.namespace }}
+Replicas:  backend {{ .Values.backend.replicas }} | frontend {{ .Values.frontend.replicas }}
+
+Access:
+  https://{{ .Values.ingress.hosts.frontend }}/        - frontend (Next.js)
+  https://{{ .Values.ingress.hosts.api }}/api/v1/      - API
+
+Health:
+  kubectl get pods -n {{ .Values.namespace }} -l app=hrms

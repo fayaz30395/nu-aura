@@ -5,6 +5,7 @@ import com.hrms.api.dataimport.dto.*;
 import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.CellValueSanitizer;
 import com.hrms.domain.dataimport.KekaImportHistory;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
@@ -62,6 +63,7 @@ public class KekaImportService {
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final EmailNotificationService emailNotificationService;
+    private final CellValueSanitizer cellValueSanitizer;
 
     /**
      * QA sweep S2-C K-5: API-driven KEKA import is not implemented — the executor below
@@ -248,7 +250,14 @@ public class KekaImportService {
     }
 
     /**
-     * Helper: Extract headers from CSV file
+     * Helper: Extract headers from CSV file.
+     *
+     * <p>SECURITY (Wave-10 P1-3 / OWASP A03 / CWE-1236): CSV headers are
+     * surfaced back to the client as the {@code detectedColumns} field, and
+     * may be re-used as JSON keys in column-mapping requests. A hostile upload
+     * that smuggles a formula-leading char into a header would later poison
+     * an Excel export of those columns, so every header passes through
+     * {@link CellValueSanitizer#sanitize} before being returned.
      */
     private List<String> extractHeadersFromCSV(MultipartFile file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
@@ -258,7 +267,10 @@ public class KekaImportService {
                 return new ArrayList<>();
             }
 
-            return new ArrayList<>(csvParser.getHeaderMap().keySet());
+            return csvParser.getHeaderMap().keySet().stream()
+                    .map(cellValueSanitizer::sanitize)
+                    .map(h -> h == null ? "" : h)
+                    .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 

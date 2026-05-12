@@ -3,6 +3,7 @@ package com.hrms.application.migration.service;
 import com.hrms.api.migration.dto.ImportResult;
 import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.CellValueSanitizer;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
@@ -64,6 +65,7 @@ public class KekaMigrationService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CellValueSanitizer cellValueSanitizer;
     @Value("${app.migration.default-password}")
     private String defaultMigrationPassword;
 
@@ -533,7 +535,9 @@ public class KekaMigrationService {
                 Map<String, String> rowData = new HashMap<>();
 
                 for (int i = 0; i < headers.length && i < values.length; i++) {
-                    rowData.put(headers[i], values[i].trim());
+                    // Wave-10 P1-3 / OWASP A03: neutralise formula-injection in raw CSV cells.
+                    String sanitized = cellValueSanitizer.sanitize(values[i].trim());
+                    rowData.put(headers[i], sanitized == null ? "" : sanitized);
                 }
 
                 rows.add(rowData);
@@ -543,11 +547,16 @@ public class KekaMigrationService {
         return rows;
     }
 
+    /**
+     * Read a cell as String and run it through the centralized formula-injection
+     * guard (Wave-10 P1-3 / OWASP A03 / CWE-1236). Any leading
+     * <code>= + - @ \t \r</code> is neutralized before the value is returned.
+     */
     private String getCellValue(Cell cell) {
         if (cell == null)
             return null;
 
-        return switch (cell.getCellType()) {
+        String raw = switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
             case NUMERIC -> {
                 if (DateUtil.isCellDateFormatted(cell)) {
@@ -565,6 +574,7 @@ public class KekaMigrationService {
                     : cell.getStringCellValue();
             default -> null;
         };
+        return cellValueSanitizer.sanitize(raw);
     }
 
     private String normalizeHeader(String header) {

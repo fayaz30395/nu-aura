@@ -17,4 +17,13 @@ public class LoginRequest {
 
     @NotBlank(message = "Password is required")
     private String password;
+
+    /**
+     * reCAPTCHA v3 response token, populated by the browser widget after the
+     * user solves a challenge. Optional — only required when the server
+     * indicates {@code captcha-required} on a prior failed attempt (see
+     * {@code AuthService.login} threshold logic). Blank / null on the first
+     * three attempts is normal and accepted.
+     */
+    private String captchaToken;
 }

@@ -73,14 +73,16 @@ public class OfferLetterSignatureListener {
                 case COMPLETED -> {
                     // Candidate signed the offer letter - accept offer
                     candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
-                    candidate.setOfferAcceptedDate(LocalDate.now());
+                    // S12-B: tenant-local offer-accepted date (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+                    candidate.setOfferAcceptedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
                     candidateRepository.save(candidate);
                     log.info("Candidate {} accepted offer via e-signature", candidateId);
                 }
                 case DECLINED -> {
                     // Candidate declined to sign - decline offer
                     candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
-                    candidate.setOfferDeclinedDate(LocalDate.now());
+                    // S12-B: tenant-local offer-declined date (IST fallback). TODO(S12-B): inject TenantTimeService.
+                    candidate.setOfferDeclinedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
                     candidate.setOfferDeclineReason("Declined via e-signature");
                     candidateRepository.save(candidate);
                     log.info("Candidate {} declined offer via e-signature", candidateId);

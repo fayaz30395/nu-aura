@@ -5,6 +5,7 @@ import com.hrms.api.attendance.dto.BulkAttendanceImportResponse.ImportErrorCode;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.logging.Audited;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.CellValueSanitizer;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.domain.employee.Employee;
@@ -57,6 +58,7 @@ public class AttendanceImportService {
     );
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final EmployeeRepository employeeRepository;
+    private final CellValueSanitizer cellValueSanitizer;
 
     /**
      * Generate Excel template for attendance import
@@ -267,7 +269,17 @@ public class AttendanceImportService {
                     "Enter the employee code (e.g., EMP001) in the first column");
             throw new IllegalArgumentException("Missing employee code");
         }
-        employeeCode = employeeCode.trim();
+        // SECURITY (Wave-10 P1-3): employeeCode is an ID, must never legitimately
+        // start with a formula trigger char. sanitizeStrict returns null on hit and
+        // we surface a row-level error so the import history shows what was skipped.
+        String strictCode = cellValueSanitizer.sanitizeStrict(employeeCode.trim());
+        if (strictCode == null) {
+            addError(response, rowNumber, employeeCode, ImportErrorCode.MISSING_EMPLOYEE_CODE,
+                    "Employee code contains an invalid leading character (formula injection guard)",
+                    "Employee codes must not start with =, +, -, @, TAB or CR");
+            throw new IllegalArgumentException("Employee code rejected by formula-injection guard");
+        }
+        employeeCode = strictCode;
 
         // Get date (required)
         String dateStr = getCellValueAsString(row.getCell(1));
@@ -412,12 +424,19 @@ public class AttendanceImportService {
         return true;
     }
 
+    /**
+     * Read a cell as String and run it through the centralized formula-injection
+     * guard (Wave-10 P1-3 / OWASP A03 / CWE-1236). Any leading
+     * <code>= + - @ \t \r</code> is neutralized before the value is returned.
+     */
     private String getCellValueAsString(Cell cell) {
         if (cell == null) return null;
 
+        String raw;
         switch (cell.getCellType()) {
             case STRING:
-                return cell.getStringCellValue();
+                raw = cell.getStringCellValue();
+                break;
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     // Handle date cells
@@ -440,7 +459,8 @@ public class AttendanceImportService {
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
                 try {
-                    return cell.getStringCellValue();
+                    raw = cell.getStringCellValue();
+                    break;
                 } catch (IllegalStateException e) {
                     try {
                         return String.valueOf(cell.getNumericCellValue());
@@ -452,6 +472,7 @@ public class AttendanceImportService {
             default:
                 return null;
         }
+        return cellValueSanitizer.sanitize(raw);
     }
 
     private void addError(BulkAttendanceImportResponse response, int rowNumber, String employeeCode,

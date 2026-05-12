@@ -94,7 +94,8 @@ public class ApplicantService {
         applicant.setSource(request.getSource());
         applicant.setNotes(request.getNotes());
         applicant.setExpectedSalary(request.getExpectedSalary());
-        applicant.setAppliedDate(LocalDate.now());
+        // S12-B: tenant-local applied date (IST fallback) — date-only field. TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+        applicant.setAppliedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
         applicant.setCurrentStageEnteredAt(LocalDateTime.now());
 
         Applicant savedApplicant = applicantRepository.save(applicant);

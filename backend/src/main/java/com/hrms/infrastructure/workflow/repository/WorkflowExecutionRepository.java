@@ -71,7 +71,8 @@ public interface WorkflowExecutionRepository extends JpaRepository<WorkflowExecu
     @Query("SELECT e FROM WorkflowExecution e WHERE e.tenantId = :tenantId AND e.submittedAt BETWEEN :startDate AND :endDate")
     List<WorkflowExecution> findByDateRange(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (completed_at - submitted_at))/3600) FROM workflow_executions WHERE tenant_id = :tenantId AND entity_type = :entityType AND status = 'APPROVED' AND completed_at IS NOT NULL", nativeQuery = true)
+    // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
+    @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (completed_at - submitted_at))/3600) FROM workflow_executions WHERE tenant_id = :tenantId AND is_deleted = false AND entity_type = :entityType AND status = 'APPROVED' AND completed_at IS NOT NULL", nativeQuery = true)
     Double getAverageApprovalTimeInHours(@Param("tenantId") UUID tenantId, @Param("entityType") String entityType);
 
     // ==================== EXPLICIT FETCH QUERIES (REQUIRED FOR LAZY ASSOCIATIONS) ====================

@@ -63,8 +63,9 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
      * GIN index on a tsvector over {@code body_text}). Until then the RAG retriever path
      * remains a seq-scan — acceptable while corpus is small, but will not scale.
      */
+    // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT bp.* FROM blog_posts bp " +
-            "WHERE bp.tenant_id = :tenantId AND (" +
+            "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND (" +
             "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
@@ -72,7 +73,7 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
             "bp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM blog_posts bp " +
-                    "WHERE bp.tenant_id = :tenantId AND (" +
+                    "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND (" +
                     "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")

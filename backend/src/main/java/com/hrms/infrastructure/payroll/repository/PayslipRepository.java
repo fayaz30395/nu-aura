@@ -160,10 +160,13 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID> {
      * statutory filing generators (PF, ESI, etc.) that need employee codes alongside
      * salary components without a per-row employee lookup.
      */
+    // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed —
+    // statutory filings (PF/ESI) MUST exclude soft-deleted payslips and employees
     @Query(value = "SELECT p.*, e.first_name, e.last_name, e.employee_code " +
             "FROM payslips p " +
-            "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId " +
+            "LEFT JOIN employees e ON e.id = p.employee_id AND e.tenant_id = :tenantId AND e.is_deleted = false " +
             "WHERE p.tenant_id = :tenantId " +
+            "AND p.is_deleted = false " +
             "AND p.pay_period_month = :month AND p.pay_period_year = :year " +
             "ORDER BY e.last_name ASC, e.first_name ASC",
             nativeQuery = true)

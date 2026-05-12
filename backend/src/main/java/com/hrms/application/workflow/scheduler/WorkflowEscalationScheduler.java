@@ -95,7 +95,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int processOverdueEscalations(UUID tenantId) {
-        LocalDateTime now = LocalDateTime.now();
+        // S12-B: tenant-local "now" for overdue evaluation (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int escalatedCount = 0;
@@ -161,7 +162,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int processAutoTimeoutActions(UUID tenantId) {
-        LocalDateTime now = LocalDateTime.now();
+        // S12-B: tenant-local "now" for auto-timeout evaluation (IST fallback). TODO(S12-B): inject TenantTimeService.
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         List<StepExecution> overdueSteps = stepExecutionRepository.findOverdueStepsWithExecution(tenantId, now);
 
         int autoActionedCount = 0;
@@ -208,7 +210,8 @@ public class WorkflowEscalationScheduler {
      */
     @Transactional
     public int sendDeadlineReminders(UUID tenantId) {
-        LocalDateTime now = LocalDateTime.now();
+        // S12-B: tenant-local "now" for reminder threshold evaluation (IST fallback). TODO(S12-B): inject TenantTimeService.
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         LocalDateTime reminderThreshold = now.plusHours(config.getReminderHoursBeforeDeadline());
 
         // Find pending steps with deadline approaching
@@ -406,7 +409,8 @@ public class WorkflowEscalationScheduler {
             }
 
             WorkflowExecution execution = step.getWorkflowExecution();
-            long hoursRemaining = Duration.between(LocalDateTime.now(), step.getDeadline()).toHours();
+            // S12-B: tenant-local "now" for hours-remaining calc in reminder message (IST fallback). TODO(S12-B): inject TenantTimeService.
+            long hoursRemaining = Duration.between(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")), step.getDeadline()).toHours();
 
             String title = "Reminder: Pending Approval";
             String message = String.format(

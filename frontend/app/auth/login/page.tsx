@@ -102,6 +102,44 @@ function sanitizeReturnUrl(url: string | null): string {
 // Set NEXT_PUBLIC_SSO_ALLOWED_DOMAIN in .env.production for each tenant deployment.
 const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io';
 
+// reCAPTCHA v2 site key. Public by Google's design — safe to embed at build time.
+// Empty in dev (NoOp CaptchaService is active server-side so the widget never renders).
+// Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY in .env.production after registering the domain
+// at https://www.google.com/recaptcha/admin.
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
+
+// Sentinel string the backend returns in `error.response.data.message` when the
+// account has exceeded `app.security.captcha.threshold-attempts` failed logins
+// and must solve a CAPTCHA before the next password attempt. Kept as a module
+// constant so the contract is grep-able from a single place when the backend
+// signal changes.
+const CAPTCHA_REQUIRED_MESSAGE = 'captcha-required';
+
+// Global window typing for the lazily-injected reCAPTCHA script. The script
+// installs `window.grecaptcha` and calls our `onload` once `render()` is safe
+// to use. We type-narrow inside the loader so the rest of the component does
+// not have to deal with `any`.
+declare global {
+  interface Window {
+    grecaptcha?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          'expired-callback'?: () => void;
+          'error-callback'?: () => void;
+          theme?: 'light' | 'dark';
+          size?: 'normal' | 'compact';
+        }
+      ) => number;
+      reset: (widgetId?: number) => void;
+      getResponse: (widgetId?: number) => string;
+    };
+    __nuAuraRecaptchaOnLoad?: () => void;
+  }
+}
+
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
   // wave-3 N: Safari <=16.1 lacks color-mix(). Swap to rgba() fallback
@@ -293,6 +331,15 @@ function LoginPage() {
   const [mounted, setMounted] = useState(false);
   const [didFreshLogin, setDidFreshLogin] = useState(false);
 
+  // Wave-10 P2-3: CAPTCHA gate after 3 failed login attempts. The widget is
+  // only rendered after the backend signals `captcha-required`, so the
+  // happy-path UX is unchanged. `captchaToken` holds the latest token the
+  // widget callback gave us; it is sent with the next login attempt and
+  // cleared after submit (Google issues single-use tokens).
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaWidgetId, setCaptchaWidgetId] = useState<number | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -345,6 +392,70 @@ function LoginPage() {
     }
   }, [hasHydrated, isAuthenticated, user, didFreshLogin, router, searchParams, mfaRequired]);
 
+  // Lazy-load Google reCAPTCHA when the backend has gated the user behind a
+  // CAPTCHA. We use the script-tag injection approach (rather than pulling in
+  // `react-google-recaptcha`) so the runtime dep change is zero — no new
+  // package, no SSR concerns, and the script is only fetched when the gate
+  // actually triggers. The render is "explicit" so we control widget mount
+  // timing (otherwise Google would auto-bind to any g-recaptcha div on first
+  // paint, which we don't want during the happy path).
+  useEffect(() => {
+    if (!captchaRequired) return;
+    if (!RECAPTCHA_SITE_KEY) {
+      log.warn('Backend requested CAPTCHA but NEXT_PUBLIC_RECAPTCHA_SITE_KEY is not configured');
+      return;
+    }
+    if (typeof window === 'undefined') return;
+
+    const SCRIPT_ID = 'nu-aura-recaptcha-script';
+    const CONTAINER_ID = 'nu-aura-recaptcha-container';
+
+    // Helper that actually renders the widget into our placeholder div.
+    // Guarded with the widgetId state so we never double-render on re-mount
+    // (Google's API throws if you call render() twice on the same container).
+    const tryRender = () => {
+      const container = document.getElementById(CONTAINER_ID);
+      if (!container || !window.grecaptcha) return;
+      if (captchaWidgetId !== null) return;
+      try {
+        const id = window.grecaptcha.render(container, {
+          sitekey: RECAPTCHA_SITE_KEY,
+          callback: (token: string) => setCaptchaToken(token),
+          'expired-callback': () => setCaptchaToken(null),
+          'error-callback': () => setCaptchaToken(null),
+        });
+        setCaptchaWidgetId(id);
+      } catch (renderErr) {
+        log.error('reCAPTCHA render failed', renderErr);
+      }
+    };
+
+    // If the script is already on the page (e.g. user triggered CAPTCHA twice
+    // in one session) just re-render into the (now empty) container.
+    if (window.grecaptcha) {
+      tryRender();
+      return;
+    }
+    // Otherwise inject the script once and let its onload handler call us.
+    if (document.getElementById(SCRIPT_ID)) {
+      // Script element exists but window.grecaptcha not yet populated — the
+      // onload fires `__nuAuraRecaptchaOnLoad`, which we re-install below.
+      window.__nuAuraRecaptchaOnLoad = tryRender;
+      return;
+    }
+    window.__nuAuraRecaptchaOnLoad = tryRender;
+    const script = document.createElement('script');
+    script.id = SCRIPT_ID;
+    script.src = 'https://www.google.com/recaptcha/api.js?onload=__nuAuraRecaptchaOnLoad&render=explicit';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    // Intentionally no cleanup — the script is a one-shot global resource and
+    // ripping it out on unmount would defeat the cache when the user toggles
+    // the email form open/closed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [captchaRequired]);
+
   // Lockout timer — clears expired lockout once the window expires
   useEffect(() => {
     if (lockoutUntil) {
@@ -380,18 +491,55 @@ function LoginPage() {
     setError(null);
   };
 
+  // Inspect a login failure for the backend's captcha-required signal. When
+  // matched, flip the gate on and clear the stale token so the user sees a
+  // fresh widget; returns true so the caller can render a tailored message
+  // instead of the generic "Invalid email or password" string.
+  const isCaptchaRequiredError = (err: unknown): boolean => {
+    const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+    if (message === CAPTCHA_REQUIRED_MESSAGE) {
+      setCaptchaRequired(true);
+      setCaptchaToken(null);
+      // Reset any already-rendered widget so the next render() lands in a
+      // freshly-cleared challenge state.
+      if (captchaWidgetId !== null && typeof window !== 'undefined' && window.grecaptcha) {
+        try { window.grecaptcha.reset(captchaWidgetId); } catch { /* widget may have been re-mounted */ }
+      }
+      return true;
+    }
+    return false;
+  };
+
+  // Local widening of the shared LoginRequest type to allow the optional
+  // captchaToken field. The shared type stays unchanged (out of scope for
+  // this Wave-10 P2-3 change) — axios serialises any object property and the
+  // backend's LoginRequest DTO already accepts the extra field, so the cast
+  // is safe at runtime and we recover compile-time safety inside this page.
+  type LoginPayload = Parameters<typeof login>[0] & { captchaToken?: string };
+
   // Demo account quick-login
   const handleDemoLogin = async (email: string) => {
     setIsDemoLoading(true);
     setError(null);
     try {
-      await login({ email, password: DEMO_PASSWORD });
+      const payload: LoginPayload = {
+        email,
+        password: DEMO_PASSWORD,
+        ...(captchaToken ? { captchaToken } : {}),
+      };
+      await login(payload);
+      setCaptchaRequired(false);
+      setCaptchaToken(null);
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-        || 'Service temporarily unavailable. Please try again in a moment.';
-      setError(message);
+      if (isCaptchaRequiredError(err)) {
+        setError('Please complete the CAPTCHA challenge to continue.');
+      } else {
+        const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+          || 'Service temporarily unavailable. Please try again in a moment.';
+        setError(message);
+      }
     } finally {
       setIsDemoLoading(false);
     }
@@ -399,16 +547,34 @@ function LoginPage() {
 
   // Email + password login (Bug #3 FIX)
   const handleEmailLogin = async (data: EmailPasswordForm) => {
+    // Once the gate is on, require a token before we even hit the network.
+    // Avoids a wasted round-trip and a confusing flicker if the user submits
+    // before solving the widget.
+    if (captchaRequired && !captchaToken) {
+      setError('Please complete the CAPTCHA challenge to continue.');
+      return;
+    }
     setIsEmailLoading(true);
     setError(null);
     try {
-      await login({ email: data.email, password: data.password });
+      const payload: LoginPayload = {
+        email: data.email,
+        password: data.password,
+        ...(captchaToken ? { captchaToken } : {}),
+      };
+      await login(payload);
+      setCaptchaRequired(false);
+      setCaptchaToken(null);
       setDidFreshLogin(true);
       router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-        || 'Invalid email or password';
-      setError(message);
+      if (isCaptchaRequiredError(err)) {
+        setError('Please complete the CAPTCHA challenge to continue.');
+      } else {
+        const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+          || 'Invalid email or password';
+        setError(message);
+      }
     } finally {
       setIsEmailLoading(false);
     }
@@ -767,9 +933,25 @@ function LoginPage() {
                       </div>
                     </div>
 
+                    {/* Wave-10 P2-3: CAPTCHA placeholder. Stays in the DOM (display:none)
+                        until the backend signals captcha-required so the script-injection
+                        useEffect always has a stable target to call grecaptcha.render()
+                        on without React tearing the node out from under it. */}
+                    <div
+                      id="nu-aura-recaptcha-container"
+                      role={captchaRequired ? 'region' : undefined}
+                      aria-label={captchaRequired ? 'CAPTCHA challenge' : undefined}
+                      className={captchaRequired ? 'flex justify-center pt-1' : 'hidden'}
+                    />
+                    {captchaRequired && !RECAPTCHA_SITE_KEY && (
+                      <p className="text-xs text-danger-500 -mt-2">
+                        CAPTCHA challenge required, but the site key is not configured. Contact your administrator.
+                      </p>
+                    )}
+
                     <button
                       type="submit"
-                      disabled={isEmailLoading}
+                      disabled={isEmailLoading || (captchaRequired && !captchaToken)}
                       className="skeuo-button w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-accent-600 hover:bg-accent-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       {isEmailLoading ? (

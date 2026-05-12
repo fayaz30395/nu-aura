@@ -393,7 +393,8 @@ public class QuizAssessmentService {
                 .employeeId(employeeId)
                 .enrollmentId(enrollmentId)
                 .issuedAt(LocalDateTime.now())
-                .completionDate(LocalDate.now())
+                // S12-B: tenant-local completion date for certificate (IST fallback) — date-only field. TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+                .completionDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
                 .isActive(true)
                 .scoreAchieved(enrollment.getQuizScore() != null ? enrollment.getQuizScore().intValue() : 0)
                 .tenantId(tenantId)

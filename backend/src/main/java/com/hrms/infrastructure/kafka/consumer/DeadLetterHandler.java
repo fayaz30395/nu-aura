@@ -2,6 +2,7 @@ package com.hrms.infrastructure.kafka.consumer;
 
 import com.hrms.domain.kafka.FailedKafkaEvent;
 import com.hrms.domain.kafka.FailedKafkaEvent.FailedEventStatus;
+import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.repository.FailedKafkaEventRepository;
 import io.micrometer.core.instrument.Counter;
@@ -63,6 +64,7 @@ public class DeadLetterHandler {
     private final MeterRegistry meterRegistry;
     private final FailedKafkaEventRepository failedKafkaEventRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final IdempotencyService idempotencyService;
 
     /**
      * Per-topic counters, lazily initialised to avoid startup registration order issues.
@@ -123,7 +125,17 @@ public class DeadLetterHandler {
             @Header(KafkaHeaders.PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset) {
 
+        // Idempotency key derived from physical offset (DLT payload is raw String — no event id guarantee).
+        // Prevents duplicated metric increments and structured-log alerts on consumer restart /
+        // partition rebalance, where the same offset can be redelivered after our DB-level
+        // persistIfAbsent check has already short-circuited.
+        String idempotencyKey = "dlt:" + topic + ":" + partition + ":" + offset;
         try {
+            if (!idempotencyService.tryProcess(idempotencyKey)) {
+                log.debug("[DLT] Duplicate DLT delivery skipped: topic={} partition={} offset={}", topic, partition, offset);
+                return;
+            }
+
             String payloadExcerpt = truncate(message, PAYLOAD_LOG_MAX_LENGTH);
 
             log.error("[DLT] Dead letter received — topic={}, partition={}, offset={}, payloadExcerpt={}",
@@ -141,6 +153,8 @@ public class DeadLetterHandler {
 
         } catch (Exception e) { // Intentional broad catch — DLT last resort
             log.error("[DLT] Unexpected error while handling dead letter from {}: {}", topic, e.getMessage(), e);
+            // Release the claim so a retry can re-enter; DLT must never get silently swallowed.
+            idempotencyService.release(idempotencyKey);
         } finally {
             // Always acknowledge — the DLT is the end of the retry road.
             // Failing to acknowledge would cause the consumer to stall.

@@ -104,7 +104,8 @@ public class JobBoardIntegrationService {
                 }
                 posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
                 posting.setPostedAt(LocalDateTime.now());
-                posting.setExpiresAt(LocalDateTime.now().plusDays(30));
+                // S12-B: tenant-local 30-day expiry window for job-board posting (IST fallback). TODO(S12-B): inject TenantTimeService.
+                posting.setExpiresAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusDays(30));
                 posting.setLastSyncedAt(LocalDateTime.now());
                 posting.setErrorMessage(null);
             } catch (Exception e) { // Intentional broad catch — external job board API integration

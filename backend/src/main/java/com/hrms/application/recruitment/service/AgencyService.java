@@ -167,7 +167,8 @@ public class AgencyService {
         submission.setStatus(request.getStatus());
 
         if (request.getStatus() == SubmissionStatus.HIRED) {
-            submission.setHiredAt(request.getHiredAt() != null ? request.getHiredAt() : java.time.LocalDate.now());
+            // S12-B: tenant-local hired date (IST fallback) — LocalDate (date-only). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+            submission.setHiredAt(request.getHiredAt() != null ? request.getHiredAt() : java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
             if (submission.getInvoiceStatus() == InvoiceStatus.NOT_APPLICABLE) {
                 submission.setInvoiceStatus(InvoiceStatus.PENDING);
             }

@@ -287,6 +287,18 @@ app:
     csrf:
       # Enable CSRF protection (recommended for cookie-based auth)
       enabled: ${CSRF_ENABLED:true}
+    # reCAPTCHA v3 challenge for login (Wave-10 P2-3). Default OFF for dev/test/CI;
+    # production overrides via application-prod.yml and provides RECAPTCHA_SITE_KEY +
+    # RECAPTCHA_SECRET_KEY env vars. When disabled, NoOp CaptchaService is wired
+    # and the threshold check still runs but verify() always returns true.
+    # The site-key is sent to the browser (public by Google's design); the
+    # secret-key is server-side only and MUST NOT be committed to source control.
+    captcha:
+      enabled: ${CAPTCHA_ENABLED:false}
+      site-key: ${RECAPTCHA_SITE_KEY:}
+      secret-key: ${RECAPTCHA_SECRET_KEY:}
+      min-score: ${RECAPTCHA_MIN_SCORE:0.5}
+      threshold-attempts: ${CAPTCHA_THRESHOLD_ATTEMPTS:3}
     # ClamAV virus scanning for file uploads (S10-L). Default OFF for dev/test/CI;
     # production overrides via application-prod.yml. When disabled, NoOpScanner is wired
     # and all uploads pass through unscanned (logged at startup as a WARN).

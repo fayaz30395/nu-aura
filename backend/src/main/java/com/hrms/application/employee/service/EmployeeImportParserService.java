@@ -3,6 +3,7 @@ package com.hrms.application.employee.service;
 import com.hrms.api.employee.dto.EmployeeImportRow;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.CellValueSanitizer;
 import com.hrms.domain.customfield.CustomFieldDefinition;
 import com.hrms.infrastructure.customfield.repository.CustomFieldDefinitionRepository;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +107,18 @@ public class EmployeeImportParserService {
         put("zip_code", "postalCode");
         put("pincode", "postalCode");
     }};
+    /**
+     * Identity / name / code fields that should never legitimately contain a
+     * spreadsheet formula. We use {@link CellValueSanitizer#sanitizeStrict} on
+     * these and skip the row if injection is detected (Wave-10 P1-3 / OWASP A03).
+     */
+    private static final Set<String> STRICT_FIELDS = Set.of(
+            "employeecode", "firstname", "middlename", "lastname",
+            "manageremployeecode", "departmentcode", "taxid", "bankaccountnumber",
+            "bankifsccode"
+    );
     private final CustomFieldDefinitionRepository customFieldDefinitionRepository;
+    private final CellValueSanitizer cellValueSanitizer;
 
     /**
      * Parse a CSV or Excel file and return list of import rows.
@@ -355,6 +367,13 @@ public class EmployeeImportParserService {
 
     /**
      * Map array of values to EmployeeImportRow.
+     *
+     * <p>Each cell value is run through {@link CellValueSanitizer#sanitize} again
+     * here so CSV-path reads (which never hit {@link #getCellValueAsString}) also
+     * get formula-injection neutralisation. Strict-validated fields additionally
+     * pass through {@link CellValueSanitizer#sanitizeStrict}; if rejected, the
+     * value is dropped (left empty) and the import-row downstream validator
+     * will surface the missing-field error to the user.
      */
     private EmployeeImportRow mapToImportRow(Map<Integer, String> columnMapping, String[] values, int rowNumber, Set<String> customFieldCodes) {
         EmployeeImportRow row = new EmployeeImportRow();
@@ -363,7 +382,23 @@ public class EmployeeImportParserService {
         for (Map.Entry<Integer, String> entry : columnMapping.entrySet()) {
             int index = entry.getKey();
             String field = entry.getValue();
-            String value = index < values.length ? values[index].trim() : "";
+            String rawValue = index < values.length ? values[index].trim() : "";
+
+            // Defence-in-depth: re-sanitise (idempotent for Excel cells already
+            // sanitised in getCellValueAsString; necessary for raw-CSV cells).
+            String value = cellValueSanitizer.sanitize(rawValue);
+            if (value == null) value = "";
+
+            // Strict-validate identity/name/code fields — null means rejected.
+            if (STRICT_FIELDS.contains(field.toLowerCase()) && !value.isEmpty()) {
+                String strict = cellValueSanitizer.sanitizeStrict(value);
+                if (strict == null) {
+                    log.warn("Row {}: dropping value for strict-validated field '{}' due to formula-injection pattern", rowNumber, field);
+                    value = "";
+                } else {
+                    value = strict;
+                }
+            }
 
             setFieldValue(row, field, value);
         }
@@ -429,11 +464,16 @@ public class EmployeeImportParserService {
 
     /**
      * Get cell value as string regardless of cell type.
+     *
+     * <p>SECURITY (Wave-10 P1-3 / OWASP A03 / CWE-1236): the raw string from
+     * {@code getStringCellValue()} (and formula-typed cells) passes through
+     * {@link CellValueSanitizer#sanitize} so a cell beginning with
+     * {@code = + - @ \t \r} is neutralized before reaching any downstream consumer.
      */
     private String getCellValueAsString(Cell cell) {
         if (cell == null) return "";
 
-        return switch (cell.getCellType()) {
+        String raw = switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
             case NUMERIC -> {
                 if (DateUtil.isCellDateFormatted(cell)) {
@@ -456,6 +496,9 @@ public class EmployeeImportParserService {
             }
             default -> "";
         };
+        // CSV/Excel injection guard — see CellValueSanitizer for OWASP A03 details.
+        String sanitized = cellValueSanitizer.sanitize(raw);
+        return sanitized == null ? "" : sanitized;
     }
 
     /**

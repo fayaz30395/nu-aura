@@ -78,7 +78,8 @@ public class HelpdeskService {
             ticketCategoryRepository.findByIdAndTenantId(request.getCategoryId(), tenantId)
                     .ifPresent(category -> {
                         if (category.getSlaHours() != null) {
-                            ticket.setDueDate(LocalDateTime.now().plusHours(category.getSlaHours()));
+                            // S12-B: tenant-local SLA due-date for helpdesk ticket (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
+                            ticket.setDueDate(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).plusHours(category.getSlaHours()));
                         }
                     });
         }

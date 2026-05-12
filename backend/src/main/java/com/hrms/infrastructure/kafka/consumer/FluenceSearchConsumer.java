@@ -4,6 +4,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.knowledge.BlogPost;
 import com.hrms.domain.knowledge.DocumentTemplate;
 import com.hrms.domain.knowledge.WikiPage;
+import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.KafkaTopics;
 import com.hrms.infrastructure.kafka.events.FluenceContentEvent;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
@@ -40,6 +41,7 @@ public class FluenceSearchConsumer {
     private final WikiPageRepository wikiPageRepository;
     private final BlogPostRepository blogPostRepository;
     private final DocumentTemplateRepository documentTemplateRepository;
+    private final IdempotencyService idempotencyService;
 
     @KafkaListener(
             topics = KafkaTopics.FLUENCE_CONTENT,
@@ -54,12 +56,25 @@ public class FluenceSearchConsumer {
         UUID contentId = event.getContentId();
         String action = event.getAction();
         UUID tenantId = event.getTenantId();
+        String eventId = event.getEventId();
 
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
         }
 
+        boolean claimed = false;
         try {
+            // Atomic idempotency check-and-claim via Redis SETNX.
+            // Without this, an at-least-once redelivery between ES write and Kafka ACK
+            // could race a DELETE against a subsequent CREATE on the same document,
+            // leaving the index inconsistent with PostgreSQL.
+            if (eventId != null && !idempotencyService.tryProcess(eventId)) {
+                log.debug("Fluence content event {} already processed, skipping", eventId);
+                acknowledgment.acknowledge();
+                return;
+            }
+            claimed = eventId != null;
+
             log.info("Processing fluence content event: type={}, id={}, action={}, tenantId={}",
                     contentType, contentId, action, tenantId);
 
@@ -71,11 +86,16 @@ public class FluenceSearchConsumer {
             }
 
             acknowledgment.acknowledge();
-            log.debug("Successfully processed fluence content event: {}", event.getEventId());
+            log.debug("Successfully processed fluence content event: {}", eventId);
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing fluence content event: type={}, id={}, action={}: {}",
                     contentType, contentId, action, e.getMessage(), e);
+            // Release the idempotency claim so Kafka redelivery can retry.
+            // Otherwise the 24h TTL would silently swallow every retry.
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
             // Don't acknowledge; let Kafka retry or move to DLT
             throw e;
         } finally {

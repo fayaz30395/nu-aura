@@ -211,7 +211,9 @@ public class ContractLifecycleScheduler {
         int[] reminderDays = getReminderDaysForTenant(tenantId);
         int maxWindow = Arrays.stream(reminderDays).max().orElse(30);
 
-        LocalDate windowEnd = LocalDate.now().plusDays(maxWindow);
+        // S12-B: tenant-local "today" for reminder-window evaluation (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+        LocalDate todayLocal = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        LocalDate windowEnd = todayLocal.plusDays(maxWindow);
         List<Contract> approachingExpiry = contractRepository.findActiveContractsExpiringBefore(tenantId, windowEnd);
 
         int remindersCreated = 0;
@@ -220,7 +222,7 @@ public class ContractLifecycleScheduler {
                 LocalDate reminderDate = contract.getEndDate().minusDays(daysBefore);
 
                 // Only create future or today reminders
-                if (reminderDate.isBefore(LocalDate.now())) {
+                if (reminderDate.isBefore(todayLocal)) {
                     continue;
                 }
 
@@ -250,7 +252,8 @@ public class ContractLifecycleScheduler {
                 LocalDate renewalReminderDate = contract.getEndDate().minusDays(
                         Math.min(reminderDays[0], 7));
 
-                if (!renewalReminderDate.isBefore(LocalDate.now())
+                // S12-B: tenant-local "today" for renewal-reminder past check (IST fallback). TODO(S12-B): inject TenantTimeService.
+                if (!renewalReminderDate.isBefore(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))
                         && !reminderRepository.existsPendingReminder(
                         contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
 
@@ -411,7 +414,8 @@ public class ContractLifecycleScheduler {
             return String.format("A reminder is due for contract '%s'. Please review and take action.",
                     contract.getTitle());
         }
-        long daysUntilExpiry = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), contract.getEndDate());
+        // S12-B: tenant-local "today" for days-until-expiry calc in notification message (IST fallback). TODO(S12-B): inject TenantTimeService.
+        long daysUntilExpiry = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")), contract.getEndDate());
         String daysText = daysUntilExpiry > 0
                 ? daysUntilExpiry + " day(s)"
                 : "today (or already past)";

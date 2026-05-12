@@ -340,7 +340,8 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<ContractListDto> getExpiringContracts(int days) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for expiring-contracts window (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         LocalDate expiryDate = today.plusDays(days);
 
         return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate)
@@ -355,7 +356,8 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getExpiringContracts(int days, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        LocalDate today = LocalDate.now();
+        // S12-B: tenant-local "today" for expiring-contracts window (paginated, IST fallback). TODO(S12-B): inject TenantTimeService.
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         LocalDate expiryDate = today.plusDays(days);
 
         return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate, pageable)

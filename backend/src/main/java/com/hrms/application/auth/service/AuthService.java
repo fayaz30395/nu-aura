@@ -6,6 +6,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.platform.service.HrmsPermissionInitializer;
+import com.hrms.application.security.service.CaptchaService;
 import com.hrms.application.user.service.ImplicitRoleService;
 import com.hrms.common.config.PasswordPolicyConfig;
 import com.hrms.common.exception.AuthenticationException;
@@ -28,6 +29,7 @@ import com.hrms.common.security.AccountLockoutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -78,8 +80,21 @@ public class AuthService {
     private final AccountLockoutService accountLockoutService;
     private final PasswordHistoryRepository passwordHistoryRepository;
     private final PasswordPolicyConfig passwordPolicyConfig;
+    private final CaptchaService captchaService;
+    private final StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * Redis key prefix for the failed-attempt counter. MUST match the constant
+     * in {@code AccountLockoutService} (intentional duplication — that service
+     * is out of scope for this change and we read the same counter so a single
+     * brute-force window drives both the captcha gate and the lockout cap).
+     */
+    private static final String LOCKOUT_ATTEMPTS_KEY_PREFIX = "lockout:attempts:";
+
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
+    @Value("${app.security.captcha.threshold-attempts:3}")
+    private int captchaThresholdAttempts;
     @Value("${app.google.client-id:}")
     private String googleClientId;
     /**
@@ -110,7 +125,9 @@ public class AuthService {
                        PasswordPolicyService passwordPolicyService,
                        AccountLockoutService accountLockoutService,
                        PasswordHistoryRepository passwordHistoryRepository,
-                       PasswordPolicyConfig passwordPolicyConfig) {
+                       PasswordPolicyConfig passwordPolicyConfig,
+                       CaptchaService captchaService,
+                       StringRedisTemplate stringRedisTemplate) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -124,6 +141,8 @@ public class AuthService {
         this.accountLockoutService = accountLockoutService;
         this.passwordHistoryRepository = passwordHistoryRepository;
         this.passwordPolicyConfig = passwordPolicyConfig;
+        this.captchaService = captchaService;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Transactional(readOnly = true)
@@ -179,6 +198,40 @@ public class AuthService {
             metricsService.recordLoginFailure("password", "account_locked");
             throw new org.springframework.security.authentication.LockedException(
                     "Account temporarily locked due to too many failed login attempts");
+        }
+
+        // SEC (Wave-10 P2-3): once an account has accumulated `captchaThresholdAttempts`
+        // failed logins in the current sliding window, require a reCAPTCHA token on
+        // every subsequent attempt up until the AccountLockoutService MAX_ATTEMPTS=5
+        // hard lock. This adds a friction wall against credential-stuffing without
+        // burdening legitimate users on the first few mistypes. The counter we read
+        // is the SAME Redis key AccountLockoutService writes, so attempts are not
+        // double-counted. We deliberately read straight from StringRedisTemplate
+        // because exposing the counter via AccountLockoutService is out of scope
+        // for this change.
+        int currentFailedAttempts = readFailedLoginAttempts(request.getEmail());
+        if (currentFailedAttempts >= captchaThresholdAttempts) {
+            String captchaToken = request.getCaptchaToken();
+            if (captchaToken == null || captchaToken.isBlank()
+                    || !captchaService.verify(captchaToken, resolveRemoteIp())) {
+                metricsService.recordLoginFailure("password", "captcha_required");
+                // Throw the project's AuthenticationException (NOT Spring's
+                // BadCredentialsException) so that GlobalExceptionHandler's
+                // handleAuthenticationException preserves our literal message in
+                // the response body. The Spring BadCredentialsException handler
+                // hard-codes the user-facing message to "Invalid email or password"
+                // (line 224 of GlobalExceptionHandler) which would strip the
+                // "captcha-required" signal the frontend keys off. We are not
+                // permitted to edit GlobalExceptionHandler under the strict scope
+                // of this change, so we route through the AuthenticationException
+                // path instead. End result on the wire: 401 UNAUTHORIZED with
+                // errorCode=AUTHENTICATION_FAILED and message="captcha-required".
+                //
+                // We intentionally do NOT increment loginFailed() here — failing
+                // the captcha is not a password attempt and should not accelerate
+                // the user toward the 5-strike lockout.
+                throw new AuthenticationException("captcha-required");
+            }
         }
 
         try {
@@ -1003,6 +1056,73 @@ public class AuthService {
         log.info("User {} logged in successfully after MFA verification", userId);
 
         return buildAuthResponse(user, tenantId, ctx);
+    }
+
+    /**
+     * Read the current failed-attempt counter for the given username from
+     * Redis. Returns {@code 0} when the key is absent, malformed, or Redis is
+     * unreachable — the captcha gate is fail-open on Redis errors because the
+     * downstream {@link AccountLockoutService} will also see a fresh counter
+     * and the user can re-attempt. This is intentional: a Redis outage should
+     * not lock every user out of password login.
+     *
+     * <p>The key format ({@value LOCKOUT_ATTEMPTS_KEY_PREFIX}{@code <username>})
+     * MUST stay in sync with {@code AccountLockoutService.ATTEMPTS_KEY_PREFIX}.
+     * The duplication is deliberate scaffolding under the strict scope rule
+     * that prohibits modifying {@code AccountLockoutService}.</p>
+     */
+    private int readFailedLoginAttempts(String username) {
+        if (username == null || username.isBlank()) {
+            return 0;
+        }
+        try {
+            String value = stringRedisTemplate.opsForValue().get(LOCKOUT_ATTEMPTS_KEY_PREFIX + username);
+            if (value == null || value.isBlank()) {
+                return 0;
+            }
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException badInt) {
+            log.warn("Lockout counter for {} is non-numeric — treating as zero", username);
+            return 0;
+        } catch (DataAccessException redisDown) {
+            // Redis unreachable — fail open. AccountLockoutService.loginFailed()
+            // will also no-op in this case, so the brute-force window is
+            // effectively suspended until Redis recovers; that is the same
+            // pre-existing behaviour and out of scope to change here.
+            log.warn("Could not read lockout counter for {}: {}", username, redisDown.getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Best-effort resolve the remote IP of the current request for forwarding
+     * to Google's siteverify call. Reads {@code X-Forwarded-For} (first hop)
+     * when present so the value reflects the real client behind the K8s
+     * ingress, falling back to the direct {@code remoteAddr}. Returns
+     * {@code null} when no request is bound to the current thread (e.g. an
+     * internal call path) — Google treats {@code remoteip} as optional, so a
+     * null is safe.
+     */
+    private String resolveRemoteIp() {
+        try {
+            org.springframework.web.context.request.RequestAttributes attrs =
+                    org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            if (!(attrs instanceof org.springframework.web.context.request.ServletRequestAttributes sra)) {
+                return null;
+            }
+            jakarta.servlet.http.HttpServletRequest req = sra.getRequest();
+            String forwarded = req.getHeader("X-Forwarded-For");
+            if (forwarded != null && !forwarded.isBlank()) {
+                // X-Forwarded-For may be a comma-separated chain; the original
+                // client is the leftmost entry.
+                int comma = forwarded.indexOf(',');
+                return (comma > 0 ? forwarded.substring(0, comma) : forwarded).trim();
+            }
+            return req.getRemoteAddr();
+        } catch (Exception swallow) { // Intentional broad catch — pure diagnostic helper, must never break login
+            log.debug("Could not resolve remote IP: {}", swallow.getMessage());
+            return null;
+        }
     }
 
     /**

@@ -153,9 +153,12 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
      * JOIN FETCH causes "cannot use FETCH with pagination" in Hibernate.
      * Plain JOIN works with pagination and is correct since workflowExecution is non-nullable.
      */
+    // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT s.* FROM step_executions s " +
             "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
             "WHERE s.tenant_id = :tenantId " +
+            "AND s.is_deleted = false " +
+            "AND e.is_deleted = false " +
             "AND s.assigned_to_user_id = :userId " +
             "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
             "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +
@@ -169,6 +172,8 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
             countQuery = "SELECT COUNT(s.id) FROM step_executions s " +
                     "JOIN workflow_executions e ON e.id = s.workflow_execution_id " +
                     "WHERE s.tenant_id = :tenantId " +
+                    "AND s.is_deleted = false " +
+                    "AND e.is_deleted = false " +
                     "AND s.assigned_to_user_id = :userId " +
                     "AND (CAST(:status AS VARCHAR) IS NULL OR s.status = :status) " +
                     "AND (CAST(:entityType AS VARCHAR) IS NULL OR e.entity_type = :entityType) " +

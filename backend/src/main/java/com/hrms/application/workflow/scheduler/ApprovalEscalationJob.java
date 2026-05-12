@@ -97,7 +97,8 @@ public class ApprovalEscalationJob {
     @Transactional
     int processEscalationsForTenant(UUID tenantId) {
         // Fetch all stale PENDING steps that are eligible for escalation (assigned > 48 hours ago)
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(48);
+        // S12-B: tenant-local cutoff for stale-step detection (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.now(tenantId).
+        LocalDateTime cutoff = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).minusHours(48);
         List<StepExecution> staleSteps = stepExecutionRepository.findStaleStepsForEscalation(tenantId, cutoff);
 
         int escalatedCount = 0;

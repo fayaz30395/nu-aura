@@ -460,7 +460,8 @@ public class JobOpeningService {
     }
 
     private String generateUniqueJobCode(UUID tenantId) {
-        String year = String.valueOf(Year.now().getValue());
+        // S12-B: tenant-local year for job-code prefix (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.year(tenantId).
+        String year = String.valueOf(Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue());
         String base = "JOB-" + year + "-";
         int seq = 1;
         String code;

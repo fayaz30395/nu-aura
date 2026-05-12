@@ -70,8 +70,9 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
      * GIN index on a tsvector over {@code body_text}). Until then the RAG retriever path
      * remains a seq-scan — acceptable while corpus is small, but will not scale.
      */
+    // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
-            "WHERE wp.tenant_id = :tenantId AND (" +
+            "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND (" +
             "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
@@ -79,7 +80,7 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
             "wp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
-                    "WHERE wp.tenant_id = :tenantId AND (" +
+                    "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND (" +
                     "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")
