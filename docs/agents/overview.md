@@ -278,7 +278,7 @@ PROJECT CONTEXT:
 - API: REST, versioned /api/v1/, SpringDoc OpenAPI 2.7.0
 - RBAC: Role hierarchy with @RequiresPermission, permission format module.action
 - Multi-tenancy: Shared DB, shared schema, PostgreSQL RLS
-- Existing docs: docs/build-kit/ (24 docs), docs/adr/ (5 ADRs), docs/runbooks/ (4 guides)
+- Existing docs: docs/architecture/ (topic-grouped architecture, formerly build-kit), docs/adr/ (9 ADRs), docs/runbooks/ (4 guides)
 
 YOUR ROLE:
 - Write clear, findable documentation

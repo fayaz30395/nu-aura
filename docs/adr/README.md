@@ -11,12 +11,19 @@ deleted.
 
 ## ADR Index
 
-| ADR                                             | Title                                           | Status   | Date    |
-|-------------------------------------------------|-------------------------------------------------|----------|---------|
-| [ADR-001](ADR-001-multi-tenant-architecture.md) | Multi-Tenant Architecture with Shared Database  | Accepted | 2025-01 |
-| [ADR-002](ADR-002-authentication-strategy.md)   | JWT-based Authentication with HTTP-only Cookies | Accepted | 2025-01 |
-| [ADR-003](ADR-003-caching-strategy.md)          | Redis Caching with Tenant-Aware Key Generation  | Accepted | 2025-01 |
-| [ADR-004](ADR-004-webhook-delivery-system.md)   | Reliable Webhook Delivery with Circuit Breaker  | Accepted | 2026-02 |
+| ADR                                                   | Title                                           | Status   | Date    |
+|-------------------------------------------------------|-------------------------------------------------|----------|---------|
+| [ADR-001](ADR-001-multi-tenant-architecture.md)       | Multi-Tenant Architecture with Shared Database  | Accepted | 2025-01 |
+| [ADR-002](ADR-002-authentication-strategy.md)         | JWT-based Authentication with HTTP-only Cookies | Accepted | 2025-01 |
+| [ADR-003](ADR-003-caching-strategy.md)                | Redis Caching with Tenant-Aware Key Generation  | Accepted | 2025-01 |
+| [ADR-004](ADR-004-webhook-delivery-system.md)         | Reliable Webhook Delivery with Circuit Breaker  | Accepted | 2026-02 |
+| [ADR-005](ADR-005-theme-consolidation.md)             | Theme Consolidation                             | Accepted | 2026-03 |
+| [ADR-006](ADR-006-jwt-token-optimization.md)          | JWT Token Optimization                          | Accepted | 2026-03 |
+| [ADR-007](ADR-007-payroll-saga-pattern.md)            | Payroll Saga Pattern                            | Accepted | 2026-03 |
+| [ADR-008](ADR-008-recruitment-ats-gap-analysis.md)    | Recruitment ATS Gap Analysis                    | Accepted | 2026-03 |
+| [ADR-009](ADR-009-database-connection-pool-sizing.md) | Database Connection Pool Sizing                 | Accepted | 2026-03 |
+
+ADRs 005–009 were merged in from the legacy `docs/build-kit/` tree during Phase 2 of the repo layout cleanup (2026-05-13). The original numbering inside build-kit (001–005) was renumbered to 005–009 to avoid collision with the foundational ADRs above. Original index preserved as `build-kit-adr-index.md`.
 
 ## ADR Status Lifecycle
 

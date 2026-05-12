@@ -1204,8 +1204,7 @@ optimization work. The architecture is sound; execution needs improvement.
 `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/main/java/com/hrms/common/config/SecurityConfig.java` —
 Security configuration
 
-- `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/build-kit/05_DATABASE_SCHEMA_DESIGN.md` — Schema
-  design
+- `docs/architecture/database/schema-design.md` — Schema design
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-001-multi-tenant-architecture.md` —
   Multi-tenancy ADR
 - `/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/adr/ADR-002-authentication-strategy.md` —

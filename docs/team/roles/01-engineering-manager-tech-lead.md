@@ -81,7 +81,7 @@
 - `@RequiresPermission` annotation
 - SuperAdmin bypasses ALL checks
 - Permissions cached in Redis
-- Key: `docs/build-kit/04_RBAC_PERMISSION_MATRIX.md`
+- Key: `docs/architecture/rbac/permission-matrix.md`
 
 ### 3. Event-Driven Workflows (Kafka)
 
@@ -92,7 +92,7 @@ Topics: `nu-aura.approvals`, `nu-aura.notifications`, `nu-aura.audit`, `nu-aura.
 
 Workflow: `workflow_def → workflow_step → approval_instance → approval_task`
 Used for: Leave, expenses, assets, performance, recruitment
-Key: `docs/build-kit/08_APPROVAL_WORKFLOW_ENGINE.md`
+Key: `docs/architecture/workflow/approval-engine.md`
 
 ## Metrics to Track
 
@@ -126,8 +126,8 @@ Low: Style inconsistencies, TODOs
 
 ## Documentation
 
-**Must Read**: `CLAUDE.md`, `MEMORY.md`, `REQUIREMENTS.md`
-**Architecture**: `docs/build-kit/` (24 docs), `docs/adr/` (5 ADRs)
+**Must Read**: `CLAUDE.md`, `MEMORY.md`, `README.md`
+**Architecture**: `docs/architecture/` (topic-grouped, formerly build-kit), `docs/adr/` (9 ADRs)
 **Runbooks**: `docs/runbooks/`
 
 ## Success Criteria

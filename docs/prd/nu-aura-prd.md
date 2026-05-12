@@ -1062,14 +1062,14 @@ Explicitly NOT in NU-AURA today:
 
 ### 18.2 Reference documents (in-repo)
 
-- **Architecture**: `docs/architecture/Backend.md`, `erd.md`, `security-controls.md`,
+- **Architecture**: `docs/architecture/backend.md`, `erd.md`, `security-controls.md`,
   `sprint-history.md`
 - **API**: `docs/api/external-api-guide.md`, `webhook-payload-reference.md`, `api-quick-start.md`
 - **Runbooks**: `docs/runbooks/deployment.md`, `rollback.md`, `key-rotation.md`,
   `tenant-lifecycle.md`, `backup-restore.md`, `disaster-recovery.md`, `dr-drill-checklist.md`
 - **Audit**: `docs/audit/wave-10-deep-audit-report.md`, `kafka-idempotency-audit.md`,
   `soft-delete-native-query-audit.md`, `spring-boot-3.4-to-3.5-upgrade-precheck.md`
-- **Handover**: `docs/handover/PROJECT-HANDOVER.md` (companion to this PRD — contains validation
+- **Handover**: `docs/handover/project-handover.md` (companion to this PRD — contains validation
   gaps and known caveats)
 
 ### 18.3 Reference documents (external)

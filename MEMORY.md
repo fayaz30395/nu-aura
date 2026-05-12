@@ -61,7 +61,7 @@ Two formats exist in the codebase. Both are supported:
 ### Permission Scale
 
 500+ granular permissions across 16 business modules. Documented in
-`docs/build-kit/04_RBAC_PERMISSION_MATRIX.md`.
+`docs/architecture/rbac/permission-matrix.md`.
 
 ### Permission Hierarchy
 
@@ -259,7 +259,7 @@ Supports: leave approvals, expense approvals, onboarding approvals, performance 
 approvals, requisition approvals. Dynamic routing based on configurable steps and role-based
 approval chains.
 
-**Key doc:** `docs/build-kit/08_APPROVAL_WORKFLOW_ENGINE.md`
+**Key doc:** `docs/architecture/workflow/approval-engine.md`
 
 ---
 
@@ -592,8 +592,8 @@ APIs.
 
 | Location                      | Contents                                                                                                        | Count        |
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------|--------------|
-| `docs/build-kit/`             | Core architecture docs (00–17) + ADRs (001–005) + index                                                         | 24 files     |
-| `docs/adr/`                   | Foundational ADRs (multi-tenant, auth, caching, webhooks)                                                       | 5 files      |
+| `docs/architecture/`          | Topic-grouped architecture docs (system, modules, microservices, events, devops, observability, testing, ai-execution-plan, master-plan, plus rbac/, database/, payroll/, leave/, workflow/, org/, api/, frontend/) | merged from build-kit Phase 2 |
+| `docs/adr/`                   | ADR-001..009 (multi-tenant, auth, caching, webhooks, theme, jwt, payroll-saga, recruitment-ats, db-pool)        | 9 ADRs + index |
 | `docs/architecture-diagrams/` | Mermaid diagrams (system context, containers, modules, auth flow, etc.)                                         | 9 .mmd files |
 | `docs/runbooks/`              | Incident response, payroll correction, data correction, Kafka DLT                                               | 4 files      |
 | `docs/execution/`             | Phase 0–7 execution logs                                                                                        | 8 files      |
