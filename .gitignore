@@ -141,6 +141,8 @@ backend/target/surefire-reports/
 
 docs/qa/*
 /docs/qa/*
+!docs/qa/README.md
+!/docs/qa/README.md
 
 # Phase-1 cleanup: build artifacts, runtime logs, ad-hoc dev outputs
 nohup.out
