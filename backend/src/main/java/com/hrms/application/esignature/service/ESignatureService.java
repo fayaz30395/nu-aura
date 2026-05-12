@@ -189,7 +189,7 @@ public class ESignatureService {
         // Apply scope-based filtering using DataScopeService
         Specification<SignatureRequest> scopeSpec = dataScopeService.getScopeSpecification(Permission.ESIGNATURE_VIEW);
         Specification<SignatureRequest> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<SignatureRequest> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+        Specification<SignatureRequest> combinedSpec = Specification.allOf(tenantSpec).and(scopeSpec);
 
         return signatureRequestRepository.findAll(combinedSpec, pageable)
                 .map(this::mapToSignatureRequestResponse);

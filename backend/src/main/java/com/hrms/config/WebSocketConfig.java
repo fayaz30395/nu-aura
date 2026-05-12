@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -42,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private RedisWebSocketRelay redisWebSocketRelay;
 
     @Autowired(required = false)
-    public void setRedisWebSocketRelay(@Nullable RedisWebSocketRelay redisWebSocketRelay) {
+    public void setRedisWebSocketRelay(@Lazy @Nullable RedisWebSocketRelay redisWebSocketRelay) {
         this.redisWebSocketRelay = redisWebSocketRelay;
     }
 

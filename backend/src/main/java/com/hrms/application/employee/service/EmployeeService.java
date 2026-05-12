@@ -517,7 +517,7 @@ public class EmployeeService {
         Specification<Employee> tenantSpec = (root, query, cb) ->
                 cb.equal(root.get("tenantId"), tenantId);
         Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
-        Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+        Specification<Employee> combinedSpec = Specification.allOf(tenantSpec).and(scopeSpec);
 
         Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);
         Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
@@ -550,7 +550,7 @@ public class EmployeeService {
             );
         };
         Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.EMPLOYEE_VIEW_ALL);
-        Specification<Employee> combinedSpec = Specification.where(tenantSpec).and(searchSpec).and(scopeSpec);
+        Specification<Employee> combinedSpec = Specification.allOf(tenantSpec).and(searchSpec).and(scopeSpec);
 
         Page<Employee> employeePage = employeeRepository.findAll(combinedSpec, pageable);
         Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());

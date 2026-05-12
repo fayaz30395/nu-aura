@@ -180,7 +180,7 @@ public class InterviewManagementService {
             return cb.equal(root.get("tenantId"), tenantId);
         };
         return interviewRepository.findAll(
-                        Specification.where(tenantSpec).and(scopeSpec), pageable)
+                        Specification.allOf(tenantSpec).and(scopeSpec), pageable)
                 .map(this::mapToInterviewResponse);
     }
 
@@ -216,7 +216,7 @@ public class InterviewManagementService {
         Specification<Interview> candidateSpec = (root, query, cb) -> cb.equal(root.get("candidateId"), candidateId);
 
         return interviewRepository.findAll(
-                Specification.where(tenantSpec).and(candidateSpec).and(scopeSpec),
+                Specification.allOf(tenantSpec).and(candidateSpec).and(scopeSpec),
                 pageable).map(this::mapToInterviewResponse);
     }
 

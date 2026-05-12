@@ -73,7 +73,7 @@ public class DataScopeService {
     @Transactional(readOnly = true)
     public <T> Specification<T> getScopeSpecificationWith(String permission, Specification<T> additionalSpec) {
         Specification<T> scopeSpec = getScopeSpecification(permission);
-        return Specification.where(scopeSpec).and(additionalSpec);
+        return Specification.allOf(scopeSpec).and(additionalSpec);
     }
 
     /**

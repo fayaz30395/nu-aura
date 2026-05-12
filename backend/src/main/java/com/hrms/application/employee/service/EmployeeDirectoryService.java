@@ -48,7 +48,7 @@ public class EmployeeDirectoryService {
         // Build specification for dynamic query
         String permission = determineViewPermission();
         Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(permission);
-        Specification<Employee> spec = Specification.where(scopeSpec).and(buildSpecification(tenantId, request));
+        Specification<Employee> spec = Specification.allOf(scopeSpec).and(buildSpecification(tenantId, request));
 
         // Create pageable with sorting
         Pageable pageable = PageRequest.of(

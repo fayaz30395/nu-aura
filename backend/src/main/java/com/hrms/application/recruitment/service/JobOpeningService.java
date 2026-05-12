@@ -160,7 +160,7 @@ public class JobOpeningService {
         Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
 
         Page<JobOpening> page = jobOpeningRepository.findAll(
-                Specification.where(tenantSpec).and(scopeSpec), pageable);
+                Specification.allOf(tenantSpec).and(scopeSpec), pageable);
 
         return mapJobOpeningPageBatch(page, tenantId);
     }
@@ -175,7 +175,7 @@ public class JobOpeningService {
         Specification<JobOpening> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
 
         Page<JobOpening> page = jobOpeningRepository.findAll(
-                Specification.where(tenantSpec).and(statusSpec).and(scopeSpec), pageable);
+                Specification.allOf(tenantSpec).and(statusSpec).and(scopeSpec), pageable);
 
         return mapJobOpeningPageBatch(page, tenantId);
     }

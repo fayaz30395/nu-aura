@@ -11,6 +11,13 @@ spring:
       # Override the PostgreSQL-specific connection-init-sql from application.yml.
       # H2 does not support SET app.current_tenant_id; use a no-op SELECT instead.
       connection-init-sql: SELECT 1
+    # Explicit empty replica URL — keeps RoutingDataSourceConfig dormant under H2.
+    # RoutingDataSourceConfig's @ConditionalOnExpression already treats empty/"false"
+    # as disabled, but pinning the override here documents the intent at the test
+    # profile level and avoids accidental activation if the env happens to export
+    # SPRING_DATASOURCE_REPLICA_URL while running the suite locally.
+    replica:
+      url: ""
 
   jpa:
     open-in-view: true

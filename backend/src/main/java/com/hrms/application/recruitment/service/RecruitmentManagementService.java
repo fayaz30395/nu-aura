@@ -203,7 +203,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(Permission.CANDIDATE_VIEW);
 
         Page<Candidate> page = candidateRepository.findAll(
-                Specification.where(tenantSpec).and(scopeSpec), pageable);
+                Specification.allOf(tenantSpec).and(scopeSpec), pageable);
         return mapCandidatePageBatch(page);
     }
 
@@ -217,7 +217,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         Specification<Candidate> jobSpec = (root, query, cb) -> cb.equal(root.get("jobOpeningId"), jobOpeningId);
 
         Page<Candidate> page = candidateRepository.findAll(
-                Specification.where(tenantSpec).and(jobSpec).and(scopeSpec), pageable);
+                Specification.allOf(tenantSpec).and(jobSpec).and(scopeSpec), pageable);
         return mapCandidatePageBatch(page);
     }
 
@@ -551,7 +551,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
 
         Page<Candidate> page = candidateRepository.findAll(
-                Specification.where(tenantSpec).and(offerSpec).and(scopeSpec), pageable);
+                Specification.allOf(tenantSpec).and(offerSpec).and(scopeSpec), pageable);
         return mapCandidatePageBatch(page);
     }
 

@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +25,21 @@ import java.util.Map;
  * <h2>Activation</h2>
  * <p>
  * Activated only when the environment variable {@code SPRING_DATASOURCE_REPLICA_URL}
- * (property {@code spring.datasource.replica.url}) is set. When unset, this configuration
- * is skipped entirely via {@link ConditionalOnProperty}, leaving the existing primary
- * data-source path untouched — making the change zero-risk for environments that have
- * not yet provisioned a Neon replica endpoint.
+ * (property {@code spring.datasource.replica.url}) is set to a <em>non-empty, non-false</em>
+ * value. When unset, empty (e.g. {@code ${SPRING_DATASOURCE_REPLICA_URL:}} resolving to
+ * an empty string in the test/dev profile), or explicitly {@code "false"}, this
+ * configuration is skipped entirely via {@link ConditionalOnExpression}, leaving the
+ * existing primary data-source path untouched — making the change zero-risk for
+ * environments that have not yet provisioned a Neon replica endpoint.
+ * </p>
+ *
+ * <p>
+ * Note: a plain {@code @ConditionalOnProperty(name = "spring.datasource.replica.url")}
+ * is <strong>not</strong> sufficient here because Spring Boot 3.x treats an empty-string
+ * placeholder value as "present and not 'false'", which would wrongly activate this
+ * config in the test profile (where the placeholder resolves to {@code ""}) and break
+ * the {@code dataSource}/{@code routingDataSource} qualifier graph for H2-backed tests.
+ * The SpEL expression below explicitly demands a non-empty, non-"false" URL.
  * </p>
  *
  * <h2>How routing works</h2>
@@ -95,7 +106,9 @@ import java.util.Map;
  * @see JpaConfig
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.datasource.replica.url")
+@ConditionalOnExpression(
+        "'${spring.datasource.replica.url:}'.length() > 0 "
+        + "&& !'${spring.datasource.replica.url:}'.equalsIgnoreCase('false')")
 @Slf4j
 public class RoutingDataSourceConfig {
 

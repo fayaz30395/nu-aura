@@ -329,7 +329,7 @@ public class LetterService {
         // Apply scope-based filtering using DataScopeService
         Specification<GeneratedLetter> scopeSpec = dataScopeService.getScopeSpecification(Permission.LETTER_TEMPLATE_VIEW);
         Specification<GeneratedLetter> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
-        Specification<GeneratedLetter> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+        Specification<GeneratedLetter> combinedSpec = Specification.allOf(tenantSpec).and(scopeSpec);
 
         return letterRepository.findAll(combinedSpec, pageable)
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));
@@ -357,7 +357,7 @@ public class LetterService {
         Specification<GeneratedLetter> scopeSpec = dataScopeService.getScopeSpecification(Permission.LETTER_APPROVE);
         Specification<GeneratedLetter> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<GeneratedLetter> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), LetterStatus.PENDING_APPROVAL);
-        Specification<GeneratedLetter> combinedSpec = Specification.where(tenantSpec).and(statusSpec).and(scopeSpec);
+        Specification<GeneratedLetter> combinedSpec = Specification.allOf(tenantSpec).and(statusSpec).and(scopeSpec);
 
         return letterRepository.findAll(combinedSpec, pageable)
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));

@@ -113,7 +113,7 @@ public class ApplicantService {
     public Page<ApplicantResponse> listApplicants(UUID jobOpeningId, ApplicationStatus status, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        Specification<Applicant> spec = Specification.where(tenantSpec(tenantId))
+        Specification<Applicant> spec = Specification.allOf(tenantSpec(tenantId))
                 .and(scopeSpec())
                 .and(jobOpeningId != null ? jobOpeningSpec(jobOpeningId) : null)
                 .and(status != null ? statusSpec(status) : null);
@@ -161,7 +161,7 @@ public class ApplicantService {
     public ApplicantPipelineResponse getPipeline(UUID jobOpeningId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        Specification<Applicant> spec = Specification.where(tenantSpec(tenantId))
+        Specification<Applicant> spec = Specification.allOf(tenantSpec(tenantId))
                 .and(scopeSpec())
                 .and(jobOpeningSpec(jobOpeningId));
 
@@ -199,7 +199,7 @@ public class ApplicantService {
     public List<ApplicantResponse> getApplicantsByCandidate(UUID candidateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        Specification<Applicant> spec = Specification.where(tenantSpec(tenantId))
+        Specification<Applicant> spec = Specification.allOf(tenantSpec(tenantId))
                 .and(scopeSpec())
                 .and(candidateSpec(candidateId));
 
@@ -216,7 +216,7 @@ public class ApplicantService {
 
     private Applicant getApplicantByIdAndTenant(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        Specification<Applicant> spec = Specification.where(tenantSpec(tenantId))
+        Specification<Applicant> spec = Specification.allOf(tenantSpec(tenantId))
                 .and(idSpec(id));
 
         return applicantRepository.findOne(spec)
@@ -225,7 +225,7 @@ public class ApplicantService {
 
     private Applicant getApplicantByIdAndScope(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        Specification<Applicant> spec = Specification.where(tenantSpec(tenantId))
+        Specification<Applicant> spec = Specification.allOf(tenantSpec(tenantId))
                 .and(idSpec(id))
                 .and(scopeSpec());
 
