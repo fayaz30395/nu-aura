@@ -10,7 +10,7 @@ import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
-import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/design-system';
+import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — chart subtree extracted into
 // FluenceAnalyticsCharts.tsx so it ships only when the Analytics route renders.

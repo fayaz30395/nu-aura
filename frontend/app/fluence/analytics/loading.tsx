@@ -1,4 +1,4 @@
-import {card, layout} from '@/lib/design-system';
+import {card, layout} from '@/lib/theme/design-system';
 
 export default function AnalyticsLoading() {
   return (

@@ -8,7 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/queries/useFluence';
 import type {BlogPost, FluenceFavorite, WikiPage} from '@/lib/types/platform/fluence';
-import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/design-system';
+import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 type TabType = 'wiki' | 'blog' | 'favorites';

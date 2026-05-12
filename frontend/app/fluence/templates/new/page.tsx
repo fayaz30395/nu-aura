@@ -12,7 +12,7 @@ import {notifications} from '@mantine/notifications';
 import {Drawer, LoadingOverlay, TagsInput} from '@mantine/core';
 import {motion} from 'framer-motion';
 import {ArrowLeft, FileText, Info, Save, Send, Smile, Tag,} from 'lucide-react';
-import {motion as dsMotion} from '@/lib/design-system';
+import {motion as dsMotion} from '@/lib/theme/design-system';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 

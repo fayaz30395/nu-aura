@@ -1,7 +1,7 @@
 'use client';
 
 import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import {NotificationHandler, WebSocketNotification, webSocketService, WebSocketStatus,} from '@/lib/websocket';
+import {NotificationHandler, WebSocketNotification, webSocketService, WebSocketStatus,} from '@/lib/services/websocket';
 import {useToast} from './ToastProvider';
 import {logger} from '@/lib/utils/logger';
 

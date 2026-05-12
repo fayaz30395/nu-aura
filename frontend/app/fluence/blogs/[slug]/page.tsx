@@ -29,7 +29,7 @@ import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
-import {card, iconSize, motion as dsMotion} from '@/lib/design-system';
+import {card, iconSize, motion as dsMotion} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {

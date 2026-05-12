@@ -3,7 +3,7 @@
 import {useRouter} from 'next/navigation';
 import {AlertCircle} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
-import {iconSize, typography} from '@/lib/design-system';
+import {iconSize, typography} from '@/lib/theme/design-system';
 
 export default function AnalyticsError({
                                          error,

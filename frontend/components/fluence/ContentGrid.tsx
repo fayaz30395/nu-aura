@@ -4,7 +4,7 @@ import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {Eye, Heart, MessageCircle} from 'lucide-react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
-import {iconSize, typography} from '@/lib/design-system';
+import {iconSize, typography} from '@/lib/theme/design-system';
 
 export interface ContentItem {
   id: string;

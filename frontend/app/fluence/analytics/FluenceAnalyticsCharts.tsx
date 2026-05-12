@@ -21,7 +21,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import {chartColors} from '@/lib/design-system';
+import {chartColors} from '@/lib/theme/design-system';
 
 export interface ActivityTrendDatum {
   date: string;

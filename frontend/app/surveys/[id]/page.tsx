@@ -43,7 +43,7 @@ import {useLaunchSurvey, useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useAddQuestion, useDeleteQuestion, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
 import {QuestionType, SurveyStatus} from '@/lib/types/grow/survey';
 import {toBadgeVariant} from '@/lib/utils/type-guards';
-import {iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
+import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // ─── Question type metadata ────────────────────────────────────────────────
 const questionTypeOptions = [

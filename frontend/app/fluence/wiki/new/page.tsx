@@ -15,7 +15,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {ArrowLeft, Building2, ChevronDown, Eye, FileText, Globe, Lock, Save, Send, Shield,} from 'lucide-react';
 import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
-import {motion as dsMotion} from '@/lib/design-system';
+import {motion as dsMotion} from '@/lib/theme/design-system';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(

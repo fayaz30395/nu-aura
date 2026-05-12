@@ -8,7 +8,7 @@ import {Clock, Eye, Heart, MessageCircle, Pen, Plus, Search, Tag,} from 'lucide-
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {typography} from '@/lib/design-system';
+import {typography} from '@/lib/theme/design-system';
 import {useBlogCategories, useBlogPosts} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';

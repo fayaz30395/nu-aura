@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {WebSocketNotification, webSocketService, WebSocketStatus} from '@/lib/websocket';
+import {WebSocketNotification, webSocketService, WebSocketStatus} from '@/lib/services/websocket';
 
 /**
  * WebSocket Service Reconnection Tests

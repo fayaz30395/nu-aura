@@ -12,7 +12,7 @@ import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSubmitSurveyResponse, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
 import type {SurveyQuestion} from '@/lib/types/grow/survey';
 import {QuestionType} from '@/lib/types/grow/survey';
-import {iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
+import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // ─── Per-question answer state ─────────────────────────────────────────────
 interface AnswerState {

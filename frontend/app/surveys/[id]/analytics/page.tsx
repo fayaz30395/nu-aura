@@ -12,7 +12,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSurveyAnalytics} from '@/lib/hooks/queries/useSurveyQuestions';
 import {QuestionType} from '@/lib/types/grow/survey';
-import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
+import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — per-question chart subtree
 // extracted into SurveyAnalyticsCharts.tsx so survey analytics only ships the

@@ -17,7 +17,7 @@ import {
 } from '@/lib/hooks/queries/useFluence';
 import {Button} from '@/components/ui/Button';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
-import {card, input as dsInput, typography} from '@/lib/design-system';
+import {card, input as dsInput, typography} from '@/lib/theme/design-system';
 import {getInitials} from '@/lib/utils';
 import type {SpaceMember, SpaceMemberRole, WikiSpace, WikiVisibility} from '@/lib/types/platform/fluence';
 

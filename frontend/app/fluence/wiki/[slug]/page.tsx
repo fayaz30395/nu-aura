@@ -54,7 +54,7 @@ import {
 import {useAuth} from '@/lib/hooks/useAuth';
 import {fluenceService} from '@/lib/services/platform/fluence.service';
 import {MentionInput, type MentionInputHandle} from '@/components/fluence/MentionInput';
-import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/design-system';
+import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {WatchButton} from '@/components/fluence/WatchButton';

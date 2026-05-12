@@ -3,7 +3,7 @@
 import {useRouter} from 'next/navigation';
 import {ChevronRight, Home} from 'lucide-react';
 import {motion} from 'framer-motion';
-import {iconSize} from '@/lib/design-system';
+import {iconSize} from '@/lib/theme/design-system';
 
 export interface BreadcrumbItem {
   label: string;

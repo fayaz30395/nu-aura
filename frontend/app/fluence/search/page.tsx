@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
-import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/design-system';
+import {card as dsCard, iconSize, input as dsInput, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 import {useFluenceSearch} from '@/lib/hooks/queries/useFluence';
 import type {SavedSearch} from '@/lib/types/platform/fluence';
 import {sanitizeHtml} from '@/lib/utils/sanitize';

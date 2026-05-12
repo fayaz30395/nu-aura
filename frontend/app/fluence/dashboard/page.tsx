@@ -10,7 +10,7 @@ import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
-import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/design-system';
+import {card, iconSize, layout, motion as dsMotion, typography} from '@/lib/theme/design-system';
 
 /**
  * NU-Fluence Dashboard — central hub for knowledge management.

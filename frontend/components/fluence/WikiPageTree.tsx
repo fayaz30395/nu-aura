@@ -6,7 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {ChevronDown, ChevronRight, Eye, File, FolderOpen, Pin,} from 'lucide-react';
 import {Tooltip} from '@mantine/core';
 import type {WikiPageTreeNode} from '@/lib/types/platform/fluence';
-import {iconSize, typography} from '@/lib/design-system';
+import {iconSize, typography} from '@/lib/theme/design-system';
 
 // ─── Status Badge ───────────────────────────────────────────────────────────
 
