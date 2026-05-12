@@ -7,6 +7,7 @@ import com.hrms.api.recruitment.dto.ApplicantStatusUpdateRequest;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.recruitment.Applicant;
 import com.hrms.domain.recruitment.ApplicationSource;
 import com.hrms.domain.recruitment.ApplicationStatus;
@@ -52,6 +53,9 @@ class ApplicantServiceTest {
 
     @Mock
     private DataScopeService dataScopeService;
+
+    @Mock
+    private TenantTimeService tenantTimeService;
 
     @InjectMocks
     private ApplicantService applicantService;
@@ -112,6 +116,7 @@ class ApplicantServiceTest {
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
                     .thenReturn(Optional.of(jobOpening));
+            when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
             when(applicantRepository.save(any(Applicant.class)))
                     .thenAnswer(invocation -> {
                         Applicant saved = invocation.getArgument(0);

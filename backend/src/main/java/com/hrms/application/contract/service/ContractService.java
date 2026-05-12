@@ -5,6 +5,7 @@ import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.metrics.MetricsService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.contract.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.contract.repository.*;
@@ -39,6 +40,7 @@ public class ContractService {
     private final ContractReminderRepository reminderRepository;
     private final EmployeeService employeeService;
     private final MetricsService metricsService;
+    private final TenantTimeService tenantTimeService;
 
     // ===================== CRUD Operations =====================
 
@@ -340,8 +342,8 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<ContractListDto> getExpiringContracts(int days) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        // S12-B: tenant-local "today" for expiring-contracts window (IST fallback). TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "today" for expiring-contracts window — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate expiryDate = today.plusDays(days);
 
         return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate)
@@ -356,8 +358,8 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getExpiringContracts(int days, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        // S12-B: tenant-local "today" for expiring-contracts window (paginated, IST fallback). TODO(S12-B): inject TenantTimeService.
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        // S12-B: tenant-local "today" for expiring-contracts window (paginated) — resolved via TenantTimeService.
+        LocalDate today = tenantTimeService.today(tenantId);
         LocalDate expiryDate = today.plusDays(days);
 
         return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate, pageable)

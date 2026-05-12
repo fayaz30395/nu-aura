@@ -3,6 +3,7 @@ package com.hrms.application.attendance.service;
 import com.hrms.api.attendance.dto.*;
 import com.hrms.application.attendance.adapter.BiometricAdapter;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.attendance.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.attendance.repository.*;
@@ -48,6 +49,7 @@ public class BiometricIntegrationService {
     private final AttendanceRecordService attendanceRecordService;
     private final EventPublisher eventPublisher;
     private final List<BiometricAdapter> adapters;
+    private final TenantTimeService tenantTimeService;
 
     // ─── Device Management ──────────────────────────────────────────────────
 
@@ -465,8 +467,8 @@ public class BiometricIntegrationService {
 
     public BiometricDeviceResponse toDeviceResponse(BiometricDevice device) {
         UUID tenantId = device.getTenantId();
-        // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
-        LocalDateTime todayStart = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).atStartOfDay();
+        // S11-M Wave-10 P0-1: tenant-local "today" — resolved via TenantTimeService.
+        LocalDateTime todayStart = tenantTimeService.today(tenantId).atStartOfDay();
 
         long totalToday = punchLogRepository.countByDeviceAndStatusSince(
                 device.getId(), tenantId, BiometricPunchLog.ProcessedStatus.PROCESSED, todayStart)

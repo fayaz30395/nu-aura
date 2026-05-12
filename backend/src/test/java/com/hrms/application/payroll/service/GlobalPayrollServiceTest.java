@@ -4,6 +4,7 @@ import com.hrms.api.payroll.dto.*;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.payroll.Currency;
 import com.hrms.domain.payroll.EmployeePayrollRecord;
 import com.hrms.domain.payroll.ExchangeRate;
@@ -56,6 +57,8 @@ class GlobalPayrollServiceTest {
     private GlobalPayrollRunRepository payrollRunRepository;
     @Mock
     private EmployeePayrollRecordRepository recordRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private GlobalPayrollService globalPayrollService;
     private UUID tenantId;
@@ -81,6 +84,7 @@ class GlobalPayrollServiceTest {
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
     }
 
     // ==================== CURRENCY MANAGEMENT TESTS ====================

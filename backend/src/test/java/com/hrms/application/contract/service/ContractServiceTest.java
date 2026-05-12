@@ -3,6 +3,7 @@ package com.hrms.application.contract.service;
 import com.hrms.api.contract.dto.*;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.contract.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.contract.repository.*;
@@ -68,6 +69,9 @@ class ContractServiceTest {
     @Mock
     private com.hrms.common.metrics.MetricsService metricsService;
 
+    @Mock
+    private TenantTimeService tenantTimeService;
+
     @InjectMocks
     private ContractService contractService;
 
@@ -94,6 +98,7 @@ class ContractServiceTest {
         testEmployee.setId(EMPLOYEE_ID);
         testEmployee.setTenantId(TENANT_ID);
         lenient().when(employeeService.getByIdAndTenant(any(), any())).thenReturn(testEmployee);
+        lenient().when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
     }
 
     @AfterEach

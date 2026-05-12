@@ -4,6 +4,7 @@ import com.hrms.api.attendance.dto.BiometricDeviceRequest;
 import com.hrms.api.attendance.dto.BiometricPunchRequest;
 import com.hrms.application.attendance.adapter.BiometricAdapter;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.attendance.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.attendance.repository.*;
@@ -47,6 +48,8 @@ class BiometricIntegrationServiceTest {
     private EventPublisher eventPublisher;
     @Mock
     private List<BiometricAdapter> adapters;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private BiometricIntegrationService service;
 

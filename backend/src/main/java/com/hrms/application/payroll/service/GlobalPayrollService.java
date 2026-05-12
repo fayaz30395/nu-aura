@@ -3,6 +3,7 @@ package com.hrms.application.payroll.service;
 import com.hrms.api.payroll.dto.*;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.payroll.Currency;
 import com.hrms.domain.payroll.ExchangeRate;
@@ -21,7 +22,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +37,7 @@ public class GlobalPayrollService {
     private final PayrollLocationRepository locationRepository;
     private final GlobalPayrollRunRepository payrollRunRepository;
     private final EmployeePayrollRecordRepository recordRepository;
+    private final TenantTimeService tenantTimeService;
 
     // ==================== CURRENCY MANAGEMENT ====================
 
@@ -446,9 +447,8 @@ public class GlobalPayrollService {
     @Transactional(readOnly = true)
     public GlobalPayrollDashboard getDashboard() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        // S11-M Wave-10 P0-1: tenant-local year (IST fallback) so YTD totals don't blip on Jan 1.
-        // TODO(S11-M): inject TenantTimeService and use tenantTimeService.today(tenantId).getYear().
-        int currentYear = Year.now(java.time.ZoneId.of("Asia/Kolkata")).getValue();
+        // S11-M Wave-10 P0-1: tenant-local year so YTD totals don't blip on Jan 1 — resolved via TenantTimeService.
+        int currentYear = tenantTimeService.today(tenantId).getYear();
 
         // Get counts
         List<PayrollLocation> activeLocations = locationRepository.findByTenantIdAndIsActiveTrue(tenantId);

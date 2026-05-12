@@ -4,6 +4,7 @@ import com.hrms.api.attendance.dto.RestrictedHolidayDTOs.*;
 import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.attendance.RestrictedHoliday;
 import com.hrms.domain.attendance.RestrictedHolidayPolicy;
 import com.hrms.domain.attendance.RestrictedHolidaySelection;
@@ -38,6 +39,7 @@ public class RestrictedHolidayService {
     private final RestrictedHolidaySelectionRepository selectionRepository;
     private final RestrictedHolidayPolicyRepository policyRepository;
     private final AuditLogService auditLogService;
+    private final TenantTimeService tenantTimeService;
 
     // ═══════════════════════════ Holiday CRUD ═══════════════════════════
 
@@ -173,9 +175,9 @@ public class RestrictedHolidayService {
         if (policy != null) {
             // Check minimum days before selection
             if (policy.getMinDaysBeforeSelection() != null) {
-                // S11-M Wave-10 P0-1: tenant-local "today" (IST fallback). TODO(S11-M): inject TenantTimeService.
+                // S11-M Wave-10 P0-1: tenant-local "today" — resolved via TenantTimeService.
                 long daysUntilHoliday = java.time.temporal.ChronoUnit.DAYS.between(
-                        LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")), holiday.getHolidayDate());
+                        tenantTimeService.today(tenantId), holiday.getHolidayDate());
                 if (daysUntilHoliday < policy.getMinDaysBeforeSelection()) {
                     throw new IllegalArgumentException(
                             "Selection must be made at least " + policy.getMinDaysBeforeSelection()

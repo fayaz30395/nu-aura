@@ -4,6 +4,7 @@ import com.hrms.api.attendance.dto.RestrictedHolidayDTOs.*;
 import com.hrms.application.audit.service.AuditLogService;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.attendance.RestrictedHoliday;
 import com.hrms.domain.attendance.RestrictedHolidayPolicy;
 import com.hrms.domain.attendance.RestrictedHolidaySelection;
@@ -41,6 +42,8 @@ class RestrictedHolidayServiceTest {
     private RestrictedHolidayPolicyRepository policyRepository;
     @Mock
     private AuditLogService auditLogService;
+    @Mock
+    private TenantTimeService tenantTimeService;
     @InjectMocks
     private RestrictedHolidayService service;
     private UUID tenantId;
@@ -167,6 +170,7 @@ class RestrictedHolidayServiceTest {
                 tenantId, employeeId, holidayId)).thenReturn(false);
         when(policyRepository.findByTenantIdAndYearAndIsActiveTrue(eq(tenantId), anyInt()))
                 .thenReturn(Optional.of(policy));
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
         when(selectionRepository.countActiveSelectionsByEmployeeAndYear(eq(tenantId), eq(employeeId), anyInt()))
                 .thenReturn(1L);
 
@@ -209,6 +213,7 @@ class RestrictedHolidayServiceTest {
                 tenantId, employeeId, holidayId)).thenReturn(false);
         when(policyRepository.findByTenantIdAndYearAndIsActiveTrue(eq(tenantId), anyInt()))
                 .thenReturn(Optional.of(policy));
+        when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
         when(selectionRepository.countActiveSelectionsByEmployeeAndYear(eq(tenantId), eq(employeeId), anyInt()))
                 .thenReturn(2L);
 

@@ -7,6 +7,7 @@ import com.hrms.api.recruitment.dto.ApplicantStatusUpdateRequest;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.TenantTimeService;
 import com.hrms.domain.recruitment.Applicant;
 import com.hrms.domain.recruitment.ApplicationStatus;
 import com.hrms.domain.recruitment.Candidate;
@@ -22,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -60,6 +60,7 @@ public class ApplicantService {
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final DataScopeService dataScopeService;
+    private final TenantTimeService tenantTimeService;
 
     @Transactional
     public ApplicantResponse createApplicant(ApplicantRequest request) {
@@ -94,8 +95,8 @@ public class ApplicantService {
         applicant.setSource(request.getSource());
         applicant.setNotes(request.getNotes());
         applicant.setExpectedSalary(request.getExpectedSalary());
-        // S12-B: tenant-local applied date (IST fallback) — date-only field. TODO(S12-B): inject TenantTimeService and use tenantTimeService.today(tenantId).
-        applicant.setAppliedDate(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")));
+        // S12-B: tenant-local applied date — resolved via TenantTimeService.
+        applicant.setAppliedDate(tenantTimeService.today(tenantId));
         applicant.setCurrentStageEnteredAt(LocalDateTime.now());
 
         Applicant savedApplicant = applicantRepository.save(applicant);
