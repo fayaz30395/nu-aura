@@ -449,6 +449,30 @@ public class GlobalExceptionHandler {
         return jsonResponse(status, errorResponse);
     }
 
+    /**
+     * Map {@link com.hrms.application.security.service.VirusScanService.VirusInfectedFileException}
+     * to HTTP 422 Unprocessable Entity. The signature is intentionally NOT echoed to the client —
+     * the SECURITY WARN log line in {@code FileStorageService#scanForMalware} carries tenant,
+     * user, filename, and signature for audit; the API response stays generic.
+     */
+    @ExceptionHandler(com.hrms.application.security.service.VirusScanService.VirusInfectedFileException.class)
+    public ResponseEntity<ErrorResponse> handleVirusInfectedFile(
+            com.hrms.application.security.service.VirusScanService.VirusInfectedFileException ex,
+            WebRequest request) {
+
+        String path = extractPath(request);
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+
+        logError("security", "virus_infected_upload", ex, status, path);
+        recordErrorMetric("security", "virus_infected_upload", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Unprocessable Entity",
+                "File rejected by malware scan", path);
+        errorResponse.setErrorCode("FILE_INFECTED");
+
+        return jsonResponse(status, errorResponse);
+    }
+
     @ExceptionHandler(FeatureDisabledException.class)
     public ResponseEntity<ErrorResponse> handleFeatureDisabledException(
             FeatureDisabledException ex, WebRequest request) {

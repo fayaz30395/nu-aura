@@ -2,6 +2,7 @@ package com.hrms.infrastructure.integration.docusign;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.common.util.UrlAllowlistValidator;
 import com.hrms.domain.integration.ConnectorConfig;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -60,11 +61,15 @@ public class DocuSignAuthService {
     private static final long REFRESH_BUFFER_MS = 5 * 60 * 1000;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    // SECURITY: tenant-admin can supply baseUrl via connector settings; validate every
+    // outbound URL we construct against the SSRF allowlist before opening a socket.
+    private final UrlAllowlistValidator urlAllowlistValidator;
     // Cache: tenantId -> {accessToken, expiresAt}
     private final ConcurrentHashMap<UUID, TokenCache> tokenCache = new ConcurrentHashMap<>();
 
-    public DocuSignAuthService(ObjectMapper objectMapper) {
+    public DocuSignAuthService(ObjectMapper objectMapper, UrlAllowlistValidator urlAllowlistValidator) {
         this.objectMapper = objectMapper;
+        this.urlAllowlistValidator = urlAllowlistValidator;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -247,6 +252,8 @@ public class DocuSignAuthService {
     private String exchangeJwtForToken(String jwtAssertion, String baseUrl) {
         try {
             String tokenEndpoint = baseUrl.replaceAll("/+$", "") + "/oauth/token";
+            // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+            urlAllowlistValidator.validate(tokenEndpoint);
             String requestBody = String.format(
                     "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=%s",
                     jwtAssertion);

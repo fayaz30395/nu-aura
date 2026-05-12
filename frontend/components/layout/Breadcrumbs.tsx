@@ -79,15 +79,16 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                   (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
                 }}
               >
-                {item.icon && <span className="flex items-center">{item.icon}</span>}
+                {item.icon && <span className="flex items-center" aria-hidden="true">{item.icon}</span>}
                 <span>{item.label}</span>
               </Link>
             ) : (
               <span
                 className="flex items-center gap-1.5 px-2 py-1 font-medium"
                 style={{color: 'var(--text-primary)'}}
+                aria-current={index === items.length - 1 ? 'page' : undefined}
               >
-                {item.icon && <span className="flex items-center">{item.icon}</span>}
+                {item.icon && <span className="flex items-center" aria-hidden="true">{item.icon}</span>}
                 {item.label}
               </span>
             )}

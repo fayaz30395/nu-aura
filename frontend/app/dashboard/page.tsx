@@ -811,10 +811,12 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-4">
             {notifications.map((notification) => (
-              <div
+              <button
+                type="button"
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className="flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all"
+                aria-label={`Open ${notification.type} notification: ${notification.title}`}
+                className="w-full text-left flex items-start gap-4 p-4 rounded-xl cursor-pointer border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)] hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <div
                   className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${getNotificationTone(notification.type)}`}>
@@ -829,7 +831,7 @@ export default function DashboardPage() {
                       {notification.subtitle}
                     </p>
                     {notification.hasVideo && (
-                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0"/>
+                      <Video className="h-3 w-3 text-[var(--status-info-text)] flex-shrink-0" aria-label="Has video call"/>
                     )}
                   </div>
                 </div>
@@ -838,7 +840,7 @@ export default function DashboardPage() {
                     ? notification.subtitle
                     : formatRelativeTime(notification.timestamp)}
                 </span>
-              </div>
+              </button>
             ))}
             <div className="flex gap-2 pt-2">
               <Button

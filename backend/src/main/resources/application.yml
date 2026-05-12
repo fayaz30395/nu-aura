@@ -250,8 +250,18 @@ app:
   cookie:
     # Use secure cookies (HTTPS only) - should be true in production
     secure: ${COOKIE_SECURE:true}
-    # Optional: restrict cookies to specific domain
+    # Optional: restrict cookies to specific domain. Note: a Domain attribute
+    # is INCOMPATIBLE with the __Host- cookie prefix and is silently ignored
+    # by CookieConfig when use-host-prefix=true.
     domain: ${COOKIE_DOMAIN:}
+    # S10-J: Switch the default auth cookie from access_token / refresh_token
+    # to __Host-hrms-access / __Host-hrms-refresh. The __Host- prefix forces
+    # Secure, Path=/, and absence of Domain at the browser level — making the
+    # cookie immune to sibling-subdomain and HTTP-downgrade plant attacks.
+    # Default OFF until all cookie readers (AuthController @CookieValue,
+    # TenantFilter, RateLimitingFilter, CsrfDoubleSubmitFilter) are migrated
+    # to read both names. JwtAuthenticationFilter already accepts either.
+    use-host-prefix: ${COOKIE_USE_HOST_PREFIX:false}
 
   # Security settings
   security:
@@ -262,6 +272,14 @@ app:
     csrf:
       # Enable CSRF protection (recommended for cookie-based auth)
       enabled: ${CSRF_ENABLED:true}
+    # ClamAV virus scanning for file uploads (S10-L). Default OFF for dev/test/CI;
+    # production overrides via application-prod.yml. When disabled, NoOpScanner is wired
+    # and all uploads pass through unscanned (logged at startup as a WARN).
+    virusscan:
+      enabled: ${VIRUSSCAN_ENABLED:false}
+      host: ${VIRUSSCAN_HOST:localhost}
+      port: ${VIRUSSCAN_PORT:3310}
+      timeout-ms: ${VIRUSSCAN_TIMEOUT_MS:10000}
     # Password policy configuration (P0 stabilization - OWASP compliance)
     password:
       min-length: ${PASSWORD_MIN_LENGTH:12}

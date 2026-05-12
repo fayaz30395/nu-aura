@@ -50,18 +50,24 @@ export const CandidateFilters = memo(function CandidateFilters({
       <CardContent className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" aria-hidden="true"/>
+            <label htmlFor="candidate-search" className="sr-only">Search candidates</label>
             <input
+              id="candidate-search"
               type="text"
               placeholder="Search candidates..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
+              aria-label="Search candidates by name, email, or code"
               className="w-full input-aura pl-10 pr-4 py-2.5 rounded-xl"
             />
           </div>
+          <label htmlFor="candidate-job-filter" className="sr-only">Filter by job opening</label>
           <select
+            id="candidate-job-filter"
             value={jobFilter}
             onChange={(e) => onJobChange(e.target.value)}
+            aria-label="Filter candidates by job opening"
             className="input-aura px-4 py-2.5 rounded-xl"
           >
             <option value="">All Job Openings</option>
@@ -69,9 +75,12 @@ export const CandidateFilters = memo(function CandidateFilters({
               <option key={job.id} value={job.id}>{job.jobTitle}</option>
             ))}
           </select>
+          <label htmlFor="candidate-status-filter" className="sr-only">Filter by status</label>
           <select
+            id="candidate-status-filter"
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
+            aria-label="Filter candidates by status"
             className="input-aura px-4 py-2.5 rounded-xl"
           >
             {STATUS_OPTIONS.map(opt => (

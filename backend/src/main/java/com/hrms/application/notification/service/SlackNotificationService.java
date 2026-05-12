@@ -5,6 +5,7 @@ import com.hrms.common.exception.BusinessException;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.resilience.CircuitBreakerRegistry;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.util.UrlAllowlistValidator;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,10 @@ public class SlackNotificationService {
     private static final String SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
     private final CircuitBreaker circuitBreaker;
     private final ObjectMapper objectMapper;
+    // SECURITY: the public sendToWebhook(String, ...) overload accepts an arbitrary URL,
+    // so any future caller passing a user-influenced value must not be able to point us
+    // at internal services. Validate every webhook URL before we open the socket.
+    private final UrlAllowlistValidator urlAllowlistValidator;
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -54,9 +59,12 @@ public class SlackNotificationService {
     @Value("${app.slack.default-channel:#hrms-notifications}")
     private String defaultChannel;
 
-    public SlackNotificationService(CircuitBreakerRegistry circuitBreakerRegistry, ObjectMapper objectMapper) {
+    public SlackNotificationService(CircuitBreakerRegistry circuitBreakerRegistry,
+                                    ObjectMapper objectMapper,
+                                    UrlAllowlistValidator urlAllowlistValidator) {
         this.circuitBreaker = circuitBreakerRegistry.forSlack();
         this.objectMapper = objectMapper;
+        this.urlAllowlistValidator = urlAllowlistValidator;
     }
 
     /**
@@ -87,6 +95,17 @@ public class SlackNotificationService {
                               List<SlackAttachment> attachments, List<SlackBlock> blocks) {
         if (!slackEnabled || webhookUrl == null || webhookUrl.isEmpty()) {
             log.debug("Slack notifications disabled or webhook not configured");
+            return;
+        }
+
+        // SECURITY: SSRF guard — refuse to deliver to private/metadata/non-allowed-port targets.
+        // If the configured webhook is misconfigured (e.g. someone pasted an internal URL by
+        // mistake), we log and skip rather than throw so an async notification can't poison the
+        // calling business transaction.
+        try {
+            urlAllowlistValidator.validate(webhookUrl);
+        } catch (BusinessException ssrf) {
+            log.warn("Slack webhook URL blocked by SSRF policy: {}", ssrf.getMessage());
             return;
         }
 

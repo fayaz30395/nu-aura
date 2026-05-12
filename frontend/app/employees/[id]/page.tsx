@@ -489,7 +489,8 @@ export default function EmployeeDetailPage() {
                 {employee.managerId ? (
                   <button
                     onClick={() => router.push(`/employees/${employee.managerId}`)}
-                    className="flex items-center gap-2 group"
+                    aria-label={`View profile of reporting manager ${employee.managerName}`}
+                    className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
                   >
                     <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
                     <span className="text-sm font-medium text-accent-700 dark:text-accent-400 group-hover:underline">
@@ -875,8 +876,17 @@ export default function EmployeeDetailPage() {
                         {dottedReports.map((report) => (
                           <tr
                             key={report.id}
-                            className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
+                            className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-within:bg-[var(--bg-card-hover)]"
                             onClick={() => router.push(`/employees/${report.id}`)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                router.push(`/employees/${report.id}`);
+                              }
+                            }}
+                            tabIndex={0}
+                            role="link"
+                            aria-label={`View profile of ${report.fullName}`}
                           >
                             <td className="whitespace-nowrap py-2">
                               <div className="flex items-center gap-2">
@@ -919,12 +929,15 @@ export default function EmployeeDetailPage() {
               {/* Search */}
               <div className="mb-6">
                 <div className="relative max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" aria-hidden="true"/>
+                  <label htmlFor="doc-categories-search" className="sr-only">Search document categories</label>
                   <input
+                    id="doc-categories-search"
                     type="text"
                     placeholder="Search document categories..."
                     value={docSearch}
                     onChange={(e) => setDocSearch(e.target.value)}
+                    aria-label="Search document categories"
                     className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   />
                 </div>

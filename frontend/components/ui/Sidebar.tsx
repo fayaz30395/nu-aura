@@ -214,6 +214,7 @@ const ChildrenFlyover: React.FC<{
                   }}
                   className={childClasses}
                   prefetch={true}
+                  aria-current={activeId === child.id ? 'page' : undefined}
                 >
                   {childContent}
                 </Link>
@@ -383,6 +384,8 @@ const SidebarMenuItem: React.FC<{
           className={commonClasses}
           style={activeStyles}
           prefetch={true}
+          aria-current={isActive ? 'page' : undefined}
+          aria-label={isCollapsed ? item.label : undefined}
         >
           {content}
         </Link>
@@ -401,6 +404,8 @@ const SidebarMenuItem: React.FC<{
         disabled={item.disabled}
         aria-expanded={hasChildren ? isFlyoverOpen : undefined}
         aria-haspopup={hasChildren ? 'true' : undefined}
+        aria-current={isActive && !hasChildren ? 'page' : undefined}
+        aria-label={isCollapsed ? item.label : undefined}
       >
         {content}
       </button>
@@ -665,7 +670,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1 scrollbar-hide" aria-label="Primary navigation">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 

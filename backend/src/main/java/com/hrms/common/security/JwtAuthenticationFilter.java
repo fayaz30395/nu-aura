@@ -67,13 +67,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    EmployeeRepository employeeRepository,
                                    ScopeContextService scopeContextService,
                                    SecurityService securityService,
-                                   TenantStatusCache tenantStatusCache) {
+                                   TenantStatusCache tenantStatusCache,
+                                   UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.employeeRepository = employeeRepository;
         this.scopeContextService = scopeContextService;
         this.securityService = securityService;
         this.tenantStatusCache = tenantStatusCache;
+        // S10-E left this field unwired in the constructor — without an
+        // assignment the file fails javac's "final field might not have been
+        // initialized" check and the whole module won't compile. Constructor
+        // injection mirrors the other repositories above.
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -319,17 +325,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Extract JWT from the access_token cookie.
+     * Extract the JWT access token from the request cookie jar.
+     *
+     * <p>SEC (S10-J): Accepts EITHER the hardened {@code __Host-hrms-access}
+     * cookie OR the legacy {@code access_token} cookie during a one-deploy
+     * rollover window. The hardened cookie wins when both are present, since
+     * a {@code __Host-} prefixed cookie cannot be planted by a sibling
+     * subdomain or over plain HTTP — the browser enforces {@code Secure},
+     * {@code Path=/}, and no {@code Domain} on the prefix.</p>
      */
     private String getJwtFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
+        if (cookies == null) {
+            return null;
+        }
+        String legacyValue = null;
+        for (Cookie cookie : cookies) {
+            String name = cookie.getName();
+            if (CookieConfig.ACCESS_TOKEN_COOKIE_HOST.equals(name)) {
+                // Hardened cookie wins. Return immediately — even if a legacy
+                // cookie was also present, the __Host- one is the trustworthy
+                // source.
+                return cookie.getValue();
+            }
+            if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(name)) {
+                legacyValue = cookie.getValue();
+                // Don't return yet — keep scanning in case the __Host- cookie
+                // appears later in the array.
             }
         }
-        return null;
+        return legacyValue;
     }
 }

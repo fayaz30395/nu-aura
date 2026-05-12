@@ -1,6 +1,8 @@
 package com.hrms.application.document.service;
 
+import com.hrms.application.security.service.VirusScanService;
 import com.hrms.common.exception.BusinessException;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +73,7 @@ public class FileStorageService {
             "application/vnd.openxmlformats-officedocument.presentationml.presentation");
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
+    private final VirusScanService virusScanService;
     @Value("${app.storage.url-expiry-hours:24}")
     private int urlExpiryHours;
 
@@ -82,6 +85,10 @@ public class FileStorageService {
 
         UUID tenantId = TenantContext.getCurrentTenant();
         String objectName = generateObjectName(tenantId, category, entityId, file.getOriginalFilename());
+
+        // AV scan BEFORE we open a write connection to the storage provider — failing
+        // the scan should never leave a partial Drive object or a dangling mapping row.
+        scanForMalware(file);
 
         try {
             storageProvider.ensureStorageReady();
@@ -269,6 +276,66 @@ public class FileStorageService {
         } catch (Exception e) { // Intentional broad catch — mapping persistence is a hard prereq for download
             log.error("Failed to persist drive_file_mapping for objectName={}", objectName, e);
             throw new BusinessException("Failed to record file mapping");
+        }
+    }
+
+    /**
+     * Run the configured {@link VirusScanService} against the upload body. Called from
+     * {@link #uploadFile(MultipartFile, String, UUID)} after declared-type / size /
+     * magic-byte checks pass, before any write to the storage provider.
+     *
+     * <p>On {@link VirusScanService.Infected} we log a SECURITY-tagged WARN with the
+     * tenant, user, original filename, and signature, then throw
+     * {@link VirusScanService.VirusInfectedFileException} which the global handler
+     * maps to HTTP 422.</p>
+     *
+     * <p>On {@link VirusScanService.Error} we log at WARN but allow the upload to
+     * proceed. Failing closed on a transient clamd outage would create an availability
+     * incident every time the AV daemon restarts; the {@link NoOpScanner} branch already
+     * documents that dev environments have no AV coverage. Operators wanting fail-closed
+     * semantics should monitor the {@code SECURITY clamd scan failed} log line and alert
+     * on rate; tightening this to throw is a one-line follow-up if policy changes.</p>
+     */
+    private void scanForMalware(MultipartFile file) {
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
+        } catch (IOException e) {
+            log.error("Failed to read file bytes for AV scan: {}", file.getOriginalFilename(), e);
+            throw new BusinessException("Unable to read file content for scanning");
+        }
+
+        VirusScanService.ScanResult result = virusScanService.scan(bytes, file.getOriginalFilename());
+        switch (result) {
+            case VirusScanService.Clean ignored -> {
+                // no-op — fall through to upload
+            }
+            case VirusScanService.Infected infected -> {
+                UUID tenantId = TenantContext.getCurrentTenant();
+                UUID userId = safeCurrentUserId();
+                log.warn("SECURITY virus-infected upload blocked tenantId={} userId={} filename={} signature={}",
+                        tenantId, userId, infected.filename(), infected.signature());
+                throw new VirusScanService.VirusInfectedFileException(
+                        infected.filename(), infected.signature());
+            }
+            case VirusScanService.Error error -> {
+                // Fail open — see method javadoc. Logged so dashboards can pick it up.
+                log.warn("SECURITY virus-scan error filename={} reason={} — upload allowed",
+                        file.getOriginalFilename(), error.reason());
+            }
+        }
+    }
+
+    /**
+     * Best-effort current-user lookup for SECURITY logs. We never want a missing
+     * SecurityContext to mask an infected-upload event, so any failure here is
+     * swallowed and the user is logged as {@code null}.
+     */
+    private UUID safeCurrentUserId() {
+        try {
+            return SecurityContext.getCurrentUserId();
+        } catch (Exception e) { // Intentional broad catch — log-only path
+            return null;
         }
     }
 

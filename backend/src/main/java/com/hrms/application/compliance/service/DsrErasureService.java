@@ -30,18 +30,33 @@ import java.util.UUID;
  *
  * <p>This service is the cascade <em>planner</em> — it inspects the data
  * subject's records across the platform, applies the per-data-class
- * {@link ErasurePolicy}, performs the User-row anonymisation in this sprint,
- * and audit-logs every decision so the legal team can demonstrate Article 17
+ * {@link ErasurePolicy}, performs the User-row anonymisation, fans out across
+ * the four downstream entities ({@code Employee}, {@code SalaryStructure},
+ * {@code LeaveRequest}/{@code LeaveBalance}, {@code AttendanceRecord}), and
+ * audit-logs every decision so the legal team can demonstrate Article 17
  * compliance.</p>
  *
- * <p><strong>Sprint S9-B scope:</strong> only the {@code User} row is touched
- * in this sprint. The cascade across {@code Employee} / {@code SalaryStructure}
- * / {@code LeaveRequest} / {@code AttendanceRecord} is deliberately left as a
- * TODO marker for S10 — each requires its own anonymisation strategy
- * (especially payroll, where the Indian Income Tax Act §139A retention rules
- * mandate that the row be kept readable for 7 years). The legal-hold decision
- * is captured in this sprint so the result is recorded on the DSR row even
- * before the S10 cascade lands.</p>
+ * <p><strong>Cascade order &amp; ordering rationale</strong> (S10 sprint):</p>
+ * <ol>
+ *   <li>{@link UserAnonymizer} — anonymise the principal so further auth
+ *       attempts fail; recorded via SHA-256 hash for audit.</li>
+ *   <li>{@link EmployeeAnonymizer} — wipe HR PII on the employee row.</li>
+ *   <li>{@link SalaryStructureAnonymizer} — apply §139A-aware retention;
+ *       amounts preserved.</li>
+ *   <li>{@link LeaveRecordRedactor} — soft-delete leave_requests +
+ *       leave_balances ({@code SOFT_DELETE_PRESERVE_AUDIT}).</li>
+ *   <li>{@link AttendanceRecordRedactor} — soft-delete attendance_records
+ *       ({@code SOFT_DELETE_PRESERVE_AUDIT}).</li>
+ * </ol>
+ * <p>Each cascade collaborator runs in its own {@code REQUIRES_NEW}
+ * transaction so a downstream failure (e.g. attendance redaction throwing
+ * because of an unexpected schema drift) does not roll back the upstream
+ * PII wipe. The data subject's stated right to erasure is more important
+ * than the rest of the cascade succeeding — a partial cascade with the
+ * principal already anonymised is preferable to an all-or-nothing rollback
+ * that leaves the login credentials live. Each step records its outcome
+ * (counts, retained/skipped) which is then composed into the
+ * {@code adminNotes} summary on the DSR row.</p>
  *
  * <p><strong>Authorization model:</strong> only two principals may invoke
  * {@link #processErasure(DsrRequest)}:</p>
@@ -86,6 +101,13 @@ public class DsrErasureService {
     private final AuditLogService auditLogService;
     private final EmployeeRepository employeeRepository;
     private final EmployeePayrollRecordRepository payrollRecordRepository;
+    // S10 cascade collaborators — each runs in its own REQUIRES_NEW transaction
+    // (see class javadoc "Cascade order & ordering rationale"). Order of
+    // injection matches invocation order in processErasure() for readability.
+    private final EmployeeAnonymizer employeeAnonymizer;
+    private final SalaryStructureAnonymizer salaryStructureAnonymizer;
+    private final LeaveRecordRedactor leaveRecordRedactor;
+    private final AttendanceRecordRedactor attendanceRecordRedactor;
 
     /**
      * Fulfils the Article 17 erasure described by {@code request}.
@@ -95,23 +117,29 @@ public class DsrErasureService {
      *   <li>Verify caller authority (data subject themselves OR SYSTEM_ADMIN).</li>
      *   <li>Determine legal-hold posture (Indian payroll §139A 7-year window):
      *       if any payroll record exists for the linked employee in the last
-     *       7 years, switch the {@code Employee} policy from
-     *       {@link ErasurePolicy#HARD_DELETE} to {@link ErasurePolicy#ANONYMIZE}
-     *       and document the reason in the result.</li>
+     *       7 years, lock the {@code Employee} + {@code SalaryStructure}
+     *       policies to {@link ErasurePolicy#ANONYMIZE} and document the
+     *       reason in the result.</li>
      *   <li>Anonymise the User row via {@link UserAnonymizer#anonymize}.</li>
+     *   <li>S10 cascade — invoke {@link EmployeeAnonymizer},
+     *       {@link SalaryStructureAnonymizer}, {@link LeaveRecordRedactor} and
+     *       {@link AttendanceRecordRedactor} (in that order). Each runs in
+     *       its own {@code REQUIRES_NEW} transaction so a downstream failure
+     *       cannot roll back an upstream PII wipe.</li>
      *   <li>Emit a {@link AuditLog.AuditAction#STATUS_CHANGE} audit row with
-     *       SHA-256(original email) so the data subject can prove their
-     *       record was erased without exposing the original PII.</li>
+     *       SHA-256(original email) and the structured cascade outcome so
+     *       the data subject can prove their record was erased without
+     *       exposing the original PII.</li>
      *   <li>Transition the DSR row to {@link DsrRequest.Status#COMPLETED}.</li>
      * </ol>
      *
      * <p>The method is {@code @Transactional} (default propagation) so the
-     * audit + status transitions commit together. The anonymisation itself
-     * runs in a {@link org.springframework.transaction.annotation.Propagation#REQUIRES_NEW}
-     * inner transaction (see {@link UserAnonymizer}) so the PII wipe survives
-     * any post-anonymisation failure in this outer transaction — the data
-     * subject's right to erasure is more important than the rest of the
-     * cascade succeeding.</p>
+     * audit + status transitions commit together. Every anonymisation /
+     * redaction collaborator runs in
+     * {@link org.springframework.transaction.annotation.Propagation#REQUIRES_NEW}
+     * so each PII wipe survives any post-step failure in this outer
+     * transaction — the data subject's right to erasure is more important
+     * than the rest of the cascade succeeding.</p>
      *
      * @param request the DSR row to fulfil; must be of type
      *                {@link DsrRequest.RequestType#ERASURE} and in a non-terminal
@@ -156,19 +184,31 @@ public class DsrErasureService {
         request.setHandlerUserId(callerId);
         dsrRequestRepository.save(request);
 
-        // Step 2: determine the policy outcome per data class. This sprint
-        // only materialises the result for User; cascade work for the rest
-        // is left to S10 (see TODO markers below).
+        // Step 2: determine the policy outcome per data class. The matrix
+        // encodes per-table decisions (ANONYMIZE for Employee + SalaryStructure
+        // due to FK pinning + §139A retention; SOFT_DELETE_PRESERVE_AUDIT for
+        // Leave + Attendance because there's no statutory retention).
         Map<String, ErasurePolicy> policies = resolvePolicies(request);
 
         // Step 3: anonymise the User row. Returns the pre-anonymisation
         // email for the audit hash; null when the user was already erased.
         String originalEmail = userAnonymizer.anonymize(request.getRequesterUserId(), tenantId);
 
-        // Step 4: forensic audit row. action=STATUS_CHANGE matches the rest of
+        // Step 4: S10 cascade — fan out across HR + payroll + leave +
+        // attendance. Each collaborator runs in its own REQUIRES_NEW
+        // transaction so a failure in step N does not roll back step <N.
+        // Outcomes are collected for the adminNotes summary so the legal
+        // team can cite exact row counts within the 30-day response window.
+        CascadeOutcome cascade = runCascade(request, policies);
+
+        // Step 5: forensic audit row. action=STATUS_CHANGE matches the rest of
         // the DSR audit chain (createRequest uses CREATE for the intake, and
         // every subsequent state transition uses STATUS_CHANGE). The chain
         // can be read end-to-end by filtering audit_logs.entity_type='DsrRequest'.
+        // The newValue now carries the per-cascade-step counters so the
+        // forensic record itself enumerates how many rows were touched in
+        // each table — the same data that lands in adminNotes but in a
+        // machine-readable shape for compliance dashboards.
         Map<String, Object> oldValue = Map.of(
                 "originalEmailSha256", originalEmail != null ? sha256Hex(originalEmail) : "ALREADY_ANONYMIZED",
                 "status", DsrRequest.Status.IN_PROGRESS.name()
@@ -181,6 +221,7 @@ public class DsrErasureService {
                         Map.Entry::getKey,
                         e -> e.getValue().name()
                 )));
+        newValue.put("cascade", cascade.asAuditMap());
 
         auditLogService.logAction(
                 "DsrRequest",
@@ -192,11 +233,107 @@ public class DsrErasureService {
                         + request.getRequesterUserId()
         );
 
-        // Step 5: terminal transition. complete() records handler + completedAt;
+        // Step 6: terminal transition. complete() records handler + completedAt;
         // adminNotes carries the per-data-class result summary for the human
         // reviewing the row in the admin UI.
-        request.complete(callerId, buildResultNotes(policies, originalEmail));
+        request.complete(callerId, buildResultNotes(policies, originalEmail, cascade));
         return dsrRequestRepository.save(request);
+    }
+
+    /**
+     * Runs the four downstream cascade steps in their canonical order:
+     * Employee → SalaryStructure → Leave → Attendance. Each step is invoked
+     * even when an earlier step returned a {@code NOT_FOUND}/{@code NO_EMPLOYEE}
+     * outcome — the steps that depend on an employeeId short-circuit cleanly
+     * (their result types carry the no-op sentinel) and we still want every
+     * cascade collaborator to produce an audit-facing result for the DSR
+     * summary, otherwise the legal team cannot answer "did you check table
+     * X?" without inspecting service logs.
+     *
+     * <p>The employee row is resolved once here and its id is threaded into
+     * the downstream calls so each cascade step doesn't re-query the same
+     * row. When no employee row exists (service account, never-onboarded
+     * user) every downstream step uses its {@code NO_EMPLOYEE} sentinel and
+     * the DSR summary records "no HR record linked — cascade no-op".</p>
+     */
+    private CascadeOutcome runCascade(DsrRequest request, Map<String, ErasurePolicy> policies) {
+        UUID userId = request.getRequesterUserId();
+        UUID tenantId = request.getTenantId();
+
+        // Step 4a: Employee row PII wipe. The collaborator returns the
+        // outcome enum we record verbatim; the employeeId we resolve here
+        // is passed downstream so the leaf cascade steps don't re-query.
+        EmployeeAnonymizer.Result employeeResult = employeeAnonymizer.anonymize(userId, tenantId);
+        UUID employeeId = employeeRepository.findByUserIdAndTenantId(userId, tenantId)
+                .map(emp -> emp.getId())
+                .orElse(null);
+
+        // Step 4b: Salary structures — ANONYMIZE policy, but with §139A
+        // retention this is effectively a forensic count today (see
+        // SalaryStructureAnonymizer javadoc). Future PII columns on the
+        // entity will be wiped here.
+        SalaryStructureAnonymizer.Result salaryResult =
+                salaryStructureAnonymizer.anonymize(employeeId, tenantId);
+
+        // Step 4c: Leave requests + balances — SOFT_DELETE_PRESERVE_AUDIT.
+        LeaveRecordRedactor.Result leaveResult = leaveRecordRedactor.redact(employeeId, tenantId);
+
+        // Step 4d: Attendance records — SOFT_DELETE_PRESERVE_AUDIT.
+        AttendanceRecordRedactor.Result attendanceResult =
+                attendanceRecordRedactor.redact(employeeId, tenantId);
+
+        // Sanity-log a cascade summary line. Useful for ops debugging when a
+        // DSR completes but a tenant later complains about a missed row.
+        log.info("DSR {} cascade complete — employee={}, salary={}/{}, leaveRequests={}, "
+                + "leaveBalances={}, attendance={}",
+                request.getId(),
+                employeeResult,
+                salaryResult.kind(), salaryResult.count(),
+                leaveResult.leaveRequestsSoftDeleted(),
+                leaveResult.leaveBalancesSoftDeleted(),
+                attendanceResult.softDeleted());
+
+        return new CascadeOutcome(employeeResult, salaryResult, leaveResult, attendanceResult);
+    }
+
+    /**
+     * Aggregated cascade result that the audit row + adminNotes summary both
+     * consume. Kept as a private record on the orchestrator (rather than a
+     * top-level type) because it has no callers outside this class and
+     * carrying it via a single object simplifies the
+     * {@code buildResultNotes} / audit-emission call sites.
+     */
+    private record CascadeOutcome(
+            EmployeeAnonymizer.Result employee,
+            SalaryStructureAnonymizer.Result salary,
+            LeaveRecordRedactor.Result leave,
+            AttendanceRecordRedactor.Result attendance) {
+
+        /**
+         * Returns the cascade outcome in the shape the audit row's
+         * {@code newValue.cascade} expects. Kept here rather than inlined
+         * so the audit format and the {@code adminNotes} format share one
+         * source of truth and stay in sync.
+         */
+        Map<String, Object> asAuditMap() {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("Employee", employee.name());
+            Map<String, Object> salaryMap = new LinkedHashMap<>();
+            salaryMap.put("kind", salary.kind().name());
+            salaryMap.put("rowsRetained", salary.count());
+            map.put("SalaryStructure", salaryMap);
+            Map<String, Object> leaveMap = new LinkedHashMap<>();
+            leaveMap.put("leaveRequestsSoftDeleted", leave.leaveRequestsSoftDeleted());
+            leaveMap.put("leaveRequestsAlreadyDeleted", leave.leaveRequestsAlreadyDeleted());
+            leaveMap.put("leaveBalancesSoftDeleted", leave.leaveBalancesSoftDeleted());
+            leaveMap.put("leaveBalancesAlreadyDeleted", leave.leaveBalancesAlreadyDeleted());
+            map.put("Leave", leaveMap);
+            Map<String, Object> attendanceMap = new LinkedHashMap<>();
+            attendanceMap.put("softDeleted", attendance.softDeleted());
+            attendanceMap.put("alreadyDeleted", attendance.alreadyDeleted());
+            map.put("AttendanceRecord", attendanceMap);
+            return map;
+        }
     }
 
     /**
@@ -228,10 +365,12 @@ public class DsrErasureService {
 
         // Override: if the data subject's linked employee has any payroll
         // record within the 7-year retention window, force ANONYMIZE on the
-        // Employee row (rather than HARD_DELETE) so the FK chain to payroll
-        // records survives. We don't actually touch the Employee row in this
-        // sprint (TODO S10), but the policy decision is recorded so the
-        // admin notes carry the legal-hold rationale.
+        // Employee + SalaryStructure rows (rather than any deletion) so the
+        // FK chain to payroll records survives the cascade. The S10 cascade
+        // (EmployeeAnonymizer + SalaryStructureAnonymizer) honours this
+        // decision in {@link #runCascade}; the matrix returned here is the
+        // single source of truth recorded on both the audit row and the
+        // adminNotes summary so the legal-hold rationale is explicit.
         if (hasActivePayrollWithinRetentionWindow(request.getRequesterUserId(), request.getTenantId())) {
             log.info("DSR {} — payroll records within {}-year retention window detected; "
                     + "Employee policy locked to ANONYMIZE (Indian Income Tax Act §139A)",
@@ -285,10 +424,18 @@ public class DsrErasureService {
      *
      * <p>The format is line-based rather than JSON so an HR admin pasting it
      * into an email reply still reads cleanly. The structured
-     * {@code policiesApplied} map in the audit row is the machine-readable
-     * counterpart for any compliance dashboard.</p>
+     * {@code policiesApplied} + {@code cascade} maps in the audit row are
+     * the machine-readable counterpart for any compliance dashboard.</p>
+     *
+     * <p>S10: now appends per-table row counts captured during the cascade
+     * so the data subject can see exactly how many leave / attendance /
+     * payroll rows were touched. The §139A retention note is rendered
+     * inline when the matrix has locked {@code Employee} / {@code SalaryStructure}
+     * to {@code ANONYMIZE} for that reason.</p>
      */
-    private String buildResultNotes(Map<String, ErasurePolicy> policies, String originalEmail) {
+    private String buildResultNotes(Map<String, ErasurePolicy> policies,
+                                    String originalEmail,
+                                    CascadeOutcome cascade) {
         StringBuilder sb = new StringBuilder();
         sb.append("GDPR Article 17 fulfilment — ").append(java.time.LocalDateTime.now()).append("\n\n");
 
@@ -306,12 +453,28 @@ public class DsrErasureService {
                     .append(entry.getValue().name()).append("\n");
         }
 
-        // TODO(S10 cascade): when the S10 sprint wires up Employee /
-        // SalaryStructure / LeaveRequest / AttendanceRecord cascades, append
-        // a per-table row-count to this summary so the data subject can see
-        // exactly how many records were touched in each class.
-        sb.append("\nCascade across Employee/SalaryStructure/LeaveRequest/AttendanceRecord is "
-                + "deferred to S10. Audit log row written for forensic chain.");
+        // S10 cascade row counts. One bullet per data class, mirroring the
+        // policy decisions above so a reviewer can see policy + outcome side
+        // by side. AuditLog/User are not enumerated here because they are
+        // captured in the lines above (User anonymisation status; audit row
+        // is the artefact being written, not a row in the cascade).
+        sb.append("\nCascade outcome:\n");
+        sb.append("  • Employee: ").append(cascade.employee().name()).append("\n");
+        sb.append("  • SalaryStructure: ").append(cascade.salary().kind().name())
+                .append(" (").append(cascade.salary().count())
+                .append(" row(s) retained under Indian Income Tax Act §139A)\n");
+        sb.append("  • LeaveRequest: ").append(cascade.leave().leaveRequestsSoftDeleted())
+                .append(" soft-deleted, ").append(cascade.leave().leaveRequestsAlreadyDeleted())
+                .append(" already deleted\n");
+        sb.append("  • LeaveBalance: ").append(cascade.leave().leaveBalancesSoftDeleted())
+                .append(" soft-deleted, ").append(cascade.leave().leaveBalancesAlreadyDeleted())
+                .append(" already deleted\n");
+        sb.append("  • AttendanceRecord: ").append(cascade.attendance().softDeleted())
+                .append(" soft-deleted, ").append(cascade.attendance().alreadyDeleted())
+                .append(" already deleted\n");
+
+        sb.append("\nForensic chain: audit_logs row written with SHA-256 of original email + "
+                + "structured cascade map for compliance dashboards.");
 
         return sb.toString();
     }

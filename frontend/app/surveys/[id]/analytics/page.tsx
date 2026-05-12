@@ -1,22 +1,10 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {ArrowLeft, BarChart3, MessageSquare, PieChart as PieChartIcon, TrendingUp, Users,} from 'lucide-react';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Button, Card, CardContent,} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -25,6 +13,23 @@ import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSurveyAnalytics} from '@/lib/hooks/queries/useSurveyQuestions';
 import {QuestionType} from '@/lib/types/grow/survey';
 import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/design-system';
+
+// S10-K: recharts (~180 KB gz) is lazy-loaded — per-question chart subtree
+// extracted into SurveyAnalyticsCharts.tsx so survey analytics only ships the
+// chart bundle on this route (and only client-side).
+const ChartFallback = () => (
+  <div className="h-64 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
+);
+
+const SurveyBarChart = dynamic(
+  () => import('./SurveyAnalyticsCharts').then((m) => ({default: m.SurveyBarChart})),
+  {ssr: false, loading: ChartFallback}
+);
+
+const SurveyPieChart = dynamic(
+  () => import('./SurveyAnalyticsCharts').then((m) => ({default: m.SurveyPieChart})),
+  {ssr: false, loading: ChartFallback}
+);
 
 const PIE_COLORS = [
   chartColors.primary,
@@ -220,72 +225,14 @@ export default function SurveyAnalyticsPage() {
                         {/* Rating / NPS / Likert → Bar Chart */}
                         {showBarChart && barData.length > 0 && (
                           <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={barData}>
-                                <CartesianGrid
-                                  strokeDasharray="3 3"
-                                  stroke={chartColors.grid}
-                                />
-                                <XAxis
-                                  dataKey="name"
-                                  tick={{fontSize: 12, fill: chartColors.tooltip.text}}
-                                />
-                                <YAxis
-                                  allowDecimals={false}
-                                  tick={{fontSize: 12, fill: chartColors.tooltip.text}}
-                                />
-                                <Tooltip
-                                  contentStyle={{
-                                    backgroundColor: chartColors.tooltip.bg,
-                                    border: `1px solid ${chartColors.tooltip.border}`,
-                                    borderRadius: 8,
-                                    color: chartColors.tooltip.text,
-                                  }}
-                                />
-                                <Bar
-                                  dataKey="count"
-                                  fill={chartColors.primary}
-                                  radius={[4, 4, 0, 0]}
-                                />
-                              </BarChart>
-                            </ResponsiveContainer>
+                            <SurveyBarChart data={barData}/>
                           </div>
                         )}
 
                         {/* Choice → Pie Chart */}
                         {showPieChart && pieData.length > 0 && (
                           <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
-                                <Pie
-                                  data={pieData}
-                                  cx="50%"
-                                  cy="50%"
-                                  labelLine={false}
-                                  label={({name, percent}) =>
-                                    `${name} (${(percent * 100).toFixed(0)}%)`
-                                  }
-                                  outerRadius={80}
-                                  dataKey="value"
-                                >
-                                  {pieData.map((_, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={PIE_COLORS[index % PIE_COLORS.length]}
-                                    />
-                                  ))}
-                                </Pie>
-                                <Legend/>
-                                <Tooltip
-                                  contentStyle={{
-                                    backgroundColor: chartColors.tooltip.bg,
-                                    border: `1px solid ${chartColors.tooltip.border}`,
-                                    borderRadius: 8,
-                                    color: chartColors.tooltip.text,
-                                  }}
-                                />
-                              </PieChart>
-                            </ResponsiveContainer>
+                            <SurveyPieChart data={pieData} colors={PIE_COLORS}/>
                           </div>
                         )}
 

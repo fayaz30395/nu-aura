@@ -164,9 +164,9 @@ export default function NotificationSettingsPage() {
                   className="grid grid-cols-12 gap-4 py-4 border-b last:border-b-0 items-center"
                 >
                   <div className="col-span-6 flex items-start gap-4">
-                    {pref.icon}
+                    <span aria-hidden="true">{pref.icon}</span>
                     <div>
-                      <p className="font-medium text-foreground">{pref.label}</p>
+                      <p className="font-medium text-foreground" id={`pref-${pref.key}-label`}>{pref.label}</p>
                       <p className="text-sm text-muted-foreground">{pref.description}</p>
                     </div>
                   </div>
@@ -174,6 +174,9 @@ export default function NotificationSettingsPage() {
                     <button
                       onClick={() => togglePreference(pref.key, 'email')}
                       disabled={saving}
+                      role="switch"
+                      aria-checked={pref.email}
+                      aria-label={`${pref.email ? 'Disable' : 'Enable'} email notifications for ${pref.label}`}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         pref.email ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
@@ -189,6 +192,9 @@ export default function NotificationSettingsPage() {
                     <button
                       onClick={() => togglePreference(pref.key, 'push')}
                       disabled={saving}
+                      role="switch"
+                      aria-checked={pref.push}
+                      aria-label={`${pref.push ? 'Disable' : 'Enable'} push notifications for ${pref.label}`}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         pref.push ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}
@@ -204,6 +210,9 @@ export default function NotificationSettingsPage() {
                     <button
                       onClick={() => togglePreference(pref.key, 'inApp')}
                       disabled={saving}
+                      role="switch"
+                      aria-checked={pref.inApp}
+                      aria-label={`${pref.inApp ? 'Disable' : 'Enable'} in-app notifications for ${pref.label}`}
                       className={`w-10 h-6 rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                         pref.inApp ? 'bg-accent-700' : 'bg-[var(--border-main)]'
                       } relative disabled:opacity-50`}

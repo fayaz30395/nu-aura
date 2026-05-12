@@ -1,5 +1,6 @@
 package com.hrms.application.integration.service;
 
+import com.hrms.common.util.UrlAllowlistValidator;
 import com.hrms.domain.integration.*;
 import com.hrms.infrastructure.integration.repository.IntegrationConnectorConfigRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,14 +27,29 @@ import java.util.UUID;
 @Slf4j
 public class IntegrationConnectorConfigService {
 
+    /**
+     * Settings keys whose values are outbound URLs. We validate them against the
+     * SSRF allowlist at write time so a tenant admin cannot persist a baseUrl
+     * pointing at {@code 169.254.169.254} (cloud metadata) or internal services.
+     *
+     * <p>Keys are matched case-insensitively. Add new URL-bearing settings here
+     * when introducing new connectors.</p>
+     */
+    private static final java.util.Set<String> URL_SETTING_KEYS = java.util.Set.of(
+            "baseurl", "webhookurl", "callbackurl", "apiurl", "tokenendpoint", "endpoint"
+    );
+
     private final IntegrationConnectorConfigRepository repository;
     private final ObjectMapper objectMapper;
+    private final UrlAllowlistValidator urlAllowlistValidator;
 
     public IntegrationConnectorConfigService(
             IntegrationConnectorConfigRepository repository,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            UrlAllowlistValidator urlAllowlistValidator) {
         this.repository = repository;
         this.objectMapper = objectMapper;
+        this.urlAllowlistValidator = urlAllowlistValidator;
     }
 
     /**
@@ -81,6 +97,12 @@ public class IntegrationConnectorConfigService {
             Set<String> eventSubscriptions) {
 
         log.info("Saving configuration for connector: {} in tenant: {}", connectorId, tenantId);
+
+        // SECURITY: tenant admins control these settings via the connector REST API.
+        // Reject any URL-bearing setting that points at internal/metadata/non-allowed-port
+        // addresses BEFORE we persist — so a later background job can't be tricked into
+        // calling it. Mirrors WebhookService's create/update guard.
+        validateUrlSettings(settings, connectorId);
 
         IntegrationConnectorConfigEntity entity = repository
                 .findByTenantIdAndConnectorIdAndIsDeletedFalse(tenantId, connectorId)
@@ -250,5 +272,30 @@ public class IntegrationConnectorConfigService {
 
         entity.softDelete();
         repository.save(entity);
+    }
+
+    /**
+     * Walk the settings map and run every URL-bearing value through the SSRF allowlist.
+     *
+     * <p>Case-insensitive key matching against {@link #URL_SETTING_KEYS}. Empty/null
+     * values are tolerated (treated as "not configured") to keep partial updates working;
+     * a non-empty value that fails the allowlist raises {@link com.hrms.common.exception.BusinessException}
+     * via {@link UrlAllowlistValidator#validate(String)}.</p>
+     */
+    private void validateUrlSettings(Map<String, Object> settings, String connectorId) {
+        if (settings == null || settings.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : settings.entrySet()) {
+            String key = entry.getKey();
+            if (key == null) continue;
+            if (!URL_SETTING_KEYS.contains(key.toLowerCase())) continue;
+            Object value = entry.getValue();
+            if (value == null) continue;
+            String url = value.toString();
+            if (url.isBlank()) continue;
+            log.debug("Validating connector {} setting '{}' as outbound URL", connectorId, key);
+            urlAllowlistValidator.validate(url);
+        }
     }
 }

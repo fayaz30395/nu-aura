@@ -156,10 +156,25 @@ app:
   cookie:
     # CRITICAL: Always use secure cookies (HTTPS only) in production
     secure: true
+    # S10-J: prod is the canonical home for the __Host- prefix — it's the only
+    # profile that runs over HTTPS, and the prefix is silently dropped without
+    # Secure. Set COOKIE_USE_HOST_PREFIX=true at the canary stage once all
+    # cookie readers (AuthController @CookieValue, TenantFilter, etc.) have
+    # been migrated to accept both legacy and hardened names.
+    use-host-prefix: ${COOKIE_USE_HOST_PREFIX:false}
   security:
     csrf:
       # Enable CSRF protection in production
       enabled: true
+    # ClamAV virus scanning ON in production. Host/port must point at the clamd
+    # sidecar/service; defaults assume a co-located daemon. Timeout chosen to be
+    # well below the upload controller request timeout so a slow clamd surfaces
+    # as a per-request warning rather than a request-thread stall.
+    virusscan:
+      enabled: ${VIRUSSCAN_ENABLED:true}
+      host: ${VIRUSSCAN_HOST:clamav}
+      port: ${VIRUSSCAN_PORT:3310}
+      timeout-ms: ${VIRUSSCAN_TIMEOUT_MS:10000}
 
   # Google Drive file storage (production service account)
   google-drive:

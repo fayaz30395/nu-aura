@@ -706,36 +706,48 @@ function LoginPage() {
                     onSubmit={handleSubmit(handleEmailLogin)}
                     className="mt-3 space-y-4"
                     style={{ animation: 'fadeSlideUp 0.2s ease-out' }}
+                    aria-label="Email and password sign-in"
                   >
                     <div>
+                      <label htmlFor="login-email" className="sr-only">Email address</label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" aria-hidden="true" />
                         <input
+                          id="login-email"
                           {...register('email')}
                           type="email"
                           placeholder="Email address"
                           autoComplete="email"
+                          aria-label="Email address"
+                          aria-invalid={!!emailErrors.email}
+                          aria-describedby={emailErrors.email ? 'login-email-error' : undefined}
                           className="input-aura pl-10 w-full"
                         />
                       </div>
                       {emailErrors.email && (
-                        <p className="text-danger-500 text-xs mt-1">{emailErrors.email.message}</p>
+                        <p id="login-email-error" className="text-danger-500 text-xs mt-1">{emailErrors.email.message}</p>
                       )}
                     </div>
 
                     <div>
+                      <label htmlFor="login-password" className="sr-only">Password</label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" aria-hidden="true" />
                         <input
+                          id="login-password"
                           {...register('password')}
                           type={showPassword ? 'text' : 'password'}
                           placeholder="Password"
                           autoComplete="current-password"
+                          aria-label="Password"
+                          aria-invalid={!!emailErrors.password}
+                          aria-describedby={emailErrors.password ? 'login-password-error' : undefined}
                           className="input-aura pl-10 pr-10 w-full"
                         />
                         <button
                           type="button"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          aria-pressed={showPassword}
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] rounded"
                         >
@@ -743,7 +755,7 @@ function LoginPage() {
                         </button>
                       </div>
                       {emailErrors.password && (
-                        <p className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
+                        <p id="login-password-error" className="text-danger-500 text-xs mt-1">{emailErrors.password.message}</p>
                       )}
                       <div className="flex justify-end mt-1">
                         <Link

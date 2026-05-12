@@ -301,21 +301,27 @@ export default function EmployeesPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 flex gap-2">
+            <label htmlFor="employee-search" className="sr-only">Search employees</label>
             <input
+              id="employee-search"
               type="text"
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              aria-label="Search employees by name or email"
               className="flex-1 min-w-0 h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
             />
             <Button variant="secondary" size="sm" onClick={handleSearch}>
               Search
             </Button>
           </div>
+          <label htmlFor="employee-status-filter" className="sr-only">Filter by status</label>
           <select
+            id="employee-status-filter"
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(0); }}
+            aria-label="Filter employees by status"
             className="h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all skeuo-input"
           >
             <option value="">All Status</option>
@@ -559,26 +565,30 @@ export default function EmployeesPage() {
                   <div className={currentTab === 'basic' ? 'space-y-4' : 'hidden'}>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="emp-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Employee Code *
                           </label>
                           <input
+                            id="emp-code"
                             type="text"
                             {...register('employeeCode')}
                             className="input-aura"
                             placeholder="EMP001"
+                            aria-invalid={!!errors.employeeCode}
                           />
                           {errors.employeeCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employeeCode.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="emp-work-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Work Email *
                           </label>
                           <input
+                            id="emp-work-email"
                             type="email"
                             {...register('workEmail')}
                             className="input-aura"
                             placeholder="employee@company.com"
+                            aria-invalid={!!errors.workEmail}
                           />
                           {errors.workEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.workEmail.message}</p>}
                         </div>
@@ -586,21 +596,24 @@ export default function EmployeesPage() {
 
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="emp-first-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             First Name *
                           </label>
                           <input
+                            id="emp-first-name"
                             type="text"
                             {...register('firstName')}
                             className="input-aura"
+                            aria-invalid={!!errors.firstName}
                           />
                           {errors.firstName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.firstName.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="emp-middle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Middle Name
                           </label>
                           <input
+                            id="emp-middle-name"
                             type="text"
                             {...register('middleName')}
                             className="input-aura"
@@ -608,10 +621,11 @@ export default function EmployeesPage() {
                           {errors.middleName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.middleName.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="emp-last-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Last Name
                           </label>
                           <input
+                            id="emp-last-name"
                             type="text"
                             {...register('lastName')}
                             className="input-aura"
@@ -621,14 +635,16 @@ export default function EmployeesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="emp-password" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Initial Password *
                         </label>
                         <input
+                          id="emp-password"
                           type="password"
                           {...register('password')}
                           className="input-aura"
                           placeholder="Employee will change on first login"
+                          aria-invalid={!!errors.password}
                         />
                         {errors.password && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
                       </div>

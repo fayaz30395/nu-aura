@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.common.resilience.CircuitBreaker;
 import com.hrms.common.resilience.CircuitBreakerRegistry;
+import com.hrms.common.util.UrlAllowlistValidator;
 import com.hrms.domain.integration.ConnectorConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,15 +51,21 @@ public class DocuSignApiClient {
     private final CircuitBreaker circuitBreaker;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    // SECURITY: tenant-supplied baseUrl is admin-controlled via IntegrationConnectorConfigService
+    // and could be set to an internal address. Every URL we construct from baseUrl is run through
+    // this allowlist before opening a socket — blocks RFC 1918, metadata endpoints, and non-allowed ports.
+    private final UrlAllowlistValidator urlAllowlistValidator;
     // Rate limiting: track request timestamps per tenant
     private final ConcurrentHashMap<UUID, List<Long>> requestTimestamps = new ConcurrentHashMap<>();
 
     public DocuSignApiClient(DocuSignAuthService authService,
                              CircuitBreakerRegistry circuitBreakerRegistry,
-                             ObjectMapper objectMapper) {
+                             ObjectMapper objectMapper,
+                             UrlAllowlistValidator urlAllowlistValidator) {
         this.authService = authService;
         this.circuitBreaker = circuitBreakerRegistry.forDocuSign();
         this.objectMapper = objectMapper;
+        this.urlAllowlistValidator = urlAllowlistValidator;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -115,6 +122,8 @@ public class DocuSignApiClient {
                 String requestBody = buildCreateEnvelopeJson(templateId, recipientEmail, recipientName, subject);
 
                 String url = String.format("%s/accounts/%s/envelopes", baseUrl.replaceAll("/+$", ""), accountId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
                         .header("Authorization", "Bearer " + accessToken)
@@ -165,6 +174,8 @@ public class DocuSignApiClient {
 
                 String url = String.format("%s/accounts/%s/envelopes/%s?include=recipients",
                         baseUrl.replaceAll("/+$", ""), accountId, envelopeId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
@@ -214,6 +225,8 @@ public class DocuSignApiClient {
 
                 String url = String.format("%s/accounts/%s/envelopes/%s",
                         baseUrl.replaceAll("/+$", ""), accountId, envelopeId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
@@ -261,6 +274,8 @@ public class DocuSignApiClient {
 
                 String url = String.format("%s/accounts/%s/envelopes/%s/documents/%s",
                         baseUrl.replaceAll("/+$", ""), accountId, envelopeId, documentId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
@@ -301,6 +316,8 @@ public class DocuSignApiClient {
                 String baseUrl = getString(config, "baseUrl");
 
                 String url = String.format("%s/accounts/%s/templates", baseUrl.replaceAll("/+$", ""), accountId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
@@ -369,6 +386,12 @@ public class DocuSignApiClient {
                 requestBody.put("includeDocumentFields", true);
 
                 String url = String.format("%s/accounts/%s/connect", baseUrl.replaceAll("/+$", ""), accountId);
+                // SECURITY: SSRF guard — baseUrl is tenant-admin supplied via connector settings.
+                urlAllowlistValidator.validate(url);
+                // SECURITY: webhookUrl is tenant-supplied — DocuSign will call this back, so we
+                // also enforce the allowlist here even though the immediate outbound call goes to
+                // DocuSign (defense in depth + parity with WebhookService).
+                urlAllowlistValidator.validate(webhookUrl);
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))

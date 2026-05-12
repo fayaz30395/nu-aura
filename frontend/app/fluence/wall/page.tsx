@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { IconActivity, IconFlame, IconTrendingUp } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
 import { Permissions } from '@/lib/hooks/usePermissions';
@@ -66,54 +65,56 @@ function TrendingSidebar() {
       {/* Trending Content */}
       <div className="skeuo-card p-4 rounded-xl">
         <div className="flex items-center gap-2 mb-4">
-          <IconTrendingUp size={18} className="text-[var(--text-primary)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
+          <IconTrendingUp size={18} className="text-[var(--text-primary)]" aria-hidden="true" />
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">
             Trending Content
-          </span>
+          </h2>
         </div>
         {trendingItems.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-4">
-            <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" />
+            <IconFlame size={32} strokeWidth={1.5} className="text-[var(--text-muted)]" aria-hidden="true" />
             <p className="text-caption text-center">
               No trending content yet. Start creating and sharing to see what is popular.
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <ul className="space-y-2" aria-label="Trending content list">
             {trendingItems.map((item, idx) => (
-              <a
-                key={item.id}
-                href={item.href}
-                className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer group"
-              >
-                <span className="text-xs font-bold text-[var(--text-muted)] w-4 mt-0.5">
-                  {idx + 1}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    {item.type === 'WIKI' ? (
-                      <BookOpen className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" />
-                    ) : (
-                      <Newspaper className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" />
-                    )}
-                    <span className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400">
-                      {item.title}
-                    </span>
+              <li key={item.id}>
+                <a
+                  href={item.href}
+                  className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  aria-label={`${item.type === 'WIKI' ? 'Wiki' : 'Blog'} #${idx + 1}: ${item.title}, ${item.viewCount} views, ${item.likeCount} likes`}
+                >
+                  <span className="text-xs font-bold text-[var(--text-muted)] w-4 mt-0.5" aria-hidden="true">
+                    {idx + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      {item.type === 'WIKI' ? (
+                        <BookOpen className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" aria-hidden="true" />
+                      ) : (
+                        <Newspaper className="h-3 w-3 text-accent-600 dark:text-accent-400 flex-shrink-0" aria-hidden="true" />
+                      )}
+                      <span className="text-xs font-medium text-[var(--text-primary)] truncate group-hover:text-accent-700 dark:group-hover:text-accent-400">
+                        {item.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-2xs text-[var(--text-muted)]">
+                      <span className="flex items-center gap-0.5">
+                        <Eye className="h-2.5 w-2.5" aria-hidden="true" />
+                        {item.viewCount}
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <Heart className="h-2.5 w-2.5" aria-hidden="true" />
+                        {item.likeCount}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-2xs text-[var(--text-muted)]">
-                    <span className="flex items-center gap-0.5">
-                      <Eye className="h-2.5 w-2.5" />
-                      {item.viewCount}
-                    </span>
-                    <span className="flex items-center gap-0.5">
-                      <Heart className="h-2.5 w-2.5" />
-                      {item.likeCount}
-                    </span>
-                  </div>
-                </div>
-              </a>
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
 
@@ -176,7 +177,6 @@ function formatTimeAgo(dateString: string): string {
 }
 
 function WallPageContent() {
-  const router = useRouter();
   const createPost = useCreatePost();
   // Permission gate handled by <PermissionGate> wrapper in default export.
 
@@ -184,16 +184,16 @@ function WallPageContent() {
     <AppLayout>
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <div className="flex items-center gap-4 mb-6">
-          <IconActivity size={28} className="text-[var(--text-primary)]" />
+          <IconActivity size={28} className="text-[var(--text-primary)]" aria-hidden="true" />
           <div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] skeuo-emboss">
               Activity Wall
-            </h2>
+            </h1>
             <p className="text-body-muted">
               See what is happening across your knowledge base
             </p>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400" aria-label="Live updates">
             Live
           </span>
         </div>

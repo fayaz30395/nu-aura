@@ -2,26 +2,31 @@
 
 import {useMemo} from 'react';
 import {motion} from 'framer-motion';
+import dynamic from 'next/dynamic';
 import {useRouter} from 'next/navigation';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate, PageDeniedFallback} from '@/components/auth/PermissionGate';
-import {
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
 import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/design-system';
+
+// S10-K: recharts (~180 KB gz) is lazy-loaded — chart subtree extracted into
+// FluenceAnalyticsCharts.tsx so it ships only when the Analytics route renders.
+const ChartFallback = () => (
+  <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
+);
+
+const ActivityTrendChart = dynamic(
+  () => import('./FluenceAnalyticsCharts').then((m) => ({default: m.ActivityTrendChart})),
+  {ssr: false, loading: ChartFallback}
+);
+
+const ContentDistributionChart = dynamic(
+  () => import('./FluenceAnalyticsCharts').then((m) => ({default: m.ContentDistributionChart})),
+  {ssr: false, loading: ChartFallback}
+);
 
 /**
  * NU-Fluence Analytics Dashboard
@@ -248,36 +253,7 @@ function FluenceAnalyticsPageContent() {
                 {activityLoading ? (
                   <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                 ) : (
-                  <ResponsiveContainer width="100%" height={280}>
-                    <LineChart data={activityTrendData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid}/>
-                      <XAxis
-                        dataKey="date"
-                        stroke={chartColors.grid}
-                        tick={{fill: 'var(--text-muted)', fontSize: 12}}
-                      />
-                      <YAxis
-                        stroke={chartColors.grid}
-                        tick={{fill: 'var(--text-muted)', fontSize: 12}}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: chartColors.tooltip.bg,
-                          border: `1px solid ${chartColors.tooltip.border}`,
-                          borderRadius: '8px',
-                        }}
-                        labelStyle={{color: chartColors.tooltip.text}}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="actions"
-                        stroke={chartColors.primary}
-                        strokeWidth={2}
-                        dot={{fill: chartColors.primary, r: 4}}
-                        activeDot={{r: 6}}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <ActivityTrendChart data={activityTrendData}/>
                 )}
               </CardContent>
             </Card>
@@ -296,32 +272,7 @@ function FluenceAnalyticsPageContent() {
                 {isLoading ? (
                   <div className="h-72 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                 ) : (
-                  <ResponsiveContainer width="100%" height={280}>
-                    <PieChart>
-                      <Pie
-                        data={contentDistData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({name, value}) => `${name}: ${value}`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {contentDistData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill}/>
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: chartColors.tooltip.bg,
-                          border: `1px solid ${chartColors.tooltip.border}`,
-                          borderRadius: '8px',
-                        }}
-                        labelStyle={{color: chartColors.tooltip.text}}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <ContentDistributionChart data={contentDistData}/>
                 )}
               </CardContent>
             </Card>

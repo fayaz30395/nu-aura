@@ -137,8 +137,8 @@ export default function MyDashboardPage() {
   if (!dashboard && !isSuperAdminOrAdmin) {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
-        <div className="text-center py-12">
-          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+        <div className="text-center py-12" role="status">
+          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" aria-hidden="true" />
           <h2 className="skeuo-emboss text-xl font-semibold text-[var(--text-primary)] mb-2">
             No Employee Profile Linked
           </h2>
