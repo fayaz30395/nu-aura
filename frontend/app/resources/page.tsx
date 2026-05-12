@@ -22,7 +22,7 @@ import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {ResourceManagementApiError} from '@/lib/services/hrms/resource-management.service';
 import {useMyPendingApprovals, useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
-import {CreateAllocationModal} from '@/components/resources/CreateAllocationModal';
+import {CreateAllocationModal} from '@/components/resource-management/CreateAllocationModal';
 
 export default function ResourcesPage() {
   const router = useRouter();

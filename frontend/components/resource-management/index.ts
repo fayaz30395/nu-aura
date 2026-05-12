@@ -5,3 +5,6 @@ export {EmployeeWorkloadCard} from './EmployeeWorkloadCard';
 export {WorkloadSummaryStats} from './WorkloadSummaryStats';
 export {ResourceAvailabilityCalendar} from './ResourceAvailabilityCalendar';
 export {EmployeeAllocationDetailModal} from './EmployeeAllocationDetailModal';
+export {CreateAllocationModal} from './CreateAllocationModal';
+export {EmployeeStep} from './EmployeeStep';
+export {ProjectStep} from './ProjectStep';
